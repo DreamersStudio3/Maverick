@@ -100,6 +100,8 @@ void AMVCharacterBase::UpdateMovement()
 	// Decide Gait
 	Gait = DesiredGait();
 
+	// Todo: Update Accleration, Braking Deceleration, GroundFriction, Calculate MaxWalkSpeed along with moveing direction (optional: Crouch)
+
 }
 
 void AMVCharacterBase::SetStrafeMode(bool StrafeModeOn)

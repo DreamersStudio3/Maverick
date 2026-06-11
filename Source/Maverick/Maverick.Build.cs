@@ -24,8 +24,9 @@ public class Maverick : ModuleRules
 		{
 			PrivateDependencyModuleNames.AddRange(new string[]
 			{
-				"UnrealED",
-				"KismetCompiler",
+				//"UnrealED",
+                "UnrealEd",
+                "KismetCompiler",
 				"BlueprintGraph",
                 "AnimationCore"
             });
