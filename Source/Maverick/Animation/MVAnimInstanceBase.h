@@ -32,6 +32,7 @@ private:
 	void GetRotationData(float DeltaTime);
 	void GetAccelerationData(float DeltaTime);
 	void GetCharacterStateData();
+	void CalculatePivotState();
 
 private:
 	void CalculateLocomotionDirection(float MoveDirectionAngle, ELocomotionDirection& Direction);
@@ -61,6 +62,7 @@ public:
 	// Velocity Data
 public:
 	FVector PreviousVelocity;
+	UPROPERTY(BlueprintReadOnly, Category = "AnimBPData_Velocity")
 	FVector Velocity;
 	UPROPERTY(BlueprintReadOnly, Category = "AnimBPData_Velocity")
 	uint8 bHasVelocity2D : 1;
@@ -68,6 +70,8 @@ public:
 	float GroundSpeed;
 	UPROPERTY(BlueprintReadOnly, Category = "AnimBPData_Velocity")
 	float MovingDirection;
+	UPROPERTY(BlueprintReadOnly, Category = "AnimBPData_Velocity")
+	float MovingDirectionFromAcceleration;
 	UPROPERTY(BlueprintReadOnly, Category = "AnimBPData_Velocity")
 	ELocomotionDirection LocomotionDirection;
 	UPROPERTY(BlueprintReadOnly, Category = "AnimBPData_Velocity")
@@ -107,5 +111,10 @@ public:
 	EGait PreviousGait;
 	UPROPERTY(BlueprintReadOnly, Category = "AnimBPData_CharacterState")
 	uint8 bGaitChanged : 1;
+
+	// Pivot Data
+public:
+	UPROPERTY(BlueprintReadOnly, Category = "AnimBPData_Pivot")
+	uint8 IsPivot : 1;
 
 };

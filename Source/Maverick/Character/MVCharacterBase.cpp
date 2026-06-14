@@ -20,7 +20,20 @@ AMVCharacterBase::AMVCharacterBase()
 void AMVCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	// Character Moving Direction Speed Map
+	FString CurvePath = "/Game/Miscellaneous/Curve/C_CharacterMoveSpeedMap.C_CharacterMoveSpeedMap";
+	SpeedDirectionCurve = LoadObject<UCurveFloat>(nullptr, *CurvePath);
+
+	// VERIFICATION: Check if it actually loaded
+	if (SpeedDirectionCurve)
+	{
+		UE_LOG(LogTemp, Log, TEXT("Successfully loaded Curve: %s"), *SpeedDirectionCurve->GetName());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("FAILED to load Curve at path: %s. Check the path in Content Browser!"), *CurvePath);
+	}
 }
 
 // Called every frame
@@ -71,7 +84,13 @@ void AMVCharacterBase::UpdateCharacterValue()
 	bIsFalling = GetCharacterMovement()->IsFalling();
 	
 	// Calculate Move Direction Angle
-	CharacterMoveDirectionAngle = UKismetAnimationLibrary::CalculateDirection(GetCharacterMovement()->Velocity, GetActorRotation());
+	if (!GetCharacterMovement()->Velocity.IsNearlyZero())
+	{
+		CharacterMoveDirectionAngle = UKismetAnimationLibrary::CalculateDirection(GetCharacterMovement()->Velocity, GetActorRotation());
+		CharacterMoveDirectionAngleFromAcceleration = UKismetAnimationLibrary::CalculateDirection(GetCharacterMovement()->GetCurrentAcceleration(), GetActorRotation());
+	}
+
+	
 
 	// HasMovementInput
 	{
@@ -100,7 +119,24 @@ void AMVCharacterBase::UpdateMovement()
 	// Decide Gait
 	Gait = DesiredGait();
 
-	// Todo: Update Accleration, Braking Deceleration, GroundFriction, Calculate MaxWalkSpeed along with moveing direction (optional: Crouch)
+	// Movement Speed
+	GetCharacterMovement()->MaxWalkSpeed = CalculateCharacterMovementSpeed(200, 500, 1.5);
+
+	// Acceleration
+	GetCharacterMovement()->MaxAcceleration = 1000.0f;
+
+	// Braking Deceleration
+	if (bHasMovementInput)
+	{
+		GetCharacterMovement()->BrakingDecelerationWalking = 1000.0f;
+	}
+	else
+	{
+		GetCharacterMovement()->BrakingDecelerationWalking = 500.0f;
+	}
+
+	// Ground Friction
+	GetCharacterMovement()->GroundFriction = 5.0f;
 
 }
 
@@ -141,7 +177,8 @@ bool AMVCharacterBase::CanSprint()
 	bool StrafeCondition = true;
 	if (CharacterInputState.WantsToStrafe)
 	{
-		StrafeCondition = UKismetMathLibrary::InRange_FloatFloat(CharacterMoveDirectionAngle, -50, 50);
+		//StrafeCondition = UKismetMathLibrary::InRange_FloatFloat(CharacterMoveDirectionAngle, -50, 50);
+		StrafeCondition = false;
 	}
 
 	return
@@ -152,6 +189,35 @@ bool AMVCharacterBase::CanSprint()
 			!CharacterInputState.WantsToAim &&
 			StrafeCondition
 			);
+}
+
+float AMVCharacterBase::CalculateCharacterMovementSpeed(float WalkSpeed, float RunSpeed, float SprintSpeedMultiplier)
+{
+
+	if (!SpeedDirectionCurve)
+	{
+		return RunSpeed;
+	}
+	float StrafeMapValue = SpeedDirectionCurve->GetFloatValue(abs(CharacterMoveDirectionAngle));
+
+	float OutSpeed;
+	switch (Gait)
+	{
+	case EGait::Walking:
+		OutSpeed = WalkSpeed;
+		break;
+	case EGait::Running:
+		OutSpeed = RunSpeed;
+		break;
+	case EGait::Sprinting:
+		OutSpeed = RunSpeed * SprintSpeedMultiplier;
+		break;
+	default:
+		OutSpeed = RunSpeed;
+		break;
+	}
+
+	return UKismetMathLibrary::MapRangeClamped(StrafeMapValue, 0, 1, 0, OutSpeed);
 }
 
 

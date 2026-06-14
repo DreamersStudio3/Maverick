@@ -46,12 +46,16 @@ protected:
 private:
 	EGait DesiredGait();
 	bool CanSprint();
+	float CalculateCharacterMovementSpeed(float WalkSpeed, float RunSpeed, float SprintSpeedMultiplier);
 	
 
 public:
 
 	UPROPERTY(BlueprintReadOnly, Category = "LocomotionData")
 	float CharacterMoveDirectionAngle;
+	
+	UPROPERTY(BlueprintReadOnly, Category = "LocomotionData")
+	float CharacterMoveDirectionAngleFromAcceleration;
 	
 	UPROPERTY(BlueprintReadOnly, Category = "LocomotionData")
 	uint8 bIsFalling : 1;
@@ -67,5 +71,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, Category = "LocomotionData")
 	FCharacterInputState CharacterInputState;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LocomotionData")
+	TObjectPtr<UCurveFloat> SpeedDirectionCurve;
+
 
 };
