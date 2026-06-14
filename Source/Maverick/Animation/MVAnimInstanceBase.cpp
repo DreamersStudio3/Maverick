@@ -47,6 +47,7 @@ void UMVAnimInstanceBase::NativeUpdateAnimation(float DeltaSeconds)
 	GetRotationData(DeltaSeconds);
 	GetAccelerationData(DeltaSeconds);
 	GetCharacterStateData();
+	CalculatePivotState();
 
 
 }
@@ -75,6 +76,7 @@ void UMVAnimInstanceBase::GetVelocityData()
 
 	GroundSpeed = FVector(Velocity.X, Velocity.Y, 0.0f).Length();
 	MovingDirection = Character->CharacterMoveDirectionAngle;
+	MovingDirectionFromAcceleration = Character->CharacterMoveDirectionAngleFromAcceleration;
 
 	CalculateLocomotionDirection(MovingDirection, LocomotionDirection);
 
@@ -168,6 +170,22 @@ void UMVAnimInstanceBase::GetCharacterStateData()
 	CurrentGait = IncomingGait;
 
 	bGaitChanged = (CurrentGait != PreviousGait);
+}
+
+void UMVAnimInstanceBase::CalculatePivotState()
+{
+	FVector Acceleration2D = CurrentAcceleration.GetSafeNormal2D();
+	FVector Velocity2D = Velocity.GetSafeNormal2D();
+
+	if (Acceleration2D.IsNearlyZero() || Velocity2D.IsNearlyZero())
+	{
+		IsPivot = false;
+		return;
+	}
+	
+	float PivotDotValue = FVector::DotProduct(Acceleration2D, Velocity2D);
+
+	IsPivot = PivotDotValue < 0.0f;
 }
 
 void UMVAnimInstanceBase::CalculateLocomotionDirection(float MoveDirectionAngle, ELocomotionDirection& Direction)
