@@ -20,6 +20,8 @@ public class Maverick : ModuleRules
 			"AnimGraphRuntime",
 			"Json",
 			"JsonUtilities",
+			"StateTreeModule",
+			"GameplayStateTreeModule",
 		});
 
 		if (Target.Type == TargetRules.TargetType.Editor)
