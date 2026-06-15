@@ -1,41 +1,33 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Pawn.h"
 #include "StateTreeTaskBase.h"
-#include "MVBossLookAtTargetTask.generated.h"
+#include "MVChaseTargetTask.generated.h"
 
 USTRUCT()
-struct FMVBossLookAtTargetTaskInstanceData
+struct FMVChaseTargetTaskData 
 {
 	GENERATED_BODY()
 	
-	UPROPERTY(EditAnywhere, Category = "Input|Target")
-	TObjectPtr<AActor> Target;
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<APawn> Target;
 	
-	UPROPERTY(EditAnywhere, Category = "Input|Owner")
+	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<APawn> Owner;
-	
-	UPROPERTY(EditAnywhere, Category = "Input|TurnSpeed")
-	float TurnSpeed = 5.0f;
-	
-	UPROPERTY(EditAnywhere, Category = "Input|bCanLookAt")
-	bool bCanLookAt = true;
 		
 };
 
 USTRUCT()
-struct FMVBossLookAtTargetTask : public FStateTreeTaskCommonBase
+struct FMVChaseTargetTask : public FStateTreeTaskCommonBase
 {
-	
 	GENERATED_BODY()
 	
-	using FInstanceDataType = FMVBossLookAtTargetTaskInstanceData;
+	using InstanceDataType = FMVChaseTargetTaskData;
 	
 	virtual const UStruct* GetInstanceDataType() const override
 	{
-		return FInstanceDataType::StaticStruct();
-	}
+		return InstanceDataType::StaticStruct();
+	};
 	
 	virtual EStateTreeRunStatus EnterState(
 		FStateTreeExecutionContext& Context,
@@ -51,8 +43,5 @@ struct FMVBossLookAtTargetTask : public FStateTreeTaskCommonBase
 		FStateTreeExecutionContext& Context,
 		const FStateTreeTransitionResult& Transition
 		) const override;
-	
-
-public: 
 		
 };
