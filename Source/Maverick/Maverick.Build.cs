@@ -8,34 +8,34 @@ public class Maverick : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-        PublicIncludePaths.AddRange(new string[] { "Maverick/" });
+		PublicIncludePaths.AddRange(new string[] { "Maverick/" });
 
-        PublicDependencyModuleNames.AddRange(new string[]
+		PublicDependencyModuleNames.AddRange(new string[]
 		{
-			"Core", 
-			"CoreUObject", 
-			"Engine", 
-			"InputCore", 
-			"EnhancedInput", 
+			"Core",
+			"CoreUObject",
+			"Engine",
+			"InputCore",
+			"EnhancedInput",
 			"AnimGraphRuntime",
+			"Json",
+			"JsonUtilities",
 		});
 
 		if (Target.Type == TargetRules.TargetType.Editor)
 		{
 			PrivateDependencyModuleNames.AddRange(new string[]
 			{
-				//"UnrealED",
-                "UnrealEd",
-                "KismetCompiler",
+				"UnrealEd",
+				"AssetRegistry",
+				"KismetCompiler",
 				"BlueprintGraph",
-                "AnimationCore"
-            });
-
-
+				"AnimationCore",
+				"ToolMenus",
+				"Slate",
+				"SlateCore"
+			});
 		}
-
-
-		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
