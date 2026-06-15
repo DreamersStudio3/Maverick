@@ -57,7 +57,13 @@ CSV 변환기는 `MaverickDesign/Json/SheetRecipe.json`도 함께 생성합니�
 
 ## DataTable 생성
 
-에디터에서 다음 콘솔 명령을 실행하면 JSON이 `UDataTable` 에셋으로 변환됩니다.
+에디터에서 다음 메뉴를 실행하면 JSON이 `UDataTable` 에셋으로 변환됩니다.
+
+```text
+Tools > Maverick > Generate Data Tables
+```
+
+콘솔 명령으로도 실행할 수 있습니다.
 
 ```text
 MV.Table.GenerateDataTables

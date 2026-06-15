@@ -30,7 +30,10 @@ public class Maverick : ModuleRules
 				"AssetRegistry",
 				"KismetCompiler",
 				"BlueprintGraph",
-				"AnimationCore"
+				"AnimationCore",
+				"ToolMenus",
+				"Slate",
+				"SlateCore"
 			});
 		}
 

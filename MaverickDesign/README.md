@@ -5,7 +5,7 @@
 ## 전체 흐름
 
 1. `MaverickDesign/Csv`에 CSV 파일을 추가하거나 수정합니다.
-2. 에디터에서 `MV.Table.GenerateDataTables` 콘솔 명령을 실행합니다.
+2. 에디터의 `Tools > Maverick > Generate Data Tables` 메뉴를 실행합니다.
 3. 변환기가 CSV를 `MaverickDesign/Json`으로 변환합니다.
 4. 생성기가 JSON을 `/Game/Table/DT_*` `UDataTable` 에셋으로 가져옵니다.
 5. 생성기가 `/Game/Table/DT_MVTableManifest`를 갱신합니다.
@@ -124,7 +124,13 @@ if (TableManager->BuildPropTable(TEXT("Item"), ItemTable))
 
 ## DataTable 생성
 
-에디터 콘솔에서 실행합니다.
+에디터 메뉴에서 실행합니다.
+
+```text
+Tools > Maverick > Generate Data Tables
+```
+
+콘솔 명령으로도 실행할 수 있습니다.
 
 ```text
 MV.Table.GenerateDataTables
