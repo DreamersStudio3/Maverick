@@ -6,6 +6,9 @@
 
 class UMVTableManager;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FMVOnStatValueChanged, float, CurrentValue, float, MaxValue);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMVOnDead);
+
 UCLASS(ClassGroup = (Maverick), meta = (BlueprintSpawnableComponent))
 class MAVERICK_API UMVStatComponent : public UActorComponent
 {
@@ -13,6 +16,21 @@ class MAVERICK_API UMVStatComponent : public UActorComponent
 
 public:
 	UMVStatComponent();
+
+	UPROPERTY(BlueprintAssignable, Category = "Maverick|Stat|Event")
+	FMVOnStatValueChanged OnHPChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Maverick|Stat|Event")
+	FMVOnStatValueChanged OnStaminaChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Maverick|Stat|Event")
+	FMVOnStatValueChanged OnMPChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Maverick|Stat|Event")
+	FMVOnStatValueChanged OnGroggyChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Maverick|Stat|Event")
+	FMVOnDead OnDead;
 
 protected:
 	virtual void BeginPlay() override;
