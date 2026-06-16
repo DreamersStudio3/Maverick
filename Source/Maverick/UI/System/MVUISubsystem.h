@@ -2,10 +2,13 @@
 
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
+#include "UI/System/MVUIDataTypes.h"
 #include "MVUISubsystem.generated.h"
 
 class UCommonActivatableWidget;
 class UMVHUDWidgetBase;
+class UMVInteractionPromptPopup;
+class UMVMessagePopup;
 class UMVPopupBase;
 class UMVUILayerBase;
 class UMVWindowBase;
@@ -47,6 +50,24 @@ public:
 	UCommonActivatableWidget* ShowDeathOverlay();
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
+	UMVInteractionPromptPopup* ShowInteractionPrompt(const FMVInteractionPromptData& PromptData);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
+	UMVInteractionPromptPopup* ShowInteractionPromptText(FText PromptText);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
+	void HideInteractionPrompt();
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
+	UMVMessagePopup* ShowPopupMessage(const FMVPopupMessageData& MessageData);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
+	UMVMessagePopup* ShowPopupMessageText(FText MessageText, float Duration = 2.0f);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
+	UMVMessagePopup* ShowPopupMessageById(FName MessageId);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
 	void ClearAllUI();
 
 	UFUNCTION(BlueprintPure, Category = "Maverick|UI")
@@ -64,4 +85,7 @@ private:
 
 	UPROPERTY(Transient)
 	TObjectPtr<UMVHUDWidgetBase> CachedHUD;
+
+	UPROPERTY(Transient)
+	TObjectPtr<UMVInteractionPromptPopup> ActiveInteractionPrompt;
 };

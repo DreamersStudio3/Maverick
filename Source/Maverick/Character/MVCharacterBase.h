@@ -38,7 +38,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UMVStatComponent> StatComponent;
 
-
 private:
 	void UpdateCharacterValue();
 	void UpdateRotation();
@@ -79,6 +78,4 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LocomotionData")
 	TObjectPtr<UCurveFloat> SpeedDirectionCurve;
-
-
 };

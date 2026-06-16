@@ -16,6 +16,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Popup")
 	void ClosePopup();
 
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Popup")
+	void SetAutoDismissSeconds(float InAutoDismissSeconds);
+
 protected:
 	virtual void NativeOnActivated() override;
 	virtual void NativeOnDeactivated() override;
@@ -25,6 +28,7 @@ protected:
 
 private:
 	void HandleAutoDismissElapsed();
+	void StartAutoDismissTimer();
 
 	FTimerHandle AutoDismissTimerHandle;
 };

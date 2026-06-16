@@ -1,0 +1,99 @@
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Components/ActorComponent.h"
+#include "InputCoreTypes.h"
+#include "MVInteractionDetectorComponent.generated.h"
+
+class UPrimitiveComponent;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
+	FMVOnFocusedInteractableChanged,
+	UObject*, PreviousInteractable,
+	UObject*, NewInteractable);
+
+UCLASS(ClassGroup = (Maverick), meta = (BlueprintSpawnableComponent))
+class MAVERICK_API UMVInteractionDetectorComponent : public UActorComponent
+{
+	GENERATED_BODY()
+
+public:
+	UMVInteractionDetectorComponent();
+
+	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	UPROPERTY(BlueprintAssignable, Category = "Maverick|Interaction")
+	FMVOnFocusedInteractableChanged OnFocusedInteractableChanged;
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Interaction")
+	void SetInteractionDetectionEnabled(bool bInEnabled);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Interaction")
+	void RefreshInteractable();
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Interaction")
+	void ClearFocusedInteractable();
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Interaction")
+	bool TryInteract();
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|Interaction")
+	UObject* GetFocusedInteractable() const { return FocusedInteractable.Get(); }
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|Interaction")
+	bool HasFocusedInteractable() const { return FocusedInteractable.IsValid(); }
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Interaction")
+	bool bDetectionEnabled = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Interaction", meta = (ClampMin = "0.0"))
+	float DetectionRadius = 250.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Interaction", meta = (ClampMin = "0.01"))
+	float DetectionInterval = 0.1f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Interaction", meta = (ClampMin = "0.0", ClampMax = "180.0"))
+	float DetectionHalfAngle = 75.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Interaction")
+	bool bUseViewCone = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Interaction")
+	bool bRequireLineOfSight = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Interaction")
+	TEnumAsByte<ECollisionChannel> LineOfSightChannel = ECC_Visibility;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Interaction")
+	TArray<TEnumAsByte<ECollisionChannel>> InteractionObjectChannels;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Interaction")
+	FKey InteractionInputKey = EKeys::Invalid;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Interaction")
+	FText DefaultPromptText;
+
+private:
+	struct FMVInteractionCandidate
+	{
+		TWeakObjectPtr<UObject> InteractableObject;
+		TWeakObjectPtr<AActor> InteractableActor;
+		TWeakObjectPtr<UPrimitiveComponent> InteractableComponent;
+		FVector Location = FVector::ZeroVector;
+		float Score = 0.0f;
+	};
+
+	bool ShouldRunDetection() const;
+	bool TryBuildCandidate(UPrimitiveComponent* OverlapComponent, const FVector& Origin, const FVector& ViewDirection, FMVInteractionCandidate& OutCandidate) const;
+	bool HasLineOfSight(const FMVInteractionCandidate& Candidate) const;
+	UObject* FindInteractableObject(UPrimitiveComponent* OverlapComponent) const;
+	bool IsInteractableAvailable(UObject* InteractableObject) const;
+	void SetFocusedInteractable(UObject* NewInteractable);
+	void UpdateInteractionPrompt();
+
+	TWeakObjectPtr<UObject> FocusedInteractable;
+	float TimeUntilNextDetection = 0.0f;
+};

@@ -15,22 +15,24 @@ void UMVPopupBase::ClosePopup()
 	DeactivateWidget();
 }
 
-void UMVPopupBase::NativeOnActivated()
+void UMVPopupBase::SetAutoDismissSeconds(float InAutoDismissSeconds)
 {
-	Super::NativeOnActivated();
+	AutoDismissSeconds = FMath::Max(0.0f, InAutoDismissSeconds);
 
-	if (AutoDismissSeconds > 0.0f)
+	if (IsActivated())
 	{
 		if (UWorld* World = GetWorld())
 		{
-			World->GetTimerManager().SetTimer(
-				AutoDismissTimerHandle,
-				this,
-				&UMVPopupBase::HandleAutoDismissElapsed,
-				AutoDismissSeconds,
-				false);
+			World->GetTimerManager().ClearTimer(AutoDismissTimerHandle);
 		}
+		StartAutoDismissTimer();
 	}
+}
+
+void UMVPopupBase::NativeOnActivated()
+{
+	Super::NativeOnActivated();
+	StartAutoDismissTimer();
 }
 
 void UMVPopupBase::NativeOnDeactivated()
@@ -46,4 +48,20 @@ void UMVPopupBase::NativeOnDeactivated()
 void UMVPopupBase::HandleAutoDismissElapsed()
 {
 	ClosePopup();
+}
+
+void UMVPopupBase::StartAutoDismissTimer()
+{
+	if (AutoDismissSeconds > 0.0f)
+	{
+		if (UWorld* World = GetWorld())
+		{
+			World->GetTimerManager().SetTimer(
+				AutoDismissTimerHandle,
+				this,
+				&UMVPopupBase::HandleAutoDismissElapsed,
+				AutoDismissSeconds,
+				false);
+		}
+	}
 }

@@ -5,6 +5,7 @@
 #include "MVUISettings.generated.h"
 
 class UMVHUDWidgetBase;
+class UMVMessagePopup;
 class UMVPopupBase;
 class UMVUILayerBase;
 class UMVWindowBase;
@@ -55,4 +56,10 @@ public:
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Popup")
 	TSubclassOf<UMVPopupBase> DialoguePopupClass;
+
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Popup")
+	TSubclassOf<UMVMessagePopup> MessagePopupClass;
+
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Data")
+	FName UIMessageTableName = TEXT("UIMessage");
 };

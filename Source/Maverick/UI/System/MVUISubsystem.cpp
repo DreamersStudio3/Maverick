@@ -4,9 +4,13 @@
 #include "Components/MVStatComponent.h"
 #include "Engine/World.h"
 #include "GameFramework/PlayerController.h"
+#include "Tables/MVTableManager.h"
+#include "Tables/MVUIMessageTableTypes.h"
 #include "UI/Base/MVHUDWidgetBase.h"
 #include "UI/Base/MVPopupBase.h"
 #include "UI/Base/MVWindowBase.h"
+#include "UI/Popup/MVInteractionPromptPopup.h"
+#include "UI/Popup/MVMessagePopup.h"
 #include "UI/System/MVUILayerBase.h"
 #include "UI/System/MVUISettings.h"
 #include "UI/Window/MVDeathOverlayWindow.h"
@@ -87,6 +91,7 @@ void UMVUISubsystem::PopLayer()
 	}
 
 	CachedHUD = nullptr;
+	ActiveInteractionPrompt = nullptr;
 }
 
 UCommonActivatableWidget* UMVUISubsystem::PushWindowByClass(TSubclassOf<UMVWindowBase> WindowClass)
@@ -158,6 +163,100 @@ UCommonActivatableWidget* UMVUISubsystem::ShowDeathOverlay()
 	return DeathWindow;
 }
 
+UMVInteractionPromptPopup* UMVUISubsystem::ShowInteractionPrompt(const FMVInteractionPromptData& PromptData)
+{
+	if (IsValid(ActiveInteractionPrompt) && ActiveInteractionPrompt->IsActivated())
+	{
+		ActiveInteractionPrompt->SetPromptData(PromptData);
+		return ActiveInteractionPrompt;
+	}
+
+	const UMVUISettings* Settings = GetDefault<UMVUISettings>();
+	if (!Settings)
+	{
+		return nullptr;
+	}
+
+	ActiveInteractionPrompt = Cast<UMVInteractionPromptPopup>(PushPopupByClass(Settings->InteractionPromptPopupClass));
+	if (ActiveInteractionPrompt)
+	{
+		ActiveInteractionPrompt->SetPromptData(PromptData);
+	}
+
+	return ActiveInteractionPrompt;
+}
+
+UMVInteractionPromptPopup* UMVUISubsystem::ShowInteractionPromptText(FText PromptText)
+{
+	FMVInteractionPromptData PromptData;
+	PromptData.PromptText = PromptText;
+	return ShowInteractionPrompt(PromptData);
+}
+
+void UMVUISubsystem::HideInteractionPrompt()
+{
+	if (IsValid(ActiveInteractionPrompt))
+	{
+		ActiveInteractionPrompt->DeactivateWidget();
+	}
+
+	ActiveInteractionPrompt = nullptr;
+}
+
+UMVMessagePopup* UMVUISubsystem::ShowPopupMessage(const FMVPopupMessageData& MessageData)
+{
+	const UMVUISettings* Settings = GetDefault<UMVUISettings>();
+	if (!Settings || !Settings->MessagePopupClass)
+	{
+		return nullptr;
+	}
+
+	UMVMessagePopup* MessagePopup = Cast<UMVMessagePopup>(PushPopupByClass(Settings->MessagePopupClass));
+	if (MessagePopup)
+	{
+		MessagePopup->SetMessageData(MessageData);
+	}
+
+	return MessagePopup;
+}
+
+UMVMessagePopup* UMVUISubsystem::ShowPopupMessageText(FText MessageText, float Duration)
+{
+	FMVPopupMessageData MessageData;
+	MessageData.MessageText = MessageText;
+	MessageData.Duration = Duration;
+	return ShowPopupMessage(MessageData);
+}
+
+UMVMessagePopup* UMVUISubsystem::ShowPopupMessageById(FName MessageId)
+{
+	const UMVUISettings* Settings = GetDefault<UMVUISettings>();
+	if (!Settings || Settings->UIMessageTableName.IsNone() || MessageId.IsNone())
+	{
+		return nullptr;
+	}
+
+	const UMVTableManager* TableManager = UMVTableManager::Get(this);
+	if (!TableManager)
+	{
+		return nullptr;
+	}
+
+	const FMVUIMessageRow* MessageRow = TableManager->FindRow<FMVUIMessageRow>(
+		Settings->UIMessageTableName,
+		MessageId.ToString());
+	if (!MessageRow)
+	{
+		return nullptr;
+	}
+
+	FMVPopupMessageData MessageData;
+	MessageData.MessageId = MessageId;
+	MessageData.MessageText = MessageRow->MessageText;
+	MessageData.Duration = MessageRow->DefaultDuration;
+	return ShowPopupMessage(MessageData);
+}
+
 void UMVUISubsystem::ClearAllUI()
 {
 	for (UMVUILayerBase* Layer : LayerStack)
@@ -173,6 +272,7 @@ void UMVUISubsystem::ClearAllUI()
 
 	LayerStack.Reset();
 	CachedHUD = nullptr;
+	ActiveInteractionPrompt = nullptr;
 }
 
 void UMVUISubsystem::HandleWorldInit(UWorld* World, const UWorld::InitializationValues IVS)
