@@ -9,6 +9,8 @@
 
 #include "MVCharacterBase.generated.h"
 
+class UMVStatComponent;
+
 UCLASS(Blueprintable, BlueprintType)
 class MAVERICK_API AMVCharacterBase : public ACharacter
 {
@@ -33,6 +35,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void AttemptCrouch();
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<UMVStatComponent> StatComponent;
+
 
 private:
 	void UpdateCharacterValue();
@@ -46,7 +51,7 @@ protected:
 private:
 	EGait DesiredGait();
 	bool CanSprint();
-	float CalculateCharacterMovementSpeed(float WalkSpeed, float RunSpeed, float SprintSpeedMultiplier);
+	float CalculateCharacterMovementSpeed(float WalkSpeed, float RunSpeed, float SprintSpeed);
 	
 
 public:

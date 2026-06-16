@@ -3,6 +3,7 @@
 
 #include "Character/MVCharacterBase.h"
 
+#include "Components/MVStatComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "KismetAnimationLibrary.h"
 #include "Math/Vector.h"
@@ -11,9 +12,10 @@
 // Sets default values
 AMVCharacterBase::AMVCharacterBase()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	StatComponent = CreateDefaultSubobject<UMVStatComponent>(TEXT("StatComponent"));
 }
 
 // Called when the game starts or when spawned
@@ -120,7 +122,10 @@ void AMVCharacterBase::UpdateMovement()
 	Gait = DesiredGait();
 
 	// Movement Speed
-	GetCharacterMovement()->MaxWalkSpeed = CalculateCharacterMovementSpeed(200, 500, 1.5);
+	const float WalkSpeed = StatComponent ? StatComponent->WalkSpeed : 200.0f;
+	const float RunSpeed = StatComponent ? StatComponent->RunSpeed : 500.0f;
+	const float SprintSpeed = StatComponent ? StatComponent->SprintSpeed : 750.0f;
+	GetCharacterMovement()->MaxWalkSpeed = CalculateCharacterMovementSpeed(WalkSpeed, RunSpeed, SprintSpeed);
 
 	// Acceleration
 	GetCharacterMovement()->MaxAcceleration = 1000.0f;
@@ -191,7 +196,7 @@ bool AMVCharacterBase::CanSprint()
 			);
 }
 
-float AMVCharacterBase::CalculateCharacterMovementSpeed(float WalkSpeed, float RunSpeed, float SprintSpeedMultiplier)
+float AMVCharacterBase::CalculateCharacterMovementSpeed(float WalkSpeed, float RunSpeed, float SprintSpeed)
 {
 
 	if (!SpeedDirectionCurve)
@@ -210,7 +215,7 @@ float AMVCharacterBase::CalculateCharacterMovementSpeed(float WalkSpeed, float R
 		OutSpeed = RunSpeed;
 		break;
 	case EGait::Sprinting:
-		OutSpeed = RunSpeed * SprintSpeedMultiplier;
+		OutSpeed = SprintSpeed;
 		break;
 	default:
 		OutSpeed = RunSpeed;
