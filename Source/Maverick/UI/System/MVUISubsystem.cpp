@@ -1,9 +1,12 @@
 #include "UI/System/MVUISubsystem.h"
 
+#include "Camera/CameraComponent.h"
 #include "CommonActivatableWidget.h"
 #include "Components/MVStatComponent.h"
 #include "Engine/World.h"
+#include "GameFramework/Pawn.h"
 #include "GameFramework/PlayerController.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "Tables/MVDialogueTableTypes.h"
 #include "Tables/MVTableManager.h"
 #include "Tables/MVUIMessageTableTypes.h"
@@ -97,6 +100,27 @@ void UMVUISubsystem::PopLayer()
 	ActiveDialogueWindow = nullptr;
 	ActivePopup = nullptr;
 	bHasPendingDialogueRequest = false;
+	PendingDialogueText = FText::GetEmpty();
+	PendingDialogueDuration = -1.0f;
+	PendingDialogueMinimumSkipDelay = -1.0f;
+	bDialoguePromptRestoreDelayActive = false;
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().ClearTimer(DialoguePromptRestoreDelayTimerHandle);
+		World->GetTimerManager().ClearTimer(DialogueCameraZoomTimerHandle);
+	}
+	if (USpringArmComponent* SpringArm = DialogueZoomSpringArm.Get())
+	{
+		SpringArm->TargetArmLength = DialogueZoomOriginalArmLength;
+	}
+	if (UCameraComponent* Camera = DialogueZoomCamera.Get())
+	{
+		Camera->SetFieldOfView(DialogueZoomOriginalFOV);
+	}
+	DialogueZoomSpringArm.Reset();
+	DialogueZoomCamera.Reset();
+	bDialogueCameraZoomApplied = false;
+	bDialogueCameraZoomRestoring = false;
 }
 
 UCommonActivatableWidget* UMVUISubsystem::PushWindowByClass(TSubclassOf<UMVWindowBase> WindowClass)
@@ -222,23 +246,33 @@ void UMVUISubsystem::HideInteractionPrompt()
 
 UMVDialogueWindow* UMVUISubsystem::ShowDialogueWindowText(FText DialogueText, float Duration)
 {
+	return ShowDialogueWindowTextWithTiming(DialogueText, Duration);
+}
+
+UMVDialogueWindow* UMVUISubsystem::ShowDialogueWindowTextWithTiming(FText DialogueText, float Duration, float MinimumSkipDelay)
+{
 	const UMVUISettings* Settings = GetDefault<UMVUISettings>();
 	if (!Settings || !Settings->DialogueWindowClass)
 	{
 		return nullptr;
 	}
 
+	if (IsDialogueWindowBlockingInteraction())
+	{
+		return ActiveDialogueWindow;
+	}
+
 	if (IsPopupActive(ActivePopup))
 	{
-		QueueDialogueWindowText(DialogueText, Duration);
+		QueueDialogueWindowText(DialogueText, Duration, MinimumSkipDelay);
 		CloseActivePopup();
 		return nullptr;
 	}
 
-	return OpenDialogueWindowText(DialogueText, Duration);
+	return OpenDialogueWindowText(DialogueText, Duration, MinimumSkipDelay);
 }
 
-UMVDialogueWindow* UMVUISubsystem::OpenDialogueWindowText(FText DialogueText, float Duration)
+UMVDialogueWindow* UMVUISubsystem::OpenDialogueWindowText(FText DialogueText, float Duration, float MinimumSkipDelay)
 {
 	const UMVUISettings* Settings = GetDefault<UMVUISettings>();
 	if (!Settings || !Settings->DialogueWindowClass)
@@ -247,10 +281,11 @@ UMVDialogueWindow* UMVUISubsystem::OpenDialogueWindowText(FText DialogueText, fl
 	}
 
 	const float DisplayDuration = Duration >= 0.0f ? Duration : Settings->DialogueWindowDuration;
-	if (IsDialogueWindowActive(ActiveDialogueWindow))
+	const float ResolvedMinimumSkipDelay = MinimumSkipDelay >= 0.0f
+		? MinimumSkipDelay
+		: Settings->DialogueWindowMinimumSkipDelay;
+	if (IsDialogueWindowPresent(ActiveDialogueWindow))
 	{
-		ActiveDialogueWindow->SetAutoDismissSeconds(DisplayDuration);
-		ActiveDialogueWindow->SetDialogueText(DialogueText);
 		return ActiveDialogueWindow;
 	}
 
@@ -264,19 +299,27 @@ UMVDialogueWindow* UMVUISubsystem::OpenDialogueWindowText(FText DialogueText, fl
 	if (ActiveDialogueWindow)
 	{
 		TrackActiveDialogueWindow(ActiveDialogueWindow);
+		ApplyDialogueCameraZoom(ActiveDialogueWindow->GetFadeInSeconds());
+		ActiveDialogueWindow->SetMinimumSkipDelay(ResolvedMinimumSkipDelay);
 		ActiveDialogueWindow->SetAutoDismissSeconds(DisplayDuration);
 		ActiveDialogueWindow->SetDialogueText(DialogueText);
 	}
 
 	bHasPendingDialogueRequest = false;
+	PendingDialogueText = FText::GetEmpty();
+	PendingDialogueDuration = -1.0f;
+	PendingDialogueMinimumSkipDelay = -1.0f;
 	return ActiveDialogueWindow;
 }
 
 void UMVUISubsystem::HideDialogueWindow()
 {
 	bHasPendingDialogueRequest = false;
+	PendingDialogueText = FText::GetEmpty();
+	PendingDialogueDuration = -1.0f;
+	PendingDialogueMinimumSkipDelay = -1.0f;
 
-	if (IsDialogueWindowActive(ActiveDialogueWindow))
+	if (IsDialogueWindowPresent(ActiveDialogueWindow))
 	{
 		ActiveDialogueWindow->CloseDialogue();
 		return;
@@ -287,7 +330,25 @@ void UMVUISubsystem::HideDialogueWindow()
 
 void UMVUISubsystem::SkipDialogueWindow()
 {
-	HideDialogueWindow();
+	if (CanSkipDialogueWindow())
+	{
+		HideDialogueWindow();
+	}
+}
+
+bool UMVUISubsystem::CanSkipDialogueWindow() const
+{
+	return IsDialogueWindowPresent(ActiveDialogueWindow)
+		&& ActiveDialogueWindow->CanSkipDialogue();
+}
+
+bool UMVUISubsystem::CanUseInteractionPrompt() const
+{
+	return !IsDialogueWindowBlockingInteraction()
+		&& IsPopupActive(ActiveInteractionPrompt)
+		&& ActivePopup == ActiveInteractionPrompt
+		&& !ActiveInteractionPrompt->IsClosing()
+		&& !ActiveInteractionPrompt->IsFading();
 }
 
 bool UMVUISubsystem::IsDialogueWindowActive() const
@@ -297,7 +358,9 @@ bool UMVUISubsystem::IsDialogueWindowActive() const
 
 bool UMVUISubsystem::IsDialogueWindowBlockingInteraction() const
 {
-	return bHasPendingDialogueRequest || IsDialogueWindowActive(ActiveDialogueWindow);
+	return bHasPendingDialogueRequest
+		|| bDialoguePromptRestoreDelayActive
+		|| IsDialogueWindowPresent(ActiveDialogueWindow);
 }
 
 UMVDialogueWindow* UMVUISubsystem::ShowDialogueWindowById(FName DialogueId)
@@ -322,7 +385,10 @@ UMVDialogueWindow* UMVUISubsystem::ShowDialogueWindowById(FName DialogueId)
 		return nullptr;
 	}
 
-	return ShowDialogueWindowText(DialogueRow->DialogueText, DialogueRow->DisplayDuration);
+	return ShowDialogueWindowTextWithTiming(
+		DialogueRow->DialogueText,
+		DialogueRow->DisplayDuration,
+		DialogueRow->MinimumSkipDelay);
 }
 
 UMVMessagePopup* UMVUISubsystem::ShowPopupMessage(const FMVPopupMessageData& MessageData)
@@ -398,6 +464,27 @@ void UMVUISubsystem::ClearAllUI()
 	ActiveDialogueWindow = nullptr;
 	ActivePopup = nullptr;
 	bHasPendingDialogueRequest = false;
+	PendingDialogueText = FText::GetEmpty();
+	PendingDialogueDuration = -1.0f;
+	PendingDialogueMinimumSkipDelay = -1.0f;
+	bDialoguePromptRestoreDelayActive = false;
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().ClearTimer(DialoguePromptRestoreDelayTimerHandle);
+		World->GetTimerManager().ClearTimer(DialogueCameraZoomTimerHandle);
+	}
+	if (USpringArmComponent* SpringArm = DialogueZoomSpringArm.Get())
+	{
+		SpringArm->TargetArmLength = DialogueZoomOriginalArmLength;
+	}
+	if (UCameraComponent* Camera = DialogueZoomCamera.Get())
+	{
+		Camera->SetFieldOfView(DialogueZoomOriginalFOV);
+	}
+	DialogueZoomSpringArm.Reset();
+	DialogueZoomCamera.Reset();
+	bDialogueCameraZoomApplied = false;
+	bDialogueCameraZoomRestoring = false;
 }
 
 void UMVUISubsystem::HandleWorldInit(UWorld* World, const UWorld::InitializationValues IVS)
@@ -483,10 +570,213 @@ void UMVUISubsystem::HandleDialogueWindowClosed(UMVDialogueWindow* ClosedDialogu
 	}
 
 	ClosedDialogueWindow->OnDialogueWindowClosed.RemoveDynamic(this, &UMVUISubsystem::HandleDialogueWindowClosed);
+	ClosedDialogueWindow->OnDialogueWindowClosing.RemoveDynamic(this, &UMVUISubsystem::HandleDialogueWindowClosing);
 
 	if (ClosedDialogueWindow == ActiveDialogueWindow)
 	{
 		ActiveDialogueWindow = nullptr;
+	}
+
+	const UMVUISettings* Settings = GetDefault<UMVUISettings>();
+	const float RestoreDelay = Settings ? Settings->DialoguePromptRestoreDelay : 0.0f;
+	if (RestoreDelay > 0.0f)
+	{
+		if (UWorld* World = GetWorld())
+		{
+			bDialoguePromptRestoreDelayActive = true;
+			World->GetTimerManager().SetTimer(
+				DialoguePromptRestoreDelayTimerHandle,
+				this,
+				&UMVUISubsystem::HandleDialoguePromptRestoreDelayElapsed,
+				RestoreDelay,
+				false);
+		}
+		else
+		{
+			bDialoguePromptRestoreDelayActive = false;
+		}
+	}
+	else
+	{
+		bDialoguePromptRestoreDelayActive = false;
+	}
+}
+
+void UMVUISubsystem::HandleDialogueWindowClosing(UMVDialogueWindow* ClosingDialogueWindow)
+{
+	const float DurationSeconds = IsValid(ClosingDialogueWindow)
+		? ClosingDialogueWindow->GetFadeOutSeconds()
+		: -1.0f;
+	RestoreDialogueCameraZoom(DurationSeconds);
+}
+
+void UMVUISubsystem::HandleDialoguePromptRestoreDelayElapsed()
+{
+	bDialoguePromptRestoreDelayActive = false;
+}
+
+void UMVUISubsystem::ApplyDialogueCameraZoom(float DurationOverride)
+{
+	const UMVUISettings* Settings = GetDefault<UMVUISettings>();
+	if (!Settings || !Settings->bEnableDialogueCameraZoom || bDialogueCameraZoomApplied)
+	{
+		return;
+	}
+
+	UWorld* World = GetWorld();
+	APlayerController* PlayerController = World ? World->GetFirstPlayerController() : nullptr;
+	APawn* Pawn = PlayerController ? PlayerController->GetPawn() : nullptr;
+	if (!Pawn)
+	{
+		return;
+	}
+
+	DialogueZoomSpringArm = Pawn->FindComponentByClass<USpringArmComponent>();
+	DialogueZoomCamera = Pawn->FindComponentByClass<UCameraComponent>();
+	if (!DialogueZoomSpringArm.IsValid() && !DialogueZoomCamera.IsValid())
+	{
+		return;
+	}
+
+	if (USpringArmComponent* SpringArm = DialogueZoomSpringArm.Get())
+	{
+		DialogueZoomOriginalArmLength = SpringArm->TargetArmLength;
+		DialogueZoomTargetArmLength = FMath::Max(0.0f, DialogueZoomOriginalArmLength + Settings->DialogueCameraSpringArmLengthOffset);
+	}
+	if (UCameraComponent* Camera = DialogueZoomCamera.Get())
+	{
+		DialogueZoomOriginalFOV = Camera->FieldOfView;
+		DialogueZoomTargetFOV = FMath::Clamp(DialogueZoomOriginalFOV + Settings->DialogueCameraFOVOffset, 5.0f, 170.0f);
+	}
+
+	bDialogueCameraZoomApplied = true;
+	StartDialogueCameraZoom(false, DurationOverride);
+}
+
+void UMVUISubsystem::RestoreDialogueCameraZoom(float DurationOverride)
+{
+	if (!bDialogueCameraZoomApplied || bDialogueCameraZoomRestoring)
+	{
+		return;
+	}
+
+	StartDialogueCameraZoom(true, DurationOverride);
+}
+
+void UMVUISubsystem::StartDialogueCameraZoom(bool bInRestoring, float DurationOverride)
+{
+	const UMVUISettings* Settings = GetDefault<UMVUISettings>();
+	UWorld* World = GetWorld();
+	if (!Settings || !World)
+	{
+		FinishDialogueCameraZoom();
+		return;
+	}
+
+	bDialogueCameraZoomRestoring = bInRestoring;
+	DialogueZoomDurationSeconds = ResolveDialogueCameraZoomDuration(DurationOverride, bInRestoring);
+	DialogueZoomDecelerationExponent = FMath::Max(1.0f, Settings->DialogueCameraZoomDecelerationExponent);
+	DialogueZoomStartTimeSeconds = World->GetTimeSeconds();
+
+	if (USpringArmComponent* SpringArm = DialogueZoomSpringArm.Get())
+	{
+		DialogueZoomStartArmLength = SpringArm->TargetArmLength;
+		DialogueZoomTargetArmLength = bInRestoring
+			? DialogueZoomOriginalArmLength
+			: FMath::Max(0.0f, DialogueZoomOriginalArmLength + Settings->DialogueCameraSpringArmLengthOffset);
+	}
+	if (UCameraComponent* Camera = DialogueZoomCamera.Get())
+	{
+		DialogueZoomStartFOV = Camera->FieldOfView;
+		DialogueZoomTargetFOV = bInRestoring
+			? DialogueZoomOriginalFOV
+			: FMath::Clamp(DialogueZoomOriginalFOV + Settings->DialogueCameraFOVOffset, 5.0f, 170.0f);
+	}
+
+	World->GetTimerManager().ClearTimer(DialogueCameraZoomTimerHandle);
+	if (DialogueZoomDurationSeconds <= 0.0f)
+	{
+		UpdateDialogueCameraZoom();
+		FinishDialogueCameraZoom();
+		return;
+	}
+
+	World->GetTimerManager().SetTimer(
+		DialogueCameraZoomTimerHandle,
+		this,
+		&UMVUISubsystem::UpdateDialogueCameraZoom,
+		0.01f,
+		true);
+}
+
+float UMVUISubsystem::ResolveDialogueCameraZoomDuration(float DurationOverride, bool bRestoring) const
+{
+	if (DurationOverride >= 0.0f)
+	{
+		return DurationOverride;
+	}
+
+	if (IsValid(ActiveDialogueWindow))
+	{
+		return bRestoring
+			? ActiveDialogueWindow->GetFadeOutSeconds()
+			: ActiveDialogueWindow->GetFadeInSeconds();
+	}
+
+	return 0.0f;
+}
+
+void UMVUISubsystem::UpdateDialogueCameraZoom()
+{
+	UWorld* World = GetWorld();
+	if (!World)
+	{
+		FinishDialogueCameraZoom();
+		return;
+	}
+
+	const float LinearAlpha = DialogueZoomDurationSeconds > 0.0f
+		? FMath::Clamp((World->GetTimeSeconds() - DialogueZoomStartTimeSeconds) / DialogueZoomDurationSeconds, 0.0f, 1.0f)
+		: 1.0f;
+	const float Alpha = 1.0f - FMath::Pow(1.0f - LinearAlpha, DialogueZoomDecelerationExponent);
+
+	if (USpringArmComponent* SpringArm = DialogueZoomSpringArm.Get())
+	{
+		SpringArm->TargetArmLength = FMath::Lerp(DialogueZoomStartArmLength, DialogueZoomTargetArmLength, Alpha);
+	}
+	if (UCameraComponent* Camera = DialogueZoomCamera.Get())
+	{
+		Camera->SetFieldOfView(FMath::Lerp(DialogueZoomStartFOV, DialogueZoomTargetFOV, Alpha));
+	}
+
+	if (LinearAlpha >= 1.0f)
+	{
+		FinishDialogueCameraZoom();
+	}
+}
+
+void UMVUISubsystem::FinishDialogueCameraZoom()
+{
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().ClearTimer(DialogueCameraZoomTimerHandle);
+	}
+
+	if (USpringArmComponent* SpringArm = DialogueZoomSpringArm.Get())
+	{
+		SpringArm->TargetArmLength = DialogueZoomTargetArmLength;
+	}
+	if (UCameraComponent* Camera = DialogueZoomCamera.Get())
+	{
+		Camera->SetFieldOfView(DialogueZoomTargetFOV);
+	}
+
+	if (bDialogueCameraZoomRestoring)
+	{
+		DialogueZoomSpringArm.Reset();
+		DialogueZoomCamera.Reset();
+		bDialogueCameraZoomApplied = false;
+		bDialogueCameraZoomRestoring = false;
 	}
 }
 
@@ -498,6 +788,11 @@ bool UMVUISubsystem::IsPopupActive(const UMVPopupBase* Popup) const
 bool UMVUISubsystem::IsDialogueWindowActive(const UMVDialogueWindow* DialogueWindow) const
 {
 	return IsValid(DialogueWindow) && DialogueWindow->IsActivated();
+}
+
+bool UMVUISubsystem::IsDialogueWindowPresent(const UMVDialogueWindow* DialogueWindow) const
+{
+	return IsValid(DialogueWindow);
 }
 
 void UMVUISubsystem::CloseActivePopupImmediately()
@@ -522,10 +817,11 @@ void UMVUISubsystem::CloseActivePopup()
 	ActivePopup->ClosePopup();
 }
 
-void UMVUISubsystem::QueueDialogueWindowText(FText DialogueText, float Duration)
+void UMVUISubsystem::QueueDialogueWindowText(FText DialogueText, float Duration, float MinimumSkipDelay)
 {
 	PendingDialogueText = DialogueText;
 	PendingDialogueDuration = Duration;
+	PendingDialogueMinimumSkipDelay = MinimumSkipDelay;
 	bHasPendingDialogueRequest = true;
 }
 
@@ -538,11 +834,13 @@ void UMVUISubsystem::TryOpenPendingDialogueWindow()
 
 	const FText DialogueText = PendingDialogueText;
 	const float DialogueDuration = PendingDialogueDuration;
+	const float DialogueMinimumSkipDelay = PendingDialogueMinimumSkipDelay;
 	bHasPendingDialogueRequest = false;
 	PendingDialogueText = FText::GetEmpty();
 	PendingDialogueDuration = -1.0f;
+	PendingDialogueMinimumSkipDelay = -1.0f;
 
-	OpenDialogueWindowText(DialogueText, DialogueDuration);
+	OpenDialogueWindowText(DialogueText, DialogueDuration, DialogueMinimumSkipDelay);
 }
 
 void UMVUISubsystem::TrackActivePopup(UMVPopupBase* Popup)
@@ -563,12 +861,14 @@ void UMVUISubsystem::TrackActiveDialogueWindow(UMVDialogueWindow* DialogueWindow
 {
 	if (IsValid(ActiveDialogueWindow))
 	{
+		ActiveDialogueWindow->OnDialogueWindowClosing.RemoveDynamic(this, &UMVUISubsystem::HandleDialogueWindowClosing);
 		ActiveDialogueWindow->OnDialogueWindowClosed.RemoveDynamic(this, &UMVUISubsystem::HandleDialogueWindowClosed);
 	}
 
 	ActiveDialogueWindow = DialogueWindow;
 	if (IsValid(ActiveDialogueWindow))
 	{
+		ActiveDialogueWindow->OnDialogueWindowClosing.AddUniqueDynamic(this, &UMVUISubsystem::HandleDialogueWindowClosing);
 		ActiveDialogueWindow->OnDialogueWindowClosed.AddUniqueDynamic(this, &UMVUISubsystem::HandleDialogueWindowClosed);
 	}
 }

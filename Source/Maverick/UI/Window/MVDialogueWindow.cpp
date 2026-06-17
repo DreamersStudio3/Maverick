@@ -19,6 +19,7 @@ void UMVDialogueWindow::SetDialogueText(FText InDialogueText)
 	if (DialogueText)
 	{
 		DialogueText->SetText(InDialogueText);
+		DialogueText->SetRenderOpacity(1.0f);
 	}
 }
 
@@ -30,28 +31,93 @@ void UMVDialogueWindow::SetAutoDismissSeconds(float InAutoDismissSeconds)
 	{
 		World->GetTimerManager().ClearTimer(AutoDismissTimerHandle);
 	}
-	StartAutoDismissTimer();
+	if (bFadeInFinished && IsActivated())
+	{
+		StartAutoDismissTimer();
+	}
+}
+
+void UMVDialogueWindow::SetMinimumSkipDelay(float InMinimumSkipDelay)
+{
+	MinimumSkipDelay = FMath::Max(0.0f, InMinimumSkipDelay);
+	bCanSkipDialogue = false;
+
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().ClearTimer(MinimumSkipDelayTimerHandle);
+	}
+
+	if (bFadeInFinished && IsActivated())
+	{
+		StartMinimumSkipDelayTimer();
+	}
 }
 
 void UMVDialogueWindow::CloseDialogue()
 {
-	DeactivateWidgetWithFade();
+	if (bCloseRequested)
+	{
+		return;
+	}
+
+	bCloseRequested = true;
+	bCanSkipDialogue = false;
+	ClearDialogueTimers();
+
+	if (DialogueText && DialogueTextFadeOutSeconds > 0.0f && DialogueText->GetRenderOpacity() > 0.0f)
+	{
+		DialogueTextFadeController.Play(
+			*DialogueText,
+			DialogueText->GetRenderOpacity(),
+			0.0f,
+			DialogueTextFadeOutSeconds,
+			true,
+			[this]()
+			{
+				HandleDialogueTextFadeOutFinished();
+			});
+		return;
+	}
+
+	HandleDialogueTextFadeOutFinished();
+}
+
+bool UMVDialogueWindow::CanSkipDialogue() const
+{
+	return bCanSkipDialogue
+		&& IsActivated()
+		&& !bCloseRequested
+		&& !IsFading()
+		&& !DialogueTextFadeController.IsPlaying();
 }
 
 void UMVDialogueWindow::NativeOnActivated()
 {
-	Super::NativeOnActivated();
+	SetUIFadeDurations(DialogueWindowFadeSeconds, DialogueWindowFadeSeconds);
 
 	bClosedEventBroadcast = false;
-	StartAutoDismissTimer();
+	bClosingEventBroadcast = false;
+	bCloseRequested = false;
+	bFadeInFinished = false;
+	bCanSkipDialogue = false;
+	DialogueTextFadeController.Stop();
+	if (DialogueText)
+	{
+		DialogueText->SetRenderOpacity(1.0f);
+	}
+	ClearDialogueTimers();
+
+	Super::NativeOnActivated();
 }
 
 void UMVDialogueWindow::NativeOnDeactivated()
 {
-	if (UWorld* World = GetWorld())
-	{
-		World->GetTimerManager().ClearTimer(AutoDismissTimerHandle);
-	}
+	ClearDialogueTimers();
+	DialogueTextFadeController.Stop();
+
+	bFadeInFinished = false;
+	bCanSkipDialogue = false;
+	BroadcastDialogueClosing();
 
 	Super::NativeOnDeactivated();
 
@@ -59,13 +125,48 @@ void UMVDialogueWindow::NativeOnDeactivated()
 	BroadcastDialogueClosed();
 }
 
+void UMVDialogueWindow::HandleFadeInFinished()
+{
+	Super::HandleFadeInFinished();
+
+	bFadeInFinished = true;
+	StartMinimumSkipDelayTimer();
+	StartAutoDismissTimer();
+}
+
 void UMVDialogueWindow::HandleAutoDismissElapsed()
 {
 	CloseDialogue();
 }
 
+bool UMVDialogueWindow::NativeOnHandleBackAction()
+{
+	if (!bCloseOnBack)
+	{
+		return false;
+	}
+
+	CloseDialogue();
+	return true;
+}
+
+void UMVDialogueWindow::HandleMinimumSkipDelayElapsed()
+{
+	bCanSkipDialogue = true;
+}
+
+void UMVDialogueWindow::HandleDialogueTextFadeOutFinished()
+{
+	BeginDialogueWindowFadeOut();
+}
+
 void UMVDialogueWindow::StartAutoDismissTimer()
 {
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().ClearTimer(AutoDismissTimerHandle);
+	}
+
 	if (AutoDismissSeconds > 0.0f)
 	{
 		if (UWorld* World = GetWorld())
@@ -78,6 +179,53 @@ void UMVDialogueWindow::StartAutoDismissTimer()
 				false);
 		}
 	}
+}
+
+void UMVDialogueWindow::StartMinimumSkipDelayTimer()
+{
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().ClearTimer(MinimumSkipDelayTimerHandle);
+
+		if (MinimumSkipDelay > 0.0f)
+		{
+			World->GetTimerManager().SetTimer(
+				MinimumSkipDelayTimerHandle,
+				this,
+				&UMVDialogueWindow::HandleMinimumSkipDelayElapsed,
+				MinimumSkipDelay,
+				false);
+			return;
+		}
+	}
+
+	bCanSkipDialogue = true;
+}
+
+void UMVDialogueWindow::ClearDialogueTimers()
+{
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().ClearTimer(AutoDismissTimerHandle);
+		World->GetTimerManager().ClearTimer(MinimumSkipDelayTimerHandle);
+	}
+}
+
+void UMVDialogueWindow::BeginDialogueWindowFadeOut()
+{
+	BroadcastDialogueClosing();
+	DeactivateWidgetWithFade();
+}
+
+void UMVDialogueWindow::BroadcastDialogueClosing()
+{
+	if (bClosingEventBroadcast)
+	{
+		return;
+	}
+
+	bClosingEventBroadcast = true;
+	OnDialogueWindowClosing.Broadcast(this);
 }
 
 void UMVDialogueWindow::BroadcastDialogueClosed()

@@ -67,7 +67,14 @@ void UMVActivatableWidgetBase::NativeOnActivated()
 	FadeController.Stop();
 	if (bAutoFadeInOnActivated)
 	{
-		FadeController.Play(*this, 0.0f, 1.0f, FadeInSeconds, false);
+		FadeController.Play(*this, 0.0f, 1.0f, FadeInSeconds, false, [this]()
+		{
+			HandleFadeInFinished();
+		});
+	}
+	else
+	{
+		HandleFadeInFinished();
 	}
 }
 
@@ -97,6 +104,10 @@ bool UMVActivatableWidgetBase::NativeOnHandleBackAction()
 
 	DeactivateWidgetWithFade();
 	return true;
+}
+
+void UMVActivatableWidgetBase::HandleFadeInFinished()
+{
 }
 
 void UMVActivatableWidgetBase::HandleFadeOutFinished()

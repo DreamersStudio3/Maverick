@@ -1,11 +1,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "TimerManager.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "UI/System/MVUIDataTypes.h"
 #include "MVUISubsystem.generated.h"
 
 class UCommonActivatableWidget;
+class UCameraComponent;
 class UMVDialogueWindow;
 class UMVHUDWidgetBase;
 class UMVInteractionPromptPopup;
@@ -13,6 +15,7 @@ class UMVMessagePopup;
 class UMVPopupBase;
 class UMVUILayerBase;
 class UMVWindowBase;
+class USpringArmComponent;
 
 UCLASS()
 class MAVERICK_API UMVUISubsystem : public UGameInstanceSubsystem
@@ -63,10 +66,22 @@ public:
 	UMVDialogueWindow* ShowDialogueWindowText(FText DialogueText, float Duration = -1.0f);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
+	UMVDialogueWindow* ShowDialogueWindowTextWithTiming(FText DialogueText, float Duration = -1.0f, float MinimumSkipDelay = -1.0f);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
 	void HideDialogueWindow();
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
 	void SkipDialogueWindow();
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|UI")
+	bool CanSkipDialogueWindow() const;
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|UI")
+	bool CanUseInteractionPrompt() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
+	void RestoreDialogueCameraZoom(float DurationOverride = -1.0f);
 
 	UFUNCTION(BlueprintPure, Category = "Maverick|UI")
 	bool IsDialogueWindowActive() const;
@@ -105,12 +120,22 @@ private:
 	UFUNCTION()
 	void HandleDialogueWindowClosed(UMVDialogueWindow* ClosedDialogueWindow);
 
+	UFUNCTION()
+	void HandleDialogueWindowClosing(UMVDialogueWindow* ClosingDialogueWindow);
+
+	void HandleDialoguePromptRestoreDelayElapsed();
+	void ApplyDialogueCameraZoom(float DurationOverride = -1.0f);
+	void StartDialogueCameraZoom(bool bInRestoring, float DurationOverride = -1.0f);
+	float ResolveDialogueCameraZoomDuration(float DurationOverride, bool bRestoring) const;
+	void UpdateDialogueCameraZoom();
+	void FinishDialogueCameraZoom();
 	bool IsPopupActive(const UMVPopupBase* Popup) const;
 	bool IsDialogueWindowActive(const UMVDialogueWindow* DialogueWindow) const;
+	bool IsDialogueWindowPresent(const UMVDialogueWindow* DialogueWindow) const;
 	void CloseActivePopupImmediately();
 	void CloseActivePopup();
-	UMVDialogueWindow* OpenDialogueWindowText(FText DialogueText, float Duration);
-	void QueueDialogueWindowText(FText DialogueText, float Duration);
+	UMVDialogueWindow* OpenDialogueWindowText(FText DialogueText, float Duration, float MinimumSkipDelay);
+	void QueueDialogueWindowText(FText DialogueText, float Duration, float MinimumSkipDelay);
 	void TryOpenPendingDialogueWindow();
 	void TrackActivePopup(UMVPopupBase* Popup);
 	void TrackActiveDialogueWindow(UMVDialogueWindow* DialogueWindow);
@@ -130,7 +155,25 @@ private:
 	UPROPERTY(Transient)
 	TObjectPtr<UMVPopupBase> ActivePopup;
 
+	TWeakObjectPtr<USpringArmComponent> DialogueZoomSpringArm;
+	TWeakObjectPtr<UCameraComponent> DialogueZoomCamera;
+	FTimerHandle DialoguePromptRestoreDelayTimerHandle;
+	FTimerHandle DialogueCameraZoomTimerHandle;
+	float DialogueZoomOriginalArmLength = 0.0f;
+	float DialogueZoomStartArmLength = 0.0f;
+	float DialogueZoomTargetArmLength = 0.0f;
+	float DialogueZoomOriginalFOV = 0.0f;
+	float DialogueZoomStartFOV = 0.0f;
+	float DialogueZoomTargetFOV = 0.0f;
+	float DialogueZoomStartTimeSeconds = 0.0f;
+	float DialogueZoomDurationSeconds = 0.0f;
+	float DialogueZoomDecelerationExponent = 2.0f;
+	bool bDialoguePromptRestoreDelayActive = false;
+	bool bDialogueCameraZoomApplied = false;
+	bool bDialogueCameraZoomRestoring = false;
+
 	FText PendingDialogueText;
 	float PendingDialogueDuration = -1.0f;
+	float PendingDialogueMinimumSkipDelay = -1.0f;
 	bool bHasPendingDialogueRequest = false;
 };

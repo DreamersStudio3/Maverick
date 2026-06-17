@@ -88,9 +88,16 @@ void UMVInteractionDetectorComponent::RefreshInteractable()
 		{
 			ReleaseSuppressedInteractable(false);
 		}
-		else if (!IsInteractableWithinDialogueEscapeRange(SuppressedInteractable.Get()))
+		else
 		{
-			ReleaseSuppressedInteractable(true);
+			if (!IsInteractableWithinDetectionRange(SuppressedInteractable.Get()))
+			{
+				RestoreDialogueCameraZoom();
+			}
+			if (!IsInteractableWithinDialogueEscapeRange(SuppressedInteractable.Get()))
+			{
+				ReleaseSuppressedInteractable(true);
+			}
 		}
 	}
 
@@ -348,22 +355,21 @@ bool UMVInteractionDetectorComponent::TryInteract()
 
 	RefreshInteractable();
 
+	UWorld* World = GetWorld();
+	UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr;
+	UMVUISubsystem* UISubsystem = GameInstance ? GameInstance->GetSubsystem<UMVUISubsystem>() : nullptr;
+	if (!UISubsystem || !UISubsystem->CanUseInteractionPrompt())
+	{
+		return false;
+	}
+
 	UObject* InteractableObject = FocusedInteractable.Get();
 	if (!IsInteractableAvailable(InteractableObject) || IsInteractableSuppressed(InteractableObject))
 	{
 		return false;
 	}
 
-	if (UWorld* World = GetWorld())
-	{
-		if (UGameInstance* GameInstance = World->GetGameInstance())
-		{
-			if (UMVUISubsystem* UISubsystem = GameInstance->GetSubsystem<UMVUISubsystem>())
-			{
-				UISubsystem->HideInteractionPrompt();
-			}
-		}
-	}
+	UISubsystem->HideInteractionPrompt();
 
 	SuppressedInteractable = InteractableObject;
 	LockInteractionUntilInputReleased();
@@ -543,6 +549,19 @@ bool UMVInteractionDetectorComponent::IsInteractableSuppressed(UObject* Interact
 	return InteractableObject && SuppressedInteractable.Get() == InteractableObject;
 }
 
+bool UMVInteractionDetectorComponent::IsInteractableWithinDetectionRange(UObject* InteractableObject) const
+{
+	const AActor* OwnerActor = GetOwner();
+	const AActor* InteractableActor = ResolveInteractableActor(InteractableObject);
+	if (!OwnerActor || !InteractableActor || DetectionRange <= 0.0f)
+	{
+		return false;
+	}
+
+	return FVector::DistSquared(OwnerActor->GetActorLocation(), InteractableActor->GetActorLocation())
+		<= FMath::Square(DetectionRange);
+}
+
 bool UMVInteractionDetectorComponent::IsInteractableWithinDialogueEscapeRange(UObject* InteractableObject) const
 {
 	const AActor* OwnerActor = GetOwner();
@@ -578,7 +597,7 @@ bool UMVInteractionDetectorComponent::SkipActiveDialogueWindow() const
 	UWorld* World = GetWorld();
 	UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr;
 	UMVUISubsystem* UISubsystem = GameInstance ? GameInstance->GetSubsystem<UMVUISubsystem>() : nullptr;
-	if (!UISubsystem || !UISubsystem->IsDialogueWindowActive())
+	if (!UISubsystem || !UISubsystem->CanSkipDialogueWindow())
 	{
 		return false;
 	}
@@ -595,6 +614,17 @@ void UMVInteractionDetectorComponent::HideActiveDialogueWindow() const
 	if (UISubsystem)
 	{
 		UISubsystem->HideDialogueWindow();
+	}
+}
+
+void UMVInteractionDetectorComponent::RestoreDialogueCameraZoom() const
+{
+	UWorld* World = GetWorld();
+	UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr;
+	UMVUISubsystem* UISubsystem = GameInstance ? GameInstance->GetSubsystem<UMVUISubsystem>() : nullptr;
+	if (UISubsystem)
+	{
+		UISubsystem->RestoreDialogueCameraZoom();
 	}
 }
 
@@ -645,6 +675,11 @@ void UMVInteractionDetectorComponent::UpdateDialogueEscapeState()
 		}
 	}
 #endif
+
+	if (!IsInteractableWithinDetectionRange(SuppressedInteractable.Get()))
+	{
+		RestoreDialogueCameraZoom();
+	}
 
 	if (IsInteractableWithinDialogueEscapeRange(SuppressedInteractable.Get()))
 	{

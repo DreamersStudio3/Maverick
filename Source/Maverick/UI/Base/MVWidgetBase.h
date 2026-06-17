@@ -28,6 +28,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Maverick|UI|Animation")
 	bool IsFadingOut() const { return FadeController.IsFadingOut(); }
 
+	UFUNCTION(BlueprintPure, Category = "Maverick|UI|Animation")
+	bool IsFading() const { return FadeController.IsPlaying(); }
+
 protected:
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;

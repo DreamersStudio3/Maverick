@@ -29,6 +29,15 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Maverick|UI|Animation")
 	bool IsFadingOut() const { return FadeController.IsFadingOut(); }
 
+	UFUNCTION(BlueprintPure, Category = "Maverick|UI|Animation")
+	bool IsFading() const { return FadeController.IsPlaying(); }
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|UI|Animation")
+	float GetFadeInSeconds() const { return FadeInSeconds; }
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|UI|Animation")
+	float GetFadeOutSeconds() const { return FadeOutSeconds; }
+
 	virtual TOptional<FUIInputConfig> GetDesiredInputConfig() const override;
 
 protected:
@@ -36,6 +45,7 @@ protected:
 	virtual void NativeOnDeactivated() override;
 	virtual UWidget* NativeGetDesiredFocusTarget() const override;
 	virtual bool NativeOnHandleBackAction() override;
+	virtual void HandleFadeInFinished();
 	virtual void HandleFadeOutFinished();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Maverick|UI|Input")

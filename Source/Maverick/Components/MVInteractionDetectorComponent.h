@@ -111,11 +111,13 @@ private:
 	AActor* ResolveInteractableActor(UObject* InteractableObject, UPrimitiveComponent* FallbackComponent = nullptr) const;
 	bool IsInteractableAvailable(UObject* InteractableObject) const;
 	bool IsInteractableSuppressed(UObject* InteractableObject) const;
+	bool IsInteractableWithinDetectionRange(UObject* InteractableObject) const;
 	bool IsInteractableWithinDialogueEscapeRange(UObject* InteractableObject) const;
 	bool IsDialogueWindowActive() const;
 	bool IsDialogueInteractionBlocked() const;
 	bool SkipActiveDialogueWindow() const;
 	void HideActiveDialogueWindow() const;
+	void RestoreDialogueCameraZoom() const;
 	void ReleaseSuppressedInteractable(bool bHideDialogue);
 	void UpdateDialogueEscapeState();
 	void LockInteractionUntilInputReleased();

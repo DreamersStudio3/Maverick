@@ -23,6 +23,9 @@ struct MAVERICK_API FMVDialogueRow : public FMVTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Table|UI|Dialogue", meta = (ClampMin = "0.0"))
 	float DisplayDuration = 3.0f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Table|UI|Dialogue", meta = (ClampMin = "0.0"))
+	float MinimumSkipDelay = 0.0f;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Table|UI|Dialogue")
 	FString NextDialogueId;
 
