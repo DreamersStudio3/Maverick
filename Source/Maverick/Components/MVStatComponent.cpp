@@ -112,24 +112,60 @@ bool UMVStatComponent::LoadStatsFromTable()
 
 void UMVStatComponent::SetMaxHP(float InMaxHP)
 {
+	const float PreviousMaxHP = MaxHP;
+	const float PreviousCurrentHP = CurrentHP;
 	MaxHP = NonNegative(InMaxHP);
 	CurrentHP = ClampCurrent(CurrentHP, MaxHP);
+
+	if (!FMath::IsNearlyEqual(PreviousMaxHP, MaxHP) || !FMath::IsNearlyEqual(PreviousCurrentHP, CurrentHP))
+	{
+		OnHPChanged.Broadcast(CurrentHP, MaxHP);
+	}
+
+	if (PreviousCurrentHP > 0.0f && CurrentHP <= 0.0f)
+	{
+		OnDead.Broadcast();
+	}
 }
 
 void UMVStatComponent::SetCurrentHP(float InCurrentHP)
 {
+	const float PreviousCurrentHP = CurrentHP;
 	CurrentHP = ClampCurrent(InCurrentHP, MaxHP);
+
+	if (!FMath::IsNearlyEqual(PreviousCurrentHP, CurrentHP))
+	{
+		OnHPChanged.Broadcast(CurrentHP, MaxHP);
+	}
+
+	if (PreviousCurrentHP > 0.0f && CurrentHP <= 0.0f)
+	{
+		OnDead.Broadcast();
+	}
 }
 
 void UMVStatComponent::SetMaxStamina(float InMaxStamina)
 {
+	const float PreviousMaxStamina = MaxStamina;
+	const float PreviousCurrentStamina = CurrentStamina;
 	MaxStamina = NonNegative(InMaxStamina);
 	CurrentStamina = ClampCurrent(CurrentStamina, MaxStamina);
+
+	if (!FMath::IsNearlyEqual(PreviousMaxStamina, MaxStamina) || !FMath::IsNearlyEqual(PreviousCurrentStamina, CurrentStamina))
+	{
+		OnStaminaChanged.Broadcast(CurrentStamina, MaxStamina);
+	}
 }
 
 void UMVStatComponent::SetCurrentStamina(float InCurrentStamina)
 {
+	const float PreviousCurrentStamina = CurrentStamina;
 	CurrentStamina = ClampCurrent(InCurrentStamina, MaxStamina);
+
+	if (!FMath::IsNearlyEqual(PreviousCurrentStamina, CurrentStamina))
+	{
+		OnStaminaChanged.Broadcast(CurrentStamina, MaxStamina);
+	}
 }
 
 void UMVStatComponent::SetStaminaRecoveryPerSecond(float InStaminaRecoveryPerSecond)
@@ -144,13 +180,26 @@ void UMVStatComponent::SetStaminaRecoveryDelay(float InStaminaRecoveryDelay)
 
 void UMVStatComponent::SetMaxMP(float InMaxMP)
 {
+	const float PreviousMaxMP = MaxMP;
+	const float PreviousCurrentMP = CurrentMP;
 	MaxMP = NonNegative(InMaxMP);
 	CurrentMP = ClampCurrent(CurrentMP, MaxMP);
+
+	if (!FMath::IsNearlyEqual(PreviousMaxMP, MaxMP) || !FMath::IsNearlyEqual(PreviousCurrentMP, CurrentMP))
+	{
+		OnMPChanged.Broadcast(CurrentMP, MaxMP);
+	}
 }
 
 void UMVStatComponent::SetCurrentMP(float InCurrentMP)
 {
+	const float PreviousCurrentMP = CurrentMP;
 	CurrentMP = ClampCurrent(InCurrentMP, MaxMP);
+
+	if (!FMath::IsNearlyEqual(PreviousCurrentMP, CurrentMP))
+	{
+		OnMPChanged.Broadcast(CurrentMP, MaxMP);
+	}
 }
 
 void UMVStatComponent::SetMPRecoveryPerSecond(float InMPRecoveryPerSecond)
@@ -185,13 +234,26 @@ void UMVStatComponent::SetDefence(float InDefence)
 
 void UMVStatComponent::SetMaxGroggy(float InMaxGroggy)
 {
+	const float PreviousMaxGroggy = MaxGroggy;
+	const float PreviousCurrentGroggy = CurrentGroggy;
 	MaxGroggy = NonNegative(InMaxGroggy);
 	CurrentGroggy = ClampCurrent(CurrentGroggy, MaxGroggy);
+
+	if (!FMath::IsNearlyEqual(PreviousMaxGroggy, MaxGroggy) || !FMath::IsNearlyEqual(PreviousCurrentGroggy, CurrentGroggy))
+	{
+		OnGroggyChanged.Broadcast(CurrentGroggy, MaxGroggy);
+	}
 }
 
 void UMVStatComponent::SetCurrentGroggy(float InCurrentGroggy)
 {
+	const float PreviousCurrentGroggy = CurrentGroggy;
 	CurrentGroggy = ClampCurrent(InCurrentGroggy, MaxGroggy);
+
+	if (!FMath::IsNearlyEqual(PreviousCurrentGroggy, CurrentGroggy))
+	{
+		OnGroggyChanged.Broadcast(CurrentGroggy, MaxGroggy);
+	}
 }
 
 void UMVStatComponent::SetGroggyRecoveryPerSecond(float InGroggyRecoveryPerSecond)

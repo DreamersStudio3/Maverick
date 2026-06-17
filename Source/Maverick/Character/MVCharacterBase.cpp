@@ -54,7 +54,6 @@ void AMVCharacterBase::Tick(float DeltaTime)
 void AMVCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
 }
 
 void AMVCharacterBase::AttemptCrouch()
@@ -77,8 +76,6 @@ void AMVCharacterBase::AttemptCrouch()
 	}
 
 }
-
-
 
 void AMVCharacterBase::UpdateCharacterValue()
 {
