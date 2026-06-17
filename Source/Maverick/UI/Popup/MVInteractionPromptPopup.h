@@ -26,6 +26,9 @@ protected:
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional), Category = "Maverick|UI|Interaction")
 	TObjectPtr<UTextBlock> InputKeyText;
 
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional), Category = "Maverick|UI|Interaction")
+	TObjectPtr<UTextBlock> CandidateCounterText;
+
 	UPROPERTY(BlueprintReadOnly, Category = "Maverick|UI|Interaction")
 	FMVInteractionPromptData PromptData;
 

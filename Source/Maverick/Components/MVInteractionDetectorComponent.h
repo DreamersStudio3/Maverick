@@ -39,18 +39,33 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Interaction")
 	bool TryInteract();
 
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Interaction")
+	bool SelectNextInteractable();
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Interaction")
+	bool SelectPreviousInteractable();
+
 	UFUNCTION(BlueprintPure, Category = "Maverick|Interaction")
 	UObject* GetFocusedInteractable() const { return FocusedInteractable.Get(); }
 
 	UFUNCTION(BlueprintPure, Category = "Maverick|Interaction")
 	bool HasFocusedInteractable() const { return FocusedInteractable.IsValid(); }
 
+	UFUNCTION(BlueprintPure, Category = "Maverick|Interaction")
+	int32 GetInteractableCandidateCount() const { return InteractionCandidates.Num(); }
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|Interaction")
+	int32 GetSelectedInteractableCandidateIndex() const { return SelectedCandidateIndex; }
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Interaction")
 	bool bDetectionEnabled = true;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Interaction", meta = (ClampMin = "0.0"))
-	float DetectionRadius = 250.0f;
+	float DetectionRange = 300.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Interaction", meta = (ClampMin = "0.0"))
+	float DialogueEscapeRange = 600.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Interaction", meta = (ClampMin = "0.01"))
 	float DetectionInterval = 0.1f;
@@ -76,6 +91,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Interaction")
 	FText DefaultPromptText;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Interaction|Debug")
+	bool bDrawDebugDetection = false;
+
 private:
 	struct FMVInteractionCandidate
 	{
@@ -90,10 +108,29 @@ private:
 	bool TryBuildCandidate(UPrimitiveComponent* OverlapComponent, const FVector& Origin, const FVector& ViewDirection, FMVInteractionCandidate& OutCandidate) const;
 	bool HasLineOfSight(const FMVInteractionCandidate& Candidate) const;
 	UObject* FindInteractableObject(UPrimitiveComponent* OverlapComponent) const;
+	AActor* ResolveInteractableActor(UObject* InteractableObject, UPrimitiveComponent* FallbackComponent = nullptr) const;
 	bool IsInteractableAvailable(UObject* InteractableObject) const;
+	bool IsInteractableSuppressed(UObject* InteractableObject) const;
+	bool IsInteractableWithinDialogueEscapeRange(UObject* InteractableObject) const;
+	bool IsDialogueWindowActive() const;
+	bool IsDialogueInteractionBlocked() const;
+	bool SkipActiveDialogueWindow() const;
+	void HideActiveDialogueWindow() const;
+	void ReleaseSuppressedInteractable(bool bHideDialogue);
+	void UpdateDialogueEscapeState();
+	void LockInteractionUntilInputReleased();
+	void UpdateInteractionInputReleaseGate();
+	bool IsInteractionInputHeld() const;
+	int32 FindCandidateIndex(UObject* InteractableObject) const;
+	bool SelectInteractableByOffset(int32 Offset);
+	bool SetSelectedCandidateIndex(int32 NewIndex);
 	void SetFocusedInteractable(UObject* NewInteractable);
 	void UpdateInteractionPrompt();
 
+	TArray<FMVInteractionCandidate> InteractionCandidates;
 	TWeakObjectPtr<UObject> FocusedInteractable;
+	TWeakObjectPtr<UObject> SuppressedInteractable;
+	int32 SelectedCandidateIndex = INDEX_NONE;
 	float TimeUntilNextDetection = 0.0f;
+	bool bWaitForInteractionInputRelease = false;
 };

@@ -14,6 +14,12 @@ struct FMVInteractionPromptData
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Interaction")
 	FKey InputKey = EKeys::Invalid;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Interaction", meta = (ClampMin = "0"))
+	int32 CandidateIndex = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Interaction", meta = (ClampMin = "0"))
+	int32 CandidateCount = 0;
 };
 
 USTRUCT(BlueprintType)
