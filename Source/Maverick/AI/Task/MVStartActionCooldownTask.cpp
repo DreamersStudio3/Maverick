@@ -6,7 +6,7 @@
 
 namespace
 {
-	APawn* ResolveOwner(FStateTreeExecutionContext& Context, const TObjectPtr<APawn>& BoundOwner)
+	APawn* ResolveStartCooldownOwner(FStateTreeExecutionContext& Context, const TObjectPtr<APawn>& BoundOwner)
 	{
 		if (BoundOwner)
 		{
@@ -27,7 +27,7 @@ EStateTreeRunStatus FMVStartActionCooldownTask::EnterState(FStateTreeExecutionCo
 {
 	FInstanceDataType& InstanceData = Context.GetInstanceData<FInstanceDataType>(*this);
 
-	const APawn* Owner = ResolveOwner(Context, InstanceData.Owner);
+	const APawn* Owner = ResolveStartCooldownOwner(Context, InstanceData.Owner);
 	if (!Owner || InstanceData.ActionId.IsNone())
 	{
 		return EStateTreeRunStatus::Failed;

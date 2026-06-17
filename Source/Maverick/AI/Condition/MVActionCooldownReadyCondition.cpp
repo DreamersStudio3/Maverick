@@ -6,7 +6,7 @@
 
 namespace
 {
-	APawn* ResolveOwner(FStateTreeExecutionContext& Context, const TObjectPtr<APawn>& BoundOwner)
+	APawn* ResolveCooldownConditionOwner(FStateTreeExecutionContext& Context, const TObjectPtr<APawn>& BoundOwner)
 	{
 		if (BoundOwner)
 		{
@@ -26,7 +26,7 @@ bool FMVActionCooldownReadyCondition::TestCondition(FStateTreeExecutionContext& 
 {
 	const FInstanceDataType& InstanceData = Context.GetInstanceData<FInstanceDataType>(*this);
 
-	const APawn* Owner = ResolveOwner(Context, InstanceData.Owner);
+	const APawn* Owner = ResolveCooldownConditionOwner(Context, InstanceData.Owner);
 	if (!Owner || InstanceData.ActionId.IsNone())
 	{
 		return false;
