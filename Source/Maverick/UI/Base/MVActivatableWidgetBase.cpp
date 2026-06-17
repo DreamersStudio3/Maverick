@@ -14,6 +14,35 @@ UMVActivatableWidgetBase::UMVActivatableWidgetBase(const FObjectInitializer& Obj
 	DeactivatedVisibility = ESlateVisibility::Collapsed;
 }
 
+void UMVActivatableWidgetBase::PlayFadeIn()
+{
+	FadeController.Play(*this, GetRenderOpacity(), 1.0f, FadeInSeconds, false);
+}
+
+void UMVActivatableWidgetBase::PlayFadeOut()
+{
+	FadeController.Play(*this, GetRenderOpacity(), 0.0f, FadeOutSeconds, true);
+}
+
+void UMVActivatableWidgetBase::DeactivateWidgetWithFade()
+{
+	if (FadeController.IsFadingOut())
+	{
+		return;
+	}
+
+	FadeController.Play(*this, GetRenderOpacity(), 0.0f, FadeOutSeconds, true, [this]()
+	{
+		HandleFadeOutFinished();
+	});
+}
+
+void UMVActivatableWidgetBase::SetUIFadeDurations(float InFadeInSeconds, float InFadeOutSeconds)
+{
+	FadeInSeconds = FMath::Max(0.0f, InFadeInSeconds);
+	FadeOutSeconds = FMath::Max(0.0f, InFadeOutSeconds);
+}
+
 TOptional<FUIInputConfig> UMVActivatableWidgetBase::GetDesiredInputConfig() const
 {
 	if (!bUseDesiredInputConfig)
@@ -29,6 +58,24 @@ TOptional<FUIInputConfig> UMVActivatableWidgetBase::GetDesiredInputConfig() cons
 	InputConfig.bIgnoreMoveInput = bIgnoreMoveInput;
 	InputConfig.bIgnoreLookInput = bIgnoreLookInput;
 	return InputConfig;
+}
+
+void UMVActivatableWidgetBase::NativeOnActivated()
+{
+	Super::NativeOnActivated();
+
+	FadeController.Stop();
+	if (bAutoFadeInOnActivated)
+	{
+		FadeController.Play(*this, 0.0f, 1.0f, FadeInSeconds, false);
+	}
+}
+
+void UMVActivatableWidgetBase::NativeOnDeactivated()
+{
+	FadeController.Stop();
+
+	Super::NativeOnDeactivated();
 }
 
 UWidget* UMVActivatableWidgetBase::NativeGetDesiredFocusTarget() const
@@ -48,5 +95,11 @@ bool UMVActivatableWidgetBase::NativeOnHandleBackAction()
 		return false;
 	}
 
-	return Super::NativeOnHandleBackAction();
+	DeactivateWidgetWithFade();
+	return true;
+}
+
+void UMVActivatableWidgetBase::HandleFadeOutFinished()
+{
+	DeactivateWidget();
 }

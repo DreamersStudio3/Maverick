@@ -4,6 +4,7 @@
 #include "Components/MVStatComponent.h"
 #include "Engine/World.h"
 #include "GameFramework/PlayerController.h"
+#include "Tables/MVDialogueTableTypes.h"
 #include "Tables/MVTableManager.h"
 #include "Tables/MVUIMessageTableTypes.h"
 #include "UI/Base/MVHUDWidgetBase.h"
@@ -14,6 +15,7 @@
 #include "UI/System/MVUILayerBase.h"
 #include "UI/System/MVUISettings.h"
 #include "UI/Window/MVDeathOverlayWindow.h"
+#include "UI/Window/MVDialogueWindow.h"
 
 void UMVUISubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
@@ -92,6 +94,9 @@ void UMVUISubsystem::PopLayer()
 
 	CachedHUD = nullptr;
 	ActiveInteractionPrompt = nullptr;
+	ActiveDialogueWindow = nullptr;
+	ActivePopup = nullptr;
+	bHasPendingDialogueRequest = false;
 }
 
 UCommonActivatableWidget* UMVUISubsystem::PushWindowByClass(TSubclassOf<UMVWindowBase> WindowClass)
@@ -105,7 +110,7 @@ UCommonActivatableWidget* UMVUISubsystem::PushWindowByClass(TSubclassOf<UMVWindo
 	return Layer->PushWindow(WindowClass);
 }
 
-UCommonActivatableWidget* UMVUISubsystem::PushPopupByClass(TSubclassOf<UMVPopupBase> PopupClass)
+UMVPopupBase* UMVUISubsystem::PushPopupByClass(TSubclassOf<UMVPopupBase> PopupClass)
 {
 	UMVUILayerBase* Layer = GetOrCreateRootLayer();
 	if (!Layer || !PopupClass)
@@ -113,7 +118,11 @@ UCommonActivatableWidget* UMVUISubsystem::PushPopupByClass(TSubclassOf<UMVPopupB
 		return nullptr;
 	}
 
-	return Layer->PushPopup(PopupClass);
+	CloseActivePopupImmediately();
+
+	UMVPopupBase* NewPopup = Layer->PushPopup(PopupClass);
+	TrackActivePopup(NewPopup);
+	return NewPopup;
 }
 
 UMVHUDWidgetBase* UMVUISubsystem::ShowHUDByClass(TSubclassOf<UMVHUDWidgetBase> HUDClass)
@@ -165,10 +174,20 @@ UCommonActivatableWidget* UMVUISubsystem::ShowDeathOverlay()
 
 UMVInteractionPromptPopup* UMVUISubsystem::ShowInteractionPrompt(const FMVInteractionPromptData& PromptData)
 {
-	if (IsValid(ActiveInteractionPrompt) && ActiveInteractionPrompt->IsActivated())
+	if (IsDialogueWindowBlockingInteraction())
+	{
+		return nullptr;
+	}
+
+	if (IsPopupActive(ActiveInteractionPrompt) && !ActiveInteractionPrompt->IsClosing())
 	{
 		ActiveInteractionPrompt->SetPromptData(PromptData);
 		return ActiveInteractionPrompt;
+	}
+
+	if (IsPopupActive(ActivePopup))
+	{
+		return nullptr;
 	}
 
 	const UMVUISettings* Settings = GetDefault<UMVUISettings>();
@@ -195,12 +214,115 @@ UMVInteractionPromptPopup* UMVUISubsystem::ShowInteractionPromptText(FText Promp
 
 void UMVUISubsystem::HideInteractionPrompt()
 {
-	if (IsValid(ActiveInteractionPrompt))
+	if (IsPopupActive(ActiveInteractionPrompt))
 	{
-		ActiveInteractionPrompt->DeactivateWidget();
+		ActiveInteractionPrompt->ClosePopup();
+	}
+}
+
+UMVDialogueWindow* UMVUISubsystem::ShowDialogueWindowText(FText DialogueText, float Duration)
+{
+	const UMVUISettings* Settings = GetDefault<UMVUISettings>();
+	if (!Settings || !Settings->DialogueWindowClass)
+	{
+		return nullptr;
 	}
 
-	ActiveInteractionPrompt = nullptr;
+	if (IsPopupActive(ActivePopup))
+	{
+		QueueDialogueWindowText(DialogueText, Duration);
+		CloseActivePopup();
+		return nullptr;
+	}
+
+	return OpenDialogueWindowText(DialogueText, Duration);
+}
+
+UMVDialogueWindow* UMVUISubsystem::OpenDialogueWindowText(FText DialogueText, float Duration)
+{
+	const UMVUISettings* Settings = GetDefault<UMVUISettings>();
+	if (!Settings || !Settings->DialogueWindowClass)
+	{
+		return nullptr;
+	}
+
+	const float DisplayDuration = Duration >= 0.0f ? Duration : Settings->DialogueWindowDuration;
+	if (IsDialogueWindowActive(ActiveDialogueWindow))
+	{
+		ActiveDialogueWindow->SetAutoDismissSeconds(DisplayDuration);
+		ActiveDialogueWindow->SetDialogueText(DialogueText);
+		return ActiveDialogueWindow;
+	}
+
+	UMVUILayerBase* Layer = GetOrCreateRootLayer();
+	if (!Layer)
+	{
+		return nullptr;
+	}
+
+	ActiveDialogueWindow = Cast<UMVDialogueWindow>(Layer->PushWindow(Settings->DialogueWindowClass));
+	if (ActiveDialogueWindow)
+	{
+		TrackActiveDialogueWindow(ActiveDialogueWindow);
+		ActiveDialogueWindow->SetAutoDismissSeconds(DisplayDuration);
+		ActiveDialogueWindow->SetDialogueText(DialogueText);
+	}
+
+	bHasPendingDialogueRequest = false;
+	return ActiveDialogueWindow;
+}
+
+void UMVUISubsystem::HideDialogueWindow()
+{
+	bHasPendingDialogueRequest = false;
+
+	if (IsDialogueWindowActive(ActiveDialogueWindow))
+	{
+		ActiveDialogueWindow->CloseDialogue();
+		return;
+	}
+
+	ActiveDialogueWindow = nullptr;
+}
+
+void UMVUISubsystem::SkipDialogueWindow()
+{
+	HideDialogueWindow();
+}
+
+bool UMVUISubsystem::IsDialogueWindowActive() const
+{
+	return IsDialogueWindowActive(ActiveDialogueWindow);
+}
+
+bool UMVUISubsystem::IsDialogueWindowBlockingInteraction() const
+{
+	return bHasPendingDialogueRequest || IsDialogueWindowActive(ActiveDialogueWindow);
+}
+
+UMVDialogueWindow* UMVUISubsystem::ShowDialogueWindowById(FName DialogueId)
+{
+	const UMVUISettings* Settings = GetDefault<UMVUISettings>();
+	if (!Settings || Settings->DialogueTableName.IsNone() || DialogueId.IsNone())
+	{
+		return nullptr;
+	}
+
+	const UMVTableManager* TableManager = UMVTableManager::Get(this);
+	if (!TableManager)
+	{
+		return nullptr;
+	}
+
+	const FMVDialogueRow* DialogueRow = TableManager->FindRow<FMVDialogueRow>(
+		Settings->DialogueTableName,
+		DialogueId.ToString());
+	if (!DialogueRow)
+	{
+		return nullptr;
+	}
+
+	return ShowDialogueWindowText(DialogueRow->DialogueText, DialogueRow->DisplayDuration);
 }
 
 UMVMessagePopup* UMVUISubsystem::ShowPopupMessage(const FMVPopupMessageData& MessageData)
@@ -273,6 +395,9 @@ void UMVUISubsystem::ClearAllUI()
 	LayerStack.Reset();
 	CachedHUD = nullptr;
 	ActiveInteractionPrompt = nullptr;
+	ActiveDialogueWindow = nullptr;
+	ActivePopup = nullptr;
+	bHasPendingDialogueRequest = false;
 }
 
 void UMVUISubsystem::HandleWorldInit(UWorld* World, const UWorld::InitializationValues IVS)
@@ -326,4 +451,124 @@ void UMVUISubsystem::BindToPlayerDeath(UWorld* World)
 void UMVUISubsystem::HandlePlayerDeath()
 {
 	ShowDeathOverlay();
+}
+
+void UMVUISubsystem::HandlePopupClosed(UMVPopupBase* ClosedPopup)
+{
+	if (!ClosedPopup)
+	{
+		return;
+	}
+
+	ClosedPopup->OnPopupClosed.RemoveDynamic(this, &UMVUISubsystem::HandlePopupClosed);
+
+	if (ClosedPopup == ActiveInteractionPrompt)
+	{
+		ActiveInteractionPrompt = nullptr;
+	}
+
+	if (ClosedPopup == ActivePopup)
+	{
+		ActivePopup = nullptr;
+	}
+
+	TryOpenPendingDialogueWindow();
+}
+
+void UMVUISubsystem::HandleDialogueWindowClosed(UMVDialogueWindow* ClosedDialogueWindow)
+{
+	if (!ClosedDialogueWindow)
+	{
+		return;
+	}
+
+	ClosedDialogueWindow->OnDialogueWindowClosed.RemoveDynamic(this, &UMVUISubsystem::HandleDialogueWindowClosed);
+
+	if (ClosedDialogueWindow == ActiveDialogueWindow)
+	{
+		ActiveDialogueWindow = nullptr;
+	}
+}
+
+bool UMVUISubsystem::IsPopupActive(const UMVPopupBase* Popup) const
+{
+	return IsValid(Popup) && Popup->GetParent();
+}
+
+bool UMVUISubsystem::IsDialogueWindowActive(const UMVDialogueWindow* DialogueWindow) const
+{
+	return IsValid(DialogueWindow) && DialogueWindow->IsActivated();
+}
+
+void UMVUISubsystem::CloseActivePopupImmediately()
+{
+	if (!IsPopupActive(ActivePopup))
+	{
+		ActivePopup = nullptr;
+		return;
+	}
+
+	ActivePopup->ClosePopupImmediately();
+}
+
+void UMVUISubsystem::CloseActivePopup()
+{
+	if (!IsPopupActive(ActivePopup))
+	{
+		ActivePopup = nullptr;
+		return;
+	}
+
+	ActivePopup->ClosePopup();
+}
+
+void UMVUISubsystem::QueueDialogueWindowText(FText DialogueText, float Duration)
+{
+	PendingDialogueText = DialogueText;
+	PendingDialogueDuration = Duration;
+	bHasPendingDialogueRequest = true;
+}
+
+void UMVUISubsystem::TryOpenPendingDialogueWindow()
+{
+	if (!bHasPendingDialogueRequest || IsPopupActive(ActivePopup))
+	{
+		return;
+	}
+
+	const FText DialogueText = PendingDialogueText;
+	const float DialogueDuration = PendingDialogueDuration;
+	bHasPendingDialogueRequest = false;
+	PendingDialogueText = FText::GetEmpty();
+	PendingDialogueDuration = -1.0f;
+
+	OpenDialogueWindowText(DialogueText, DialogueDuration);
+}
+
+void UMVUISubsystem::TrackActivePopup(UMVPopupBase* Popup)
+{
+	if (IsValid(ActivePopup))
+	{
+		ActivePopup->OnPopupClosed.RemoveDynamic(this, &UMVUISubsystem::HandlePopupClosed);
+	}
+
+	ActivePopup = Popup;
+	if (IsValid(ActivePopup))
+	{
+		ActivePopup->OnPopupClosed.AddUniqueDynamic(this, &UMVUISubsystem::HandlePopupClosed);
+	}
+}
+
+void UMVUISubsystem::TrackActiveDialogueWindow(UMVDialogueWindow* DialogueWindow)
+{
+	if (IsValid(ActiveDialogueWindow))
+	{
+		ActiveDialogueWindow->OnDialogueWindowClosed.RemoveDynamic(this, &UMVUISubsystem::HandleDialogueWindowClosed);
+	}
+
+	ActiveDialogueWindow = DialogueWindow;
+	if (IsValid(ActiveDialogueWindow))
+	{
+		ActiveDialogueWindow->OnDialogueWindowClosed.AddUniqueDynamic(this, &UMVUISubsystem::HandleDialogueWindowClosed);
+	}
 }

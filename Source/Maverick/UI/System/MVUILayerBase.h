@@ -6,6 +6,7 @@
 
 class UCommonActivatableWidget;
 class UCommonActivatableWidgetStack;
+class UMVPopupBase;
 class UOverlay;
 
 UCLASS(Blueprintable)
@@ -20,7 +21,7 @@ public:
 	UCommonActivatableWidget* PushWindow(TSubclassOf<UCommonActivatableWidget> WindowClass);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Layer")
-	UCommonActivatableWidget* PushPopup(TSubclassOf<UCommonActivatableWidget> PopupClass);
+	UMVPopupBase* PushPopup(TSubclassOf<UMVPopupBase> PopupClass);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Layer")
 	UUserWidget* SetHUDByClass(TSubclassOf<UUserWidget> HUDClass, APlayerController* OwningPlayer);
@@ -45,7 +46,7 @@ protected:
 	TObjectPtr<UOverlay> HUDLayer;
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional), Category = "Maverick|UI|Layer")
-	TObjectPtr<UCommonActivatableWidgetStack> PopupStack;
+	TObjectPtr<UOverlay> PopupLayer;
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional), Category = "Maverick|UI|Layer")
 	TObjectPtr<UOverlay> WidgetLayer;

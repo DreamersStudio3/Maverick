@@ -5,6 +5,7 @@
 #include "MVUISettings.generated.h"
 
 class UMVHUDWidgetBase;
+class UMVDialogueWindow;
 class UMVMessagePopup;
 class UMVPopupBase;
 class UMVUILayerBase;
@@ -54,12 +55,18 @@ public:
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Popup")
 	TSubclassOf<UMVPopupBase> BossClearPopupClass;
 
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Popup")
-	TSubclassOf<UMVPopupBase> DialoguePopupClass;
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Window")
+	TSubclassOf<UMVDialogueWindow> DialogueWindowClass;
+
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Window", meta = (ClampMin = "0.0"))
+	float DialogueWindowDuration = 3.0f;
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Popup")
 	TSubclassOf<UMVMessagePopup> MessagePopupClass;
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Data")
 	FName UIMessageTableName = TEXT("UIMessage");
+
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Data")
+	FName DialogueTableName = TEXT("Dialogue");
 };

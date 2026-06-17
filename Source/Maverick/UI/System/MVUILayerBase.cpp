@@ -4,6 +4,7 @@
 #include "CommonActivatableWidget.h"
 #include "Components/Overlay.h"
 #include "Components/OverlaySlot.h"
+#include "UI/Base/MVPopupBase.h"
 #include "Widgets/CommonActivatableWidgetContainer.h"
 
 void UMVUILayerBase::NativeOnInitialized()
@@ -26,14 +27,29 @@ UCommonActivatableWidget* UMVUILayerBase::PushWindow(TSubclassOf<UCommonActivata
 	return WindowStack->AddWidget(WindowClass);
 }
 
-UCommonActivatableWidget* UMVUILayerBase::PushPopup(TSubclassOf<UCommonActivatableWidget> PopupClass)
+UMVPopupBase* UMVUILayerBase::PushPopup(TSubclassOf<UMVPopupBase> PopupClass)
 {
-	if (!PopupStack || !PopupClass)
+	if (!PopupLayer || !PopupClass)
 	{
 		return nullptr;
 	}
 
-	return PopupStack->AddWidget(PopupClass);
+	APlayerController* OwningPlayer = GetOwningPlayer();
+	UMVPopupBase* NewPopup = OwningPlayer
+		? CreateWidget<UMVPopupBase>(OwningPlayer, PopupClass)
+		: CreateWidget<UMVPopupBase>(GetWorld(), PopupClass);
+	if (!NewPopup)
+	{
+		return nullptr;
+	}
+
+	if (UOverlaySlot* PopupSlot = PopupLayer->AddChildToOverlay(NewPopup))
+	{
+		PopupSlot->SetHorizontalAlignment(HAlign_Fill);
+		PopupSlot->SetVerticalAlignment(VAlign_Fill);
+	}
+
+	return NewPopup;
 }
 
 UUserWidget* UMVUILayerBase::SetHUDByClass(TSubclassOf<UUserWidget> HUDClass, APlayerController* OwningPlayer)
@@ -98,9 +114,9 @@ void UMVUILayerBase::ClearLayer()
 		HUDLayer->ClearChildren();
 	}
 
-	if (PopupStack)
+	if (PopupLayer)
 	{
-		PopupStack->ClearWidgets();
+		PopupLayer->ClearChildren();
 	}
 
 	if (WidgetLayer)
@@ -123,16 +139,14 @@ void UMVUILayerBase::BuildNativeLayerTree()
 		UCommonActivatableWidgetStack::StaticClass(),
 		TEXT("WindowStack"));
 	HUDLayer = WidgetTree->ConstructWidget<UOverlay>(UOverlay::StaticClass(), TEXT("HUDLayer"));
-	PopupStack = WidgetTree->ConstructWidget<UCommonActivatableWidgetStack>(
-		UCommonActivatableWidgetStack::StaticClass(),
-		TEXT("PopupStack"));
+	PopupLayer = WidgetTree->ConstructWidget<UOverlay>(UOverlay::StaticClass(), TEXT("PopupLayer"));
 	WidgetLayer = WidgetTree->ConstructWidget<UOverlay>(UOverlay::StaticClass(), TEXT("WidgetLayer"));
 
 	WidgetTree->RootWidget = RootOverlay;
 
 	AddFullScreenOverlayChild(RootOverlay, WindowStack);
 	AddFullScreenOverlayChild(RootOverlay, HUDLayer);
-	AddFullScreenOverlayChild(RootOverlay, PopupStack);
+	AddFullScreenOverlayChild(RootOverlay, PopupLayer);
 	AddFullScreenOverlayChild(RootOverlay, WidgetLayer);
 }
 

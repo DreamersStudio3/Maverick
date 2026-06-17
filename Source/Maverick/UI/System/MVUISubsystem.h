@@ -6,6 +6,7 @@
 #include "MVUISubsystem.generated.h"
 
 class UCommonActivatableWidget;
+class UMVDialogueWindow;
 class UMVHUDWidgetBase;
 class UMVInteractionPromptPopup;
 class UMVMessagePopup;
@@ -35,7 +36,7 @@ public:
 	UCommonActivatableWidget* PushWindowByClass(TSubclassOf<UMVWindowBase> WindowClass);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
-	UCommonActivatableWidget* PushPopupByClass(TSubclassOf<UMVPopupBase> PopupClass);
+	UMVPopupBase* PushPopupByClass(TSubclassOf<UMVPopupBase> PopupClass);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
 	UMVHUDWidgetBase* ShowHUDByClass(TSubclassOf<UMVHUDWidgetBase> HUDClass);
@@ -59,6 +60,24 @@ public:
 	void HideInteractionPrompt();
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
+	UMVDialogueWindow* ShowDialogueWindowText(FText DialogueText, float Duration = -1.0f);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
+	void HideDialogueWindow();
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
+	void SkipDialogueWindow();
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|UI")
+	bool IsDialogueWindowActive() const;
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|UI")
+	bool IsDialogueWindowBlockingInteraction() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
+	UMVDialogueWindow* ShowDialogueWindowById(FName DialogueId);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
 	UMVMessagePopup* ShowPopupMessage(const FMVPopupMessageData& MessageData);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
@@ -80,6 +99,22 @@ private:
 	UFUNCTION()
 	void HandlePlayerDeath();
 
+	UFUNCTION()
+	void HandlePopupClosed(UMVPopupBase* ClosedPopup);
+
+	UFUNCTION()
+	void HandleDialogueWindowClosed(UMVDialogueWindow* ClosedDialogueWindow);
+
+	bool IsPopupActive(const UMVPopupBase* Popup) const;
+	bool IsDialogueWindowActive(const UMVDialogueWindow* DialogueWindow) const;
+	void CloseActivePopupImmediately();
+	void CloseActivePopup();
+	UMVDialogueWindow* OpenDialogueWindowText(FText DialogueText, float Duration);
+	void QueueDialogueWindowText(FText DialogueText, float Duration);
+	void TryOpenPendingDialogueWindow();
+	void TrackActivePopup(UMVPopupBase* Popup);
+	void TrackActiveDialogueWindow(UMVDialogueWindow* DialogueWindow);
+
 	UPROPERTY(Transient)
 	TArray<TObjectPtr<UMVUILayerBase>> LayerStack;
 
@@ -88,4 +123,14 @@ private:
 
 	UPROPERTY(Transient)
 	TObjectPtr<UMVInteractionPromptPopup> ActiveInteractionPrompt;
+
+	UPROPERTY(Transient)
+	TObjectPtr<UMVDialogueWindow> ActiveDialogueWindow;
+
+	UPROPERTY(Transient)
+	TObjectPtr<UMVPopupBase> ActivePopup;
+
+	FText PendingDialogueText;
+	float PendingDialogueDuration = -1.0f;
+	bool bHasPendingDialogueRequest = false;
 };

@@ -3,46 +3,74 @@
 UMVPopupBase::UMVPopupBase(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	DesiredInputMode = ECommonInputMode::All;
-	bIsModal = false;
-	bCloseOnBack = false;
-	bIgnoreMoveInput = false;
-	bIgnoreLookInput = false;
 }
 
 void UMVPopupBase::ClosePopup()
 {
-	DeactivateWidget();
-}
-
-void UMVPopupBase::SetAutoDismissSeconds(float InAutoDismissSeconds)
-{
-	AutoDismissSeconds = FMath::Max(0.0f, InAutoDismissSeconds);
-
-	if (IsActivated())
+	if (IsClosing())
 	{
-		if (UWorld* World = GetWorld())
-		{
-			World->GetTimerManager().ClearTimer(AutoDismissTimerHandle);
-		}
-		StartAutoDismissTimer();
+		return;
 	}
+
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().ClearTimer(AutoDismissTimerHandle);
+	}
+
+	RemoveFromParentWithFade();
 }
 
-void UMVPopupBase::NativeOnActivated()
-{
-	Super::NativeOnActivated();
-	StartAutoDismissTimer();
-}
-
-void UMVPopupBase::NativeOnDeactivated()
+void UMVPopupBase::ClosePopupImmediately()
 {
 	if (UWorld* World = GetWorld())
 	{
 		World->GetTimerManager().ClearTimer(AutoDismissTimerHandle);
 	}
 
-	Super::NativeOnDeactivated();
+	RemoveFromParent();
+	if (!GetParent())
+	{
+		BroadcastPopupClosed();
+	}
+}
+
+void UMVPopupBase::SetAutoDismissSeconds(float InAutoDismissSeconds)
+{
+	AutoDismissSeconds = FMath::Max(0.0f, InAutoDismissSeconds);
+
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().ClearTimer(AutoDismissTimerHandle);
+	}
+	StartAutoDismissTimer();
+}
+
+void UMVPopupBase::NativeConstruct()
+{
+	Super::NativeConstruct();
+
+	bClosedEventBroadcast = false;
+	StartAutoDismissTimer();
+}
+
+void UMVPopupBase::NativeDestruct()
+{
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().ClearTimer(AutoDismissTimerHandle);
+	}
+
+	BroadcastPopupClosed();
+	Super::NativeDestruct();
+}
+
+void UMVPopupBase::HandleFadeOutFinished()
+{
+	RemoveFromParent();
+	if (!GetParent())
+	{
+		BroadcastPopupClosed();
+	}
 }
 
 void UMVPopupBase::HandleAutoDismissElapsed()
@@ -64,4 +92,15 @@ void UMVPopupBase::StartAutoDismissTimer()
 				false);
 		}
 	}
+}
+
+void UMVPopupBase::BroadcastPopupClosed()
+{
+	if (bClosedEventBroadcast)
+	{
+		return;
+	}
+
+	bClosedEventBroadcast = true;
+	OnPopupClosed.Broadcast(this);
 }
