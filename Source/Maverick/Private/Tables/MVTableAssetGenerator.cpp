@@ -134,7 +134,7 @@ namespace
 		return !OutString.IsEmpty();
 	}
 
-	bool JsonValueToString(const TSharedPtr<FJsonValue>& Value, FString& OutValue)
+	bool JsonValueToGeneratorString(const TSharedPtr<FJsonValue>& Value, FString& OutValue)
 	{
 		if (!Value.IsValid())
 		{
@@ -518,7 +518,7 @@ bool UMVTableAssetGenerator::BuildAndSaveDataTable(
 		}
 
 		FString KeyString;
-		if (!JsonValueToString(*KeyValue, KeyString) || KeyString.IsEmpty())
+		if (!JsonValueToGeneratorString(*KeyValue, KeyString) || KeyString.IsEmpty())
 		{
 			UE_LOG(
 				LogTemp,

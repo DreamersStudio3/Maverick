@@ -22,6 +22,12 @@ public class Maverick : ModuleRules
 			"JsonUtilities",
 			"StateTreeModule",
 			"GameplayStateTreeModule",
+			"UMG",
+			"Slate",
+			"SlateCore",
+			"CommonUI",
+			"CommonInput",
+			"DeveloperSettings",
 		});
 
 		if (Target.Type == TargetRules.TargetType.Editor)
