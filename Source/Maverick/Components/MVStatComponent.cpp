@@ -178,6 +178,35 @@ void UMVStatComponent::SetStaminaRecoveryDelay(float InStaminaRecoveryDelay)
 	StaminaRecoveryDelay = NonNegative(InStaminaRecoveryDelay);
 }
 
+bool UMVStatComponent::HasStamina(float RequiredAmount) const
+{
+	return CurrentStamina >= NonNegative(RequiredAmount);
+}
+
+bool UMVStatComponent::ConsumeStamina(float Amount)
+{
+	const float NormalizedAmount = NonNegative(Amount);
+	if (NormalizedAmount <= 0.0f)
+	{
+		return true;
+	}
+
+	const bool bHadEnoughStamina = CurrentStamina >= NormalizedAmount;
+	SetCurrentStamina(CurrentStamina - NormalizedAmount);
+	return bHadEnoughStamina;
+}
+
+void UMVStatComponent::RecoverStamina(float Amount)
+{
+	const float NormalizedAmount = NonNegative(Amount);
+	if (NormalizedAmount <= 0.0f)
+	{
+		return;
+	}
+
+	SetCurrentStamina(CurrentStamina + NormalizedAmount);
+}
+
 void UMVStatComponent::SetMaxMP(float InMaxMP)
 {
 	const float PreviousMaxMP = MaxMP;
@@ -205,6 +234,35 @@ void UMVStatComponent::SetCurrentMP(float InCurrentMP)
 void UMVStatComponent::SetMPRecoveryPerSecond(float InMPRecoveryPerSecond)
 {
 	MPRecoveryPerSecond = NonNegative(InMPRecoveryPerSecond);
+}
+
+bool UMVStatComponent::HasMP(float RequiredAmount) const
+{
+	return CurrentMP >= NonNegative(RequiredAmount);
+}
+
+bool UMVStatComponent::ConsumeMP(float Amount)
+{
+	const float NormalizedAmount = NonNegative(Amount);
+	if (NormalizedAmount <= 0.0f)
+	{
+		return true;
+	}
+
+	const bool bHadEnoughMP = CurrentMP >= NormalizedAmount;
+	SetCurrentMP(CurrentMP - NormalizedAmount);
+	return bHadEnoughMP;
+}
+
+void UMVStatComponent::RecoverMP(float Amount)
+{
+	const float NormalizedAmount = NonNegative(Amount);
+	if (NormalizedAmount <= 0.0f)
+	{
+		return;
+	}
+
+	SetCurrentMP(CurrentMP + NormalizedAmount);
 }
 
 void UMVStatComponent::SetAttackSpeed(float InAttackSpeed)

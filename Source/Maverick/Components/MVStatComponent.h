@@ -60,6 +60,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Stamina")
 	void SetStaminaRecoveryDelay(float InStaminaRecoveryDelay);
 
+	UFUNCTION(BlueprintPure, Category = "Maverick|Stat|Stamina")
+	bool HasStamina(float RequiredAmount) const;
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Stamina")
+	bool ConsumeStamina(float Amount);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Stamina")
+	void RecoverStamina(float Amount);
+
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|MP")
 	void SetMaxMP(float InMaxMP);
 
@@ -68,6 +77,15 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|MP")
 	void SetMPRecoveryPerSecond(float InMPRecoveryPerSecond);
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|Stat|MP")
+	bool HasMP(float RequiredAmount) const;
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|MP")
+	bool ConsumeMP(float Amount);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|MP")
+	void RecoverMP(float Amount);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Attack")
 	void SetAttackSpeed(float InAttackSpeed);
