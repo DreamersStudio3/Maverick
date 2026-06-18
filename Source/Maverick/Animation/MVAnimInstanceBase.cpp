@@ -57,6 +57,7 @@ void UMVAnimInstanceBase::ReceiveCharacterData()
 	IncomingGait = Character->Gait;
 	CharacterInputState = Character->CharacterInputState;
 	bIsFalling = CharcterMovementComponent->IsFalling();
+
 }
 
 void UMVAnimInstanceBase::GetLocationData(float DeltaTime)
