@@ -53,6 +53,8 @@ void UMVStatusBarWidget::SetRecentLossHoldLocked(bool)
 void UMVStatusBarWidget::SetProgress(float CurrentValue, float MaxValue)
 {
 	const float PreviousPercent = CurrentDisplayPercent;
+	const bool bRecentLossAlreadyActive = RecentLossHoldRemaining > 0.0f
+		|| RecentLossDisplayPercent > PreviousPercent + KINDA_SMALL_NUMBER;
 	TargetPercent = MaxValue > 0.0f ? FMath::Clamp(CurrentValue / MaxValue, 0.0f, 1.0f) : 0.0f;
 	CurrentDisplayPercent = TargetPercent;
 
@@ -69,7 +71,10 @@ void UMVStatusBarWidget::SetProgress(float CurrentValue, float MaxValue)
 		if (bShouldShowRecentLoss)
 		{
 			RecentLossDisplayPercent = FMath::Max(RecentLossDisplayPercent, PreviousPercent);
-			RecentLossHoldRemaining = RecentLossHoldTime;
+			if (!bRecentLossAlreadyActive)
+			{
+				RecentLossHoldRemaining = RecentLossHoldTime;
+			}
 		}
 		else if (CurrentDisplayPercent >= RecentLossDisplayPercent)
 		{
