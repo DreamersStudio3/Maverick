@@ -5,7 +5,7 @@
 
 namespace
 {
-AMVCharacterBase* FindCharacter(const USkeletalMeshComponent* MeshComp)
+AMVCharacterBase* FindBlockMovementInputCharacter(const USkeletalMeshComponent* MeshComp)
 {
 	return MeshComp ? Cast<AMVCharacterBase>(MeshComp->GetOwner()) : nullptr;
 }
@@ -19,7 +19,7 @@ void UMVAnimNotifyState_BlockMovementInput::NotifyBegin(
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
 
-	if (AMVCharacterBase* Character = FindCharacter(MeshComp))
+	if (AMVCharacterBase* Character = FindBlockMovementInputCharacter(MeshComp))
 	{
 		Character->BeginMovementInputBlock();
 	}
@@ -32,7 +32,7 @@ void UMVAnimNotifyState_BlockMovementInput::NotifyEnd(
 {
 	Super::NotifyEnd(MeshComp, Animation, EventReference);
 
-	if (AMVCharacterBase* Character = FindCharacter(MeshComp))
+	if (AMVCharacterBase* Character = FindBlockMovementInputCharacter(MeshComp))
 	{
 		Character->EndMovementInputBlock();
 	}

@@ -5,7 +5,7 @@
 
 namespace
 {
-AMVCharacterBase* FindCharacter(const USkeletalMeshComponent* MeshComp)
+AMVCharacterBase* FindInvincibleCharacter(const USkeletalMeshComponent* MeshComp)
 {
 	return MeshComp ? Cast<AMVCharacterBase>(MeshComp->GetOwner()) : nullptr;
 }
@@ -19,7 +19,7 @@ void UMVAnimNotifyState_Invincible::NotifyBegin(
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
 
-	if (AMVCharacterBase* Character = FindCharacter(MeshComp))
+	if (AMVCharacterBase* Character = FindInvincibleCharacter(MeshComp))
 	{
 		Character->BeginInvincibility();
 	}
@@ -32,7 +32,7 @@ void UMVAnimNotifyState_Invincible::NotifyEnd(
 {
 	Super::NotifyEnd(MeshComp, Animation, EventReference);
 
-	if (AMVCharacterBase* Character = FindCharacter(MeshComp))
+	if (AMVCharacterBase* Character = FindInvincibleCharacter(MeshComp))
 	{
 		Character->EndInvincibility();
 	}
