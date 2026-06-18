@@ -113,7 +113,7 @@
                     "InputBufferTime": 0,
                     "LaunchDistance": 600,
                     "LaunchDuration": 0,
-                    "LaunchVerticalSpeed": 50,
+                    "LaunchVerticalSpeed": 0,
                     "bLocksMovement": true,
                     "bUsesRootMotion": false,
                     "bCanBeInterrupted": true
