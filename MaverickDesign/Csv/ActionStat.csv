@@ -1,0 +1,6 @@
+ActionStatId,ActionName,StaminaCost,StaminaCostType,MPCost,MPCostType,DamageMultiplier,HitReactionType,StaminaRecoveryRateMultiplier,MinRequiredStamina,MinRequiredMP,SprintRestartStaminaPercent,Cooldown,InputBufferTime,LaunchDistance,LaunchDuration,LaunchVerticalSpeed,bLocksMovement,bUsesRootMotion,bCanBeInterrupted
+10001,LightAttack,15,Instant,0,None,1,Light,1,0,0,0,0,0.2,0,0,0,true,true,true
+10002,HeavyAttack,30,Instant,0,None,1.5,Heavy,1,0,0,0,0,0.25,0,0,0,true,true,true
+10010,Guard,20,OnDemand,0,None,1,None,1,0,0,0,0,0,0,0,0,false,false,true
+10020,Sprint,20,PerSecond,0,None,1,None,1,0,0,70,0,0,0,0,0,false,false,true
+10021,Dodge,12,Instant,0,None,1,None,1,1,0,0,0.8,0,600,0,50,true,false,true
