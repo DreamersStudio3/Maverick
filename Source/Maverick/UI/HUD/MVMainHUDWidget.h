@@ -27,6 +27,8 @@ public:
 	void HideBossHPBar();
 
 protected:
+	virtual void NativeOnInitialized() override;
+
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional), Category = "Maverick|UI|HUD")
 	TObjectPtr<UMVPlayerStatusWidget> PlayerStatus;
 
@@ -43,5 +45,7 @@ protected:
 	TObjectPtr<UMVBossHPBarWidget> BossHPBar;
 
 private:
+	void BuildNativeWidgetTree();
+
 	FText CachedBossName;
 };
