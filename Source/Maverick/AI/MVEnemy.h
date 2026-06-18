@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AI/Enum/MVAttackDirection.h"
 #include "Character/MVCharacterBase.h"
 #include "MVEnemy.generated.h"
 
@@ -17,7 +18,7 @@ class MAVERICK_API AMVEnemy : public AMVCharacterBase
 public:
 	AMVEnemy();
 	
-	bool Attack(int EAttackDirection);
+	bool Attack(EMVAttackDirection AttackDirection);
 	
 	
 protected:

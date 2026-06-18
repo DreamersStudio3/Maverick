@@ -9,7 +9,7 @@ void FMVTargetEvaluator::TreeStart(FStateTreeExecutionContext& Context) const
 	InstanceDataType& InstanceData = Context.GetInstanceData<InstanceDataType>(*this);
 	
 	UWorld* World = Context.GetWorld();
-	if (World)
+	if (!World)
 	{
 		return;
 	}

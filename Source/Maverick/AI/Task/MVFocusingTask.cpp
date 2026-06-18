@@ -47,30 +47,30 @@ EStateTreeRunStatus FMVFocusingTask::EnterState(
 EStateTreeRunStatus FMVFocusingTask::Tick(FStateTreeExecutionContext& Context, const float DeltaTime) const
 {
 	FInstanceDataType& InstanceData = Context.GetInstanceData(*this);
-
+	
 	if (!InstanceData.bCanFocus || !InstanceData.Target || !InstanceData.Owner)
 	{
 		return EStateTreeRunStatus::Failed;
 	}
-
+	
 	FVector TargetDirection = InstanceData.Target->GetActorLocation() - InstanceData.Owner->GetActorLocation();
 	TargetDirection.Z = 0.0f;
-
+	
 	if (TargetDirection.IsNearlyZero())
 	{
 		return EStateTreeRunStatus::Failed;
 	}
-
+	
 	FRotator TargetRotation = TargetDirection.Rotation();
 	TargetRotation.Pitch = 0.0f;
 	TargetRotation.Roll = 0.0f;
-
+	
 	const FRotator NewRotation = FMath::RInterpTo(
 		InstanceData.Owner->GetActorRotation(),
 		TargetRotation,
 		DeltaTime,
 		InstanceData.TurnSpeed);
-
+	
 	InstanceData.Owner->SetActorRotation(NewRotation);
 
 	return EStateTreeRunStatus::Running;
@@ -81,5 +81,7 @@ void FMVFocusingTask::ExitState(
 	const FStateTreeTransitionResult& Transition
 	) const
 {
+	
+	
 	FStateTreeTaskCommonBase::ExitState(Context, Transition);
 }

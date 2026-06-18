@@ -64,7 +64,7 @@ namespace
 		const FVector DrawOrigin = OwnerLocation + FVector(0.0f, 0.0f, InstanceData.CombatAreaDebugHeightOffset);
 		const FVector DrawTarget = TargetLocation + FVector(0.0f, 0.0f, InstanceData.CombatAreaDebugHeightOffset);
 
-		DrawCombatAreaCircle(World, DrawOrigin, InstanceData.OutsideArea, FColor::Cyan, Duration);
+		//DrawCombatAreaCircle(World, DrawOrigin, InstanceData.OutsideArea, FColor::Cyan, Duration);
 		DrawCombatAreaCircle(World, DrawOrigin, InstanceData.DefensiveArea, FColor::Yellow, Duration);
 		DrawCombatAreaCircle(World, DrawOrigin, InstanceData.OffensiveArea, FColor::Red, Duration);
 
@@ -145,29 +145,29 @@ EStateTreeRunStatus FMVGlobalSensingTask::Tick(FStateTreeExecutionContext& Conte
 	//앞/뒤/좌/우 판정
 	if (DotProduct > 0.5f)
 	{
-		InstanceData.AttackDirection = EAttackDirection::Forward;
+		InstanceData.AttackDirection = EMVAttackDirection::Forward;
 	}
 	if (DotProduct < 0.5f)
 	{
-		InstanceData.AttackDirection = EAttackDirection::Backward;
+		InstanceData.AttackDirection = EMVAttackDirection::Backward;
 	}
 	if (CrossProduct.Z > 0.0f && FMath::Abs(DotProduct) <= 0.5f)
 	{
-		InstanceData.AttackDirection = EAttackDirection::Left;
+		InstanceData.AttackDirection = EMVAttackDirection::Left;
 	}
 	if (CrossProduct.Z < 0.0f && FMath::Abs(DotProduct) <= 0.5f)
 	{
-		InstanceData.AttackDirection = EAttackDirection::Right;
+		InstanceData.AttackDirection = EMVAttackDirection::Right;
 	}
 	
 	//Area 판정
 	//OutSideArea
-	if (InstanceData.DistanceToTarget > InstanceData.OutsideArea )
+	if (InstanceData.DistanceToTarget > InstanceData.DefensiveArea )
 	{
 		InstanceData.CurrentArea = EMVBossCombatArea::OutsideArea;
 	}
 	//DefensiveArea
-	if ((InstanceData.OutsideArea > InstanceData.DistanceToTarget) 
+	if ((InstanceData.DefensiveArea > InstanceData.DistanceToTarget) 
 		&& (InstanceData.DistanceToTarget > InstanceData.OffensiveArea))
 	{
 		InstanceData.CurrentArea = EMVBossCombatArea::DefensiveArea;
