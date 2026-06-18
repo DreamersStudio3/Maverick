@@ -9,7 +9,7 @@ AMVEnemy::AMVEnemy()
 {
 }
 
-bool AMVEnemy::Attack(int EAttackDirection)
+bool AMVEnemy::Attack(const EMVAttackDirection AttackDirection)
 {
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
     
@@ -19,12 +19,12 @@ bool AMVEnemy::Attack(int EAttackDirection)
 		FName SectionName;
  
 		
-		switch (EAttackDirection)
+		switch (AttackDirection)
 		{
-		case 0: SectionName = FName("Front"); break;
-		case 1: SectionName = FName("Back");  break;
-		case 2: SectionName = FName("Left");  break;
-		case 3: SectionName = FName("Right"); break;
+		case EMVAttackDirection::Forward: SectionName = FName("Front"); break;
+		case EMVAttackDirection::Backward: SectionName = FName("Back"); break;
+		case EMVAttackDirection::Left: SectionName = FName("Left"); break;
+		case EMVAttackDirection::Right: SectionName = FName("Right"); break;
 		default: SectionName = FName("Front"); break;
 		}
  

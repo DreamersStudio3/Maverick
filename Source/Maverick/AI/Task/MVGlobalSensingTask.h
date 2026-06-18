@@ -4,19 +4,8 @@
 #include "GameFramework/Pawn.h"
 #include "StateTreeTaskBase.h"
 #include "AI/Enum/MVBossCombatArea.h"
+#include "AI/Enum/MVAttackDirection.h"
 #include "MVGlobalSensingTask.generated.h"
-
-
-
-UENUM()
-enum class EAttackDirection : uint8
-{
-	Forward,
-	Backward,
-	Left,
-	Right,
-};
-
 
 USTRUCT()
 struct FMVGlobalSensingTaskInstanceData
@@ -32,8 +21,8 @@ struct FMVGlobalSensingTaskInstanceData
 	TObjectPtr<APawn> Owner;
 	
 	//각 Area 값 변수
-	UPROPERTY(EditAnywhere, Category = "Input|Area")
-	float OutsideArea;
+	// UPROPERTY(EditAnywhere, Category = "Input|Area")
+	// float OutsideArea;
 	
 	UPROPERTY(EditAnywhere, Category = "Input|Area")
 	float DefensiveArea;
@@ -59,7 +48,7 @@ struct FMVGlobalSensingTaskInstanceData
 	float AngleToTarget = 0.0f;
 	
 	UPROPERTY(EditAnywhere, Category = "Output")
-	EAttackDirection AttackDirection;
+	EMVAttackDirection AttackDirection = EMVAttackDirection::Forward;
 	
 	UPROPERTY(EditAnywhere, Category = "Output")
 	EMVBossCombatArea CurrentArea;
