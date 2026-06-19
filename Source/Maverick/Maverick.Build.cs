@@ -28,6 +28,7 @@ public class Maverick : ModuleRules
 			"CommonUI",
 			"CommonInput",
 			"DeveloperSettings",
+			"Chooser",
 		});
 
 		if (Target.Type == TargetRules.TargetType.Editor)

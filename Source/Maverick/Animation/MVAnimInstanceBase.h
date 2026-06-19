@@ -34,10 +34,6 @@ private:
 	void GetCharacterStateData();
 	void CalculatePivotState();
 
-private:
-	void CalculateLocomotionDirection(float MoveDirectionAngle, ELocomotionDirection& Direction);
-
-
 	// Character Data
 public:
 	UPROPERTY(BlueprintReadOnly, Category = "AnimBPData_Character")
@@ -79,8 +75,6 @@ public:
 	float MovingDirectionFromAcceleration;
 	UPROPERTY(BlueprintReadOnly, Category = "AnimBPData_Velocity")
 	ELocomotionDirection LocomotionDirection;
-	UPROPERTY(BlueprintReadOnly, Category = "AnimBPData_Velocity")
-	ELocomotionDirection LocomotionDirectionFromAcceleration;
 
 	// Rotation Data
 public:
