@@ -266,7 +266,9 @@ void AMVCharacterBase::UpdateLocomotionDirection()
 
 void AMVCharacterBase::UpdateRotation()
 {
-	if (CharacterInputState.WantsToStrafe || CharacterInputState.WantsToAim)
+	if ((bHasMovementInput || bIsFalling)										&&
+		(CharacterInputState.WantsToStrafe || CharacterInputState.WantsToAim)
+		)
 	{
 		SetStrafeMode(true);
 	}

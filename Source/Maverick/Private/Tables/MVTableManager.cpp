@@ -88,7 +88,7 @@ namespace
 		return false;
 	}
 
-	bool JsonValueToString(const TSharedPtr<FJsonValue>& Value, FString& OutValue)
+	bool TableManagerJsonValueToString(const TSharedPtr<FJsonValue>& Value, FString& OutValue)
 	{
 		if (!Value.IsValid())
 		{
@@ -199,7 +199,7 @@ bool UMVTableManager::GetString(FName TableName, const FString& RowKey, const FS
 	TSharedPtr<FJsonValue> GenericValue;
 	if (TryGetGenericField(TableName, RowKey, FieldName, GenericValue))
 	{
-		return JsonValueToString(GenericValue, OutValue);
+		return TableManagerJsonValueToString(GenericValue, OutValue);
 	}
 
 	const uint8* RowData = nullptr;

@@ -57,6 +57,7 @@ void UMVAnimInstanceBase::ReceiveCharacterData()
 	IncomingGait = Character->Gait;
 	CharacterInputState = Character->CharacterInputState;
 	LocomotionDirection = Character->LocomotionDirection;
+	bIsFalling = CharcterMovementComponent->IsFalling();
 }
 
 void UMVAnimInstanceBase::GetLocationData(float DeltaTime)
@@ -72,6 +73,10 @@ void UMVAnimInstanceBase::GetVelocityData()
 {
 	PreviousVelocity = Velocity;
 	Velocity = CharcterMovementComponent->Velocity;
+	if (bIsFalling)
+	{
+		FallSpeed = Velocity.Z;
+	}
 
 	bHasVelocity2D = !UKismetMathLibrary::NearlyEqual_FloatFloat(FVector(Velocity.X, Velocity.Y, 0.0f).SquaredLength(), 0.0f, 0.01);
 
