@@ -1,0 +1,28 @@
+{
+    "version": 1,
+    "source": {
+        "converter": "CsvToJsonConverter",
+        "file": "CharacterIndex.csv"
+    },
+    "tables": {
+        "CharacterIndex": {
+            "key": "CharacterIndexId",
+            "rows": [
+                {
+                    "CharacterIndexId": 1,
+                    "CharacterName": "PlayerCharacter",
+                    "CharacterKind": "Player",
+                    "ActionProfileId": 1,
+                    "bEnabled": true
+                },
+                {
+                    "CharacterIndexId": 10001,
+                    "CharacterName": "BulkupCarcass",
+                    "CharacterKind": "Enemy",
+                    "ActionProfileId": 10001,
+                    "bEnabled": true
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,4 @@
+CharacterIndexId,CharacterName,CharacterKind,ActionProfileId,bEnabled
+1,PlayerCharacter,Player,1,true
+10001,BulkupCarcass,Enemy,10001,true
+
