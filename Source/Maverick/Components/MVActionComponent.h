@@ -27,6 +27,15 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Action|Character")
+	void SetCharacterIndexId(int32 NewCharacterIndexId);
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|Action|Character")
+	int32 GetCharacterIndexId() const;
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|Action|Character")
+	int32 GetActionProfileId() const;
+
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Action")
 	bool TryStartAction(EMVActionId ActionId, float PlayRate = 1.0f, FName StartSection = NAME_None);
 
@@ -93,13 +102,22 @@ public:
 	FMVOnActionEnded OnActionEnded;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Action|Table")
+	FName CharacterIndexTableName = TEXT("CharacterIndex");
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Action|Table")
 	FName ActionIndexTableName = TEXT("ActionIndex");
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Action|Table")
 	FName ActionStatTableName = TEXT("ActionStat");
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Action|Character", meta = (ClampMin = "1"))
+	int32 CharacterIndexId = MVCharacterIndexIds::Player;
+
 private:
 	void CacheOwnerReferences();
+	const FMVCharacterIndexRow* FindCharacterIndexRow() const;
+	int32 ResolveActionProfileId() const;
+	static FString MakeActionIndexRowKey(int32 InActionProfileId, int32 InActionId);
 	UAnimInstance* GetOwnerAnimInstance() const;
 	UAnimMontage* ResolveActionMontage(int32 ActionId, const FMVActionIndexRow& ActionIndex) const;
 	class UChooserTable* LoadActionChooserTable(int32 ActionId, const FMVActionIndexRow& ActionIndex) const;

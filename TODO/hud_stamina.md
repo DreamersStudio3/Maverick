@@ -41,6 +41,7 @@
 - [x] Dodge Chooser가 직접 조건을 관리하도록 C++ `DodgeVariant` 결정을 제거하고 `bHasDodgeMovementInput`/`CharacterInputState.WantsToStrafe` 원천 조건을 사용한다.
 - [x] Dodge Chooser가 락온 회피를 8방향으로 나눌 때 `LocomotionDirection`을 방향 조건으로 사용하도록 정리한다.
 - [x] 몽타주 NotifyState 기반으로 이동입력 차단, 무적, 입력 버퍼 구간을 `ActionComponent` 상태에 연결한다.
+- [x] `GenerateDataTables` 성공 직후 `MVTableManager` 캐시를 reload해 새 `CharacterIndex` 테이블이 PIE에 즉시 반영되도록 한다.
 - [ ] 공격/회피/가드가 `ActionComponent.TryStartAction(ActionId)`를 통해 `ActionIndex`로 액션을 찾고 `ActionStat`으로 비용, 배율, 피격유형을 읽도록 연결한다.
 - [ ] BP 회피 실행 경로를 `TryStartAction(Dodge)` 호출로 교체하고, `ActionIndex.AnimationChooserTable`에 회피 Chooser Table 경로를 채운다.
 - [ ] Chooser Table 에셋에서 결과 타입을 `AnimMontage`로 설정하고 조건별 애니메이션 선택 로직을 연결한다.

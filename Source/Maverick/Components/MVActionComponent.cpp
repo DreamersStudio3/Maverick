@@ -20,6 +20,21 @@ void UMVActionComponent::BeginPlay()
 	CacheOwnerReferences();
 }
 
+void UMVActionComponent::SetCharacterIndexId(const int32 NewCharacterIndexId)
+{
+	CharacterIndexId = FMath::Max(0, NewCharacterIndexId);
+}
+
+int32 UMVActionComponent::GetCharacterIndexId() const
+{
+	return CharacterIndexId;
+}
+
+int32 UMVActionComponent::GetActionProfileId() const
+{
+	return ResolveActionProfileId();
+}
+
 bool UMVActionComponent::TryStartAction(
 	const EMVActionId ActionId,
 	const float PlayRate,
@@ -232,18 +247,41 @@ const FMVActionIndexRow* UMVActionComponent::FindActionIndexRow(
 	const int32 ActionId,
 	const EMVActionType ExpectedActionType) const
 {
+	const int32 ResolvedActionProfileId = ResolveActionProfileId();
+	if (ResolvedActionProfileId <= 0)
+	{
+		return nullptr;
+	}
+
+	const FString ActionIndexKey = MakeActionIndexRowKey(ResolvedActionProfileId, ActionId);
 	const UMVTableManager* TableManager = UMVTableManager::Get(this);
 	const FMVActionIndexRow* ActionIndex = TableManager && !ActionIndexTableName.IsNone() && ActionId > 0
-		? TableManager->FindRow<FMVActionIndexRow>(ActionIndexTableName, FString::FromInt(ActionId))
+		? TableManager->FindRow<FMVActionIndexRow>(ActionIndexTableName, ActionIndexKey)
 		: nullptr;
 	if (!ActionIndex || !ActionIndex->bEnabled)
 	{
 		return nullptr;
 	}
 
+	if (ActionIndex->ActionProfileId != ResolvedActionProfileId || ActionIndex->ActionId != ActionId)
+	{
+		UE_LOG(
+			LogTemp,
+			Warning,
+			TEXT("ActionIndex row '%s' mismatches requested ActionProfileId %d and ActionId %d."),
+			*ActionIndexKey,
+			ResolvedActionProfileId,
+			ActionId);
+		return nullptr;
+	}
+
 	if (ExpectedActionType != EMVActionType::None && ActionIndex->ActionType != ExpectedActionType)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ActionId %d has unexpected ActionType."), ActionId);
+		UE_LOG(
+			LogTemp,
+			Warning,
+			TEXT("ActionIndex row '%s' has unexpected ActionType."),
+			*ActionIndexKey);
 		return nullptr;
 	}
 
@@ -274,6 +312,54 @@ void UMVActionComponent::CacheOwnerReferences()
 	CachedStatComponent = GetOwner()
 		? GetOwner()->FindComponentByClass<UMVStatComponent>()
 		: nullptr;
+}
+
+const FMVCharacterIndexRow* UMVActionComponent::FindCharacterIndexRow() const
+{
+	const UMVTableManager* TableManager = UMVTableManager::Get(this);
+	const FMVCharacterIndexRow* CharacterIndex = TableManager && !CharacterIndexTableName.IsNone() && CharacterIndexId > 0
+		? TableManager->FindRow<FMVCharacterIndexRow>(CharacterIndexTableName, FString::FromInt(CharacterIndexId))
+		: nullptr;
+	if (!CharacterIndex || !CharacterIndex->bEnabled)
+	{
+		return nullptr;
+	}
+
+	if (CharacterIndex->CharacterIndexId != CharacterIndexId)
+	{
+		UE_LOG(
+			LogTemp,
+			Warning,
+			TEXT("CharacterIndex row '%d' mismatches requested CharacterIndexId %d."),
+			CharacterIndex->CharacterIndexId,
+			CharacterIndexId);
+		return nullptr;
+	}
+
+	return CharacterIndex;
+}
+
+int32 UMVActionComponent::ResolveActionProfileId() const
+{
+	const FMVCharacterIndexRow* CharacterIndex = FindCharacterIndexRow();
+	if (!CharacterIndex)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("CharacterIndexId %d has no enabled CharacterIndex row."), CharacterIndexId);
+		return INDEX_NONE;
+	}
+
+	if (CharacterIndex->ActionProfileId <= 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("CharacterIndexId %d has invalid ActionProfileId."), CharacterIndexId);
+		return INDEX_NONE;
+	}
+
+	return CharacterIndex->ActionProfileId;
+}
+
+FString UMVActionComponent::MakeActionIndexRowKey(const int32 InActionProfileId, const int32 InActionId)
+{
+	return FString::Printf(TEXT("%05d_%d"), InActionProfileId, InActionId);
 }
 
 UAnimInstance* UMVActionComponent::GetOwnerAnimInstance() const

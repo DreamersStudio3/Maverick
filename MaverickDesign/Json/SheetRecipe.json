@@ -1,5 +1,6 @@
 {
-    "ActionIndex": "ActionId",
+    "ActionIndex": "ActionIndexKey",
     "ActionStat": "ActionStatId",
+    "CharacterIndex": "CharacterIndexId",
     "PlayerStat": "StatId"
 }

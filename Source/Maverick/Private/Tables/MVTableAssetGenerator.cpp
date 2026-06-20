@@ -1,6 +1,7 @@
 #include "Tables/MVTableAssetGenerator.h"
 
 #include "Tables/MVSheetSpecs.h"
+#include "Tables/MVTableManager.h"
 #include "Tables/MVTableTypes.h"
 
 #if WITH_EDITOR
@@ -288,6 +289,14 @@ bool UMVTableAssetGenerator::GenerateDataTables(FString& OutReport)
 	{
 		OutReport += LINE_TERMINATOR;
 		OutReport += FString::Join(Errors, LINE_TERMINATOR);
+	}
+
+	if (Errors.IsEmpty())
+	{
+		if (UMVTableManager* TableManager = UMVTableManager::Get())
+		{
+			TableManager->ReloadAllTables();
+		}
 	}
 
 	return Errors.IsEmpty();
