@@ -1,5 +1,6 @@
 #include "Animation/NotifyStates/MVAnimNotifyState_DodgeLaunch.h"
 
+#include "Animation/ActiveMontageInstanceScope.h"
 #include "Components/MVDodgeComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/Actor.h"
@@ -10,6 +11,13 @@ UMVDodgeComponent* FindDodgeComponent(const USkeletalMeshComponent* MeshComp)
 {
 	const AActor* Owner = MeshComp ? MeshComp->GetOwner() : nullptr;
 	return Owner ? Owner->FindComponentByClass<UMVDodgeComponent>() : nullptr;
+}
+
+int32 GetMontageInstanceId(const FAnimNotifyEventReference& EventReference)
+{
+	const UE::Anim::FAnimNotifyMontageInstanceContext* MontageContext =
+		EventReference.GetContextData<UE::Anim::FAnimNotifyMontageInstanceContext>();
+	return MontageContext ? MontageContext->MontageInstanceID : INDEX_NONE;
 }
 }
 
@@ -27,7 +35,8 @@ void UMVAnimNotifyState_DodgeLaunch::NotifyBegin(
 			TotalDuration,
 			DistanceCurve,
 			DistanceScale,
-			bApplyVerticalLaunchOnBegin);
+			bApplyVerticalLaunchOnBegin,
+			GetMontageInstanceId(EventReference));
 	}
 }
 
@@ -41,7 +50,7 @@ void UMVAnimNotifyState_DodgeLaunch::NotifyTick(
 
 	if (UMVDodgeComponent* DodgeComponent = FindDodgeComponent(MeshComp))
 	{
-		DodgeComponent->TickDodgeLaunchWindow(FrameDeltaTime);
+		DodgeComponent->TickDodgeLaunchWindow(FrameDeltaTime, GetMontageInstanceId(EventReference));
 	}
 }
 
@@ -54,7 +63,9 @@ void UMVAnimNotifyState_DodgeLaunch::NotifyEnd(
 
 	if (UMVDodgeComponent* DodgeComponent = FindDodgeComponent(MeshComp))
 	{
-		DodgeComponent->EndDodgeLaunchWindow(bClearHorizontalVelocityOnEnd);
+		DodgeComponent->EndDodgeLaunchWindow(
+			bClearHorizontalVelocityOnEnd,
+			GetMontageInstanceId(EventReference));
 	}
 }
 
