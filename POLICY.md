@@ -1,5 +1,16 @@
 # POLICY.md
 
+## C++ 구현 규칙
+
+### Unreal Engine Unity Build 호환성
+
+- Unreal Engine unity build에서는 여러 `.cpp` 파일이 하나의 번역 단위로 묶일 수 있으므로, 익명 네임스페이스나 `static`만으로 파일 간 이름 충돌을 피할 수 있다고 가정하지 않는다.
+- `.cpp` 로컬 헬퍼 함수, 상수, 타입은 `DebugBoolText`, `ResolveEightWayDirection`, `NormalizeInput`처럼 범용적인 이름을 단독으로 쓰지 않는다.
+- 파일 로컬 헬퍼 이름은 파일이나 도메인을 포함해 고유하게 작성한다. 예: `DodgeDebugBoolText`, `ResolveDodgeEightWayDirection`, `ActionDebugBoolText`.
+- 새 로컬 헬퍼를 추가하기 전에 모듈 전체에서 같은 이름이 이미 쓰이는지 검색한다.
+- 여러 파일에서 같은 로직이 필요하면 같은 구현을 복사하지 말고 명시적인 공용 유틸리티로 분리해 하나의 정의를 공유한다.
+- unity build 충돌을 피하려고 빌드 설정을 우회하기보다 소스 코드가 unity build에서도 안전하게 컴파일되도록 고친다.
+
 ## 커밋 메시지 컨벤션
 
 커밋 메시지는 Conventional Commits 계열의 타입을 기준으로 하되, 실제 커밋 제목과 설명은 한글로 작성한다.

@@ -12,6 +12,8 @@ Maverick은 Unreal Engine 5.6 기반의 3인칭 소울라이크 프로젝트다.
 
 세부 정책은 `AGENTS.md`가 아니라 `POLICY.md`에 추가하거나 갱신한다. `AGENTS.md`는 프로젝트의 상위 맥락과 정책 문서로 연결하는 진입점 역할만 한다.
 
+C++ 구현 규칙과 Unreal Engine unity build 호환성 관련 세부 정책도 `POLICY.md`를 따른다.
+
 ## 작업 진행 관리
 
 작업을 진행할 때는 루트의 `TODO` 디렉토리에 현재 작업 목록을 정리하고, 그 내용을 기준으로 진행 상태를 관리한다.

@@ -10,7 +10,7 @@
 
 namespace
 {
-const TCHAR* DebugBoolText(const bool bValue)
+const TCHAR* ActionDebugBoolText(const bool bValue)
 {
 	return bValue ? TEXT("true") : TEXT("false");
 }
@@ -78,7 +78,7 @@ bool UMVActionComponent::TryStartActionById(
 			InputBufferWindowCount,
 			RecoveryEscapeWindowCount,
 			MovementInputBlockCount,
-			DebugBoolText(bConsumingBufferedAction));
+			ActionDebugBoolText(bConsumingBufferedAction));
 		return TryBufferActionById(ActionId);
 	}
 
@@ -178,9 +178,9 @@ void UMVActionComponent::FinishActiveAction(bool bInterrupted)
 		TEXT("[MVActionBuffer] FinishActiveAction Owner=%s Finished=%d Interrupted=%s Buffered=%d HasBufferedInput=%s BufferedDir=%s InputWindow=%d RecoveryWindow=%d MovementBlock=%d"),
 		*GetNameSafe(GetOwner()),
 		FinishedActionId,
-		DebugBoolText(bInterrupted),
+		ActionDebugBoolText(bInterrupted),
 		BufferedActionId,
-		DebugBoolText(bBufferedActionHasMovementInput),
+		ActionDebugBoolText(bBufferedActionHasMovementInput),
 		*BufferedActionMovementInputDirection.ToCompactString(),
 		InputBufferWindowCount,
 		RecoveryEscapeWindowCount,
@@ -283,7 +283,7 @@ bool UMVActionComponent::TryBufferActionById(const int32 ActionId)
 			*GetNameSafe(GetOwner()),
 			ActionId,
 			ActiveActionId,
-			DebugBoolText(IsActionRunning()));
+			ActionDebugBoolText(IsActionRunning()));
 		return false;
 	}
 
@@ -325,7 +325,7 @@ bool UMVActionComponent::TryBufferActionById(const int32 ActionId)
 		*GetNameSafe(GetOwner()),
 		ActionId,
 		ActiveActionId,
-		DebugBoolText(bBufferedActionHasMovementInput),
+		ActionDebugBoolText(bBufferedActionHasMovementInput),
 		*BufferedActionMovementInputDirection.ToCompactString(),
 		InputBufferWindowCount,
 		RecoveryEscapeWindowCount,
@@ -339,7 +339,7 @@ bool UMVActionComponent::TryBufferActionById(const int32 ActionId)
 			TEXT("[MVActionBuffer] BufferedImmediateConsumeAttempt Owner=%s Action=%d Started=%s"),
 			*GetNameSafe(GetOwner()),
 			ActionId,
-			DebugBoolText(bStartedBufferedAction));
+			ActionDebugBoolText(bStartedBufferedAction));
 	}
 	return true;
 }
@@ -354,7 +354,7 @@ void UMVActionComponent::ClearBufferedAction()
 			TEXT("[MVActionBuffer] ClearBufferedAction Owner=%s Buffered=%d HasInput=%s Dir=%s"),
 			*GetNameSafe(GetOwner()),
 			BufferedActionId,
-			DebugBoolText(bBufferedActionHasMovementInput),
+			ActionDebugBoolText(bBufferedActionHasMovementInput),
 			*BufferedActionMovementInputDirection.ToCompactString());
 	}
 	BufferedActionId = INDEX_NONE;
@@ -388,7 +388,7 @@ void UMVActionComponent::UpdateBufferedActionMovementInput(const FVector& Moveme
 			TEXT("[MVActionBuffer] BufferedInputUpdated Owner=%s Buffered=%d HasInput=%s Dir=%s RawDir=%s"),
 			*GetNameSafe(GetOwner()),
 			BufferedActionId,
-			DebugBoolText(bBufferedActionHasMovementInput),
+			ActionDebugBoolText(bBufferedActionHasMovementInput),
 			*BufferedActionMovementInputDirection.ToCompactString(),
 			*MovementInputDirection.ToCompactString());
 	}
@@ -504,7 +504,7 @@ bool UMVActionComponent::TryStartBufferedAction()
 			TEXT("[MVActionBuffer] ConsumeRejectedByDelegate Owner=%s Buffered=%d HasInput=%s Dir=%s Active=%d"),
 			*GetNameSafe(GetOwner()),
 			ActionIdToStart,
-			DebugBoolText(bHasMovementInputToStart),
+			ActionDebugBoolText(bHasMovementInputToStart),
 			*MovementInputDirectionToStart.ToCompactString(),
 			ActiveActionId);
 		ClearBufferedAction();
@@ -517,7 +517,7 @@ bool UMVActionComponent::TryStartBufferedAction()
 		TEXT("[MVActionBuffer] ConsumeStart Owner=%s Buffered=%d HasInput=%s Dir=%s Active=%d InputWindow=%d RecoveryWindow=%d MovementBlock=%d"),
 		*GetNameSafe(GetOwner()),
 		ActionIdToStart,
-		DebugBoolText(bHasMovementInputToStart),
+		ActionDebugBoolText(bHasMovementInputToStart),
 		*MovementInputDirectionToStart.ToCompactString(),
 		ActiveActionId,
 		InputBufferWindowCount,
@@ -542,7 +542,7 @@ bool UMVActionComponent::TryStartBufferedAction()
 		TEXT("[MVActionBuffer] ConsumeEnd Owner=%s Buffered=%d Started=%s ActiveNow=%d"),
 		*GetNameSafe(GetOwner()),
 		ActionIdToStart,
-		DebugBoolText(bStarted),
+		ActionDebugBoolText(bStarted),
 		ActiveActionId);
 
 	bConsumingBufferedAction = false;
@@ -589,7 +589,7 @@ void UMVActionComponent::EndInputBufferWindow()
 			Warning,
 			TEXT("[MVActionBuffer] InputWindowEndConsumeAttempt Owner=%s Started=%s"),
 			*GetNameSafe(GetOwner()),
-			DebugBoolText(bStartedBufferedAction));
+			ActionDebugBoolText(bStartedBufferedAction));
 	}
 }
 
@@ -618,7 +618,7 @@ void UMVActionComponent::EndMovementInputBlock()
 		TEXT("[MVActionBuffer] MovementBlockEnd Owner=%s Count=%d WasBlocked=%s Active=%d Buffered=%d InputWindow=%d RecoveryWindow=%d"),
 		*GetNameSafe(GetOwner()),
 		MovementInputBlockCount,
-		DebugBoolText(bWasBlocked),
+		ActionDebugBoolText(bWasBlocked),
 		ActiveActionId,
 		BufferedActionId,
 		InputBufferWindowCount,
@@ -631,7 +631,7 @@ void UMVActionComponent::EndMovementInputBlock()
 			Warning,
 			TEXT("[MVActionBuffer] MovementBlockEndConsumeAttempt Owner=%s Started=%s"),
 			*GetNameSafe(GetOwner()),
-			DebugBoolText(bStartedBufferedAction));
+			ActionDebugBoolText(bStartedBufferedAction));
 	}
 }
 
@@ -651,7 +651,7 @@ void UMVActionComponent::BeginRecoveryEscapeWindow()
 		RecoveryEscapeWindowCount,
 		ActiveActionId,
 		BufferedActionId,
-		DebugBoolText(bBufferedActionHasMovementInput),
+		ActionDebugBoolText(bBufferedActionHasMovementInput),
 		*BufferedActionMovementInputDirection.ToCompactString(),
 		InputBufferWindowCount,
 		MovementInputBlockCount);
@@ -661,7 +661,7 @@ void UMVActionComponent::BeginRecoveryEscapeWindow()
 		Warning,
 		TEXT("[MVActionBuffer] RecoveryWindowBeginConsumeAttempt Owner=%s Started=%s"),
 		*GetNameSafe(GetOwner()),
-		DebugBoolText(bStartedBufferedAction));
+		ActionDebugBoolText(bStartedBufferedAction));
 }
 
 void UMVActionComponent::EndRecoveryEscapeWindow()
@@ -681,7 +681,7 @@ void UMVActionComponent::EndRecoveryEscapeWindow()
 		RecoveryEscapeWindowCount,
 		ActiveActionId,
 		BufferedActionId,
-		DebugBoolText(bBufferedActionHasMovementInput),
+		ActionDebugBoolText(bBufferedActionHasMovementInput),
 		*BufferedActionMovementInputDirection.ToCompactString(),
 		InputBufferWindowCount,
 		MovementInputBlockCount);
@@ -691,7 +691,7 @@ void UMVActionComponent::EndRecoveryEscapeWindow()
 		Warning,
 		TEXT("[MVActionBuffer] RecoveryWindowEndConsumeAttempt Owner=%s Started=%s"),
 		*GetNameSafe(GetOwner()),
-		DebugBoolText(bStartedBufferedAction));
+		ActionDebugBoolText(bStartedBufferedAction));
 	RecoveryEscapeWindowCount = FMath::Max(0, RecoveryEscapeWindowCount - 1);
 }
 
@@ -908,7 +908,7 @@ void UMVActionComponent::HandleActionMontageEnded(
 			TEXT("[MVActionBuffer] IgnoreStaleMontageEnded Owner=%s Montage=%s Interrupted=%s EndInstance=%d ActiveInstance=%d Active=%d ActiveMontage=%s"),
 			*GetNameSafe(GetOwner()),
 			*GetNameSafe(Montage),
-			DebugBoolText(bInterrupted),
+			ActionDebugBoolText(bInterrupted),
 			ActionInstanceId,
 			ActiveActionInstanceId,
 			ActiveActionId,

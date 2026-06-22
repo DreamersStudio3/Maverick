@@ -13,7 +13,7 @@
 
 namespace
 {
-ELocomotionDirection ResolveEightWayDirection(const float MoveDirectionAngle)
+ELocomotionDirection ResolveCharacterEightWayDirection(const float MoveDirectionAngle)
 {
 	const float AbsAngle = FMath::Abs(MoveDirectionAngle);
 
@@ -245,7 +245,7 @@ void AMVCharacterBase::UpdateCharacterValue()
 
 void AMVCharacterBase::UpdateLocomotionDirection()
 {
-	LocomotionDirection = ResolveEightWayDirection(CharacterMoveDirectionAngleFromAcceleration);
+	LocomotionDirection = ResolveCharacterEightWayDirection(CharacterMoveDirectionAngleFromAcceleration);
 }
 
 void AMVCharacterBase::UpdateRotation()
