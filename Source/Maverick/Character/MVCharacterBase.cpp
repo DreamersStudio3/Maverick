@@ -6,6 +6,7 @@
 #include "Components/MVActionComponent.h"
 #include "Components/MVDodgeComponent.h"
 #include "Components/MVStatComponent.h"
+#include "GameFramework/Controller.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "KismetAnimationLibrary.h"
 #include "Math/Vector.h"
@@ -13,6 +14,17 @@
 
 namespace
 {
+FVector2D ClampCharacterControllerSpaceInput(const FVector2D& Input)
+{
+	const float SizeSquared = Input.SizeSquared();
+	if (SizeSquared <= 1.0f)
+	{
+		return Input;
+	}
+
+	return Input / FMath::Sqrt(SizeSquared);
+}
+
 ELocomotionDirection ResolveCharacterEightWayDirection(const float MoveDirectionAngle)
 {
 	const float AbsAngle = FMath::Abs(MoveDirectionAngle);
@@ -81,16 +93,6 @@ void AMVCharacterBase::BeginPlay()
 		UE_LOG(LogTemp, Error, TEXT("FAILED to load Curve at path: %s. Check the path in Content Browser!"), *CurvePath);
 	}
 
-	if (ActionComponent)
-	{
-		ActionComponent->OnActionStatRecoveryPauseChanged.AddUniqueDynamic(
-			this,
-			&AMVCharacterBase::HandleActionStatRecoveryPauseChanged);
-		ActionComponent->OnActionCostConsumed.AddUniqueDynamic(
-			this,
-			&AMVCharacterBase::HandleActionCostConsumed);
-	}
-
 	CacheSprintActionData();
 }
 
@@ -114,6 +116,7 @@ void AMVCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 void AMVCharacterBase::AddMovementInput(const FVector WorldDirection, const float ScaleValue, const bool bForce)
 {
+	CacheControllerSpaceMovementInput(WorldDirection, ScaleValue);
 	OnMovementInputReceived.Broadcast(WorldDirection * ScaleValue);
 	Super::AddMovementInput(WorldDirection, ScaleValue, bForce);
 }
@@ -142,6 +145,56 @@ void AMVCharacterBase::AttemptCrouch()
 bool AMVCharacterBase::HasDodgeMovementInput() const
 {
 	return bHasDodgeMovementInput;
+}
+
+bool AMVCharacterBase::TryGetControllerSpaceMovementInput(
+	FVector2D& OutMovementInput,
+	const int32 MaxFrameAge) const
+{
+	OutMovementInput = FVector2D::ZeroVector;
+	if (ControllerSpaceMovementInput.IsNearlyZero())
+	{
+		return false;
+	}
+
+	const uint64 CurrentFrame = GFrameCounter;
+	if (ControllerSpaceMovementInputFrame > CurrentFrame)
+	{
+		return false;
+	}
+
+	const uint64 FrameAge = CurrentFrame - ControllerSpaceMovementInputFrame;
+	if (FrameAge > static_cast<uint64>(FMath::Max(0, MaxFrameAge)))
+	{
+		return false;
+	}
+
+	OutMovementInput = ControllerSpaceMovementInput;
+	return true;
+}
+
+FRotator AMVCharacterBase::ResolveMovementInputReferenceRotation() const
+{
+	if (const AController* OwnerController = GetController())
+	{
+		return FRotator(0.0f, OwnerController->GetControlRotation().Yaw, 0.0f);
+	}
+
+	return FRotator(0.0f, GetActorRotation().Yaw, 0.0f);
+}
+
+FVector AMVCharacterBase::ResolveWorldDirectionFromControllerSpaceInput(
+	const FVector2D& ControllerSpaceInput) const
+{
+	if (ControllerSpaceInput.IsNearlyZero())
+	{
+		return FVector::ZeroVector;
+	}
+
+	const FRotator ReferenceRotation = ResolveMovementInputReferenceRotation();
+	const FVector ForwardVector = FRotationMatrix(ReferenceRotation).GetUnitAxis(EAxis::X).GetSafeNormal2D();
+	const FVector RightVector = FRotationMatrix(ReferenceRotation).GetUnitAxis(EAxis::Y).GetSafeNormal2D();
+	return (ForwardVector * ControllerSpaceInput.X + RightVector * ControllerSpaceInput.Y).GetSafeNormal2D();
 }
 
 void AMVCharacterBase::ApplyLocomotionDirectionSnapshot(const FVector& MovementDirection)
@@ -253,6 +306,43 @@ void AMVCharacterBase::UpdateLocomotionDirection()
 	LocomotionDirectionFromAcceleration = ResolveCharacterEightWayDirection(CharacterMoveDirectionAngleFromAcceleration);
 }
 
+void AMVCharacterBase::CacheControllerSpaceMovementInput(
+	const FVector& WorldDirection,
+	const float ScaleValue)
+{
+	if (ControllerSpaceMovementInputFrame != GFrameCounter)
+	{
+		ControllerSpaceMovementInput = FVector2D::ZeroVector;
+		ControllerSpaceMovementInputFrame = GFrameCounter;
+	}
+
+	const FVector2D ControllerSpaceInput = ResolveControllerSpaceMovementInput(WorldDirection, ScaleValue);
+	if (!ControllerSpaceInput.IsNearlyZero())
+	{
+		ControllerSpaceMovementInput = ClampCharacterControllerSpaceInput(
+			ControllerSpaceMovementInput + ControllerSpaceInput);
+	}
+}
+
+FVector2D AMVCharacterBase::ResolveControllerSpaceMovementInput(
+	const FVector& WorldDirection,
+	const float ScaleValue) const
+{
+	const FVector WorldDirection2D(WorldDirection.X, WorldDirection.Y, 0.0f);
+	if (WorldDirection2D.IsNearlyZero() || FMath::IsNearlyZero(ScaleValue))
+	{
+		return FVector2D::ZeroVector;
+	}
+
+	const FRotator ReferenceRotation = ResolveMovementInputReferenceRotation();
+	const FVector ForwardVector = FRotationMatrix(ReferenceRotation).GetUnitAxis(EAxis::X).GetSafeNormal2D();
+	const FVector RightVector = FRotationMatrix(ReferenceRotation).GetUnitAxis(EAxis::Y).GetSafeNormal2D();
+	const FVector ScaledWorldInput = WorldDirection2D.GetSafeNormal2D() * ScaleValue;
+	return ClampCharacterControllerSpaceInput(FVector2D(
+		FVector::DotProduct(ScaledWorldInput, ForwardVector),
+		FVector::DotProduct(ScaledWorldInput, RightVector)));
+}
+
 void AMVCharacterBase::UpdateRotation()
 {
 	if ((bHasMovementInput || bIsFalling)										&&
@@ -314,7 +404,6 @@ void AMVCharacterBase::UpdateRecoverableStats(float DeltaTime)
 	const bool bShouldConsumeStamina = SprintStaminaCostPerSecond > 0.0f && Gait == EGait::Sprinting && bHasMovementInput;
 	if (bShouldConsumeStamina)
 	{
-		RestartRecoverableStatCooldown();
 		StatComponent->ConsumeStamina(CalculateSprintStaminaDrain(DeltaTime));
 
 		if (StatComponent->CurrentStamina <= KINDA_SMALL_NUMBER)
@@ -325,25 +414,7 @@ void AMVCharacterBase::UpdateRecoverableStats(float DeltaTime)
 		return;
 	}
 
-	if (ActionComponent && ActionComponent->IsActionStatRecoveryPaused())
-	{
-		return;
-	}
-
-	if (bUseStaminaRecoveryDelay)
-	{
-		RecoverableStatCooldownRemaining = FMath::Max(0.0f, RecoverableStatCooldownRemaining - DeltaTime);
-	}
-	else
-	{
-		RecoverableStatCooldownRemaining = 0.0f;
-	}
-
-	if (RecoverableStatCooldownRemaining <= 0.0f)
-	{
-		StatComponent->RecoverStamina(StatComponent->StaminaRecoveryPerSecond * DeltaTime);
-		StatComponent->RecoverMP(StatComponent->MPRecoveryPerSecond * DeltaTime);
-	}
+	StatComponent->TickRecoverableStats(DeltaTime);
 
 	const float ResumeThreshold = StatComponent->MaxStamina * ResolveSprintResumeStaminaRatio();
 	if (bIsSprintBlockedByStamina && StatComponent->CurrentStamina >= ResumeThreshold)
@@ -376,32 +447,6 @@ void AMVCharacterBase::CacheSprintActionData()
 		? FMath::Clamp(SprintActionStat->SprintRestartStaminaPercent, 0.0f, 100.0f)
 		: FMath::Clamp(SprintResumeStaminaRatio * 100.0f, 0.0f, 100.0f);
 	bHasSprintActionData = true;
-}
-
-void AMVCharacterBase::RestartRecoverableStatCooldown()
-{
-	RecoverableStatCooldownRemaining = bUseStaminaRecoveryDelay && StatComponent
-		? StatComponent->StaminaRecoveryDelay
-		: 0.0f;
-}
-
-void AMVCharacterBase::HandleActionStatRecoveryPauseChanged(bool bPaused)
-{
-	if (bPaused)
-	{
-		RecoverableStatCooldownRemaining = 0.0f;
-	}
-	else
-	{
-		RestartRecoverableStatCooldown();
-	}
-
-	OnStatRecentLossHoldChanged.Broadcast(bPaused);
-}
-
-void AMVCharacterBase::HandleActionCostConsumed(int32 ActionId)
-{
-	RestartRecoverableStatCooldown();
 }
 
 void AMVCharacterBase::SetStrafeMode(bool StrafeModeOn)

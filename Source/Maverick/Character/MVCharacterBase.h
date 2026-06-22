@@ -15,25 +15,28 @@ class UMVStatComponent;
 class UMVActionComponent;
 class UMVDodgeComponent;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnStatRecentLossHoldChanged, bool, bHold);
 DECLARE_MULTICAST_DELEGATE_OneParam(FMVOnMovementInputReceived, const FVector&);
 
 /**
  * 공통 캐릭터 런타임 본체.
  *
- * 플레이어와 NPC가 공유할 수 있는 이동 상태, 공용 컴포넌트 연결, 이동/무적 잠금 반영,
- * 회복 가능한 스탯 갱신을 관리한다. 회피, 전투, 액션 버퍼 같은 도메인 정책은
- * 전용 컴포넌트가 이 클래스의 공통 상태와 이벤트를 사용해 처리한다.
+ * 플레이어와 NPC가 공유할 수 있는 이동 상태, 공용 컴포넌트 연결, 무적 상태,
+ * 질주 스태미너 소비를 관리한다. 회피, 전투, 액션 버퍼 같은 도메인 세부 정책은
+ * 전용 컴포넌트가 이 클래스의 공통 상태 변수와 이벤트 함수를 호출해 컴포넌트 안에서 개별적으로 처리한다.
  *
  * 책임:
- *   - CharacterMovement 기준 locomotion 값과 gait, 장비 스타일, 스태미너 회복 상태를 갱신한다.
- *   - Action/Stat/Dodge 컴포넌트를 소유하고 엔진 라이프사이클과 공용 이벤트를 연결한다.
- *   - ActionComponent의 이동 입력 잠금과 캐릭터 무적 중첩 상태를 CharacterMovement에 반영한다.
+ *   - CharacterMovement 기준 locomotion 값과 gait, 장비 스타일, 질주 스태미너 상태를 갱신한다.
+ *   - ACharacter의 BeginPlay, Tick, AddMovementInput 진입점에서 초기 데이터 로드,
+ *     매 프레임 locomotion/질주 스태미너 갱신, 이동 입력 캐싱과 OnMovementInputReceived 브로드캐스트를 담당한다.
+ *   - 질주 중이 아닐 때 StatComponent의 회복 Tick을 호출하되, 회복 쿨다운과 일시정지 정책은 StatComponent가 소유한다.
+ *   - 이동 입력은 항상 controller yaw 기준 raw 2D로 계산해 게임을 플레이하는 유저의 의도와 일치시킨다.
+ *   - ActionComponent의 이동 입력 잠금은 CharacterMovement의 MaxAcceleration에 반영한다.
+ *   - 무적 상태는 중첩 카운터로 관리해 여러 무적 구간이 겹쳐도 모든 구간이 끝난 뒤 해제되게 한다.
  *
  * 라이프사이클:
  *   1) BeginPlay -> 공용 컴포넌트 이벤트와 locomotion 보조 데이터를 초기화한다.
- *   2) AddMovementInput -> 원본 이동 입력을 브로드캐스트한 뒤 CharacterMovement에 전달한다.
- *   3) Tick -> 이동/회전/회복 스탯을 갱신하고 애니메이션 조회용 상태를 정리한다.
+ *   2) AddMovementInput -> controller yaw 기준 raw 2D 입력을 누적하고 이동 입력 이벤트를 브로드캐스트한다.
+ *   3) Tick -> 이동/회전/질주 스태미너를 갱신하고 애니메이션 조회용 상태를 정리한다.
  */
 UCLASS(Blueprintable, BlueprintType)
 class MAVERICK_API AMVCharacterBase : public ACharacter
@@ -63,6 +66,10 @@ public:
 	UFUNCTION(BlueprintPure, Category = "LocomotionData|Action")
 	bool HasDodgeMovementInput() const;
 
+	bool TryGetControllerSpaceMovementInput(FVector2D& OutMovementInput, int32 MaxFrameAge = 0) const;
+	FRotator ResolveMovementInputReferenceRotation() const;
+	FVector ResolveWorldDirectionFromControllerSpaceInput(const FVector2D& ControllerSpaceInput) const;
+
 	void ApplyLocomotionDirectionSnapshot(const FVector& MovementDirection);
 
 	UFUNCTION(BlueprintCallable, Category = "LocomotionData|Equipment")
@@ -89,9 +96,6 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Maverick|Character|State")
 	bool IsInvincible() const;
 
-	UPROPERTY(BlueprintAssignable, Category = "Maverick|Action|Event")
-	FMVOnStatRecentLossHoldChanged OnStatRecentLossHoldChanged;
-
 	FMVOnMovementInputReceived OnMovementInputReceived;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
@@ -108,15 +112,10 @@ private:
 	void UpdateRotation();
 	void UpdateMovement(float DeltaTime);
 	void UpdateLocomotionDirection();
+	void CacheControllerSpaceMovementInput(const FVector& WorldDirection, float ScaleValue);
+	FVector2D ResolveControllerSpaceMovementInput(const FVector& WorldDirection, float ScaleValue) const;
 	void UpdateRecoverableStats(float DeltaTime);
 	void CacheSprintActionData();
-	void RestartRecoverableStatCooldown();
-
-	UFUNCTION()
-	void HandleActionStatRecoveryPauseChanged(bool bPaused);
-
-	UFUNCTION()
-	void HandleActionCostConsumed(int32 ActionId);
 
 protected:
 	UFUNCTION(BlueprintCallable, Category = "LocomotionData")
@@ -131,13 +130,14 @@ private:
 	float ResolveSprintMinRequiredStamina() const;
 	float ResolveSprintResumeStaminaRatio() const;
 	float CalculateCharacterMovementSpeed(float WalkSpeed, float RunSpeed, float SprintSpeed);
-	float RecoverableStatCooldownRemaining = 0.0f;
 	bool bHasSprintActionData = false;
 	float SprintActionStaminaCost = 20.0f;
 	EMVActionResourceCostType SprintActionStaminaCostType = EMVActionResourceCostType::PerSecond;
 	float SprintActionMinRequiredStamina = 0.0f;
 	float SprintActionRestartStaminaPercent = 70.0f;
 	int32 InvincibilityCount = 0;
+	FVector2D ControllerSpaceMovementInput = FVector2D::ZeroVector;
+	uint64 ControllerSpaceMovementInputFrame = 0;
 	
 
 public:
@@ -174,9 +174,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LocomotionData|Stamina", meta = (ClampMin = "0.0", ClampMax = "1.0"))
 	float SprintResumeStaminaRatio = 0.7f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LocomotionData|Stamina")
-	bool bUseStaminaRecoveryDelay = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LocomotionData|Action", meta = (DisplayName = "Sprint Action"))
 	EMVActionId SprintActionId = EMVActionId::Sprint;

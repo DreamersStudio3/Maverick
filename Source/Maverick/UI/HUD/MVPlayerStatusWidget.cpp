@@ -1,7 +1,6 @@
 #include "UI/HUD/MVPlayerStatusWidget.h"
 
 #include "Blueprint/WidgetTree.h"
-#include "Character/MVCharacterBase.h"
 #include "Components/MVStatComponent.h"
 #include "Components/VerticalBox.h"
 #include "Components/VerticalBoxSlot.h"
@@ -26,10 +25,14 @@ void UMVPlayerStatusWidget::BindToStatComponent(UMVStatComponent* InStatComponen
 	BoundStatComponent->OnHPChanged.AddUniqueDynamic(this, &UMVPlayerStatusWidget::HandleHPChanged);
 	BoundStatComponent->OnStaminaChanged.AddUniqueDynamic(this, &UMVPlayerStatusWidget::HandleStaminaChanged);
 	BoundStatComponent->OnMPChanged.AddUniqueDynamic(this, &UMVPlayerStatusWidget::HandleMPChanged);
+	BoundStatComponent->OnStatRecentLossHoldChanged.AddUniqueDynamic(
+		this,
+		&UMVPlayerStatusWidget::HandleStatRecentLossHoldChanged);
 
 	HandleHPChanged(BoundStatComponent->CurrentHP, BoundStatComponent->MaxHP);
 	HandleStaminaChanged(BoundStatComponent->CurrentStamina, BoundStatComponent->MaxStamina);
 	HandleMPChanged(BoundStatComponent->CurrentMP, BoundStatComponent->MaxMP);
+	HandleStatRecentLossHoldChanged(BoundStatComponent->IsRecoverableStatRecoveryPaused());
 }
 
 void UMVPlayerStatusWidget::UnbindStatComponent()
@@ -42,6 +45,10 @@ void UMVPlayerStatusWidget::UnbindStatComponent()
 	BoundStatComponent->OnHPChanged.RemoveDynamic(this, &UMVPlayerStatusWidget::HandleHPChanged);
 	BoundStatComponent->OnStaminaChanged.RemoveDynamic(this, &UMVPlayerStatusWidget::HandleStaminaChanged);
 	BoundStatComponent->OnMPChanged.RemoveDynamic(this, &UMVPlayerStatusWidget::HandleMPChanged);
+	BoundStatComponent->OnStatRecentLossHoldChanged.RemoveDynamic(
+		this,
+		&UMVPlayerStatusWidget::HandleStatRecentLossHoldChanged);
+	HandleStatRecentLossHoldChanged(false);
 	BoundStatComponent = nullptr;
 }
 
@@ -61,12 +68,10 @@ void UMVPlayerStatusWidget::NativeConstruct()
 
 	APawn* OwningPawn = GetOwningPlayerPawn();
 	BindToStatComponent(OwningPawn ? OwningPawn->FindComponentByClass<UMVStatComponent>() : nullptr);
-	BindToCharacter(Cast<AMVCharacterBase>(OwningPawn));
 }
 
 void UMVPlayerStatusWidget::NativeDestruct()
 {
-	UnbindCharacter();
 	UnbindStatComponent();
 	Super::NativeDestruct();
 }
@@ -141,38 +146,6 @@ void UMVPlayerStatusWidget::ConfigureStatusBars()
 		MPBar->SetLabelVisible(false);
 		MPBar->SetValueVisible(false);
 	}
-}
-
-void UMVPlayerStatusWidget::BindToCharacter(AMVCharacterBase* InCharacter)
-{
-	if (BoundCharacter == InCharacter)
-	{
-		return;
-	}
-
-	UnbindCharacter();
-	BoundCharacter = InCharacter;
-	if (!BoundCharacter)
-	{
-		return;
-	}
-
-	BoundCharacter->OnStatRecentLossHoldChanged.AddUniqueDynamic(
-		this,
-		&UMVPlayerStatusWidget::HandleStatRecentLossHoldChanged);
-}
-
-void UMVPlayerStatusWidget::UnbindCharacter()
-{
-	if (!BoundCharacter)
-	{
-		return;
-	}
-
-	BoundCharacter->OnStatRecentLossHoldChanged.RemoveDynamic(
-		this,
-		&UMVPlayerStatusWidget::HandleStatRecentLossHoldChanged);
-	BoundCharacter = nullptr;
 }
 
 void UMVPlayerStatusWidget::ApplyStatusBarSize(

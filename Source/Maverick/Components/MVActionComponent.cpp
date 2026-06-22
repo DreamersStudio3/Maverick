@@ -10,11 +10,6 @@
 
 namespace
 {
-const TCHAR* ActionDebugBoolText(const bool bValue)
-{
-	return bValue ? TEXT("true") : TEXT("false");
-}
-
 FVector NormalizeBufferedMovementInput(const FVector& MovementInputDirection)
 {
 	const FVector MovementInput2D(MovementInputDirection.X, MovementInputDirection.Y, 0.0f);
@@ -67,18 +62,6 @@ bool UMVActionComponent::TryStartActionById(
 {
 	if (IsActionRunning())
 	{
-		UE_LOG(
-			LogTemp,
-			Warning,
-			TEXT("[MVActionBuffer] RedirectToBuffer Owner=%s Requested=%d Active=%d Buffered=%d InputWindow=%d RecoveryWindow=%d MovementBlock=%d Consuming=%s"),
-			*GetNameSafe(GetOwner()),
-			ActionId,
-			ActiveActionId,
-			BufferedActionId,
-			InputBufferWindowCount,
-			RecoveryEscapeWindowCount,
-			MovementInputBlockCount,
-			ActionDebugBoolText(bConsumingBufferedAction));
 		return TryBufferActionById(ActionId);
 	}
 
@@ -89,13 +72,6 @@ bool UMVActionComponent::TryStartActionById(
 
 	if (!bConsumingBufferedAction && IsMovementInputBlocked())
 	{
-		UE_LOG(
-			LogTemp,
-			Warning,
-			TEXT("[MVActionBuffer] StartRejected MovementBlocked Owner=%s Requested=%d MovementBlock=%d"),
-			*GetNameSafe(GetOwner()),
-			ActionId,
-			MovementInputBlockCount);
 		return false;
 	}
 
@@ -154,13 +130,6 @@ bool UMVActionComponent::TryStartActionById(
 	}
 
 	OnActionStarted.Broadcast(ActionId);
-	UE_LOG(
-		LogTemp,
-		Warning,
-		TEXT("[MVActionBuffer] ActionStarted Owner=%s Action=%d Montage=%s"),
-		*GetNameSafe(GetOwner()),
-		ActionId,
-		*GetNameSafe(ActionMontage));
 	return true;
 }
 
@@ -172,20 +141,6 @@ void UMVActionComponent::FinishActiveAction(bool bInterrupted)
 	}
 
 	const int32 FinishedActionId = ActiveActionId;
-	UE_LOG(
-		LogTemp,
-		Warning,
-		TEXT("[MVActionBuffer] FinishActiveAction Owner=%s Finished=%d Interrupted=%s Buffered=%d HasBufferedInput=%s BufferedDir=%s InputWindow=%d RecoveryWindow=%d MovementBlock=%d"),
-		*GetNameSafe(GetOwner()),
-		FinishedActionId,
-		ActionDebugBoolText(bInterrupted),
-		BufferedActionId,
-		ActionDebugBoolText(bBufferedActionHasMovementInput),
-		*BufferedActionMovementInputDirection.ToCompactString(),
-		InputBufferWindowCount,
-		RecoveryEscapeWindowCount,
-		MovementInputBlockCount);
-
 	ActiveActionId = INDEX_NONE;
 	ActiveActionMontage = nullptr;
 	ActiveActionInstanceId = INDEX_NONE;
@@ -220,6 +175,16 @@ void UMVActionComponent::BeginActionStatRecoveryPause()
 	++ActionStatRecoveryPauseCount;
 	if (!bWasPaused)
 	{
+		if (!CachedStatComponent)
+		{
+			CacheOwnerReferences();
+		}
+
+		if (CachedStatComponent)
+		{
+			CachedStatComponent->BeginRecoverableStatRecoveryPause();
+		}
+
 		OnActionStatRecoveryPauseChanged.Broadcast(true);
 	}
 }
@@ -236,6 +201,16 @@ void UMVActionComponent::EndActionStatRecoveryPause()
 	if (ActionStatRecoveryPauseCount <= 0)
 	{
 		ActionStatRecoveryPauseCount = 0;
+		if (!CachedStatComponent)
+		{
+			CacheOwnerReferences();
+		}
+
+		if (CachedStatComponent)
+		{
+			CachedStatComponent->EndRecoverableStatRecoveryPause();
+		}
+
 		OnActionStatRecoveryPauseChanged.Broadcast(false);
 	}
 }
@@ -276,41 +251,16 @@ bool UMVActionComponent::TryBufferActionById(const int32 ActionId)
 {
 	if (!IsActionRunning() || ActionId <= 0)
 	{
-		UE_LOG(
-			LogTemp,
-			Warning,
-			TEXT("[MVActionBuffer] BufferRejected InvalidState Owner=%s Requested=%d Active=%d IsRunning=%s"),
-			*GetNameSafe(GetOwner()),
-			ActionId,
-			ActiveActionId,
-			ActionDebugBoolText(IsActionRunning()));
 		return false;
 	}
 
 	if (!IsInputBufferOpen() && !IsRecoveryEscapeWindowOpen())
 	{
-		UE_LOG(
-			LogTemp,
-			Warning,
-			TEXT("[MVActionBuffer] BufferRejected WindowClosed Owner=%s Requested=%d Active=%d InputWindow=%d RecoveryWindow=%d MovementBlock=%d"),
-			*GetNameSafe(GetOwner()),
-			ActionId,
-			ActiveActionId,
-			InputBufferWindowCount,
-			RecoveryEscapeWindowCount,
-			MovementInputBlockCount);
 		return false;
 	}
 
 	if (!FindActionIndexRow(ActionId))
 	{
-		UE_LOG(
-			LogTemp,
-			Warning,
-			TEXT("[MVActionBuffer] BufferRejected MissingActionRow Owner=%s Requested=%d Active=%d"),
-			*GetNameSafe(GetOwner()),
-			ActionId,
-			ActiveActionId);
 		return false;
 	}
 
@@ -318,45 +268,15 @@ bool UMVActionComponent::TryBufferActionById(const int32 ActionId)
 		? ResolveBufferedActionMovementInput.Execute(ActionId)
 		: FVector::ZeroVector;
 	BufferAction(ActionId, MovementInputDirection);
-	UE_LOG(
-		LogTemp,
-		Warning,
-		TEXT("[MVActionBuffer] Buffered Owner=%s Action=%d Active=%d HasInput=%s Dir=%s InputWindow=%d RecoveryWindow=%d MovementBlock=%d"),
-		*GetNameSafe(GetOwner()),
-		ActionId,
-		ActiveActionId,
-		ActionDebugBoolText(bBufferedActionHasMovementInput),
-		*BufferedActionMovementInputDirection.ToCompactString(),
-		InputBufferWindowCount,
-		RecoveryEscapeWindowCount,
-		MovementInputBlockCount);
 	if (IsRecoveryEscapeWindowOpen())
 	{
-		const bool bStartedBufferedAction = TryStartBufferedAction();
-		UE_LOG(
-			LogTemp,
-			Warning,
-			TEXT("[MVActionBuffer] BufferedImmediateConsumeAttempt Owner=%s Action=%d Started=%s"),
-			*GetNameSafe(GetOwner()),
-			ActionId,
-			ActionDebugBoolText(bStartedBufferedAction));
+		TryStartBufferedAction();
 	}
 	return true;
 }
 
 void UMVActionComponent::ClearBufferedAction()
 {
-	if (HasBufferedAction())
-	{
-		UE_LOG(
-			LogTemp,
-			Warning,
-			TEXT("[MVActionBuffer] ClearBufferedAction Owner=%s Buffered=%d HasInput=%s Dir=%s"),
-			*GetNameSafe(GetOwner()),
-			BufferedActionId,
-			ActionDebugBoolText(bBufferedActionHasMovementInput),
-			*BufferedActionMovementInputDirection.ToCompactString());
-	}
 	BufferedActionId = INDEX_NONE;
 	BufferedActionMovementInputDirection = FVector::ZeroVector;
 	bBufferedActionHasMovementInput = false;
@@ -375,23 +295,8 @@ void UMVActionComponent::UpdateBufferedActionMovementInput(const FVector& Moveme
 		return;
 	}
 
-	const bool bPreviousHasInput = bBufferedActionHasMovementInput;
-	const FVector PreviousDirection = BufferedActionMovementInputDirection;
 	BufferedActionMovementInputDirection = NormalizedMovementInput;
 	bBufferedActionHasMovementInput = !NormalizedMovementInput.IsNearlyZero();
-	if (bPreviousHasInput != bBufferedActionHasMovementInput
-		|| !PreviousDirection.Equals(BufferedActionMovementInputDirection, KINDA_SMALL_NUMBER))
-	{
-		UE_LOG(
-			LogTemp,
-			Warning,
-			TEXT("[MVActionBuffer] BufferedInputUpdated Owner=%s Buffered=%d HasInput=%s Dir=%s RawDir=%s"),
-			*GetNameSafe(GetOwner()),
-			BufferedActionId,
-			ActionDebugBoolText(bBufferedActionHasMovementInput),
-			*BufferedActionMovementInputDirection.ToCompactString(),
-			*MovementInputDirection.ToCompactString());
-	}
 }
 
 bool UMVActionComponent::HasBufferedAction() const
@@ -443,49 +348,21 @@ bool UMVActionComponent::TryStartBufferedAction()
 {
 	if (bConsumingBufferedAction)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[MVActionBuffer] ConsumeBlocked AlreadyConsuming Owner=%s"), *GetNameSafe(GetOwner()));
 		return false;
 	}
 
 	if (!HasBufferedAction())
 	{
-		UE_LOG(
-			LogTemp,
-			Warning,
-			TEXT("[MVActionBuffer] ConsumeBlocked NoBufferedAction Owner=%s Active=%d InputWindow=%d RecoveryWindow=%d MovementBlock=%d"),
-			*GetNameSafe(GetOwner()),
-			ActiveActionId,
-			InputBufferWindowCount,
-			RecoveryEscapeWindowCount,
-			MovementInputBlockCount);
 		return false;
 	}
 
 	if (!IsRecoveryEscapeWindowOpen())
 	{
-		UE_LOG(
-			LogTemp,
-			Warning,
-			TEXT("[MVActionBuffer] ConsumeBlocked RecoveryWindowClosed Owner=%s Buffered=%d InputWindow=%d RecoveryWindow=%d MovementBlock=%d"),
-			*GetNameSafe(GetOwner()),
-			BufferedActionId,
-			InputBufferWindowCount,
-			RecoveryEscapeWindowCount,
-			MovementInputBlockCount);
 		return false;
 	}
 
 	if (IsMovementInputBlocked())
 	{
-		UE_LOG(
-			LogTemp,
-			Warning,
-			TEXT("[MVActionBuffer] ConsumeBlocked MovementBlocked Owner=%s Buffered=%d InputWindow=%d RecoveryWindow=%d MovementBlock=%d"),
-			*GetNameSafe(GetOwner()),
-			BufferedActionId,
-			InputBufferWindowCount,
-			RecoveryEscapeWindowCount,
-			MovementInputBlockCount);
 		return false;
 	}
 
@@ -498,31 +375,10 @@ bool UMVActionComponent::TryStartBufferedAction()
 			MovementInputDirectionToStart,
 			bHasMovementInputToStart))
 	{
-		UE_LOG(
-			LogTemp,
-			Warning,
-			TEXT("[MVActionBuffer] ConsumeRejectedByDelegate Owner=%s Buffered=%d HasInput=%s Dir=%s Active=%d"),
-			*GetNameSafe(GetOwner()),
-			ActionIdToStart,
-			ActionDebugBoolText(bHasMovementInputToStart),
-			*MovementInputDirectionToStart.ToCompactString(),
-			ActiveActionId);
 		ClearBufferedAction();
 		return false;
 	}
 
-	UE_LOG(
-		LogTemp,
-		Warning,
-		TEXT("[MVActionBuffer] ConsumeStart Owner=%s Buffered=%d HasInput=%s Dir=%s Active=%d InputWindow=%d RecoveryWindow=%d MovementBlock=%d"),
-		*GetNameSafe(GetOwner()),
-		ActionIdToStart,
-		ActionDebugBoolText(bHasMovementInputToStart),
-		*MovementInputDirectionToStart.ToCompactString(),
-		ActiveActionId,
-		InputBufferWindowCount,
-		RecoveryEscapeWindowCount,
-		MovementInputBlockCount);
 	ClearBufferedAction();
 
 	bConsumingBufferedAction = true;
@@ -536,14 +392,6 @@ bool UMVActionComponent::TryStartBufferedAction()
 	}
 
 	const bool bStarted = TryStartActionById(ActionIdToStart);
-	UE_LOG(
-		LogTemp,
-		Warning,
-		TEXT("[MVActionBuffer] ConsumeEnd Owner=%s Buffered=%d Started=%s ActiveNow=%d"),
-		*GetNameSafe(GetOwner()),
-		ActionIdToStart,
-		ActionDebugBoolText(bStarted),
-		ActiveActionId);
 
 	bConsumingBufferedAction = false;
 	ConsumingBufferedActionId = INDEX_NONE;
@@ -556,82 +404,29 @@ bool UMVActionComponent::TryStartBufferedAction()
 void UMVActionComponent::BeginInputBufferWindow()
 {
 	++InputBufferWindowCount;
-	UE_LOG(
-		LogTemp,
-		Warning,
-		TEXT("[MVActionBuffer] InputWindowBegin Owner=%s Count=%d Active=%d Buffered=%d RecoveryWindow=%d MovementBlock=%d"),
-		*GetNameSafe(GetOwner()),
-		InputBufferWindowCount,
-		ActiveActionId,
-		BufferedActionId,
-		RecoveryEscapeWindowCount,
-		MovementInputBlockCount);
 }
 
 void UMVActionComponent::EndInputBufferWindow()
 {
 	InputBufferWindowCount = FMath::Max(0, InputBufferWindowCount - 1);
-	UE_LOG(
-		LogTemp,
-		Warning,
-		TEXT("[MVActionBuffer] InputWindowEnd Owner=%s Count=%d Active=%d Buffered=%d RecoveryWindow=%d MovementBlock=%d"),
-		*GetNameSafe(GetOwner()),
-		InputBufferWindowCount,
-		ActiveActionId,
-		BufferedActionId,
-		RecoveryEscapeWindowCount,
-		MovementInputBlockCount);
 	if (!IsInputBufferOpen() && IsRecoveryEscapeWindowOpen())
 	{
-		const bool bStartedBufferedAction = TryStartBufferedAction();
-		UE_LOG(
-			LogTemp,
-			Warning,
-			TEXT("[MVActionBuffer] InputWindowEndConsumeAttempt Owner=%s Started=%s"),
-			*GetNameSafe(GetOwner()),
-			ActionDebugBoolText(bStartedBufferedAction));
+		TryStartBufferedAction();
 	}
 }
 
 void UMVActionComponent::BeginMovementInputBlock()
 {
 	++MovementInputBlockCount;
-	UE_LOG(
-		LogTemp,
-		Warning,
-		TEXT("[MVActionBuffer] MovementBlockBegin Owner=%s Count=%d Active=%d Buffered=%d InputWindow=%d RecoveryWindow=%d"),
-		*GetNameSafe(GetOwner()),
-		MovementInputBlockCount,
-		ActiveActionId,
-		BufferedActionId,
-		InputBufferWindowCount,
-		RecoveryEscapeWindowCount);
 }
 
 void UMVActionComponent::EndMovementInputBlock()
 {
 	const bool bWasBlocked = MovementInputBlockCount > 0;
 	MovementInputBlockCount = FMath::Max(0, MovementInputBlockCount - 1);
-	UE_LOG(
-		LogTemp,
-		Warning,
-		TEXT("[MVActionBuffer] MovementBlockEnd Owner=%s Count=%d WasBlocked=%s Active=%d Buffered=%d InputWindow=%d RecoveryWindow=%d"),
-		*GetNameSafe(GetOwner()),
-		MovementInputBlockCount,
-		ActionDebugBoolText(bWasBlocked),
-		ActiveActionId,
-		BufferedActionId,
-		InputBufferWindowCount,
-		RecoveryEscapeWindowCount);
 	if (bWasBlocked && !IsMovementInputBlocked() && IsRecoveryEscapeWindowOpen())
 	{
-		const bool bStartedBufferedAction = TryStartBufferedAction();
-		UE_LOG(
-			LogTemp,
-			Warning,
-			TEXT("[MVActionBuffer] MovementBlockEndConsumeAttempt Owner=%s Started=%s"),
-			*GetNameSafe(GetOwner()),
-			ActionDebugBoolText(bStartedBufferedAction));
+		TryStartBufferedAction();
 	}
 }
 
@@ -643,25 +438,7 @@ bool UMVActionComponent::IsMovementInputBlocked() const
 void UMVActionComponent::BeginRecoveryEscapeWindow()
 {
 	++RecoveryEscapeWindowCount;
-	UE_LOG(
-		LogTemp,
-		Warning,
-		TEXT("[MVActionBuffer] RecoveryWindowBegin Owner=%s Count=%d Active=%d Buffered=%d HasInput=%s Dir=%s InputWindow=%d MovementBlock=%d"),
-		*GetNameSafe(GetOwner()),
-		RecoveryEscapeWindowCount,
-		ActiveActionId,
-		BufferedActionId,
-		ActionDebugBoolText(bBufferedActionHasMovementInput),
-		*BufferedActionMovementInputDirection.ToCompactString(),
-		InputBufferWindowCount,
-		MovementInputBlockCount);
-	const bool bStartedBufferedAction = TryStartBufferedAction();
-	UE_LOG(
-		LogTemp,
-		Warning,
-		TEXT("[MVActionBuffer] RecoveryWindowBeginConsumeAttempt Owner=%s Started=%s"),
-		*GetNameSafe(GetOwner()),
-		ActionDebugBoolText(bStartedBufferedAction));
+	TryStartBufferedAction();
 }
 
 void UMVActionComponent::EndRecoveryEscapeWindow()
@@ -669,29 +446,10 @@ void UMVActionComponent::EndRecoveryEscapeWindow()
 	if (RecoveryEscapeWindowCount <= 0)
 	{
 		RecoveryEscapeWindowCount = 0;
-		UE_LOG(LogTemp, Warning, TEXT("[MVActionBuffer] RecoveryWindowEndIgnored Owner=%s CountAlreadyZero"), *GetNameSafe(GetOwner()));
 		return;
 	}
 
-	UE_LOG(
-		LogTemp,
-		Warning,
-		TEXT("[MVActionBuffer] RecoveryWindowEnd Owner=%s CountBefore=%d Active=%d Buffered=%d HasInput=%s Dir=%s InputWindow=%d MovementBlock=%d"),
-		*GetNameSafe(GetOwner()),
-		RecoveryEscapeWindowCount,
-		ActiveActionId,
-		BufferedActionId,
-		ActionDebugBoolText(bBufferedActionHasMovementInput),
-		*BufferedActionMovementInputDirection.ToCompactString(),
-		InputBufferWindowCount,
-		MovementInputBlockCount);
-	const bool bStartedBufferedAction = TryStartBufferedAction();
-	UE_LOG(
-		LogTemp,
-		Warning,
-		TEXT("[MVActionBuffer] RecoveryWindowEndConsumeAttempt Owner=%s Started=%s"),
-		*GetNameSafe(GetOwner()),
-		ActionDebugBoolText(bStartedBufferedAction));
+	TryStartBufferedAction();
 	RecoveryEscapeWindowCount = FMath::Max(0, RecoveryEscapeWindowCount - 1);
 }
 
@@ -902,17 +660,6 @@ void UMVActionComponent::HandleActionMontageEnded(
 {
 	if (ActionInstanceId != ActiveActionInstanceId || Montage != ActiveActionMontage)
 	{
-		UE_LOG(
-			LogTemp,
-			Warning,
-			TEXT("[MVActionBuffer] IgnoreStaleMontageEnded Owner=%s Montage=%s Interrupted=%s EndInstance=%d ActiveInstance=%d Active=%d ActiveMontage=%s"),
-			*GetNameSafe(GetOwner()),
-			*GetNameSafe(Montage),
-			ActionDebugBoolText(bInterrupted),
-			ActionInstanceId,
-			ActiveActionInstanceId,
-			ActiveActionId,
-			*GetNameSafe(ActiveActionMontage));
 		return;
 	}
 
