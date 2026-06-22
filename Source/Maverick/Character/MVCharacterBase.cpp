@@ -86,9 +86,6 @@ void AMVCharacterBase::BeginPlay()
 		ActionComponent->OnActionStatRecoveryPauseChanged.AddUniqueDynamic(
 			this,
 			&AMVCharacterBase::HandleActionStatRecoveryPauseChanged);
-		ActionComponent->OnActionPreparing.AddUniqueDynamic(
-			this,
-			&AMVCharacterBase::HandleActionPreparing);
 		ActionComponent->OnActionCostConsumed.AddUniqueDynamic(
 			this,
 			&AMVCharacterBase::HandleActionCostConsumed);
@@ -115,6 +112,12 @@ void AMVCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
+void AMVCharacterBase::AddMovementInput(const FVector WorldDirection, const float ScaleValue, const bool bForce)
+{
+	OnMovementInputReceived.Broadcast(WorldDirection * ScaleValue);
+	Super::AddMovementInput(WorldDirection, ScaleValue, bForce);
+}
+
 void AMVCharacterBase::AttemptCrouch()
 {
 	if (bIsFalling)
@@ -138,45 +141,20 @@ void AMVCharacterBase::AttemptCrouch()
 
 bool AMVCharacterBase::HasDodgeMovementInput() const
 {
-	if (bHasMovementInput)
-	{
-		return true;
-	}
-
-	const UCharacterMovementComponent* MovementComponent = GetCharacterMovement();
-	if (!MovementComponent)
-	{
-		return false;
-	}
-
-	const FVector Acceleration2D(
-		MovementComponent->GetCurrentAcceleration().X,
-		MovementComponent->GetCurrentAcceleration().Y,
-		0.0f);
-	return !Acceleration2D.IsNearlyZero(1.0f);
+	return bHasDodgeMovementInput;
 }
 
-void AMVCharacterBase::RefreshDodgeChooserData()
+void AMVCharacterBase::ApplyLocomotionDirectionSnapshot(const FVector& MovementDirection)
 {
-	const UCharacterMovementComponent* MovementComponent = GetCharacterMovement();
-	const FVector CurrentAcceleration2D = MovementComponent
-		? FVector(MovementComponent->GetCurrentAcceleration().X, MovementComponent->GetCurrentAcceleration().Y, 0.0f)
-		: FVector::ZeroVector;
-	if (!CurrentAcceleration2D.IsNearlyZero(1.0f))
+	const FVector MovementDirection2D(MovementDirection.X, MovementDirection.Y, 0.0f);
+	if (MovementDirection2D.IsNearlyZero())
 	{
-		CharacterMoveDirectionAngleFromAcceleration =
-			UKismetAnimationLibrary::CalculateDirection(CurrentAcceleration2D, GetActorRotation());
+		return;
 	}
 
-	if (MovementComponent)
-	{
-		const float InputRatio = UKismetMathLibrary::SafeDivide(
-			CurrentAcceleration2D.Length(),
-			MovementComponent->GetMaxAcceleration());
-		bHasMovementInput = InputRatio > 0.9f;
-	}
-
-	bHasDodgeMovementInput = HasDodgeMovementInput();
+	CharacterMoveDirectionAngleFromAcceleration = UKismetAnimationLibrary::CalculateDirection(
+		MovementDirection2D,
+		GetActorRotation());
 	UpdateLocomotionDirection();
 }
 
@@ -192,17 +170,23 @@ EMVEquippedStyle AMVCharacterBase::GetEquippedStyle() const
 
 void AMVCharacterBase::BeginMovementInputBlock()
 {
-	++MovementInputBlockCount;
+	if (ActionComponent)
+	{
+		ActionComponent->BeginMovementInputBlock();
+	}
 }
 
 void AMVCharacterBase::EndMovementInputBlock()
 {
-	MovementInputBlockCount = FMath::Max(0, MovementInputBlockCount - 1);
+	if (ActionComponent)
+	{
+		ActionComponent->EndMovementInputBlock();
+	}
 }
 
 bool AMVCharacterBase::IsMovementInputBlocked() const
 {
-	return MovementInputBlockCount > 0;
+	return ActionComponent && ActionComponent->IsMovementInputBlocked();
 }
 
 void AMVCharacterBase::BeginInvincibility()
@@ -255,7 +239,7 @@ void AMVCharacterBase::UpdateCharacterValue()
 		bHasMovementInput = false;
 	}
 
-	RefreshDodgeChooserData();
+	bHasDodgeMovementInput = bHasMovementInput || !CurrentAcceleration2D.IsNearlyZero(1.0f);
 	UpdateLocomotionDirection();
 }
 
@@ -408,14 +392,6 @@ void AMVCharacterBase::HandleActionStatRecoveryPauseChanged(bool bPaused)
 	}
 
 	OnStatRecentLossHoldChanged.Broadcast(bPaused);
-}
-
-void AMVCharacterBase::HandleActionPreparing(const int32 ActionId)
-{
-	if (ActionId == MVActionIds::Dodge && DodgeComponent)
-	{
-		DodgeComponent->PrepareDodgeAction();
-	}
 }
 
 void AMVCharacterBase::HandleActionCostConsumed(int32 ActionId)

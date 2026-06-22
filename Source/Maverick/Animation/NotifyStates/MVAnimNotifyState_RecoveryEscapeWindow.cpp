@@ -1,4 +1,4 @@
-#include "Animation/NotifyStates/MVAnimNotifyState_BlockMovementInput.h"
+#include "Animation/NotifyStates/MVAnimNotifyState_RecoveryEscapeWindow.h"
 
 #include "Components/MVActionComponent.h"
 #include "Components/SkeletalMeshComponent.h"
@@ -6,14 +6,14 @@
 
 namespace
 {
-UMVActionComponent* FindBlockMovementInputActionComponent(const USkeletalMeshComponent* MeshComp)
+UMVActionComponent* FindRecoveryEscapeActionComponent(const USkeletalMeshComponent* MeshComp)
 {
 	AActor* Owner = MeshComp ? MeshComp->GetOwner() : nullptr;
 	return Owner ? Owner->FindComponentByClass<UMVActionComponent>() : nullptr;
 }
 }
 
-void UMVAnimNotifyState_BlockMovementInput::NotifyBegin(
+void UMVAnimNotifyState_RecoveryEscapeWindow::NotifyBegin(
 	USkeletalMeshComponent* MeshComp,
 	UAnimSequenceBase* Animation,
 	float TotalDuration,
@@ -21,26 +21,26 @@ void UMVAnimNotifyState_BlockMovementInput::NotifyBegin(
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
 
-	if (UMVActionComponent* ActionComponent = FindBlockMovementInputActionComponent(MeshComp))
+	if (UMVActionComponent* ActionComponent = FindRecoveryEscapeActionComponent(MeshComp))
 	{
-		ActionComponent->BeginMovementInputBlock();
+		ActionComponent->BeginRecoveryEscapeWindow();
 	}
 }
 
-void UMVAnimNotifyState_BlockMovementInput::NotifyEnd(
+void UMVAnimNotifyState_RecoveryEscapeWindow::NotifyEnd(
 	USkeletalMeshComponent* MeshComp,
 	UAnimSequenceBase* Animation,
 	const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyEnd(MeshComp, Animation, EventReference);
 
-	if (UMVActionComponent* ActionComponent = FindBlockMovementInputActionComponent(MeshComp))
+	if (UMVActionComponent* ActionComponent = FindRecoveryEscapeActionComponent(MeshComp))
 	{
-		ActionComponent->EndMovementInputBlock();
+		ActionComponent->EndRecoveryEscapeWindow();
 	}
 }
 
-FString UMVAnimNotifyState_BlockMovementInput::GetNotifyName_Implementation() const
+FString UMVAnimNotifyState_RecoveryEscapeWindow::GetNotifyName_Implementation() const
 {
-	return TEXT("Block Movement Input");
+	return TEXT("Recovery Escape Window");
 }

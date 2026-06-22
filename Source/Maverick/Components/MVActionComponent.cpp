@@ -8,6 +8,23 @@
 #include "GameFramework/Character.h"
 #include "Tables/MVTableManager.h"
 
+namespace
+{
+const TCHAR* DebugBoolText(const bool bValue)
+{
+	return bValue ? TEXT("true") : TEXT("false");
+}
+
+FVector NormalizeBufferedMovementInput(const FVector& MovementInputDirection)
+{
+	const FVector MovementInput2D(MovementInputDirection.X, MovementInputDirection.Y, 0.0f);
+	return MovementInput2D.IsNearlyZero()
+		? FVector::ZeroVector
+		: MovementInput2D.GetSafeNormal2D();
+}
+
+}
+
 UMVActionComponent::UMVActionComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
@@ -50,11 +67,35 @@ bool UMVActionComponent::TryStartActionById(
 {
 	if (IsActionRunning())
 	{
+		UE_LOG(
+			LogTemp,
+			Warning,
+			TEXT("[MVActionBuffer] RedirectToBuffer Owner=%s Requested=%d Active=%d Buffered=%d InputWindow=%d RecoveryWindow=%d MovementBlock=%d Consuming=%s"),
+			*GetNameSafe(GetOwner()),
+			ActionId,
+			ActiveActionId,
+			BufferedActionId,
+			InputBufferWindowCount,
+			RecoveryEscapeWindowCount,
+			MovementInputBlockCount,
+			DebugBoolText(bConsumingBufferedAction));
 		return TryBufferActionById(ActionId);
 	}
 
 	if (PlayRate <= 0.0f)
 	{
+		return false;
+	}
+
+	if (!bConsumingBufferedAction && IsMovementInputBlocked())
+	{
+		UE_LOG(
+			LogTemp,
+			Warning,
+			TEXT("[MVActionBuffer] StartRejected MovementBlocked Owner=%s Requested=%d MovementBlock=%d"),
+			*GetNameSafe(GetOwner()),
+			ActionId,
+			MovementInputBlockCount);
 		return false;
 	}
 
@@ -98,9 +139,10 @@ bool UMVActionComponent::TryStartActionById(
 
 	ActiveActionId = ActionId;
 	ActiveActionMontage = ActionMontage;
+	ActiveActionInstanceId = ++NextActionInstanceId;
 
 	FOnMontageEnded EndDelegate;
-	EndDelegate.BindUObject(this, &UMVActionComponent::HandleActionMontageEnded);
+	EndDelegate.BindUObject(this, &UMVActionComponent::HandleActionMontageEnded, ActiveActionInstanceId);
 	AnimInstance->Montage_SetEndDelegate(EndDelegate, ActionMontage);
 
 	BeginActionStatRecoveryPause();
@@ -112,6 +154,13 @@ bool UMVActionComponent::TryStartActionById(
 	}
 
 	OnActionStarted.Broadcast(ActionId);
+	UE_LOG(
+		LogTemp,
+		Warning,
+		TEXT("[MVActionBuffer] ActionStarted Owner=%s Action=%d Montage=%s"),
+		*GetNameSafe(GetOwner()),
+		ActionId,
+		*GetNameSafe(ActionMontage));
 	return true;
 }
 
@@ -123,21 +172,45 @@ void UMVActionComponent::FinishActiveAction(bool bInterrupted)
 	}
 
 	const int32 FinishedActionId = ActiveActionId;
-	const int32 PendingBufferedActionId = !bInterrupted && HasBufferedAction()
-		? BufferedActionId
-		: INDEX_NONE;
+	UE_LOG(
+		LogTemp,
+		Warning,
+		TEXT("[MVActionBuffer] FinishActiveAction Owner=%s Finished=%d Interrupted=%s Buffered=%d HasBufferedInput=%s BufferedDir=%s InputWindow=%d RecoveryWindow=%d MovementBlock=%d"),
+		*GetNameSafe(GetOwner()),
+		FinishedActionId,
+		DebugBoolText(bInterrupted),
+		BufferedActionId,
+		DebugBoolText(bBufferedActionHasMovementInput),
+		*BufferedActionMovementInputDirection.ToCompactString(),
+		InputBufferWindowCount,
+		RecoveryEscapeWindowCount,
+		MovementInputBlockCount);
 
 	ActiveActionId = INDEX_NONE;
 	ActiveActionMontage = nullptr;
+	ActiveActionInstanceId = INDEX_NONE;
 	ResetActionNotifyState();
 	ClearBufferedAction();
 
 	EndActionStatRecoveryPause();
 	OnActionEnded.Broadcast(FinishedActionId, bInterrupted);
+}
 
-	if (PendingBufferedActionId != INDEX_NONE)
+void UMVActionComponent::CompleteActiveAction()
+{
+	FinishActiveAction(false);
+}
+
+void UMVActionComponent::CancelActiveAction(const float BlendOutTime)
+{
+	UAnimInstance* AnimInstance = GetOwnerAnimInstance();
+	UAnimMontage* MontageToStop = ActiveActionMontage;
+
+	FinishActiveAction(true);
+
+	if (AnimInstance && MontageToStop)
 	{
-		TryStartActionById(PendingBufferedActionId);
+		AnimInstance->Montage_Stop(FMath::Max(0.0f, BlendOutTime), MontageToStop);
 	}
 }
 
@@ -170,6 +243,8 @@ void UMVActionComponent::EndActionStatRecoveryPause()
 void UMVActionComponent::ResetActionNotifyState()
 {
 	InputBufferWindowCount = 0;
+	MovementInputBlockCount = 0;
+	RecoveryEscapeWindowCount = 0;
 }
 
 bool UMVActionComponent::IsActionStatRecoveryPaused() const
@@ -199,23 +274,124 @@ bool UMVActionComponent::TryBufferAction(const EMVActionId ActionId)
 
 bool UMVActionComponent::TryBufferActionById(const int32 ActionId)
 {
-	if (!IsActionRunning() || !IsInputBufferOpen() || ActionId <= 0)
+	if (!IsActionRunning() || ActionId <= 0)
 	{
+		UE_LOG(
+			LogTemp,
+			Warning,
+			TEXT("[MVActionBuffer] BufferRejected InvalidState Owner=%s Requested=%d Active=%d IsRunning=%s"),
+			*GetNameSafe(GetOwner()),
+			ActionId,
+			ActiveActionId,
+			DebugBoolText(IsActionRunning()));
+		return false;
+	}
+
+	if (!IsInputBufferOpen() && !IsRecoveryEscapeWindowOpen())
+	{
+		UE_LOG(
+			LogTemp,
+			Warning,
+			TEXT("[MVActionBuffer] BufferRejected WindowClosed Owner=%s Requested=%d Active=%d InputWindow=%d RecoveryWindow=%d MovementBlock=%d"),
+			*GetNameSafe(GetOwner()),
+			ActionId,
+			ActiveActionId,
+			InputBufferWindowCount,
+			RecoveryEscapeWindowCount,
+			MovementInputBlockCount);
 		return false;
 	}
 
 	if (!FindActionIndexRow(ActionId))
 	{
+		UE_LOG(
+			LogTemp,
+			Warning,
+			TEXT("[MVActionBuffer] BufferRejected MissingActionRow Owner=%s Requested=%d Active=%d"),
+			*GetNameSafe(GetOwner()),
+			ActionId,
+			ActiveActionId);
 		return false;
 	}
 
-	BufferedActionId = ActionId;
+	const FVector MovementInputDirection = ResolveBufferedActionMovementInput.IsBound()
+		? ResolveBufferedActionMovementInput.Execute(ActionId)
+		: FVector::ZeroVector;
+	BufferAction(ActionId, MovementInputDirection);
+	UE_LOG(
+		LogTemp,
+		Warning,
+		TEXT("[MVActionBuffer] Buffered Owner=%s Action=%d Active=%d HasInput=%s Dir=%s InputWindow=%d RecoveryWindow=%d MovementBlock=%d"),
+		*GetNameSafe(GetOwner()),
+		ActionId,
+		ActiveActionId,
+		DebugBoolText(bBufferedActionHasMovementInput),
+		*BufferedActionMovementInputDirection.ToCompactString(),
+		InputBufferWindowCount,
+		RecoveryEscapeWindowCount,
+		MovementInputBlockCount);
+	if (IsRecoveryEscapeWindowOpen())
+	{
+		const bool bStartedBufferedAction = TryStartBufferedAction();
+		UE_LOG(
+			LogTemp,
+			Warning,
+			TEXT("[MVActionBuffer] BufferedImmediateConsumeAttempt Owner=%s Action=%d Started=%s"),
+			*GetNameSafe(GetOwner()),
+			ActionId,
+			DebugBoolText(bStartedBufferedAction));
+	}
 	return true;
 }
 
 void UMVActionComponent::ClearBufferedAction()
 {
+	if (HasBufferedAction())
+	{
+		UE_LOG(
+			LogTemp,
+			Warning,
+			TEXT("[MVActionBuffer] ClearBufferedAction Owner=%s Buffered=%d HasInput=%s Dir=%s"),
+			*GetNameSafe(GetOwner()),
+			BufferedActionId,
+			DebugBoolText(bBufferedActionHasMovementInput),
+			*BufferedActionMovementInputDirection.ToCompactString());
+	}
 	BufferedActionId = INDEX_NONE;
+	BufferedActionMovementInputDirection = FVector::ZeroVector;
+	bBufferedActionHasMovementInput = false;
+}
+
+void UMVActionComponent::UpdateBufferedActionMovementInput(const FVector& MovementInputDirection)
+{
+	if (!HasBufferedAction())
+	{
+		return;
+	}
+
+	const FVector NormalizedMovementInput = NormalizeBufferedMovementInput(MovementInputDirection);
+	if (NormalizedMovementInput.IsNearlyZero())
+	{
+		return;
+	}
+
+	const bool bPreviousHasInput = bBufferedActionHasMovementInput;
+	const FVector PreviousDirection = BufferedActionMovementInputDirection;
+	BufferedActionMovementInputDirection = NormalizedMovementInput;
+	bBufferedActionHasMovementInput = !NormalizedMovementInput.IsNearlyZero();
+	if (bPreviousHasInput != bBufferedActionHasMovementInput
+		|| !PreviousDirection.Equals(BufferedActionMovementInputDirection, KINDA_SMALL_NUMBER))
+	{
+		UE_LOG(
+			LogTemp,
+			Warning,
+			TEXT("[MVActionBuffer] BufferedInputUpdated Owner=%s Buffered=%d HasInput=%s Dir=%s RawDir=%s"),
+			*GetNameSafe(GetOwner()),
+			BufferedActionId,
+			DebugBoolText(bBufferedActionHasMovementInput),
+			*BufferedActionMovementInputDirection.ToCompactString(),
+			*MovementInputDirection.ToCompactString());
+	}
 }
 
 bool UMVActionComponent::HasBufferedAction() const
@@ -228,19 +404,308 @@ int32 UMVActionComponent::GetBufferedActionId() const
 	return BufferedActionId;
 }
 
+bool UMVActionComponent::HasBufferedActionMovementInput() const
+{
+	return bBufferedActionHasMovementInput;
+}
+
+FVector UMVActionComponent::GetBufferedActionMovementInputDirection() const
+{
+	return BufferedActionMovementInputDirection;
+}
+
+bool UMVActionComponent::IsConsumingBufferedAction() const
+{
+	return bConsumingBufferedAction;
+}
+
+int32 UMVActionComponent::GetConsumingBufferedActionId() const
+{
+	return ConsumingBufferedActionId;
+}
+
+bool UMVActionComponent::HasConsumingBufferedActionMovementInput() const
+{
+	return bConsumingBufferedActionHasMovementInput;
+}
+
+FVector UMVActionComponent::GetConsumingBufferedActionMovementInputDirection() const
+{
+	return ConsumingBufferedActionMovementInputDirection;
+}
+
 bool UMVActionComponent::IsInputBufferOpen() const
 {
 	return InputBufferWindowCount > 0;
 }
 
+bool UMVActionComponent::TryStartBufferedAction()
+{
+	if (bConsumingBufferedAction)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[MVActionBuffer] ConsumeBlocked AlreadyConsuming Owner=%s"), *GetNameSafe(GetOwner()));
+		return false;
+	}
+
+	if (!HasBufferedAction())
+	{
+		UE_LOG(
+			LogTemp,
+			Warning,
+			TEXT("[MVActionBuffer] ConsumeBlocked NoBufferedAction Owner=%s Active=%d InputWindow=%d RecoveryWindow=%d MovementBlock=%d"),
+			*GetNameSafe(GetOwner()),
+			ActiveActionId,
+			InputBufferWindowCount,
+			RecoveryEscapeWindowCount,
+			MovementInputBlockCount);
+		return false;
+	}
+
+	if (!IsRecoveryEscapeWindowOpen())
+	{
+		UE_LOG(
+			LogTemp,
+			Warning,
+			TEXT("[MVActionBuffer] ConsumeBlocked RecoveryWindowClosed Owner=%s Buffered=%d InputWindow=%d RecoveryWindow=%d MovementBlock=%d"),
+			*GetNameSafe(GetOwner()),
+			BufferedActionId,
+			InputBufferWindowCount,
+			RecoveryEscapeWindowCount,
+			MovementInputBlockCount);
+		return false;
+	}
+
+	if (IsMovementInputBlocked())
+	{
+		UE_LOG(
+			LogTemp,
+			Warning,
+			TEXT("[MVActionBuffer] ConsumeBlocked MovementBlocked Owner=%s Buffered=%d InputWindow=%d RecoveryWindow=%d MovementBlock=%d"),
+			*GetNameSafe(GetOwner()),
+			BufferedActionId,
+			InputBufferWindowCount,
+			RecoveryEscapeWindowCount,
+			MovementInputBlockCount);
+		return false;
+	}
+
+	const int32 ActionIdToStart = BufferedActionId;
+	const FVector MovementInputDirectionToStart = BufferedActionMovementInputDirection;
+	const bool bHasMovementInputToStart = bBufferedActionHasMovementInput;
+	if (CanConsumeBufferedAction.IsBound()
+		&& !CanConsumeBufferedAction.Execute(
+			ActionIdToStart,
+			MovementInputDirectionToStart,
+			bHasMovementInputToStart))
+	{
+		UE_LOG(
+			LogTemp,
+			Warning,
+			TEXT("[MVActionBuffer] ConsumeRejectedByDelegate Owner=%s Buffered=%d HasInput=%s Dir=%s Active=%d"),
+			*GetNameSafe(GetOwner()),
+			ActionIdToStart,
+			DebugBoolText(bHasMovementInputToStart),
+			*MovementInputDirectionToStart.ToCompactString(),
+			ActiveActionId);
+		ClearBufferedAction();
+		return false;
+	}
+
+	UE_LOG(
+		LogTemp,
+		Warning,
+		TEXT("[MVActionBuffer] ConsumeStart Owner=%s Buffered=%d HasInput=%s Dir=%s Active=%d InputWindow=%d RecoveryWindow=%d MovementBlock=%d"),
+		*GetNameSafe(GetOwner()),
+		ActionIdToStart,
+		DebugBoolText(bHasMovementInputToStart),
+		*MovementInputDirectionToStart.ToCompactString(),
+		ActiveActionId,
+		InputBufferWindowCount,
+		RecoveryEscapeWindowCount,
+		MovementInputBlockCount);
+	ClearBufferedAction();
+
+	bConsumingBufferedAction = true;
+	ConsumingBufferedActionId = ActionIdToStart;
+	ConsumingBufferedActionMovementInputDirection = MovementInputDirectionToStart;
+	bConsumingBufferedActionHasMovementInput = bHasMovementInputToStart;
+
+	if (IsActionRunning())
+	{
+		CancelActiveAction(0.1f);
+	}
+
+	const bool bStarted = TryStartActionById(ActionIdToStart);
+	UE_LOG(
+		LogTemp,
+		Warning,
+		TEXT("[MVActionBuffer] ConsumeEnd Owner=%s Buffered=%d Started=%s ActiveNow=%d"),
+		*GetNameSafe(GetOwner()),
+		ActionIdToStart,
+		DebugBoolText(bStarted),
+		ActiveActionId);
+
+	bConsumingBufferedAction = false;
+	ConsumingBufferedActionId = INDEX_NONE;
+	ConsumingBufferedActionMovementInputDirection = FVector::ZeroVector;
+	bConsumingBufferedActionHasMovementInput = false;
+
+	return bStarted;
+}
+
 void UMVActionComponent::BeginInputBufferWindow()
 {
 	++InputBufferWindowCount;
+	UE_LOG(
+		LogTemp,
+		Warning,
+		TEXT("[MVActionBuffer] InputWindowBegin Owner=%s Count=%d Active=%d Buffered=%d RecoveryWindow=%d MovementBlock=%d"),
+		*GetNameSafe(GetOwner()),
+		InputBufferWindowCount,
+		ActiveActionId,
+		BufferedActionId,
+		RecoveryEscapeWindowCount,
+		MovementInputBlockCount);
 }
 
 void UMVActionComponent::EndInputBufferWindow()
 {
 	InputBufferWindowCount = FMath::Max(0, InputBufferWindowCount - 1);
+	UE_LOG(
+		LogTemp,
+		Warning,
+		TEXT("[MVActionBuffer] InputWindowEnd Owner=%s Count=%d Active=%d Buffered=%d RecoveryWindow=%d MovementBlock=%d"),
+		*GetNameSafe(GetOwner()),
+		InputBufferWindowCount,
+		ActiveActionId,
+		BufferedActionId,
+		RecoveryEscapeWindowCount,
+		MovementInputBlockCount);
+	if (!IsInputBufferOpen() && IsRecoveryEscapeWindowOpen())
+	{
+		const bool bStartedBufferedAction = TryStartBufferedAction();
+		UE_LOG(
+			LogTemp,
+			Warning,
+			TEXT("[MVActionBuffer] InputWindowEndConsumeAttempt Owner=%s Started=%s"),
+			*GetNameSafe(GetOwner()),
+			DebugBoolText(bStartedBufferedAction));
+	}
+}
+
+void UMVActionComponent::BeginMovementInputBlock()
+{
+	++MovementInputBlockCount;
+	UE_LOG(
+		LogTemp,
+		Warning,
+		TEXT("[MVActionBuffer] MovementBlockBegin Owner=%s Count=%d Active=%d Buffered=%d InputWindow=%d RecoveryWindow=%d"),
+		*GetNameSafe(GetOwner()),
+		MovementInputBlockCount,
+		ActiveActionId,
+		BufferedActionId,
+		InputBufferWindowCount,
+		RecoveryEscapeWindowCount);
+}
+
+void UMVActionComponent::EndMovementInputBlock()
+{
+	const bool bWasBlocked = MovementInputBlockCount > 0;
+	MovementInputBlockCount = FMath::Max(0, MovementInputBlockCount - 1);
+	UE_LOG(
+		LogTemp,
+		Warning,
+		TEXT("[MVActionBuffer] MovementBlockEnd Owner=%s Count=%d WasBlocked=%s Active=%d Buffered=%d InputWindow=%d RecoveryWindow=%d"),
+		*GetNameSafe(GetOwner()),
+		MovementInputBlockCount,
+		DebugBoolText(bWasBlocked),
+		ActiveActionId,
+		BufferedActionId,
+		InputBufferWindowCount,
+		RecoveryEscapeWindowCount);
+	if (bWasBlocked && !IsMovementInputBlocked() && IsRecoveryEscapeWindowOpen())
+	{
+		const bool bStartedBufferedAction = TryStartBufferedAction();
+		UE_LOG(
+			LogTemp,
+			Warning,
+			TEXT("[MVActionBuffer] MovementBlockEndConsumeAttempt Owner=%s Started=%s"),
+			*GetNameSafe(GetOwner()),
+			DebugBoolText(bStartedBufferedAction));
+	}
+}
+
+bool UMVActionComponent::IsMovementInputBlocked() const
+{
+	return MovementInputBlockCount > 0;
+}
+
+void UMVActionComponent::BeginRecoveryEscapeWindow()
+{
+	++RecoveryEscapeWindowCount;
+	UE_LOG(
+		LogTemp,
+		Warning,
+		TEXT("[MVActionBuffer] RecoveryWindowBegin Owner=%s Count=%d Active=%d Buffered=%d HasInput=%s Dir=%s InputWindow=%d MovementBlock=%d"),
+		*GetNameSafe(GetOwner()),
+		RecoveryEscapeWindowCount,
+		ActiveActionId,
+		BufferedActionId,
+		DebugBoolText(bBufferedActionHasMovementInput),
+		*BufferedActionMovementInputDirection.ToCompactString(),
+		InputBufferWindowCount,
+		MovementInputBlockCount);
+	const bool bStartedBufferedAction = TryStartBufferedAction();
+	UE_LOG(
+		LogTemp,
+		Warning,
+		TEXT("[MVActionBuffer] RecoveryWindowBeginConsumeAttempt Owner=%s Started=%s"),
+		*GetNameSafe(GetOwner()),
+		DebugBoolText(bStartedBufferedAction));
+}
+
+void UMVActionComponent::EndRecoveryEscapeWindow()
+{
+	if (RecoveryEscapeWindowCount <= 0)
+	{
+		RecoveryEscapeWindowCount = 0;
+		UE_LOG(LogTemp, Warning, TEXT("[MVActionBuffer] RecoveryWindowEndIgnored Owner=%s CountAlreadyZero"), *GetNameSafe(GetOwner()));
+		return;
+	}
+
+	UE_LOG(
+		LogTemp,
+		Warning,
+		TEXT("[MVActionBuffer] RecoveryWindowEnd Owner=%s CountBefore=%d Active=%d Buffered=%d HasInput=%s Dir=%s InputWindow=%d MovementBlock=%d"),
+		*GetNameSafe(GetOwner()),
+		RecoveryEscapeWindowCount,
+		ActiveActionId,
+		BufferedActionId,
+		DebugBoolText(bBufferedActionHasMovementInput),
+		*BufferedActionMovementInputDirection.ToCompactString(),
+		InputBufferWindowCount,
+		MovementInputBlockCount);
+	const bool bStartedBufferedAction = TryStartBufferedAction();
+	UE_LOG(
+		LogTemp,
+		Warning,
+		TEXT("[MVActionBuffer] RecoveryWindowEndConsumeAttempt Owner=%s Started=%s"),
+		*GetNameSafe(GetOwner()),
+		DebugBoolText(bStartedBufferedAction));
+	RecoveryEscapeWindowCount = FMath::Max(0, RecoveryEscapeWindowCount - 1);
+}
+
+bool UMVActionComponent::IsRecoveryEscapeWindowOpen() const
+{
+	return RecoveryEscapeWindowCount > 0;
+}
+
+void UMVActionComponent::BufferAction(const int32 ActionId, const FVector& MovementInputDirection)
+{
+	const FVector NormalizedMovementInput = NormalizeBufferedMovementInput(MovementInputDirection);
+	BufferedActionId = ActionId;
+	BufferedActionMovementInputDirection = NormalizedMovementInput;
+	bBufferedActionHasMovementInput = !NormalizedMovementInput.IsNearlyZero();
 }
 
 const FMVActionIndexRow* UMVActionComponent::FindActionIndexRow(
@@ -430,10 +895,24 @@ UChooserTable* UMVActionComponent::LoadActionChooserTable(int32 ActionId, const 
 	return ChooserTable;
 }
 
-void UMVActionComponent::HandleActionMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+void UMVActionComponent::HandleActionMontageEnded(
+	UAnimMontage* Montage,
+	bool bInterrupted,
+	const int32 ActionInstanceId)
 {
-	if (Montage != ActiveActionMontage)
+	if (ActionInstanceId != ActiveActionInstanceId || Montage != ActiveActionMontage)
 	{
+		UE_LOG(
+			LogTemp,
+			Warning,
+			TEXT("[MVActionBuffer] IgnoreStaleMontageEnded Owner=%s Montage=%s Interrupted=%s EndInstance=%d ActiveInstance=%d Active=%d ActiveMontage=%s"),
+			*GetNameSafe(GetOwner()),
+			*GetNameSafe(Montage),
+			DebugBoolText(bInterrupted),
+			ActionInstanceId,
+			ActiveActionInstanceId,
+			ActiveActionId,
+			*GetNameSafe(ActiveActionMontage));
 		return;
 	}
 

@@ -16,7 +16,25 @@ class UMVActionComponent;
 class UMVDodgeComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnStatRecentLossHoldChanged, bool, bHold);
+DECLARE_MULTICAST_DELEGATE_OneParam(FMVOnMovementInputReceived, const FVector&);
 
+/**
+ * 공통 캐릭터 런타임 본체.
+ *
+ * 플레이어와 NPC가 공유할 수 있는 이동 상태, 공용 컴포넌트 연결, 이동/무적 잠금 반영,
+ * 회복 가능한 스탯 갱신을 관리한다. 회피, 전투, 액션 버퍼 같은 도메인 정책은
+ * 전용 컴포넌트가 이 클래스의 공통 상태와 이벤트를 사용해 처리한다.
+ *
+ * 책임:
+ *   - CharacterMovement 기준 locomotion 값과 gait, 장비 스타일, 스태미너 회복 상태를 갱신한다.
+ *   - Action/Stat/Dodge 컴포넌트를 소유하고 엔진 라이프사이클과 공용 이벤트를 연결한다.
+ *   - ActionComponent의 이동 입력 잠금과 캐릭터 무적 중첩 상태를 CharacterMovement에 반영한다.
+ *
+ * 라이프사이클:
+ *   1) BeginPlay -> 공용 컴포넌트 이벤트와 locomotion 보조 데이터를 초기화한다.
+ *   2) AddMovementInput -> 원본 이동 입력을 브로드캐스트한 뒤 CharacterMovement에 전달한다.
+ *   3) Tick -> 이동/회전/회복 스탯을 갱신하고 애니메이션 조회용 상태를 정리한다.
+ */
 UCLASS(Blueprintable, BlueprintType)
 class MAVERICK_API AMVCharacterBase : public ACharacter
 {
@@ -36,6 +54,7 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual void AddMovementInput(FVector WorldDirection, float ScaleValue = 1.0f, bool bForce = false) override;
 
 public:
 	UFUNCTION(BlueprintCallable)
@@ -44,8 +63,7 @@ public:
 	UFUNCTION(BlueprintPure, Category = "LocomotionData|Action")
 	bool HasDodgeMovementInput() const;
 
-	UFUNCTION(BlueprintCallable, Category = "LocomotionData|Action")
-	void RefreshDodgeChooserData();
+	void ApplyLocomotionDirectionSnapshot(const FVector& MovementDirection);
 
 	UFUNCTION(BlueprintCallable, Category = "LocomotionData|Equipment")
 	void SetEquippedStyle(EMVEquippedStyle NewEquippedStyle);
@@ -74,6 +92,8 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|Action|Event")
 	FMVOnStatRecentLossHoldChanged OnStatRecentLossHoldChanged;
 
+	FMVOnMovementInputReceived OnMovementInputReceived;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UMVStatComponent> StatComponent;
 
@@ -94,9 +114,6 @@ private:
 
 	UFUNCTION()
 	void HandleActionStatRecoveryPauseChanged(bool bPaused);
-
-	UFUNCTION()
-	void HandleActionPreparing(int32 ActionId);
 
 	UFUNCTION()
 	void HandleActionCostConsumed(int32 ActionId);
@@ -120,7 +137,6 @@ private:
 	EMVActionResourceCostType SprintActionStaminaCostType = EMVActionResourceCostType::PerSecond;
 	float SprintActionMinRequiredStamina = 0.0f;
 	float SprintActionRestartStaminaPercent = 70.0f;
-	int32 MovementInputBlockCount = 0;
 	int32 InvincibilityCount = 0;
 	
 
