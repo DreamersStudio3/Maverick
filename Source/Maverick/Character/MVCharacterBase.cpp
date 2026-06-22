@@ -212,9 +212,13 @@ void AMVCharacterBase::UpdateCharacterValue()
 	bIsFalling = GetCharacterMovement()->IsFalling();
 	
 	// Calculate Move Direction Angle
-	if (!GetCharacterMovement()->Velocity.IsNearlyZero())
+	if (CharacterInputState.WantsToStrafe && !GetCharacterMovement()->Velocity.IsNearlyZero())
 	{
 		CharacterMoveDirectionAngle = UKismetAnimationLibrary::CalculateDirection(GetCharacterMovement()->Velocity, GetActorRotation());
+	}
+	else
+	{
+		CharacterMoveDirectionAngle = 0;
 	}
 
 	const FVector CurrentAcceleration2D(
@@ -245,7 +249,8 @@ void AMVCharacterBase::UpdateCharacterValue()
 
 void AMVCharacterBase::UpdateLocomotionDirection()
 {
-	LocomotionDirection = ResolveCharacterEightWayDirection(CharacterMoveDirectionAngleFromAcceleration);
+	LocomotionDirection = ResolveCharacterEightWayDirection(CharacterMoveDirectionAngle);
+	LocomotionDirectionFromAcceleration = ResolveCharacterEightWayDirection(CharacterMoveDirectionAngleFromAcceleration);
 }
 
 void AMVCharacterBase::UpdateRotation()

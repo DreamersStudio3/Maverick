@@ -57,6 +57,7 @@ void UMVAnimInstanceBase::ReceiveCharacterData()
 	IncomingGait = Character->Gait;
 	CharacterInputState = Character->CharacterInputState;
 	LocomotionDirection = Character->LocomotionDirection;
+	LocomotionDirectionFromAcceleration = Character->LocomotionDirectionFromAcceleration;
 	bIsFalling = CharcterMovementComponent->IsFalling();
 
 }
@@ -186,6 +187,6 @@ void UMVAnimInstanceBase::CalculatePivotState()
 	
 	float PivotDotValue = FVector::DotProduct(Acceleration2D, Velocity2D);
 
-	IsPivot = PivotDotValue < 0.0f;
+	IsPivot = PivotDotValue < -0.5f;
 }
 
