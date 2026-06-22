@@ -14,7 +14,7 @@ namespace
 {
 constexpr float NonRollDodgeLaunchDistanceScale = 0.75f;
 
-const TCHAR* DebugBoolText(const bool bValue)
+const TCHAR* DodgeDebugBoolText(const bool bValue)
 {
 	return bValue ? TEXT("true") : TEXT("false");
 }
@@ -44,7 +44,7 @@ bool IsBackwardDiagonalDodgeDirection(const ELocomotionDirection Direction)
 		|| Direction == ELocomotionDirection::BR;
 }
 
-ELocomotionDirection ResolveEightWayDirection(const float MoveDirectionAngle)
+ELocomotionDirection ResolveDodgeEightWayDirection(const float MoveDirectionAngle)
 {
 	const float AbsAngle = FMath::Abs(MoveDirectionAngle);
 
@@ -100,7 +100,7 @@ ELocomotionDirection ResolveDirectionFromReferenceRotation(
 	const float ForwardDot = FVector::DotProduct(Direction2D, GetReferenceForwardVector(ReferenceRotation));
 	const float RightDot = FVector::DotProduct(Direction2D, GetReferenceRightVector(ReferenceRotation));
 	const float DirectionAngle = FMath::RadiansToDegrees(FMath::Atan2(RightDot, ForwardDot));
-	return ResolveEightWayDirection(DirectionAngle);
+	return ResolveDodgeEightWayDirection(DirectionAngle);
 }
 
 FVector ResolveDirectionVectorFromReferenceRotation(
@@ -429,7 +429,7 @@ bool UMVDodgeComponent::BeginDodgeLaunchWindow(
 		ScaledLaunchDistance,
 		LaunchDuration,
 		bApplyVerticalLaunch ? LaunchVerticalSpeed : 0.0f,
-		DebugBoolText(bDodgeLaunchActive));
+		DodgeDebugBoolText(bDodgeLaunchActive));
 
 	if (bApplyVerticalLaunch && !FMath::IsNearlyZero(LaunchVerticalSpeed))
 	{
@@ -506,7 +506,7 @@ void UMVDodgeComponent::EndDodgeLaunchWindow(
 			*GetNameSafe(GetOwner()),
 			MontageInstanceId,
 			ActiveDodgeLaunchMontageInstanceId,
-			DebugBoolText(bDodgeLaunchActive));
+			DodgeDebugBoolText(bDodgeLaunchActive));
 		return;
 	}
 
@@ -516,8 +516,8 @@ void UMVDodgeComponent::EndDodgeLaunchWindow(
 		TEXT("[MVDodgeLaunch] End Owner=%s MontageInstance=%d ClearHorizontal=%s Active=%s Elapsed=%.3f Duration=%.3f"),
 		*GetNameSafe(GetOwner()),
 		MontageInstanceId,
-		DebugBoolText(bClearHorizontalVelocity),
-		DebugBoolText(bDodgeLaunchActive),
+		DodgeDebugBoolText(bClearHorizontalVelocity),
+		DodgeDebugBoolText(bDodgeLaunchActive),
 		ActiveDodgeLaunchElapsed,
 		ActiveDodgeLaunchDuration);
 	StopActiveDodgeLaunch(bClearHorizontalVelocity);
@@ -606,9 +606,9 @@ bool UMVDodgeComponent::TryStartBufferedDodgeLaunchFallback()
 		Warning,
 		TEXT("[MVDodgeLaunch] BufferedFallback Owner=%s Started=%s MontageInstance=%d HasCachedSettings=%s"),
 		*GetNameSafe(OwnerCharacter),
-		DebugBoolText(bStarted),
+		DodgeDebugBoolText(bStarted),
 		MontageInstanceId,
-		DebugBoolText(bHasCachedDodgeLaunchWindowSettings));
+		DodgeDebugBoolText(bHasCachedDodgeLaunchWindowSettings));
 	return bStarted;
 }
 
@@ -658,7 +658,7 @@ FVector UMVDodgeComponent::ResolveBufferedActionMovementInput(const int32 Action
 			*GetNameSafe(OwnerCharacter),
 			ActionId,
 			*MovementInputDirection.ToCompactString(),
-			DebugBoolText(!MovementInputDirection.IsNearlyZero()));
+			DodgeDebugBoolText(!MovementInputDirection.IsNearlyZero()));
 		return MovementInputDirection;
 	}
 
@@ -688,8 +688,8 @@ bool UMVDodgeComponent::CanConsumeBufferedAction(
 		*GetNameSafe(OwnerCharacter),
 		ActionId,
 		ActionComponent->GetActiveActionId(),
-		DebugBoolText(bActiveActionIsDodge),
-		DebugBoolText(bHasMovementInput),
+		DodgeDebugBoolText(bActiveActionIsDodge),
+		DodgeDebugBoolText(bHasMovementInput),
 		*MovementInputDirection.ToCompactString());
 	if (bActiveActionIsDodge && !bHasMovementInput)
 	{
