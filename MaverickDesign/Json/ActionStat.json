@@ -111,7 +111,7 @@
                     "SprintRestartStaminaPercent": 0,
                     "Cooldown": 0.8,
                     "InputBufferTime": 0,
-                    "LaunchDistance": 600,
+                    "LaunchDistance": 400,
                     "LaunchDuration": 0,
                     "LaunchVerticalSpeed": 0,
                     "bLocksMovement": true,
