@@ -8,6 +8,7 @@
 #include "Enum/MVEquipmentEnums.h"
 #include "Struct/CharacterLocomotionStructs.h"
 #include "Tables/MVActionTableTypes.h"
+#include "Tables/MVCharacterTableTypes.h"
 
 #include "MVCharacterBase.generated.h"
 
@@ -20,12 +21,13 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FMVOnMovementInputReceived, const FVector&);
 /**
  * 공통 캐릭터 런타임 본체.
  *
- * 플레이어와 NPC가 공유할 수 있는 이동 상태, 공용 컴포넌트 연결, 무적 상태,
+ * 플레이어와 NPC가 공유할 수 있는 캐릭터 데이터 ID, 이동 상태, 공용 컴포넌트 연결, 무적 상태,
  * 질주 스태미너 소비를 관리한다. 회피, 전투, 액션 버퍼 같은 도메인 세부 정책은
  * 전용 컴포넌트가 이 클래스의 공통 상태 변수와 이벤트 함수를 호출해 컴포넌트 안에서 개별적으로 처리한다.
  *
  * 책임:
- *   - CharacterMovement 기준 locomotion 값과 gait, 장비 스타일, 질주 스태미너 상태를 갱신한다.
+ *   - CharacterIndexId를 액션/스탯 컴포넌트에 주입하고 CharacterMovement 기준 locomotion 값과 gait,
+ *     장비 스타일, 질주 스태미너 상태를 갱신한다.
  *   - ACharacter의 BeginPlay, Tick, AddMovementInput 진입점에서 초기 데이터 로드,
  *     매 프레임 locomotion/질주 스태미너 갱신, 이동 입력 캐싱과 OnMovementInputReceived 브로드캐스트를 담당한다.
  *   - 질주 중이 아닐 때 StatComponent의 회복 Tick을 호출하되, 회복 쿨다운과 일시정지 정책은 StatComponent가 소유한다.
@@ -49,6 +51,7 @@ public:
 
 protected:
 	// Called when the game starts or when spawned
+	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
 
 public:	
@@ -62,6 +65,12 @@ public:
 public:
 	UFUNCTION(BlueprintCallable)
 	void AttemptCrouch();
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Character|Data")
+	void SetCharacterIndexId(int32 NewCharacterIndexId);
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|Character|Data")
+	int32 GetCharacterIndexId() const;
 
 	UFUNCTION(BlueprintPure, Category = "LocomotionData|Action")
 	bool HasDodgeMovementInput() const;
@@ -108,6 +117,7 @@ public:
 	TObjectPtr<UMVDodgeComponent> DodgeComponent;
 
 private:
+	void ApplyCharacterIndexIdToComponents();
 	void UpdateCharacterValue();
 	void UpdateRotation();
 	void UpdateMovement(float DeltaTime);
@@ -141,6 +151,9 @@ private:
 	
 
 public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Character|Data", meta = (ClampMin = "1"))
+	int32 CharacterIndexId = MVCharacterIndexIds::Player;
 
 	UPROPERTY(BlueprintReadOnly, Category = "LocomotionData")
 	float CharacterMoveDirectionAngle;

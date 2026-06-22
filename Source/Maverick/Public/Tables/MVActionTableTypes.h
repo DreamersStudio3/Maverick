@@ -16,11 +16,6 @@ namespace MVActionIds
 	inline constexpr int32 UseConsumable = 10030;
 }
 
-namespace MVCharacterIndexIds
-{
-	inline constexpr int32 Player = 1;
-}
-
 namespace MVActionProfileIds
 {
 	inline constexpr int32 Player = 1;
@@ -111,40 +106,6 @@ enum class EMVActionHitReactionType : uint8
 	Knockback,
 	Knockdown,
 	Launch
-};
-
-UENUM(BlueprintType)
-enum class EMVCharacterKind : uint8
-{
-	None,
-	Player,
-	Enemy
-};
-
-USTRUCT(BlueprintType, meta = (MVTable = "CharacterIndex"))
-struct MAVERICK_API FMVCharacterIndexRow : public FMVTableRowBase
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Table|Character")
-	int32 CharacterIndexId = 0;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Table|Character")
-	FName CharacterName = NAME_None;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Table|Character")
-	EMVCharacterKind CharacterKind = EMVCharacterKind::None;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Table|Character")
-	int32 ActionProfileId = 0;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Table|Character")
-	bool bEnabled = true;
-
-	virtual void PostRead() override
-	{
-		RowId = CharacterIndexId;
-	}
 };
 
 USTRUCT(BlueprintType, meta = (MVTable = "ActionIndex"))

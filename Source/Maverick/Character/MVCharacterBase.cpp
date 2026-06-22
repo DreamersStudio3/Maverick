@@ -69,9 +69,17 @@ AMVCharacterBase::AMVCharacterBase()
 	StatComponent = CreateDefaultSubobject<UMVStatComponent>(TEXT("StatComponent"));
 	ActionComponent = CreateDefaultSubobject<UMVActionComponent>(TEXT("ActionComponent"));
 	DodgeComponent = CreateDefaultSubobject<UMVDodgeComponent>(TEXT("DodgeComponent"));
+	ApplyCharacterIndexIdToComponents();
 	bIsSprintBlockedByStamina = false;
 	bHasDodgeMovementInput = false;
 	LocomotionDirection = ELocomotionDirection::F;
+}
+
+void AMVCharacterBase::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	ApplyCharacterIndexIdToComponents();
 }
 
 // Called when the game starts or when spawned
@@ -140,6 +148,17 @@ void AMVCharacterBase::AttemptCrouch()
 		return;
 	}
 
+}
+
+void AMVCharacterBase::SetCharacterIndexId(const int32 NewCharacterIndexId)
+{
+	CharacterIndexId = FMath::Max(0, NewCharacterIndexId);
+	ApplyCharacterIndexIdToComponents();
+}
+
+int32 AMVCharacterBase::GetCharacterIndexId() const
+{
+	return CharacterIndexId;
 }
 
 bool AMVCharacterBase::HasDodgeMovementInput() const
@@ -255,6 +274,19 @@ void AMVCharacterBase::EndInvincibility()
 bool AMVCharacterBase::IsInvincible() const
 {
 	return InvincibilityCount > 0;
+}
+
+void AMVCharacterBase::ApplyCharacterIndexIdToComponents()
+{
+	if (ActionComponent)
+	{
+		ActionComponent->SetCharacterIndexId(CharacterIndexId);
+	}
+
+	if (StatComponent)
+	{
+		StatComponent->SetCharacterIndexId(CharacterIndexId);
+	}
 }
 
 void AMVCharacterBase::UpdateCharacterValue()

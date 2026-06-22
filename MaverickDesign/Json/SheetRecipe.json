@@ -2,5 +2,5 @@
     "ActionIndex": "ActionIndexKey",
     "ActionStat": "ActionStatId",
     "CharacterIndex": "CharacterIndexId",
-    "PlayerStat": "StatId"
+    "CharacterStat": "StatId"
 }
