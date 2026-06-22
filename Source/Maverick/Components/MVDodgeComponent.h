@@ -12,12 +12,12 @@ class UCurveFloat;
 /**
  * 회피 액션 전용 런타임 컴포넌트.
  *
- * ActionComponent의 공용 실행/버퍼 흐름 위에서 Dodge가 필요로 하는 입력 방향 스냅샷,
+ * ActionComponent의 공용 실행/버퍼 흐름 위에서 Dodge가 필요로 하는 controller-space 입력 스냅샷,
  * Dodge 시작 yaw, chooser 입력 플래그, AnimNotify 기반 launch 이동을 관리한다.
  *
  * 책임:
- *   - 입력 버퍼 구간의 Dodge 이동 의도를 저장하고 buffered action 소비 시점에 재사용한다.
- *   - Roll과 대각 Step은 캐릭터 yaw를 보정하되, Strafe Step 판정은 controller yaw 기준으로 고정한다.
+ *   - 입력 버퍼 구간의 Dodge 이동 의도를 controller-space raw 2D로 저장하고 소비 시점에 재사용한다.
+ *   - Roll과 대각 Step은 캐릭터 yaw를 보정하되, Strafe Step 방향 판정은 controller yaw 기준으로 고정한다.
  *   - Step chooser에는 cardinal F/L/R/B 문맥을 제공하고, Step/Backstep은 Roll보다 짧은 launch 거리를 쓴다.
  *   - launch 이동은 AnimNotify 설정을 따르며 걷기 바닥에서는 경사면을 따라 보정한다.
  *
@@ -49,14 +49,15 @@ public:
 		UCurveFloat* DistanceCurve,
 		float DistanceScale,
 		bool bApplyVerticalLaunch,
-		int32 MontageInstanceId);
+		int32 MontageInstanceId,
+		bool bClearPreparedLaunch = true);
 	void TickDodgeLaunchWindow(float DeltaTime, int32 MontageInstanceId);
 	void EndDodgeLaunchWindow(bool bClearHorizontalVelocity, int32 MontageInstanceId);
 
 private:
-	void CacheMovementInputDirection(const FVector& MovementInputDirection);
+	void CacheControllerSpaceMovementInput(const FVector2D& ControllerSpaceMovementInput);
 	void HandleOwnerMovementInput(const FVector& MovementInputDirection);
-	FVector CaptureMovementInputDirection(const AMVCharacterBase& OwnerCharacter) const;
+	FVector2D CaptureControllerSpaceMovementInput(const AMVCharacterBase& OwnerCharacter) const;
 	FVector ResolveBufferedActionMovementInput(int32 ActionId) const;
 	bool CanConsumeBufferedAction(
 		int32 ActionId,
@@ -96,7 +97,8 @@ private:
 	UPROPERTY(Transient)
 	TObjectPtr<UCurveFloat> CachedDodgeLaunchDistanceCurve;
 
-	FVector CachedMovementInputDirection = FVector::ZeroVector;
+	FVector2D CachedControllerSpaceMovementInput = FVector2D::ZeroVector;
+	uint64 CachedControllerSpaceMovementInputFrame = 0;
 	FVector PreparedDodgeLaunchDirection = FVector::ZeroVector;
 	FVector ActiveDodgeLaunchDirection = FVector::ZeroVector;
 	float CachedDodgeLaunchNotifyDuration = 0.0f;

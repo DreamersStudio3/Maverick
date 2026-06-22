@@ -6,7 +6,6 @@
 
 class UMVStatComponent;
 class UMVStatusBarWidget;
-class AMVCharacterBase;
 
 UCLASS(Blueprintable)
 class MAVERICK_API UMVPlayerStatusWidget : public UMVWidgetBase
@@ -76,8 +75,6 @@ protected:
 private:
 	void BuildNativeWidgetTree();
 	void ConfigureStatusBars();
-	void BindToCharacter(AMVCharacterBase* InCharacter);
-	void UnbindCharacter();
 	void ApplyStatusBarSize(
 		UMVStatusBarWidget* StatusBar,
 		float MaxValue,
@@ -100,7 +97,4 @@ private:
 
 	UPROPERTY(Transient)
 	TObjectPtr<UMVStatComponent> BoundStatComponent;
-
-	UPROPERTY(Transient)
-	TObjectPtr<AMVCharacterBase> BoundCharacter;
 };
