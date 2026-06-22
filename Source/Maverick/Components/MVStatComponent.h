@@ -13,9 +13,10 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMVOnDead);
 /**
  * 캐릭터 스탯 값과 회복 정책을 관리하는 컴포넌트.
  *
- * 테이블에서 기본 스탯을 로드하고 HP, 스태미너, MP, groggy, 이동/전투 수치의 현재값과
- * 변경 이벤트를 소유한다. 스태미너/MP 소비는 회복 쿨다운을 시작하며, 액션 중 회복 일시정지와
- * 최근 감소 UI 홀드 이벤트도 이 컴포넌트의 상태로 관리한다.
+ * 명시적으로 설정된 CharacterIndexId와 동일한 StatId를 가진 CharacterStat row에서 기본 스탯을
+ * 로드하고 HP, 스태미너, MP, groggy, 이동/전투 수치의 현재값과 변경 이벤트를 소유한다.
+ * 스태미너/MP 소비는 회복 쿨다운을 시작하며, 액션 중 회복 일시정지와 최근 감소 UI 홀드 이벤트도
+ * 이 컴포넌트의 상태로 관리한다. 다른 도메인 컴포넌트의 캐릭터 선택 상태는 참조하지 않는다.
  *
  * 라이프사이클:
  *   1) BeginPlay -> 설정된 스탯 테이블 행을 읽어 현재 스탯 값을 초기화한다.
@@ -54,6 +55,12 @@ protected:
 public:
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Table")
 	void SetStatTableReference(FName InStatTableName, const FString& InStatRowKey);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Character")
+	void SetCharacterIndexId(int32 NewCharacterIndexId);
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|Stat|Character")
+	int32 GetCharacterIndexId() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Table")
 	bool LoadStatsFromTable();
@@ -145,14 +152,14 @@ public:
 	void SetGroggyRecoveryDelay(float InGroggyRecoveryDelay);
 
 private:
-	bool TryReadFloat(const UMVTableManager* TableManager, const FString& FieldName, float& OutValue) const;
+	FString MakeStatRowKey() const;
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Table")
-	FName StatTableName = TEXT("PlayerStat");
+	FName StatTableName = TEXT("CharacterStat");
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Table")
-	FString StatRowKey = TEXT("1");
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Character", meta = (ClampMin = "1"))
+	int32 CharacterIndexId = 1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Table")
 	bool bLoadStatsOnBeginPlay = true;

@@ -1,6 +1,7 @@
 #include "Components/MVStatComponent.h"
 
 #include "Tables/MVTableManager.h"
+#include "Tables/MVStatTableTypes.h"
 
 namespace
 {
@@ -24,7 +25,7 @@ void UMVStatComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (bLoadStatsOnBeginPlay && !StatTableName.IsNone() && !StatRowKey.IsEmpty())
+	if (bLoadStatsOnBeginPlay && !StatTableName.IsNone() && CharacterIndexId > 0)
 	{
 		LoadStatsFromTable();
 	}
@@ -33,79 +34,69 @@ void UMVStatComponent::BeginPlay()
 void UMVStatComponent::SetStatTableReference(FName InStatTableName, const FString& InStatRowKey)
 {
 	StatTableName = InStatTableName;
-	StatRowKey = InStatRowKey;
+
+	int32 ParsedCharacterIndexId = 0;
+	if (LexTryParseString(ParsedCharacterIndexId, *InStatRowKey))
+	{
+		SetCharacterIndexId(ParsedCharacterIndexId);
+	}
+}
+
+void UMVStatComponent::SetCharacterIndexId(const int32 NewCharacterIndexId)
+{
+	CharacterIndexId = FMath::Max(0, NewCharacterIndexId);
+}
+
+int32 UMVStatComponent::GetCharacterIndexId() const
+{
+	return CharacterIndexId;
 }
 
 bool UMVStatComponent::LoadStatsFromTable()
 {
 	const UMVTableManager* TableManager = UMVTableManager::Get(this);
-	if (!TableManager || StatTableName.IsNone() || StatRowKey.IsEmpty())
+	if (!TableManager || StatTableName.IsNone() || CharacterIndexId <= 0)
 	{
 		return false;
 	}
 
-	float LoadedMaxHP = 0.0f;
-	float LoadedCurrentHP = 0.0f;
-	float LoadedMaxStamina = 0.0f;
-	float LoadedCurrentStamina = 0.0f;
-	float LoadedStaminaRecoveryPerSecond = 0.0f;
-	float LoadedStaminaRecoveryDelay = 0.0f;
-	float LoadedMaxMP = 0.0f;
-	float LoadedCurrentMP = 0.0f;
-	float LoadedMPRecoveryPerSecond = 0.0f;
-	float LoadedAttackSpeed = 0.0f;
-	float LoadedWalkSpeed = 0.0f;
-	float LoadedRunSpeed = 0.0f;
-	float LoadedSprintSpeed = 0.0f;
-	float LoadedDefence = 0.0f;
-	float LoadedMaxGroggy = 0.0f;
-	float LoadedCurrentGroggy = 0.0f;
-	float LoadedGroggyRecoveryPerSecond = 0.0f;
-	float LoadedGroggyRecoveryDelay = 0.0f;
-
-	bool bLoaded = true;
-	bLoaded &= TryReadFloat(TableManager, TEXT("MaxHP"), LoadedMaxHP);
-	bLoaded &= TryReadFloat(TableManager, TEXT("CurrentHP"), LoadedCurrentHP);
-	bLoaded &= TryReadFloat(TableManager, TEXT("MaxStamina"), LoadedMaxStamina);
-	bLoaded &= TryReadFloat(TableManager, TEXT("CurrentStamina"), LoadedCurrentStamina);
-	bLoaded &= TryReadFloat(TableManager, TEXT("StaminaRecoveryPerSecond"), LoadedStaminaRecoveryPerSecond);
-	bLoaded &= TryReadFloat(TableManager, TEXT("StaminaRecoveryDelay"), LoadedStaminaRecoveryDelay);
-	bLoaded &= TryReadFloat(TableManager, TEXT("MaxMP"), LoadedMaxMP);
-	bLoaded &= TryReadFloat(TableManager, TEXT("CurrentMP"), LoadedCurrentMP);
-	bLoaded &= TryReadFloat(TableManager, TEXT("MPRecoveryPerSecond"), LoadedMPRecoveryPerSecond);
-	bLoaded &= TryReadFloat(TableManager, TEXT("AttackSpeed"), LoadedAttackSpeed);
-	bLoaded &= TryReadFloat(TableManager, TEXT("WalkSpeed"), LoadedWalkSpeed);
-	bLoaded &= TryReadFloat(TableManager, TEXT("RunSpeed"), LoadedRunSpeed);
-	bLoaded &= TryReadFloat(TableManager, TEXT("SprintSpeed"), LoadedSprintSpeed);
-	bLoaded &= TryReadFloat(TableManager, TEXT("Defence"), LoadedDefence);
-	bLoaded &= TryReadFloat(TableManager, TEXT("MaxGroggy"), LoadedMaxGroggy);
-	bLoaded &= TryReadFloat(TableManager, TEXT("CurrentGroggy"), LoadedCurrentGroggy);
-	bLoaded &= TryReadFloat(TableManager, TEXT("GroggyRecoveryPerSecond"), LoadedGroggyRecoveryPerSecond);
-	bLoaded &= TryReadFloat(TableManager, TEXT("GroggyRecoveryDelay"), LoadedGroggyRecoveryDelay);
-
-	if (!bLoaded)
+	const FString StatRowKey = MakeStatRowKey();
+	const FMVCharacterStatRow* StatRow = TableManager->FindRow<FMVCharacterStatRow>(StatTableName, StatRowKey);
+	if (!StatRow)
 	{
 		return false;
 	}
 
-	SetMaxHP(LoadedMaxHP);
-	SetCurrentHP(LoadedCurrentHP);
-	SetMaxStamina(LoadedMaxStamina);
-	SetCurrentStamina(LoadedCurrentStamina);
-	SetStaminaRecoveryPerSecond(LoadedStaminaRecoveryPerSecond);
-	SetStaminaRecoveryDelay(LoadedStaminaRecoveryDelay);
-	SetMaxMP(LoadedMaxMP);
-	SetCurrentMP(LoadedCurrentMP);
-	SetMPRecoveryPerSecond(LoadedMPRecoveryPerSecond);
-	SetAttackSpeed(LoadedAttackSpeed);
-	SetWalkSpeed(LoadedWalkSpeed);
-	SetRunSpeed(LoadedRunSpeed);
-	SetSprintSpeed(LoadedSprintSpeed);
-	SetDefence(LoadedDefence);
-	SetMaxGroggy(LoadedMaxGroggy);
-	SetCurrentGroggy(LoadedCurrentGroggy);
-	SetGroggyRecoveryPerSecond(LoadedGroggyRecoveryPerSecond);
-	SetGroggyRecoveryDelay(LoadedGroggyRecoveryDelay);
+	if (StatRow->StatId != CharacterIndexId)
+	{
+		UE_LOG(
+			LogTemp,
+			Warning,
+			TEXT("CharacterStat row '%s' has StatId %d, expected CharacterIndexId %d."),
+			*StatRowKey,
+			StatRow->StatId,
+			CharacterIndexId);
+		return false;
+	}
+
+	SetMaxHP(StatRow->MaxHP);
+	SetCurrentHP(StatRow->CurrentHP);
+	SetMaxStamina(StatRow->MaxStamina);
+	SetCurrentStamina(StatRow->CurrentStamina);
+	SetStaminaRecoveryPerSecond(StatRow->StaminaRecoveryPerSecond);
+	SetStaminaRecoveryDelay(StatRow->StaminaRecoveryDelay);
+	SetMaxMP(StatRow->MaxMP);
+	SetCurrentMP(StatRow->CurrentMP);
+	SetMPRecoveryPerSecond(StatRow->MPRecoveryPerSecond);
+	SetAttackSpeed(StatRow->AttackSpeed);
+	SetWalkSpeed(StatRow->WalkSpeed);
+	SetRunSpeed(StatRow->RunSpeed);
+	SetSprintSpeed(StatRow->SprintSpeed);
+	SetDefence(StatRow->Defence);
+	SetMaxGroggy(StatRow->MaxGroggy);
+	SetCurrentGroggy(StatRow->CurrentGroggy);
+	SetGroggyRecoveryPerSecond(StatRow->GroggyRecoveryPerSecond);
+	SetGroggyRecoveryDelay(StatRow->GroggyRecoveryDelay);
 
 	return true;
 }
@@ -389,7 +380,7 @@ void UMVStatComponent::SetGroggyRecoveryDelay(float InGroggyRecoveryDelay)
 	GroggyRecoveryDelay = MVStatNonNegative(InGroggyRecoveryDelay);
 }
 
-bool UMVStatComponent::TryReadFloat(const UMVTableManager* TableManager, const FString& FieldName, float& OutValue) const
+FString UMVStatComponent::MakeStatRowKey() const
 {
-	return TableManager && TableManager->GetFloat(StatTableName, StatRowKey, FieldName, OutValue);
+	return FString::FromInt(CharacterIndexId);
 }

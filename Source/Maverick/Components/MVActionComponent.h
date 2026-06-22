@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Tables/MVActionTableTypes.h"
+#include "Tables/MVCharacterTableTypes.h"
 #include "MVActionComponent.generated.h"
 
 class UAnimInstance;
