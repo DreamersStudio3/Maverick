@@ -75,6 +75,8 @@ public:
 	float MovingDirectionFromAcceleration;
 	UPROPERTY(BlueprintReadOnly, Category = "AnimBPData_Velocity")
 	ELocomotionDirection LocomotionDirection;
+	UPROPERTY(BlueprintReadOnly, Category = "AnimBPData_Velocity")
+	ELocomotionDirection LocomotionDirectionFromAcceleration;
 
 	// Rotation Data
 public:

@@ -158,6 +158,9 @@ public:
 	ELocomotionDirection LocomotionDirection;
 	
 	UPROPERTY(BlueprintReadOnly, Category = "LocomotionData")
+	ELocomotionDirection LocomotionDirectionFromAcceleration;
+	
+	UPROPERTY(BlueprintReadOnly, Category = "LocomotionData")
 	EGait Gait;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LocomotionData|Equipment")
