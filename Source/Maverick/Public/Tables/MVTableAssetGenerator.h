@@ -20,6 +20,7 @@ public:
 #if WITH_EDITOR
 private:
 	static bool RunCsvConverter(FString& OutLog);
+	static bool ValidateCharacterStatMapping(TArray<FString>& OutErrors);
 	static int32 ImportAllJsonFiles(TArray<struct FMVTableManifestRow>& OutTableManifestRows, TArray<FString>& OutErrors);
 	static int32 ImportJsonFile(
 		const FString& JsonPath,

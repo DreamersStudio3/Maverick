@@ -56,6 +56,10 @@ void UMVAnimInstanceBase::ReceiveCharacterData()
 {
 	IncomingGait = Character->Gait;
 	CharacterInputState = Character->CharacterInputState;
+	LocomotionDirection = Character->LocomotionDirection;
+	LocomotionDirectionFromAcceleration = Character->LocomotionDirectionFromAcceleration;
+	bIsFalling = CharcterMovementComponent->IsFalling();
+
 }
 
 void UMVAnimInstanceBase::GetLocationData(float DeltaTime)
@@ -71,18 +75,16 @@ void UMVAnimInstanceBase::GetVelocityData()
 {
 	PreviousVelocity = Velocity;
 	Velocity = CharcterMovementComponent->Velocity;
+	if (bIsFalling)
+	{
+		FallSpeed = Velocity.Z;
+	}
 
 	bHasVelocity2D = !UKismetMathLibrary::NearlyEqual_FloatFloat(FVector(Velocity.X, Velocity.Y, 0.0f).SquaredLength(), 0.0f, 0.01);
 
 	GroundSpeed = FVector(Velocity.X, Velocity.Y, 0.0f).Length();
 	MovingDirection = Character->CharacterMoveDirectionAngle;
 	MovingDirectionFromAcceleration = Character->CharacterMoveDirectionAngleFromAcceleration;
-
-	CalculateLocomotionDirection(MovingDirection, LocomotionDirection);
-
-	CalculateLocomotionDirection(UKismetAnimationLibrary::CalculateDirection(CurrentAcceleration2D, ActorRotation), LocomotionDirectionFromAcceleration);
-	
-
 }
 
 void UMVAnimInstanceBase::GetRotationData(float DeltaTime)
@@ -185,81 +187,6 @@ void UMVAnimInstanceBase::CalculatePivotState()
 	
 	float PivotDotValue = FVector::DotProduct(Acceleration2D, Velocity2D);
 
-	IsPivot = PivotDotValue < 0.0f;
-}
-
-void UMVAnimInstanceBase::CalculateLocomotionDirection(float MoveDirectionAngle, ELocomotionDirection& Direction)
-{
-	float ABSAngle = FMath::Abs(MoveDirectionAngle);
-
-	// If StrafeMode is false, Direction will be Forward
-	if (!CharacterInputState.WantsToStrafe && !CharacterInputState.WantsToAim)
-	{
-		Direction = ELocomotionDirection::F;
-		return;
-	}
-
-	// Backward Direction
-	if (ABSAngle >= 112.5)
-	{
-		// Direction == Backward
-		if (ABSAngle >= 157.5)
-		{
-			Direction = ELocomotionDirection::B;
-			return;
-		}
-		// BackLeft or BackRight
-		else
-		{
-			if (MoveDirectionAngle >= 0)
-			{
-				Direction = ELocomotionDirection::BR;
-				return;
-			}
-			else
-			{
-				Direction = ELocomotionDirection::BL;
-				return;
-			}
-		}
-	}
-	// Forward Direction
-	else if (ABSAngle <= 67.5)
-	{
-		// Direction == Forward
-		if (ABSAngle <= 22.5)
-		{
-			Direction = ELocomotionDirection::F;
-			return;
-		}
-		// FrowardLeft or ForwardRight
-		else
-		{
-			if (MoveDirectionAngle >= 0)
-			{
-				Direction = ELocomotionDirection::FR;
-				return;
-			}
-			else
-			{
-				Direction = ELocomotionDirection::FL;
-				return;
-			}
-		}
-	}
-	// Left or Right
-	else
-	{
-		if (MoveDirectionAngle >= 0)
-		{
-			Direction = ELocomotionDirection::R;
-			return;
-		}
-		else
-		{
-			Direction = ELocomotionDirection::L;
-			return;
-		}
-	}
+	IsPivot = PivotDotValue < -0.5f;
 }
 

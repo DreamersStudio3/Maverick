@@ -1,0 +1,65 @@
+{
+    "version": 1,
+    "source": {
+        "converter": "CsvToJsonConverter",
+        "file": "ActionIndex.csv"
+    },
+    "tables": {
+        "ActionIndex": {
+            "key": "ActionIndexKey",
+            "rows": [
+                {
+                    "ActionIndexKey": "00001_10001",
+                    "ActionProfileId": 1,
+                    "ActionId": 10001,
+                    "ActionName": "LightAttack",
+                    "Category": "Attack",
+                    "ActionType": "LightAttack",
+                    "ActionStatId": 10001,
+                    "bEnabled": true
+                },
+                {
+                    "ActionIndexKey": "00001_10002",
+                    "ActionProfileId": 1,
+                    "ActionId": 10002,
+                    "ActionName": "HeavyAttack",
+                    "Category": "Attack",
+                    "ActionType": "HeavyAttack",
+                    "ActionStatId": 10002,
+                    "bEnabled": true
+                },
+                {
+                    "ActionIndexKey": "00001_10010",
+                    "ActionProfileId": 1,
+                    "ActionId": 10010,
+                    "ActionName": "Guard",
+                    "Category": "Defence",
+                    "ActionType": "Guard",
+                    "ActionStatId": 10010,
+                    "bEnabled": true
+                },
+                {
+                    "ActionIndexKey": "00001_10020",
+                    "ActionProfileId": 1,
+                    "ActionId": 10020,
+                    "ActionName": "Sprint",
+                    "Category": "Movement",
+                    "ActionType": "Sprint",
+                    "ActionStatId": 10020,
+                    "bEnabled": true
+                },
+                {
+                    "ActionIndexKey": "00001_10021",
+                    "ActionProfileId": 1,
+                    "ActionId": 10021,
+                    "ActionName": "Dodge",
+                    "Category": "Movement",
+                    "ActionType": "Dodge",
+                    "ActionStatId": 10021,
+                    "AnimationChooserTable": "/Game/Table/Chooser/CHT_Dodge.CHT_Dodge",
+                    "bEnabled": true
+                }
+            ]
+        }
+    }
+}

@@ -1,6 +1,7 @@
 #include "Tables/MVTableAssetGenerator.h"
 
 #include "Tables/MVSheetSpecs.h"
+#include "Tables/MVTableManager.h"
 #include "Tables/MVTableTypes.h"
 
 #if WITH_EDITOR
@@ -174,6 +175,86 @@ namespace
 		return FJsonSerializer::Serialize(Object.ToSharedRef(), Writer);
 	}
 
+	bool TableAssetGeneratorReadIntegerKeySet(
+		const FString& JsonPath,
+		const FString& TableName,
+		const FString& KeyColumnName,
+		TSet<int32>& OutKeys,
+		TArray<FString>& OutErrors)
+	{
+		FString Raw;
+		if (!FFileHelper::LoadFileToString(Raw, *JsonPath))
+		{
+			OutErrors.Add(FString::Printf(TEXT("Cannot read JSON for validation: %s"), *JsonPath));
+			return false;
+		}
+
+		TSharedPtr<FJsonObject> Root;
+		const TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(Raw);
+		if (!FJsonSerializer::Deserialize(Reader, Root) || !Root.IsValid())
+		{
+			OutErrors.Add(FString::Printf(TEXT("Invalid JSON for validation: %s"), *JsonPath));
+			return false;
+		}
+
+		TSharedPtr<FJsonObject> TablesObject;
+		TSharedPtr<FJsonObject> TableObject;
+		const TArray<TSharedPtr<FJsonValue>>* Rows = nullptr;
+		if (!TryGetObjectField(Root, TEXT("tables"), TablesObject)
+			|| !TryGetObjectField(TablesObject, TableName, TableObject)
+			|| !TryGetArrayField(TableObject, TEXT("rows"), Rows)
+			|| !Rows)
+		{
+			OutErrors.Add(FString::Printf(TEXT("%s: table '%s' has no rows for validation."), *JsonPath, *TableName));
+			return false;
+		}
+
+		bool bSucceeded = true;
+		for (const TSharedPtr<FJsonValue>& Element : *Rows)
+		{
+			if (!Element.IsValid() || Element->Type != EJson::Object)
+			{
+				OutErrors.Add(FString::Printf(TEXT("%s: table '%s' has a non-object row."), *JsonPath, *TableName));
+				bSucceeded = false;
+				continue;
+			}
+
+			const TSharedPtr<FJsonObject> RowObject = Element->AsObject();
+			const TSharedPtr<FJsonValue>* KeyValue = RowObject->Values.Find(KeyColumnName);
+			FString KeyString;
+			int32 Key = 0;
+			if (!KeyValue
+				|| !KeyValue->IsValid()
+				|| !JsonValueToGeneratorString(*KeyValue, KeyString)
+				|| !LexTryParseString(Key, *KeyString))
+			{
+				OutErrors.Add(FString::Printf(
+					TEXT("%s: table '%s' has an invalid '%s' value."),
+					*JsonPath,
+					*TableName,
+					*KeyColumnName));
+				bSucceeded = false;
+				continue;
+			}
+
+			if (OutKeys.Contains(Key))
+			{
+				OutErrors.Add(FString::Printf(
+					TEXT("%s: table '%s' has duplicate '%s' value %d."),
+					*JsonPath,
+					*TableName,
+					*KeyColumnName,
+					Key));
+				bSucceeded = false;
+				continue;
+			}
+
+			OutKeys.Add(Key);
+		}
+
+		return bSucceeded;
+	}
+
 	bool SaveDataTableAsset(UDataTable* DataTable, const FString& PackagePath, FString& OutError)
 	{
 		if (!DataTable)
@@ -262,8 +343,19 @@ bool UMVTableAssetGenerator::GenerateDataTables(FString& OutReport)
 
 	FMVSheetSpecs::Invalidate();
 
-	TArray<FMVTableManifestRow> TableManifestRows;
 	TArray<FString> Errors;
+	if (!ValidateCharacterStatMapping(Errors))
+	{
+		OutReport = FString::Printf(TEXT("CSV conversion succeeded, but table validation failed.\n%s"), *ConverterLog);
+		if (!Errors.IsEmpty())
+		{
+			OutReport += LINE_TERMINATOR;
+			OutReport += FString::Join(Errors, LINE_TERMINATOR);
+		}
+		return false;
+	}
+
+	TArray<FMVTableManifestRow> TableManifestRows;
 	const int32 ImportedCount = ImportAllJsonFiles(TableManifestRows, Errors);
 
 	TArray<FString> CleanupErrors;
@@ -288,6 +380,14 @@ bool UMVTableAssetGenerator::GenerateDataTables(FString& OutReport)
 	{
 		OutReport += LINE_TERMINATOR;
 		OutReport += FString::Join(Errors, LINE_TERMINATOR);
+	}
+
+	if (Errors.IsEmpty())
+	{
+		if (UMVTableManager* TableManager = UMVTableManager::Get())
+		{
+			TableManager->ReloadAllTables();
+		}
 	}
 
 	return Errors.IsEmpty();
@@ -346,6 +446,53 @@ bool UMVTableAssetGenerator::RunCsvConverter(FString& OutLog)
 		*StdErr);
 
 	return bExecuted && ReturnCode == 0;
+}
+
+bool UMVTableAssetGenerator::ValidateCharacterStatMapping(TArray<FString>& OutErrors)
+{
+	const FString JsonDir = GetJsonDir();
+	TSet<int32> CharacterIndexIds;
+	TSet<int32> CharacterStatIds;
+
+	const bool bLoadedCharacterIndex = TableAssetGeneratorReadIntegerKeySet(
+		JsonDir / TEXT("CharacterIndex.json"),
+		TEXT("CharacterIndex"),
+		TEXT("CharacterIndexId"),
+		CharacterIndexIds,
+		OutErrors);
+	const bool bLoadedCharacterStat = TableAssetGeneratorReadIntegerKeySet(
+		JsonDir / TEXT("CharacterStat.json"),
+		TEXT("CharacterStat"),
+		TEXT("StatId"),
+		CharacterStatIds,
+		OutErrors);
+	if (!bLoadedCharacterIndex || !bLoadedCharacterStat)
+	{
+		return false;
+	}
+
+	for (const int32 CharacterIndexId : CharacterIndexIds)
+	{
+		if (!CharacterStatIds.Contains(CharacterIndexId))
+		{
+			OutErrors.Add(FString::Printf(
+				TEXT("CharacterStat is missing StatId %d for CharacterIndexId %d."),
+				CharacterIndexId,
+				CharacterIndexId));
+		}
+	}
+
+	for (const int32 StatId : CharacterStatIds)
+	{
+		if (!CharacterIndexIds.Contains(StatId))
+		{
+			OutErrors.Add(FString::Printf(
+				TEXT("CharacterStat has StatId %d with no matching CharacterIndexId."),
+				StatId));
+		}
+	}
+
+	return OutErrors.IsEmpty();
 }
 
 int32 UMVTableAssetGenerator::ImportAllJsonFiles(TArray<FMVTableManifestRow>& OutTableManifestRows, TArray<FString>& OutErrors)

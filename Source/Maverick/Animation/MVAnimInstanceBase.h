@@ -34,20 +34,19 @@ private:
 	void GetCharacterStateData();
 	void CalculatePivotState();
 
-private:
-	void CalculateLocomotionDirection(float MoveDirectionAngle, ELocomotionDirection& Direction);
-
-public:
-	TObjectPtr<AMVCharacterBase> Character;
-	TObjectPtr<UCharacterMovementComponent> CharcterMovementComponent;
-
-
 	// Character Data
 public:
+	UPROPERTY(BlueprintReadOnly, Category = "AnimBPData_Character")
+	TObjectPtr<AMVCharacterBase> Character;
+	UPROPERTY(BlueprintReadOnly, Category = "AnimBPData_Character")
+	TObjectPtr<UCharacterMovementComponent> CharcterMovementComponent;
+
 	UPROPERTY(BlueprintReadOnly, Category = "AnimBPData_Character")
 	EGait IncomingGait;
 	UPROPERTY(BlueprintReadWrite, Category = "AnimBPData_Character")
 	FCharacterInputState CharacterInputState;
+	UPROPERTY(BlueprintReadOnly, Category = "AnimBPData_Character")
+	uint8 bIsFalling : 1;
 
 	// Location Data
 public:
@@ -65,6 +64,8 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "AnimBPData_Velocity")
 	FVector Velocity;
 	UPROPERTY(BlueprintReadOnly, Category = "AnimBPData_Velocity")
+	float FallSpeed;
+	UPROPERTY(BlueprintReadOnly, Category = "AnimBPData_Velocity")
 	uint8 bHasVelocity2D : 1;
 	UPROPERTY(BlueprintReadOnly, Category = "AnimBPData_Velocity")
 	float GroundSpeed;
@@ -79,6 +80,7 @@ public:
 
 	// Rotation Data
 public:
+	UPROPERTY(BlueprintReadOnly, Category = "AnimBPData_Rotation")
 	FRotator ActorRotation;
 	float PreActorYaw;
 	float ActorYaw;
