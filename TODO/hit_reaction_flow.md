@@ -11,6 +11,7 @@ HitResolver 피격 계산 흐름이 들어간 뒤 이어서 정리할 작업 목
 
 ## Collision / Notify 연계
 
+- [x] `HitResolverSubsystem` 호출 입구를 `FMVHitResolveRequest`를 받는 `ResolveAttackHit` 하나로 통일한다.
 - [ ] 공격 몽타주 NotifyState에서 충돌 컴포넌트 API를 호출하는 최소 흐름을 만든다.
 - [ ] 충돌 컴포넌트가 공격자 `CharacterIndexId`, 액션 id, 이미 맞은 대상 목록을 기억해 중복 타격과 자기 자신 타격을 막는다.
 - [ ] 유효 타격 후보만 `HitResolverSubsystem`에 전달한다.

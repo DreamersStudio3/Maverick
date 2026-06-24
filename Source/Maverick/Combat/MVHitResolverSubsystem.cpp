@@ -21,27 +21,14 @@ bool UMVHitResolverSubsystem::ResolveAttackHit(
 		return false;
 	}
 
-	OnHitResolved.Broadcast(OutHitData);
+	OnHitResolved.Broadcast(OutHitData); // VFX, UI 등 후속 처리용 이벤트 브로드캐스트
 
 	if (AMVCharacterBase* Victim = OutHitData.Victim.Get())
 	{
-		Victim->OnHitResolved(OutHitData);
+		Victim->OnHitResolved(OutHitData); // 피격자에게 피해 처리를 명령하는 곳
 	}
 
 	return true;
-}
-
-bool UMVHitResolverSubsystem::ResolveAttackHitByCharacters(
-	AMVCharacterBase* Attacker,
-	AMVCharacterBase* Victim,
-	const int32 ActionId,
-	FMVResolvedHitData& OutHitData)
-{
-	FMVHitResolveRequest Request;
-	Request.Attacker = Attacker;
-	Request.Victim = Victim;
-	Request.ActionId = ActionId;
-	return ResolveAttackHit(Request, OutHitData);
 }
 
 bool UMVHitResolverSubsystem::BuildResolvedHitData(
