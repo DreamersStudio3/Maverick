@@ -33,13 +33,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Hit")
 	bool ResolveAttackHit(const FMVHitResolveRequest& Request, FMVResolvedHitData& OutHitData);
 
-	UFUNCTION(BlueprintCallable, Category = "Maverick|Hit")
-	bool ResolveAttackHitByCharacters(
-		AMVCharacterBase* Attacker,
-		AMVCharacterBase* Victim,
-		int32 ActionId,
-		FMVResolvedHitData& OutHitData);
-
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|Hit|Event")
 	FMVOnHitResolvedSignature OnHitResolved;
 
