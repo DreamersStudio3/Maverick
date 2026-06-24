@@ -4,9 +4,11 @@ ActionIndexKey,ActionProfileId,ActionId,ActionName,Category,ActionType,ActionSta
 00001_10010,1,10010,Guard,Defence,Guard,10010,,true
 00001_10020,1,10020,Sprint,Movement,Sprint,10020,,true
 00001_10021,1,10021,Dodge,Movement,Dodge,10021,/Game/Table/Chooser/CHT_Dodge.CHT_Dodge,true
-20001_20001,20001,20001,OutsideArea,Movement,Sprint,10020,,true
-20001_20002,20001,20002,DefensiveArea,Defence,Guard,10010,,true
-20001_20003,20001,20003,OffensiveArea,Attack,LightAttack,10001,,true
-20001_20004,20001,20004,Dadge,Movement,Dodge,10021,,true
-20001_20005,20001,20005,Groggy,None,None,10001,,true
-20001_20006,20001,20006,Dead,None,None,10001,,true
+20001_20010,20001,20010,CounterAttack,Attack,HeavyAttack,10002,/Game/AI/NamelessPuppet/Chooser/CHT_TestCounterAttack.CHT_TestCounterAttack,true
+20001_20011,20001,20011,SprintAttack,Attack,LightAttack,10001,/Game/AI/NamelessPuppet/Chooser/CHT_TestSprintAttack.CHT_TestSprintAttack,true
+20001_20012,20001,20012,AirborneChargeAttack,Attack,HeavyAttack,10002,/Game/AI/NamelessPuppet/Chooser/CHT_TestAirborneAttack.CHT_TestAirborneAttack,true
+20001_20020,20001,20020,SkillBackAttack,Attack,LightAttack,10001,/Game/AI/NamelessPuppet/Chooser/CHT_TestSkillAttack.CHT_TestSkillAttack,true
+20001_20021,20001,20021,SkillRangeAttack,Attack,LightAttack,10001,/Game/AI/NamelessPuppet/Chooser/CHT_TestSkillAttack.CHT_TestSkillAttack,true
+20001_20022,20001,20022,SkillGapCloseAttack,Attack,HeavyAttack,10002,/Game/AI/NamelessPuppet/Chooser/CHT_TestSkillAttack.CHT_TestSkillAttack,true
+20001_20023,20001,20023,SkillSpecialAttack,Attack,HeavyAttack,10002,/Game/AI/NamelessPuppet/Chooser/CHT_TestSkillAttack.CHT_TestSkillAttack,true
+20001_20030,20001,20030,BasicAttack,Attack,LightAttack,10001,/Game/AI/NamelessPuppet/Chooser/CHT_TestBasicAttack.CHT_TestBasicAttack,true
