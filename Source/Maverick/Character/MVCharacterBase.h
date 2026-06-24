@@ -7,6 +7,7 @@
 #include "Enum/CharacterLocomotionEnums.h"
 #include "Enum/MVEquipmentEnums.h"
 #include "Struct/CharacterLocomotionStructs.h"
+#include "Struct/MVHitTypes.h"
 #include "Tables/MVActionTableTypes.h"
 #include "Tables/MVCharacterTableTypes.h"
 
@@ -22,12 +23,13 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FMVOnMovementInputReceived, const FVector&);
  * 공통 캐릭터 런타임 본체.
  *
  * 플레이어와 NPC가 공유할 수 있는 캐릭터 데이터 ID, 이동 상태, 공용 컴포넌트 연결, 무적 상태,
- * 질주 스태미너 소비를 관리한다. 회피, 전투, 액션 버퍼 같은 도메인 세부 정책은
+ * 피격 이벤트 브리지, 질주 스태미너 소비를 관리한다. 회피, 전투, 액션 버퍼 같은 도메인 세부 정책은
  * 전용 컴포넌트가 이 클래스의 공통 상태 변수와 이벤트 함수를 호출해 컴포넌트 안에서 개별적으로 처리한다.
  *
  * 책임:
  *   - CharacterIndexId를 액션/스탯 컴포넌트에 주입하고 CharacterMovement 기준 locomotion 값과 gait,
  *     장비 스타일, 질주 스태미너 상태를 갱신한다.
+ *   - HitResolver가 전달한 결과의 CharacterIndexId를 확인한 뒤 OnDamaged를 브로드캐스트한다.
  *   - ACharacter의 BeginPlay, Tick, AddMovementInput 진입점에서 초기 데이터 로드,
  *     매 프레임 locomotion/질주 스태미너 갱신, 이동 입력 캐싱과 OnMovementInputReceived 브로드캐스트를 담당한다.
  *   - 질주 중이 아닐 때 StatComponent의 회복 Tick을 호출하되, 회복 쿨다운과 일시정지 정책은 StatComponent가 소유한다.
@@ -105,7 +107,13 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Maverick|Character|State")
 	bool IsInvincible() const;
 
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Character|Damage")
+	bool OnHitResolved(const FMVResolvedHitData& HitData);
+
 	FMVOnMovementInputReceived OnMovementInputReceived;
+
+	UPROPERTY(BlueprintAssignable, Category = "Maverick|Character|Event")
+	FMVOnDamagedSignature OnDamaged;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UMVStatComponent> StatComponent;
@@ -118,6 +126,7 @@ public:
 
 private:
 	void ApplyCharacterIndexIdToComponents();
+	void BindDamageHandlers();
 	void UpdateCharacterValue();
 	void UpdateRotation();
 	void UpdateMovement(float DeltaTime);

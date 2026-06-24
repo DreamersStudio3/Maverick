@@ -80,12 +80,15 @@ void AMVCharacterBase::PostInitializeComponents()
 	Super::PostInitializeComponents();
 
 	ApplyCharacterIndexIdToComponents();
+	BindDamageHandlers();
 }
 
 // Called when the game starts or when spawned
 void AMVCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	BindDamageHandlers();
 
 	// Character Moving Direction Speed Map
 	FString CurvePath = "/Game/Miscellaneous/Curve/C_CharacterMoveSpeedMap.C_CharacterMoveSpeedMap";
@@ -276,6 +279,17 @@ bool AMVCharacterBase::IsInvincible() const
 	return InvincibilityCount > 0;
 }
 
+bool AMVCharacterBase::OnHitResolved(const FMVResolvedHitData& HitData)
+{
+	if (HitData.VictimCharacterIndexId != CharacterIndexId)
+	{
+		return false;
+	}
+
+	OnDamaged.Broadcast(HitData);
+	return true;
+}
+
 void AMVCharacterBase::ApplyCharacterIndexIdToComponents()
 {
 	if (ActionComponent)
@@ -287,6 +301,18 @@ void AMVCharacterBase::ApplyCharacterIndexIdToComponents()
 	{
 		StatComponent->SetCharacterIndexId(CharacterIndexId);
 	}
+}
+
+void AMVCharacterBase::BindDamageHandlers()
+{
+	if (!StatComponent)
+	{
+		return;
+	}
+
+	OnDamaged.RemoveDynamic(StatComponent, &UMVStatComponent::HandleDamaged);
+	OnDamaged.AddUniqueDynamic(StatComponent, &UMVStatComponent::HandleDamaged);
+	// TODO: HitReactionComponent가 추가되면 OnDamaged에 HandleDamaged를 함께 바인딩한다.
 }
 
 void AMVCharacterBase::UpdateCharacterValue()

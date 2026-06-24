@@ -46,6 +46,9 @@ struct MAVERICK_API FMVCharacterStatRow : public FMVTableRowBase
 	float MPRecoveryPerSecond = 0.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Table|Stat|Attack")
+	float AttackPower = 10.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Table|Stat|Attack")
 	float AttackSpeed = 0.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Table|Stat|MoveSpeed")

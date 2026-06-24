@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Struct/MVHitTypes.h"
 #include "MVStatComponent.generated.h"
 
 class UMVTableManager;
@@ -15,8 +16,9 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMVOnDead);
  *
  * 명시적으로 설정된 CharacterIndexId와 동일한 StatId를 가진 CharacterStat row에서 기본 스탯을
  * 로드하고 HP, 스태미너, MP, groggy, 이동/전투 수치의 현재값과 변경 이벤트를 소유한다.
- * 스태미너/MP 소비는 회복 쿨다운을 시작하며, 액션 중 회복 일시정지와 최근 감소 UI 홀드 이벤트도
- * 이 컴포넌트의 상태로 관리한다. 다른 도메인 컴포넌트의 캐릭터 선택 상태는 참조하지 않는다.
+ * `OnDamaged` 구독을 통해 확정된 피해의 HP 차감도 처리한다. 스태미너/MP 소비는 회복 쿨다운을 시작하며,
+ * 액션 중 회복 일시정지와 최근 감소 UI 홀드 이벤트도 이 컴포넌트의 상태로 관리한다.
+ * 다른 도메인 컴포넌트의 캐릭터 선택 상태는 참조하지 않는다.
  *
  * 라이프사이클:
  *   1) BeginPlay -> 설정된 스탯 테이블 행을 읽어 현재 스탯 값을 초기화한다.
@@ -64,6 +66,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Table")
 	bool LoadStatsFromTable();
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Damage")
+	void HandleDamaged(const FMVResolvedHitData& HitData);
 
 	void TickRecoverableStats(float DeltaTime);
 
@@ -123,6 +128,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|MP")
 	void RecoverMP(float Amount);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Attack")
+	void SetAttackPower(float InAttackPower);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Attack")
 	void SetAttackSpeed(float InAttackSpeed);
@@ -193,6 +201,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|MP")
 	float MPRecoveryPerSecond = 5.0f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Attack")
+	float AttackPower = 10.0f;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Attack")
 	float AttackSpeed = 1.0f;

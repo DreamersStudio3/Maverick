@@ -88,6 +88,7 @@ bool UMVStatComponent::LoadStatsFromTable()
 	SetMaxMP(StatRow->MaxMP);
 	SetCurrentMP(StatRow->CurrentMP);
 	SetMPRecoveryPerSecond(StatRow->MPRecoveryPerSecond);
+	SetAttackPower(StatRow->AttackPower);
 	SetAttackSpeed(StatRow->AttackSpeed);
 	SetWalkSpeed(StatRow->WalkSpeed);
 	SetRunSpeed(StatRow->RunSpeed);
@@ -99,6 +100,26 @@ bool UMVStatComponent::LoadStatsFromTable()
 	SetGroggyRecoveryDelay(StatRow->GroggyRecoveryDelay);
 
 	return true;
+}
+
+void UMVStatComponent::HandleDamaged(const FMVResolvedHitData& HitData)
+{
+	if (HitData.VictimCharacterIndexId > 0 && HitData.VictimCharacterIndexId != CharacterIndexId)
+	{
+		return;
+	}
+
+	const float HPDamage = MVStatNonNegative(HitData.FinalDamage);
+	if (HPDamage > 0.0f)
+	{
+		SetCurrentHP(CurrentHP - HPDamage);
+	}
+
+	const float GroggyDamage = MVStatNonNegative(HitData.GroggyDamage);
+	if (GroggyDamage > 0.0f)
+	{
+		SetCurrentGroggy(CurrentGroggy + GroggyDamage);
+	}
 }
 
 void UMVStatComponent::TickRecoverableStats(float DeltaTime)
@@ -319,6 +340,11 @@ void UMVStatComponent::RecoverMP(float Amount)
 	}
 
 	SetCurrentMP(CurrentMP + NormalizedAmount);
+}
+
+void UMVStatComponent::SetAttackPower(float InAttackPower)
+{
+	AttackPower = MVStatNonNegative(InAttackPower);
 }
 
 void UMVStatComponent::SetAttackSpeed(float InAttackSpeed)
