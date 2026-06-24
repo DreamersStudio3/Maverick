@@ -4,3 +4,9 @@ ActionIndexKey,ActionProfileId,ActionId,ActionName,Category,ActionType,ActionSta
 00001_10010,1,10010,Guard,Defence,Guard,10010,,true
 00001_10020,1,10020,Sprint,Movement,Sprint,10020,,true
 00001_10021,1,10021,Dodge,Movement,Dodge,10021,/Game/Table/Chooser/CHT_Dodge.CHT_Dodge,true
+20001_20001,20001,20001,OutsideArea,Movement,Sprint,10020,,true
+20001_20002,20001,20002,DefensiveArea,Defence,Guard,10010,,true
+20001_20003,20001,20003,OffensiveArea,Attack,LightAttack,10001,,true
+20001_20004,20001,20004,Dadge,Movement,Dodge,10021,,true
+20001_20005,20001,20005,Groggy,None,None,10001,,true
+20001_20006,20001,20006,Dead,None,None,10001,,true

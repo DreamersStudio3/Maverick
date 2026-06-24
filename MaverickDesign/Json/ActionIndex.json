@@ -58,6 +58,66 @@
                     "ActionStatId": 10021,
                     "AnimationChooserTable": "/Game/Table/Chooser/CHT_Dodge.CHT_Dodge",
                     "bEnabled": true
+                },
+                {
+                    "ActionIndexKey": "20001_20001",
+                    "ActionProfileId": 20001,
+                    "ActionId": 20001,
+                    "ActionName": "OutsideArea",
+                    "Category": "Movement",
+                    "ActionType": "Sprint",
+                    "ActionStatId": 10020,
+                    "bEnabled": true
+                },
+                {
+                    "ActionIndexKey": "20001_20002",
+                    "ActionProfileId": 20001,
+                    "ActionId": 20002,
+                    "ActionName": "DefensiveArea",
+                    "Category": "Defence",
+                    "ActionType": "Guard",
+                    "ActionStatId": 10010,
+                    "bEnabled": true
+                },
+                {
+                    "ActionIndexKey": "20001_20003",
+                    "ActionProfileId": 20001,
+                    "ActionId": 20003,
+                    "ActionName": "OffensiveArea",
+                    "Category": "Attack",
+                    "ActionType": "LightAttack",
+                    "ActionStatId": 10001,
+                    "bEnabled": true
+                },
+                {
+                    "ActionIndexKey": "20001_20004",
+                    "ActionProfileId": 20001,
+                    "ActionId": 20004,
+                    "ActionName": "Dadge",
+                    "Category": "Movement",
+                    "ActionType": "Dodge",
+                    "ActionStatId": 10021,
+                    "bEnabled": true
+                },
+                {
+                    "ActionIndexKey": "20001_20005",
+                    "ActionProfileId": 20001,
+                    "ActionId": 20005,
+                    "ActionName": "Groggy",
+                    "Category": "None",
+                    "ActionType": "None",
+                    "ActionStatId": 10001,
+                    "bEnabled": true
+                },
+                {
+                    "ActionIndexKey": "20001_20006",
+                    "ActionProfileId": 20001,
+                    "ActionId": 20006,
+                    "ActionName": "Dead",
+                    "Category": "None",
+                    "ActionType": "None",
+                    "ActionStatId": 10001,
+                    "bEnabled": true
                 }
             ]
         }

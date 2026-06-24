@@ -30,7 +30,7 @@
                     "GroggyRecoveryDelay": 2
                 },
                 {
-                    "StatId": 10001,
+                    "StatId": 20001,
                     "MaxHP": 100,
                     "CurrentHP": 100,
                     "MaxStamina": 100,

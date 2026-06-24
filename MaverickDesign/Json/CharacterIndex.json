@@ -16,10 +16,10 @@
                     "bEnabled": true
                 },
                 {
-                    "CharacterIndexId": 10001,
-                    "CharacterName": "BulkupCarcass",
+                    "CharacterIndexId": 20001,
+                    "CharacterName": "NamelessPuppet",
                     "CharacterKind": "Enemy",
-                    "ActionProfileId": 10001,
+                    "ActionProfileId": 20001,
                     "bEnabled": true
                 }
             ]
