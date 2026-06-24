@@ -65,6 +65,11 @@ EStateTreeRunStatus FMVFocusingTask::Tick(FStateTreeExecutionContext& Context, c
 	TargetRotation.Pitch = 0.0f;
 	TargetRotation.Roll = 0.0f;
 	
+	if (TargetDirection.IsNearlyZero())
+	{
+		return EStateTreeRunStatus::Succeeded;
+	}
+	
 	const FRotator NewRotation = FMath::RInterpTo(
 		InstanceData.Owner->GetActorRotation(),
 		TargetRotation,
