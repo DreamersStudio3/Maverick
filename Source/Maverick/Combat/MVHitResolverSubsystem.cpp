@@ -1,10 +1,8 @@
 #include "Combat/MVHitResolverSubsystem.h"
 
 #include "Character/MVCharacterBase.h"
-#include "Components/MVActionComponent.h"
 #include "Components/MVStatComponent.h"
 #include "Engine/World.h"
-#include "Tables/MVActionTableTypes.h"
 
 UMVHitResolverSubsystem* UMVHitResolverSubsystem::Get(const UObject* WorldContextObject)
 {
@@ -39,7 +37,7 @@ bool UMVHitResolverSubsystem::BuildResolvedHitData(
 
 	AMVCharacterBase* Attacker = Request.Attacker.Get();
 	AMVCharacterBase* Victim = Request.Victim.Get();
-	if (!Attacker || !Victim || Attacker == Victim || Request.ActionId <= MVActionIds::None)
+	if (!Attacker || !Victim || Attacker == Victim)
 	{
 		return false;
 	}
@@ -51,49 +49,33 @@ bool UMVHitResolverSubsystem::BuildResolvedHitData(
 		return false;
 	}
 
-	const FMVActionStatRow* ActionStat = FindActionStatRow(*Attacker, Request.ActionId);
-	if (!ActionStat)
-	{
-		return false;
-	}
-
 	const float AttackerAttackPower = ResolveNonNegativeStat(AttackerStat->AttackPower);
 	const float BaseAttackPower = AttackerAttackPower > 0.0f
 		? AttackerAttackPower
 		: ResolveNonNegativeStat(FallbackAttackPower);
 	const float WeaponAttackPower = ResolveEquippedWeaponAttackPower(*Attacker, Request);
-	const float DamageMultiplier = FMath::Max(0.0f, ActionStat->DamageMultiplier);
+	const float DamageMultiplier = ResolveNonNegativeStat(Request.DamageMultiplier);
 	const float VictimDefence = ResolveNonNegativeStat(VictimStat->Defence);
 	const float RawDamage = (BaseAttackPower + WeaponAttackPower) * DamageMultiplier;
 	const float FinalDamage = FMath::Max(0.0f, RawDamage - VictimDefence);
 
 	OutHitData.Attacker = Attacker;
 	OutHitData.Victim = Victim;
-	OutHitData.AttackerCharacterIndexId = Attacker->GetCharacterIndexId();
-	OutHitData.VictimCharacterIndexId = Victim->GetCharacterIndexId();
-	OutHitData.ActionId = Request.ActionId;
+	OutHitData.AttackerCharacterIndexCode = Attacker->GetCharacterIndexCode();
+	OutHitData.VictimCharacterIndexCode = Victim->GetCharacterIndexCode();
+	OutHitData.ActionRowName = Request.ActionRowName;
 	OutHitData.CharacterAttackPower = BaseAttackPower;
 	OutHitData.WeaponAttackPower = WeaponAttackPower;
 	OutHitData.VictimDefence = VictimDefence;
 	OutHitData.DamageMultiplier = DamageMultiplier;
 	OutHitData.FinalDamage = FinalDamage;
 	OutHitData.GroggyDamage = 0.0f;
-	OutHitData.HitReactionType = ActionStat->HitReactionType;
+	OutHitData.HitReactionType = Request.HitReactionType;
 	OutHitData.HitLocation = Request.HitLocation;
 	OutHitData.HitDirection = Request.HitDirection.IsNearlyZero()
 		? ResolveHitDirection(*Attacker, *Victim)
 		: Request.HitDirection.GetSafeNormal();
 	return true;
-}
-
-const FMVActionStatRow* UMVHitResolverSubsystem::FindActionStatRow(
-	const AMVCharacterBase& Attacker,
-	const int32 ActionId) const
-{
-	const UMVActionComponent* ActionComponent = Attacker.FindComponentByClass<UMVActionComponent>();
-	return ActionComponent
-		? ActionComponent->FindActionStatRow(ActionId)
-		: nullptr;
 }
 
 float UMVHitResolverSubsystem::ResolveEquippedWeaponAttackPower(

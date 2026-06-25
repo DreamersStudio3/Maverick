@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "GameplayTagContainer.h"
 #include "Struct/MVHitTypes.h"
 #include "MVStatComponent.generated.h"
 
@@ -14,7 +15,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMVOnDead);
 /**
  * 캐릭터 스탯 값과 회복 정책을 관리하는 컴포넌트.
  *
- * 명시적으로 설정된 CharacterIndexId와 동일한 StatId를 가진 CharacterStat row에서 기본 스탯을
+ * 명시적으로 설정된 CharacterIndexCode와 동일한 CharacterStat row에서 기본 스탯을
  * 로드하고 HP, 스태미너, MP, groggy, 이동/전투 수치의 현재값과 변경 이벤트를 소유한다.
  * `OnDamaged` 구독을 통해 확정된 피해의 HP 차감도 처리한다. 스태미너/MP 소비는 회복 쿨다운을 시작하며,
  * 액션 중 회복 일시정지와 최근 감소 UI 홀드 이벤트도 이 컴포넌트의 상태로 관리한다.
@@ -59,10 +60,10 @@ public:
 	void SetStatTableReference(FName InStatTableName, const FString& InStatRowKey);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Character")
-	void SetCharacterIndexId(int32 NewCharacterIndexId);
+	void SetCharacterIndexCode(FGameplayTag NewCharacterIndexCode);
 
 	UFUNCTION(BlueprintPure, Category = "Maverick|Stat|Character")
-	int32 GetCharacterIndexId() const;
+	FGameplayTag GetCharacterIndexCode() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Table")
 	bool LoadStatsFromTable();
@@ -166,8 +167,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Table")
 	FName StatTableName = TEXT("CharacterStat");
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Character", meta = (ClampMin = "1"))
-	int32 CharacterIndexId = 1;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Character", meta = (Categories = "Character"))
+	FGameplayTag CharacterIndexCode;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Table")
 	bool bLoadStatsOnBeginPlay = true;
