@@ -48,6 +48,7 @@ public:
 	bool StartCooldown(FName ActionId);
 	bool IsCooldownReady(FName ActionId) const;
 	float GetRemainingTime(FName ActionId) const;
+	void GetReadyActionIds(TArray<FName>& OutActionIds) const;
 
 	const TMap<FName, FMVActionCooldownState>& GetCooldownStates() const { return CooldownStates; }
 
