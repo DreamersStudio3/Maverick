@@ -3,29 +3,32 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Enum/CharacterLocomotionEnums.h"
+#include "GameplayTagContainer.h"
+#include "Tables/MVMovementActionTableTypes.h"
+#include "UObject/SoftObjectPath.h"
 #include "MVDodgeComponent.generated.h"
 
 class AMVCharacterBase;
-struct FMVActionStatRow;
 class UCurveFloat;
+class UMVActionComponent;
 
 /**
  * 회피 액션 전용 런타임 컴포넌트.
  *
- * ActionComponent의 공용 실행/버퍼 흐름 위에서 Dodge가 필요로 하는 controller-space 입력 스냅샷,
- * Dodge 시작 yaw, chooser 입력 플래그, AnimNotify 기반 launch 이동을 관리한다.
+ * InputManager 액션 입력에서 Dodge row를 선택하고, ActionComponent 실행 API로 몽타주를 요청한다.
+ * Dodge가 필요로 하는 controller-space 입력 스냅샷, Dodge 시작 yaw, chooser 입력 플래그를 관리한다.
+ * Dodge 이동 자체는 montage root motion이 담당한다.
  *
  * 책임:
  *   - 입력 버퍼 구간의 Dodge 이동 의도를 controller-space raw 2D로 저장하고 소비 시점에 재사용한다.
- *   - Roll과 대각 Step은 캐릭터 yaw를 보정하되, Strafe Step 방향 판정은 controller yaw 기준으로 고정한다.
- *   - Step chooser에는 cardinal F/L/R/B 문맥을 제공하고, Step/Backstep은 Roll보다 짧은 launch 거리를 쓴다.
- *   - launch 이동은 AnimNotify 설정을 따르며 걷기 바닥에서는 경사면을 따라 보정한다.
+ *   - Roll과 대각 Step은 root motion 재생 전에 캐릭터 yaw를 입력 방향으로 보정한다.
+ *   - 대각 Step chooser에는 앞대각 F, 뒤대각 B 문맥을 제공해 축 방향 root motion row를 재사용할 수 있게 한다.
+ *   - 기존 DodgeLaunch NotifyState 호출은 애셋 호환을 위해 no-op으로 받는다.
  *
  * 라이프사이클:
- *   1) BeginPlay -> CharacterBase 이동 입력 이벤트와 ActionComponent 준비/입력 스냅샷 delegate를 바인딩한다.
- *   2) OnActionPreparing(Dodge) -> 입력 스냅샷, 캐릭터 회전, chooser용 locomotion 상태를 준비한다.
- *   3) MV Dodge Launch NotifyState -> 거리/시간 설정을 캐시하고 준비된 방향으로 이동을 적용한다.
- *   4) Buffered Dodge 시작 시 NotifyState Begin이 누락되면 캐시한 설정으로 launch를 재초기화한다.
+ *   1) BeginPlay -> CharacterBase 이동 입력 이벤트와 InputManager 액션 입력을 바인딩한다.
+ *   2) Dodge 입력 -> 입력 스냅샷과 chooser 문맥을 준비하고, Chooser/DataTable row를 확정해 ActionComponent에 전달한다.
+ *   3) 현재 Dodge의 RecoveryEscapeWindow 안에서 Dodge 입력이 들어오면 다음 Dodge row로 전환한다.
  */
 UCLASS(ClassGroup = (Maverick), meta = (BlueprintSpawnableComponent))
 class MAVERICK_API UMVDodgeComponent : public UActorComponent
@@ -54,65 +57,50 @@ public:
 	void TickDodgeLaunchWindow(float DeltaTime, int32 MontageInstanceId);
 	void EndDodgeLaunchWindow(bool bClearHorizontalVelocity, int32 MontageInstanceId);
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Action|Dodge|Chooser")
+	FSoftObjectPath DodgeChooserTable = TEXT("/Game/Table/Chooser/CHT_Dodge.CHT_Dodge");
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Action|Dodge|Chooser")
+	bool bUseNamingConventionWhenChooserUnavailable = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Action|Dodge|Table", meta = (ClampMin = "1"))
+	int32 DefaultDodgeRowIndex = 1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Action|Dodge|Recovery", meta = (ClampMin = "0.0", Units = "s"))
+	float RecoveryDodgeTransitionBlendOutTime = 0.05f;
+
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = "Maverick|Action|Dodge|Chooser")
+	FMVDodgeActionRowHandle ChooserDodgeActionRowHandle;
+
 private:
 	void CacheControllerSpaceMovementInput(const FVector2D& ControllerSpaceMovementInput);
 	void HandleOwnerMovementInput(const FVector& MovementInputDirection);
 	FVector2D CaptureControllerSpaceMovementInput(const AMVCharacterBase& OwnerCharacter) const;
-	FVector ResolveBufferedActionMovementInput(int32 ActionId) const;
-	bool CanConsumeBufferedAction(
-		int32 ActionId,
-		const FVector& MovementInputDirection,
-		bool bHasMovementInput) const;
+	bool TryStartDodgeAction();
+	bool TryConsumeBufferedDodgeInput();
+	bool ResolveDodgeActionRowHandle(FMVDodgeActionRowHandle& OutActionRowHandle);
+	bool EvaluateDodgeChooserActionRowHandle(FMVDodgeActionRowHandle& OutActionRowHandle);
+	FName MakeDodgeActionTableName(FGameplayTag CharacterIndexCode) const;
+	FName MakeDodgeActionTableName(const UDataTable* ActionDataTable) const;
+	FName MakeDodgeActionRowName(FGameplayTag CharacterIndexCode, int32 Index) const;
+	FGameplayTag ResolveCharacterIndexCode() const;
+	bool CanTransitionActiveDodgeAction(const UMVActionComponent& ActionComponent) const;
+	const FMVDodgeActionRow* FindDodgeActionRow(FDataTableRowHandle ActionRowHandle) const;
+	bool CanConsumeDodgeCost(const FMVDodgeActionRow& DodgeActionRow) const;
+	bool ConsumeDodgeCost(const FMVDodgeActionRow& DodgeActionRow);
 	void ApplyDodgeChooserSnapshot(
 		AMVCharacterBase& OwnerCharacter,
 		bool bHasMovementInput,
-		bool bFreeDodge,
-		ELocomotionDirection StrafeInputDirection) const;
-	void ClearPreparedDodgeLaunch();
-	void StopActiveDodgeLaunch(bool bClearHorizontalVelocity, bool bClearPreparedLaunch = true);
-	void CacheDodgeLaunchWindowSettings(
-		float NotifyDuration,
-		UCurveFloat* DistanceCurve,
-		float DistanceScale,
-		bool bApplyVerticalLaunch);
-	bool TryStartBufferedDodgeLaunchFallback();
-	FVector ResolveDodgeLaunchDirection(const AMVCharacterBase& OwnerCharacter) const;
-	float ResolveDodgeLaunchDistance(const FMVActionStatRow& ActionStat, const AMVCharacterBase& OwnerCharacter) const;
-	float ResolveDodgeLaunchDuration(const FMVActionStatRow& ActionStat, float NotifyDuration) const;
-	float EvaluateDodgeLaunchDistanceAlpha(float NormalizedTime) const;
-	bool IsCurrentDodgeLaunchMontageInstance(int32 MontageInstanceId) const;
+		ELocomotionDirection InputDirection,
+		const FVector& MovementDirection) const;
 
 	UFUNCTION()
-	void HandleActionPreparing(int32 ActionId);
-
+	void HandleActionInputSubmitted(int32 ActionId, FVector2D ControllerSpaceInput, bool bHasMovementInput);
 	UFUNCTION()
-	void HandleActionStarted(int32 ActionId);
+	void HandleRecoveryEscapeWindowChanged(bool bOpen);
 
-	UPROPERTY(Transient)
-	TObjectPtr<AMVCharacterBase> ActiveDodgeLaunchCharacter;
-
-	UPROPERTY(Transient)
-	TObjectPtr<UCurveFloat> ActiveDodgeLaunchDistanceCurve;
-
-	UPROPERTY(Transient)
-	TObjectPtr<UCurveFloat> CachedDodgeLaunchDistanceCurve;
-
+	FName ActiveDodgeActionTableName = NAME_None;
+	FName ActiveDodgeActionRowName = NAME_None;
 	FVector2D CachedControllerSpaceMovementInput = FVector2D::ZeroVector;
 	uint64 CachedControllerSpaceMovementInputFrame = 0;
-	FVector PreparedDodgeLaunchDirection = FVector::ZeroVector;
-	FVector ActiveDodgeLaunchDirection = FVector::ZeroVector;
-	float CachedDodgeLaunchNotifyDuration = 0.0f;
-	float CachedDodgeLaunchDistanceScale = 1.0f;
-	float ActiveDodgeLaunchTargetDistance = 0.0f;
-	float ActiveDodgeLaunchDuration = 0.0f;
-	float ActiveDodgeLaunchElapsed = 0.0f;
-	float ActiveDodgeLaunchLastAlpha = 0.0f;
-	int32 ActiveDodgeLaunchMontageInstanceId = INDEX_NONE;
-	bool bCachedDodgeLaunchApplyVertical = true;
-	bool bHasCachedDodgeLaunchWindowSettings = false;
-	bool bHasPreparedDodgeLaunchDirection = false;
-	bool bPreparedDodgeHasMovementInput = false;
-	bool bPreparedDodgeUsesRollDistance = false;
-	bool bPendingBufferedDodgeLaunchFallback = false;
-	bool bDodgeLaunchActive = false;
 };
