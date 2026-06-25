@@ -13,7 +13,7 @@
 
 `MaverickDesign/Json`은 에디터 생성용 중간 산출물입니다. 런타임의 기준 데이터는 `/Game/Table` 아래 생성된 `UDataTable` 에셋입니다.
 
-액션 실행 테이블처럼 몽타주/섹션과 강하게 묶인 데이터는 CSV 생성 체인에서 제외하고 uasset DataTable로 직접 관리할 수 있습니다. 현재 직접 관리 테이블 스캔 대상은 `/Game/Table/HitReaction`, `/Game/Table/Combat` 아래 DataTable입니다.
+액션 실행 테이블처럼 몽타주/섹션과 강하게 묶인 데이터는 CSV 생성 체인에서 제외하고 uasset DataTable로 직접 관리할 수 있습니다. 현재 직접 관리 테이블 스캔 대상은 `/Game/Table/HitReaction`, `/Game/Table/Combat`, `/Game/Table/Dodge`, `/Game/Table/Sprint` 아래 DataTable입니다.
 
 ## CSV 작성
 

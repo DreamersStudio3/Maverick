@@ -158,6 +158,7 @@ private:
 	float ResolveSprintStaminaCostPerSecond() const;
 	float ResolveSprintMinRequiredStamina() const;
 	float ResolveSprintResumeStaminaRatio() const;
+	const FMVSprintActionRow* FindSprintActionRow() const;
 	FName ResolveSprintActionTableName() const;
 	FName ResolveSprintActionRowName() const;
 	float CalculateCharacterMovementSpeed(float WalkSpeed, float RunSpeed, float SprintSpeed);
@@ -210,7 +211,10 @@ public:
 	float SprintResumeStaminaRatio = 0.7f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LocomotionData|Sprint|Table")
-	FName SprintActionTableName = NAME_None;
+	FDataTableRowHandle SprintActionRow;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LocomotionData|Sprint|Table")
+	FName SprintActionTableName = TEXT("Sprint");
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LocomotionData|Sprint|Table")
 	FName SprintActionRowName = NAME_None;

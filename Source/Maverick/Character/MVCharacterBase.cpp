@@ -514,22 +514,17 @@ void AMVCharacterBase::CacheSprintActionData()
 	SprintActionMinRequiredStamina = 0.0f;
 	SprintActionRestartStaminaPercent = FMath::Clamp(SprintResumeStaminaRatio * 100.0f, 0.0f, 100.0f);
 
-	const UMVTableManager* TableManager = UMVTableManager::Get(this);
-	const FName ActionTableName = ResolveSprintActionTableName();
-	const FName ActionRowName = ResolveSprintActionRowName();
-	const FMVSprintActionRow* SprintActionRow = TableManager && !ActionTableName.IsNone() && !ActionRowName.IsNone()
-		? TableManager->FindRow<FMVSprintActionRow>(ActionTableName, ActionRowName.ToString())
-		: nullptr;
-	if (!SprintActionRow || !SprintActionRow->bEnabled)
+	const FMVSprintActionRow* SprintActionDataRow = FindSprintActionRow();
+	if (!SprintActionDataRow || !SprintActionDataRow->bEnabled)
 	{
 		return;
 	}
 
-	SprintActionStaminaCost = FMath::Max(0.0f, SprintActionRow->StaminaCost);
-	SprintActionStaminaCostType = SprintActionRow->StaminaCostType;
-	SprintActionMinRequiredStamina = FMath::Max(0.0f, SprintActionRow->MinRequiredStamina);
-	SprintActionRestartStaminaPercent = SprintActionRow->SprintRestartStaminaPercent > 0.0f
-		? FMath::Clamp(SprintActionRow->SprintRestartStaminaPercent, 0.0f, 100.0f)
+	SprintActionStaminaCost = FMath::Max(0.0f, SprintActionDataRow->StaminaCost);
+	SprintActionStaminaCostType = SprintActionDataRow->StaminaCostType;
+	SprintActionMinRequiredStamina = FMath::Max(0.0f, SprintActionDataRow->MinRequiredStamina);
+	SprintActionRestartStaminaPercent = SprintActionDataRow->SprintRestartStaminaPercent > 0.0f
+		? FMath::Clamp(SprintActionDataRow->SprintRestartStaminaPercent, 0.0f, 100.0f)
 		: FMath::Clamp(SprintResumeStaminaRatio * 100.0f, 0.0f, 100.0f);
 	bHasSprintActionData = true;
 }
@@ -600,6 +595,38 @@ float AMVCharacterBase::ResolveSprintResumeStaminaRatio() const
 	return FMath::Clamp(RestartPercent / 100.0f, 0.0f, 1.0f);
 }
 
+const FMVSprintActionRow* AMVCharacterBase::FindSprintActionRow() const
+{
+	if (SprintActionRow.DataTable && !SprintActionRow.RowName.IsNone())
+	{
+		if (!SprintActionRow.DataTable->GetRowStruct()
+			|| !SprintActionRow.DataTable->GetRowStruct()->IsChildOf(FMVSprintActionRow::StaticStruct()))
+		{
+			UE_LOG(
+				LogTemp,
+				Warning,
+				TEXT("SprintActionRow has invalid row struct. DataTable=%s RowStruct=%s Expected=MVSprintActionRow."),
+				*GetNameSafe(SprintActionRow.DataTable),
+				SprintActionRow.DataTable->GetRowStruct()
+					? *SprintActionRow.DataTable->GetRowStruct()->GetName()
+					: TEXT("None"));
+			return nullptr;
+		}
+
+		return SprintActionRow.DataTable->FindRow<FMVSprintActionRow>(
+			SprintActionRow.RowName,
+			TEXT("MVCharacterBase"),
+			false);
+	}
+
+	const UMVTableManager* TableManager = UMVTableManager::Get(this);
+	const FName ActionTableName = ResolveSprintActionTableName();
+	const FName ActionRowName = ResolveSprintActionRowName();
+	return TableManager && !ActionTableName.IsNone() && !ActionRowName.IsNone()
+		? TableManager->FindRow<FMVSprintActionRow>(ActionTableName, ActionRowName.ToString())
+		: nullptr;
+}
+
 FName AMVCharacterBase::ResolveSprintActionTableName() const
 {
 	if (!SprintActionTableName.IsNone())
@@ -607,10 +634,7 @@ FName AMVCharacterBase::ResolveSprintActionTableName() const
 		return SprintActionTableName;
 	}
 
-	const FString CharacterIndexCodeToken = CharacterBaseCharacterIndexCodeToTableToken(CharacterIndexCode);
-	return CharacterIndexCodeToken.IsEmpty()
-		? NAME_None
-		: FName(*FString::Printf(TEXT("Sprint_%s"), *CharacterIndexCodeToken));
+	return TEXT("Sprint");
 }
 
 FName AMVCharacterBase::ResolveSprintActionRowName() const

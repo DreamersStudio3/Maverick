@@ -59,6 +59,14 @@ FString DodgeCharacterIndexCodeToTableToken(const FGameplayTag CharacterIndexCod
 	return Token;
 }
 
+bool MVDodgeIsHitReactionTerminalRecoveryAction(const FName ActionTableName, const FName ActionRowName)
+{
+	const FString TableName = ActionTableName.ToString();
+	const FString RowName = ActionRowName.ToString();
+	return TableName.StartsWith(TEXT("HR_"))
+		&& (RowName.Contains(TEXT("_Getup_")) || RowName.Contains(TEXT("_EscapeDodge_")));
+}
+
 FVector2D DodgeClampControllerSpaceInput(const FVector2D& Input)
 {
 	const float SizeSquared = Input.SizeSquared();
@@ -723,12 +731,19 @@ FGameplayTag UMVDodgeComponent::ResolveCharacterIndexCode() const
 
 bool UMVDodgeComponent::CanTransitionActiveDodgeAction(const UMVActionComponent& ActionComponent) const
 {
-	return ActionComponent.IsRecoveryEscapeWindowOpen()
-		&& ActionComponent.CanInterruptActiveAction()
-		&& !ActiveDodgeActionTableName.IsNone()
+	if (!ActionComponent.IsRecoveryEscapeWindowOpen() || !ActionComponent.CanInterruptActiveAction())
+	{
+		return false;
+	}
+
+	const FName ActiveActionTableName = ActionComponent.GetActiveActionTableName();
+	const FName ActiveActionRowName = ActionComponent.GetActiveActionRowName();
+	const bool bActiveActionIsDodge = !ActiveDodgeActionTableName.IsNone()
 		&& !ActiveDodgeActionRowName.IsNone()
-		&& ActionComponent.GetActiveActionTableName() == ActiveDodgeActionTableName
-		&& ActionComponent.GetActiveActionRowName() == ActiveDodgeActionRowName;
+		&& ActiveActionTableName == ActiveDodgeActionTableName
+		&& ActiveActionRowName == ActiveDodgeActionRowName;
+	return bActiveActionIsDodge
+		|| MVDodgeIsHitReactionTerminalRecoveryAction(ActiveActionTableName, ActiveActionRowName);
 }
 
 const FMVDodgeActionRow* UMVDodgeComponent::FindDodgeActionRow(

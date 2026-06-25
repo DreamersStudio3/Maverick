@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Engine/DataTable.h"
 #include "Tables/MVActionRowTableTypes.h"
 #include "MVHitReactionActionTableTypes.generated.h"
 
@@ -25,4 +26,28 @@ struct MAVERICK_API FMVHitReactionActionRow : public FMVActionRow
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Table|HitReaction|Launch", meta = (Units = "cm/s"))
 	float LaunchVerticalSpeed = 0.0f;
+};
+
+USTRUCT(BlueprintType)
+struct MAVERICK_API FMVHitReactionActionRowHandle
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Table|HitReaction")
+	FDataTableRowHandle ActionRow;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Table|HitReaction")
+	FName StartSection = NAME_None;
+
+	bool IsValid() const
+	{
+		return ActionRow.DataTable && !ActionRow.RowName.IsNone();
+	}
+
+	void Reset()
+	{
+		ActionRow.DataTable = nullptr;
+		ActionRow.RowName = NAME_None;
+		StartSection = NAME_None;
+	}
 };

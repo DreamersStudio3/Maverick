@@ -154,6 +154,7 @@ public:
 
 private:
 	bool TryStartResolvedAction(FName ActionTableName, FName ActionRowName, const FMVActionRow& ActionRow, FName StartSection);
+	void InterruptActiveActionForTransition();
 	void CacheOwnerReferences();
 	UAnimInstance* GetOwnerAnimInstance() const;
 	UAnimMontage* ResolveActionRowMontage(FName ActionTableName, FName ActionRowName, const FMVActionRow& ActionRow) const;

@@ -120,26 +120,26 @@ void UMVHitReactionComponent::HandleDamaged(const FMVResolvedHitData& HitData)
 		}
 	}
 
-	const bool bStarted = CachedActionComponent->TryStartActionFromTable(
-		ActionData.ActionTableName,
-		ActionData.ActionRowName,
+	const bool bStarted = CachedActionComponent->TryStartActionFromRowHandle(
+		ActionData.ActionRowHandle,
 		ActionData.StartSection);
 	if (!bStarted)
 	{
 		UE_LOG(
 			LogMVHitReactionComponent,
 			Warning,
-			TEXT("ActionComponent failed to start hit reaction. Table=%s, RowName=%s, Section=%s."),
-			*ActionData.ActionTableName.ToString(),
-			*ActionData.ActionRowName.ToString(),
+			TEXT("ActionComponent failed to start hit reaction. DataTable=%s, RowName=%s, Section=%s."),
+			*GetNameSafe(ActionData.ActionRowHandle.DataTable),
+			*ActionData.ActionRowHandle.RowName.ToString(),
 			*ActionData.StartSection.ToString());
 	}
 	if (bStarted)
 	{
 		ResetAirborneLandDetector();
-		ActiveHitReactionActionRowName = ActionData.ActionRowName;
+		ActiveHitReactionActionRowName = ActionData.ActionRowHandle.RowName;
 		ActiveHitReactionType = HitData.HitReactionType;
 		ActiveHitReactionDirection = ActionData.Direction;
+		bActiveHitReactionActionIsRecoveryAction = false;
 		ApplyHitReactionLaunch(HitData, ActionData.ActionRow);
 		TryConsumeBufferedRecoveryInput();
 	}
@@ -259,39 +259,35 @@ bool UMVHitReactionComponent::GetActionData(const FMVResolvedHitData& HitData, F
 	ChooserHitReactionType = HitData.HitReactionType;
 	ChooserHitReactionDirection = Direction;
 
-	const FName ActionTableName = ResolveHitReactionActionTableName(HitData.HitReactionType, Direction);
-	if (ActionTableName.IsNone())
+	FMVHitReactionActionRowHandle ActionRowHandle;
+	if (!ResolveHitReactionActionRowHandle(HitData.HitReactionType, Direction, ActionRowHandle))
 	{
 		UE_LOG(
 			LogMVHitReactionComponent,
 			Warning,
-			TEXT("HitReaction table was not resolved. CharacterIndexCode=%s, HitReactionType=%d, Direction=%d."),
+			TEXT("HitReaction action row handle was not resolved. CharacterIndexCode=%s, HitReactionType=%d, Direction=%d."),
 			*ChooserCharacterIndexCode.ToString(),
 			static_cast<int32>(HitData.HitReactionType),
 			static_cast<int32>(Direction));
 		return false;
 	}
 
-	const FName ActionRowName = MakeHitReactionActionRowName(
-		ChooserCharacterIndexCode,
-		HitData.HitReactionType,
-		Direction,
-		DefaultHitReactionRowIndex);
-	const FMVHitReactionActionRow* ActionRow = FindHitReactionActionRow(ActionTableName, ActionRowName);
+	const FMVHitReactionActionRow* ActionRow = FindHitReactionActionRow(ActionRowHandle.ActionRow);
 	if (!ActionRow)
 	{
 		UE_LOG(
 			LogMVHitReactionComponent,
 			Warning,
-			TEXT("HitReaction row was not resolved. Table=%s, RowName=%s."),
-			*ActionTableName.ToString(),
-			*ActionRowName.ToString());
+			TEXT("HitReaction row was not resolved. DataTable=%s, RowName=%s."),
+			*GetNameSafe(ActionRowHandle.ActionRow.DataTable),
+			*ActionRowHandle.ActionRow.RowName.ToString());
 		return false;
 	}
 
-	OutActionData.ActionTableName = ActionTableName;
-	OutActionData.ActionRowName = ActionRowName;
-	OutActionData.StartSection = ActionRow->DefaultStartSection;
+	OutActionData.ActionRowHandle = ActionRowHandle.ActionRow;
+	OutActionData.StartSection = ActionRowHandle.StartSection.IsNone()
+		? ActionRow->DefaultStartSection
+		: ActionRowHandle.StartSection;
 	OutActionData.Direction = Direction;
 	OutActionData.ActionRow = *ActionRow;
 	return true;
@@ -412,6 +408,11 @@ bool UMVHitReactionComponent::TryConsumeRecoveryInput(
 		return false;
 	}
 
+	if (bActiveHitReactionActionIsRecoveryAction)
+	{
+		return false;
+	}
+
 	if (ShouldCancelRecoveryInputDirectly())
 	{
 		return TryCancelActiveRecoveryAction();
@@ -459,15 +460,20 @@ bool UMVHitReactionComponent::TryConsumeRecoveryMovementInput(
 		return false;
 	}
 
+	if (bActiveHitReactionActionIsRecoveryAction)
+	{
+		return TryCancelActiveRecoveryAction();
+	}
+
 	if (ShouldCancelRecoveryInputDirectly())
 	{
 		return TryCancelActiveRecoveryAction();
 	}
 
-	return TryStartDefaultRecoveryAction();
+	return TryStartEscapeDodgeRecoveryAction(Direction);
 }
 
-bool UMVHitReactionComponent::TryStartDefaultRecoveryAction()
+bool UMVHitReactionComponent::TryStartDefaultRecoveryAction(const bool bRequireRecoveryWindow)
 {
 	if (!CachedActionComponent)
 	{
@@ -477,21 +483,38 @@ bool UMVHitReactionComponent::TryStartDefaultRecoveryAction()
 
 	if (!CachedActionComponent
 		|| ActiveHitReactionActionRowName.IsNone()
-		|| CachedActionComponent->GetActiveActionRowName() != ActiveHitReactionActionRowName
-		|| !CachedActionComponent->IsRecoveryEscapeWindowOpen()
+		|| bActiveHitReactionActionIsRecoveryAction
 		|| ShouldCancelRecoveryInputDirectly())
 	{
 		return false;
 	}
 
+	if (CachedActionComponent->GetActiveActionRowName() != ActiveHitReactionActionRowName)
+	{
+		return false;
+	}
+
+	if (bRequireRecoveryWindow && !CachedActionComponent->IsRecoveryEscapeWindowOpen())
+	{
+		return false;
+	}
+
 	const FGameplayTag CharacterIndexCode = ResolveCharacterIndexCode();
-	return TryTransitionRecoveryAction(
-		ResolveGetupRecoveryActionTableName(),
+	FDataTableRowHandle RecoveryActionRowHandle;
+	if (!ResolveRecoveryActionRowHandle(
 		MakeGetupRecoveryActionRowName(
 			CharacterIndexCode,
 			ActiveHitReactionDirection,
 			DefaultRecoveryRowIndex),
-		TEXT("DefaultRecoveryGetup"));
+		RecoveryActionRowHandle))
+	{
+		return false;
+	}
+
+	return TryStartRecoveryAction(
+		RecoveryActionRowHandle,
+		bRequireRecoveryWindow ? TEXT("DefaultRecoveryGetup") : TEXT("DefaultRecoveryNotify"),
+		bRequireRecoveryWindow);
 }
 
 bool UMVHitReactionComponent::TryStartEscapeDodgeRecoveryAction(const EMVActionInputDirection Direction)
@@ -508,20 +531,47 @@ bool UMVHitReactionComponent::TryStartEscapeDodgeRecoveryAction(const EMVActionI
 	}
 
 	const FGameplayTag CharacterIndexCode = ResolveCharacterIndexCode();
-	return TryTransitionRecoveryAction(
-		ResolveEscapeDodgeRecoveryActionTableName(),
+	FDataTableRowHandle RecoveryActionRowHandle;
+	if (!ResolveRecoveryActionRowHandle(
 		MakeEscapeDodgeRecoveryActionRowName(
 			CharacterIndexCode,
 			ActiveHitReactionDirection,
 			EscapeDirection,
 			DefaultRecoveryRowIndex),
-		TEXT("RecoveryEscapeDodge"));
+		RecoveryActionRowHandle))
+	{
+		return false;
+	}
+
+	AlignOwnerToControllerForEscapeDodge();
+	return TryStartRecoveryAction(RecoveryActionRowHandle, TEXT("RecoveryEscapeDodge"), true);
 }
 
-bool UMVHitReactionComponent::TryTransitionRecoveryAction(
-	const FName ActionTableName,
-	const FName ActionRowName,
-	const TCHAR* Source)
+void UMVHitReactionComponent::AlignOwnerToControllerForEscapeDodge() const
+{
+	AMVCharacterBase* Character = OwnerCharacter.Get();
+	if (!Character)
+	{
+		Character = Cast<AMVCharacterBase>(GetOwner());
+	}
+
+	if (!Character)
+	{
+		return;
+	}
+
+	Character->SetActorRotation(Character->ResolveMovementInputReferenceRotation());
+	if (UCharacterMovementComponent* MovementComponent = Character->GetCharacterMovement())
+	{
+		MovementComponent->bUseControllerDesiredRotation = false;
+		MovementComponent->bOrientRotationToMovement = false;
+	}
+}
+
+bool UMVHitReactionComponent::TryStartRecoveryAction(
+	const FDataTableRowHandle ActionRowHandle,
+	const TCHAR* Source,
+	const bool bRequireRecoveryWindow)
 {
 	if (!CachedActionComponent)
 	{
@@ -531,30 +581,37 @@ bool UMVHitReactionComponent::TryTransitionRecoveryAction(
 
 	if (!CachedActionComponent
 		|| ActiveHitReactionActionRowName.IsNone()
-		|| CachedActionComponent->GetActiveActionRowName() != ActiveHitReactionActionRowName
-		|| !CachedActionComponent->IsRecoveryEscapeWindowOpen()
-		|| ActionTableName.IsNone()
-		|| ActionRowName.IsNone())
+		|| !ActionRowHandle.DataTable
+		|| ActionRowHandle.RowName.IsNone())
 	{
 		return false;
 	}
 
-	const FMVActionRow* RecoveryActionRow = FindRecoveryActionRow(ActionTableName, ActionRowName);
+	if (CachedActionComponent->GetActiveActionRowName() != ActiveHitReactionActionRowName)
+	{
+		return false;
+	}
+
+	if (bRequireRecoveryWindow && !CachedActionComponent->IsRecoveryEscapeWindowOpen())
+	{
+		return false;
+	}
+
+	const FMVActionRow* RecoveryActionRow = FindRecoveryActionRow(ActionRowHandle);
 	if (!RecoveryActionRow)
 	{
 		UE_LOG(
 			LogMVHitReactionComponent,
 			Warning,
-			TEXT("Recovery action row was not resolved. Source=%s, Table=%s, RowName=%s."),
+			TEXT("Recovery action row was not resolved. Source=%s, DataTable=%s, RowName=%s."),
 			Source,
-			*ActionTableName.ToString(),
-			*ActionRowName.ToString());
+			*GetNameSafe(ActionRowHandle.DataTable),
+			*ActionRowHandle.RowName.ToString());
 		return false;
 	}
 
-	const bool bStarted = CachedActionComponent->TryTransitionActionFromTable(
-		ActionTableName,
-		ActionRowName,
+	const bool bStarted = CachedActionComponent->TryTransitionActionFromRowHandle(
+		ActionRowHandle,
 		RecoveryActionRow->DefaultStartSection,
 		RecoveryActionTransitionBlendOutTime);
 	if (!bStarted)
@@ -562,23 +619,48 @@ bool UMVHitReactionComponent::TryTransitionRecoveryAction(
 		UE_LOG(
 			LogMVHitReactionComponent,
 			Warning,
-			TEXT("Recovery action transition failed. Source=%s, Table=%s, RowName=%s."),
+			TEXT("Recovery action start failed. Source=%s, DataTable=%s, RowName=%s."),
 			Source,
-			*ActionTableName.ToString(),
-			*ActionRowName.ToString());
+			*GetNameSafe(ActionRowHandle.DataTable),
+			*ActionRowHandle.RowName.ToString());
 		return false;
 	}
 
-	ActiveHitReactionActionRowName = NAME_None;
-	ActiveHitReactionType = EMVActionHitReactionType::None;
-	ActiveHitReactionDirection = EMVHitReactionDirection::Front;
+	ActiveHitReactionActionRowName = ActionRowHandle.RowName;
+	bActiveHitReactionActionIsRecoveryAction = true;
+	ResetAirborneLandDetector();
 	return true;
+}
+
+bool UMVHitReactionComponent::HasBufferedRecoveryActionInput() const
+{
+	if (!CachedInputManager)
+	{
+		return false;
+	}
+
+	int32 ActionId = INDEX_NONE;
+	FVector2D ControllerSpaceInput = FVector2D::ZeroVector;
+	bool bHasMovementInput = false;
+	return CachedInputManager->TryGetBufferedActionInput(
+		ActionId,
+		ControllerSpaceInput,
+		bHasMovementInput);
 }
 
 bool UMVHitReactionComponent::ShouldCancelRecoveryInputDirectly() const
 {
 	return ActiveHitReactionType == EMVActionHitReactionType::SmallHit
 		|| ActiveHitReactionType == EMVActionHitReactionType::LargeHit;
+}
+
+void UMVHitReactionComponent::ClearActiveHitReactionState()
+{
+	ActiveHitReactionActionRowName = NAME_None;
+	ActiveHitReactionType = EMVActionHitReactionType::None;
+	ActiveHitReactionDirection = EMVHitReactionDirection::Front;
+	bActiveHitReactionActionIsRecoveryAction = false;
+	ResetAirborneLandDetector();
 }
 
 bool UMVHitReactionComponent::TryCancelActiveRecoveryAction()
@@ -627,6 +709,11 @@ void UMVHitReactionComponent::EndAirborneLandDetector()
 		bAirborneLandDetectorSawFalling = false;
 		bAirborneLandJumpRequested = false;
 	}
+}
+
+bool UMVHitReactionComponent::RequestDefaultRecoveryAction()
+{
+	return TryStartDefaultRecoveryAction(false);
 }
 
 bool UMVHitReactionComponent::IsAirborneLandDetectorActive() const
@@ -723,18 +810,42 @@ void UMVHitReactionComponent::TryJumpAirborneLandSection()
 	}
 }
 
-FName UMVHitReactionComponent::ResolveHitReactionActionTableName(
+bool UMVHitReactionComponent::ResolveHitReactionActionRowHandle(
 	const EMVActionHitReactionType HitReactionType,
-	const EMVHitReactionDirection Direction) const
+	const EMVHitReactionDirection Direction,
+	FMVHitReactionActionRowHandle& OutActionRowHandle)
 {
-	const FName ChooserTableName = EvaluateHitReactionChooserTable();
-	if (!ChooserTableName.IsNone())
+	OutActionRowHandle.Reset();
+	if (EvaluateHitReactionChooserActionRowHandle(OutActionRowHandle))
 	{
-		return ChooserTableName;
+		return true;
+	}
+
+	if (!bUseNamingConventionWhenChooserUnavailable || !OwnerCharacter)
+	{
+		return false;
+	}
+
+	const FGameplayTag CharacterIndexCode = ResolveCharacterIndexCode();
+	return MakeHitReactionActionRowHandleFromNames(
+		ResolveHitReactionActionTableName(),
+		MakeHitReactionActionRowName(
+			CharacterIndexCode,
+			HitReactionType,
+			Direction,
+			DefaultHitReactionRowIndex),
+		OutActionRowHandle);
+}
+
+FName UMVHitReactionComponent::ResolveHitReactionActionTableName() const
+{
+	if (!HitReactionActionTableName.IsNone())
+	{
+		return HitReactionActionTableName;
 	}
 
 	return bUseNamingConventionWhenChooserUnavailable && OwnerCharacter
-		? MakeHitReactionActionTableName(ResolveCharacterIndexCode(), HitReactionType, Direction)
+		? MakeHitReactionActionTableName(ResolveCharacterIndexCode())
 		: NAME_None;
 }
 
@@ -758,25 +869,29 @@ EMVHitReactionDirection UMVHitReactionComponent::ResolveSupportedHitReactionDire
 	}
 }
 
-FName UMVHitReactionComponent::EvaluateHitReactionChooserTable() const
+bool UMVHitReactionComponent::EvaluateHitReactionChooserActionRowHandle(FMVHitReactionActionRowHandle& OutActionRowHandle)
 {
+	OutActionRowHandle.Reset();
+	ChooserHitReactionActionRowHandle.Reset();
+
 	if (!HitReactionChooserTable.IsValid())
 	{
-		return NAME_None;
+		return false;
 	}
 
 	UChooserTable* ChooserTable = Cast<UChooserTable>(HitReactionChooserTable.TryLoad());
 	if (!ChooserTable)
 	{
-		return NAME_None;
+		return false;
 	}
 
 	FChooserEvaluationContext Context;
-	Context.AddObjectParam(const_cast<UMVHitReactionComponent*>(this));
+	Context.AddObjectParam(this);
 	if (UObject* OwnerObject = GetOwner())
 	{
 		Context.AddObjectParam(OwnerObject);
 	}
+	Context.AddStructParam(ChooserHitReactionActionRowHandle);
 
 	TSoftObjectPtr<UObject> SelectedObject;
 	UChooserTable::EvaluateChooser(
@@ -789,48 +904,51 @@ FName UMVHitReactionComponent::EvaluateHitReactionChooserTable() const
 				return FObjectChooserBase::EIteratorStatus::Stop;
 			}));
 
+	if (ChooserHitReactionActionRowHandle.IsValid())
+	{
+		OutActionRowHandle = ChooserHitReactionActionRowHandle;
+		return true;
+	}
+
 	UObject* ResolvedObject = SelectedObject.IsValid()
 		? SelectedObject.Get()
 		: SelectedObject.LoadSynchronous();
-	const UDataTable* SelectedDataTable = Cast<UDataTable>(ResolvedObject);
+	UDataTable* SelectedDataTable = Cast<UDataTable>(ResolvedObject);
 	if (!SelectedDataTable)
 	{
-		return NAME_None;
+		return false;
 	}
 
-	FString TableName = SelectedDataTable->GetName();
-	TableName.RemoveFromStart(TEXT("DT_"));
-	return FName(*TableName);
+	OutActionRowHandle.ActionRow.DataTable = SelectedDataTable;
+	OutActionRowHandle.ActionRow.RowName = MakeHitReactionActionRowName(
+		ResolveCharacterIndexCode(),
+		ChooserHitReactionType,
+		ChooserHitReactionDirection,
+		DefaultHitReactionRowIndex);
+	return OutActionRowHandle.IsValid();
 }
 
-FName UMVHitReactionComponent::ResolveGetupRecoveryActionTableName() const
+bool UMVHitReactionComponent::ResolveRecoveryActionRowHandle(
+	const FName ActionRowName,
+	FDataTableRowHandle& OutActionRowHandle) const
 {
-	if (!GetupRecoveryActionTableName.IsNone())
+	FMVHitReactionActionRowHandle HitReactionActionRowHandle;
+	if (!MakeHitReactionActionRowHandleFromNames(
+		ResolveHitReactionActionTableName(),
+		ActionRowName,
+		HitReactionActionRowHandle))
 	{
-		return GetupRecoveryActionTableName;
+		OutActionRowHandle.DataTable = nullptr;
+		OutActionRowHandle.RowName = NAME_None;
+		return false;
 	}
 
-	return MakeHitReactionRecoveryActionTableName(
-		ResolveCharacterIndexCode(),
-		MVHitReactionGetupRecoveryType);
-}
-
-FName UMVHitReactionComponent::ResolveEscapeDodgeRecoveryActionTableName() const
-{
-	if (!EscapeDodgeRecoveryActionTableName.IsNone())
-	{
-		return EscapeDodgeRecoveryActionTableName;
-	}
-
-	return MakeHitReactionRecoveryActionTableName(
-		ResolveCharacterIndexCode(),
-		MVHitReactionEscapeDodgeRecoveryType);
+	OutActionRowHandle = HitReactionActionRowHandle.ActionRow;
+	return OutActionRowHandle.DataTable && !OutActionRowHandle.RowName.IsNone();
 }
 
 FName UMVHitReactionComponent::MakeHitReactionActionTableName(
-	const FGameplayTag CharacterIndexCode,
-	const EMVActionHitReactionType HitReactionType,
-	const EMVHitReactionDirection Direction) const
+	const FGameplayTag CharacterIndexCode) const
 {
 	const FString CharacterIndexCodeToken = CharacterIndexCodeToTableToken(CharacterIndexCode);
 	if (CharacterIndexCodeToken.IsEmpty())
@@ -839,26 +957,8 @@ FName UMVHitReactionComponent::MakeHitReactionActionTableName(
 	}
 
 	return FName(*FString::Printf(
-		TEXT("HR_%s_%s_%s"),
-		*CharacterIndexCodeToken,
-		*HitReactionTypeToTableToken(HitReactionType),
-		*HitReactionDirectionToTableToken(Direction)));
-}
-
-FName UMVHitReactionComponent::MakeHitReactionRecoveryActionTableName(
-	const FGameplayTag CharacterIndexCode,
-	const FName RecoveryType) const
-{
-	const FString CharacterIndexCodeToken = CharacterIndexCodeToTableToken(CharacterIndexCode);
-	if (CharacterIndexCodeToken.IsEmpty() || RecoveryType.IsNone())
-	{
-		return NAME_None;
-	}
-
-	return FName(*FString::Printf(
-		TEXT("HR_%s_%s"),
-		*CharacterIndexCodeToken,
-		*RecoveryType.ToString()));
+		TEXT("HR_%s"),
+		*CharacterIndexCodeToken));
 }
 
 FName UMVHitReactionComponent::MakeHitReactionActionRowName(
@@ -943,23 +1043,25 @@ FGameplayTag UMVHitReactionComponent::ResolveCharacterIndexCode() const
 	return FGameplayTag();
 }
 
-const FMVHitReactionActionRow* UMVHitReactionComponent::FindHitReactionActionRow(
+bool UMVHitReactionComponent::MakeHitReactionActionRowHandleFromNames(
 	const FName ActionTableName,
-	const FName ActionRowName) const
+	const FName ActionRowName,
+	FMVHitReactionActionRowHandle& OutActionRowHandle) const
 {
-	UMVTableManager* TableManager = UMVTableManager::Get(this);
+	OutActionRowHandle.Reset();
+	const UMVTableManager* TableManager = UMVTableManager::Get(this);
 	if (!TableManager)
 	{
 		UE_LOG(LogMVHitReactionComponent, Warning, TEXT("TableManager is not available."));
-		return nullptr;
+		return false;
 	}
 
 	if (ActionTableName.IsNone() || ActionRowName.IsNone())
 	{
-		return nullptr;
+		return false;
 	}
 
-	const UDataTable* DataTable = TableManager->FindDataTable(ActionTableName);
+	UDataTable* DataTable = const_cast<UDataTable*>(TableManager->FindDataTable(ActionTableName));
 	if (!DataTable)
 	{
 		UE_LOG(
@@ -967,106 +1069,89 @@ const FMVHitReactionActionRow* UMVHitReactionComponent::FindHitReactionActionRow
 			Warning,
 			TEXT("HitReaction table is not loaded in manifest: %s."),
 			*ActionTableName.ToString());
+		return false;
+	}
+
+	OutActionRowHandle.ActionRow.DataTable = DataTable;
+	OutActionRowHandle.ActionRow.RowName = ActionRowName;
+	return OutActionRowHandle.IsValid();
+}
+
+const FMVHitReactionActionRow* UMVHitReactionComponent::FindHitReactionActionRow(
+	const FDataTableRowHandle ActionRowHandle) const
+{
+	if (!ActionRowHandle.DataTable || ActionRowHandle.RowName.IsNone())
+	{
 		return nullptr;
 	}
 
-	if (!DataTable->GetRowStruct() || !DataTable->GetRowStruct()->IsChildOf(FMVHitReactionActionRow::StaticStruct()))
+	if (!ActionRowHandle.DataTable->GetRowStruct()
+		|| !ActionRowHandle.DataTable->GetRowStruct()->IsChildOf(FMVHitReactionActionRow::StaticStruct()))
 	{
 		UE_LOG(
 			LogMVHitReactionComponent,
 			Warning,
-			TEXT("HitReaction table '%s' row struct is '%s', expected MVHitReactionActionRow."),
-			*ActionTableName.ToString(),
-			DataTable->GetRowStruct() ? *DataTable->GetRowStruct()->GetName() : TEXT("None"));
+			TEXT("HitReaction row handle has invalid row struct. DataTable=%s RowStruct=%s Expected=MVHitReactionActionRow."),
+			*GetNameSafe(ActionRowHandle.DataTable),
+			ActionRowHandle.DataTable->GetRowStruct()
+				? *ActionRowHandle.DataTable->GetRowStruct()->GetName()
+				: TEXT("None"));
 		return nullptr;
 	}
 
-	const FMVHitReactionActionRow* Row = TableManager->FindRow<FMVHitReactionActionRow>(
-		ActionTableName,
-		ActionRowName.ToString());
+	const FMVHitReactionActionRow* Row = ActionRowHandle.DataTable->FindRow<FMVHitReactionActionRow>(
+		ActionRowHandle.RowName,
+		TEXT("MVHitReactionComponent"),
+		false);
 	if (!Row)
 	{
 		UE_LOG(
 			LogMVHitReactionComponent,
 			Warning,
-			TEXT("HitReaction row '%s' was not found in table '%s'."),
-			*ActionRowName.ToString(),
-			*ActionTableName.ToString());
+			TEXT("HitReaction row '%s' was not found in table '%s'. AvailableRows=%s."),
+			*ActionRowHandle.RowName.ToString(),
+			*GetNameSafe(ActionRowHandle.DataTable),
+			*MVHitReactionBuildAvailableRowNameLog(*ActionRowHandle.DataTable));
 	}
 
 	return Row;
 }
 
 const FMVActionRow* UMVHitReactionComponent::FindRecoveryActionRow(
-	const FName ActionTableName,
-	const FName ActionRowName) const
+	const FDataTableRowHandle ActionRowHandle) const
 {
-	UMVTableManager* TableManager = UMVTableManager::Get(this);
-	if (!TableManager)
-	{
-		UE_LOG(LogMVHitReactionComponent, Warning, TEXT("TableManager is not available."));
-		return nullptr;
-	}
-
-	if (ActionTableName.IsNone() || ActionRowName.IsNone())
+	if (!ActionRowHandle.DataTable || ActionRowHandle.RowName.IsNone())
 	{
 		return nullptr;
 	}
 
-	const UDataTable* DataTable = TableManager->FindDataTable(ActionTableName);
-	if (!DataTable)
+	if (!ActionRowHandle.DataTable->GetRowStruct()
+		|| !ActionRowHandle.DataTable->GetRowStruct()->IsChildOf(FMVActionRow::StaticStruct()))
 	{
 		UE_LOG(
 			LogMVHitReactionComponent,
 			Warning,
-			TEXT("Recovery action table is not loaded in manifest: %s."),
-			*ActionTableName.ToString());
+			TEXT("Recovery action row handle has invalid row struct. DataTable=%s RowStruct=%s Expected=MVActionRow or child."),
+			*GetNameSafe(ActionRowHandle.DataTable),
+			ActionRowHandle.DataTable->GetRowStruct()
+				? *ActionRowHandle.DataTable->GetRowStruct()->GetName()
+				: TEXT("None"));
 		return nullptr;
 	}
 
-	if (!DataTable->GetRowStruct() || !DataTable->GetRowStruct()->IsChildOf(FMVActionRow::StaticStruct()))
-	{
-		UE_LOG(
-			LogMVHitReactionComponent,
-			Warning,
-			TEXT("Recovery action table '%s' row struct is '%s', expected MVActionRow or child."),
-			*ActionTableName.ToString(),
-			DataTable->GetRowStruct() ? *DataTable->GetRowStruct()->GetName() : TEXT("None"));
-		return nullptr;
-	}
-
-	const FMVActionRow* Row = TableManager->FindRow<FMVActionRow>(ActionTableName, ActionRowName.ToString());
+	const FMVActionRow* Row = ActionRowHandle.DataTable->FindRow<FMVActionRow>(
+		ActionRowHandle.RowName,
+		TEXT("MVHitReactionComponent"),
+		false);
 	if (!Row)
 	{
 		UE_LOG(
 			LogMVHitReactionComponent,
 			Warning,
-			TEXT("Recovery action row '%s' was not found in table '%s'. RowStruct=%s, RowCount=%d, AvailableRows=%s. Reloading tables once and retrying."),
-			*ActionRowName.ToString(),
-			*ActionTableName.ToString(),
-			DataTable->GetRowStruct() ? *DataTable->GetRowStruct()->GetName() : TEXT("None"),
-			DataTable->GetRowMap().Num(),
-			*MVHitReactionBuildAvailableRowNameLog(*DataTable));
-
-		TableManager->ReloadAllTables();
-		const UDataTable* ReloadedDataTable = TableManager->FindDataTable(ActionTableName);
-		Row = TableManager->FindRow<FMVActionRow>(ActionTableName, ActionRowName.ToString());
-		if (Row)
-		{
-			return Row;
-		}
-
-		UE_LOG(
-			LogMVHitReactionComponent,
-			Warning,
-			TEXT("Recovery action row '%s' still missing after reload. Table=%s, RowStruct=%s, RowCount=%d, AvailableRows=%s."),
-			*ActionRowName.ToString(),
-			*ActionTableName.ToString(),
-			ReloadedDataTable && ReloadedDataTable->GetRowStruct()
-				? *ReloadedDataTable->GetRowStruct()->GetName()
-				: TEXT("None"),
-			ReloadedDataTable ? ReloadedDataTable->GetRowMap().Num() : 0,
-			ReloadedDataTable ? *MVHitReactionBuildAvailableRowNameLog(*ReloadedDataTable) : TEXT("<table missing>"));
+			TEXT("Recovery action row '%s' was not found in table '%s'. AvailableRows=%s."),
+			*ActionRowHandle.RowName.ToString(),
+			*GetNameSafe(ActionRowHandle.DataTable),
+			*MVHitReactionBuildAvailableRowNameLog(*ActionRowHandle.DataTable));
 	}
 
 	return Row;
@@ -1155,10 +1240,7 @@ void UMVHitReactionComponent::HandleActionEnded(
 {
 	if (!ActiveHitReactionActionRowName.IsNone() && ActionRowName == ActiveHitReactionActionRowName)
 	{
-		ActiveHitReactionActionRowName = NAME_None;
-		ActiveHitReactionType = EMVActionHitReactionType::None;
-		ActiveHitReactionDirection = EMVHitReactionDirection::Front;
-		ResetAirborneLandDetector();
+		ClearActiveHitReactionState();
 	}
 }
 
@@ -1166,15 +1248,20 @@ void UMVHitReactionComponent::HandleRecoveryEscapeWindowChanged(const bool bOpen
 {
 	if (bOpen)
 	{
-		// window가 열리는 순간 이전에 저장된 액션 입력을 우선 소비하고, 없으면 최근 이동 입력으로 일반 탈출을 시도한다.
+		if (bActiveHitReactionActionIsRecoveryAction && HasBufferedRecoveryActionInput())
+		{
+			return;
+		}
+
+		// window는 기본 Getup 시작점이 아니라, 이전에 저장된 입력으로 KD/AB를 끊을 수 있는 구간이다.
 		if (!TryConsumeBufferedRecoveryInput())
 		{
-			if (!TryConsumeBufferedRecoveryMovementInput())
-			{
-				TryStartDefaultRecoveryAction();
-			}
+			TryConsumeBufferedRecoveryMovementInput();
 		}
+		return;
 	}
+
+	// 기본 Getup 전환은 MV HitReaction Default Recovery Notify가 담당한다.
 }
 
 void UMVHitReactionComponent::HandleOwnerMovementModeChanged(

@@ -37,12 +37,16 @@ namespace
 	const TCHAR* DirectManagedTablePackageRoots[] =
 	{
 		TEXT("/Game/Table/HitReaction"),
-		TEXT("/Game/Table/Combat")
+		TEXT("/Game/Table/Combat"),
+		TEXT("/Game/Table/Dodge"),
+		TEXT("/Game/Table/Sprint")
 	};
 	const TCHAR* DirectManagedDesignRoots[] =
 	{
 		TEXT("HitReaction"),
-		TEXT("Combat")
+		TEXT("Combat"),
+		TEXT("Dodge"),
+		TEXT("Sprint")
 	};
 
 #if WITH_EDITOR

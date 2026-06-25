@@ -20,8 +20,8 @@
 
 ## 전력질주 스태미나
 
-- [x] 전력질주 초당 스태미나 소모량은 `FMVSprintActionRow` 기반 uasset DataTable에서 읽는다.
-- [x] `AMVCharacterBase`가 `Sprint_{Character}` / `Sprint_{Character}_01` row에서 전력질주 비용/재시작 기준을 캐시한다.
+- [x] 전력질주 초당 스태미나 소모량은 단일 `DT_Sprint` 또는 직접 지정된 `FDataTableRowHandle`의 `FMVSprintActionRow`에서 읽는다.
+- [x] `AMVCharacterBase`가 Sprint row handle을 우선 사용하고, 없으면 `Sprint` / `Sprint_{Character}_01` fallback row에서 전력질주 비용/재시작 기준을 캐시한다.
 - [x] `AMVCharacterBase` 전력질주 상태에서 스태미나를 소모하고 지연 후 회복한다.
 - [x] 스태미나가 고갈되면 일정량 회복 전까지 전력질주를 막는다.
 - [x] 스태미나 고갈 후 재개 기준을 `FMVSprintActionRow.SprintRestartStaminaPercent = 70`으로 관리한다.
@@ -39,7 +39,7 @@
 - [x] Dodge Chooser가 락온 회피를 8방향으로 나눌 때 `LocomotionDirection`을 방향 조건으로 사용하도록 정리한다.
 - [x] 몽타주 NotifyState 기반으로 이동입력 차단, 무적, 입력 버퍼 구간을 `ActionComponent` 상태에 연결한다.
 - [x] `GenerateDataTables` 성공 직후 `MVTableManager` 캐시를 reload해 새 `CharacterIndex` 테이블이 PIE에 즉시 반영되도록 한다.
-- [ ] `Content/Table/Sprint/P1`에 `FMVSprintActionRow` 기반 `DT_Sprint_P1` row `Sprint_P1_01`을 생성하고 manifest를 refresh한다.
+- [ ] `Content/Table/Sprint`에 `FMVSprintActionRow` 기반 `DT_Sprint` row `Sprint_P1_01`을 생성하고 manifest를 refresh한다.
 - [ ] `Content/Table/Dodge/P1`에 `FMVDodgeActionRow` 기반 `DT_Dodge_P1` rows를 생성하고 `CHT_Dodge` Output Struct Column의 `FMVDodgeActionRowHandle`로 연결한다.
 - [ ] BP 회피 입력 경로는 직접 몽타주/API 호출 대신 `InputManagerComponent.SubmitActionInput(Dodge)`만 호출하도록 정리한다.
 - [ ] Combat 쪽 공격/가드도 각 도메인 Chooser가 상황별 row를 확정한 뒤 `ActionComponent.TryStartActionFromTable`을 호출하게 연결한다.
