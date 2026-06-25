@@ -1,5 +1,5 @@
-,StatId,MaxHP,CurrentHP,MaxStamina,CurrentStamina,StaminaRecoveryPerSecond,StaminaRecoveryDelay,MaxMP,CurrentMP,MPRecoveryPerSecond,AttackSpeed,WalkSpeed,RunSpeed,SprintSpeed,Defence,MaxGroggy,CurrentGroggy,GroggyRecoveryPerSecond,GroggyRecoveryDelay
+,CharacterIndexCode,MaxHP,CurrentHP,MaxStamina,CurrentStamina,StaminaRecoveryPerSecond,StaminaRecoveryDelay,MaxMP,CurrentMP,MPRecoveryPerSecond,AttackSpeed,WalkSpeed,RunSpeed,SprintSpeed,Defence,MaxGroggy,CurrentGroggy,GroggyRecoveryPerSecond,GroggyRecoveryDelay
 Client,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
-,StatId,MaxHP,CurrentHP,MaxStamina,CurrentStamina,StaminaRecoveryPerSecond,StaminaRecoveryDelay,MaxMP,CurrentMP,MPRecoveryPerSecond,AttackSpeed,WalkSpeed,RunSpeed,SprintSpeed,Defence,MaxGroggy,CurrentGroggy,GroggyRecoveryPerSecond,GroggyRecoveryDelay
-,1,100,100,100,100,35,1,100,100,5,1,200,500,750,1,100,0,10,2
-,10001,100,100,100,100,35,1,100,100,5,1,200,500,750,1,100,0,10,2
+,CharacterIndexCode,MaxHP,CurrentHP,MaxStamina,CurrentStamina,StaminaRecoveryPerSecond,StaminaRecoveryDelay,MaxMP,CurrentMP,MPRecoveryPerSecond,AttackSpeed,WalkSpeed,RunSpeed,SprintSpeed,Defence,MaxGroggy,CurrentGroggy,GroggyRecoveryPerSecond,GroggyRecoveryDelay
+,Character.Player.P1,100,100,100,100,35,1,100,100,5,1,200,500,750,1,100,0,10,2
+,Character.NPC.Enemy.E1,100,100,100,100,35,1,100,100,5,1,200,500,750,1,100,0,10,2

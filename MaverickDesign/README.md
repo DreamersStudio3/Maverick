@@ -8,10 +8,12 @@
 2. 에디터의 `Tools > Maverick > Generate Data Tables` 메뉴를 실행합니다.
 3. 변환기가 CSV를 `MaverickDesign/Json`으로 변환합니다.
 4. 생성기가 JSON을 `/Game/Table/DT_*` `UDataTable` 에셋으로 가져옵니다.
-5. 생성기가 `/Game/Table/DT_MVTableManifest`를 갱신합니다.
+5. 생성기가 CSV 기반 테이블과 직접 관리 DataTable을 합쳐 `/Game/Table/DT_MVTableManifest`를 갱신합니다.
 6. 런타임에서는 `UMVTableManager`가 manifest를 읽고 생성된 `UDataTable`들을 로드합니다.
 
 `MaverickDesign/Json`은 에디터 생성용 중간 산출물입니다. 런타임의 기준 데이터는 `/Game/Table` 아래 생성된 `UDataTable` 에셋입니다.
+
+액션 실행 테이블처럼 몽타주/섹션과 강하게 묶인 데이터는 CSV 생성 체인에서 제외하고 uasset DataTable로 직접 관리할 수 있습니다. 현재 직접 관리 테이블 스캔 대상은 `/Game/Table/HitReaction`, `/Game/Table/Combat` 아래 DataTable입니다.
 
 ## CSV 작성
 
@@ -143,6 +145,20 @@ MV.Table.GenerateDataTables
 
 매칭되는 C++ row struct가 있으면 typed `UDataTable`이 생성됩니다. 아직 row struct가 없으면 `FMVGenericTableRow`로 fallback 테이블이 생성됩니다.
 
+생성기는 CSV 기반 DataTable과 manifest에 입력 해시를 저장합니다. 다음 실행에서 CSV/JSON, row struct, manifest 항목이 이전 실행과 같으면 해당 uasset은 다시 저장하지 않습니다. 이전 버전에서 만든 에셋처럼 해시가 없는 경우에는 첫 실행 때 한 번 저장됩니다.
+
+직접 관리 DataTable을 추가하거나 이동하고 CSV 기반 테이블을 다시 생성할 필요가 없다면 manifest만 갱신할 수 있습니다.
+
+```text
+Tools > Maverick > Refresh Table Manifest
+```
+
+콘솔 명령:
+
+```text
+MV.Table.RefreshManifest
+```
+
 ## 런타임 조회
 
 런타임에서는 `UMVTableManager`를 통해 생성된 DataTable을 조회합니다.
@@ -164,6 +180,6 @@ Blueprint나 임시 호출부에서는 필드 단위 조회 API도 사용할 수
 
 ## 변경 시 주의사항
 
-CSV나 row struct를 변경했다면 `MV.Table.GenerateDataTables`를 다시 실행해야 합니다.
+CSV나 row struct를 변경했다면 `MV.Table.GenerateDataTables`를 다시 실행해야 합니다. 직접 관리 DataTable만 추가/이동했다면 `MV.Table.RefreshManifest`만 실행하면 됩니다.
 
 row struct의 필드명은 JSON 필드명과 같아야 자동 변환됩니다. key 컬럼이 바뀌면 CSV 헤더, row struct 필드, `PostRead()`의 `RowId` 대입을 함께 맞춰야 합니다.

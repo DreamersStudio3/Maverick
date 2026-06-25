@@ -6,10 +6,10 @@
     },
     "tables": {
         "CharacterStat": {
-            "key": "StatId",
+            "key": "CharacterIndexCode",
             "rows": [
                 {
-                    "StatId": 1,
+                    "CharacterIndexCode": "Character.Player.P1",
                     "MaxHP": 100,
                     "CurrentHP": 100,
                     "MaxStamina": 100,
@@ -30,7 +30,7 @@
                     "GroggyRecoveryDelay": 2
                 },
                 {
-                    "StatId": 10001,
+                    "CharacterIndexCode": "Character.NPC.Enemy.E1",
                     "MaxHP": 100,
                     "CurrentHP": 100,
                     "MaxStamina": 100,

@@ -1,6 +1,4 @@
 {
-    "ActionIndex": "ActionIndexKey",
-    "ActionStat": "ActionStatId",
-    "CharacterIndex": "CharacterIndexId",
-    "CharacterStat": "StatId"
+    "CharacterIndex": "CharacterIndexCode",
+    "CharacterStat": "CharacterIndexCode"
 }

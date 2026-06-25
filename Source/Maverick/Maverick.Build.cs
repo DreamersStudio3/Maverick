@@ -22,6 +22,7 @@ public class Maverick : ModuleRules
 			"JsonUtilities",
 			"StateTreeModule",
 			"GameplayStateTreeModule",
+			"GameplayTags",
 			"UMG",
 			"Slate",
 			"SlateCore",

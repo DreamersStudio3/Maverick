@@ -17,19 +17,36 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Table|Editor", meta = (DisplayName = "Generate Maverick DataTables"))
 	static bool GenerateDataTables(FString& OutReport);
 
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Table|Editor", meta = (DisplayName = "Refresh Maverick Table Manifest"))
+	static bool RefreshTableManifest(FString& OutReport);
+
 #if WITH_EDITOR
 private:
 	static bool RunCsvConverter(FString& OutLog);
 	static bool ValidateCharacterStatMapping(TArray<FString>& OutErrors);
 	static int32 ImportAllJsonFiles(TArray<struct FMVTableManifestRow>& OutTableManifestRows, TArray<FString>& OutErrors);
+	static int32 BuildCsvOriginManifestRows(TArray<struct FMVTableManifestRow>& OutTableManifestRows, TArray<FString>& OutErrors);
 	static int32 ImportJsonFile(
 		const FString& JsonPath,
+		TArray<struct FMVTableManifestRow>& OutTableManifestRows,
+		TArray<FString>& OutErrors);
+	static int32 BuildCsvOriginManifestRowsFromJsonFile(
+		const FString& JsonPath,
+		TArray<struct FMVTableManifestRow>& OutTableManifestRows,
+		TArray<FString>& OutErrors);
+	static int32 ScanDirectManagedDataTables(
 		TArray<struct FMVTableManifestRow>& OutTableManifestRows,
 		TArray<FString>& OutErrors);
 	static bool BuildAndSaveDataTable(
 		const FString& TableName,
 		const struct FMVSheetSpec& Spec,
 		const TArray<TSharedPtr<FJsonValue>>& JsonRows,
+		struct FMVTableManifestRow& OutManifestRow,
+		FString& OutError);
+	static bool BuildManifestRowForDataTable(
+		const FString& TableName,
+		class UDataTable* DataTable,
+		const FString& KeyColumnName,
 		struct FMVTableManifestRow& OutManifestRow,
 		FString& OutError);
 	static bool SaveManifest(const TArray<struct FMVTableManifestRow>& ManifestRows, FString& OutError);

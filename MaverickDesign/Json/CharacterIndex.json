@@ -6,20 +6,16 @@
     },
     "tables": {
         "CharacterIndex": {
-            "key": "CharacterIndexId",
+            "key": "CharacterIndexCode",
             "rows": [
                 {
-                    "CharacterIndexId": 1,
+                    "CharacterIndexCode": "Character.Player.P1",
                     "CharacterName": "PlayerCharacter",
-                    "CharacterKind": "Player",
-                    "ActionProfileId": 1,
                     "bEnabled": true
                 },
                 {
-                    "CharacterIndexId": 10001,
+                    "CharacterIndexCode": "Character.NPC.Enemy.E1",
                     "CharacterName": "BulkupCarcass",
-                    "CharacterKind": "Enemy",
-                    "ActionProfileId": 10001,
                     "bEnabled": true
                 }
             ]

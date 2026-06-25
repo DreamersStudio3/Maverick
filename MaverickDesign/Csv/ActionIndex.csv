@@ -1,6 +1,0 @@
-ActionIndexKey,ActionProfileId,ActionId,ActionName,Category,ActionType,ActionStatId,AnimationChooserTable,bEnabled
-00001_10001,1,10001,LightAttack,Attack,LightAttack,10001,,true
-00001_10002,1,10002,HeavyAttack,Attack,HeavyAttack,10002,,true
-00001_10010,1,10010,Guard,Defence,Guard,10010,,true
-00001_10020,1,10020,Sprint,Movement,Sprint,10020,,true
-00001_10021,1,10021,Dodge,Movement,Dodge,10021,/Game/Table/Chooser/CHT_Dodge.CHT_Dodge,true
