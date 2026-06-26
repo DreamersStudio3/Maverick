@@ -81,3 +81,15 @@ float UMVActionCooldownComponent::GetRemainingTime(const FName ActionId) const
 	const FMVActionCooldownState* State = CooldownStates.Find(ActionId);
 	return State ? State->RemainingTime : 0.0f;
 }
+
+void UMVActionCooldownComponent::GetReadyActionIds(TArray<FName>& OutActionIds) const
+{
+	OutActionIds.Reset();
+	for (const TPair<FName, FMVActionCooldownState>& Cooldown : CooldownStates)
+	{
+		if (Cooldown.Value.bIsReady)
+		{
+			OutActionIds.Add(Cooldown.Key);
+		}
+	}
+}

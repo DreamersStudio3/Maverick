@@ -17,6 +17,11 @@
                     "CharacterIndexCode": "Character.NPC.Enemy.E1",
                     "CharacterName": "BulkupCarcass",
                     "bEnabled": true
+                },
+                {
+                    "CharacterIndexCode": "Character.NPC.Enemy.NamelessPuppet",
+                    "CharacterName": "NamelessPuppet",
+                    "bEnabled": true
                 }
             ]
         }

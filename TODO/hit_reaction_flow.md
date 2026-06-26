@@ -88,3 +88,12 @@ HitReaction 테이블은 CSV 생성 체인에서 빼고 `Content/Table/HitReacti
 
 - [ ] `WeaponComponent`가 추가되면 HitResolver의 `ResolveEquippedWeaponAttackPower`에서 현재 무기 스탯을 직접 조회한다.
 - [ ] 무기 아이템이 없는 상태도 맨손 무기 기본 장착으로 처리한다.
+
+## develop 병합 정리
+
+- [x] `CharacterIndex`/`CharacterStat` 충돌은 `CharacterIndexCode` GameplayTag row key 기준으로 정리한다.
+- [x] develop의 `NamelessPuppet` 데이터는 `Character.NPC.Enemy.NamelessPuppet` row로 이식한다.
+- [x] develop AI 공격 실행 태스크는 `ActionId` 직접 실행 대신 `FDataTableRowHandle`을 ActionComponent에 전달하게 정리한다.
+- [ ] 남은 `ActionIndex` 충돌은 legacy 액션 테이블을 복구하지 않고 AI 공격 데이터를 새 ActionRow/RowHandle 구조로 옮길지 결정한다.
+- [ ] `BP_Carcass` 바이너리 충돌은 에디터에서 대화/PIE 테스트 연결과 develop AI 변경을 함께 확인해 수동 병합한다.
+- [ ] 남은 충돌 처리 후 `Tools > Maverick > Generate Data Tables`를 실행해 `DT_CharacterIndex`/`DT_CharacterStat`을 CSV 원본과 맞춘다.

@@ -1,4 +1,4 @@
 CharacterIndexCode,CharacterName,bEnabled
 Character.Player.P1,PlayerCharacter,true
 Character.NPC.Enemy.E1,BulkupCarcass,true
-
+Character.NPC.Enemy.NamelessPuppet,NamelessPuppet,true
