@@ -1,6 +1,14 @@
 #include "UI/Window/MVDeathOverlayWindow.h"
 
-#include "UI/System/MVUISubsystem.h"
+#include "Blueprint/WidgetTree.h"
+#include "Components/Overlay.h"
+#include "Components/OverlaySlot.h"
+#include "Components/TextBlock.h"
+
+namespace
+{
+const FText MVDeathOverlayDefaultDeathText = NSLOCTEXT("MaverickDeath", "YouDied", "YOU DIED");
+}
 
 UMVDeathOverlayWindow::UMVDeathOverlayWindow(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -8,46 +16,137 @@ UMVDeathOverlayWindow::UMVDeathOverlayWindow(const FObjectInitializer& ObjectIni
 	bCloseOnBack = false;
 	DesiredInputMode = ECommonInputMode::All;
 	bIgnoreMoveInput = true;
-	bIgnoreLookInput = true;
+	bIgnoreLookInput = false;
+	ApplyDeathOverlayFadeDurations();
 }
 
 void UMVDeathOverlayWindow::SetDisplaySeconds(float InDisplaySeconds)
 {
-	DisplaySeconds = FMath::Max(0.0f, InDisplaySeconds);
+	MinimumDisplaySeconds = FMath::Max(0.0f, InDisplaySeconds);
+	if (IsActivated() && bFadeInFinished)
+	{
+		StartMinimumDisplayTimer();
+	}
+}
+
+void UMVDeathOverlayWindow::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
+
+	BuildNativeWidgetTree();
+	RefreshDeathText();
 }
 
 void UMVDeathOverlayWindow::NativeOnActivated()
 {
-	Super::NativeOnActivated();
+	bMinimumDisplayElapsed = false;
+	bFadeInFinished = false;
+	ApplyDeathOverlayFadeDurations();
+	RefreshDeathText();
+	ClearMinimumDisplayTimer();
 
-	if (UWorld* World = GetWorld())
-	{
-		World->GetTimerManager().SetTimer(
-			DisplayTimerHandle,
-			this,
-			&UMVDeathOverlayWindow::HandleDisplayTimeElapsed,
-			DisplaySeconds,
-			false);
-	}
+	Super::NativeOnActivated();
 }
 
 void UMVDeathOverlayWindow::NativeOnDeactivated()
 {
-	if (UWorld* World = GetWorld())
-	{
-		World->GetTimerManager().ClearTimer(DisplayTimerHandle);
-	}
+	ClearMinimumDisplayTimer();
+	bMinimumDisplayElapsed = false;
+	bFadeInFinished = false;
 
 	Super::NativeOnDeactivated();
 }
 
-void UMVDeathOverlayWindow::HandleDisplayTimeElapsed()
+void UMVDeathOverlayWindow::HandleFadeInFinished()
 {
-	if (UGameInstance* GameInstance = GetGameInstance())
+	Super::HandleFadeInFinished();
+
+	bFadeInFinished = true;
+	StartMinimumDisplayTimer();
+}
+
+void UMVDeathOverlayWindow::BuildNativeWidgetTree()
+{
+	if (!WidgetTree || WidgetTree->RootWidget)
 	{
-		if (UMVUISubsystem* UISubsystem = GameInstance->GetSubsystem<UMVUISubsystem>())
-		{
-			UISubsystem->ShowLoadingWindow();
-		}
+		return;
 	}
+
+	UOverlay* RootOverlay = WidgetTree->ConstructWidget<UOverlay>(UOverlay::StaticClass(), TEXT("DeathOverlayRoot"));
+	DeathText = WidgetTree->ConstructWidget<UTextBlock>(UTextBlock::StaticClass(), TEXT("DeathText"));
+	WidgetTree->RootWidget = RootOverlay;
+
+	if (!RootOverlay || !DeathText)
+	{
+		return;
+	}
+
+	FSlateFontInfo DeathFont = DeathText->GetFont();
+	DeathFont.Size = 72;
+	DeathText->SetFont(DeathFont);
+	DeathText->SetJustification(ETextJustify::Center);
+	DeathText->SetColorAndOpacity(FSlateColor(FLinearColor(0.82f, 0.05f, 0.04f, 1.0f)));
+	DeathText->SetShadowColorAndOpacity(FLinearColor(0.0f, 0.0f, 0.0f, 0.85f));
+	DeathText->SetShadowOffset(FVector2D(3.0f, 3.0f));
+
+	if (UOverlaySlot* DeathTextSlot = RootOverlay->AddChildToOverlay(DeathText))
+	{
+		DeathTextSlot->SetHorizontalAlignment(HAlign_Center);
+		DeathTextSlot->SetVerticalAlignment(VAlign_Center);
+		DeathTextSlot->SetPadding(FMargin(32.0f));
+	}
+}
+
+void UMVDeathOverlayWindow::ApplyDeathOverlayFadeDurations()
+{
+	SetUIFadeDurations(DeathOverlayFadeInSeconds, DeathOverlayFadeOutSeconds);
+}
+
+void UMVDeathOverlayWindow::RefreshDeathText()
+{
+	if (DeathText)
+	{
+		DeathText->SetText(MVDeathOverlayDefaultDeathText);
+	}
+}
+
+void UMVDeathOverlayWindow::StartMinimumDisplayTimer()
+{
+	ClearMinimumDisplayTimer();
+	bMinimumDisplayElapsed = false;
+
+	if (MinimumDisplaySeconds <= 0.0f)
+	{
+		HandleMinimumDisplayTimeElapsed();
+		return;
+	}
+
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().SetTimer(
+			MinimumDisplayTimerHandle,
+			this,
+			&UMVDeathOverlayWindow::HandleMinimumDisplayTimeElapsed,
+			MinimumDisplaySeconds,
+			false);
+	}
+}
+
+void UMVDeathOverlayWindow::ClearMinimumDisplayTimer()
+{
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().ClearTimer(MinimumDisplayTimerHandle);
+	}
+}
+
+void UMVDeathOverlayWindow::HandleMinimumDisplayTimeElapsed()
+{
+	if (bMinimumDisplayElapsed)
+	{
+		return;
+	}
+
+	bMinimumDisplayElapsed = true;
+	OnMinimumDisplayElapsed.Broadcast();
 }

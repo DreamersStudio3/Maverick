@@ -87,4 +87,7 @@ public:
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Data")
 	FName DialogueTableName = TEXT("Dialogue");
+
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Data")
+	FName GameGuideTableName = TEXT("GameGuide");
 };

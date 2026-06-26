@@ -39,14 +39,16 @@ namespace
 		TEXT("/Game/Table/HitReaction"),
 		TEXT("/Game/Table/Combat"),
 		TEXT("/Game/Table/Dodge"),
-		TEXT("/Game/Table/Sprint")
+		TEXT("/Game/Table/Sprint"),
+		TEXT("/Game/Table/Death")
 	};
 	const TCHAR* DirectManagedDesignRoots[] =
 	{
 		TEXT("HitReaction"),
 		TEXT("Combat"),
 		TEXT("Dodge"),
-		TEXT("Sprint")
+		TEXT("Sprint"),
+		TEXT("Death")
 	};
 
 #if WITH_EDITOR

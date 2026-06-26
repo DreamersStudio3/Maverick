@@ -5,6 +5,17 @@
 #include "UI/Base/MVWindowBase.h"
 #include "MVDeathOverlayWindow.generated.h"
 
+class UTextBlock;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMVOnDeathOverlayMinimumDisplayElapsed);
+
+/**
+ * 사망 연출 중 고정 사망 문구를 표시하는 오버레이 창.
+ *
+ * 이 창은 `YOU DIED` 같은 사망 알림을 화면에 표시하고 최소 표시 시간이 지났음을 알릴 뿐,
+ * 로딩 창 전환이나 부활 처리는 직접 수행하지 않는다. 사망 몽타주 종료, 필드 초기화, 부활 흐름은
+ * `UMVRespawnSubsystem`이 담당한다.
+ */
 UCLASS(Blueprintable)
 class MAVERICK_API UMVDeathOverlayWindow : public UMVWindowBase
 {
@@ -16,15 +27,39 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Death")
 	void SetDisplaySeconds(float InDisplaySeconds);
 
+	UFUNCTION(BlueprintPure, Category = "Maverick|UI|Death")
+	bool HasMinimumDisplayElapsed() const { return bMinimumDisplayElapsed; }
+
+	UPROPERTY(BlueprintAssignable, Category = "Maverick|UI|Death")
+	FMVOnDeathOverlayMinimumDisplayElapsed OnMinimumDisplayElapsed;
+
 protected:
+	virtual void NativeOnInitialized() override;
 	virtual void NativeOnActivated() override;
 	virtual void NativeOnDeactivated() override;
+	virtual void HandleFadeInFinished() override;
+
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional), Category = "Maverick|UI|Death")
+	TObjectPtr<UTextBlock> DeathText;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Maverick|UI|Death", meta = (ClampMin = "0.0"))
-	float DisplaySeconds = 3.0f;
+	float MinimumDisplaySeconds = 3.0f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Maverick|UI|Death|Animation", meta = (ClampMin = "0.0"))
+	float DeathOverlayFadeInSeconds = 1.0f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Maverick|UI|Death|Animation", meta = (ClampMin = "0.0"))
+	float DeathOverlayFadeOutSeconds = 1.0f;
 
 private:
-	void HandleDisplayTimeElapsed();
+	void BuildNativeWidgetTree();
+	void RefreshDeathText();
+	void ApplyDeathOverlayFadeDurations();
+	void StartMinimumDisplayTimer();
+	void ClearMinimumDisplayTimer();
+	void HandleMinimumDisplayTimeElapsed();
 
-	FTimerHandle DisplayTimerHandle;
+	FTimerHandle MinimumDisplayTimerHandle;
+	bool bMinimumDisplayElapsed = false;
+	bool bFadeInFinished = false;
 };

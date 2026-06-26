@@ -124,6 +124,10 @@ namespace
 			{
 				Map.Add(TableName, FMVSheetSpec{ FMVHitReactionActionRow::StaticStruct(), KeyColumnName, false });
 			}
+			else if (KeyColumnName == TEXT("RowName") && TableName.StartsWith(TEXT("Death_")))
+			{
+				Map.Add(TableName, FMVSheetSpec{ FMVActionRow::StaticStruct(), KeyColumnName, false });
+			}
 			else
 			{
 				Map.Add(TableName, FMVSheetSpec{ FMVGenericTableRow::StaticStruct(), KeyColumnName, true });

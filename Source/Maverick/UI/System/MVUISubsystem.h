@@ -121,10 +121,6 @@ public:
 
 private:
 	void HandleWorldInit(UWorld* World, const UWorld::InitializationValues IVS);
-	void BindToPlayerDeath(UWorld* World);
-
-	UFUNCTION()
-	void HandlePlayerDeath();
 
 	UFUNCTION()
 	void HandlePopupClosed(UMVPopupBase* ClosedPopup);

@@ -149,6 +149,11 @@ void AMVCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 void AMVCharacterBase::AddMovementInput(const FVector WorldDirection, const float ScaleValue, const bool bForce)
 {
+	if (!bForce && StatComponent && StatComponent->IsDead())
+	{
+		return;
+	}
+
 	CacheControllerSpaceMovementInput(WorldDirection, ScaleValue);
 	OnMovementInputReceived.Broadcast(WorldDirection * ScaleValue);
 	Super::AddMovementInput(WorldDirection, ScaleValue, bForce);
@@ -342,7 +347,8 @@ void AMVCharacterBase::BindDamageHandlers()
 
 void AMVCharacterBase::UpdateCharacterValue()
 {
-	const bool bMovementInputBlocked = IsMovementInputBlocked();
+	const bool bDead = StatComponent && StatComponent->IsDead();
+	const bool bMovementInputBlocked = IsMovementInputBlocked() || bDead;
 
 	// IsFalling
 	bIsFalling = GetCharacterMovement()->IsFalling();
@@ -453,7 +459,7 @@ void AMVCharacterBase::UpdateMovement(float DeltaTime)
 	GetCharacterMovement()->MaxWalkSpeed = CalculateCharacterMovementSpeed(WalkSpeed, RunSpeed, SprintSpeed);
 
 	// Acceleration
-	const bool bMovementInputBlocked = IsMovementInputBlocked();
+	const bool bMovementInputBlocked = IsMovementInputBlocked() || (StatComponent && StatComponent->IsDead());
 	GetCharacterMovement()->MaxAcceleration = bMovementInputBlocked ? 0.0f : 1000.0f;
 
 	// Braking Deceleration
@@ -474,6 +480,11 @@ void AMVCharacterBase::UpdateMovement(float DeltaTime)
 void AMVCharacterBase::UpdateRecoverableStats(float DeltaTime)
 {
 	if (!StatComponent || DeltaTime <= 0.0f)
+	{
+		return;
+	}
+
+	if (StatComponent->IsDead())
 	{
 		return;
 	}

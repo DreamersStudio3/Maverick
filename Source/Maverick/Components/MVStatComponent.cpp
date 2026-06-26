@@ -6,9 +6,16 @@
 
 namespace
 {
+	constexpr float MVStatMinimumMaxHP = 1.0f;
+
 	float MVStatNonNegative(float Value)
 	{
 		return FMath::Max(0.0f, Value);
+	}
+
+	float MVStatClampMaxHP(float Value)
+	{
+		return FMath::Max(MVStatMinimumMaxHP, Value);
 	}
 
 	float MVStatClampCurrent(float Value, float MaxValue)
@@ -102,6 +109,11 @@ bool UMVStatComponent::LoadStatsFromTable()
 
 void UMVStatComponent::HandleDamaged(const FMVResolvedHitData& HitData)
 {
+	if (bIsDead)
+	{
+		return;
+	}
+
 	if (HitData.VictimCharacterIndexCode.IsValid() && HitData.VictimCharacterIndexCode != CharacterIndexCode)
 	{
 		return;
@@ -110,7 +122,15 @@ void UMVStatComponent::HandleDamaged(const FMVResolvedHitData& HitData)
 	const float HPDamage = MVStatNonNegative(HitData.FinalDamage);
 	if (HPDamage > 0.0f)
 	{
+		PendingDeathHitData = HitData;
+		bHasPendingDeathHitData = true;
 		SetCurrentHP(CurrentHP - HPDamage);
+		bHasPendingDeathHitData = false;
+	}
+
+	if (bIsDead)
+	{
+		return;
 	}
 
 	const float GroggyDamage = MVStatNonNegative(HitData.GroggyDamage);
@@ -183,21 +203,23 @@ bool UMVStatComponent::IsRecoverableStatRecoveryPaused() const
 	return RecoverableStatRecoveryPauseCount > 0;
 }
 
+void UMVStatComponent::ResetDeathState()
+{
+	bIsDead = false;
+	bHasPendingDeathHitData = false;
+	PendingDeathHitData = FMVResolvedHitData();
+}
+
 void UMVStatComponent::SetMaxHP(float InMaxHP)
 {
 	const float PreviousMaxHP = MaxHP;
 	const float PreviousCurrentHP = CurrentHP;
-	MaxHP = MVStatNonNegative(InMaxHP);
+	MaxHP = MVStatClampMaxHP(InMaxHP);
 	CurrentHP = MVStatClampCurrent(CurrentHP, MaxHP);
 
 	if (!FMath::IsNearlyEqual(PreviousMaxHP, MaxHP) || !FMath::IsNearlyEqual(PreviousCurrentHP, CurrentHP))
 	{
 		OnHPChanged.Broadcast(CurrentHP, MaxHP);
-	}
-
-	if (PreviousCurrentHP > 0.0f && CurrentHP <= 0.0f)
-	{
-		OnDead.Broadcast();
 	}
 }
 
@@ -213,7 +235,7 @@ void UMVStatComponent::SetCurrentHP(float InCurrentHP)
 
 	if (PreviousCurrentHP > 0.0f && CurrentHP <= 0.0f)
 	{
-		OnDead.Broadcast();
+		BroadcastDeathStarted(EMVDeathReason::HPDepleted);
 	}
 }
 
@@ -407,4 +429,26 @@ void UMVStatComponent::SetGroggyRecoveryDelay(float InGroggyRecoveryDelay)
 FString UMVStatComponent::MakeStatRowKey() const
 {
 	return CharacterIndexCode.ToString();
+}
+
+void UMVStatComponent::BroadcastDeathStarted(const EMVDeathReason Reason)
+{
+	if (bIsDead)
+	{
+		return;
+	}
+
+	bIsDead = true;
+
+	FMVDeathContext DeathContext;
+	DeathContext.DeadActor = GetOwner();
+	DeathContext.Reason = Reason;
+	DeathContext.bHasHitData = bHasPendingDeathHitData;
+	if (bHasPendingDeathHitData)
+	{
+		DeathContext.HitData = PendingDeathHitData;
+	}
+
+	OnDeathStarted.Broadcast(DeathContext);
+	OnDead.Broadcast();
 }

@@ -1,6 +1,7 @@
 #include "Components/MVInputManagerComponent.h"
 
 #include "Character/MVCharacterBase.h"
+#include "Components/MVStatComponent.h"
 
 UMVInputManagerComponent::UMVInputManagerComponent()
 {
@@ -30,6 +31,15 @@ bool UMVInputManagerComponent::SubmitActionInputById(const int32 ActionId)
 	if (ActionId <= MVActionIds::None)
 	{
 		return false;
+	}
+
+	if (const AMVCharacterBase* Character = OwnerCharacter.Get())
+	{
+		if (Character->StatComponent && Character->StatComponent->IsDead())
+		{
+			ClearBufferedActionInput();
+			return false;
+		}
 	}
 
 	FVector2D ControllerSpaceInput = FVector2D::ZeroVector;

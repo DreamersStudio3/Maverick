@@ -5,6 +5,7 @@
 #include "Components/MVActionComponent.h"
 #include "Engine/DataTable.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "System/MVRespawnSubsystem.h"
 #include "Tables/MVCharacterTableTypes.h"
 #include "Tables/MVTableManager.h"
 
@@ -58,6 +59,7 @@ void UMVHitReactionComponent::BeginPlay()
 	CacheOwnerReferences();
 	BindInputManagerHandlers();
 	BindActionComponentHandlers();
+	BindStatComponentHandlers();
 }
 
 void UMVHitReactionComponent::HandleDamaged(const FMVResolvedHitData& HitData)
@@ -73,6 +75,11 @@ void UMVHitReactionComponent::HandleDamaged(const FMVResolvedHitData& HitData)
 	}
 
 	if (!OwnerCharacter || !CachedActionComponent)
+	{
+		return;
+	}
+
+	if (CachedStatComponent && CachedStatComponent->IsDead())
 	{
 		return;
 	}
@@ -188,6 +195,9 @@ void UMVHitReactionComponent::CacheOwnerReferences()
 	CachedInputManager = GetOwner()
 		? GetOwner()->FindComponentByClass<UMVInputManagerComponent>()
 		: nullptr;
+	CachedStatComponent = GetOwner()
+		? GetOwner()->FindComponentByClass<UMVStatComponent>()
+		: nullptr;
 }
 
 void UMVHitReactionComponent::BindInputManagerHandlers()
@@ -229,6 +239,24 @@ void UMVHitReactionComponent::BindActionComponentHandlers()
 		CachedActionComponent->OnRecoveryEscapeWindowChanged.AddUniqueDynamic(
 			this,
 			&UMVHitReactionComponent::HandleRecoveryEscapeWindowChanged);
+	}
+}
+
+void UMVHitReactionComponent::BindStatComponentHandlers()
+{
+	if (!CachedStatComponent)
+	{
+		CacheOwnerReferences();
+	}
+
+	if (CachedStatComponent)
+	{
+		CachedStatComponent->OnDeathStarted.RemoveDynamic(
+			this,
+			&UMVHitReactionComponent::HandleDeathStarted);
+		CachedStatComponent->OnDeathStarted.AddUniqueDynamic(
+			this,
+			&UMVHitReactionComponent::HandleDeathStarted);
 	}
 }
 
@@ -290,6 +318,70 @@ bool UMVHitReactionComponent::GetActionData(const FMVResolvedHitData& HitData, F
 		: ActionRowHandle.StartSection;
 	OutActionData.Direction = Direction;
 	OutActionData.ActionRow = *ActionRow;
+	return true;
+}
+
+bool UMVHitReactionComponent::TryStartDeathAction(const FMVDeathContext& DeathContext)
+{
+	if (!OwnerCharacter || !CachedActionComponent || !CachedStatComponent)
+	{
+		CacheOwnerReferences();
+		BindActionComponentHandlers();
+		BindStatComponentHandlers();
+	}
+
+	if (!OwnerCharacter || !CachedActionComponent)
+	{
+		return false;
+	}
+
+	if (DeathContext.DeadActor && DeathContext.DeadActor != OwnerCharacter)
+	{
+		return false;
+	}
+
+	if (DeathContext.bHasHitData
+		&& DeathContext.HitData.VictimCharacterIndexCode.IsValid()
+		&& DeathContext.HitData.VictimCharacterIndexCode != OwnerCharacter->GetCharacterIndexCode())
+	{
+		return false;
+	}
+
+	FDataTableRowHandle DeathActionRowHandle;
+	if (!ResolveDeathActionRowHandle(DeathContext, DeathActionRowHandle))
+	{
+		UE_LOG(
+			LogMVHitReactionComponent,
+			Warning,
+			TEXT("Death action row handle was not resolved. CharacterIndexCode=%s."),
+			*OwnerCharacter->GetCharacterIndexCode().ToString());
+		return false;
+	}
+
+	if (CachedActionComponent->IsActionRunning())
+	{
+		if (!bCancelActiveActionBeforeDeath)
+		{
+			return false;
+		}
+
+		CachedActionComponent->CancelActiveAction(DeathActionCancelBlendOutTime);
+	}
+
+	const bool bStarted = CachedActionComponent->TryStartActionFromRowHandle(DeathActionRowHandle);
+	if (!bStarted)
+	{
+		UE_LOG(
+			LogMVHitReactionComponent,
+			Warning,
+			TEXT("ActionComponent failed to start death action. DataTable=%s, RowName=%s."),
+			*GetNameSafe(DeathActionRowHandle.DataTable),
+			*DeathActionRowHandle.RowName.ToString());
+		return false;
+	}
+
+	ClearActiveHitReactionState();
+	ActiveDeathActionRowName = DeathActionRowHandle.RowName;
 	return true;
 }
 
@@ -849,6 +941,18 @@ FName UMVHitReactionComponent::ResolveHitReactionActionTableName() const
 		: NAME_None;
 }
 
+FName UMVHitReactionComponent::ResolveDeathActionTableName() const
+{
+	if (!DeathActionTableName.IsNone())
+	{
+		return DeathActionTableName;
+	}
+
+	return OwnerCharacter
+		? MakeDeathActionTableName(ResolveCharacterIndexCode())
+		: NAME_None;
+}
+
 EMVHitReactionDirection UMVHitReactionComponent::ResolveSupportedHitReactionDirection(
 	const EMVActionHitReactionType HitReactionType,
 	const EMVHitReactionDirection Direction) const
@@ -947,6 +1051,59 @@ bool UMVHitReactionComponent::ResolveRecoveryActionRowHandle(
 	return OutActionRowHandle.DataTable && !OutActionRowHandle.RowName.IsNone();
 }
 
+bool UMVHitReactionComponent::ResolveDeathActionRowHandle(
+	const FMVDeathContext& DeathContext,
+	FDataTableRowHandle& OutActionRowHandle) const
+{
+	OutActionRowHandle = FDataTableRowHandle();
+	if (DeathActionRow.DataTable && !DeathActionRow.RowName.IsNone())
+	{
+		OutActionRowHandle = DeathActionRow;
+		return true;
+	}
+
+	const UMVTableManager* TableManager = UMVTableManager::Get(this);
+	if (!TableManager)
+	{
+		return false;
+	}
+
+	const FGameplayTag CharacterIndexCode = ResolveCharacterIndexCode();
+	const FName ActionTableName = ResolveDeathActionTableName();
+	if (!CharacterIndexCode.IsValid() || ActionTableName.IsNone())
+	{
+		return false;
+	}
+
+	const EMVHitReactionDirection Direction = DeathContext.bHasHitData
+		? ResolveHitReactionDirection(DeathContext.HitData)
+		: EMVHitReactionDirection::Front;
+	FName ActionRowName = MakeDeathActionRowName(
+		CharacterIndexCode,
+		Direction,
+		DefaultDeathActionRowIndex);
+	if (!TableManager->HasRow(ActionTableName, ActionRowName.ToString()))
+	{
+		const FString CharacterIndexCodeToken = CharacterIndexCodeToTableToken(CharacterIndexCode);
+		ActionRowName = CharacterIndexCodeToken.IsEmpty()
+			? NAME_None
+			: FName(*FString::Printf(
+				TEXT("Death_%s_%02d"),
+				*CharacterIndexCodeToken,
+				FMath::Max(1, DefaultDeathActionRowIndex)));
+	}
+
+	UDataTable* DataTable = const_cast<UDataTable*>(TableManager->FindDataTable(ActionTableName));
+	if (!DataTable || ActionRowName.IsNone())
+	{
+		return false;
+	}
+
+	OutActionRowHandle.DataTable = DataTable;
+	OutActionRowHandle.RowName = ActionRowName;
+	return true;
+}
+
 FName UMVHitReactionComponent::MakeHitReactionActionTableName(
 	const FGameplayTag CharacterIndexCode) const
 {
@@ -959,6 +1116,29 @@ FName UMVHitReactionComponent::MakeHitReactionActionTableName(
 	return FName(*FString::Printf(
 		TEXT("HR_%s"),
 		*CharacterIndexCodeToken));
+}
+
+FName UMVHitReactionComponent::MakeDeathActionTableName(const FGameplayTag CharacterIndexCode) const
+{
+	const FString CharacterIndexCodeToken = CharacterIndexCodeToTableToken(CharacterIndexCode);
+	return CharacterIndexCodeToken.IsEmpty()
+		? NAME_None
+		: FName(*FString::Printf(TEXT("Death_%s"), *CharacterIndexCodeToken));
+}
+
+FName UMVHitReactionComponent::MakeDeathActionRowName(
+	const FGameplayTag CharacterIndexCode,
+	const EMVHitReactionDirection Direction,
+	const int32 Index) const
+{
+	const FString CharacterIndexCodeToken = CharacterIndexCodeToTableToken(CharacterIndexCode);
+	return CharacterIndexCodeToken.IsEmpty()
+		? NAME_None
+		: FName(*FString::Printf(
+			TEXT("Death_%s_%s_%02d"),
+			*CharacterIndexCodeToken,
+			*HitReactionDirectionToTableToken(Direction),
+			FMath::Max(1, Index)));
 }
 
 FName UMVHitReactionComponent::MakeHitReactionActionRowName(
@@ -1238,6 +1418,16 @@ void UMVHitReactionComponent::HandleActionEnded(
 	const FName ActionRowName,
 	bool bInterrupted)
 {
+	if (!ActiveDeathActionRowName.IsNone() && ActionRowName == ActiveDeathActionRowName)
+	{
+		ActiveDeathActionRowName = NAME_None;
+		if (UMVRespawnSubsystem* RespawnSubsystem = UMVRespawnSubsystem::Get(this))
+		{
+			RespawnSubsystem->NotifyDeathMontageEnded();
+		}
+		return;
+	}
+
 	if (!ActiveHitReactionActionRowName.IsNone() && ActionRowName == ActiveHitReactionActionRowName)
 	{
 		ClearActiveHitReactionState();
@@ -1282,4 +1472,18 @@ void UMVHitReactionComponent::HandleOwnerMovementModeChanged(
 	}
 
 	TryJumpAirborneLandSection();
+}
+
+void UMVHitReactionComponent::HandleDeathStarted(const FMVDeathContext& DeathContext)
+{
+	if (TryStartDeathAction(DeathContext))
+	{
+		return;
+	}
+
+	if (UMVRespawnSubsystem* RespawnSubsystem = UMVRespawnSubsystem::Get(this))
+	{
+		RespawnSubsystem->NotifyDeathDissolveStarted();
+		RespawnSubsystem->NotifyDeathMontageEnded();
+	}
 }

@@ -7,10 +7,42 @@
 #include "MVStatComponent.generated.h"
 
 class UMVTableManager;
+class AActor;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FMVOnStatValueChanged, float, CurrentValue, float, MaxValue);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnStatRecentLossHoldChanged, bool, bHold);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMVOnDead);
+
+UENUM(BlueprintType)
+enum class EMVDeathReason : uint8
+{
+	// CurrentHP가 0 이하로 감소해 사망한 정상 사망 경로.
+	HPDepleted,
+
+	// 정상 게임 규칙에서는 발생하지 않아야 한다. MaxHP는 최소 1까지 감소할 수 있으므로,
+	// 최대 HP 감소만으로 CurrentHP가 0이 되는 상황은 비정상 데이터/디버그용으로만 구분한다.
+	MaxHPReduced
+};
+
+USTRUCT(BlueprintType)
+struct MAVERICK_API FMVDeathContext
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Death")
+	TObjectPtr<AActor> DeadActor = nullptr;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Death")
+	EMVDeathReason Reason = EMVDeathReason::HPDepleted;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Death")
+	bool bHasHitData = false;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Death")
+	FMVResolvedHitData HitData;
+};
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnDeathStarted, const FMVDeathContext&, DeathContext);
 
 /**
  * 캐릭터 스탯 값과 회복 정책을 관리하는 컴포넌트.
@@ -52,6 +84,9 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|Stat|Event")
 	FMVOnDead OnDead;
 
+	UPROPERTY(BlueprintAssignable, Category = "Maverick|Stat|Event")
+	FMVOnDeathStarted OnDeathStarted;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -70,6 +105,12 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Damage")
 	void HandleDamaged(const FMVResolvedHitData& HitData);
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|Stat|Death")
+	bool IsDead() const { return bIsDead; }
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Death")
+	void ResetDeathState();
 
 	void TickRecoverableStats(float DeltaTime);
 
@@ -162,6 +203,7 @@ public:
 
 private:
 	FString MakeStatRowKey() const;
+	void BroadcastDeathStarted(EMVDeathReason Reason);
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Table")
@@ -236,4 +278,7 @@ public:
 private:
 	float RecoverableStatCooldownRemaining = 0.0f;
 	int32 RecoverableStatRecoveryPauseCount = 0;
+	FMVResolvedHitData PendingDeathHitData;
+	bool bHasPendingDeathHitData = false;
+	bool bIsDead = false;
 };

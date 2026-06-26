@@ -4,7 +4,6 @@
 #include "Camera/CameraComponent.h"
 #include "Character/MVCharacterBase.h"
 #include "CommonActivatableWidget.h"
-#include "Components/MVStatComponent.h"
 #include "Engine/World.h"
 #include "GameFramework/Pawn.h"
 #include "GameFramework/PlayerController.h"
@@ -626,34 +625,9 @@ void UMVUISubsystem::HandleWorldInit(UWorld* World, const UWorld::Initialization
 			}
 
 			ShowDefaultHUD();
-			BindToPlayerDeath(CurrentWorld);
 		}),
 		0.1f,
 		false);
-}
-
-void UMVUISubsystem::BindToPlayerDeath(UWorld* World)
-{
-	if (!World)
-	{
-		return;
-	}
-
-	APlayerController* PlayerController = World->GetFirstPlayerController();
-	APawn* Pawn = PlayerController ? PlayerController->GetPawn() : nullptr;
-	UMVStatComponent* StatComponent = Pawn ? Pawn->FindComponentByClass<UMVStatComponent>() : nullptr;
-	if (!StatComponent)
-	{
-		return;
-	}
-
-	StatComponent->OnDead.RemoveDynamic(this, &UMVUISubsystem::HandlePlayerDeath);
-	StatComponent->OnDead.AddDynamic(this, &UMVUISubsystem::HandlePlayerDeath);
-}
-
-void UMVUISubsystem::HandlePlayerDeath()
-{
-	ShowDeathOverlay();
 }
 
 AMVCharacterBase* UMVUISubsystem::ResolvePIEActionTestTargetCharacter(AMVCharacterBase* TargetCharacter) const
