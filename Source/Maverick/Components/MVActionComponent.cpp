@@ -2,27 +2,34 @@
 
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimMontage.h"
-#include "Chooser.h"
 #include "Components/MVStatComponent.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Engine/DataTable.h"
 #include "GameFramework/Character.h"
 #include "Tables/MVTableManager.h"
+#include "Tags/MVGameplayTags.h"
+
+DEFINE_LOG_CATEGORY_STATIC(LogMVActionComponent, Log, All);
 
 namespace
 {
-FVector NormalizeBufferedMovementInput(const FVector& MovementInputDirection)
+FName MVActionTableNameFromDataTable(const UDataTable* DataTable)
 {
-	const FVector MovementInput2D(MovementInputDirection.X, MovementInputDirection.Y, 0.0f);
-	return MovementInput2D.IsNearlyZero()
-		? FVector::ZeroVector
-		: MovementInput2D.GetSafeNormal2D();
-}
+	if (!DataTable)
+	{
+		return NAME_None;
+	}
 
+	FString TableName = DataTable->GetName();
+	TableName.RemoveFromStart(TEXT("DT_"));
+	return FName(*TableName);
+}
 }
 
 UMVActionComponent::UMVActionComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
+	CharacterIndexCode = MVGameplayTags::Character_Player_P1;
 }
 
 void UMVActionComponent::BeginPlay()
@@ -32,67 +39,89 @@ void UMVActionComponent::BeginPlay()
 	CacheOwnerReferences();
 }
 
-void UMVActionComponent::SetCharacterIndexId(const int32 NewCharacterIndexId)
+void UMVActionComponent::SetCharacterIndexCode(const FGameplayTag NewCharacterIndexCode)
 {
-	CharacterIndexId = FMath::Max(0, NewCharacterIndexId);
+	CharacterIndexCode = NewCharacterIndexCode;
 }
 
-int32 UMVActionComponent::GetCharacterIndexId() const
+FGameplayTag UMVActionComponent::GetCharacterIndexCode() const
 {
-	return CharacterIndexId;
+	return CharacterIndexCode;
 }
 
-int32 UMVActionComponent::GetActionProfileId() const
-{
-	return ResolveActionProfileId();
-}
-
-bool UMVActionComponent::TryStartAction(
-	const EMVActionId ActionId,
-	const float PlayRate,
-	const FName StartSection)
-{
-	return TryStartActionById(MVActionIds::ToRawActionId(ActionId), PlayRate, StartSection);
-}
-
-bool UMVActionComponent::TryStartActionById(
-	const int32 ActionId,
-	float PlayRate,
+bool UMVActionComponent::TryStartActionFromTable(
+	const FName ActionTableName,
+	const FName ActionRowName,
 	FName StartSection)
 {
+	if (ActionTableName.IsNone() || ActionRowName.IsNone())
+	{
+		return false;
+	}
+
 	if (IsActionRunning())
 	{
-		return TryBufferActionById(ActionId);
+		return false;
 	}
 
-	if (PlayRate <= 0.0f)
+	const FMVActionRow* ActionRow = FindActionRow(ActionTableName, ActionRowName);
+	if (!ActionRow)
+	{
+		UE_LOG(
+			LogMVActionComponent,
+			Warning,
+			TEXT("Action row was not resolved. Table=%s, RowName=%s."),
+			*ActionTableName.ToString(),
+			*ActionRowName.ToString());
+		return false;
+	}
+
+	return TryStartResolvedAction(ActionTableName, ActionRowName, *ActionRow, StartSection);
+}
+
+bool UMVActionComponent::TryStartActionFromRowHandle(
+	const FDataTableRowHandle ActionRowHandle,
+	FName StartSection)
+{
+	FName ActionTableName = NAME_None;
+	FName ActionRowName = NAME_None;
+	const FMVActionRow* ActionRow = FindActionRow(ActionRowHandle, ActionTableName, ActionRowName);
+	if (!ActionRow)
+	{
+		UE_LOG(
+			LogMVActionComponent,
+			Warning,
+			TEXT("Action row handle was not resolved. Table=%s, RowName=%s."),
+			*GetNameSafe(ActionRowHandle.DataTable),
+			*ActionRowHandle.RowName.ToString());
+		return false;
+	}
+
+	return TryStartResolvedAction(ActionTableName, ActionRowName, *ActionRow, StartSection);
+}
+
+bool UMVActionComponent::TryStartResolvedAction(
+	const FName ActionTableName,
+	const FName ActionRowName,
+	const FMVActionRow& ActionRow,
+	FName StartSection)
+{
+	if (ActionTableName.IsNone() || ActionRowName.IsNone())
 	{
 		return false;
 	}
 
-	if (!bConsumingBufferedAction && IsMovementInputBlocked())
+	if (IsActionRunning())
 	{
 		return false;
 	}
 
-	const FMVActionIndexRow* ActionIndex = FindActionIndexRow(ActionId);
-	if (!ActionIndex)
-	{
-		return false;
-	}
+	const float PlayRate = ActionRow.PlayRate > 0.0f ? ActionRow.PlayRate : 1.0f;
+	OnActionPreparing.Broadcast(ActionTableName, ActionRowName);
 
-	const FMVActionStatRow* ActionStat = FindActionStatRow(ActionId);
-	if (!ActionStat || !CanConsumeActionStartCost(*ActionStat))
-	{
-		return false;
-	}
-
-	OnActionPreparing.Broadcast(ActionId);
-
-	UAnimMontage* ActionMontage = ResolveActionMontage(ActionId, *ActionIndex);
+	UAnimMontage* ActionMontage = ResolveActionRowMontage(ActionTableName, ActionRowName, ActionRow);
 	if (!ActionMontage)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ActionId %d has no resolved montage."), ActionId);
 		return false;
 	}
 
@@ -108,29 +137,92 @@ bool UMVActionComponent::TryStartActionById(
 		return false;
 	}
 
+	if (StartSection.IsNone())
+	{
+		StartSection = ActionRow.DefaultStartSection;
+	}
+
 	if (!StartSection.IsNone())
 	{
 		AnimInstance->Montage_JumpToSection(StartSection, ActionMontage);
 	}
 
-	ActiveActionId = ActionId;
+	ActiveActionTableName = ActionTableName;
+	ActiveActionRowName = ActionRowName;
 	ActiveActionMontage = ActionMontage;
 	ActiveActionInstanceId = ++NextActionInstanceId;
+	bActiveActionCanBeInterrupted = ActionRow.bCanBeInterrupted;
 
 	FOnMontageEnded EndDelegate;
 	EndDelegate.BindUObject(this, &UMVActionComponent::HandleActionMontageEnded, ActiveActionInstanceId);
 	AnimInstance->Montage_SetEndDelegate(EndDelegate, ActionMontage);
 
-	BeginActionStatRecoveryPause();
-	if (!ConsumeActionStartCost(*ActionStat, ActionId))
+	BeginRecoverableStatRecoveryPause();
+	if (ActionRow.bLocksMovement)
 	{
-		FinishActiveAction(true);
-		AnimInstance->Montage_Stop(0.0f, ActionMontage);
+		BeginMovementInputBlock();
+	}
+
+	OnActionStarted.Broadcast(ActionTableName, ActionRowName);
+	return true;
+}
+
+bool UMVActionComponent::TryTransitionActionFromTable(
+	const FName ActionTableName,
+	const FName ActionRowName,
+	const FName StartSection,
+	const float /*BlendOutTime*/)
+{
+	if (ActionTableName.IsNone() || ActionRowName.IsNone())
+	{
 		return false;
 	}
 
-	OnActionStarted.Broadcast(ActionId);
-	return true;
+	const FMVActionRow* ActionRow = FindActionRow(ActionTableName, ActionRowName);
+	if (!ActionRow)
+	{
+		UE_LOG(
+			LogMVActionComponent,
+			Warning,
+			TEXT("Action row transition was not resolved. Table=%s, RowName=%s."),
+			*ActionTableName.ToString(),
+			*ActionRowName.ToString());
+		return false;
+	}
+
+	if (IsActionRunning())
+	{
+		InterruptActiveActionForTransition();
+	}
+
+	return TryStartResolvedAction(ActionTableName, ActionRowName, *ActionRow, StartSection);
+}
+
+bool UMVActionComponent::TryTransitionActionFromRowHandle(
+	const FDataTableRowHandle ActionRowHandle,
+	const FName StartSection,
+	const float /*BlendOutTime*/)
+{
+	FName ActionTableName = NAME_None;
+	FName ActionRowName = NAME_None;
+	const FMVActionRow* ActionRow = FindActionRow(ActionRowHandle, ActionTableName, ActionRowName);
+	if (!ActionRow)
+	{
+		UE_LOG(
+			LogMVActionComponent,
+			Warning,
+			TEXT("Action row handle transition was not resolved. Table=%s, RowName=%s."),
+			*GetNameSafe(ActionRowHandle.DataTable),
+			*ActionRowHandle.RowName.ToString());
+		return false;
+	}
+
+	if (IsActionRunning())
+	{
+		InterruptActiveActionForTransition();
+	}
+
+	return TryStartResolvedAction(ActionTableName, ActionRowName, *ActionRow, StartSection);
 }
 
 void UMVActionComponent::FinishActiveAction(bool bInterrupted)
@@ -140,15 +232,17 @@ void UMVActionComponent::FinishActiveAction(bool bInterrupted)
 		return;
 	}
 
-	const int32 FinishedActionId = ActiveActionId;
-	ActiveActionId = INDEX_NONE;
+	const FName FinishedActionTableName = ActiveActionTableName;
+	const FName FinishedActionRowName = ActiveActionRowName;
+	ActiveActionTableName = NAME_None;
+	ActiveActionRowName = NAME_None;
 	ActiveActionMontage = nullptr;
 	ActiveActionInstanceId = INDEX_NONE;
+	bActiveActionCanBeInterrupted = true;
 	ResetActionNotifyState();
-	ClearBufferedAction();
 
-	EndActionStatRecoveryPause();
-	OnActionEnded.Broadcast(FinishedActionId, bInterrupted);
+	EndRecoverableStatRecoveryPause();
+	OnActionEnded.Broadcast(FinishedActionTableName, FinishedActionRowName, bInterrupted);
 }
 
 void UMVActionComponent::CompleteActiveAction()
@@ -169,10 +263,17 @@ void UMVActionComponent::CancelActiveAction(const float BlendOutTime)
 	}
 }
 
-void UMVActionComponent::BeginActionStatRecoveryPause()
+void UMVActionComponent::InterruptActiveActionForTransition()
 {
-	const bool bWasPaused = ActionStatRecoveryPauseCount > 0;
-	++ActionStatRecoveryPauseCount;
+	// Transition starts another montage immediately. Do not pre-stop the current montage here,
+	// because that can insert a base-pose frame before the next montage blends in.
+	FinishActiveAction(true);
+}
+
+void UMVActionComponent::BeginRecoverableStatRecoveryPause()
+{
+	const bool bWasPaused = RecoverableStatRecoveryPauseCount > 0;
+	++RecoverableStatRecoveryPauseCount;
 	if (!bWasPaused)
 	{
 		if (!CachedStatComponent)
@@ -185,22 +286,22 @@ void UMVActionComponent::BeginActionStatRecoveryPause()
 			CachedStatComponent->BeginRecoverableStatRecoveryPause();
 		}
 
-		OnActionStatRecoveryPauseChanged.Broadcast(true);
+		OnRecoverableStatRecoveryPauseChanged.Broadcast(true);
 	}
 }
 
-void UMVActionComponent::EndActionStatRecoveryPause()
+void UMVActionComponent::EndRecoverableStatRecoveryPause()
 {
-	if (ActionStatRecoveryPauseCount <= 0)
+	if (RecoverableStatRecoveryPauseCount <= 0)
 	{
-		ActionStatRecoveryPauseCount = 0;
+		RecoverableStatRecoveryPauseCount = 0;
 		return;
 	}
 
-	--ActionStatRecoveryPauseCount;
-	if (ActionStatRecoveryPauseCount <= 0)
+	--RecoverableStatRecoveryPauseCount;
+	if (RecoverableStatRecoveryPauseCount <= 0)
 	{
-		ActionStatRecoveryPauseCount = 0;
+		RecoverableStatRecoveryPauseCount = 0;
 		if (!CachedStatComponent)
 		{
 			CacheOwnerReferences();
@@ -211,30 +312,45 @@ void UMVActionComponent::EndActionStatRecoveryPause()
 			CachedStatComponent->EndRecoverableStatRecoveryPause();
 		}
 
-		OnActionStatRecoveryPauseChanged.Broadcast(false);
+		OnRecoverableStatRecoveryPauseChanged.Broadcast(false);
 	}
 }
 
 void UMVActionComponent::ResetActionNotifyState()
 {
+	const bool bWasRecoveryEscapeWindowOpen = IsRecoveryEscapeWindowOpen();
 	InputBufferWindowCount = 0;
 	MovementInputBlockCount = 0;
 	RecoveryEscapeWindowCount = 0;
+	if (bWasRecoveryEscapeWindowOpen)
+	{
+		OnRecoveryEscapeWindowChanged.Broadcast(false);
+	}
 }
 
-bool UMVActionComponent::IsActionStatRecoveryPaused() const
+bool UMVActionComponent::IsRecoverableStatRecoveryPaused() const
 {
-	return ActionStatRecoveryPauseCount > 0;
+	return RecoverableStatRecoveryPauseCount > 0;
 }
 
 bool UMVActionComponent::IsActionRunning() const
 {
-	return ActiveActionId != INDEX_NONE && ActiveActionMontage;
+	return ActiveActionMontage != nullptr;
 }
 
-int32 UMVActionComponent::GetActiveActionId() const
+bool UMVActionComponent::CanInterruptActiveAction() const
 {
-	return ActiveActionId;
+	return !IsActionRunning() || bActiveActionCanBeInterrupted;
+}
+
+FName UMVActionComponent::GetActiveActionTableName() const
+{
+	return ActiveActionTableName;
+}
+
+FName UMVActionComponent::GetActiveActionRowName() const
+{
+	return ActiveActionRowName;
 }
 
 UAnimMontage* UMVActionComponent::GetActiveActionMontage() const
@@ -242,163 +358,9 @@ UAnimMontage* UMVActionComponent::GetActiveActionMontage() const
 	return ActiveActionMontage;
 }
 
-bool UMVActionComponent::TryBufferAction(const EMVActionId ActionId)
-{
-	return TryBufferActionById(MVActionIds::ToRawActionId(ActionId));
-}
-
-bool UMVActionComponent::TryBufferActionById(const int32 ActionId)
-{
-	if (!IsActionRunning() || ActionId <= 0)
-	{
-		return false;
-	}
-
-	if (!IsInputBufferOpen() && !IsRecoveryEscapeWindowOpen())
-	{
-		return false;
-	}
-
-	if (!FindActionIndexRow(ActionId))
-	{
-		return false;
-	}
-
-	const FVector MovementInputDirection = ResolveBufferedActionMovementInput.IsBound()
-		? ResolveBufferedActionMovementInput.Execute(ActionId)
-		: FVector::ZeroVector;
-	BufferAction(ActionId, MovementInputDirection);
-	if (IsRecoveryEscapeWindowOpen())
-	{
-		TryStartBufferedAction();
-	}
-	return true;
-}
-
-void UMVActionComponent::ClearBufferedAction()
-{
-	BufferedActionId = INDEX_NONE;
-	BufferedActionMovementInputDirection = FVector::ZeroVector;
-	bBufferedActionHasMovementInput = false;
-}
-
-void UMVActionComponent::UpdateBufferedActionMovementInput(const FVector& MovementInputDirection)
-{
-	if (!HasBufferedAction())
-	{
-		return;
-	}
-
-	const FVector NormalizedMovementInput = NormalizeBufferedMovementInput(MovementInputDirection);
-	if (NormalizedMovementInput.IsNearlyZero())
-	{
-		return;
-	}
-
-	BufferedActionMovementInputDirection = NormalizedMovementInput;
-	bBufferedActionHasMovementInput = !NormalizedMovementInput.IsNearlyZero();
-}
-
-bool UMVActionComponent::HasBufferedAction() const
-{
-	return BufferedActionId != INDEX_NONE;
-}
-
-int32 UMVActionComponent::GetBufferedActionId() const
-{
-	return BufferedActionId;
-}
-
-bool UMVActionComponent::HasBufferedActionMovementInput() const
-{
-	return bBufferedActionHasMovementInput;
-}
-
-FVector UMVActionComponent::GetBufferedActionMovementInputDirection() const
-{
-	return BufferedActionMovementInputDirection;
-}
-
-bool UMVActionComponent::IsConsumingBufferedAction() const
-{
-	return bConsumingBufferedAction;
-}
-
-int32 UMVActionComponent::GetConsumingBufferedActionId() const
-{
-	return ConsumingBufferedActionId;
-}
-
-bool UMVActionComponent::HasConsumingBufferedActionMovementInput() const
-{
-	return bConsumingBufferedActionHasMovementInput;
-}
-
-FVector UMVActionComponent::GetConsumingBufferedActionMovementInputDirection() const
-{
-	return ConsumingBufferedActionMovementInputDirection;
-}
-
 bool UMVActionComponent::IsInputBufferOpen() const
 {
 	return InputBufferWindowCount > 0;
-}
-
-bool UMVActionComponent::TryStartBufferedAction()
-{
-	if (bConsumingBufferedAction)
-	{
-		return false;
-	}
-
-	if (!HasBufferedAction())
-	{
-		return false;
-	}
-
-	if (!IsRecoveryEscapeWindowOpen())
-	{
-		return false;
-	}
-
-	if (IsMovementInputBlocked())
-	{
-		return false;
-	}
-
-	const int32 ActionIdToStart = BufferedActionId;
-	const FVector MovementInputDirectionToStart = BufferedActionMovementInputDirection;
-	const bool bHasMovementInputToStart = bBufferedActionHasMovementInput;
-	if (CanConsumeBufferedAction.IsBound()
-		&& !CanConsumeBufferedAction.Execute(
-			ActionIdToStart,
-			MovementInputDirectionToStart,
-			bHasMovementInputToStart))
-	{
-		ClearBufferedAction();
-		return false;
-	}
-
-	ClearBufferedAction();
-
-	bConsumingBufferedAction = true;
-	ConsumingBufferedActionId = ActionIdToStart;
-	ConsumingBufferedActionMovementInputDirection = MovementInputDirectionToStart;
-	bConsumingBufferedActionHasMovementInput = bHasMovementInputToStart;
-
-	if (IsActionRunning())
-	{
-		CancelActiveAction(0.1f);
-	}
-
-	const bool bStarted = TryStartActionById(ActionIdToStart);
-
-	bConsumingBufferedAction = false;
-	ConsumingBufferedActionId = INDEX_NONE;
-	ConsumingBufferedActionMovementInputDirection = FVector::ZeroVector;
-	bConsumingBufferedActionHasMovementInput = false;
-
-	return bStarted;
 }
 
 void UMVActionComponent::BeginInputBufferWindow()
@@ -409,10 +371,6 @@ void UMVActionComponent::BeginInputBufferWindow()
 void UMVActionComponent::EndInputBufferWindow()
 {
 	InputBufferWindowCount = FMath::Max(0, InputBufferWindowCount - 1);
-	if (!IsInputBufferOpen() && IsRecoveryEscapeWindowOpen())
-	{
-		TryStartBufferedAction();
-	}
 }
 
 void UMVActionComponent::BeginMovementInputBlock()
@@ -424,10 +382,6 @@ void UMVActionComponent::EndMovementInputBlock()
 {
 	const bool bWasBlocked = MovementInputBlockCount > 0;
 	MovementInputBlockCount = FMath::Max(0, MovementInputBlockCount - 1);
-	if (bWasBlocked && !IsMovementInputBlocked() && IsRecoveryEscapeWindowOpen())
-	{
-		TryStartBufferedAction();
-	}
 }
 
 bool UMVActionComponent::IsMovementInputBlocked() const
@@ -437,20 +391,28 @@ bool UMVActionComponent::IsMovementInputBlocked() const
 
 void UMVActionComponent::BeginRecoveryEscapeWindow()
 {
+	const bool bWasOpen = IsRecoveryEscapeWindowOpen();
 	++RecoveryEscapeWindowCount;
-	TryStartBufferedAction();
+	if (!bWasOpen)
+	{
+		OnRecoveryEscapeWindowChanged.Broadcast(true);
+	}
 }
 
 void UMVActionComponent::EndRecoveryEscapeWindow()
 {
+	const bool bWasOpen = IsRecoveryEscapeWindowOpen();
 	if (RecoveryEscapeWindowCount <= 0)
 	{
 		RecoveryEscapeWindowCount = 0;
 		return;
 	}
 
-	TryStartBufferedAction();
 	RecoveryEscapeWindowCount = FMath::Max(0, RecoveryEscapeWindowCount - 1);
+	if (bWasOpen && !IsRecoveryEscapeWindowOpen())
+	{
+		OnRecoveryEscapeWindowChanged.Broadcast(false);
+	}
 }
 
 bool UMVActionComponent::IsRecoveryEscapeWindowOpen() const
@@ -458,76 +420,136 @@ bool UMVActionComponent::IsRecoveryEscapeWindowOpen() const
 	return RecoveryEscapeWindowCount > 0;
 }
 
-void UMVActionComponent::BufferAction(const int32 ActionId, const FVector& MovementInputDirection)
+bool UMVActionComponent::TryJumpActiveActionSection(const FName SectionName)
 {
-	const FVector NormalizedMovementInput = NormalizeBufferedMovementInput(MovementInputDirection);
-	BufferedActionId = ActionId;
-	BufferedActionMovementInputDirection = NormalizedMovementInput;
-	bBufferedActionHasMovementInput = !NormalizedMovementInput.IsNearlyZero();
-}
-
-const FMVActionIndexRow* UMVActionComponent::FindActionIndexRow(
-	const int32 ActionId,
-	const EMVActionType ExpectedActionType) const
-{
-	const int32 ResolvedActionProfileId = ResolveActionProfileId();
-	if (ResolvedActionProfileId <= 0)
+	if (SectionName.IsNone() || !IsActionRunning())
 	{
-		return nullptr;
+		return false;
 	}
 
-	const FString ActionIndexKey = MakeActionIndexRowKey(ResolvedActionProfileId, ActionId);
-	const UMVTableManager* TableManager = UMVTableManager::Get(this);
-	const FMVActionIndexRow* ActionIndex = TableManager && !ActionIndexTableName.IsNone() && ActionId > 0
-		? TableManager->FindRow<FMVActionIndexRow>(ActionIndexTableName, ActionIndexKey)
-		: nullptr;
-	if (!ActionIndex || !ActionIndex->bEnabled)
+	UAnimMontage* Montage = ActiveActionMontage.Get();
+	UAnimInstance* AnimInstance = GetOwnerAnimInstance();
+	if (!Montage || !AnimInstance || !AnimInstance->Montage_IsPlaying(Montage))
 	{
-		return nullptr;
+		return false;
 	}
 
-	if (ActionIndex->ActionProfileId != ResolvedActionProfileId || ActionIndex->ActionId != ActionId)
+	if (!Montage->IsValidSectionName(SectionName))
 	{
 		UE_LOG(
 			LogTemp,
 			Warning,
-			TEXT("ActionIndex row '%s' mismatches requested ActionProfileId %d and ActionId %d."),
-			*ActionIndexKey,
-			ResolvedActionProfileId,
-			ActionId);
-		return nullptr;
+			TEXT("Active action montage '%s' has no section '%s'. Table=%s, RowName=%s."),
+			*Montage->GetName(),
+			*SectionName.ToString(),
+			*ActiveActionTableName.ToString(),
+			*ActiveActionRowName.ToString());
+		return false;
 	}
 
-	if (ExpectedActionType != EMVActionType::None && ActionIndex->ActionType != ExpectedActionType)
-	{
-		UE_LOG(
-			LogTemp,
-			Warning,
-			TEXT("ActionIndex row '%s' has unexpected ActionType."),
-			*ActionIndexKey);
-		return nullptr;
-	}
-
-	return ActionIndex;
+	AnimInstance->Montage_JumpToSection(SectionName, Montage);
+	return true;
 }
 
-const FMVActionStatRow* UMVActionComponent::FindActionStatRow(
-	int32 ActionId,
-	EMVActionType ExpectedActionType) const
+bool UMVActionComponent::TryJumpActiveActionRecoverySection(const FName SectionName)
 {
-	const FMVActionIndexRow* ActionIndex = FindActionIndexRow(ActionId, ExpectedActionType);
-	if (!ActionIndex)
+	return IsRecoveryEscapeWindowOpen()
+		&& TryJumpActiveActionSection(SectionName);
+}
+
+const FMVActionRow* UMVActionComponent::FindActionRow(
+	const FName ActionTableName,
+	const FName ActionRowName) const
+{
+	const UMVTableManager* TableManager = UMVTableManager::Get(this);
+	if (!TableManager)
+	{
+		UE_LOG(LogMVActionComponent, Warning, TEXT("TableManager is not available."));
+		return nullptr;
+	}
+
+	if (ActionTableName.IsNone() || ActionRowName.IsNone())
 	{
 		return nullptr;
 	}
 
-	const int32 ActionStatId = ActionIndex->ActionStatId > 0
-		? ActionIndex->ActionStatId
-		: ActionIndex->ActionId;
-	const UMVTableManager* TableManager = UMVTableManager::Get(this);
-	return TableManager && !ActionStatTableName.IsNone() && ActionStatId > 0
-		? TableManager->FindRow<FMVActionStatRow>(ActionStatTableName, FString::FromInt(ActionStatId))
-		: nullptr;
+	const UDataTable* DataTable = TableManager->FindDataTable(ActionTableName);
+	if (!DataTable)
+	{
+		UE_LOG(
+			LogMVActionComponent,
+			Warning,
+			TEXT("Action table is not loaded in manifest: %s."),
+			*ActionTableName.ToString());
+		return nullptr;
+	}
+
+	if (!DataTable->GetRowStruct() || !DataTable->GetRowStruct()->IsChildOf(FMVActionRow::StaticStruct()))
+	{
+		UE_LOG(
+			LogMVActionComponent,
+			Warning,
+			TEXT("Action table '%s' row struct is '%s', expected MVActionRow or child."),
+			*ActionTableName.ToString(),
+			DataTable->GetRowStruct() ? *DataTable->GetRowStruct()->GetName() : TEXT("None"));
+		return nullptr;
+	}
+
+	const FMVActionRow* ActionRow = TableManager->FindRow<FMVActionRow>(ActionTableName, ActionRowName.ToString());
+	if (!ActionRow || !ActionRow->bEnabled)
+	{
+		UE_LOG(
+			LogMVActionComponent,
+			Warning,
+			TEXT("Action row '%s' was not found or disabled in table '%s'."),
+			*ActionRowName.ToString(),
+			*ActionTableName.ToString());
+		return nullptr;
+	}
+
+	return ActionRow;
+}
+
+const FMVActionRow* UMVActionComponent::FindActionRow(
+	const FDataTableRowHandle ActionRowHandle,
+	FName& OutActionTableName,
+	FName& OutActionRowName) const
+{
+	OutActionTableName = MVActionTableNameFromDataTable(ActionRowHandle.DataTable);
+	OutActionRowName = ActionRowHandle.RowName;
+	if (!ActionRowHandle.DataTable || ActionRowHandle.RowName.IsNone())
+	{
+		return nullptr;
+	}
+
+	if (!ActionRowHandle.DataTable->GetRowStruct()
+		|| !ActionRowHandle.DataTable->GetRowStruct()->IsChildOf(FMVActionRow::StaticStruct()))
+	{
+		UE_LOG(
+			LogMVActionComponent,
+			Warning,
+			TEXT("Action row handle table '%s' row struct is '%s', expected MVActionRow or child."),
+			*GetNameSafe(ActionRowHandle.DataTable),
+			ActionRowHandle.DataTable->GetRowStruct() ? *ActionRowHandle.DataTable->GetRowStruct()->GetName() : TEXT("None"));
+		return nullptr;
+	}
+
+	const FMVActionRow* ActionRow = ActionRowHandle.DataTable->FindRow<FMVActionRow>(
+		ActionRowHandle.RowName,
+		TEXT("MVActionComponent"),
+		false);
+	if (!ActionRow || !ActionRow->bEnabled)
+	{
+		UE_LOG(
+			LogMVActionComponent,
+			Warning,
+			TEXT("Action row handle row '%s' was not found or disabled in table '%s'."),
+			*ActionRowHandle.RowName.ToString(),
+			*GetNameSafe(ActionRowHandle.DataTable));
+		return nullptr;
+	}
+
+	return ActionRow;
 }
 
 void UMVActionComponent::CacheOwnerReferences()
@@ -537,54 +559,6 @@ void UMVActionComponent::CacheOwnerReferences()
 		: nullptr;
 }
 
-const FMVCharacterIndexRow* UMVActionComponent::FindCharacterIndexRow() const
-{
-	const UMVTableManager* TableManager = UMVTableManager::Get(this);
-	const FMVCharacterIndexRow* CharacterIndex = TableManager && !CharacterIndexTableName.IsNone() && CharacterIndexId > 0
-		? TableManager->FindRow<FMVCharacterIndexRow>(CharacterIndexTableName, FString::FromInt(CharacterIndexId))
-		: nullptr;
-	if (!CharacterIndex || !CharacterIndex->bEnabled)
-	{
-		return nullptr;
-	}
-
-	if (CharacterIndex->CharacterIndexId != CharacterIndexId)
-	{
-		UE_LOG(
-			LogTemp,
-			Warning,
-			TEXT("CharacterIndex row '%d' mismatches requested CharacterIndexId %d."),
-			CharacterIndex->CharacterIndexId,
-			CharacterIndexId);
-		return nullptr;
-	}
-
-	return CharacterIndex;
-}
-
-int32 UMVActionComponent::ResolveActionProfileId() const
-{
-	const FMVCharacterIndexRow* CharacterIndex = FindCharacterIndexRow();
-	if (!CharacterIndex)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("CharacterIndexId %d has no enabled CharacterIndex row."), CharacterIndexId);
-		return INDEX_NONE;
-	}
-
-	if (CharacterIndex->ActionProfileId <= 0)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("CharacterIndexId %d has invalid ActionProfileId."), CharacterIndexId);
-		return INDEX_NONE;
-	}
-
-	return CharacterIndex->ActionProfileId;
-}
-
-FString UMVActionComponent::MakeActionIndexRowKey(const int32 InActionProfileId, const int32 InActionId)
-{
-	return FString::Printf(TEXT("%05d_%d"), InActionProfileId, InActionId);
-}
-
 UAnimInstance* UMVActionComponent::GetOwnerAnimInstance() const
 {
 	const ACharacter* OwnerCharacter = Cast<ACharacter>(GetOwner());
@@ -592,65 +566,36 @@ UAnimInstance* UMVActionComponent::GetOwnerAnimInstance() const
 	return MeshComponent ? MeshComponent->GetAnimInstance() : nullptr;
 }
 
-UAnimMontage* UMVActionComponent::ResolveActionMontage(int32 ActionId, const FMVActionIndexRow& ActionIndex) const
+UAnimMontage* UMVActionComponent::ResolveActionRowMontage(
+	const FName ActionTableName,
+	const FName ActionRowName,
+	const FMVActionRow& ActionRow) const
 {
-	UChooserTable* ChooserTable = LoadActionChooserTable(ActionId, ActionIndex);
-	if (!ChooserTable)
-	{
-		return nullptr;
-	}
-
-	FChooserEvaluationContext Context;
-	if (UObject* OwnerObject = GetOwner())
-	{
-		Context.AddObjectParam(OwnerObject);
-	}
-	Context.AddObjectParam(const_cast<UMVActionComponent*>(this));
-
-	TSoftObjectPtr<UObject> SelectedObject;
-	UChooserTable::EvaluateChooser(
-		Context,
-		ChooserTable,
-		FObjectChooserBase::FObjectChooserSoftObjectIteratorCallback::CreateLambda(
-			[&SelectedObject](const TSoftObjectPtr<UObject>& InResult)
-			{
-				SelectedObject = InResult;
-				return FObjectChooserBase::EIteratorStatus::Stop;
-			}));
-
-	UObject* ResolvedObject = SelectedObject.IsValid()
-		? SelectedObject.Get()
-		: SelectedObject.LoadSynchronous();
-	UAnimMontage* Montage = Cast<UAnimMontage>(ResolvedObject);
-	if (!Montage)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("ActionId %d chooser did not resolve an AnimMontage."), ActionId);
-	}
-
-	return Montage;
-}
-
-UChooserTable* UMVActionComponent::LoadActionChooserTable(int32 ActionId, const FMVActionIndexRow& ActionIndex) const
-{
-	if (!ActionIndex.AnimationChooserTable.IsValid())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("ActionId %d has no AnimationChooserTable."), ActionId);
-		return nullptr;
-	}
-
-	UObject* ChooserObject = ActionIndex.AnimationChooserTable.TryLoad();
-	UChooserTable* ChooserTable = Cast<UChooserTable>(ChooserObject);
-	if (!ChooserTable)
+	if (!ActionRow.Montage.IsValid())
 	{
 		UE_LOG(
 			LogTemp,
 			Warning,
-			TEXT("ActionId %d AnimationChooserTable path is not a ChooserTable: %s"),
-			ActionId,
-			*ActionIndex.AnimationChooserTable.ToString());
+			TEXT("Action table '%s' row '%s' has no Montage path."),
+			*ActionTableName.ToString(),
+			*ActionRowName.ToString());
+		return nullptr;
 	}
 
-	return ChooserTable;
+	UObject* MontageObject = ActionRow.Montage.TryLoad();
+	UAnimMontage* Montage = Cast<UAnimMontage>(MontageObject);
+	if (!Montage)
+	{
+		UE_LOG(
+			LogTemp,
+			Warning,
+			TEXT("Action table '%s' row '%s' Montage path is not an AnimMontage: %s"),
+			*ActionTableName.ToString(),
+			*ActionRowName.ToString(),
+			*ActionRow.Montage.ToString());
+	}
+
+	return Montage;
 }
 
 void UMVActionComponent::HandleActionMontageEnded(
@@ -664,87 +609,4 @@ void UMVActionComponent::HandleActionMontageEnded(
 	}
 
 	FinishActiveAction(bInterrupted);
-}
-
-float UMVActionComponent::GetActionStartStaminaCost(const FMVActionStatRow& ActionStat) const
-{
-	return ActionStat.StaminaCostType == EMVActionResourceCostType::Instant
-		? FMath::Max(0.0f, ActionStat.StaminaCost)
-		: 0.0f;
-}
-
-float UMVActionComponent::GetActionStartMPCost(const FMVActionStatRow& ActionStat) const
-{
-	return ActionStat.MPCostType == EMVActionResourceCostType::Instant
-		? FMath::Max(0.0f, ActionStat.MPCost)
-		: 0.0f;
-}
-
-bool UMVActionComponent::CanConsumeActionStartCost(const FMVActionStatRow& ActionStat) const
-{
-	if (!CachedStatComponent)
-	{
-		const_cast<UMVActionComponent*>(this)->CacheOwnerReferences();
-	}
-
-	if (!CachedStatComponent)
-	{
-		return true;
-	}
-
-	const float RequiredStamina = FMath::Max(
-		FMath::Max(0.0f, ActionStat.MinRequiredStamina),
-		GetActionStartStaminaCost(ActionStat));
-	const float RequiredMP = FMath::Max(
-		FMath::Max(0.0f, ActionStat.MinRequiredMP),
-		GetActionStartMPCost(ActionStat));
-
-	return CachedStatComponent->HasStamina(RequiredStamina)
-		&& CachedStatComponent->HasMP(RequiredMP);
-}
-
-bool UMVActionComponent::ConsumeActionStartCost(const FMVActionStatRow& ActionStat, int32 ActionId)
-{
-	if (!CachedStatComponent)
-	{
-		CacheOwnerReferences();
-	}
-
-	if (!CachedStatComponent)
-	{
-		return true;
-	}
-
-	const float StaminaCost = GetActionStartStaminaCost(ActionStat);
-	const float MPCost = GetActionStartMPCost(ActionStat);
-	if (!CanConsumeActionStartCost(ActionStat))
-	{
-		return false;
-	}
-
-	bool bConsumedAnyCost = false;
-	if (StaminaCost > 0.0f)
-	{
-		if (!CachedStatComponent->ConsumeStamina(StaminaCost))
-		{
-			return false;
-		}
-		bConsumedAnyCost = true;
-	}
-
-	if (MPCost > 0.0f)
-	{
-		if (!CachedStatComponent->ConsumeMP(MPCost))
-		{
-			return false;
-		}
-		bConsumedAnyCost = true;
-	}
-
-	if (bConsumedAnyCost)
-	{
-		OnActionCostConsumed.Broadcast(ActionId);
-	}
-
-	return true;
 }

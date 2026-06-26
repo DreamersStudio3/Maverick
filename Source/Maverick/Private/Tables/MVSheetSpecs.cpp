@@ -1,5 +1,7 @@
 #include "Tables/MVSheetSpecs.h"
 
+#include "Tables/MVActionRowTableTypes.h"
+#include "Tables/MVHitReactionActionTableTypes.h"
 #include "Tables/MVTableTypes.h"
 
 #include "Misc/FileHelper.h"
@@ -117,6 +119,10 @@ namespace
 			if (UScriptStruct* const* TypedStruct = TableToStruct.Find(TableName))
 			{
 				Map.Add(TableName, FMVSheetSpec{ *TypedStruct, KeyColumnName, false });
+			}
+			else if (KeyColumnName == TEXT("RowName") && (TableName.StartsWith(TEXT("HR_")) || TableName.Contains(TEXT("_HR_"))))
+			{
+				Map.Add(TableName, FMVSheetSpec{ FMVHitReactionActionRow::StaticStruct(), KeyColumnName, false });
 			}
 			else
 			{

@@ -33,7 +33,8 @@ struct FMVExecuteFixedAttackTaskInstanceData
 	UPROPERTY(Transient)
 	TObjectPtr<AMVEnemy> Enemy = nullptr;
 
-	int32 StartedActionId = INDEX_NONE;
+	FName StartedActionTableName = NAME_None;
+	FName StartedActionRowName = NAME_None;
 	int32 AttackInstanceId = INDEX_NONE;
 	FDelegateHandle AttackMontageEndedHandle;
 };
@@ -83,7 +84,8 @@ struct FMVSelectAndExecuteAttackTaskInstanceData
 	UPROPERTY(Transient)
 	TObjectPtr<UMVActionComponent> ActionComponent = nullptr;
 
-	int32 StartedActionId = INDEX_NONE;
+	FName StartedActionTableName = NAME_None;
+	FName StartedActionRowName = NAME_None;
 };
 
 USTRUCT(meta = (DisplayName = "Select And Execute Attack Task"))

@@ -1,5 +1,6 @@
 #include "Components/MVInteractionDetectorComponent.h"
 
+#include "Character/MVCharacterBase.h"
 #include "Components/PrimitiveComponent.h"
 #include "Engine/EngineTypes.h"
 #include "Engine/GameInstance.h"
@@ -8,6 +9,7 @@
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/Pawn.h"
 #include "Interaction/MVInteractableInterface.h"
+#include "TimerManager.h"
 #if ENABLE_DRAW_DEBUG
 #include "DrawDebugHelpers.h"
 #endif
@@ -84,7 +86,8 @@ void UMVInteractionDetectorComponent::RefreshInteractable()
 
 	if (SuppressedInteractable.IsValid())
 	{
-		if (!IsDialogueInteractionBlocked())
+		const bool bInteractionHoldActive = IsDialogueInteractionBlocked() || IsPIEActionTestPanelActiveOrPending();
+		if (!bInteractionHoldActive)
 		{
 			ReleaseSuppressedInteractable(false);
 		}
@@ -374,6 +377,7 @@ bool UMVInteractionDetectorComponent::TryInteract()
 	SuppressedInteractable = InteractableObject;
 	LockInteractionUntilInputReleased();
 	IMVInteractableInterface::Execute_Interact(InteractableObject, GetOwner());
+	TryShowPIEActionTestPanelForInteractable(InteractableObject);
 	return true;
 }
 
@@ -592,6 +596,42 @@ bool UMVInteractionDetectorComponent::IsDialogueInteractionBlocked() const
 	return UISubsystem && UISubsystem->IsDialogueWindowBlockingInteraction();
 }
 
+bool UMVInteractionDetectorComponent::IsPIEActionTestPanelActiveOrPending() const
+{
+#if !UE_BUILD_SHIPPING
+	UWorld* World = GetWorld();
+	UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr;
+	UMVUISubsystem* UISubsystem = GameInstance ? GameInstance->GetSubsystem<UMVUISubsystem>() : nullptr;
+	return UISubsystem && UISubsystem->IsPIEActionTestPanelActiveOrPending();
+#else
+	return false;
+#endif
+}
+
+bool UMVInteractionDetectorComponent::IsPIEActionTestInteractable(UObject* InteractableObject) const
+{
+#if !UE_BUILD_SHIPPING
+	const AActor* InteractableActor = ResolveInteractableActor(InteractableObject);
+	const UObject* ObjectForName = InteractableActor ? Cast<const UObject>(InteractableActor) : InteractableObject;
+	if (!ObjectForName)
+	{
+		return false;
+	}
+
+	const FString ObjectName = ObjectForName->GetName();
+	const UClass* ObjectClass = ObjectForName->GetClass();
+	const FString ClassName = ObjectClass ? ObjectClass->GetName() : FString();
+	return ObjectName.Contains(TEXT("Carcass"), ESearchCase::IgnoreCase)
+		|| ClassName.Contains(TEXT("Carcass"), ESearchCase::IgnoreCase)
+		|| ObjectName.Contains(TEXT("BP_Carcass"), ESearchCase::IgnoreCase)
+		|| ClassName.Contains(TEXT("BP_Carcass"), ESearchCase::IgnoreCase)
+		|| ObjectName.Contains(TEXT("BPCarcass"), ESearchCase::IgnoreCase)
+		|| ClassName.Contains(TEXT("BPCarcass"), ESearchCase::IgnoreCase);
+#else
+	return false;
+#endif
+}
+
 bool UMVInteractionDetectorComponent::SkipActiveDialogueWindow() const
 {
 	UWorld* World = GetWorld();
@@ -617,6 +657,49 @@ void UMVInteractionDetectorComponent::HideActiveDialogueWindow() const
 	}
 }
 
+void UMVInteractionDetectorComponent::HidePIEActionTestPanel() const
+{
+#if !UE_BUILD_SHIPPING
+	UWorld* World = GetWorld();
+	UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr;
+	UMVUISubsystem* UISubsystem = GameInstance ? GameInstance->GetSubsystem<UMVUISubsystem>() : nullptr;
+	if (UISubsystem)
+	{
+		UISubsystem->HidePIEActionTestPanel();
+	}
+#endif
+}
+
+void UMVInteractionDetectorComponent::TryShowPIEActionTestPanelForInteractable(UObject* InteractableObject)
+{
+#if !UE_BUILD_SHIPPING
+	UWorld* World = GetWorld();
+	if (!World || World->WorldType != EWorldType::PIE || !IsPIEActionTestInteractable(InteractableObject))
+	{
+		return;
+	}
+
+	TWeakObjectPtr<AMVCharacterBase> OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
+	if (!OwnerCharacter.IsValid())
+	{
+		return;
+	}
+
+	World->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateWeakLambda(
+		this,
+		[this, OwnerCharacter]()
+		{
+			UWorld* CallbackWorld = GetWorld();
+			UGameInstance* GameInstance = CallbackWorld ? CallbackWorld->GetGameInstance() : nullptr;
+			UMVUISubsystem* UISubsystem = GameInstance ? GameInstance->GetSubsystem<UMVUISubsystem>() : nullptr;
+			if (OwnerCharacter.IsValid() && UISubsystem)
+			{
+				UISubsystem->ShowPIEActionTestPanel(OwnerCharacter.Get());
+			}
+		}));
+#endif
+}
+
 void UMVInteractionDetectorComponent::RestoreDialogueCameraZoom() const
 {
 	UWorld* World = GetWorld();
@@ -638,6 +721,7 @@ void UMVInteractionDetectorComponent::ReleaseSuppressedInteractable(bool bHideDi
 	if (bHideDialogue)
 	{
 		HideActiveDialogueWindow();
+		HidePIEActionTestPanel();
 	}
 
 	SuppressedInteractable = nullptr;
@@ -645,7 +729,8 @@ void UMVInteractionDetectorComponent::ReleaseSuppressedInteractable(bool bHideDi
 
 void UMVInteractionDetectorComponent::UpdateDialogueEscapeState()
 {
-	if (!SuppressedInteractable.IsValid() || !IsDialogueInteractionBlocked())
+	if (!SuppressedInteractable.IsValid()
+		|| (!IsDialogueInteractionBlocked() && !IsPIEActionTestPanelActiveOrPending()))
 	{
 		return;
 	}

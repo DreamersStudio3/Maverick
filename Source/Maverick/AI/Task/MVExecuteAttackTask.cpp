@@ -4,6 +4,7 @@
 #include "AI/MVEnemy.h"
 #include "AIController.h"
 #include "Components/MVActionComponent.h"
+#include "Engine/DataTable.h"
 #include "StateTreeAsyncExecutionContext.h"
 #include "StateTreeExecutionContext.h"
 
@@ -24,6 +25,44 @@ APawn* ExecuteAttackResolveOwner(FStateTreeExecutionContext& Context, const TObj
 	return Cast<APawn>(Context.GetOwner());
 }
 
+FName ExecuteAttackActionTableNameFromDataTable(const UDataTable* DataTable)
+{
+	if (!DataTable)
+	{
+		return NAME_None;
+	}
+
+	FString TableName = DataTable->GetName();
+	TableName.RemoveFromStart(TEXT("DT_"));
+	return FName(*TableName);
+}
+
+bool ExecuteAttackTryStartAction(
+	UMVActionComponent& ActionComponent,
+	const FMVAICombatActionCandidate& Candidate,
+	FName& OutActionTableName,
+	FName& OutActionRowName)
+{
+	OutActionTableName = ExecuteAttackActionTableNameFromDataTable(Candidate.ActionRow.DataTable);
+	OutActionRowName = Candidate.ActionRow.RowName;
+	if (!MVAICombat::HasExecutableActionRow(Candidate))
+	{
+		return false;
+	}
+
+	return ActionComponent.TryStartActionFromRowHandle(Candidate.ActionRow, Candidate.StartSection);
+}
+
+bool ExecuteAttackIsStartedActionRunning(
+	const UMVActionComponent& ActionComponent,
+	const FName StartedActionTableName,
+	const FName StartedActionRowName)
+{
+	return ActionComponent.IsActionRunning()
+		&& ActionComponent.GetActiveActionTableName() == StartedActionTableName
+		&& ActionComponent.GetActiveActionRowName() == StartedActionRowName;
+}
+
 bool ExecuteAttackStartCooldown(APawn& Owner, const FMVAICombatActionCandidate& Candidate)
 {
 	UMVActionCooldownComponent* CooldownComponent = Owner.FindComponentByClass<UMVActionCooldownComponent>();
@@ -41,7 +80,7 @@ bool ExecuteAttackCanSelectCandidate(
 	const FMVAICombatActionCandidate& Candidate,
 	const bool bAllowRepeatedLastAttack)
 {
-	if (Candidate.ActionId <= 0)
+	if (!MVAICombat::HasExecutableActionRow(Candidate))
 	{
 		return false;
 	}
@@ -143,12 +182,13 @@ EStateTreeRunStatus FMVExecuteFixedAttackTask::EnterState(
 
 	InstanceData.ActionComponent = nullptr;
 	InstanceData.Enemy = nullptr;
-	InstanceData.StartedActionId = INDEX_NONE;
+	InstanceData.StartedActionTableName = NAME_None;
+	InstanceData.StartedActionRowName = NAME_None;
 	InstanceData.AttackInstanceId = INDEX_NONE;
 	InstanceData.AttackMontageEndedHandle.Reset();
 
 	APawn* Owner = ExecuteAttackResolveOwner(Context, InstanceData.Owner);
-	if (!Owner || InstanceData.Attack.ActionId <= 0)
+	if (!Owner || !MVAICombat::HasExecutableActionRow(InstanceData.Attack))
 	{
 		return EStateTreeRunStatus::Failed;
 	}
@@ -156,7 +196,11 @@ EStateTreeRunStatus FMVExecuteFixedAttackTask::EnterState(
 	InstanceData.ActionComponent = Owner->FindComponentByClass<UMVActionComponent>();
 	if (InstanceData.ActionComponent)
 	{
-		if (!InstanceData.ActionComponent->TryStartActionById(InstanceData.Attack.ActionId))
+		if (!ExecuteAttackTryStartAction(
+			*InstanceData.ActionComponent,
+			InstanceData.Attack,
+			InstanceData.StartedActionTableName,
+			InstanceData.StartedActionRowName))
 		{
 			return EStateTreeRunStatus::Failed;
 		}
@@ -167,7 +211,6 @@ EStateTreeRunStatus FMVExecuteFixedAttackTask::EnterState(
 			return EStateTreeRunStatus::Failed;
 		}
 
-		InstanceData.StartedActionId = InstanceData.Attack.ActionId;
 		InstanceData.LastAttackTag = MVAICombat::MakeActionTag(InstanceData.Attack);
 		return EStateTreeRunStatus::Running;
 	}
@@ -198,7 +241,6 @@ EStateTreeRunStatus FMVExecuteFixedAttackTask::EnterState(
 			}
 		});
 
-	InstanceData.StartedActionId = InstanceData.Attack.ActionId;
 	InstanceData.LastAttackTag = MVAICombat::MakeActionTag(InstanceData.Attack);
 	return EStateTreeRunStatus::Running;
 }
@@ -211,8 +253,10 @@ EStateTreeRunStatus FMVExecuteFixedAttackTask::Tick(FStateTreeExecutionContext& 
 		return EStateTreeRunStatus::Running;
 	}
 
-	return InstanceData.ActionComponent->IsActionRunning()
-		&& InstanceData.ActionComponent->GetActiveActionId() == InstanceData.StartedActionId
+	return ExecuteAttackIsStartedActionRunning(
+		*InstanceData.ActionComponent,
+		InstanceData.StartedActionTableName,
+		InstanceData.StartedActionRowName)
 		? EStateTreeRunStatus::Running
 		: EStateTreeRunStatus::Succeeded;
 }
@@ -229,8 +273,10 @@ void FMVExecuteFixedAttackTask::ExitState(
 	}
 
 	if (InstanceData.ActionComponent
-		&& InstanceData.ActionComponent->IsActionRunning()
-		&& InstanceData.ActionComponent->GetActiveActionId() == InstanceData.StartedActionId)
+		&& ExecuteAttackIsStartedActionRunning(
+			*InstanceData.ActionComponent,
+			InstanceData.StartedActionTableName,
+			InstanceData.StartedActionRowName))
 	{
 		InstanceData.ActionComponent->CancelActiveAction(0.1f);
 	}
@@ -249,7 +295,8 @@ EStateTreeRunStatus FMVSelectAndExecuteAttackTask::EnterState(
 {
 	FInstanceDataType& InstanceData = Context.GetInstanceData<FInstanceDataType>(*this);
 	InstanceData.ActionComponent = nullptr;
-	InstanceData.StartedActionId = INDEX_NONE;
+	InstanceData.StartedActionTableName = NAME_None;
+	InstanceData.StartedActionRowName = NAME_None;
 	InstanceData.SelectedAttack = FMVAICombatActionCandidate();
 
 	APawn* Owner = ExecuteAttackResolveOwner(Context, InstanceData.Owner);
@@ -264,7 +311,12 @@ EStateTreeRunStatus FMVSelectAndExecuteAttackTask::EnterState(
 	}
 
 	InstanceData.ActionComponent = Owner->FindComponentByClass<UMVActionComponent>();
-	if (!InstanceData.ActionComponent || !InstanceData.ActionComponent->TryStartActionById(InstanceData.SelectedAttack.ActionId))
+	if (!InstanceData.ActionComponent
+		|| !ExecuteAttackTryStartAction(
+			*InstanceData.ActionComponent,
+			InstanceData.SelectedAttack,
+			InstanceData.StartedActionTableName,
+			InstanceData.StartedActionRowName))
 	{
 		return EStateTreeRunStatus::Failed;
 	}
@@ -275,7 +327,6 @@ EStateTreeRunStatus FMVSelectAndExecuteAttackTask::EnterState(
 		return EStateTreeRunStatus::Failed;
 	}
 
-	InstanceData.StartedActionId = InstanceData.SelectedAttack.ActionId;
 	InstanceData.LastAttackTag = MVAICombat::MakeActionTag(InstanceData.SelectedAttack);
 	return EStateTreeRunStatus::Running;
 }
@@ -288,8 +339,10 @@ EStateTreeRunStatus FMVSelectAndExecuteAttackTask::Tick(FStateTreeExecutionConte
 		return EStateTreeRunStatus::Failed;
 	}
 
-	return InstanceData.ActionComponent->IsActionRunning()
-		&& InstanceData.ActionComponent->GetActiveActionId() == InstanceData.StartedActionId
+	return ExecuteAttackIsStartedActionRunning(
+		*InstanceData.ActionComponent,
+		InstanceData.StartedActionTableName,
+		InstanceData.StartedActionRowName)
 		? EStateTreeRunStatus::Running
 		: EStateTreeRunStatus::Succeeded;
 }
@@ -300,8 +353,10 @@ void FMVSelectAndExecuteAttackTask::ExitState(
 {
 	FInstanceDataType& InstanceData = Context.GetInstanceData<FInstanceDataType>(*this);
 	if (InstanceData.ActionComponent
-		&& InstanceData.ActionComponent->IsActionRunning()
-		&& InstanceData.ActionComponent->GetActiveActionId() == InstanceData.StartedActionId)
+		&& ExecuteAttackIsStartedActionRunning(
+			*InstanceData.ActionComponent,
+			InstanceData.StartedActionTableName,
+			InstanceData.StartedActionRowName))
 	{
 		InstanceData.ActionComponent->CancelActiveAction(0.1f);
 	}

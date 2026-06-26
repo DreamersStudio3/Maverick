@@ -40,7 +40,7 @@ StateTree는 보통 위에서 아래로 먼저 true가 된 State를 선택한다
 | `CurrentArea` | `OutsideArea`, `DefensiveArea`, `OffensiveArea` | `DefensiveArea`, `OffensiveArea` 반경으로 계산된다. |
 | `bHasLineOfSight` | 타겟까지 visibility trace가 막히지 않는지 | 후보의 `bRequiresLineOfSight`가 true일 때 필요하다. |
 | `bActionRunning` | 현재 ActionComponent가 액션 실행 중인지 | true면 Dead 외 전투 조건은 실패한다. |
-| `ReadyActionIds` | 쿨다운이 ready인 액션 id 목록 | 공격 후보의 `CooldownActionId` 또는 `ActionId`가 여기에 있어야 한다. |
+| `ReadyActionIds` | 쿨다운이 ready인 액션 id 목록 | 공격 후보의 `CooldownActionId`가 있으면 그 값, 없으면 `ActionRow.RowName`이 여기에 있어야 한다. |
 | `LastAttackTag` | 마지막 공격 태그 | `Select And Execute Attack Task`는 1차 선택에서 같은 태그 반복을 피한다. |
 | `bAttackCadenceReady` | 공통 공격 템포 쿨다운 ready 여부 | Skill/Basic 조건에서 사용된다. |
 | `bCounterWindow` | 카운터 가능 타이밍 | CounterAttack 조건에서 사용된다. |
@@ -60,9 +60,11 @@ Counter, Sprint, Airborne, Skill, Basic 공격은 모두 같은 후보 구조를
 
 | 변수 | 의미 | 설정/주의 |
 | --- | --- | --- |
-| `ActionId` | 실행할 액션 id | 0 이하이면 후보는 항상 실패한다. `DT_ActionIndex`에 같은 id가 있어야 한다. |
-| `ActionTag` | 마지막 공격 비교용 태그 | 비워두면 `ActionId` 문자열을 태그로 쓴다. 같은 태그는 1차 선택에서 반복 방지된다. |
-| `CooldownActionId` | 쿨다운 id | 비워두면 `ActionId` 문자열을 쓴다. `ActionCooldowns`에도 같은 이름이 있어야 ready가 된다. |
+| `ActionRow` | 실행할 액션 row handle | 필수다. `FMVActionRow` 또는 그 자식 row struct를 쓰는 DataTable row를 지정한다. |
+| `StartSection` | 시작 섹션 | 비워두면 row의 `DefaultStartSection`을 사용한다. |
+| `ActionId` | 임시 식별자 | 새 실행 흐름에서는 실행 키가 아니다. 기존 에셋 호환용 fallback으로만 남아 있다. |
+| `ActionTag` | 마지막 공격 비교용 태그 | 비워두면 `ActionRow.RowName`을 태그로 쓴다. 같은 태그는 1차 선택에서 반복 방지된다. |
+| `CooldownActionId` | 쿨다운 id | 비워두면 `ActionRow.RowName`을 쓴다. `ActionCooldowns`에도 같은 이름이 있어야 ready가 된다. |
 | `Role` | 후보의 전투 역할 | 현재 C++ 선택 필터에는 직접 사용되지 않는다. 에디터 분류/디자인 용도다. |
 | `MinDistance` | 이 거리보다 가까우면 후보 실패 | SprintAttack처럼 원거리에서만 나와야 하는 공격에 필수다. |
 | `MaxDistance` | 이 거리보다 멀면 후보 실패 | `0` 이하는 상한 없음이다. 대부분 공격에는 실제 사거리를 넣어야 한다. |
@@ -136,7 +138,7 @@ Combat 부모 State의 Task로 두는 것을 권장한다. 타겟 정보와 전�
 | `ForwardPathTraceDistance` | 전방 경로 trace 길이 | Sprint/돌진 공격 경로 검사 거리. |
 | `BackwardPathTraceDistance` | 후방 경로 trace 길이 | 현재 코드에서는 직접 사용되지 않는다. |
 | `StrafePathTraceDistance` | 좌우 strafe 경로 trace 길이 | Strafe 가능 여부 계산. |
-| `ActionCooldowns` | AI 전투 쿨다운 목록 | 모든 후보의 `CooldownActionId` 또는 `ActionId`를 등록해야 한다. |
+| `ActionCooldowns` | AI 전투 쿨다운 목록 | 모든 후보의 `CooldownActionId` 또는 `ActionRow.RowName`을 등록해야 한다. |
 | `AttackCadenceActionId` | 공통 공격 템포 쿨다운 id | 비우면 항상 ready. 쓰려면 `ActionCooldowns`에도 등록한다. |
 | `CurrentPhase` | 패턴 페이즈 | 현재 기본 조건에는 직접 사용되지 않는다. |
 | `bCounterWindow` | 카운터 가능 플래그 | 외부 로직에서 바인딩해서 사용한다. |
@@ -179,11 +181,11 @@ CounterAttack, SprintAttack, AirborneChargeAttack처럼 단일 후보를 실행�
 | 변수 | 의미 | 설정/주의 |
 | --- | --- | --- |
 | `Owner` | AI Pawn | 보통 비워도 자동 해결된다. |
-| `Attack` | 실행할 후보 | `ActionId`가 0 이하이면 실패한다. |
+| `Attack` | 실행할 후보 | `ActionRow`가 비어 있으면 실패한다. |
 | `FallbackAttackDirection` | ActionComponent가 없을 때 `AMVEnemy::Attack`에 넘길 방향 | 현재 일반 액션 시스템을 쓰면 거의 fallback 용도다. |
 | `LastAttackTag` | 실행된 공격 태그 output | Global Sensing의 `LastAttackTag`로 되돌려 반복 방지에 사용한다. |
 
-ActionComponent가 있으면 `TryStartActionById(Attack.ActionId)`로 몽타주를 실행한다. 실행 후 후보의 쿨다운을 시작한다.
+ActionComponent가 있으면 `TryStartActionFromRowHandle(Attack.ActionRow, Attack.StartSection)`로 몽타주를 실행한다. 실행 후 후보의 쿨다운을 시작한다.
 
 ## Focusing Task
 
@@ -220,7 +222,7 @@ Strafe 조건은 전투권 안에서 즉시 공격할 후보가 없고, 각도/�
 
 | 변수 | 의미 | 설정/주의 |
 | --- | --- | --- |
-| `ActionId` | 쿨다운 이름 | 후보의 `CooldownActionId`와 같아야 한다. 후보의 `CooldownActionId`가 비어 있으면 후보 `ActionId` 문자열과 같아야 한다. |
+| `ActionId` | 쿨다운 이름 | 후보의 `CooldownActionId`와 같아야 한다. 후보의 `CooldownActionId`가 비어 있으면 후보 `ActionRow.RowName`과 같아야 한다. |
 | `CooldownDuration` | 쿨다운 시간 | 0이면 시작해도 즉시 ready. |
 | `bStartReady` | 시작 시 ready 여부 | false면 시작부터 쿨다운 중이다. |
 
@@ -267,8 +269,8 @@ NamelessPuppet 같은 근접 AI 기준 예시:
 
 - `Select And Execute Attack Task.Candidates`가 0개인지 확인한다.
 - `SelectedAttack`은 output이다. 후보 입력은 `Candidates`다.
-- 후보 `CooldownActionId` 또는 `ActionId`가 `ReadyActionIds`에 있는지 확인한다.
-- `DT_ActionIndex`에 해당 `ActionId`와 `AnimationChooserTable`이 있는지 확인한다.
+- 후보 `CooldownActionId` 또는 `ActionRow.RowName`이 `ReadyActionIds`에 있는지 확인한다.
+- 후보 `ActionRow`가 비어 있지 않고, 해당 DataTable이 manifest에 등록되어 있는지 확인한다.
 
 ### MoveToTarget/Reposition에 들어오지 않는다
 

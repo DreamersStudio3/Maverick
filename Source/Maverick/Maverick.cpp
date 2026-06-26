@@ -52,6 +52,12 @@ private:
 			FText::FromString(TEXT("Run CSV conversion and regenerate Maverick DataTables.")),
 			FSlateIcon(),
 			FUIAction(FExecuteAction::CreateStatic(&FMaverickModule::GenerateDataTablesFromMenu)));
+		Section.AddMenuEntry(
+			TEXT("RefreshMaverickTableManifest"),
+			FText::FromString(TEXT("Refresh Table Manifest")),
+			FText::FromString(TEXT("Refresh Maverick table manifest from generated and direct-managed DataTables.")),
+			FSlateIcon(),
+			FUIAction(FExecuteAction::CreateStatic(&FMaverickModule::RefreshTableManifestFromMenu)));
 	}
 
 	static void GenerateDataTablesFromMenu()
@@ -65,6 +71,19 @@ private:
 			FText::FromString(bSucceeded
 				? FString::Printf(TEXT("DataTable generation completed.\n\n%s"), *Report)
 				: FString::Printf(TEXT("DataTable generation failed.\n\n%s"), *Report)));
+	}
+
+	static void RefreshTableManifestFromMenu()
+	{
+		FString Report;
+		const bool bSucceeded = UMVTableAssetGenerator::RefreshTableManifest(Report);
+		UE_LOG(LogTemp, Display, TEXT("[MVTableAssetGenerator] %s%s"), bSucceeded ? TEXT("") : TEXT("Failed: "), *Report);
+
+		FMessageDialog::Open(
+			EAppMsgType::Ok,
+			FText::FromString(bSucceeded
+				? FString::Printf(TEXT("Table manifest refresh completed.\n\n%s"), *Report)
+				: FString::Printf(TEXT("Table manifest refresh failed.\n\n%s"), *Report)));
 	}
 #endif
 };

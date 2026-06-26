@@ -8,7 +8,7 @@ bool CombatDecisionIsCandidateReady(
 	const FMVAICombatContext& CombatContext,
 	const FMVAICombatActionCandidate& Candidate)
 {
-	if (Candidate.ActionId <= 0)
+	if (!MVAICombat::HasExecutableActionRow(Candidate))
 	{
 		return false;
 	}

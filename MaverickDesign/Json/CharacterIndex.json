@@ -6,20 +6,21 @@
     },
     "tables": {
         "CharacterIndex": {
-            "key": "CharacterIndexId",
+            "key": "CharacterIndexCode",
             "rows": [
                 {
-                    "CharacterIndexId": 1,
+                    "CharacterIndexCode": "Character.Player.P1",
                     "CharacterName": "PlayerCharacter",
-                    "CharacterKind": "Player",
-                    "ActionProfileId": 1,
                     "bEnabled": true
                 },
                 {
-                    "CharacterIndexId": 20001,
+                    "CharacterIndexCode": "Character.NPC.Enemy.E1",
+                    "CharacterName": "BulkupCarcass",
+                    "bEnabled": true
+                },
+                {
+                    "CharacterIndexCode": "Character.NPC.Enemy.NamelessPuppet",
                     "CharacterName": "NamelessPuppet",
-                    "CharacterKind": "Enemy",
-                    "ActionProfileId": 20001,
                     "bEnabled": true
                 }
             ]

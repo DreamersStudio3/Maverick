@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "AI/Enum/MVBossCombatArea.h"
+#include "Engine/DataTable.h"
 #include "MVAICombatTypes.generated.h"
 
 UENUM(BlueprintType)
@@ -43,6 +44,12 @@ USTRUCT(BlueprintType)
 struct FMVAICombatActionCandidate
 {
 	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Action")
+	FDataTableRowHandle ActionRow;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Action")
+	FName StartSection = NAME_None;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Action")
 	int32 ActionId = INDEX_NONE;
@@ -154,21 +161,42 @@ namespace MVAICombat
 {
 	FORCEINLINE FName MakeCooldownActionId(const FMVAICombatActionCandidate& Candidate)
 	{
-		return !Candidate.CooldownActionId.IsNone()
-			? Candidate.CooldownActionId
-			: FName(*FString::FromInt(Candidate.ActionId));
+		if (!Candidate.CooldownActionId.IsNone())
+		{
+			return Candidate.CooldownActionId;
+		}
+
+		if (!Candidate.ActionRow.RowName.IsNone())
+		{
+			return Candidate.ActionRow.RowName;
+		}
+
+		return Candidate.ActionId > 0 ? FName(*FString::FromInt(Candidate.ActionId)) : NAME_None;
 	}
 
 	FORCEINLINE FName MakeActionTag(const FMVAICombatActionCandidate& Candidate)
 	{
-		return !Candidate.ActionTag.IsNone()
-			? Candidate.ActionTag
-			: FName(*FString::FromInt(Candidate.ActionId));
+		if (!Candidate.ActionTag.IsNone())
+		{
+			return Candidate.ActionTag;
+		}
+
+		if (!Candidate.ActionRow.RowName.IsNone())
+		{
+			return Candidate.ActionRow.RowName;
+		}
+
+		return Candidate.ActionId > 0 ? FName(*FString::FromInt(Candidate.ActionId)) : NAME_None;
 	}
 
 	FORCEINLINE bool IsActionReady(const FMVAICombatContext& Context, const FName ActionId)
 	{
 		return !ActionId.IsNone() && Context.ReadyActionIds.Contains(ActionId);
+	}
+
+	FORCEINLINE bool HasExecutableActionRow(const FMVAICombatActionCandidate& Candidate)
+	{
+		return Candidate.ActionRow.DataTable && !Candidate.ActionRow.RowName.IsNone();
 	}
 
 	FORCEINLINE bool IsDistanceInRange(const FMVAICombatContext& Context, const float MinDistance, const float MaxDistance)

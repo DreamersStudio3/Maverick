@@ -3,10 +3,10 @@
 Maverick CSV -> JSON table converter.
 
 Input:
-  MaverickDesign/Csv/*.csv
+  MaverickDesign/Csv/**/*.csv
 
 Output:
-  MaverickDesign/Json/<CsvFileName>.json
+  MaverickDesign/Json/<RelativeCsvPathWithoutExt>.json
   MaverickDesign/Json/SheetRecipe.json
 
 Supported CSV layouts:
@@ -209,7 +209,7 @@ def convert_all(input_dir: Path, output_dir: Path) -> int:
     input_dir.mkdir(parents=True, exist_ok=True)
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    csv_files = sorted(path for path in input_dir.glob("*.csv") if not path.name.startswith("~$"))
+    csv_files = sorted(path for path in input_dir.rglob("*.csv") if not path.name.startswith("~$"))
     if not csv_files:
         print(f"[MVConverter] No .csv files found: {input_dir}")
         return 0
@@ -217,7 +217,8 @@ def convert_all(input_dir: Path, output_dir: Path) -> int:
     recipe: Dict[str, str] = {}
 
     for csv_path in csv_files:
-        print(f"[MVConverter] Processing {csv_path.name}")
+        relative_csv_path = csv_path.relative_to(input_dir)
+        print(f"[MVConverter] Processing {relative_csv_path.as_posix()}")
         rows = read_csv(csv_path)
         table_rows, key_column = convert_rows(rows)
 
@@ -229,9 +230,10 @@ def convert_all(input_dir: Path, output_dir: Path) -> int:
             continue
 
         table_name = csv_path.stem
-        document = build_table_document(table_name, key_column, table_rows, csv_path.name)
+        document = build_table_document(table_name, key_column, table_rows, relative_csv_path.as_posix())
 
-        output_path = output_dir / f"{table_name}.json"
+        output_path = output_dir / relative_csv_path.with_suffix(".json")
+        output_path.parent.mkdir(parents=True, exist_ok=True)
         with output_path.open("w", encoding="utf-8", newline="\n") as f:
             json.dump(document, f, ensure_ascii=False, indent=4)
 

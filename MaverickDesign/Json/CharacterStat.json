@@ -6,10 +6,10 @@
     },
     "tables": {
         "CharacterStat": {
-            "key": "StatId",
+            "key": "CharacterIndexCode",
             "rows": [
                 {
-                    "StatId": 1,
+                    "CharacterIndexCode": "Character.Player.P1",
                     "MaxHP": 100,
                     "CurrentHP": 100,
                     "MaxStamina": 100,
@@ -30,7 +30,28 @@
                     "GroggyRecoveryDelay": 2
                 },
                 {
-                    "StatId": 20001,
+                    "CharacterIndexCode": "Character.NPC.Enemy.E1",
+                    "MaxHP": 100,
+                    "CurrentHP": 100,
+                    "MaxStamina": 100,
+                    "CurrentStamina": 100,
+                    "StaminaRecoveryPerSecond": 35,
+                    "StaminaRecoveryDelay": 1,
+                    "MaxMP": 100,
+                    "CurrentMP": 100,
+                    "MPRecoveryPerSecond": 5,
+                    "AttackSpeed": 1,
+                    "WalkSpeed": 200,
+                    "RunSpeed": 500,
+                    "SprintSpeed": 750,
+                    "Defence": 1,
+                    "MaxGroggy": 100,
+                    "CurrentGroggy": 0,
+                    "GroggyRecoveryPerSecond": 10,
+                    "GroggyRecoveryDelay": 2
+                },
+                {
+                    "CharacterIndexCode": "Character.NPC.Enemy.NamelessPuppet",
                     "MaxHP": 100,
                     "CurrentHP": 100,
                     "MaxStamina": 100,

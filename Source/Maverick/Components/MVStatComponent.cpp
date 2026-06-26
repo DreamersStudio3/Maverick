@@ -2,6 +2,7 @@
 
 #include "Tables/MVTableManager.h"
 #include "Tables/MVStatTableTypes.h"
+#include "Tags/MVGameplayTags.h"
 
 namespace
 {
@@ -19,13 +20,14 @@ namespace
 UMVStatComponent::UMVStatComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
+	CharacterIndexCode = MVGameplayTags::Character_Player_P1;
 }
 
 void UMVStatComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (bLoadStatsOnBeginPlay && !StatTableName.IsNone() && CharacterIndexId > 0)
+	if (bLoadStatsOnBeginPlay && !StatTableName.IsNone() && CharacterIndexCode.IsValid())
 	{
 		LoadStatsFromTable();
 	}
@@ -35,27 +37,23 @@ void UMVStatComponent::SetStatTableReference(FName InStatTableName, const FStrin
 {
 	StatTableName = InStatTableName;
 
-	int32 ParsedCharacterIndexId = 0;
-	if (LexTryParseString(ParsedCharacterIndexId, *InStatRowKey))
-	{
-		SetCharacterIndexId(ParsedCharacterIndexId);
-	}
+	SetCharacterIndexCode(FGameplayTag::RequestGameplayTag(FName(*InStatRowKey), false));
 }
 
-void UMVStatComponent::SetCharacterIndexId(const int32 NewCharacterIndexId)
+void UMVStatComponent::SetCharacterIndexCode(const FGameplayTag NewCharacterIndexCode)
 {
-	CharacterIndexId = FMath::Max(0, NewCharacterIndexId);
+	CharacterIndexCode = NewCharacterIndexCode;
 }
 
-int32 UMVStatComponent::GetCharacterIndexId() const
+FGameplayTag UMVStatComponent::GetCharacterIndexCode() const
 {
-	return CharacterIndexId;
+	return CharacterIndexCode;
 }
 
 bool UMVStatComponent::LoadStatsFromTable()
 {
 	const UMVTableManager* TableManager = UMVTableManager::Get(this);
-	if (!TableManager || StatTableName.IsNone() || CharacterIndexId <= 0)
+	if (!TableManager || StatTableName.IsNone() || !CharacterIndexCode.IsValid())
 	{
 		return false;
 	}
@@ -67,15 +65,15 @@ bool UMVStatComponent::LoadStatsFromTable()
 		return false;
 	}
 
-	if (StatRow->StatId != CharacterIndexId)
+	if (StatRow->CharacterIndexCode != CharacterIndexCode)
 	{
 		UE_LOG(
 			LogTemp,
 			Warning,
-			TEXT("CharacterStat row '%s' has StatId %d, expected CharacterIndexId %d."),
+			TEXT("CharacterStat row '%s' has CharacterIndexCode %s, expected %s."),
 			*StatRowKey,
-			StatRow->StatId,
-			CharacterIndexId);
+			*StatRow->CharacterIndexCode.ToString(),
+			*CharacterIndexCode.ToString());
 		return false;
 	}
 
@@ -104,7 +102,7 @@ bool UMVStatComponent::LoadStatsFromTable()
 
 void UMVStatComponent::HandleDamaged(const FMVResolvedHitData& HitData)
 {
-	if (HitData.VictimCharacterIndexId > 0 && HitData.VictimCharacterIndexId != CharacterIndexId)
+	if (HitData.VictimCharacterIndexCode.IsValid() && HitData.VictimCharacterIndexCode != CharacterIndexCode)
 	{
 		return;
 	}
@@ -408,5 +406,5 @@ void UMVStatComponent::SetGroggyRecoveryDelay(float InGroggyRecoveryDelay)
 
 FString UMVStatComponent::MakeStatRowKey() const
 {
-	return FString::FromInt(CharacterIndexId);
+	return CharacterIndexCode.ToString();
 }

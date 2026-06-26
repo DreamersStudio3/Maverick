@@ -115,9 +115,13 @@ private:
 	bool IsInteractableWithinDialogueEscapeRange(UObject* InteractableObject) const;
 	bool IsDialogueWindowActive() const;
 	bool IsDialogueInteractionBlocked() const;
+	bool IsPIEActionTestPanelActiveOrPending() const;
+	bool IsPIEActionTestInteractable(UObject* InteractableObject) const;
 	bool SkipActiveDialogueWindow() const;
 	void HideActiveDialogueWindow() const;
+	void HidePIEActionTestPanel() const;
 	void RestoreDialogueCameraZoom() const;
+	void TryShowPIEActionTestPanelForInteractable(UObject* InteractableObject);
 	void ReleaseSuppressedInteractable(bool bHideDialogue);
 	void UpdateDialogueEscapeState();
 	void LockInteractionUntilInputReleased();

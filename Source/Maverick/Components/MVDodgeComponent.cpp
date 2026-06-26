@@ -1,17 +1,71 @@
 #include "Components/MVDodgeComponent.h"
 
 #include "Character/MVCharacterBase.h"
-#include "Animation/AnimInstance.h"
-#include "Animation/AnimMontage.h"
+#include "Chooser.h"
 #include "Components/MVActionComponent.h"
-#include "Components/SkeletalMeshComponent.h"
-#include "Curves/CurveFloat.h"
+#include "Components/MVInputManagerComponent.h"
+#include "Components/MVStatComponent.h"
+#include "Engine/DataTable.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Tables/MVActionTableTypes.h"
+#include "Tables/MVTableManager.h"
+
+DEFINE_LOG_CATEGORY_STATIC(LogMVDodgeComponent, Log, All);
 
 namespace
 {
-constexpr float NonRollDodgeLaunchDistanceScale = 0.75f;
+FString MVDodgeBuildAvailableRowNameLog(const UDataTable& DataTable)
+{
+	TArray<FString> RowNames;
+	for (const FName RowName : DataTable.GetRowNames())
+	{
+		RowNames.Add(RowName.ToString());
+	}
+
+	RowNames.Sort();
+	if (RowNames.IsEmpty())
+	{
+		return TEXT("<empty>");
+	}
+
+	constexpr int32 MaxLoggedRowCount = 16;
+	TArray<FString> LoggedRowNames;
+	const int32 LoggedCount = FMath::Min(RowNames.Num(), MaxLoggedRowCount);
+	for (int32 Index = 0; Index < LoggedCount; ++Index)
+	{
+		LoggedRowNames.Add(RowNames[Index]);
+	}
+
+	FString Result = FString::Join(LoggedRowNames, TEXT(", "));
+	if (RowNames.Num() > MaxLoggedRowCount)
+	{
+		Result += FString::Printf(TEXT(", ... (+%d more)"), RowNames.Num() - MaxLoggedRowCount);
+	}
+	return Result;
+}
+
+FString DodgeCharacterIndexCodeToTableToken(const FGameplayTag CharacterIndexCode)
+{
+	if (!CharacterIndexCode.IsValid())
+	{
+		return FString();
+	}
+
+	FString Token = CharacterIndexCode.GetTagName().ToString();
+	int32 LastDotIndex = INDEX_NONE;
+	if (Token.FindLastChar(TEXT('.'), LastDotIndex))
+	{
+		Token.RightChopInline(LastDotIndex + 1);
+	}
+	return Token;
+}
+
+bool MVDodgeIsHitReactionTerminalRecoveryAction(const FName ActionTableName, const FName ActionRowName)
+{
+	const FString TableName = ActionTableName.ToString();
+	const FString RowName = ActionRowName.ToString();
+	return TableName.StartsWith(TEXT("HR_"))
+		&& (RowName.Contains(TEXT("_Getup_")) || RowName.Contains(TEXT("_EscapeDodge_")));
+}
 
 FVector2D DodgeClampControllerSpaceInput(const FVector2D& Input)
 {
@@ -22,16 +76,6 @@ FVector2D DodgeClampControllerSpaceInput(const FVector2D& Input)
 	}
 
 	return Input / FMath::Sqrt(SizeSquared);
-}
-
-FVector DodgeControllerSpaceInputToVector(const FVector2D& Input)
-{
-	return FVector(Input.X, Input.Y, 0.0f);
-}
-
-FVector2D DodgeControllerSpaceInputFromVector(const FVector& Input)
-{
-	return DodgeClampControllerSpaceInput(FVector2D(Input.X, Input.Y));
 }
 
 FRotator MakeYawRotationFromDirection(const FVector& Direction)
@@ -47,10 +91,12 @@ FVector NormalizeMovementInputDirection(const FVector& Direction)
 		: Direction2D.GetSafeNormal2D();
 }
 
-bool IsForwardDiagonalDodgeDirection(const ELocomotionDirection Direction)
+bool IsDiagonalDodgeDirection(const ELocomotionDirection Direction)
 {
 	return Direction == ELocomotionDirection::FL
-		|| Direction == ELocomotionDirection::FR;
+		|| Direction == ELocomotionDirection::FR
+		|| Direction == ELocomotionDirection::BL
+		|| Direction == ELocomotionDirection::BR;
 }
 
 bool IsBackwardDiagonalDodgeDirection(const ELocomotionDirection Direction)
@@ -179,164 +225,54 @@ FRotator ResolveStrafeReferenceRotation(const AMVCharacterBase& OwnerCharacter)
 
 FVector ResolveDodgeFacingDirection(
 	const FVector& MovementInputDirection,
+	const FVector& ReferenceForwardDirection,
 	const bool bHasMovementInput,
 	const bool bFreeDodge,
-	const ELocomotionDirection StrafeInputDirection)
+	const ELocomotionDirection InputDirection)
 {
 	if (!bHasMovementInput)
 	{
 		return FVector::ZeroVector;
 	}
 
-	if (bFreeDodge || IsForwardDiagonalDodgeDirection(StrafeInputDirection))
+	if (bFreeDodge)
 	{
 		return MovementInputDirection;
 	}
 
-	if (IsBackwardDiagonalDodgeDirection(StrafeInputDirection))
+	if (IsBackwardDiagonalDodgeDirection(InputDirection))
 	{
 		return -MovementInputDirection;
 	}
 
-	return FVector::ZeroVector;
+	if (IsDiagonalDodgeDirection(InputDirection))
+	{
+		return MovementInputDirection;
+	}
+
+	return ReferenceForwardDirection;
 }
 
-int32 ResolveActiveMontageInstanceId(
-	const AMVCharacterBase& OwnerCharacter,
-	const UMVActionComponent& ActionComponent)
+ELocomotionDirection ResolveDodgeChooserDirection(
+	const bool bHasMovementInput,
+	const ELocomotionDirection InputDirection)
 {
-	const USkeletalMeshComponent* Mesh = OwnerCharacter.GetMesh();
-	UAnimInstance* AnimInstance = Mesh ? Mesh->GetAnimInstance() : nullptr;
-	const UAnimMontage* ActiveMontage = ActionComponent.GetActiveActionMontage();
-	const FAnimMontageInstance* MontageInstance = AnimInstance && ActiveMontage
-		? AnimInstance->GetActiveInstanceForMontage(ActiveMontage)
-		: nullptr;
-	return MontageInstance ? MontageInstance->GetInstanceID() : INDEX_NONE;
-}
-
-FVector ResolveGroundAdjustedLaunchDelta(
-	const AMVCharacterBase& OwnerCharacter,
-	const FVector& LaunchDirection,
-	const float DeltaDistance)
-{
-	const FVector HorizontalDelta = LaunchDirection.GetSafeNormal2D() * DeltaDistance;
-	const UCharacterMovementComponent* MovementComponent = OwnerCharacter.GetCharacterMovement();
-	if (!MovementComponent
-		|| !MovementComponent->IsMovingOnGround()
-		|| !MovementComponent->CurrentFloor.IsWalkableFloor())
+	if (!bHasMovementInput)
 	{
-		return HorizontalDelta;
+		return ELocomotionDirection::B;
 	}
 
-	const FVector FloorNormal = MovementComponent->CurrentFloor.HitResult.ImpactNormal.GetSafeNormal();
-	const FVector GroundDelta = FVector::VectorPlaneProject(HorizontalDelta, FloorNormal);
-	return GroundDelta.IsNearlyZero()
-		? HorizontalDelta
-		: GroundDelta.GetSafeNormal() * DeltaDistance;
-}
-
-bool DodgeMoveLaunchDelta(
-	AMVCharacterBase& OwnerCharacter,
-	const FVector& RequestedHorizontalDelta,
-	const FVector& LaunchDelta,
-	FHitResult& OutSweepHit,
-	bool& bOutWalkableHit,
-	bool& bOutSteppedUp,
-	bool& bOutSlid)
-{
-	OutSweepHit = FHitResult();
-	bOutWalkableHit = false;
-	bOutSteppedUp = false;
-	bOutSlid = false;
-
-	if (LaunchDelta.IsNearlyZero())
+	switch (InputDirection)
 	{
-		return true;
+	case ELocomotionDirection::FL:
+	case ELocomotionDirection::FR:
+		return ELocomotionDirection::F;
+	case ELocomotionDirection::BL:
+	case ELocomotionDirection::BR:
+		return ELocomotionDirection::B;
+	default:
+		return InputDirection;
 	}
-
-	UCharacterMovementComponent* MovementComponent = OwnerCharacter.GetCharacterMovement();
-	if (!MovementComponent || !MovementComponent->UpdatedComponent)
-	{
-		return false;
-	}
-
-	UMovementComponent* PublicMovementComponent = MovementComponent;
-	const FQuat ComponentRotation = MovementComponent->UpdatedComponent->GetComponentQuat();
-	MovementComponent->SafeMoveUpdatedComponent(LaunchDelta, ComponentRotation, true, OutSweepHit);
-	if (!OutSweepHit.IsValidBlockingHit())
-	{
-		MovementComponent->FindFloor(
-			MovementComponent->UpdatedComponent->GetComponentLocation(),
-			MovementComponent->CurrentFloor,
-			false);
-		return true;
-	}
-
-	bOutWalkableHit = MovementComponent->IsWalkable(OutSweepHit);
-	const float RemainingTime = FMath::Clamp(1.0f - OutSweepHit.Time, 0.0f, 1.0f);
-	if (OutSweepHit.bStartPenetrating)
-	{
-		FHitResult SlideHit = OutSweepHit;
-		PublicMovementComponent->SlideAlongSurface(
-			RequestedHorizontalDelta,
-			1.0f,
-			SlideHit.Normal,
-			SlideHit,
-			true);
-		bOutSlid = true;
-		MovementComponent->FindFloor(
-			MovementComponent->UpdatedComponent->GetComponentLocation(),
-			MovementComponent->CurrentFloor,
-			false);
-		return !SlideHit.bStartPenetrating;
-	}
-
-	if (RemainingTime > KINDA_SMALL_NUMBER && MovementComponent->CanStepUp(OutSweepHit))
-	{
-		FStepDownResult StepDownResult;
-		if (MovementComponent->StepUp(
-			MovementComponent->GetGravityDirection(),
-			RequestedHorizontalDelta * RemainingTime,
-			OutSweepHit,
-			&StepDownResult))
-		{
-			bOutSteppedUp = true;
-			MovementComponent->FindFloor(
-				MovementComponent->UpdatedComponent->GetComponentLocation(),
-				MovementComponent->CurrentFloor,
-				false);
-			return true;
-		}
-	}
-
-	if (RemainingTime <= KINDA_SMALL_NUMBER)
-	{
-		MovementComponent->FindFloor(
-			MovementComponent->UpdatedComponent->GetComponentLocation(),
-			MovementComponent->CurrentFloor,
-			false);
-		return true;
-	}
-
-	if (!bOutWalkableHit)
-	{
-		return false;
-	}
-
-	FHitResult SlideHit = OutSweepHit;
-	PublicMovementComponent->SlideAlongSurface(
-		RequestedHorizontalDelta,
-		RemainingTime,
-		SlideHit.Normal,
-		SlideHit,
-		true);
-	bOutSlid = true;
-
-	MovementComponent->FindFloor(
-		MovementComponent->UpdatedComponent->GetComponentLocation(),
-		MovementComponent->CurrentFloor,
-		false);
-	return !SlideHit.IsValidBlockingHit() || MovementComponent->IsWalkable(SlideHit);
 }
 }
 
@@ -357,20 +293,24 @@ void UMVDodgeComponent::BeginPlay()
 
 	OwnerCharacter->OnMovementInputReceived.AddUObject(this, &UMVDodgeComponent::HandleOwnerMovementInput);
 
+	if (UMVInputManagerComponent* InputManager = OwnerCharacter->InputManagerComponent)
+	{
+		InputManager->OnActionInputSubmitted.RemoveDynamic(
+			this,
+			&UMVDodgeComponent::HandleActionInputSubmitted);
+		InputManager->OnActionInputSubmitted.AddUniqueDynamic(
+			this,
+			&UMVDodgeComponent::HandleActionInputSubmitted);
+	}
+
 	if (UMVActionComponent* ActionComponent = OwnerCharacter->ActionComponent)
 	{
-		ActionComponent->OnActionPreparing.AddUniqueDynamic(
+		ActionComponent->OnRecoveryEscapeWindowChanged.RemoveDynamic(
 			this,
-			&UMVDodgeComponent::HandleActionPreparing);
-		ActionComponent->OnActionStarted.AddUniqueDynamic(
+			&UMVDodgeComponent::HandleRecoveryEscapeWindowChanged);
+		ActionComponent->OnRecoveryEscapeWindowChanged.AddUniqueDynamic(
 			this,
-			&UMVDodgeComponent::HandleActionStarted);
-		ActionComponent->ResolveBufferedActionMovementInput.BindUObject(
-			this,
-			&UMVDodgeComponent::ResolveBufferedActionMovementInput);
-		ActionComponent->CanConsumeBufferedAction.BindUObject(
-			this,
-			&UMVDodgeComponent::CanConsumeBufferedAction);
+			&UMVDodgeComponent::HandleRecoveryEscapeWindowChanged);
 	}
 }
 
@@ -382,23 +322,7 @@ void UMVDodgeComponent::PrepareDodgeAction()
 		return;
 	}
 
-	FVector2D ControllerSpaceMovementInput = FVector2D::ZeroVector;
-	bool bUseBufferedSnapshot = false;
-	if (UMVActionComponent* ActionComponent = OwnerCharacter->ActionComponent)
-	{
-		bUseBufferedSnapshot = ActionComponent->IsConsumingBufferedAction()
-			&& ActionComponent->GetConsumingBufferedActionId() == MVActionIds::Dodge;
-		if (bUseBufferedSnapshot && ActionComponent->HasConsumingBufferedActionMovementInput())
-		{
-			ControllerSpaceMovementInput = DodgeControllerSpaceInputFromVector(
-				ActionComponent->GetConsumingBufferedActionMovementInputDirection());
-		}
-	}
-
-	if (!bUseBufferedSnapshot)
-	{
-		ControllerSpaceMovementInput = CaptureControllerSpaceMovementInput(*OwnerCharacter);
-	}
+	const FVector2D ControllerSpaceMovementInput = CaptureControllerSpaceMovementInput(*OwnerCharacter);
 
 	const bool bHasMovementInput = !ControllerSpaceMovementInput.IsNearlyZero();
 	const bool bFreeDodge = bHasMovementInput
@@ -411,20 +335,23 @@ void UMVDodgeComponent::PrepareDodgeAction()
 		ControllerSpaceMovementInput,
 		StrafeReferenceRotation);
 
-	ELocomotionDirection StrafeInputDirection = ELocomotionDirection::F;
-	if (bHasMovementInput && bStrafeDodge)
-	{
-		StrafeInputDirection = DodgeResolveDirectionFromControllerSpaceInput(ControllerSpaceMovementInput);
-	}
+	const ELocomotionDirection InputDirection = bHasMovementInput
+		? DodgeResolveDirectionFromControllerSpaceInput(ControllerSpaceMovementInput)
+		: ELocomotionDirection::B;
+	const ELocomotionDirection ChooserInputDirection = ResolveDodgeChooserDirection(
+		bHasMovementInput,
+		InputDirection);
 
 	const FVector DodgeMovementDirection = bHasMovementInput && bStrafeDodge
-		? ResolveDirectionVectorFromReferenceRotation(StrafeInputDirection, StrafeReferenceRotation)
+		? ResolveDirectionVectorFromReferenceRotation(InputDirection, StrafeReferenceRotation)
 		: MovementInputDirection;
+	const FVector ReferenceForwardDirection = GetReferenceForwardVector(StrafeReferenceRotation);
 	const FVector DodgeFacingDirection = ResolveDodgeFacingDirection(
 		DodgeMovementDirection,
+		ReferenceForwardDirection,
 		bHasMovementInput,
 		bFreeDodge,
-		StrafeInputDirection);
+		InputDirection);
 	if (!DodgeFacingDirection.IsNearlyZero())
 	{
 		OwnerCharacter->SetActorRotation(MakeYawRotationFromDirection(DodgeFacingDirection));
@@ -434,15 +361,8 @@ void UMVDodgeComponent::PrepareDodgeAction()
 			MovementComponent->bOrientRotationToMovement = false;
 		}
 	}
-	ApplyDodgeChooserSnapshot(*OwnerCharacter, bHasMovementInput, bFreeDodge, StrafeInputDirection);
+	ApplyDodgeChooserSnapshot(*OwnerCharacter, bHasMovementInput, ChooserInputDirection, DodgeMovementDirection);
 
-	PreparedDodgeLaunchDirection = bHasMovementInput
-		? DodgeMovementDirection.GetSafeNormal2D()
-		: -OwnerCharacter->GetActorForwardVector().GetSafeNormal2D();
-	bHasPreparedDodgeLaunchDirection = !PreparedDodgeLaunchDirection.IsNearlyZero();
-	bPreparedDodgeHasMovementInput = bHasMovementInput;
-	bPreparedDodgeUsesRollDistance = bFreeDodge;
-	bPendingBufferedDodgeLaunchFallback = bUseBufferedSnapshot;
 	CachedControllerSpaceMovementInput = FVector2D::ZeroVector;
 	CachedControllerSpaceMovementInputFrame = 0;
 }
@@ -461,15 +381,6 @@ void UMVDodgeComponent::CacheControllerSpaceMovementInput(const FVector2D& Contr
 void UMVDodgeComponent::HandleOwnerMovementInput(const FVector& MovementInputDirection)
 {
 	const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
-	UMVActionComponent* ActionComponent = OwnerCharacter
-		? OwnerCharacter->ActionComponent
-		: nullptr;
-
-	const bool bHasActionBufferContext = ActionComponent
-		&& (ActionComponent->HasBufferedAction()
-			|| ActionComponent->IsInputBufferOpen()
-			|| ActionComponent->IsRecoveryEscapeWindowOpen()
-			|| ActionComponent->IsConsumingBufferedAction());
 	FVector2D ControllerSpaceMovementInput = FVector2D::ZeroVector;
 	if (OwnerCharacter)
 	{
@@ -481,263 +392,32 @@ void UMVDodgeComponent::HandleOwnerMovementInput(const FVector& MovementInputDir
 		}
 	}
 
-	if (bHasActionBufferContext && !ControllerSpaceMovementInput.IsNearlyZero())
+	if (!ControllerSpaceMovementInput.IsNearlyZero())
 	{
 		CacheControllerSpaceMovementInput(ControllerSpaceMovementInput);
-	}
-
-	if (ActionComponent)
-	{
-		ActionComponent->UpdateBufferedActionMovementInput(
-			DodgeControllerSpaceInputToVector(ControllerSpaceMovementInput));
 	}
 }
 
 bool UMVDodgeComponent::BeginDodgeLaunchWindow(
-	const float NotifyDuration,
-	UCurveFloat* DistanceCurve,
-	const float DistanceScale,
-	const bool bApplyVerticalLaunch,
-	const int32 MontageInstanceId,
-	const bool bClearPreparedLaunch)
+	const float,
+	UCurveFloat*,
+	const float,
+	const bool,
+	const int32,
+	const bool)
 {
-	AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
-	if (!OwnerCharacter)
-	{
-		return false;
-	}
-
-	UMVActionComponent* ActionComponent = OwnerCharacter->FindComponentByClass<UMVActionComponent>();
-	if (!ActionComponent)
-	{
-		return false;
-	}
-
-	CacheDodgeLaunchWindowSettings(
-		NotifyDuration,
-		DistanceCurve,
-		DistanceScale,
-		bApplyVerticalLaunch);
-
-	StopActiveDodgeLaunch(false, false);
-	ActiveDodgeLaunchMontageInstanceId = MontageInstanceId;
-
-	const FMVActionStatRow* ActionStat = ActionComponent->FindActionStatRow(
-		ActionComponent->GetActiveActionId(),
-		EMVActionType::Dodge);
-	if (!ActionStat)
-	{
-		ActiveDodgeLaunchMontageInstanceId = INDEX_NONE;
-		return false;
-	}
-
-	const float LaunchDistance = ResolveDodgeLaunchDistance(*ActionStat, *OwnerCharacter);
-	const float LaunchDuration = ResolveDodgeLaunchDuration(*ActionStat, NotifyDuration);
-	const float ScaledLaunchDistance = LaunchDistance * FMath::Max(0.0f, DistanceScale);
-	const float LaunchVerticalSpeed = ActionStat->LaunchVerticalSpeed;
-	if ((ScaledLaunchDistance <= 0.0f || LaunchDuration <= KINDA_SMALL_NUMBER)
-		&& (!bApplyVerticalLaunch || FMath::IsNearlyZero(LaunchVerticalSpeed)))
-	{
-		ActiveDodgeLaunchMontageInstanceId = INDEX_NONE;
-		return false;
-	}
-
-	const FVector LaunchDirection = ResolveDodgeLaunchDirection(*OwnerCharacter);
-	if (bClearPreparedLaunch)
-	{
-		ClearPreparedDodgeLaunch();
-	}
-	if (ScaledLaunchDistance > 0.0f && LaunchDuration > KINDA_SMALL_NUMBER && LaunchDirection.IsNearlyZero())
-	{
-		ActiveDodgeLaunchMontageInstanceId = INDEX_NONE;
-		return false;
-	}
-
-	if (UCharacterMovementComponent* MovementComponent = OwnerCharacter->GetCharacterMovement())
-	{
-		FVector Velocity = MovementComponent->Velocity;
-		Velocity.X = 0.0f;
-		Velocity.Y = 0.0f;
-		MovementComponent->Velocity = Velocity;
-	}
-
-	if (ScaledLaunchDistance > 0.0f && LaunchDuration > KINDA_SMALL_NUMBER)
-	{
-		ActiveDodgeLaunchDistanceCurve = DistanceCurve;
-		ActiveDodgeLaunchCharacter = OwnerCharacter;
-		ActiveDodgeLaunchDirection = LaunchDirection;
-		ActiveDodgeLaunchTargetDistance = ScaledLaunchDistance;
-		ActiveDodgeLaunchDuration = LaunchDuration;
-		ActiveDodgeLaunchElapsed = 0.0f;
-		ActiveDodgeLaunchLastAlpha = 0.0f;
-		bDodgeLaunchActive = true;
-	}
-
-	if (bApplyVerticalLaunch && !FMath::IsNearlyZero(LaunchVerticalSpeed))
-	{
-		OwnerCharacter->LaunchCharacter(FVector(0.0f, 0.0f, LaunchVerticalSpeed), false, true);
-	}
-
-	return true;
+	// Dodge movement is now authored as montage root motion. The notify remains as an asset compatibility no-op.
+	return false;
 }
 
-void UMVDodgeComponent::TickDodgeLaunchWindow(const float DeltaTime, const int32 MontageInstanceId)
+void UMVDodgeComponent::TickDodgeLaunchWindow(const float, const int32)
 {
-	if (!IsCurrentDodgeLaunchMontageInstance(MontageInstanceId))
-	{
-		return;
-	}
-
-	if (!bDodgeLaunchActive || DeltaTime <= 0.0f)
-	{
-		return;
-	}
-
-	AMVCharacterBase* OwnerCharacter = ActiveDodgeLaunchCharacter.Get();
-	if (!OwnerCharacter)
-	{
-		StopActiveDodgeLaunch(false);
-		return;
-	}
-
-	ActiveDodgeLaunchElapsed += DeltaTime;
-
-	const float NormalizedTime = ActiveDodgeLaunchDuration > KINDA_SMALL_NUMBER
-		? FMath::Clamp(ActiveDodgeLaunchElapsed / ActiveDodgeLaunchDuration, 0.0f, 1.0f)
-		: 1.0f;
-	const float DistanceAlpha = FMath::Max(
-		ActiveDodgeLaunchLastAlpha,
-		EvaluateDodgeLaunchDistanceAlpha(NormalizedTime));
-	const float DeltaDistance = FMath::Max(
-		0.0f,
-		(DistanceAlpha - ActiveDodgeLaunchLastAlpha) * ActiveDodgeLaunchTargetDistance);
-
-	if (DeltaDistance > KINDA_SMALL_NUMBER)
-	{
-		FHitResult SweepHit;
-		const FVector HorizontalLaunchDelta = ActiveDodgeLaunchDirection.GetSafeNormal2D() * DeltaDistance;
-		const FVector LaunchDelta = ResolveGroundAdjustedLaunchDelta(
-			*OwnerCharacter,
-			ActiveDodgeLaunchDirection,
-			DeltaDistance);
-		bool bWalkableHit = false;
-		bool bSteppedUp = false;
-		bool bSlid = false;
-		const bool bLaunchMoveContinued = DodgeMoveLaunchDelta(
-			*OwnerCharacter,
-			HorizontalLaunchDelta,
-			LaunchDelta,
-			SweepHit,
-			bWalkableHit,
-			bSteppedUp,
-			bSlid);
-		if (!bLaunchMoveContinued)
-		{
-			StopActiveDodgeLaunch(true);
-			return;
-		}
-	}
-
-	ActiveDodgeLaunchLastAlpha = DistanceAlpha;
-
-	if (NormalizedTime >= 1.0f || DistanceAlpha >= 1.0f - KINDA_SMALL_NUMBER)
-	{
-		StopActiveDodgeLaunch(false);
-	}
 }
 
 void UMVDodgeComponent::EndDodgeLaunchWindow(
-	const bool bClearHorizontalVelocity,
-	const int32 MontageInstanceId)
+	const bool,
+	const int32)
 {
-	if (!IsCurrentDodgeLaunchMontageInstance(MontageInstanceId))
-	{
-		return;
-	}
-
-	StopActiveDodgeLaunch(bClearHorizontalVelocity);
-}
-
-void UMVDodgeComponent::ClearPreparedDodgeLaunch()
-{
-	PreparedDodgeLaunchDirection = FVector::ZeroVector;
-	bHasPreparedDodgeLaunchDirection = false;
-	bPreparedDodgeHasMovementInput = false;
-	bPreparedDodgeUsesRollDistance = false;
-}
-
-void UMVDodgeComponent::StopActiveDodgeLaunch(
-	const bool bClearHorizontalVelocity,
-	const bool bClearPreparedLaunch)
-{
-	AMVCharacterBase* OwnerCharacter = ActiveDodgeLaunchCharacter.Get();
-	if (bDodgeLaunchActive && bClearHorizontalVelocity && OwnerCharacter)
-	{
-		OwnerCharacter->LaunchCharacter(FVector::ZeroVector, true, false);
-	}
-
-	ActiveDodgeLaunchCharacter = nullptr;
-	ActiveDodgeLaunchDistanceCurve = nullptr;
-	CachedControllerSpaceMovementInput = FVector2D::ZeroVector;
-	CachedControllerSpaceMovementInputFrame = 0;
-	ActiveDodgeLaunchDirection = FVector::ZeroVector;
-	ActiveDodgeLaunchTargetDistance = 0.0f;
-	ActiveDodgeLaunchDuration = 0.0f;
-	ActiveDodgeLaunchElapsed = 0.0f;
-	ActiveDodgeLaunchLastAlpha = 0.0f;
-	ActiveDodgeLaunchMontageInstanceId = INDEX_NONE;
-	bDodgeLaunchActive = false;
-	if (bClearPreparedLaunch)
-	{
-		ClearPreparedDodgeLaunch();
-	}
-}
-
-void UMVDodgeComponent::CacheDodgeLaunchWindowSettings(
-	const float NotifyDuration,
-	UCurveFloat* DistanceCurve,
-	const float DistanceScale,
-	const bool bApplyVerticalLaunch)
-{
-	CachedDodgeLaunchNotifyDuration = NotifyDuration;
-	CachedDodgeLaunchDistanceCurve = DistanceCurve;
-	CachedDodgeLaunchDistanceScale = DistanceScale;
-	bCachedDodgeLaunchApplyVertical = bApplyVerticalLaunch;
-	bHasCachedDodgeLaunchWindowSettings = true;
-}
-
-bool UMVDodgeComponent::TryStartBufferedDodgeLaunchFallback()
-{
-	AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
-	UMVActionComponent* ActionComponent = OwnerCharacter
-		? OwnerCharacter->ActionComponent
-		: nullptr;
-	if (!OwnerCharacter || !ActionComponent)
-	{
-		return false;
-	}
-
-	const int32 MontageInstanceId = ResolveActiveMontageInstanceId(*OwnerCharacter, *ActionComponent);
-	const float NotifyDuration = bHasCachedDodgeLaunchWindowSettings
-		? CachedDodgeLaunchNotifyDuration
-		: 0.0f;
-	UCurveFloat* DistanceCurve = bHasCachedDodgeLaunchWindowSettings
-		? CachedDodgeLaunchDistanceCurve.Get()
-		: nullptr;
-	const float DistanceScale = bHasCachedDodgeLaunchWindowSettings
-		? CachedDodgeLaunchDistanceScale
-		: 1.0f;
-	const bool bApplyVerticalLaunch = bHasCachedDodgeLaunchWindowSettings
-		? bCachedDodgeLaunchApplyVertical
-		: true;
-
-	return BeginDodgeLaunchWindow(
-		NotifyDuration,
-		DistanceCurve,
-		DistanceScale,
-		bApplyVerticalLaunch,
-		MontageInstanceId,
-		false);
 }
 
 FVector2D UMVDodgeComponent::CaptureControllerSpaceMovementInput(const AMVCharacterBase& OwnerCharacter) const
@@ -768,193 +448,453 @@ FVector2D UMVDodgeComponent::CaptureControllerSpaceMovementInput(const AMVCharac
 	return FVector2D::ZeroVector;
 }
 
-FVector UMVDodgeComponent::ResolveBufferedActionMovementInput(const int32 ActionId) const
+bool UMVDodgeComponent::TryStartDodgeAction()
 {
-	const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
-	if (ActionId == MVActionIds::Dodge && OwnerCharacter)
+	AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
+	if (!OwnerCharacter)
 	{
-		const FVector2D ControllerSpaceMovementInput = CaptureControllerSpaceMovementInput(*OwnerCharacter);
-		return DodgeControllerSpaceInputToVector(ControllerSpaceMovementInput);
+		UE_LOG(
+			LogMVDodgeComponent,
+			Warning,
+			TEXT("TryStartDodgeAction failed because owner is not AMVCharacterBase. Owner=%s."),
+			*GetNameSafe(GetOwner()));
+		return false;
 	}
 
-	return FVector::ZeroVector;
+	UMVActionComponent* ActionComponent = OwnerCharacter
+		? OwnerCharacter->ActionComponent
+		: nullptr;
+	if (!ActionComponent)
+	{
+		UE_LOG(
+			LogMVDodgeComponent,
+			Warning,
+			TEXT("TryStartDodgeAction failed because ActionComponent is missing. Owner=%s."),
+			*GetNameSafe(OwnerCharacter));
+		return false;
+	}
+
+	const bool bActionRunning = ActionComponent->IsActionRunning();
+	const bool bCanTransitionActiveDodge = bActionRunning && CanTransitionActiveDodgeAction(*ActionComponent);
+	if (bActionRunning && !bCanTransitionActiveDodge)
+	{
+		return false;
+	}
+
+	PrepareDodgeAction();
+
+	FMVDodgeActionRowHandle ActionRowHandle;
+	if (!ResolveDodgeActionRowHandle(ActionRowHandle))
+	{
+		UE_LOG(LogMVDodgeComponent, Warning, TEXT("TryStartDodgeAction failed because Dodge row handle was not resolved."));
+		return false;
+	}
+
+	const FName ActionTableName = MakeDodgeActionTableName(ActionRowHandle.ActionRow.DataTable);
+	const FName ActionRowName = ActionRowHandle.ActionRow.RowName;
+
+	const FMVDodgeActionRow* DodgeActionRow = FindDodgeActionRow(ActionRowHandle.ActionRow);
+	if (!DodgeActionRow)
+	{
+		return false;
+	}
+
+	if (!CanConsumeDodgeCost(*DodgeActionRow))
+	{
+		return false;
+	}
+
+	const FName StartSection = ActionRowHandle.StartSection.IsNone()
+		? DodgeActionRow->DefaultStartSection
+		: ActionRowHandle.StartSection;
+	const bool bStarted = bCanTransitionActiveDodge
+		? ActionComponent->TryTransitionActionFromRowHandle(
+			ActionRowHandle.ActionRow,
+			StartSection,
+			RecoveryDodgeTransitionBlendOutTime)
+		: ActionComponent->TryStartActionFromRowHandle(ActionRowHandle.ActionRow, StartSection);
+	if (!bStarted)
+	{
+		UE_LOG(
+			LogMVDodgeComponent,
+			Warning,
+			TEXT("TryStartDodgeAction failed because ActionComponent rejected %s. Table=%s Row=%s StartSection=%s."),
+			bCanTransitionActiveDodge ? TEXT("transition") : TEXT("start"),
+			*ActionTableName.ToString(),
+			*ActionRowName.ToString(),
+			*StartSection.ToString());
+		return false;
+	}
+
+	if (!ConsumeDodgeCost(*DodgeActionRow))
+	{
+		UE_LOG(
+			LogMVDodgeComponent,
+			Warning,
+			TEXT("TryStartDodgeAction started but failed to consume stamina, cancelling. Table=%s Row=%s."),
+			*ActionTableName.ToString(),
+			*ActionRowName.ToString());
+		ActionComponent->CancelActiveAction(0.0f);
+		return false;
+	}
+
+	ActiveDodgeActionTableName = ActionTableName;
+	ActiveDodgeActionRowName = ActionRowName;
+	return true;
 }
 
-bool UMVDodgeComponent::CanConsumeBufferedAction(
-	const int32,
-	const FVector&,
-	const bool) const
+bool UMVDodgeComponent::TryConsumeBufferedDodgeInput()
 {
+	const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
+	UMVInputManagerComponent* InputManager = OwnerCharacter
+		? OwnerCharacter->InputManagerComponent
+		: nullptr;
+	if (!InputManager)
+	{
+		return false;
+	}
+
+	int32 ActionId = INDEX_NONE;
+	FVector2D ControllerSpaceInput = FVector2D::ZeroVector;
+	bool bHasMovementInput = false;
+	if (!InputManager->TryGetBufferedActionInput(
+		ActionId,
+		ControllerSpaceInput,
+		bHasMovementInput)
+		|| ActionId != MVActionIds::Dodge)
+	{
+		return false;
+	}
+
+	if (bHasMovementInput)
+	{
+		CacheControllerSpaceMovementInput(ControllerSpaceInput);
+	}
+
+	if (!TryStartDodgeAction())
+	{
+		return false;
+	}
+
+	InputManager->ClearBufferedActionInput();
 	return true;
+}
+
+bool UMVDodgeComponent::ResolveDodgeActionRowHandle(FMVDodgeActionRowHandle& OutActionRowHandle)
+{
+	OutActionRowHandle.Reset();
+	if (EvaluateDodgeChooserActionRowHandle(OutActionRowHandle))
+	{
+		return true;
+	}
+
+	if (!bUseNamingConventionWhenChooserUnavailable)
+	{
+		UE_LOG(LogMVDodgeComponent, Warning, TEXT("Dodge chooser did not resolve a row handle and naming fallback is disabled."));
+		return false;
+	}
+
+	const FGameplayTag CharacterIndexCode = ResolveCharacterIndexCode();
+	const FName ActionTableName = MakeDodgeActionTableName(CharacterIndexCode);
+	const UMVTableManager* TableManager = UMVTableManager::Get(this);
+	if (!TableManager)
+	{
+		UE_LOG(LogMVDodgeComponent, Warning, TEXT("Dodge naming fallback failed because TableManager is not available."));
+		return false;
+	}
+
+	const UDataTable* ActionDataTable = TableManager
+		? TableManager->FindDataTable(ActionTableName)
+		: nullptr;
+	if (!ActionDataTable)
+	{
+		UE_LOG(
+			LogMVDodgeComponent,
+			Warning,
+			TEXT("Dodge naming fallback failed because table was not found. CharacterIndexCode=%s Table=%s."),
+			*CharacterIndexCode.ToString(),
+			*ActionTableName.ToString());
+		return false;
+	}
+
+	OutActionRowHandle.ActionRow.DataTable = const_cast<UDataTable*>(ActionDataTable);
+	OutActionRowHandle.ActionRow.RowName = MakeDodgeActionRowName(CharacterIndexCode, DefaultDodgeRowIndex);
+	return OutActionRowHandle.IsValid();
+}
+
+bool UMVDodgeComponent::EvaluateDodgeChooserActionRowHandle(FMVDodgeActionRowHandle& OutActionRowHandle)
+{
+	OutActionRowHandle.Reset();
+	ChooserDodgeActionRowHandle.Reset();
+
+	if (!DodgeChooserTable.IsValid())
+	{
+		UE_LOG(LogMVDodgeComponent, Warning, TEXT("Dodge chooser path is invalid."));
+		return false;
+	}
+
+	UChooserTable* ChooserTable = Cast<UChooserTable>(DodgeChooserTable.TryLoad());
+	if (!ChooserTable)
+	{
+		UE_LOG(
+			LogMVDodgeComponent,
+			Warning,
+			TEXT("Dodge chooser failed to load. Path=%s."),
+			*DodgeChooserTable.ToString());
+		return false;
+	}
+
+	FChooserEvaluationContext Context;
+	if (UObject* OwnerObject = GetOwner())
+	{
+		Context.AddObjectParam(OwnerObject);
+	}
+	else
+	{
+		return false;
+	}
+	Context.AddStructParam(ChooserDodgeActionRowHandle);
+
+	TSoftObjectPtr<UObject> SelectedObject;
+	UChooserTable::EvaluateChooser(
+		Context,
+		ChooserTable,
+		FObjectChooserBase::FObjectChooserSoftObjectIteratorCallback::CreateLambda(
+			[&SelectedObject](const TSoftObjectPtr<UObject>& InResult)
+			{
+				SelectedObject = InResult;
+				return FObjectChooserBase::EIteratorStatus::Stop;
+			}));
+
+	if (ChooserDodgeActionRowHandle.IsValid())
+	{
+		OutActionRowHandle = ChooserDodgeActionRowHandle;
+		return true;
+	}
+
+	UObject* ResolvedObject = SelectedObject.IsValid()
+		? SelectedObject.Get()
+		: SelectedObject.LoadSynchronous();
+	UDataTable* SelectedDataTable = Cast<UDataTable>(ResolvedObject);
+	if (!SelectedDataTable)
+	{
+		UE_LOG(
+			LogMVDodgeComponent,
+			Warning,
+			TEXT("Dodge chooser did not return FMVDodgeActionRowHandle or UDataTable fallback. SelectedObject=%s."),
+			*GetNameSafe(ResolvedObject));
+		return false;
+	}
+
+	OutActionRowHandle.ActionRow.DataTable = SelectedDataTable;
+	OutActionRowHandle.ActionRow.RowName = MakeDodgeActionRowName(
+		ResolveCharacterIndexCode(),
+		DefaultDodgeRowIndex);
+	return OutActionRowHandle.IsValid();
+}
+
+FName UMVDodgeComponent::MakeDodgeActionTableName(const FGameplayTag CharacterIndexCode) const
+{
+	const FString CharacterIndexCodeToken = DodgeCharacterIndexCodeToTableToken(CharacterIndexCode);
+	return CharacterIndexCodeToken.IsEmpty()
+		? NAME_None
+		: FName(*FString::Printf(TEXT("Dodge_%s"), *CharacterIndexCodeToken));
+}
+
+FName UMVDodgeComponent::MakeDodgeActionTableName(const UDataTable* ActionDataTable) const
+{
+	if (!ActionDataTable)
+	{
+		return NAME_None;
+	}
+
+	FString TableName = ActionDataTable->GetName();
+	TableName.RemoveFromStart(TEXT("DT_"));
+	return FName(*TableName);
+}
+
+FName UMVDodgeComponent::MakeDodgeActionRowName(
+	const FGameplayTag CharacterIndexCode,
+	const int32 Index) const
+{
+	const FString CharacterIndexCodeToken = DodgeCharacterIndexCodeToTableToken(CharacterIndexCode);
+	return CharacterIndexCodeToken.IsEmpty()
+		? NAME_None
+		: FName(*FString::Printf(TEXT("Dodge_%s_%02d"), *CharacterIndexCodeToken, FMath::Max(1, Index)));
+}
+
+FGameplayTag UMVDodgeComponent::ResolveCharacterIndexCode() const
+{
+	const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
+	return OwnerCharacter ? OwnerCharacter->GetCharacterIndexCode() : FGameplayTag();
+}
+
+bool UMVDodgeComponent::CanTransitionActiveDodgeAction(const UMVActionComponent& ActionComponent) const
+{
+	if (!ActionComponent.IsRecoveryEscapeWindowOpen() || !ActionComponent.CanInterruptActiveAction())
+	{
+		return false;
+	}
+
+	const FName ActiveActionTableName = ActionComponent.GetActiveActionTableName();
+	const FName ActiveActionRowName = ActionComponent.GetActiveActionRowName();
+	const bool bActiveActionIsDodge = !ActiveDodgeActionTableName.IsNone()
+		&& !ActiveDodgeActionRowName.IsNone()
+		&& ActiveActionTableName == ActiveDodgeActionTableName
+		&& ActiveActionRowName == ActiveDodgeActionRowName;
+	return bActiveActionIsDodge
+		|| MVDodgeIsHitReactionTerminalRecoveryAction(ActiveActionTableName, ActiveActionRowName);
+}
+
+const FMVDodgeActionRow* UMVDodgeComponent::FindDodgeActionRow(
+	const FDataTableRowHandle ActionRowHandle) const
+{
+	if (!ActionRowHandle.DataTable || ActionRowHandle.RowName.IsNone())
+	{
+		UE_LOG(
+			LogMVDodgeComponent,
+			Warning,
+			TEXT("FindDodgeActionRow failed because row handle is invalid. DataTable=%s Row=%s."),
+			*GetNameSafe(ActionRowHandle.DataTable),
+			*ActionRowHandle.RowName.ToString());
+		return nullptr;
+	}
+
+	if (!ActionRowHandle.DataTable->GetRowStruct()
+		|| !ActionRowHandle.DataTable->GetRowStruct()->IsChildOf(FMVDodgeActionRow::StaticStruct()))
+	{
+		UE_LOG(
+			LogMVDodgeComponent,
+			Warning,
+			TEXT("FindDodgeActionRow failed because table row struct is invalid. DataTable=%s RowStruct=%s Expected=MVDodgeActionRow."),
+			*GetNameSafe(ActionRowHandle.DataTable),
+			ActionRowHandle.DataTable->GetRowStruct() ? *ActionRowHandle.DataTable->GetRowStruct()->GetName() : TEXT("None"));
+		return nullptr;
+	}
+
+	const FMVDodgeActionRow* DodgeActionRow = ActionRowHandle.DataTable->FindRow<FMVDodgeActionRow>(
+		ActionRowHandle.RowName,
+		TEXT("MVDodgeComponent"),
+		false);
+	if (!DodgeActionRow)
+	{
+		UE_LOG(
+			LogMVDodgeComponent,
+			Warning,
+			TEXT("FindDodgeActionRow failed because row was not found. DataTable=%s Row=%s AvailableRows=%s."),
+			*GetNameSafe(ActionRowHandle.DataTable),
+			*ActionRowHandle.RowName.ToString(),
+			*MVDodgeBuildAvailableRowNameLog(*ActionRowHandle.DataTable));
+		return nullptr;
+	}
+
+	if (!DodgeActionRow->bEnabled)
+	{
+		return nullptr;
+	}
+
+	return DodgeActionRow;
+}
+
+bool UMVDodgeComponent::CanConsumeDodgeCost(const FMVDodgeActionRow& DodgeActionRow) const
+{
+	const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
+	const UMVStatComponent* StatComponent = OwnerCharacter
+		? OwnerCharacter->FindComponentByClass<UMVStatComponent>()
+		: nullptr;
+	if (!StatComponent)
+	{
+		return true;
+	}
+
+	const float InstantCost = DodgeActionRow.StaminaCostType == EMVActionResourceCostType::Instant
+		? DodgeActionRow.StaminaCost
+		: 0.0f;
+	const float RequiredStamina = FMath::Max(
+		FMath::Max(0.0f, DodgeActionRow.MinRequiredStamina),
+		FMath::Max(0.0f, InstantCost));
+	return StatComponent->HasStamina(RequiredStamina);
+}
+
+bool UMVDodgeComponent::ConsumeDodgeCost(const FMVDodgeActionRow& DodgeActionRow)
+{
+	AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
+	UMVStatComponent* StatComponent = OwnerCharacter
+		? OwnerCharacter->FindComponentByClass<UMVStatComponent>()
+		: nullptr;
+	if (!StatComponent || DodgeActionRow.StaminaCost <= 0.0f)
+	{
+		return true;
+	}
+
+	switch (DodgeActionRow.StaminaCostType)
+	{
+	case EMVActionResourceCostType::Instant:
+		return StatComponent->ConsumeStamina(DodgeActionRow.StaminaCost);
+	case EMVActionResourceCostType::None:
+	case EMVActionResourceCostType::PerSecond:
+	case EMVActionResourceCostType::OnDemand:
+	default:
+		return true;
+	}
 }
 
 void UMVDodgeComponent::ApplyDodgeChooserSnapshot(
 	AMVCharacterBase& OwnerCharacter,
 	const bool bHasMovementInput,
-	const bool bFreeDodge,
-	const ELocomotionDirection StrafeInputDirection) const
+	const ELocomotionDirection InputDirection,
+	const FVector& MovementDirection) const
 {
 	OwnerCharacter.bHasDodgeMovementInput = bHasMovementInput;
 
 	if (!bHasMovementInput)
 	{
 		OwnerCharacter.ApplyLocomotionDirectionSnapshot(-OwnerCharacter.GetActorForwardVector());
+		OwnerCharacter.LocomotionDirection = ELocomotionDirection::B;
+		OwnerCharacter.LocomotionDirectionFromAcceleration = ELocomotionDirection::B;
 		return;
 	}
 
-	if (bFreeDodge)
+	if (!MovementDirection.IsNearlyZero())
 	{
-		OwnerCharacter.ApplyLocomotionDirectionSnapshot(OwnerCharacter.GetActorForwardVector());
-		return;
+		OwnerCharacter.ApplyLocomotionDirectionSnapshot(MovementDirection);
 	}
 
-	switch (StrafeInputDirection)
-	{
-	case ELocomotionDirection::FR:
-	case ELocomotionDirection::FL:
-	case ELocomotionDirection::F:
-		OwnerCharacter.ApplyLocomotionDirectionSnapshot(OwnerCharacter.GetActorForwardVector());
-		break;
-	case ELocomotionDirection::R:
-		OwnerCharacter.ApplyLocomotionDirectionSnapshot(OwnerCharacter.GetActorRightVector());
-		break;
-	case ELocomotionDirection::BR:
-	case ELocomotionDirection::BL:
-	case ELocomotionDirection::B:
-		OwnerCharacter.ApplyLocomotionDirectionSnapshot(-OwnerCharacter.GetActorForwardVector());
-		break;
-	case ELocomotionDirection::L:
-		OwnerCharacter.ApplyLocomotionDirectionSnapshot(-OwnerCharacter.GetActorRightVector());
-		break;
-	default:
-		OwnerCharacter.ApplyLocomotionDirectionSnapshot(OwnerCharacter.GetActorForwardVector());
-		break;
-	}
+	OwnerCharacter.LocomotionDirection = InputDirection;
+	OwnerCharacter.LocomotionDirectionFromAcceleration = InputDirection;
 }
 
-FVector UMVDodgeComponent::ResolveDodgeLaunchDirection(const AMVCharacterBase& OwnerCharacter) const
-{
-	if (bHasPreparedDodgeLaunchDirection && !PreparedDodgeLaunchDirection.IsNearlyZero())
-	{
-		return PreparedDodgeLaunchDirection.GetSafeNormal2D();
-	}
-
-	const FVector2D ControllerSpaceMovementInput = CaptureControllerSpaceMovementInput(OwnerCharacter);
-	const bool bBackstep = bHasPreparedDodgeLaunchDirection
-		? !bPreparedDodgeHasMovementInput
-		: !OwnerCharacter.bHasDodgeMovementInput;
-	FVector LaunchDirection = DodgeResolveWorldDirectionFromControllerSpaceInput(
-		ControllerSpaceMovementInput,
-		ResolveStrafeReferenceRotation(OwnerCharacter));
-	if (LaunchDirection.IsNearlyZero())
-	{
-		switch (OwnerCharacter.LocomotionDirection)
-		{
-		case ELocomotionDirection::FR:
-			LaunchDirection = (OwnerCharacter.GetActorForwardVector() + OwnerCharacter.GetActorRightVector()).GetSafeNormal2D();
-			break;
-		case ELocomotionDirection::R:
-			LaunchDirection = OwnerCharacter.GetActorRightVector().GetSafeNormal2D();
-			break;
-		case ELocomotionDirection::BR:
-			LaunchDirection = (-OwnerCharacter.GetActorForwardVector() + OwnerCharacter.GetActorRightVector()).GetSafeNormal2D();
-			break;
-		case ELocomotionDirection::B:
-			LaunchDirection = -OwnerCharacter.GetActorForwardVector().GetSafeNormal2D();
-			break;
-		case ELocomotionDirection::BL:
-			LaunchDirection = (-OwnerCharacter.GetActorForwardVector() - OwnerCharacter.GetActorRightVector()).GetSafeNormal2D();
-			break;
-		case ELocomotionDirection::L:
-			LaunchDirection = -OwnerCharacter.GetActorRightVector().GetSafeNormal2D();
-			break;
-		case ELocomotionDirection::FL:
-			LaunchDirection = (OwnerCharacter.GetActorForwardVector() - OwnerCharacter.GetActorRightVector()).GetSafeNormal2D();
-			break;
-		case ELocomotionDirection::F:
-		default:
-			LaunchDirection = OwnerCharacter.GetActorForwardVector().GetSafeNormal2D();
-			break;
-		}
-	}
-
-	if (bBackstep)
-	{
-		LaunchDirection = -OwnerCharacter.GetActorForwardVector().GetSafeNormal2D();
-	}
-
-	return LaunchDirection.GetSafeNormal2D();
-}
-
-void UMVDodgeComponent::HandleActionPreparing(const int32 ActionId)
-{
-	if (ActionId == MVActionIds::Dodge)
-	{
-		PrepareDodgeAction();
-	}
-	else
-	{
-		bPendingBufferedDodgeLaunchFallback = false;
-		ClearPreparedDodgeLaunch();
-	}
-}
-
-void UMVDodgeComponent::HandleActionStarted(const int32 ActionId)
+void UMVDodgeComponent::HandleActionInputSubmitted(
+	const int32 ActionId,
+	const FVector2D ControllerSpaceInput,
+	const bool bHasMovementInput)
 {
 	if (ActionId != MVActionIds::Dodge)
 	{
-		bPendingBufferedDodgeLaunchFallback = false;
-		ClearPreparedDodgeLaunch();
 		return;
 	}
 
-	if (!bPendingBufferedDodgeLaunchFallback)
+	if (bHasMovementInput)
 	{
-		return;
+		CacheControllerSpaceMovementInput(ControllerSpaceInput);
 	}
 
-	bPendingBufferedDodgeLaunchFallback = false;
-	TryStartBufferedDodgeLaunchFallback();
-}
-
-float UMVDodgeComponent::ResolveDodgeLaunchDistance(
-	const FMVActionStatRow& ActionStat,
-	const AMVCharacterBase& OwnerCharacter) const
-{
-	const float DefaultDistance = FMath::Max(0.0f, ActionStat.LaunchDistance);
-	const bool bUsesRollDistance = bHasPreparedDodgeLaunchDirection
-		? bPreparedDodgeUsesRollDistance
-		: OwnerCharacter.bHasDodgeMovementInput
-			&& !OwnerCharacter.CharacterInputState.WantsToStrafe
-			&& !OwnerCharacter.CharacterInputState.WantsToAim;
-	return bUsesRollDistance
-		? DefaultDistance
-		: DefaultDistance * NonRollDodgeLaunchDistanceScale;
-}
-
-float UMVDodgeComponent::ResolveDodgeLaunchDuration(
-	const FMVActionStatRow& ActionStat,
-	const float NotifyDuration) const
-{
-	return ActionStat.LaunchDuration > 0.0f
-		? ActionStat.LaunchDuration
-		: FMath::Max(0.0f, NotifyDuration);
-}
-
-float UMVDodgeComponent::EvaluateDodgeLaunchDistanceAlpha(const float NormalizedTime) const
-{
-	const float ClampedTime = FMath::Clamp(NormalizedTime, 0.0f, 1.0f);
-	if (ActiveDodgeLaunchDistanceCurve)
+	if (TryStartDodgeAction())
 	{
-		return FMath::Clamp(ActiveDodgeLaunchDistanceCurve->GetFloatValue(ClampedTime), 0.0f, 1.0f);
+		if (const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner()))
+		{
+			if (UMVInputManagerComponent* InputManager = OwnerCharacter->InputManagerComponent)
+			{
+				InputManager->ClearBufferedActionInput();
+			}
+		}
 	}
-
-	return ClampedTime * ClampedTime * (3.0f - 2.0f * ClampedTime);
 }
 
-bool UMVDodgeComponent::IsCurrentDodgeLaunchMontageInstance(const int32 MontageInstanceId) const
+void UMVDodgeComponent::HandleRecoveryEscapeWindowChanged(const bool bOpen)
 {
-	return ActiveDodgeLaunchMontageInstanceId == INDEX_NONE
-		|| MontageInstanceId == INDEX_NONE
-		|| ActiveDodgeLaunchMontageInstanceId == MontageInstanceId;
+	if (bOpen)
+	{
+		TryConsumeBufferedDodgeInput();
+	}
 }

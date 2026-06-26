@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Engine/World.h"
 #include "TimerManager.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "UI/System/MVUIDataTypes.h"
@@ -8,10 +9,12 @@
 
 class UCommonActivatableWidget;
 class UCameraComponent;
+class AMVCharacterBase;
 class UMVDialogueWindow;
 class UMVHUDWidgetBase;
 class UMVInteractionPromptPopup;
 class UMVMessagePopup;
+class UMVPIEActionTestWidget;
 class UMVPopupBase;
 class UMVUILayerBase;
 class UMVWindowBase;
@@ -67,6 +70,15 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
 	UMVDialogueWindow* ShowDialogueWindowTextWithTiming(FText DialogueText, float Duration = -1.0f, float MinimumSkipDelay = -1.0f);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Debug", meta = (AdvancedDisplay = "TargetCharacter"))
+	UMVPIEActionTestWidget* ShowPIEActionTestPanel(AMVCharacterBase* TargetCharacter = nullptr);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Debug")
+	void HidePIEActionTestPanel();
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|UI|Debug")
+	bool IsPIEActionTestPanelActiveOrPending() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
 	void HideDialogueWindow();
@@ -139,6 +151,9 @@ private:
 	void TryOpenPendingDialogueWindow();
 	void TrackActivePopup(UMVPopupBase* Popup);
 	void TrackActiveDialogueWindow(UMVDialogueWindow* DialogueWindow);
+	UMVPIEActionTestWidget* OpenPIEActionTestPanel(AMVCharacterBase* TargetCharacter);
+	AMVCharacterBase* ResolvePIEActionTestTargetCharacter(AMVCharacterBase* TargetCharacter) const;
+	APlayerController* ResolvePIEActionTestPlayerController(const AMVCharacterBase* TargetCharacter) const;
 
 	UPROPERTY(Transient)
 	TArray<TObjectPtr<UMVUILayerBase>> LayerStack;
@@ -154,6 +169,12 @@ private:
 
 	UPROPERTY(Transient)
 	TObjectPtr<UMVPopupBase> ActivePopup;
+
+	UPROPERTY(Transient)
+	TObjectPtr<UMVPIEActionTestWidget> ActivePIEActionTestWidget;
+
+	TWeakObjectPtr<AMVCharacterBase> PendingPIEActionTestTargetCharacter;
+	bool bHasPendingPIEActionTestPanel = false;
 
 	TWeakObjectPtr<USpringArmComponent> DialogueZoomSpringArm;
 	TWeakObjectPtr<UCameraComponent> DialogueZoomCamera;

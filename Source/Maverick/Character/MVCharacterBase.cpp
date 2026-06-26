@@ -5,12 +5,16 @@
 
 #include "Components/MVActionComponent.h"
 #include "Components/MVDodgeComponent.h"
+#include "Components/MVHitReactionComponent.h"
+#include "Components/MVInputManagerComponent.h"
 #include "Components/MVStatComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "KismetAnimationLibrary.h"
 #include "Math/Vector.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Tables/MVTableManager.h"
+#include "Tags/MVGameplayTags.h"
 
 namespace
 {
@@ -58,6 +62,21 @@ ELocomotionDirection ResolveCharacterEightWayDirection(const float MoveDirection
 		: ELocomotionDirection::L;
 }
 
+FString CharacterBaseCharacterIndexCodeToTableToken(const FGameplayTag CharacterIndexCode)
+{
+	if (!CharacterIndexCode.IsValid())
+	{
+		return FString();
+	}
+
+	const FString TagString = CharacterIndexCode.ToString();
+	FString TagPrefix;
+	FString TagLeaf;
+	return TagString.Split(TEXT("."), &TagPrefix, &TagLeaf, ESearchCase::CaseSensitive, ESearchDir::FromEnd)
+		? TagLeaf
+		: TagString;
+}
+
 }
 
 // Sets default values
@@ -69,7 +88,10 @@ AMVCharacterBase::AMVCharacterBase()
 	StatComponent = CreateDefaultSubobject<UMVStatComponent>(TEXT("StatComponent"));
 	ActionComponent = CreateDefaultSubobject<UMVActionComponent>(TEXT("ActionComponent"));
 	DodgeComponent = CreateDefaultSubobject<UMVDodgeComponent>(TEXT("DodgeComponent"));
-	ApplyCharacterIndexIdToComponents();
+	HitReactionComponent = CreateDefaultSubobject<UMVHitReactionComponent>(TEXT("HitReactionComponent"));
+	InputManagerComponent = CreateDefaultSubobject<UMVInputManagerComponent>(TEXT("InputManagerComponent"));
+	CharacterIndexCode = MVGameplayTags::Character_Player_P1;
+	ApplyCharacterIndexCodeToComponents();
 	bIsSprintBlockedByStamina = false;
 	bHasDodgeMovementInput = false;
 	LocomotionDirection = ELocomotionDirection::F;
@@ -79,7 +101,7 @@ void AMVCharacterBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	ApplyCharacterIndexIdToComponents();
+	ApplyCharacterIndexCodeToComponents();
 	BindDamageHandlers();
 }
 
@@ -153,15 +175,15 @@ void AMVCharacterBase::AttemptCrouch()
 
 }
 
-void AMVCharacterBase::SetCharacterIndexId(const int32 NewCharacterIndexId)
+void AMVCharacterBase::SetCharacterIndexCode(const FGameplayTag NewCharacterIndexCode)
 {
-	CharacterIndexId = FMath::Max(0, NewCharacterIndexId);
-	ApplyCharacterIndexIdToComponents();
+	CharacterIndexCode = NewCharacterIndexCode;
+	ApplyCharacterIndexCodeToComponents();
 }
 
-int32 AMVCharacterBase::GetCharacterIndexId() const
+FGameplayTag AMVCharacterBase::GetCharacterIndexCode() const
 {
-	return CharacterIndexId;
+	return CharacterIndexCode;
 }
 
 bool AMVCharacterBase::HasDodgeMovementInput() const
@@ -281,7 +303,7 @@ bool AMVCharacterBase::IsInvincible() const
 
 bool AMVCharacterBase::OnHitResolved(const FMVResolvedHitData& HitData)
 {
-	if (HitData.VictimCharacterIndexId != CharacterIndexId)
+	if (HitData.VictimCharacterIndexCode.IsValid() && HitData.VictimCharacterIndexCode != CharacterIndexCode)
 	{
 		return false;
 	}
@@ -290,29 +312,32 @@ bool AMVCharacterBase::OnHitResolved(const FMVResolvedHitData& HitData)
 	return true;
 }
 
-void AMVCharacterBase::ApplyCharacterIndexIdToComponents()
+void AMVCharacterBase::ApplyCharacterIndexCodeToComponents()
 {
 	if (ActionComponent)
 	{
-		ActionComponent->SetCharacterIndexId(CharacterIndexId);
+		ActionComponent->SetCharacterIndexCode(CharacterIndexCode);
 	}
 
 	if (StatComponent)
 	{
-		StatComponent->SetCharacterIndexId(CharacterIndexId);
+		StatComponent->SetCharacterIndexCode(CharacterIndexCode);
 	}
 }
 
 void AMVCharacterBase::BindDamageHandlers()
 {
-	if (!StatComponent)
+	if (StatComponent)
 	{
-		return;
+		OnDamaged.RemoveDynamic(StatComponent, &UMVStatComponent::HandleDamaged);
+		OnDamaged.AddUniqueDynamic(StatComponent, &UMVStatComponent::HandleDamaged);
 	}
 
-	OnDamaged.RemoveDynamic(StatComponent, &UMVStatComponent::HandleDamaged);
-	OnDamaged.AddUniqueDynamic(StatComponent, &UMVStatComponent::HandleDamaged);
-	// TODO: HitReactionComponent가 추가되면 OnDamaged에 HandleDamaged를 함께 바인딩한다.
+	if (HitReactionComponent)
+	{
+		OnDamaged.RemoveDynamic(HitReactionComponent, &UMVHitReactionComponent::HandleDamaged);
+		OnDamaged.AddUniqueDynamic(HitReactionComponent, &UMVHitReactionComponent::HandleDamaged);
+	}
 }
 
 void AMVCharacterBase::UpdateCharacterValue()
@@ -484,25 +509,22 @@ void AMVCharacterBase::UpdateRecoverableStats(float DeltaTime)
 void AMVCharacterBase::CacheSprintActionData()
 {
 	bHasSprintActionData = false;
-	SprintActionStaminaCost = FMath::Max(0.0f, FallbackSprintStaminaCost);
+	SprintActionStaminaCost = 20.0f;
 	SprintActionStaminaCostType = EMVActionResourceCostType::PerSecond;
 	SprintActionMinRequiredStamina = 0.0f;
 	SprintActionRestartStaminaPercent = FMath::Clamp(SprintResumeStaminaRatio * 100.0f, 0.0f, 100.0f);
 
-	const int32 SprintRawActionId = MVActionIds::ToRawActionId(SprintActionId);
-	const FMVActionStatRow* SprintActionStat = ActionComponent
-		? ActionComponent->FindActionStatRow(SprintRawActionId, EMVActionType::Sprint)
-		: nullptr;
-	if (!SprintActionStat)
+	const FMVSprintActionRow* SprintActionDataRow = FindSprintActionRow();
+	if (!SprintActionDataRow || !SprintActionDataRow->bEnabled)
 	{
 		return;
 	}
 
-	SprintActionStaminaCost = FMath::Max(0.0f, SprintActionStat->StaminaCost);
-	SprintActionStaminaCostType = SprintActionStat->StaminaCostType;
-	SprintActionMinRequiredStamina = FMath::Max(0.0f, SprintActionStat->MinRequiredStamina);
-	SprintActionRestartStaminaPercent = SprintActionStat->SprintRestartStaminaPercent > 0.0f
-		? FMath::Clamp(SprintActionStat->SprintRestartStaminaPercent, 0.0f, 100.0f)
+	SprintActionStaminaCost = FMath::Max(0.0f, SprintActionDataRow->StaminaCost);
+	SprintActionStaminaCostType = SprintActionDataRow->StaminaCostType;
+	SprintActionMinRequiredStamina = FMath::Max(0.0f, SprintActionDataRow->MinRequiredStamina);
+	SprintActionRestartStaminaPercent = SprintActionDataRow->SprintRestartStaminaPercent > 0.0f
+		? FMath::Clamp(SprintActionDataRow->SprintRestartStaminaPercent, 0.0f, 100.0f)
 		: FMath::Clamp(SprintResumeStaminaRatio * 100.0f, 0.0f, 100.0f);
 	bHasSprintActionData = true;
 }
@@ -571,6 +593,61 @@ float AMVCharacterBase::ResolveSprintResumeStaminaRatio() const
 		? SprintActionRestartStaminaPercent
 		: SprintResumeStaminaRatio * 100.0f;
 	return FMath::Clamp(RestartPercent / 100.0f, 0.0f, 1.0f);
+}
+
+const FMVSprintActionRow* AMVCharacterBase::FindSprintActionRow() const
+{
+	if (SprintActionRow.DataTable && !SprintActionRow.RowName.IsNone())
+	{
+		if (!SprintActionRow.DataTable->GetRowStruct()
+			|| !SprintActionRow.DataTable->GetRowStruct()->IsChildOf(FMVSprintActionRow::StaticStruct()))
+		{
+			UE_LOG(
+				LogTemp,
+				Warning,
+				TEXT("SprintActionRow has invalid row struct. DataTable=%s RowStruct=%s Expected=MVSprintActionRow."),
+				*GetNameSafe(SprintActionRow.DataTable),
+				SprintActionRow.DataTable->GetRowStruct()
+					? *SprintActionRow.DataTable->GetRowStruct()->GetName()
+					: TEXT("None"));
+			return nullptr;
+		}
+
+		return SprintActionRow.DataTable->FindRow<FMVSprintActionRow>(
+			SprintActionRow.RowName,
+			TEXT("MVCharacterBase"),
+			false);
+	}
+
+	const UMVTableManager* TableManager = UMVTableManager::Get(this);
+	const FName ActionTableName = ResolveSprintActionTableName();
+	const FName ActionRowName = ResolveSprintActionRowName();
+	return TableManager && !ActionTableName.IsNone() && !ActionRowName.IsNone()
+		? TableManager->FindRow<FMVSprintActionRow>(ActionTableName, ActionRowName.ToString())
+		: nullptr;
+}
+
+FName AMVCharacterBase::ResolveSprintActionTableName() const
+{
+	if (!SprintActionTableName.IsNone())
+	{
+		return SprintActionTableName;
+	}
+
+	return TEXT("Sprint");
+}
+
+FName AMVCharacterBase::ResolveSprintActionRowName() const
+{
+	if (!SprintActionRowName.IsNone())
+	{
+		return SprintActionRowName;
+	}
+
+	const FString CharacterIndexCodeToken = CharacterBaseCharacterIndexCodeToTableToken(CharacterIndexCode);
+	return CharacterIndexCodeToken.IsEmpty()
+		? NAME_None
+		: FName(*FString::Printf(TEXT("Sprint_%s_%02d"), *CharacterIndexCodeToken, FMath::Max(1, DefaultSprintRowIndex)));
 }
 
 EGait AMVCharacterBase::DesiredGait()

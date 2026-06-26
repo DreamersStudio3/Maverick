@@ -1,6 +1,8 @@
 #include "UI/System/MVUISubsystem.h"
 
+#include "Blueprint/UserWidget.h"
 #include "Camera/CameraComponent.h"
+#include "Character/MVCharacterBase.h"
 #include "CommonActivatableWidget.h"
 #include "Components/MVStatComponent.h"
 #include "Engine/World.h"
@@ -15,6 +17,7 @@
 #include "UI/Base/MVWindowBase.h"
 #include "UI/Popup/MVInteractionPromptPopup.h"
 #include "UI/Popup/MVMessagePopup.h"
+#include "UI/Debug/MVPIEActionTestWidget.h"
 #include "UI/System/MVUILayerBase.h"
 #include "UI/System/MVUISettings.h"
 #include "UI/Window/MVDeathOverlayWindow.h"
@@ -198,8 +201,9 @@ UCommonActivatableWidget* UMVUISubsystem::ShowDeathOverlay()
 
 UMVInteractionPromptPopup* UMVUISubsystem::ShowInteractionPrompt(const FMVInteractionPromptData& PromptData)
 {
-	if (IsDialogueWindowBlockingInteraction())
+	if (IsDialogueWindowBlockingInteraction() || IsPIEActionTestPanelActiveOrPending())
 	{
+		HideInteractionPrompt();
 		return nullptr;
 	}
 
@@ -270,6 +274,110 @@ UMVDialogueWindow* UMVUISubsystem::ShowDialogueWindowTextWithTiming(FText Dialog
 	}
 
 	return OpenDialogueWindowText(DialogueText, Duration, MinimumSkipDelay);
+}
+
+UMVPIEActionTestWidget* UMVUISubsystem::ShowPIEActionTestPanel(AMVCharacterBase* TargetCharacter)
+{
+#if !UE_BUILD_SHIPPING
+	UWorld* World = GetWorld();
+	if (!World || World->WorldType != EWorldType::PIE)
+	{
+		return nullptr;
+	}
+
+	AMVCharacterBase* ResolvedTargetCharacter = ResolvePIEActionTestTargetCharacter(TargetCharacter);
+	if (!ResolvedTargetCharacter)
+	{
+		return nullptr;
+	}
+
+	if (IsDialogueWindowBlockingInteraction())
+	{
+		bHasPendingPIEActionTestPanel = true;
+		PendingPIEActionTestTargetCharacter = ResolvedTargetCharacter;
+		return ActivePIEActionTestWidget;
+	}
+
+	return OpenPIEActionTestPanel(ResolvedTargetCharacter);
+#else
+	return nullptr;
+#endif
+}
+
+UMVPIEActionTestWidget* UMVUISubsystem::OpenPIEActionTestPanel(AMVCharacterBase* TargetCharacter)
+{
+#if !UE_BUILD_SHIPPING
+	if (!TargetCharacter)
+	{
+		return nullptr;
+	}
+
+	APlayerController* PlayerController = ResolvePIEActionTestPlayerController(TargetCharacter);
+	if (!PlayerController || !PlayerController->IsLocalController())
+	{
+		return nullptr;
+	}
+
+	if (ActivePIEActionTestWidget && ActivePIEActionTestWidget->IsInViewport())
+	{
+		ActivePIEActionTestWidget->SetTargetCharacter(TargetCharacter);
+		return ActivePIEActionTestWidget;
+	}
+
+	ActivePIEActionTestWidget = CreateWidget<UMVPIEActionTestWidget>(
+		PlayerController,
+		UMVPIEActionTestWidget::StaticClass());
+	if (!ActivePIEActionTestWidget)
+	{
+		return nullptr;
+	}
+
+	ActivePIEActionTestWidget->SetTargetCharacter(TargetCharacter);
+	ActivePIEActionTestWidget->AddToViewport(9000);
+	ActivePIEActionTestWidget->SetKeyboardFocus();
+
+	PlayerController->SetShowMouseCursor(true);
+	FInputModeGameAndUI InputMode;
+	InputMode.SetWidgetToFocus(ActivePIEActionTestWidget->TakeWidget());
+	InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+	InputMode.SetHideCursorDuringCapture(false);
+	PlayerController->SetInputMode(InputMode);
+	return ActivePIEActionTestWidget;
+#else
+	return nullptr;
+#endif
+}
+
+void UMVUISubsystem::HidePIEActionTestPanel()
+{
+#if !UE_BUILD_SHIPPING
+	bHasPendingPIEActionTestPanel = false;
+	PendingPIEActionTestTargetCharacter.Reset();
+	if (ActivePIEActionTestWidget)
+	{
+		ActivePIEActionTestWidget->RemoveFromParent();
+		ActivePIEActionTestWidget = nullptr;
+	}
+
+	UWorld* World = GetWorld();
+	APlayerController* PlayerController = World ? World->GetFirstPlayerController() : nullptr;
+	if (PlayerController)
+	{
+		PlayerController->SetShowMouseCursor(false);
+		FInputModeGameOnly InputMode;
+		PlayerController->SetInputMode(InputMode);
+	}
+#endif
+}
+
+bool UMVUISubsystem::IsPIEActionTestPanelActiveOrPending() const
+{
+#if !UE_BUILD_SHIPPING
+	return bHasPendingPIEActionTestPanel
+		|| (ActivePIEActionTestWidget && ActivePIEActionTestWidget->IsInViewport());
+#else
+	return false;
+#endif
 }
 
 UMVDialogueWindow* UMVUISubsystem::OpenDialogueWindowText(FText DialogueText, float Duration, float MinimumSkipDelay)
@@ -345,6 +453,7 @@ bool UMVUISubsystem::CanSkipDialogueWindow() const
 bool UMVUISubsystem::CanUseInteractionPrompt() const
 {
 	return !IsDialogueWindowBlockingInteraction()
+		&& !IsPIEActionTestPanelActiveOrPending()
 		&& IsPopupActive(ActiveInteractionPrompt)
 		&& ActivePopup == ActiveInteractionPrompt
 		&& !ActiveInteractionPrompt->IsClosing()
@@ -463,6 +572,13 @@ void UMVUISubsystem::ClearAllUI()
 	ActiveInteractionPrompt = nullptr;
 	ActiveDialogueWindow = nullptr;
 	ActivePopup = nullptr;
+	if (ActivePIEActionTestWidget)
+	{
+		ActivePIEActionTestWidget->RemoveFromParent();
+	}
+	ActivePIEActionTestWidget = nullptr;
+	PendingPIEActionTestTargetCharacter.Reset();
+	bHasPendingPIEActionTestPanel = false;
 	bHasPendingDialogueRequest = false;
 	PendingDialogueText = FText::GetEmpty();
 	PendingDialogueDuration = -1.0f;
@@ -540,6 +656,37 @@ void UMVUISubsystem::HandlePlayerDeath()
 	ShowDeathOverlay();
 }
 
+AMVCharacterBase* UMVUISubsystem::ResolvePIEActionTestTargetCharacter(AMVCharacterBase* TargetCharacter) const
+{
+	if (TargetCharacter)
+	{
+		return TargetCharacter;
+	}
+
+	UWorld* World = GetWorld();
+	APlayerController* PlayerController = World ? World->GetFirstPlayerController() : nullptr;
+	return PlayerController
+		? Cast<AMVCharacterBase>(PlayerController->GetPawn())
+		: nullptr;
+}
+
+APlayerController* UMVUISubsystem::ResolvePIEActionTestPlayerController(const AMVCharacterBase* TargetCharacter) const
+{
+	if (!TargetCharacter)
+	{
+		return nullptr;
+	}
+
+	if (APlayerController* PlayerController = Cast<APlayerController>(TargetCharacter->GetController()))
+	{
+		return PlayerController;
+	}
+
+	UWorld* World = GetWorld();
+	APlayerController* PlayerController = World ? World->GetFirstPlayerController() : nullptr;
+	return PlayerController;
+}
+
 void UMVUISubsystem::HandlePopupClosed(UMVPopupBase* ClosedPopup)
 {
 	if (!ClosedPopup)
@@ -599,6 +746,17 @@ void UMVUISubsystem::HandleDialogueWindowClosed(UMVDialogueWindow* ClosedDialogu
 	else
 	{
 		bDialoguePromptRestoreDelayActive = false;
+	}
+
+	if (bHasPendingPIEActionTestPanel)
+	{
+		AMVCharacterBase* PendingTargetCharacter = PendingPIEActionTestTargetCharacter.Get();
+		PendingPIEActionTestTargetCharacter.Reset();
+		bHasPendingPIEActionTestPanel = false;
+		if (PendingTargetCharacter)
+		{
+			OpenPIEActionTestPanel(PendingTargetCharacter);
+		}
 	}
 }
 

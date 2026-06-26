@@ -1,3 +1,4 @@
-CharacterIndexId,CharacterName,CharacterKind,ActionProfileId,bEnabled
-1,PlayerCharacter,Player,1,true
-20001,NamelessPuppet,Enemy,20001,true
+CharacterIndexCode,CharacterName,bEnabled
+Character.Player.P1,PlayerCharacter,true
+Character.NPC.Enemy.E1,BulkupCarcass,true
+Character.NPC.Enemy.NamelessPuppet,NamelessPuppet,true

@@ -1,11 +1,14 @@
 #include "Tables/MVTableAssetGenerator.h"
 
+#include "Tables/MVActionRowTableTypes.h"
 #include "Tables/MVSheetSpecs.h"
 #include "Tables/MVTableManager.h"
 #include "Tables/MVTableTypes.h"
 
 #if WITH_EDITOR
+#include "AssetRegistry/AssetData.h"
 #include "AssetRegistry/AssetRegistryModule.h"
+#include "Containers/StringConv.h"
 #include "Engine/DataTable.h"
 #include "HAL/FileManager.h"
 #include "HAL/IConsoleManager.h"
@@ -15,9 +18,12 @@
 #include "Misc/FileHelper.h"
 #include "Misc/PackageName.h"
 #include "Misc/Paths.h"
+#include "Misc/SecureHash.h"
+#include "Modules/ModuleManager.h"
 #include "ObjectTools.h"
 #include "Serialization/JsonReader.h"
 #include "Serialization/JsonSerializer.h"
+#include "UObject/MetaData.h"
 #include "UObject/Package.h"
 #include "UObject/SavePackage.h"
 #endif
@@ -27,6 +33,21 @@ namespace
 	const TCHAR* GeneratedTablesPackageRoot = TEXT("/Game/Table");
 	const TCHAR* ManifestAssetName = TEXT("DT_MVTableManifest");
 	const TCHAR* ManifestPackagePath = TEXT("/Game/Table/DT_MVTableManifest");
+	const TCHAR* GeneratedTableHashMetadataKey = TEXT("MVTableAssetGenerator.SourceHash");
+	const TCHAR* DirectManagedTablePackageRoots[] =
+	{
+		TEXT("/Game/Table/HitReaction"),
+		TEXT("/Game/Table/Combat"),
+		TEXT("/Game/Table/Dodge"),
+		TEXT("/Game/Table/Sprint")
+	};
+	const TCHAR* DirectManagedDesignRoots[] =
+	{
+		TEXT("HitReaction"),
+		TEXT("Combat"),
+		TEXT("Dodge"),
+		TEXT("Sprint")
+	};
 
 #if WITH_EDITOR
 	FString GetMaverickDesignDir()
@@ -82,6 +103,115 @@ namespace
 	FString ToTablePackagePath(const FString& TableName)
 	{
 		return FString::Printf(TEXT("%s/%s"), GeneratedTablesPackageRoot, *ToTableAssetName(TableName));
+	}
+
+	bool TableAssetGeneratorIsUnderPackageRoot(const FString& PackagePath, const FString& RootPath)
+	{
+		return PackagePath.Equals(RootPath)
+			|| PackagePath.StartsWith(RootPath + TEXT("/"), ESearchCase::CaseSensitive);
+	}
+
+	bool TableAssetGeneratorIsDirectManagedPackagePath(const FString& PackagePath)
+	{
+		for (const TCHAR* Root : DirectManagedTablePackageRoots)
+		{
+			if (TableAssetGeneratorIsUnderPackageRoot(PackagePath, Root))
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	bool TableAssetGeneratorIsDirectManagedObjectPath(const FString& ObjectPath)
+	{
+		FString PackageName;
+		FString ObjectName;
+		if (!ObjectPath.Split(TEXT("."), &PackageName, &ObjectName, ESearchCase::CaseSensitive, ESearchDir::FromEnd))
+		{
+			PackageName = ObjectPath;
+		}
+
+		return TableAssetGeneratorIsDirectManagedPackagePath(PackageName);
+	}
+
+	bool TableAssetGeneratorIsDirectManagedJsonPath(const FString& JsonPath)
+	{
+		FString RelativePath = FPaths::ConvertRelativePathToFull(JsonPath);
+		const FString JsonDir = GetJsonDir();
+		if (!FPaths::MakePathRelativeTo(RelativePath, *JsonDir))
+		{
+			return false;
+		}
+
+		FPaths::MakeStandardFilename(RelativePath);
+		for (const TCHAR* Root : DirectManagedDesignRoots)
+		{
+			if (RelativePath.Equals(Root, ESearchCase::IgnoreCase)
+				|| RelativePath.StartsWith(FString(Root) + TEXT("/"), ESearchCase::IgnoreCase))
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	FString TableAssetGeneratorResolveKeyColumnName(const UScriptStruct* RowStruct, const FString& FallbackKeyColumnName)
+	{
+		if (!FallbackKeyColumnName.IsEmpty())
+		{
+			return FallbackKeyColumnName;
+		}
+
+		if (RowStruct && RowStruct->IsChildOf(FMVActionRow::StaticStruct()))
+		{
+			return TEXT("RowName");
+		}
+
+		if (RowStruct == FMVGenericTableRow::StaticStruct())
+		{
+			return TEXT("Key");
+		}
+
+		return TEXT("RowName");
+	}
+
+	bool TableAssetGeneratorAddManifestRow(
+		TArray<FMVTableManifestRow>& OutRows,
+		const FMVTableManifestRow& Row,
+		TArray<FString>& OutErrors)
+	{
+		if (Row.TableName.IsNone())
+		{
+			OutErrors.Add(TEXT("Manifest row has no TableName."));
+			return false;
+		}
+
+		for (const FMVTableManifestRow& ExistingRow : OutRows)
+		{
+			if (ExistingRow.TableName == Row.TableName)
+			{
+				OutErrors.Add(FString::Printf(
+					TEXT("Duplicate manifest table '%s': %s and %s"),
+					*Row.TableName.ToString(),
+					*ExistingRow.AssetPath,
+					*Row.AssetPath));
+				return false;
+			}
+		}
+
+		OutRows.Add(Row);
+		return true;
+	}
+
+	void TableAssetGeneratorSortManifestRows(TArray<FMVTableManifestRow>& Rows)
+	{
+		Rows.Sort([](const FMVTableManifestRow& Left, const FMVTableManifestRow& Right)
+		{
+			return Left.TableName.LexicalLess(Right.TableName);
+		});
 	}
 
 	bool TryGetObjectField(const TSharedPtr<FJsonObject>& Object, const FString& FieldName, TSharedPtr<FJsonObject>& OutObject)
@@ -175,11 +305,180 @@ namespace
 		return FJsonSerializer::Serialize(Object.ToSharedRef(), Writer);
 	}
 
-	bool TableAssetGeneratorReadIntegerKeySet(
+	void TableAssetGeneratorAppendJsonHashValue(const TSharedPtr<FJsonValue>& Value, FString& OutSource)
+	{
+		if (!Value.IsValid())
+		{
+			OutSource += TEXT("Invalid;");
+			return;
+		}
+
+		switch (Value->Type)
+		{
+		case EJson::String:
+		{
+			const FString StringValue = Value->AsString();
+			OutSource += FString::Printf(TEXT("S%d:"), StringValue.Len());
+			OutSource += StringValue;
+			OutSource += TEXT(";");
+			break;
+		}
+		case EJson::Number:
+		{
+			FString NumberString;
+			JsonValueToGeneratorString(Value, NumberString);
+			OutSource += TEXT("N:");
+			OutSource += NumberString;
+			OutSource += TEXT(";");
+			break;
+		}
+		case EJson::Boolean:
+			OutSource += Value->AsBool() ? TEXT("B:true;") : TEXT("B:false;");
+			break;
+		case EJson::Array:
+			OutSource += TEXT("[");
+			for (const TSharedPtr<FJsonValue>& Element : Value->AsArray())
+			{
+				TableAssetGeneratorAppendJsonHashValue(Element, OutSource);
+			}
+			OutSource += TEXT("];");
+			break;
+		case EJson::Object:
+		{
+			const TSharedPtr<FJsonObject> Object = Value->AsObject();
+			if (!Object.IsValid())
+			{
+				OutSource += TEXT("Object:null;");
+				break;
+			}
+
+			TArray<FString> FieldNames;
+			Object->Values.GetKeys(FieldNames);
+			FieldNames.Sort();
+
+			OutSource += TEXT("{");
+			for (const FString& FieldName : FieldNames)
+			{
+				OutSource += FString::Printf(TEXT("K%d:"), FieldName.Len());
+				OutSource += FieldName;
+				OutSource += TEXT("=");
+				TableAssetGeneratorAppendJsonHashValue(Object->Values[FieldName], OutSource);
+			}
+			OutSource += TEXT("};");
+			break;
+		}
+		case EJson::Null:
+			OutSource += TEXT("Null;");
+			break;
+		default:
+			OutSource += TEXT("None;");
+			break;
+		}
+	}
+
+	FString TableAssetGeneratorHashSourceString(const FString& Source)
+	{
+		const FTCHARToUTF8 Utf8Source(*Source);
+		return FMD5::HashBytes(
+			reinterpret_cast<const uint8*>(Utf8Source.Get()),
+			static_cast<uint64>(Utf8Source.Length()));
+	}
+
+	FString TableAssetGeneratorBuildGeneratedTableHash(
+		const FString& TableName,
+		const FMVSheetSpec& Spec,
+		const TArray<TSharedPtr<FJsonValue>>& JsonRows)
+	{
+		FString Source;
+		Source.Reserve(1024);
+		Source += TEXT("GeneratedTable:v1;");
+		Source += TEXT("Table=");
+		Source += TableName;
+		Source += TEXT(";Key=");
+		Source += Spec.KeyColumnName;
+		Source += TEXT(";Struct=");
+		Source += Spec.RowStruct ? Spec.RowStruct->GetPathName() : TEXT("None");
+		Source += TEXT(";Generic=");
+		Source += Spec.bGenericFallback ? TEXT("true;") : TEXT("false;");
+		Source += FString::Printf(TEXT("Rows=%d;"), JsonRows.Num());
+
+		for (const TSharedPtr<FJsonValue>& Row : JsonRows)
+		{
+			TableAssetGeneratorAppendJsonHashValue(Row, Source);
+		}
+
+		return TableAssetGeneratorHashSourceString(Source);
+	}
+
+	FString TableAssetGeneratorBuildManifestHash(const TArray<FMVTableManifestRow>& ManifestRows)
+	{
+		FString Source;
+		Source.Reserve(1024);
+		Source += TEXT("TableManifest:v1;");
+		Source += FString::Printf(TEXT("Rows=%d;"), ManifestRows.Num());
+
+		for (const FMVTableManifestRow& Row : ManifestRows)
+		{
+			Source += TEXT("Table=");
+			Source += Row.TableName.ToString();
+			Source += TEXT(";Asset=");
+			Source += Row.AssetPath;
+			Source += TEXT(";Key=");
+			Source += Row.KeyColumnName;
+			Source += TEXT(";Struct=");
+			Source += Row.RowStructName;
+			Source += TEXT(";Generic=");
+			Source += Row.bGenericFallback ? TEXT("true;") : TEXT("false;");
+		}
+
+		return TableAssetGeneratorHashSourceString(Source);
+	}
+
+	FString TableAssetGeneratorReadStoredSourceHash(const UObject* Asset)
+	{
+		if (!Asset)
+		{
+			return FString();
+		}
+
+		UPackage* Package = Asset->GetOutermost();
+		if (!Package)
+		{
+			return FString();
+		}
+
+		return Package->GetMetaData().GetValue(Asset, GeneratedTableHashMetadataKey);
+	}
+
+	void TableAssetGeneratorWriteStoredSourceHash(UObject* Asset, const FString& SourceHash)
+	{
+		if (!Asset)
+		{
+			return;
+		}
+
+		if (UPackage* Package = Asset->GetOutermost())
+		{
+			Package->GetMetaData().SetValue(Asset, GeneratedTableHashMetadataKey, *SourceHash);
+		}
+	}
+
+	bool TableAssetGeneratorCanReuseDataTable(
+		const UDataTable* DataTable,
+		const UScriptStruct* ExpectedRowStruct,
+		const FString& ExpectedSourceHash)
+	{
+		return DataTable
+			&& DataTable->GetRowStruct() == ExpectedRowStruct
+			&& !ExpectedSourceHash.IsEmpty()
+			&& TableAssetGeneratorReadStoredSourceHash(DataTable) == ExpectedSourceHash;
+	}
+
+	bool TableAssetGeneratorReadStringKeySet(
 		const FString& JsonPath,
 		const FString& TableName,
 		const FString& KeyColumnName,
-		TSet<int32>& OutKeys,
+		TSet<FString>& OutKeys,
 		TArray<FString>& OutErrors)
 	{
 		FString Raw;
@@ -222,11 +521,10 @@ namespace
 			const TSharedPtr<FJsonObject> RowObject = Element->AsObject();
 			const TSharedPtr<FJsonValue>* KeyValue = RowObject->Values.Find(KeyColumnName);
 			FString KeyString;
-			int32 Key = 0;
 			if (!KeyValue
 				|| !KeyValue->IsValid()
 				|| !JsonValueToGeneratorString(*KeyValue, KeyString)
-				|| !LexTryParseString(Key, *KeyString))
+				|| KeyString.IsEmpty())
 			{
 				OutErrors.Add(FString::Printf(
 					TEXT("%s: table '%s' has an invalid '%s' value."),
@@ -237,19 +535,19 @@ namespace
 				continue;
 			}
 
-			if (OutKeys.Contains(Key))
+			if (OutKeys.Contains(KeyString))
 			{
 				OutErrors.Add(FString::Printf(
-					TEXT("%s: table '%s' has duplicate '%s' value %d."),
+					TEXT("%s: table '%s' has duplicate '%s' value '%s'."),
 					*JsonPath,
 					*TableName,
 					*KeyColumnName,
-					Key));
+					*KeyString));
 				bSucceeded = false;
 				continue;
 			}
 
-			OutKeys.Add(Key);
+			OutKeys.Add(KeyString);
 		}
 
 		return bSucceeded;
@@ -284,7 +582,22 @@ namespace
 		return true;
 	}
 
-	UDataTable* CreateOrResetDataTable(const FString& AssetName, const FString& PackagePath, UScriptStruct* RowStruct)
+	UDataTable* FindExistingDataTable(const FString& AssetName, const FString& PackagePath)
+	{
+		UPackage* Package = CreatePackage(*PackagePath);
+		if (!Package)
+		{
+			return nullptr;
+		}
+		Package->FullyLoad();
+
+		return FindObject<UDataTable>(Package, *AssetName);
+	}
+
+	UDataTable* CreateOrResetDataTable(
+		const FString& AssetName,
+		const FString& PackagePath,
+		UScriptStruct* RowStruct)
 	{
 		UPackage* Package = CreatePackage(*PackagePath);
 		if (!Package)
@@ -305,7 +618,6 @@ namespace
 		}
 
 		DataTable->RowStruct = RowStruct;
-		DataTable->MarkPackageDirty();
 
 		if (bNewlyCreated)
 		{
@@ -325,6 +637,16 @@ static FAutoConsoleCommand GenerateMaverickTableDataTablesCommand(
 	{
 		FString Report;
 		const bool bSucceeded = UMVTableAssetGenerator::GenerateDataTables(Report);
+		UE_LOG(LogTemp, Display, TEXT("[MVTableAssetGenerator] %s%s"), bSucceeded ? TEXT("") : TEXT("Failed: "), *Report);
+	}));
+
+static FAutoConsoleCommand RefreshMaverickTableManifestCommand(
+	TEXT("MV.Table.RefreshManifest"),
+	TEXT("Refreshes /Game/Table/DT_MVTableManifest from CSV-originated root tables and direct-managed DataTables."),
+	FConsoleCommandDelegate::CreateStatic([]()
+	{
+		FString Report;
+		const bool bSucceeded = UMVTableAssetGenerator::RefreshTableManifest(Report);
 		UE_LOG(LogTemp, Display, TEXT("[MVTableAssetGenerator] %s%s"), bSucceeded ? TEXT("") : TEXT("Failed: "), *Report);
 	}));
 #endif
@@ -357,6 +679,9 @@ bool UMVTableAssetGenerator::GenerateDataTables(FString& OutReport)
 
 	TArray<FMVTableManifestRow> TableManifestRows;
 	const int32 ImportedCount = ImportAllJsonFiles(TableManifestRows, Errors);
+	const int32 DirectManagedCount = ScanDirectManagedDataTables(TableManifestRows, Errors);
+
+	TableAssetGeneratorSortManifestRows(TableManifestRows);
 
 	TArray<FString> CleanupErrors;
 	DeleteStaleGeneratedAssets(TableManifestRows, CleanupErrors);
@@ -372,9 +697,10 @@ bool UMVTableAssetGenerator::GenerateDataTables(FString& OutReport)
 	}
 
 	OutReport = FString::Printf(
-		TEXT("Converter output:\n%s\nGenerated %d table asset(s)."),
+		TEXT("Converter output:\n%s\nGenerated %d CSV-originated table asset(s).\nRegistered %d direct-managed table asset(s)."),
 		*ConverterLog,
-		ImportedCount);
+		ImportedCount,
+		DirectManagedCount);
 
 	if (!Errors.IsEmpty())
 	{
@@ -393,6 +719,52 @@ bool UMVTableAssetGenerator::GenerateDataTables(FString& OutReport)
 	return Errors.IsEmpty();
 #else
 	OutReport = TEXT("Table generation is editor-only.");
+	return false;
+#endif
+}
+
+bool UMVTableAssetGenerator::RefreshTableManifest(FString& OutReport)
+{
+#if WITH_EDITOR
+	OutReport.Reset();
+
+	FMVSheetSpecs::Invalidate();
+
+	TArray<FString> Errors;
+	TArray<FMVTableManifestRow> TableManifestRows;
+	const int32 CsvOriginCount = BuildCsvOriginManifestRows(TableManifestRows, Errors);
+	const int32 DirectManagedCount = ScanDirectManagedDataTables(TableManifestRows, Errors);
+
+	TableAssetGeneratorSortManifestRows(TableManifestRows);
+
+	FString ManifestError;
+	if (!SaveManifest(TableManifestRows, ManifestError))
+	{
+		Errors.Add(ManifestError);
+	}
+
+	OutReport = FString::Printf(
+		TEXT("Registered %d CSV-originated table asset(s).\nRegistered %d direct-managed table asset(s)."),
+		CsvOriginCount,
+		DirectManagedCount);
+
+	if (!Errors.IsEmpty())
+	{
+		OutReport += LINE_TERMINATOR;
+		OutReport += FString::Join(Errors, LINE_TERMINATOR);
+	}
+
+	if (Errors.IsEmpty())
+	{
+		if (UMVTableManager* TableManager = UMVTableManager::Get())
+		{
+			TableManager->ReloadAllTables();
+		}
+	}
+
+	return Errors.IsEmpty();
+#else
+	OutReport = TEXT("Table manifest refresh is editor-only.");
 	return false;
 #endif
 }
@@ -451,44 +823,43 @@ bool UMVTableAssetGenerator::RunCsvConverter(FString& OutLog)
 bool UMVTableAssetGenerator::ValidateCharacterStatMapping(TArray<FString>& OutErrors)
 {
 	const FString JsonDir = GetJsonDir();
-	TSet<int32> CharacterIndexIds;
-	TSet<int32> CharacterStatIds;
+	TSet<FString> CharacterIndexCodes;
+	TSet<FString> CharacterStatCodes;
 
-	const bool bLoadedCharacterIndex = TableAssetGeneratorReadIntegerKeySet(
+	const bool bLoadedCharacterIndex = TableAssetGeneratorReadStringKeySet(
 		JsonDir / TEXT("CharacterIndex.json"),
 		TEXT("CharacterIndex"),
-		TEXT("CharacterIndexId"),
-		CharacterIndexIds,
+		TEXT("CharacterIndexCode"),
+		CharacterIndexCodes,
 		OutErrors);
-	const bool bLoadedCharacterStat = TableAssetGeneratorReadIntegerKeySet(
+	const bool bLoadedCharacterStat = TableAssetGeneratorReadStringKeySet(
 		JsonDir / TEXT("CharacterStat.json"),
 		TEXT("CharacterStat"),
-		TEXT("StatId"),
-		CharacterStatIds,
+		TEXT("CharacterIndexCode"),
+		CharacterStatCodes,
 		OutErrors);
 	if (!bLoadedCharacterIndex || !bLoadedCharacterStat)
 	{
 		return false;
 	}
 
-	for (const int32 CharacterIndexId : CharacterIndexIds)
+	for (const FString& CharacterIndexCode : CharacterIndexCodes)
 	{
-		if (!CharacterStatIds.Contains(CharacterIndexId))
+		if (!CharacterStatCodes.Contains(CharacterIndexCode))
 		{
 			OutErrors.Add(FString::Printf(
-				TEXT("CharacterStat is missing StatId %d for CharacterIndexId %d."),
-				CharacterIndexId,
-				CharacterIndexId));
+				TEXT("CharacterStat is missing CharacterIndexCode '%s'."),
+				*CharacterIndexCode));
 		}
 	}
 
-	for (const int32 StatId : CharacterStatIds)
+	for (const FString& CharacterStatCode : CharacterStatCodes)
 	{
-		if (!CharacterIndexIds.Contains(StatId))
+		if (!CharacterIndexCodes.Contains(CharacterStatCode))
 		{
 			OutErrors.Add(FString::Printf(
-				TEXT("CharacterStat has StatId %d with no matching CharacterIndexId."),
-				StatId));
+				TEXT("CharacterStat has CharacterIndexCode '%s' with no matching CharacterIndex row."),
+				*CharacterStatCode));
 		}
 	}
 
@@ -505,21 +876,130 @@ int32 UMVTableAssetGenerator::ImportAllJsonFiles(TArray<FMVTableManifestRow>& Ou
 	}
 
 	TArray<FString> JsonFiles;
-	IFileManager::Get().FindFiles(JsonFiles, *(JsonDir / TEXT("*.json")), true, false);
+	IFileManager::Get().FindFilesRecursive(JsonFiles, *JsonDir, TEXT("*.json"), true, false);
 	JsonFiles.Sort();
 
 	int32 ImportedCount = 0;
-	for (const FString& FileName : JsonFiles)
+	for (const FString& JsonPath : JsonFiles)
 	{
-		if (FileName.Equals(TEXT("SheetRecipe.json"), ESearchCase::IgnoreCase))
+		if (FPaths::GetCleanFilename(JsonPath).Equals(TEXT("SheetRecipe.json"), ESearchCase::IgnoreCase))
+		{
+			continue;
+		}
+		if (TableAssetGeneratorIsDirectManagedJsonPath(JsonPath))
 		{
 			continue;
 		}
 
-		ImportedCount += ImportJsonFile(JsonDir / FileName, OutTableManifestRows, OutErrors);
+		ImportedCount += ImportJsonFile(JsonPath, OutTableManifestRows, OutErrors);
 	}
 
 	return ImportedCount;
+}
+
+int32 UMVTableAssetGenerator::BuildCsvOriginManifestRows(
+	TArray<FMVTableManifestRow>& OutTableManifestRows,
+	TArray<FString>& OutErrors)
+{
+	const FString JsonDir = GetJsonDir();
+	if (!IFileManager::Get().DirectoryExists(*JsonDir))
+	{
+		OutErrors.Add(FString::Printf(TEXT("Json directory not found: %s"), *JsonDir));
+		return 0;
+	}
+
+	TArray<FString> JsonFiles;
+	IFileManager::Get().FindFilesRecursive(JsonFiles, *JsonDir, TEXT("*.json"), true, false);
+	JsonFiles.Sort();
+
+	int32 RegisteredCount = 0;
+	for (const FString& JsonPath : JsonFiles)
+	{
+		if (FPaths::GetCleanFilename(JsonPath).Equals(TEXT("SheetRecipe.json"), ESearchCase::IgnoreCase))
+		{
+			continue;
+		}
+		if (TableAssetGeneratorIsDirectManagedJsonPath(JsonPath))
+		{
+			continue;
+		}
+
+		RegisteredCount += BuildCsvOriginManifestRowsFromJsonFile(JsonPath, OutTableManifestRows, OutErrors);
+	}
+
+	return RegisteredCount;
+}
+
+int32 UMVTableAssetGenerator::BuildCsvOriginManifestRowsFromJsonFile(
+	const FString& JsonPath,
+	TArray<FMVTableManifestRow>& OutTableManifestRows,
+	TArray<FString>& OutErrors)
+{
+	FString Raw;
+	if (!FFileHelper::LoadFileToString(Raw, *JsonPath))
+	{
+		OutErrors.Add(FString::Printf(TEXT("Cannot read JSON: %s"), *JsonPath));
+		return 0;
+	}
+
+	TSharedPtr<FJsonObject> Root;
+	const TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(Raw);
+	if (!FJsonSerializer::Deserialize(Reader, Root) || !Root.IsValid())
+	{
+		OutErrors.Add(FString::Printf(TEXT("Invalid JSON: %s"), *JsonPath));
+		return 0;
+	}
+
+	TSharedPtr<FJsonObject> TablesObject;
+	if (!TryGetObjectField(Root, TEXT("tables"), TablesObject))
+	{
+		return 0;
+	}
+
+	int32 RegisteredCount = 0;
+	for (const TPair<FString, TSharedPtr<FJsonValue>>& Pair : TablesObject->Values)
+	{
+		if (!Pair.Value.IsValid() || Pair.Value->Type != EJson::Object)
+		{
+			OutErrors.Add(FString::Printf(TEXT("%s: table '%s' is not an object."), *JsonPath, *Pair.Key));
+			continue;
+		}
+
+		const TSharedPtr<FJsonObject> TableObject = Pair.Value->AsObject();
+		FString KeyColumnName;
+		if (!TryGetStringField(TableObject, TEXT("key"), KeyColumnName))
+		{
+			OutErrors.Add(FString::Printf(TEXT("%s: table '%s' has no key field."), *JsonPath, *Pair.Key));
+			continue;
+		}
+
+		const FString AssetName = ToTableAssetName(Pair.Key);
+		const FString PackagePath = ToTablePackagePath(Pair.Key);
+		const FString AssetPath = FString::Printf(TEXT("%s.%s"), *PackagePath, *AssetName);
+		UDataTable* DataTable = LoadObject<UDataTable>(nullptr, *AssetPath);
+		if (!DataTable)
+		{
+			OutErrors.Add(FString::Printf(
+				TEXT("CSV-originated table asset not found for '%s': %s"),
+				*Pair.Key,
+				*AssetPath));
+			continue;
+		}
+
+		FMVTableManifestRow ManifestRow;
+		FString Error;
+		if (BuildManifestRowForDataTable(Pair.Key, DataTable, KeyColumnName, ManifestRow, Error)
+			&& TableAssetGeneratorAddManifestRow(OutTableManifestRows, ManifestRow, OutErrors))
+		{
+			++RegisteredCount;
+		}
+		else if (!Error.IsEmpty())
+		{
+			OutErrors.Add(Error);
+		}
+	}
+
+	return RegisteredCount;
 }
 
 int32 UMVTableAssetGenerator::ImportJsonFile(
@@ -579,8 +1059,10 @@ int32 UMVTableAssetGenerator::ImportJsonFile(
 			FMVTableManifestRow ManifestRow;
 			if (BuildAndSaveDataTable(Pair.Key, *Spec, *JsonRows, ManifestRow, Error))
 			{
-				OutTableManifestRows.Add(ManifestRow);
-				++ImportedCount;
+				if (TableAssetGeneratorAddManifestRow(OutTableManifestRows, ManifestRow, OutErrors))
+				{
+					++ImportedCount;
+				}
 			}
 			else
 			{
@@ -609,8 +1091,10 @@ int32 UMVTableAssetGenerator::ImportJsonFile(
 		FMVTableManifestRow ManifestRow;
 		if (BuildAndSaveDataTable(Pair.Key, *Spec, Pair.Value->AsArray(), ManifestRow, Error))
 		{
-			OutTableManifestRows.Add(ManifestRow);
-			++ImportedCount;
+			if (TableAssetGeneratorAddManifestRow(OutTableManifestRows, ManifestRow, OutErrors))
+			{
+				++ImportedCount;
+			}
 		}
 		else
 		{
@@ -619,6 +1103,104 @@ int32 UMVTableAssetGenerator::ImportJsonFile(
 	}
 
 	return ImportedCount;
+}
+
+int32 UMVTableAssetGenerator::ScanDirectManagedDataTables(
+	TArray<FMVTableManifestRow>& OutTableManifestRows,
+	TArray<FString>& OutErrors)
+{
+	FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>(TEXT("AssetRegistry"));
+
+	int32 RegisteredCount = 0;
+	for (const TCHAR* Root : DirectManagedTablePackageRoots)
+	{
+		TArray<FString> PathsToScan;
+		PathsToScan.Add(Root);
+		AssetRegistryModule.Get().ScanPathsSynchronous(PathsToScan, true);
+
+		FARFilter Filter;
+		Filter.PackagePaths.Add(FName(Root));
+		Filter.ClassPaths.Add(UDataTable::StaticClass()->GetClassPathName());
+		Filter.bRecursivePaths = true;
+
+		TArray<FAssetData> Assets;
+		AssetRegistryModule.Get().GetAssets(Filter, Assets);
+		Assets.Sort([](const FAssetData& Left, const FAssetData& Right)
+		{
+			return Left.PackageName.LexicalLess(Right.PackageName);
+		});
+
+		for (const FAssetData& Asset : Assets)
+		{
+			const FString AssetName = Asset.AssetName.ToString();
+			if (AssetName.Equals(ManifestAssetName, ESearchCase::IgnoreCase))
+			{
+				continue;
+			}
+
+			FString TableName = AssetName;
+			TableName.RemoveFromStart(TEXT("DT_"));
+			if (TableName.IsEmpty())
+			{
+				OutErrors.Add(FString::Printf(TEXT("Direct-managed DataTable has invalid asset name: %s"), *AssetName));
+				continue;
+			}
+
+			UDataTable* DataTable = Cast<UDataTable>(Asset.GetAsset());
+			if (!DataTable)
+			{
+				OutErrors.Add(FString::Printf(
+					TEXT("Failed to load direct-managed DataTable '%s'."),
+					*Asset.GetSoftObjectPath().ToString()));
+				continue;
+			}
+
+			FMVTableManifestRow ManifestRow;
+			FString Error;
+			if (BuildManifestRowForDataTable(TableName, DataTable, FString(), ManifestRow, Error)
+				&& TableAssetGeneratorAddManifestRow(OutTableManifestRows, ManifestRow, OutErrors))
+			{
+				++RegisteredCount;
+			}
+			else if (!Error.IsEmpty())
+			{
+				OutErrors.Add(Error);
+			}
+		}
+	}
+
+	return RegisteredCount;
+}
+
+bool UMVTableAssetGenerator::BuildManifestRowForDataTable(
+	const FString& TableName,
+	UDataTable* DataTable,
+	const FString& KeyColumnName,
+	FMVTableManifestRow& OutManifestRow,
+	FString& OutError)
+{
+	if (TableName.IsEmpty())
+	{
+		OutError = TEXT("TableName is empty.");
+		return false;
+	}
+	if (!DataTable)
+	{
+		OutError = FString::Printf(TEXT("%s: DataTable is null."), *TableName);
+		return false;
+	}
+	if (!DataTable->GetRowStruct())
+	{
+		OutError = FString::Printf(TEXT("%s: RowStruct is null."), *TableName);
+		return false;
+	}
+
+	OutManifestRow.TableName = FName(*TableName);
+	OutManifestRow.AssetPath = DataTable->GetPathName();
+	OutManifestRow.KeyColumnName = TableAssetGeneratorResolveKeyColumnName(DataTable->GetRowStruct(), KeyColumnName);
+	OutManifestRow.RowStructName = DataTable->GetRowStruct()->GetName();
+	OutManifestRow.bGenericFallback = DataTable->GetRowStruct() == FMVGenericTableRow::StaticStruct();
+	return true;
 }
 
 bool UMVTableAssetGenerator::BuildAndSaveDataTable(
@@ -636,6 +1218,20 @@ bool UMVTableAssetGenerator::BuildAndSaveDataTable(
 
 	const FString AssetName = ToTableAssetName(TableName);
 	const FString PackagePath = ToTablePackagePath(TableName);
+	const FString SourceHash = TableAssetGeneratorBuildGeneratedTableHash(TableName, Spec, JsonRows);
+	if (UDataTable* ExistingDataTable = FindExistingDataTable(AssetName, PackagePath))
+	{
+		if (TableAssetGeneratorCanReuseDataTable(ExistingDataTable, Spec.RowStruct, SourceHash))
+		{
+			OutManifestRow.TableName = FName(*TableName);
+			OutManifestRow.AssetPath = FString::Printf(TEXT("%s.%s"), *PackagePath, *AssetName);
+			OutManifestRow.KeyColumnName = Spec.KeyColumnName;
+			OutManifestRow.RowStructName = Spec.RowStruct->GetName();
+			OutManifestRow.bGenericFallback = Spec.bGenericFallback;
+			return true;
+		}
+	}
+
 	UDataTable* DataTable = CreateOrResetDataTable(AssetName, PackagePath, Spec.RowStruct);
 	if (!DataTable)
 	{
@@ -717,6 +1313,7 @@ bool UMVTableAssetGenerator::BuildAndSaveDataTable(
 		FMemory::Free(RowMemory);
 	}
 
+	TableAssetGeneratorWriteStoredSourceHash(DataTable, SourceHash);
 	DataTable->MarkPackageDirty();
 
 	if (!SaveDataTableAsset(DataTable, PackagePath, OutError))
@@ -734,6 +1331,15 @@ bool UMVTableAssetGenerator::BuildAndSaveDataTable(
 
 bool UMVTableAssetGenerator::SaveManifest(const TArray<FMVTableManifestRow>& ManifestRows, FString& OutError)
 {
+	const FString SourceHash = TableAssetGeneratorBuildManifestHash(ManifestRows);
+	if (UDataTable* ExistingManifest = FindExistingDataTable(ManifestAssetName, ManifestPackagePath))
+	{
+		if (TableAssetGeneratorCanReuseDataTable(ExistingManifest, FMVTableManifestRow::StaticStruct(), SourceHash))
+		{
+			return true;
+		}
+	}
+
 	UDataTable* Manifest = CreateOrResetDataTable(
 		ManifestAssetName,
 		ManifestPackagePath,
@@ -749,6 +1355,7 @@ bool UMVTableAssetGenerator::SaveManifest(const TArray<FMVTableManifestRow>& Man
 		Manifest->AddRow(Row.TableName, Row);
 	}
 
+	TableAssetGeneratorWriteStoredSourceHash(Manifest, SourceHash);
 	Manifest->MarkPackageDirty();
 	return SaveDataTableAsset(Manifest, ManifestPackagePath, OutError);
 }
@@ -775,6 +1382,10 @@ void UMVTableAssetGenerator::DeleteStaleGeneratedAssets(
 	{
 		const FMVTableManifestRow* ExistingRow = reinterpret_cast<const FMVTableManifestRow*>(Pair.Value);
 		if (!ExistingRow || ExistingRow->AssetPath.IsEmpty() || NewAssetPaths.Contains(ExistingRow->AssetPath))
+		{
+			continue;
+		}
+		if (TableAssetGeneratorIsDirectManagedObjectPath(ExistingRow->AssetPath))
 		{
 			continue;
 		}
