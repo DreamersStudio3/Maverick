@@ -1,6 +1,7 @@
 #include "System/MVRespawnSubsystem.h"
 
 #include "Character/MVCharacterBase.h"
+#include "Components/MVDeathComponent.h"
 #include "Components/MVStatComponent.h"
 #include "EngineUtils.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -214,14 +215,30 @@ void UMVRespawnSubsystem::HandleWorldInit(UWorld* World, const UWorld::Initializ
 void UMVRespawnSubsystem::BindToPlayerDeath(UWorld* World)
 {
 	AMVCharacterBase* Character = ResolvePlayerCharacter(World);
-	UMVStatComponent* StatComponent = Character ? Character->StatComponent.Get() : nullptr;
-	if (!StatComponent)
+	UMVDeathComponent* DeathComponent = Character ? Character->DeathComponent.Get() : nullptr;
+	if (!DeathComponent)
 	{
 		return;
 	}
 
-	StatComponent->OnDead.RemoveDynamic(this, &UMVRespawnSubsystem::HandlePlayerDeath);
-	StatComponent->OnDead.AddUniqueDynamic(this, &UMVRespawnSubsystem::HandlePlayerDeath);
+	DeathComponent->OnDeathPresentationStarted.RemoveDynamic(
+		this,
+		&UMVRespawnSubsystem::HandlePlayerDeathPresentationStarted);
+	DeathComponent->OnDeathPresentationStarted.AddUniqueDynamic(
+		this,
+		&UMVRespawnSubsystem::HandlePlayerDeathPresentationStarted);
+	DeathComponent->OnDeathDissolveStarted.RemoveDynamic(
+		this,
+		&UMVRespawnSubsystem::HandlePlayerDeathDissolveStarted);
+	DeathComponent->OnDeathDissolveStarted.AddUniqueDynamic(
+		this,
+		&UMVRespawnSubsystem::HandlePlayerDeathDissolveStarted);
+	DeathComponent->OnDeathPresentationFinished.RemoveDynamic(
+		this,
+		&UMVRespawnSubsystem::HandlePlayerDeathPresentationFinished);
+	DeathComponent->OnDeathPresentationFinished.AddUniqueDynamic(
+		this,
+		&UMVRespawnSubsystem::HandlePlayerDeathPresentationFinished);
 }
 
 void UMVRespawnSubsystem::SetRespawnPhase(const EMVRespawnPhase NewPhase)
@@ -377,6 +394,11 @@ bool UMVRespawnSubsystem::RespawnPlayerAtLastCheckpoint()
 		return false;
 	}
 
+	if (Character->DeathComponent)
+	{
+		Character->DeathComponent->ResetDeathPresentationForRespawn();
+	}
+
 	if (UMVWorldStateSubsystem* WorldState = GetWorldState())
 	{
 		FMVCheckpointSaveData Checkpoint;
@@ -429,9 +451,19 @@ UMVUISubsystem* UMVRespawnSubsystem::GetUISubsystem() const
 	return GameInstance ? GameInstance->GetSubsystem<UMVUISubsystem>() : nullptr;
 }
 
-void UMVRespawnSubsystem::HandlePlayerDeath()
+void UMVRespawnSubsystem::HandlePlayerDeathPresentationStarted(AActor* DeadActor)
 {
-	BeginDeathSequence(ResolvePlayerCharacter(GetWorld()));
+	BeginDeathSequence(DeadActor);
+}
+
+void UMVRespawnSubsystem::HandlePlayerDeathDissolveStarted(AActor* /*DeadActor*/)
+{
+	NotifyDeathDissolveStarted();
+}
+
+void UMVRespawnSubsystem::HandlePlayerDeathPresentationFinished(AActor* /*DeadActor*/)
+{
+	NotifyDeathMontageEnded();
 }
 
 void UMVRespawnSubsystem::HandleDeathOverlayMinimumDisplayElapsed()

@@ -6,7 +6,7 @@
 
 namespace
 {
-UMVHitReactionComponent* FindHitReactionDefaultRecoveryComponent(const USkeletalMeshComponent* MeshComp)
+UMVHitReactionComponent* FindHitReactionStartGetupComponent(const USkeletalMeshComponent* MeshComp)
 {
 	AActor* Owner = MeshComp ? MeshComp->GetOwner() : nullptr;
 	return Owner ? Owner->FindComponentByClass<UMVHitReactionComponent>() : nullptr;
@@ -20,7 +20,7 @@ void UMVAnimNotify_HitReactionDefaultRecovery::Notify(
 {
 	Super::Notify(MeshComp, Animation, EventReference);
 
-	if (UMVHitReactionComponent* HitReactionComponent = FindHitReactionDefaultRecoveryComponent(MeshComp))
+	if (UMVHitReactionComponent* HitReactionComponent = FindHitReactionStartGetupComponent(MeshComp))
 	{
 		HitReactionComponent->RequestDefaultRecoveryAction();
 	}
@@ -28,5 +28,5 @@ void UMVAnimNotify_HitReactionDefaultRecovery::Notify(
 
 FString UMVAnimNotify_HitReactionDefaultRecovery::GetNotifyName_Implementation() const
 {
-	return TEXT("HitReaction Default Recovery");
+	return TEXT("HitReaction Start Getup");
 }

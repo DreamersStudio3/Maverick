@@ -107,6 +107,9 @@ public:
 	void HandleDamaged(const FMVResolvedHitData& HitData);
 
 	UFUNCTION(BlueprintPure, Category = "Maverick|Stat|Death")
+	bool WouldDieFromHit(const FMVResolvedHitData& HitData) const;
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|Stat|Death")
 	bool IsDead() const { return bIsDead; }
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Death")

@@ -4,6 +4,7 @@
 #include "Character/MVCharacterBase.h"
 
 #include "Components/MVActionComponent.h"
+#include "Components/MVDeathComponent.h"
 #include "Components/MVDodgeComponent.h"
 #include "Components/MVHitReactionComponent.h"
 #include "Components/MVInputManagerComponent.h"
@@ -88,6 +89,7 @@ AMVCharacterBase::AMVCharacterBase()
 	StatComponent = CreateDefaultSubobject<UMVStatComponent>(TEXT("StatComponent"));
 	ActionComponent = CreateDefaultSubobject<UMVActionComponent>(TEXT("ActionComponent"));
 	DodgeComponent = CreateDefaultSubobject<UMVDodgeComponent>(TEXT("DodgeComponent"));
+	DeathComponent = CreateDefaultSubobject<UMVDeathComponent>(TEXT("DeathComponent"));
 	HitReactionComponent = CreateDefaultSubobject<UMVHitReactionComponent>(TEXT("HitReactionComponent"));
 	InputManagerComponent = CreateDefaultSubobject<UMVInputManagerComponent>(TEXT("InputManagerComponent"));
 	CharacterIndexCode = MVGameplayTags::Character_Player_P1;
@@ -332,16 +334,24 @@ void AMVCharacterBase::ApplyCharacterIndexCodeToComponents()
 
 void AMVCharacterBase::BindDamageHandlers()
 {
+	if (HitReactionComponent)
+	{
+		OnDamaged.RemoveDynamic(HitReactionComponent, &UMVHitReactionComponent::HandleDamaged);
+	}
+
 	if (StatComponent)
 	{
 		OnDamaged.RemoveDynamic(StatComponent, &UMVStatComponent::HandleDamaged);
-		OnDamaged.AddUniqueDynamic(StatComponent, &UMVStatComponent::HandleDamaged);
 	}
 
 	if (HitReactionComponent)
 	{
-		OnDamaged.RemoveDynamic(HitReactionComponent, &UMVHitReactionComponent::HandleDamaged);
 		OnDamaged.AddUniqueDynamic(HitReactionComponent, &UMVHitReactionComponent::HandleDamaged);
+	}
+
+	if (StatComponent)
+	{
+		OnDamaged.AddUniqueDynamic(StatComponent, &UMVStatComponent::HandleDamaged);
 	}
 }
 

@@ -105,21 +105,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|HitReaction|Table")
 	FName HitReactionActionTableName = NAME_None;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|HitReaction|Death")
-	FDataTableRowHandle DeathActionRow;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|HitReaction|Death")
-	FName DeathActionTableName = NAME_None;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|HitReaction|Death", meta = (ClampMin = "1"))
-	int32 DefaultDeathActionRowIndex = 1;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|HitReaction|Death")
-	bool bCancelActiveActionBeforeDeath = true;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|HitReaction|Death", meta = (ClampMin = "0.0"))
-	float DeathActionCancelBlendOutTime = 0.05f;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|HitReaction|Airborne")
 	FName AirborneLandSectionName = TEXT("Land");
 
@@ -148,9 +133,7 @@ private:
 	void CacheOwnerReferences();
 	void BindInputManagerHandlers();
 	void BindActionComponentHandlers();
-	void BindStatComponentHandlers();
 	bool GetActionData(const FMVResolvedHitData& HitData, FMVHitReactionActionData& OutActionData);
-	bool TryStartDeathAction(const FMVDeathContext& DeathContext);
 	void ApplyHitReactionLaunch(const FMVResolvedHitData& HitData, const FMVHitReactionActionRow& ActionRow);
 	bool TryConsumeBufferedRecoveryInput();
 	bool TryConsumeBufferedRecoveryMovementInput();
@@ -173,19 +156,15 @@ private:
 	void TryJumpAirborneLandSection();
 	bool TryCancelActiveRecoveryAction();
 	bool ResolveRecoveryActionRowHandle(FName ActionRowName, FDataTableRowHandle& OutActionRowHandle) const;
-	bool ResolveDeathActionRowHandle(const FMVDeathContext& DeathContext, FDataTableRowHandle& OutActionRowHandle) const;
 	bool ResolveHitReactionActionRowHandle(
 		EMVActionHitReactionType HitReactionType,
 		EMVHitReactionDirection Direction,
 		FMVHitReactionActionRowHandle& OutActionRowHandle);
 	FName ResolveHitReactionActionTableName() const;
-	FName ResolveDeathActionTableName() const;
 	EMVHitReactionDirection ResolveSupportedHitReactionDirection(
 		EMVActionHitReactionType HitReactionType,
 		EMVHitReactionDirection Direction) const;
 	FName MakeHitReactionActionTableName(FGameplayTag CharacterIndexCode) const;
-	FName MakeDeathActionTableName(FGameplayTag CharacterIndexCode) const;
-	FName MakeDeathActionRowName(FGameplayTag CharacterIndexCode, EMVHitReactionDirection Direction, int32 Index) const;
 	FName MakeHitReactionActionRowName(
 		FGameplayTag CharacterIndexCode,
 		EMVActionHitReactionType HitReactionType,
@@ -219,9 +198,6 @@ private:
 	UFUNCTION()
 	void HandleOwnerMovementModeChanged(ACharacter* Character, EMovementMode PrevMovementMode, uint8 PreviousCustomMode);
 
-	UFUNCTION()
-	void HandleDeathStarted(const FMVDeathContext& DeathContext);
-
 	UPROPERTY(Transient)
 	TObjectPtr<AMVCharacterBase> OwnerCharacter;
 
@@ -238,7 +214,6 @@ private:
 	EMVActionHitReactionType ActiveHitReactionType = EMVActionHitReactionType::None;
 	EMVHitReactionDirection ActiveHitReactionDirection = EMVHitReactionDirection::Front;
 	bool bActiveHitReactionActionIsRecoveryAction = false;
-	FName ActiveDeathActionRowName = NAME_None;
 	int32 AirborneLandDetectorCount = 0;
 	bool bAirborneMovementModeDelegateBound = false;
 	bool bAirborneLandDetectorSawFalling = false;

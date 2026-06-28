@@ -140,6 +140,22 @@ void UMVStatComponent::HandleDamaged(const FMVResolvedHitData& HitData)
 	}
 }
 
+bool UMVStatComponent::WouldDieFromHit(const FMVResolvedHitData& HitData) const
+{
+	if (bIsDead)
+	{
+		return true;
+	}
+
+	if (HitData.VictimCharacterIndexCode.IsValid() && HitData.VictimCharacterIndexCode != CharacterIndexCode)
+	{
+		return false;
+	}
+
+	const float HPDamage = MVStatNonNegative(HitData.FinalDamage);
+	return HPDamage > 0.0f && CurrentHP > 0.0f && CurrentHP - HPDamage <= 0.0f;
+}
+
 void UMVStatComponent::TickRecoverableStats(float DeltaTime)
 {
 	if (DeltaTime <= 0.0f || IsRecoverableStatRecoveryPaused())

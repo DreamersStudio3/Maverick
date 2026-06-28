@@ -14,8 +14,17 @@ HP가 0이 된 순간부터 사망 액션, 디졸브, 사망 오버레이, 로�
 - [x] `UMVDeathOverlayWindow`와 `UMVLoadingWindow` 클래스는 존재한다.
 - [x] 사망 이벤트에는 마지막 피격 문맥이 포함되어 있다.
 - [x] 사망 중 look을 제외한 캐릭터 이동/액션 입력 제한 정책을 추가했다.
-- [x] 사망 액션 row 선택과 디졸브 notify 골격을 추가했다.
+- [x] `UMVDeathComponent`가 사망 액션 row 선택과 actor-local 사망 표현을 담당하게 분리했다.
+- [x] 사망 디졸브 notify가 `UMVDeathComponent`에 cue를 전달하게 수정했다.
+- [x] 사망 액션 row 명명 규칙을 `Stand`, `Down`, `Land_Light`, `Land_Heavy` 체계로 확장했다.
+- [x] 낙사 사망 모션 선택 기준을 착지 속도가 아니라 낙하 높이로 잡았다.
+- [x] lethal standing hit은 HitReaction을 생략하고 바로 Death_Stand로 넘어가게 했다.
+- [x] lethal KD/AB hit은 HitReaction을 먼저 재생하고 DeathComponent가 handoff 뒤 사망 표현을 시작하게 했다.
+- [x] KD/AB lethal hit은 Lying 진입 전 `MV HitReaction Death Handoff` notify에서 DeathComponent가 death action으로 전환할 수 있게 했다.
+- [x] 사망 흐름의 컴포넌트별 책임과 DeathComponent의 입력/출력/상태 전환 계약을 문서화했다.
 - [x] 로딩 초기화 진행률 이벤트와 LoadingWindow progress API가 있다.
+- [ ] PIE 재확인: lethal Airborne hit이 Land까지 재생된 뒤 death handoff 없이 Getup으로 빠지는 문제가 남아 있다. 최신 로그에서는 이전 `CHT_HitReaction` context 오류는 사라졌지만, DeathComponent/HitReaction handoff 관련 커스텀 로그가 없어 HP 0 이벤트, notify 순서, dead state 차단 중 어느 지점에서 끊기는지 추가 계측이 필요하다.
+- [ ] KD/AB 몽타주의 Lying 섹션 진입 직전에 `MV HitReaction Death Handoff` notify를 배치한다.
 - [ ] 도움말 카드 UI와 실제 필드 액터 리셋 정책 적용은 아직 없다.
 
 ## UI 흐름
@@ -30,8 +39,8 @@ HP가 0이 된 순간부터 사망 액션, 디졸브, 사망 오버레이, 로�
 - [x] Death overlay는 이동 입력을 막되 look 입력은 막지 않는다.
 - [x] Death overlay는 타이머가 끝났다는 이유만으로 `LoadingWindow`를 직접 열지 않는다.
 - [x] Death overlay는 1초 fade in/out을 사용하고, 최소 표시 시간은 fade in 완료 뒤부터 계산한다.
-- [x] 디졸브 시작 notify에서 `UMVRespawnSubsystem::NotifyDeathDissolveStarted()`를 호출한다.
-- [x] 사망 몽타주 종료 이벤트에서 `UMVRespawnSubsystem::NotifyDeathMontageEnded()`를 호출한다.
+- [x] 디졸브 시작 notify에서 `UMVDeathComponent::NotifyDeathDissolveStarted()`를 호출한다.
+- [x] 사망 몽타주 종료 이벤트에서 `UMVDeathComponent`가 `OnDeathPresentationFinished`를 발행한다.
 
 ### LoadingWindow
 
@@ -123,7 +132,7 @@ HP가 0이 된 순간부터 사망 액션, 디졸브, 사망 오버레이, 로�
 - [x] GameGuide DataTable row 구조와 recipe를 추가한다.
 - [x] `UMVStatComponent` 사망 이벤트에 dead state와 사망 문맥을 추가한다.
 - [x] 사망 중 look 외 입력 차단 게이트를 추가한다.
-- [x] `UMVHitReactionComponent`가 사망 이벤트로 death row를 선택해 `UMVActionComponent`에 전달하게 한다.
+- [x] `UMVDeathComponent`가 사망 이벤트로 death row를 선택해 `UMVActionComponent`에 전달하게 한다.
 - [x] 사망 디졸브 notify를 추가한다.
 - [ ] dissolve component를 추가한다.
 - [x] `UMVWorldStateSubsystem` 저장/로드 골격을 추가한다.
@@ -131,4 +140,8 @@ HP가 0이 된 순간부터 사망 액션, 디졸브, 사망 오버레이, 로�
 - [x] `UMVQuestSubsystem`이 WorldState에 요청하는 구조를 추가한다.
 - [x] LoadingWindow progress API를 추가한다.
 - [x] 사망 로딩 중 월드 actor 리셋을 요청하는 `MVRespawnResettableInterface` 계약을 추가한다.
+- [x] `UMVHitReactionComponent`에서 death action과 RespawnSubsystem 직접 호출 책임을 제거한다.
+- [x] lethal standing hit은 HitReaction 없이 DeathComponent가 death action을 즉시 시작하게 한다.
+- [x] lethal KD/AB hit에서 활성 HitReaction 완료 또는 handoff 뒤 DeathComponent가 death action을 시작하게 한다.
+- [x] KD/AB lethal hit에서 Lying 진입 직전 death action으로 넘기는 handoff notify를 추가한다.
 - [ ] LoadingWindow card UI를 구현한다.

@@ -52,22 +52,26 @@ HitReaction 테이블은 CSV 생성 체인에서 빼고 `Content/Table/HitReacti
 - [x] 이동 입력은 HitReactionComponent가 이벤트로 직접 소비하지 않고, Recovery window가 열리는 순간 InputManager에 저장된 최근 이동 입력을 조회해 SH/LH는 현재 HitReaction 취소, KD/AB는 별도 `EscapeDodge` recovery 액션으로 소비한다.
 - [x] SmallHit/LargeHit은 넘어지는 리액션이 아니므로 Getup/EscapeDodge 섹션을 찾지 않고, Recovery window 안에서 이동 또는 Dodge 입력이 있으면 현재 피격 몽타주를 직접 cancel한다.
 - [x] KnockDown/Airborne은 Recovery window 안에 저장된 입력이 있으면 별도 `EscapeDodge` recovery 액션으로 전환한다.
-- [x] KD/AB 본 리액션은 상태 표현까지만 담당하고, Recovery window 안에서 입력이 없으면 별도 `MV HitReaction Default Recovery` Notify가 Getup row로 전환한다.
+- [x] KD/AB 본 리액션은 상태 표현까지만 담당하고, Recovery window 안에서 입력이 없으면 별도 `MV HitReaction Start Getup` Notify가 Getup row로 전환한다.
 - [x] Getup/EscapeDodge recovery 액션도 active HR recovery row로 추적해, 해당 몽타주의 Recovery window에서 이동 입력은 직접 cancel하고 Dodge 입력은 DodgeComponent 전환으로 넘긴다.
 - [x] HR EscapeDodge 시작 직전 actor yaw를 컨트롤러 기준 yaw로 맞춰, 누운 방향과 무관하게 F/L/R/B 입력 방향이 컨트롤러 기준으로 적용되게 한다.
-- [x] `CHT_HitReaction`은 `MVHitReactionComponent`를 0번 context로 받으므로 Chooser 평가 context도 component 우선, owner 후순위로 전달한다.
+- [x] `CHT_HitReaction`은 0번 context로 `MVHitReactionComponent`, 1번 context로 `FMVHitReactionActionRowHandle` output struct를 받는다.
 - [x] `CHT_HitReaction`은 여러 HitReaction DataTable 중 최종 row를 `FMVHitReactionActionRowHandle` Output Struct Column으로 반환한다.
 - [x] 이미 HitReaction 액션이 재생 중이면 recovery window 밖에서는 추가 HitReaction으로 현재 몽타주를 끊지 않는다.
 - [x] HitReaction row의 launch 필드를 실제 `LaunchCharacter` 호출에 연결한다.
 - [x] Airborne `Fall` 루프 구간용 `MV Airborne Land Detector` NotifyState를 추가하고, 착지 시 `Land` 섹션으로 점프하게 한다.
-- [x] Airborne 몽타주는 착지 후 `Land -> Lying` 섹션 순서로 이어지고, `Lying` 구간의 Recovery window는 EscapeDodge 입력만 받으며 `MV HitReaction Default Recovery` Notify에서 Getup 전환을 처리한다.
+- [x] Airborne 몽타주는 착지 후 `Land -> Lying` 섹션 순서로 이어지고, `Lying` 구간의 Recovery window는 EscapeDodge 입력만 받으며 `MV HitReaction Start Getup` Notify에서 Getup 전환을 처리한다.
+- [x] lethal standing hit은 HitReaction을 생략하고, lethal KD/AB hit만 HitReaction을 먼저 재생한다.
+- [x] KD/AB lethal hit은 `Lying` 섹션 진입 전 `MV HitReaction Death Handoff` Notify로 DeathComponent에 넘길 수 있게 한다.
 - [x] `CHT_Dodge`는 조건을 통과한 최종 `FMVDodgeActionRowHandle`을 Output Struct Column으로 DodgeComponent에 기록하고, DodgeComponent가 해당 row를 실행한다.
 - [x] Sprint는 Chooser를 쓰지 않고 단일 `DT_Sprint` 또는 직접 지정된 `FDataTableRowHandle`에서 row를 읽는다.
 - [ ] InputManager 입력 이벤트 소비/우선순위 정책을 추가해 HitReaction/Combat/Dodge 중 하나가 입력을 소비하면 나머지 도메인이 중복 실행하지 않게 한다.
 - [ ] 프로젝트 입력 바인딩에서 Dodge/Combat 입력을 `InputManagerComponent.SubmitActionInput`으로 연결한다.
 - [ ] 모든 HitReaction 몽타주에서 입력을 받을 리커버리/팔로쓰루 구간에 `MV Recovery Escape Window` NotifyState를 배치한다.
 - [ ] Airborne 몽타주의 `Fall` 루프 구간에 `MV Airborne Land Detector` NotifyState를 배치한다.
-- [ ] KnockDown/Airborne의 기본 Getup handoff 프레임에 `MV HitReaction Default Recovery` Notify를 배치한다.
+- [ ] KnockDown/Airborne 몽타주의 `Lying` 섹션 진입 직전에 `MV HitReaction Death Handoff` Notify를 배치한다.
+- [ ] KnockDown/Airborne의 기본 Getup handoff 프레임에 `MV HitReaction Start Getup` Notify를 배치한다.
+- [ ] lethal Airborne PIE 재현 케이스에서 Land 이후 death handoff 대신 Getup으로 전환되는 원인을 확인한다. 최신 로그에는 Chooser context 오류가 없으므로 HP 0 이벤트 발행, dead state 유지, `MV HitReaction Death Handoff`와 `MV HitReaction Start Getup` notify 순서를 계측한다.
 - [ ] KnockDown/Airborne 본 리액션 몽타주는 Lying/Fall/Land 같은 상태 표현까지만 두고, Recovery window에서 별도 Getup/EscapeDodge 액션으로 전환하게 한다.
 - [x] Combat 흐름 완성 전까지 BP_Carcass 대화가 완전히 닫힌 뒤 `MVUISubsystem`의 PIE 피격 테스트 사이드 윈도우를 열고, 버튼 선택 시 `OnHitResolved` 피격 흐름을 호출한다.
 

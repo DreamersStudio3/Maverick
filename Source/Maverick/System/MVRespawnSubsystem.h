@@ -28,14 +28,14 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FMVOnRespawnProgressChanged, float,
 /**
  * 플레이어 사망부터 로딩 초기화, 마지막 체크포인트 부활까지 조율하는 GameInstance 서브시스템.
  *
- * 사망 이벤트를 구독하고 DeathOverlay/LoadingWindow 표시를 UI subsystem에 요청한다. 저장 위치와
+ * 플레이어 DeathComponent 이벤트를 구독하고 DeathOverlay/LoadingWindow 표시를 UI subsystem에 요청한다. 저장 위치와
  * 1회성 스폰/퀘스트 같은 영구 상태는 직접 저장하지 않고 `UMVWorldStateSubsystem`에 조회/요청한다.
  * 필드 액터 리셋 구현이 들어오기 전까지는 progress 이벤트와 단계별 자리만 제공한다.
  *
  * 라이프사이클:
  *   1) GameInstance 생성 시 WorldState 의존성을 초기화하고 월드 초기화 이벤트를 구독한다.
- *   2) 플레이어 StatComponent.OnDead를 구독해 사망 흐름을 시작한다.
- *   3) 디졸브 notify/사망 몽타주 종료 notify가 호출하는 공개 API를 통해 UI와 로딩 리셋 단계로 전환한다.
+ *   2) 플레이어 DeathComponent의 표현 시작/디졸브 cue/표현 완료 이벤트를 구독해 사망 흐름을 시작한다.
+ *   3) DeathComponent 이벤트가 호출하는 공개 API를 통해 UI와 로딩 리셋 단계로 전환한다.
  */
 UCLASS()
 class MAVERICK_API UMVRespawnSubsystem : public UGameInstanceSubsystem
@@ -100,7 +100,13 @@ private:
 	UMVUISubsystem* GetUISubsystem() const;
 
 	UFUNCTION()
-	void HandlePlayerDeath();
+	void HandlePlayerDeathPresentationStarted(AActor* DeadActor);
+
+	UFUNCTION()
+	void HandlePlayerDeathDissolveStarted(AActor* DeadActor);
+
+	UFUNCTION()
+	void HandlePlayerDeathPresentationFinished(AActor* DeadActor);
 
 	UFUNCTION()
 	void HandleDeathOverlayMinimumDisplayElapsed();

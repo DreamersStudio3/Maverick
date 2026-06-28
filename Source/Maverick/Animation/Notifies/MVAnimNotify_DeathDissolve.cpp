@@ -1,7 +1,7 @@
 #include "Animation/Notifies/MVAnimNotify_DeathDissolve.h"
 
+#include "Components/MVDeathComponent.h"
 #include "Components/SkeletalMeshComponent.h"
-#include "System/MVRespawnSubsystem.h"
 
 void UMVAnimNotify_DeathDissolve::Notify(
 	USkeletalMeshComponent* MeshComp,
@@ -10,9 +10,12 @@ void UMVAnimNotify_DeathDissolve::Notify(
 {
 	Super::Notify(MeshComp, Animation, EventReference);
 
-	if (UMVRespawnSubsystem* RespawnSubsystem = UMVRespawnSubsystem::Get(MeshComp))
+	UMVDeathComponent* DeathComponent = MeshComp && MeshComp->GetOwner()
+		? MeshComp->GetOwner()->FindComponentByClass<UMVDeathComponent>()
+		: nullptr;
+	if (DeathComponent)
 	{
-		RespawnSubsystem->NotifyDeathDissolveStarted();
+		DeathComponent->NotifyDeathDissolveStarted();
 	}
 }
 
