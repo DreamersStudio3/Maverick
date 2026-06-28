@@ -4,8 +4,10 @@
 #include "Components/MVCombatComponent.h"
 
 #include "Chooser.h"
-
 #include "ChooserFunctionLibrary.h"
+#include "Combat/MVAbilityBase.h"
+#include "Components/MVActionComponent.h"
+#include "Character/MVCharacterBase.h"
 
 
 // Sets default values for this component's properties
@@ -47,7 +49,7 @@ void UMVCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 	// ...
 }
 
-bool UMVCombatComponent::TryCombatAction(EMVCombatActionTypes InActionType, FMVSkillDataTableColumn& OutRow, bool FullyStacked)
+bool UMVCombatComponent::TryCombatAction(EMVCombatActionTypes InActionType, FMVSkillDataTableColumn& OutRow, bool FullyStacked, int32 SkillIndex)
 {
 	bool isBasicAttack = false;
 	for (EMVCombatActionTypes Type : WantToMapActionTypes)
@@ -65,12 +67,13 @@ bool UMVCombatComponent::TryCombatAction(EMVCombatActionTypes InActionType, FMVS
 	}
 
 	// Action Type is Skill (Charge attack or Cooltime Skill)
-	else if (InActionType == EMVCombatActionTypes::ChargeSkill || InActionType == EMVCombatActionTypes::Skill)
+	else if (InActionType == EMVCombatActionTypes::Skill)
 	{
-		return TrySkill(InActionType, OutRow, FullyStacked);
+		return TrySkill(SkillIndex, FullyStacked);
 	}
 
 	// Other Actions --> If Other action should concern, add logic
+	// Todo: ChargeAttack --> Pressed will be same as basic attack, But key Release of ChargeSkill, Another function need
 	return false;
 }
 
@@ -118,17 +121,55 @@ bool UMVCombatComponent::TryBasicAttack(EMVCombatActionTypes InActionType, FMVSk
 	return false;
 }
 
-bool UMVCombatComponent::TrySkill(EMVCombatActionTypes InActionType, FMVSkillDataTableColumn& OutRow, bool FullyStacked)
+bool UMVCombatComponent::TrySkill(uint32 SkillIndex, bool FullyStacked)
 {
+	if (SkillIndex >= SkillMaxIndex)
+	{
+		return false;
+	}
+
+	TArray<FMVSkillActionStruct> ValueArray;
+	SkillMap.GenerateValueArray(ValueArray);
+
+	if (ValueArray.IsValidIndex(SkillIndex))
+	{
+		if (!ValueArray[SkillIndex].AbilityInstance->CheckCooldown())
+		{
+			return false;
+		}
+
+		// Todo: Check Stat Component
+		//return false;
+
+		// Todo: Send Animation Data to ActionComponent
+		FDataTableRowHandle RowHandle;
+		RowHandle.DataTable = ValueArray[SkillIndex].DataTable;
+		RowHandle.RowName = ValueArray[SkillIndex].RowName;
+
+		AMVCharacterBase* Owner = Cast<AMVCharacterBase>(GetOwner());
+		if (!Owner)
+		{
+			return false;
+		}
+		Owner->ActionComponent->TryTransitionActionFromRowHandle(RowHandle);
+		return true;
+
+	}
+
 	return false;
 }
 
-float UMVCombatComponent::GetRemainingCooldown(FName SkillName) const
-{
-	return 0.0f;
-}
 
 void UMVCombatComponent::RefreshActionMaps()
+{
+	ResetBasicAttackMap();
+	ResetSkillMap();
+
+
+
+}
+
+void UMVCombatComponent::ResetBasicAttackMap()
 {
 	// Clear Map
 	if (BasicAttackMaxIndex.Num() != 0 || BasicAttackCurrentIndex.Num() != 0)
@@ -155,7 +196,7 @@ void UMVCombatComponent::RefreshActionMaps()
 			return;
 		}
 		UE_LOG(LogTemp, Log, TEXT("MVCombatComponent(BeginPlay):Get DataTable"));
-		
+
 		// Get DataTable Map Reference
 		const TMap<FName, uint8*>& RowMap = CurrentDT->GetRowMap();
 
@@ -164,7 +205,7 @@ void UMVCombatComponent::RefreshActionMaps()
 		FName TypeName = FName(*TypeString);
 
 		int32 Count = 0;
-		
+
 		// Counting DataTable's Row numbers and set MaxIndex
 		for (auto& Iter : RowMap)
 		{
@@ -184,8 +225,58 @@ void UMVCombatComponent::RefreshActionMaps()
 		}
 
 	}
+}
 
+void UMVCombatComponent::ResetSkillMap()
+{
+	if (SkillMap.Num() != 0)
+	{
+		SkillMap.Reset();
+	}
 
+	// Enum Pointer -> To extract FName of Enum
+	const UEnum* EnumPtr = StaticEnum<EMVCombatActionTypes>();
+
+	// Variables for Searching DataBase
+	bool DataTableSearchResult = false;
+	FMVCombatActionTableInput ChooserInput;
+	ChooserInput.CurrentWeaponStyle = CurrentWeaponStyle;
+	ChooserInput.ActionType = EMVCombatActionTypes::Skill;
+
+	UDataTable* CurrentDT = GetDataTableFromChooserTable(ChooserInput, DataTableSearchResult);
+
+	if (DataTableSearchResult == false)
+	{
+		UE_LOG(LogTemp, Log, TEXT("MVCombatComponent(Reset Skill Map): Cannot Get DataTable"));
+		return;
+	}
+	UE_LOG(LogTemp, Log, TEXT("MVCombatComponentReset Skill Map):Get DataTable"));
+
+	for (auto& It : CurrentDT->GetRowMap())
+	{
+		FMVSkillActionStruct SkillData;
+		
+		FMVSkillDataTableColumn* RowData = reinterpret_cast<FMVSkillDataTableColumn*>(It.Value);
+		if (!RowData)
+		{
+			UE_LOG(LogTemp, Log, TEXT("MVCombatComponent(Reset Skill Map):Get RowData"));
+			return;
+		}
+		if (!RowData->AbilityReference)
+		{
+			UE_LOG(LogTemp, Log, TEXT("MVCombatComponent(Reset Skill Map):Nullptr -> AbilityReference"));
+			return;
+		}
+		SkillData.AbilityInstance = NewObject<UMVAbilityBase>(this, RowData->AbilityReference);
+		SkillData.AbilityInstance->SetOwner(this);
+		SkillData.AbilityInstance->InitAbility(*RowData);
+
+		SkillData.RowName = It.Key;
+		SkillData.DataTable = CurrentDT;
+
+		SkillMap.Add(RowData->AbilityReference, SkillData);
+	}
+	SkillMaxIndex = SkillMap.Num();
 
 }
 
@@ -197,6 +288,8 @@ void UMVCombatComponent::ResetCurrentIndex()
 		Element.Value = 0;
 	}
 }
+
+
 
 void UMVCombatComponent::ChangeWeapon(EMVEquippedStyle NewStyle)
 {

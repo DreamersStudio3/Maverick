@@ -9,7 +9,7 @@ enum class EMVCombatActionTypes : uint8
 	None UMETA(DisplayName = "None"),
 	LightAttack UMETA(DisplayName = "LightAttack"),
 	HeavyAttack UMETA(DisplayName = "HeavyAttack"),
-	ChargeSkill UMETA(DisplayName = "ChargeSkill"),
+	ChargeAttack UMETA(DisplayName = "ChargeAttack"),
 	Skill UMETA(DisplayName = "Skill"),
 	Dodge UMETA(DisplayName = "Dodge"),
 	Guard UMETA(DisplayName = "Guard"),
@@ -21,6 +21,6 @@ enum class EMVCombatAttackTypes : uint8
 {
 	LightAttack UMETA(DisplayName = "LightAttack"),
 	HeavyAttack UMETA(DisplayName = "HeavyAttack"),
-	Skill UMETA(DisplayName = "Skill"),
-	StackedSkill UMETA(DisplayName = "StackedSkill")
+	ChargeAttack UMETA(DisplayName = "ChargeAttack"),
+	Skill UMETA(DisplayName = "Skill")
 };

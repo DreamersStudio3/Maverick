@@ -4,32 +4,36 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
+#include "Public/Tables/MVActionRowTableTypes.h"
+
 #include "MVSkillDataTableColumn.generated.h"
 
 /**
  * 
  */
+class UMVAbilityBase;
 
 USTRUCT(BlueprintType)
-struct FMVSkillDataTableColumn : public FTableRowBase
+struct FMVSkillDataTableColumn : public FMVActionRow
 {
 	GENERATED_BODY()
 
 public:
 	FMVSkillDataTableColumn()
-		: SkillAnim(nullptr), Damage(0.0f), CooldownDuration(0.0f)
+		: Damage(0.0f), CooldownDuration(0.0f)
 	{
 
 	}
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UAnimMontage* SkillAnim;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skill|Data")
+	TSubclassOf<UMVAbilityBase> AbilityReference;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skill|Data")
 	float Damage;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skill|Data")
 	float CooldownDuration;
+
 
 
 
