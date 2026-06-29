@@ -151,7 +151,7 @@ public:
 			return false;
 		}
 		const FMVSkillDataTableColumn& CurrentData = SkillDataArray[CurrentChainStageIndex];
-		return (CurrentTime - LastStageActivationTime) >= CurrentData->InterStageCooldown;
+		return (CurrentTime - LastStageActivationTime) >= CurrentData.InterStageCooldown;
 	}
 
 	// Reset chain to stage 0
@@ -166,7 +166,8 @@ public:
 	// Activate chain (start from stage 0)
 	void ActivateChain(float CurrentTime)
 	{
-		if (bIsChained && AbilityInstances.Num() > 0)
+		// If Chain exist(2+ Chained Skills)
+		if (bIsChained && AbilityInstances.Num() > 1)
 		{
 			CurrentChainStageIndex = 0;
 			bChainActive = true;
@@ -177,6 +178,13 @@ public:
 			{
 				InputWindowCloseTime = CurrentTime + CurrentData->InputWindowDuration;
 			}
+		}
+		// if Simple Skill or invalid Skill
+		else
+		{
+			bChainActive = false;
+			LastUsedTime = CurrentTime;
+			return;
 		}
 	}
 
@@ -193,6 +201,7 @@ public:
 		{
 			bChainActive = false;
 			LastUsedTime = CurrentTime;
+			CurrentChainStageIndex = 0;
 			return false; // Chain complete
 		}
 
@@ -244,10 +253,13 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UFUNCTION(BlueprintCallable, Category = "Action")
-	bool TryCombatAction(EMVCombatActionTypes InActionType, FMVSkillDataTableColumn& OutRow, bool FullyStacked = false, int32 SkillIndex = 0);
+	bool TryCombatAction(EMVCombatActionTypes InActionType, int32 SkillIndex = 0);
 
-	bool TryBasicAttack(EMVCombatActionTypes InActionType, FMVSkillDataTableColumn& OutRow);
-	bool TrySkill(uint32 SkillIndex, bool FullyStacked);
+	bool TryBasicAttack(EMVCombatActionTypes InActionType);
+	bool TrySkill(EMVCombatActionTypes InActionType, int32 SkillIndex = 0);
+
+	//bool TryBasicAttack(EMVCombatActionTypes InActionType, FMVSkillDataTableColumn& OutRow);
+	//bool TrySkill(uint32 SkillIndex, bool FullyStacked);
 
 	// Call when Beginplay or Change Weapon Style
 	void RefreshActionMaps();
@@ -256,7 +268,7 @@ public:
 	void ResetSkillMap();
 	
 	// Set All basic attack indices to 0
-	void ResetCurrentIndex();
+	//void ResetCurrentIndex();
 
 	
 
@@ -273,29 +285,28 @@ protected:
 	FMVSkillDataTableColumn GetDataTableRowFromChooserTable(const FMVCombatActionTableInput& ChooserInput, const FName& RowName, bool& OutResult);
 	virtual FMVSkillDataTableColumn GetDataTableRowFromChooserTable_Implementation(const FMVCombatActionTableInput& ChooserInput, const FName& RowName, bool& OutResult);
 
+private:
+	void BuildChainedEntry(const FName& StartingName, const UDataTable& CurrentDT, FMVSkillEntry& OutEntry);
 
 public:
-	// Among ComBatActionTypes, selected Enums to use index attack(Basic Attack)
-	TArray<EMVCombatActionTypes>WantToMapActionTypes;
 
+	// LightAttack, HeavyAttack, ChargeAttack
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Logic")
-	TMap<FName, int32>BasicAttackCurrentIndex;
+	TMap<FName, FMVSkillEntry>BasicAttackMap;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Logic")
-	TMap<FName, int32>BasicAttackMaxIndex;
-	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Logic")
 	TMap<FName, FMVSkillEntry>SkillMap;
-
-	uint32 SkillMaxIndex;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Infomation")
 	EMVEquippedStyle CurrentWeaponStyle;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Infomation")
-	float ResetBasicAttackIndexTime = 2.0f;
+	float ResetBasicAttackTime = 2.0f;
 
-		
+
+private:
+	bool SendDataToActionComp(EMVCombatActionTypes InActionType, FName RowName);
+
 private:
 	double LastBasicAttackedTime;
 

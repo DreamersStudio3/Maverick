@@ -20,8 +20,8 @@ struct FMVSkillDataTableColumn : public FMVActionRow
 
 public:
 	FMVSkillDataTableColumn()
-		: Damage(0.0f), CooldownDuration(0.0f), InterStageCooldown(0.0f), InputWindowDuration(0.0f),
-		bIsChained(false), NextChainName(NAME_None)
+		: Damage(0.0f), CooldownDuration(0.0f), bIsChained(false), NextChainName(NAME_None), InterStageCooldown(0.0f), InputWindowDuration(0.0f)
+		
 	{
 
 	}
