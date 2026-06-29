@@ -34,6 +34,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool CheckCooldown();
 
+	UFUNCTION(BlueprintCallable)
+	void UpdateLastUsedTime();
+
+
+
 	virtual void StartAbility_Implementation() override;
 	virtual void EndAbility_Implementation() override;
 

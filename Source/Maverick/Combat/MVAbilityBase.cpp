@@ -42,11 +42,15 @@ bool UMVAbilityBase::CheckCooldown()
 
 	if (LastUsedTime == 0 || CurrentCheckTime - LastUsedTime > AbilityData.CooldownDuration)
 	{
-		LastUsedTime = CurrentCheckTime;
 		return true;
 	}
 
 	return false;
+}
+
+void UMVAbilityBase::UpdateLastUsedTime()
+{
+	LastUsedTime = GetWorld()->GetTimeSeconds();
 }
 
 void UMVAbilityBase::StartAbility_Implementation()

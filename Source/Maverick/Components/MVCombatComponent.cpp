@@ -141,7 +141,7 @@ bool UMVCombatComponent::TrySkill(uint32 SkillIndex, bool FullyStacked)
 		// Todo: Check Stat Component
 		//return false;
 
-		// Todo: Send Animation Data to ActionComponent
+		// Send Animation Data to ActionComponent
 		FDataTableRowHandle RowHandle;
 		RowHandle.DataTable = ValueArray[SkillIndex].DataTable;
 		RowHandle.RowName = ValueArray[SkillIndex].RowName;
@@ -151,8 +151,12 @@ bool UMVCombatComponent::TrySkill(uint32 SkillIndex, bool FullyStacked)
 		{
 			return false;
 		}
-		Owner->ActionComponent->TryTransitionActionFromRowHandle(RowHandle);
-		return true;
+		//Owner->ActionComponent->TryTransitionActionFromRowHandle(RowHandle);
+		if (Owner->ActionComponent->TryStartActionFromRowHandle(RowHandle))
+		{
+			ValueArray[SkillIndex].AbilityInstance->UpdateLastUsedTime();
+			return true;
+		}
 
 	}
 
@@ -268,6 +272,8 @@ void UMVCombatComponent::ResetSkillMap()
 			return;
 		}
 		SkillData.AbilityInstance = NewObject<UMVAbilityBase>(this, RowData->AbilityReference);
+		
+		// Ability should set Owner and InitAbility(DataTable)
 		SkillData.AbilityInstance->SetOwner(this);
 		SkillData.AbilityInstance->InitAbility(*RowData);
 
@@ -288,8 +294,6 @@ void UMVCombatComponent::ResetCurrentIndex()
 		Element.Value = 0;
 	}
 }
-
-
 
 void UMVCombatComponent::ChangeWeapon(EMVEquippedStyle NewStyle)
 {
