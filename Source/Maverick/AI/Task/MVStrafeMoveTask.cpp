@@ -104,6 +104,9 @@ EStateTreeRunStatus FMVStrafeMoveTask::EnterState(FStateTreeExecutionContext& Co
 	}
 
 	InstanceData.ElapsedTime = 0.0f;
+	InstanceData.bStrafePathClear = false;
+	const float MaxDuration = FMath::Max(InstanceData.StrafeMinDuration, InstanceData.StrafeMaxDuration);
+	InstanceData.MoveDuration = MaxDuration;
 
 	FVector MoveDirection = FVector::ZeroVector;
 	if (MVStrafeMoveTaskBuildMoveDirection(
@@ -117,6 +120,7 @@ EStateTreeRunStatus FMVStrafeMoveTask::EnterState(FStateTreeExecutionContext& Co
 		&& !MVStrafeMoveTaskIsMoveDirectionBlocked(*Pawn, MoveDirection, InstanceData.TraceDistance))
 	{
 		InstanceData.StrafeSign = 1.0f;
+		InstanceData.bStrafePathClear = true;
 	}
 	else if (MVStrafeMoveTaskBuildMoveDirection(
 		Pawn->GetActorLocation(),
@@ -129,6 +133,7 @@ EStateTreeRunStatus FMVStrafeMoveTask::EnterState(FStateTreeExecutionContext& Co
 		&& !MVStrafeMoveTaskIsMoveDirectionBlocked(*Pawn, MoveDirection, InstanceData.TraceDistance))
 	{
 		InstanceData.StrafeSign = -1.0f;
+		InstanceData.bStrafePathClear = true;
 	}
 	else
 	{
@@ -179,24 +184,35 @@ EStateTreeRunStatus FMVStrafeMoveTask::Tick(FStateTreeExecutionContext& Context,
 
 	if (MVStrafeMoveTaskIsMoveDirectionBlocked(*Pawn, MoveDirection, InstanceData.TraceDistance))
 	{
-		InstanceData.StrafeSign *= -1.0f;
-		if (!MVStrafeMoveTaskBuildMoveDirection(
-			Pawn->GetActorLocation(),
-			TargetActor->GetActorLocation(),
-			InstanceData.StrafeSign,
-			InstanceData.DesiredDistance,
-			InstanceData.DistanceCorrectionRange,
-			InstanceData.DistanceCorrectionWeight,
-			MoveDirection)
-			|| MVStrafeMoveTaskIsMoveDirectionBlocked(*Pawn, MoveDirection, InstanceData.TraceDistance))
-		{
-			return EStateTreeRunStatus::Failed;
-		}
+		InstanceData.bStrafePathClear = false;
+		return InstanceData.ElapsedTime >= InstanceData.StrafeMinDuration
+			? EStateTreeRunStatus::Succeeded
+			: EStateTreeRunStatus::Failed;
 	}
 
+	InstanceData.bStrafePathClear = true;
 	Pawn->AddMovementInput(MoveDirection, 1.0f);
 
 	InstanceData.ElapsedTime += DeltaTime;
+	if (InstanceData.ElapsedTime < InstanceData.StrafeMinDuration)
+	{
+		return EStateTreeRunStatus::Running;
+	}
+
+	const FMVAICombatContext& CombatContext = InstanceData.CombatContext;
+	if (CombatContext.bHasTarget && CombatContext.DistanceToTarget > InstanceData.MoveToTargetDistance)
+	{
+		return EStateTreeRunStatus::Succeeded;
+	}
+
+	if (CombatContext.bCounterWindow
+		|| CombatContext.bSprintPathClear
+		|| CombatContext.bAirborneChargePathClear
+		|| (CombatContext.bAttackCadenceReady && !CombatContext.bNeedAttackAngle && !CombatContext.bNeedClearAttackPath))
+	{
+		return EStateTreeRunStatus::Succeeded;
+	}
+
 	if (InstanceData.ElapsedTime >= InstanceData.MoveDuration)
 	{
 		return EStateTreeRunStatus::Succeeded;

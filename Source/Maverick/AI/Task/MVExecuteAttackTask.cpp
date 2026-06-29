@@ -1,7 +1,7 @@
 #include "AI/Task/MVExecuteAttackTask.h"
 
 #include "AI/MVActionCooldownComponent.h"
-#include "AI/MVEnemy.h"
+#include "Character/Npc/Enemy/MVEnemy.h"
 #include "AIController.h"
 #include "Components/MVActionComponent.h"
 #include "Engine/DataTable.h"

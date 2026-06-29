@@ -44,11 +44,18 @@ namespace
 		{
 			InstanceData.bIsQueryActionReady = false;
 			InstanceData.QueryActionRemainingTime = 0.0f;
+			InstanceData.bAttackCadenceReady = true;
+			if (InstanceData.CooldownComponent)
+			{
+				InstanceData.CooldownComponent->GetReadyActionIds(InstanceData.ReadyActionIds);
+			}
 			return;
 		}
 
 		InstanceData.bIsQueryActionReady = InstanceData.CooldownComponent->IsCooldownReady(InstanceData.QueryActionId);
 		InstanceData.QueryActionRemainingTime = InstanceData.CooldownComponent->GetRemainingTime(InstanceData.QueryActionId);
+		InstanceData.bAttackCadenceReady = InstanceData.bIsQueryActionReady;
+		InstanceData.CooldownComponent->GetReadyActionIds(InstanceData.ReadyActionIds);
 	}
 }
 
