@@ -20,7 +20,8 @@ struct FMVSkillDataTableColumn : public FMVActionRow
 
 public:
 	FMVSkillDataTableColumn()
-		: Damage(0.0f), CooldownDuration(0.0f)
+		: Damage(0.0f), CooldownDuration(0.0f), InterStageCooldown(0.0f), InputWindowDuration(0.0f),
+		bIsChained(false), NextChainName(NAME_None)
 	{
 
 	}
@@ -33,8 +34,18 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skill|Data")
 	float CooldownDuration;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skill|Chaining")
+	uint32 bIsChained : 1;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skill|Chaining")
+	FName NextChainName;
 
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skill|Chaining")
+	float InterStageCooldown;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skill|Chaining")
+	float InputWindowDuration;
 
 };

@@ -28,6 +28,187 @@ public:
 
 };
 
+USTRUCT(BlueprintType)
+struct FMVSkillEntry
+{
+	GENERATED_BODY()
+
+public:
+	// Indicates if this is a chained skill
+	UPROPERTY(BlueprintReadOnly, Category = "Skill")
+	bool bIsChained;
+
+	// For simple skills: single ability instance
+	// For chained skills: multiple ability instances (one per stage)
+	UPROPERTY(BlueprintReadOnly, Category = "Skill")
+	TArray<TObjectPtr<UMVAbilityBase>> AbilityInstances;
+
+	// For simple skills: single row name
+	// For chained skills: multiple row names in progression order
+	UPROPERTY(BlueprintReadOnly, Category = "Skill")
+	TArray<FName> SkillRowNames;
+
+	// For simple skills: single skill data
+	// For chained skills: multiple skill data (one per stage)
+	UPROPERTY(BlueprintReadOnly, Category = "Skill")
+	TArray<FMVSkillDataTableColumn> SkillDataArray;
+
+	// DataTable reference
+	UPROPERTY(BlueprintReadOnly, Category = "Skill")
+	TObjectPtr<UDataTable> DataTable;
+
+	// Main cooldown duration (applies to entire skill or chain)
+	UPROPERTY(BlueprintReadOnly, Category = "Skill")
+	float MainCooldownDuration;
+
+	// Last time this skill was used (for cooldown tracking)
+	UPROPERTY(BlueprintReadOnly, Category = "Skill")
+	float LastUsedTime;
+
+	// For chained skills: current stage index
+	UPROPERTY(BlueprintReadOnly, Category = "Skill")
+	int32 CurrentChainStageIndex;
+
+	// For chained skills: whether chain is currently active
+	UPROPERTY(BlueprintReadOnly, Category = "Skill")
+	bool bChainActive;
+
+	// For chained skills: time when current stage started
+	UPROPERTY(BlueprintReadOnly, Category = "Skill")
+	float LastStageActivationTime;
+
+	// For chained skills: when input window closes for current stage
+	UPROPERTY(BlueprintReadOnly, Category = "Skill")
+	float InputWindowCloseTime;
+
+public:
+	// Get current ability (for simple skills or current chain stage)
+	UMVAbilityBase* GetCurrentAbility() const
+	{
+		if (AbilityInstances.IsValidIndex(CurrentChainStageIndex))
+		{
+			return AbilityInstances[CurrentChainStageIndex];
+		}
+		return nullptr;
+	}
+
+	// Get current skill data (for simple skills or current chain stage)
+	const FMVSkillDataTableColumn* GetCurrentSkillData() const
+	{
+		if (SkillDataArray.IsValidIndex(CurrentChainStageIndex))
+		{
+			return &SkillDataArray[CurrentChainStageIndex];
+		}
+		return nullptr;
+	}
+
+	// Get current row name (for simple skills or current chain stage)
+	FName GetCurrentRowName() const
+	{
+		if (SkillRowNames.IsValidIndex(CurrentChainStageIndex))
+		{
+			return SkillRowNames[CurrentChainStageIndex];
+		}
+		return NAME_None;
+	}
+
+	// Check if main cooldown is ready
+	bool IsMainCooldownReady(float CurrentTime) const
+	{
+		if (MainCooldownDuration <= 0.0f)
+		{
+			return true;
+		}
+		return (CurrentTime - LastUsedTime) >= MainCooldownDuration;
+	}
+
+	// Check if input window is valid for chain advancement
+	bool IsInputWindowValid(float CurrentTime) const
+	{
+		if (!bChainActive)
+		{
+			return false;
+		}
+		return CurrentTime < InputWindowCloseTime;
+	}
+
+	// Get remaining time in input window
+	float GetRemainingInputWindowTime(float CurrentTime) const
+	{
+		if (!bChainActive)
+		{
+			return 0.0f;
+		}
+		float Remaining = InputWindowCloseTime - CurrentTime;
+		return FMath::Max(0.0f, Remaining);
+	}
+
+	// Check if inter-stage cooldown is valid for chain advancement
+	bool IsInterStageCooldownValid(float CurrentTime) const
+	{
+		if (!bChainActive || !SkillDataArray.IsValidIndex(CurrentChainStageIndex))
+		{
+			return false;
+		}
+		const FMVSkillDataTableColumn& CurrentData = SkillDataArray[CurrentChainStageIndex];
+		return (CurrentTime - LastStageActivationTime) >= CurrentData->InterStageCooldown;
+	}
+
+	// Reset chain to stage 0
+	void ResetChain()
+	{
+		CurrentChainStageIndex = 0;
+		bChainActive = false;
+		LastStageActivationTime = 0.0f;
+		InputWindowCloseTime = 0.0f;
+	}
+
+	// Activate chain (start from stage 0)
+	void ActivateChain(float CurrentTime)
+	{
+		if (bIsChained && AbilityInstances.Num() > 0)
+		{
+			CurrentChainStageIndex = 0;
+			bChainActive = true;
+			LastStageActivationTime = CurrentTime;
+
+			const FMVSkillDataTableColumn* CurrentData = GetCurrentSkillData();
+			if (CurrentData)
+			{
+				InputWindowCloseTime = CurrentTime + CurrentData->InputWindowDuration;
+			}
+		}
+	}
+
+	// Advance to next stage in chain
+	bool TryAdvanceChainStage(float CurrentTime)
+	{
+		if (!bChainActive || !bIsChained)
+		{
+			return false;
+		}
+
+		// Check if at last stage
+		if (CurrentChainStageIndex >= AbilityInstances.Num() - 1)
+		{
+			bChainActive = false;
+			LastUsedTime = CurrentTime;
+			return false; // Chain complete
+		}
+
+		CurrentChainStageIndex++;
+		LastStageActivationTime = CurrentTime;
+
+		const FMVSkillDataTableColumn* CurrentData = GetCurrentSkillData();
+		if (CurrentData)
+		{
+			InputWindowCloseTime = CurrentTime + CurrentData->InputWindowDuration;
+		}
+
+		return true;
+	}
+};
+
 
 /*
 CombatComponent
@@ -104,7 +285,7 @@ public:
 	TMap<FName, int32>BasicAttackMaxIndex;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Logic")
-	TMap<TSubclassOf<UMVAbilityBase>, FMVSkillActionStruct>SkillMap;
+	TMap<FName, FMVSkillEntry>SkillMap;
 
 	uint32 SkillMaxIndex;
 	
