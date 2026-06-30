@@ -119,7 +119,7 @@ public:
 		{
 			return true;
 		}
-		return (CurrentTime - LastUsedTime) >= MainCooldownDuration;
+		return LastUsedTime == 0 || (CurrentTime - LastUsedTime) >= MainCooldownDuration;
 	}
 
 	// Check if input window is valid for chain advancement

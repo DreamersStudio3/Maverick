@@ -50,11 +50,11 @@ bool UMVCombatComponent::TryCombatAction(EMVCombatActionTypes InActionType, int3
 		InActionType == EMVCombatActionTypes::HeavyAttack ||
 		InActionType == EMVCombatActionTypes::ChargeAttack)
 	{
-		TryBasicAttack(InActionType);
+		return TryBasicAttack(InActionType);
 	}
 	else if (InActionType == EMVCombatActionTypes::Skill)
 	{
-		TrySkill(InActionType, SkillIndex);
+		return TrySkill(InActionType, SkillIndex);
 	}
 
 
@@ -85,10 +85,11 @@ bool UMVCombatComponent::TryBasicAttack(EMVCombatActionTypes InActionType)
 
 		// Todo: Should Check Stat Component
 
-		if (SendDataToActionComp(InActionType, RowName))
+		if (SendDataToActionComp(InActionType, ActionEntry->GetCurrentRowName()))
 		{
 			ActionEntry->ActivateChain(CurrentTime);
 			LastBasicAttackedTime = CurrentTime;
+			ActionEntry->TryAdvanceChainStage(CurrentTime);
 			return true;
 		}
 		else
@@ -98,9 +99,9 @@ bool UMVCombatComponent::TryBasicAttack(EMVCombatActionTypes InActionType)
 
 	}
 
-	if (ActionEntry->bChainActive)
+	if (ActionEntry && ActionEntry->bChainActive)
 	{
-		if (SendDataToActionComp(InActionType, RowName))
+		if (SendDataToActionComp(InActionType, ActionEntry->GetCurrentRowName()))
 		{
 			ActionEntry->TryAdvanceChainStage(CurrentTime);
 		}
@@ -108,9 +109,10 @@ bool UMVCombatComponent::TryBasicAttack(EMVCombatActionTypes InActionType)
 	}
 	else
 	{
-		if (SendDataToActionComp(InActionType, RowName))
+		if (SendDataToActionComp(InActionType, ActionEntry->GetCurrentRowName()))
 		{
 			ActionEntry->ActivateChain(CurrentTime);
+			ActionEntry->TryAdvanceChainStage(CurrentTime);
 		}
 	}
 		LastBasicAttackedTime = CurrentTime;
@@ -144,7 +146,23 @@ bool UMVCombatComponent::TrySkill(EMVCombatActionTypes InActionType, int32 Skill
 		if (!ActionEntry->IsInputWindowValid(CurrentTime))
 		{
 			ActionEntry->ResetChain();
-			return false;
+			if (!ActionEntry->IsMainCooldownReady(CurrentTime))
+			{
+				return false;
+			}
+
+			// Todo: Should Check Stat Component
+
+			if (SendDataToActionComp(InActionType, ActionEntry->GetCurrentRowName()))
+			{
+				ActionEntry->ActivateChain(CurrentTime);
+				ActionEntry->TryAdvanceChainStage(CurrentTime);
+				return true;
+			}
+			else
+			{
+				return false;
+			}
 		}
 
 		// Inter-stage cooldown is not ready
@@ -157,7 +175,7 @@ bool UMVCombatComponent::TrySkill(EMVCombatActionTypes InActionType, int32 Skill
 		{
 			// Todo: Should Check Stat Component
 
-			if (SendDataToActionComp(InActionType, RowName))
+			if (SendDataToActionComp(InActionType, ActionEntry->GetCurrentRowName()))
 			{
 				ActionEntry->TryAdvanceChainStage(CurrentTime);
 				return true;
@@ -178,9 +196,10 @@ bool UMVCombatComponent::TrySkill(EMVCombatActionTypes InActionType, int32 Skill
 		
 		// Todo: Should Check Stat Component
 
-		if (SendDataToActionComp(InActionType, RowName))
+		if (SendDataToActionComp(InActionType, ActionEntry->GetCurrentRowName()))
 		{
 			ActionEntry->ActivateChain(CurrentTime);
+			ActionEntry->TryAdvanceChainStage(CurrentTime);
 			return true;
 		}
 		else
@@ -315,6 +334,8 @@ void UMVCombatComponent::ResetBasicAttackMap()
 			UE_LOG(LogTemp, Log, TEXT("MVCombatComponent(Reset Skill Map): Cannot Get DataTable"));
 			return;
 		}
+		
+		TSet<FName> ProcessedRowNames;
 
 		for (auto& It : CurrentDT->GetRowMap())
 		{
@@ -326,7 +347,7 @@ void UMVCombatComponent::ResetBasicAttackMap()
 			}
 
 			// Chained Skill will add previous when first skill(first Chain skill) add to the map
-			if (SkillMap.Contains(It.Key))
+			if (ProcessedRowNames.Contains(It.Key))
 			{
 				continue;
 			}
@@ -339,10 +360,33 @@ void UMVCombatComponent::ResetBasicAttackMap()
 			SkillEntry.CurrentChainStageIndex = 0;
 			SkillEntry.bChainActive = false;
 
-			BuildChainedEntry(It.Key, *CurrentDT, SkillEntry);
+			if (RowData->bIsChained && !RowData->NextChainName.IsNone())
+			{
+				// Build Chained Skill and collect all processed row names
+				BuildChainedEntry(It.Key, *CurrentDT, SkillEntry);
+
+				// Add all row names from this chain to the processed set
+				for (const FName& RowName : SkillEntry.SkillRowNames)
+				{
+					ProcessedRowNames.Add(RowName);
+				}
+			}
+			else
+			{
+				// Simple Skill - One Ability
+				UMVAbilityBase* AbilityInstance = NewObject<UMVAbilityBase>(this, RowData->AbilityReference);
+				if (AbilityInstance)
+				{
+					AbilityInstance->SetOwner(this);
+					AbilityInstance->InitAbility(*RowData);
+					SkillEntry.AbilityInstances.Add(AbilityInstance);
+					SkillEntry.SkillRowNames.Add(It.Key);
+					SkillEntry.SkillDataArray.Add(*RowData);
+				}
+				ProcessedRowNames.Add(It.Key);
+			}
 
 			BasicAttackMap.Add(It.Key, SkillEntry);
-
 		}
 	}
 
@@ -371,6 +415,8 @@ void UMVCombatComponent::ResetSkillMap()
 		return;
 	}
 
+	TSet<FName> ProcessedRowNames;
+
 	for (auto& It : CurrentDT->GetRowMap())
 	{
 		FMVSkillDataTableColumn* RowData = reinterpret_cast<FMVSkillDataTableColumn*>(It.Value);
@@ -382,7 +428,11 @@ void UMVCombatComponent::ResetSkillMap()
 		}
 
 		// Chained Skill will add previous when first skill(first Chain skill) add to the map
-		if (SkillMap.Contains(It.Key))
+		//if (SkillMap.Contains(It.Key))
+		//{
+		//	continue;
+		//}
+		if (ProcessedRowNames.Contains(It.Key))
 		{
 			continue;
 		}
@@ -399,6 +449,12 @@ void UMVCombatComponent::ResetSkillMap()
 		{
 			// Build Chained Skill
 			BuildChainedEntry(It.Key, *CurrentDT, SkillEntry);
+
+			// Add all row Names From this Chain to ProcessedRowNames to avoid duplicates
+			for(const FName& RowName : SkillEntry.SkillRowNames)
+			{
+				ProcessedRowNames.Add(RowName);
+			}
 		}
 		else
 		{
@@ -412,6 +468,7 @@ void UMVCombatComponent::ResetSkillMap()
 				SkillEntry.SkillRowNames.Add(It.Key);
 				SkillEntry.SkillDataArray.Add(*RowData);
 			}
+			ProcessedRowNames.Add(It.Key);
 		}
 		SkillMap.Add(It.Key, SkillEntry);
 	}
@@ -642,7 +699,8 @@ bool UMVCombatComponent::SendDataToActionComp(EMVCombatActionTypes InActionType,
 	{
 		return false;
 	}
-	if (Owner->ActionComponent->TryStartActionFromRowHandle(RowHandle))
+	//if (Owner->ActionComponent->TryStartActionFromRowHandle(RowHandle))
+	if (Owner->ActionComponent->TryTransitionActionFromRowHandle(RowHandle))
 	{
 		return true;
 	}
