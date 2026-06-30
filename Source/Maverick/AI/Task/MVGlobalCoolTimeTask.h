@@ -26,6 +26,12 @@ struct FMVGlobalCoolTimeTaskInstanceData
 	UPROPERTY(EditAnywhere, Category = "Output")
 	float QueryActionRemainingTime = 0.0f;
 
+	UPROPERTY(EditAnywhere, Category = "Output")
+	TArray<FName> ReadyActionIds;
+
+	UPROPERTY(EditAnywhere, Category = "Output")
+	bool bAttackCadenceReady = true;
+
 	UPROPERTY(Transient)
 	TObjectPtr<UMVActionCooldownComponent> CooldownComponent = nullptr;
 };

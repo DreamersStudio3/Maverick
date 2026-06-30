@@ -6,9 +6,10 @@ namespace
 {
 bool CombatDecisionIsCandidateReady(
 	const FMVAICombatContext& CombatContext,
-	const FMVAICombatActionCandidate& Candidate)
+	const FMVAICombatActionCondition& Candidate)
 {
-	if (!MVAICombat::HasExecutableActionRow(Candidate))
+	if (Candidate.ActionRequest.Domain != EMVActionDomain::Attack
+		|| Candidate.ActionRequest.RowName.IsNone())
 	{
 		return false;
 	}
@@ -23,7 +24,9 @@ bool CombatDecisionIsCandidateReady(
 		return false;
 	}
 
-	if (!MVAICombat::IsActionReady(CombatContext, MVAICombat::MakeCooldownActionId(Candidate)))
+	if (!MVAICombat::IsActionReady(
+		CombatContext,
+		MVAICombat::MakeCooldownActionId(Candidate.Metadata, Candidate.ActionRequest)))
 	{
 		return false;
 	}
@@ -63,9 +66,9 @@ bool CombatDecisionIsCandidateReady(
 
 bool CombatDecisionHasReadyCandidate(
 	const FMVAICombatContext& CombatContext,
-	const TArray<FMVAICombatActionCandidate>& Candidates)
+	const TArray<FMVAICombatActionCondition>& Candidates)
 {
-	for (const FMVAICombatActionCandidate& Candidate : Candidates)
+	for (const FMVAICombatActionCondition& Candidate : Candidates)
 	{
 		if (CombatDecisionIsCandidateReady(CombatContext, Candidate))
 		{

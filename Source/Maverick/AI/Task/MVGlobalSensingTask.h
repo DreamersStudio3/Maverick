@@ -147,6 +147,8 @@ struct FMVGlobalSensingTask : public FStateTreeTaskCommonBase
 	GENERATED_BODY()
 	
 	using FInstanceDataType = FMVGlobalSensingTaskInstanceData;
+
+	FMVGlobalSensingTask();
 	
 	virtual const UStruct* GetInstanceDataType() const override
 	{

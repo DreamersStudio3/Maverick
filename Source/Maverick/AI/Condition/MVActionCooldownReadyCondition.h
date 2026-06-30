@@ -14,7 +14,7 @@ struct FMVActionCooldownReadyConditionInstanceData
 	TObjectPtr<APawn> Owner = nullptr;
 
 	UPROPERTY(EditAnywhere, Category = "Input|Cooldown")
-	FName ActionId = NAME_None;
+	FName CooldownActionId = NAME_None;
 };
 
 USTRUCT(meta = (DisplayName = "Action Cooldown Ready"))

@@ -15,6 +15,15 @@ struct FMVStartActionCooldownTaskInstanceData
 
 	UPROPERTY(EditAnywhere, Category = "Input|Cooldown")
 	FName ActionId = NAME_None;
+
+	UPROPERTY(EditAnywhere, Category = "Input|Cooldown")
+	FName StartedActionTableName = NAME_None;
+
+	UPROPERTY(EditAnywhere, Category = "Input|Cooldown")
+	FName StartedActionRowName = NAME_None;
+
+	UPROPERTY(EditAnywhere, Category = "Input|Cooldown")
+	bool bRequireStartedAction = true;
 };
 
 USTRUCT(meta = (DisplayName = "Start Action Cooldown Task"))
