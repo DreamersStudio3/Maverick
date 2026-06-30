@@ -51,6 +51,9 @@ public:
 	UMVHUDWidgetBase* ShowDefaultHUD();
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
+	void HideHUD();
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
 	UCommonActivatableWidget* ShowLoadingWindow();
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
@@ -114,7 +117,10 @@ public:
 	UMVMessagePopup* ShowPopupMessageById(FName MessageId);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
-	void ClearAllUI();
+	void ClearAllUI(bool bUseFadeOut = false);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
+	void ResetToDefaultUI();
 
 	UFUNCTION(BlueprintPure, Category = "Maverick|UI")
 	UMVHUDWidgetBase* GetMainHUD() const { return CachedHUD; }
@@ -137,6 +143,8 @@ private:
 	float ResolveDialogueCameraZoomDuration(float DurationOverride, bool bRestoring) const;
 	void UpdateDialogueCameraZoom();
 	void FinishDialogueCameraZoom();
+	void ClearAllUIInternal(bool bUseFadeOut);
+	void ResetUITrackingState();
 	bool IsPopupActive(const UMVPopupBase* Popup) const;
 	bool IsDialogueWindowActive(const UMVDialogueWindow* DialogueWindow) const;
 	bool IsDialogueWindowPresent(const UMVDialogueWindow* DialogueWindow) const;

@@ -34,7 +34,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FMVOnRespawnProgressChanged, float,
  *
  * 라이프사이클:
  *   1) GameInstance 생성 시 WorldState 의존성을 초기화하고 월드 초기화 이벤트를 구독한다.
- *   2) 플레이어 DeathComponent의 표현 시작/디졸브 cue/표현 완료 이벤트를 구독해 사망 흐름을 시작한다.
+ *   2) 플레이어 DeathComponent의 표현 시작/오버레이 cue/표현 완료 이벤트를 구독해 사망 흐름을 시작한다.
  *   3) DeathComponent 이벤트가 호출하는 공개 API를 통해 UI와 로딩 리셋 단계로 전환한다.
  */
 UCLASS()
@@ -52,6 +52,9 @@ public:
 	bool BeginDeathSequence(AActor* DeadActor);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Respawn")
+	void NotifyDeathOverlayRequested();
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Respawn", meta = (DeprecatedFunction, DeprecationMessage = "Use NotifyDeathOverlayRequested. Death dissolve no longer displays the overlay."))
 	void NotifyDeathDissolveStarted();
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Respawn")
@@ -95,6 +98,8 @@ private:
 	FName ResolveRespawnResetFieldId() const;
 	bool RespawnPlayerAtLastCheckpoint();
 	void ResetPlayerStatsForRespawn(AMVCharacterBase& Character) const;
+	void ResetUIToDefaultAfterRespawn();
+	void RestorePlayerInputAfterRespawn() const;
 	AMVCharacterBase* ResolvePlayerCharacter(UWorld* World) const;
 	UMVWorldStateSubsystem* GetWorldState() const;
 	UMVUISubsystem* GetUISubsystem() const;
@@ -103,7 +108,7 @@ private:
 	void HandlePlayerDeathPresentationStarted(AActor* DeadActor);
 
 	UFUNCTION()
-	void HandlePlayerDeathDissolveStarted(AActor* DeadActor);
+	void HandlePlayerDeathOverlayRequested(AActor* DeadActor);
 
 	UFUNCTION()
 	void HandlePlayerDeathPresentationFinished(AActor* DeadActor);

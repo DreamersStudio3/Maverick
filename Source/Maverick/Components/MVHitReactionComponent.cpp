@@ -93,8 +93,26 @@ void UMVHitReactionComponent::HandleDamaged(const FMVResolvedHitData& HitData)
 	}
 
 	const bool bLethalHit = CachedStatComponent && CachedStatComponent->WouldDieFromHit(HitData);
+	UE_LOG(
+		LogMVHitReactionComponent,
+		Display,
+		TEXT("[DeathFlowTest] HitReaction.HandleDamaged Owner=%s HP=%.1f Damage=%.1f Lethal=%s HitReactionType=%d Active=%s/%s"),
+		*GetNameSafe(OwnerCharacter.Get()),
+		CachedStatComponent ? CachedStatComponent->CurrentHP : -1.0f,
+		HitData.FinalDamage,
+		bLethalHit ? TEXT("true") : TEXT("false"),
+		static_cast<int32>(HitData.HitReactionType),
+		CachedActionComponent ? *CachedActionComponent->GetActiveActionTableName().ToString() : TEXT("None"),
+		CachedActionComponent ? *CachedActionComponent->GetActiveActionRowName().ToString() : TEXT("None"));
+
 	if (bLethalHit && !MVActionHitReactions::IsKnockDownOrAirborne(HitData.HitReactionType))
 	{
+		UE_LOG(
+			LogMVHitReactionComponent,
+			Display,
+			TEXT("[DeathFlowTest] HitReaction.SkipStandingLethal Owner=%s HitReactionType=%d"),
+			*GetNameSafe(OwnerCharacter.Get()),
+			static_cast<int32>(HitData.HitReactionType));
 		return;
 	}
 
@@ -146,6 +164,17 @@ void UMVHitReactionComponent::HandleDamaged(const FMVResolvedHitData& HitData)
 	}
 	if (bStarted)
 	{
+		UE_LOG(
+			LogMVHitReactionComponent,
+			Display,
+			TEXT("[DeathFlowTest] HitReaction.Started Owner=%s Row=%s Table=%s Section=%s Lethal=%s HitReactionType=%d"),
+			*GetNameSafe(OwnerCharacter.Get()),
+			*ActionData.ActionRowHandle.RowName.ToString(),
+			*GetNameSafe(ActionData.ActionRowHandle.DataTable),
+			*ActionData.StartSection.ToString(),
+			bLethalHit ? TEXT("true") : TEXT("false"),
+			static_cast<int32>(HitData.HitReactionType));
+
 		ResetAirborneLandDetector();
 		ActiveHitReactionActionRowName = ActionData.ActionRowHandle.RowName;
 		ActiveHitReactionType = HitData.HitReactionType;
@@ -424,6 +453,14 @@ bool UMVHitReactionComponent::TryConsumeRecoveryInput(
 
 	if (CachedStatComponent && CachedStatComponent->IsDead())
 	{
+		UE_LOG(
+			LogMVHitReactionComponent,
+			Display,
+			TEXT("[DeathFlowTest] HitReaction.RecoveryInputBlockedByDeath Owner=%s ActionId=%d Active=%s/%s"),
+			*GetNameSafe(OwnerCharacter.Get()),
+			ActionId,
+			CachedActionComponent ? *CachedActionComponent->GetActiveActionTableName().ToString() : TEXT("None"),
+			CachedActionComponent ? *CachedActionComponent->GetActiveActionRowName().ToString() : TEXT("None"));
 		return false;
 	}
 
@@ -475,6 +512,14 @@ bool UMVHitReactionComponent::TryConsumeRecoveryMovementInput(
 
 	if (CachedStatComponent && CachedStatComponent->IsDead())
 	{
+		UE_LOG(
+			LogMVHitReactionComponent,
+			Display,
+			TEXT("[DeathFlowTest] HitReaction.RecoveryMovementBlockedByDeath Owner=%s HasMovementInput=%s Active=%s/%s"),
+			*GetNameSafe(OwnerCharacter.Get()),
+			bHasMovementInput ? TEXT("true") : TEXT("false"),
+			CachedActionComponent ? *CachedActionComponent->GetActiveActionTableName().ToString() : TEXT("None"),
+			CachedActionComponent ? *CachedActionComponent->GetActiveActionRowName().ToString() : TEXT("None"));
 		return false;
 	}
 
@@ -515,6 +560,14 @@ bool UMVHitReactionComponent::TryStartDefaultRecoveryAction(const bool bRequireR
 
 	if (CachedStatComponent && CachedStatComponent->IsDead())
 	{
+		UE_LOG(
+			LogMVHitReactionComponent,
+			Display,
+			TEXT("[DeathFlowTest] HitReaction.DefaultRecoveryBlockedByDeath Owner=%s RequireWindow=%s Active=%s/%s"),
+			*GetNameSafe(OwnerCharacter.Get()),
+			bRequireRecoveryWindow ? TEXT("true") : TEXT("false"),
+			CachedActionComponent ? *CachedActionComponent->GetActiveActionTableName().ToString() : TEXT("None"),
+			CachedActionComponent ? *CachedActionComponent->GetActiveActionRowName().ToString() : TEXT("None"));
 		return false;
 	}
 
@@ -751,12 +804,33 @@ bool UMVHitReactionComponent::RequestDefaultRecoveryAction()
 		CacheOwnerReferences();
 	}
 
-	if (CachedStatComponent && CachedStatComponent->IsDead())
+	const bool bDead = CachedStatComponent && CachedStatComponent->IsDead();
+	UE_LOG(
+		LogMVHitReactionComponent,
+		Display,
+		TEXT("[DeathFlowTest] HitReaction.StartGetupNotify Owner=%s Dead=%s ActiveHR=%s Active=%s/%s"),
+		*GetNameSafe(OwnerCharacter.Get()),
+		bDead ? TEXT("true") : TEXT("false"),
+		*ActiveHitReactionActionRowName.ToString(),
+		CachedActionComponent ? *CachedActionComponent->GetActiveActionTableName().ToString() : TEXT("None"),
+		CachedActionComponent ? *CachedActionComponent->GetActiveActionRowName().ToString() : TEXT("None"));
+
+	if (bDead)
 	{
 		return false;
 	}
 
-	return TryStartDefaultRecoveryAction(false);
+	const bool bStarted = TryStartDefaultRecoveryAction(false);
+	UE_LOG(
+		LogMVHitReactionComponent,
+		Display,
+		TEXT("[DeathFlowTest] HitReaction.StartGetupResult Owner=%s Started=%s Active=%s/%s"),
+		*GetNameSafe(OwnerCharacter.Get()),
+		bStarted ? TEXT("true") : TEXT("false"),
+		CachedActionComponent ? *CachedActionComponent->GetActiveActionTableName().ToString() : TEXT("None"),
+		CachedActionComponent ? *CachedActionComponent->GetActiveActionRowName().ToString() : TEXT("None"));
+
+	return bStarted;
 }
 
 bool UMVHitReactionComponent::IsAirborneLandDetectorActive() const

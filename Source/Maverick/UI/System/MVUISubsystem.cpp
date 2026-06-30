@@ -175,10 +175,27 @@ UMVHUDWidgetBase* UMVUISubsystem::ShowDefaultHUD()
 	return Settings ? ShowHUDByClass(Settings->DefaultHUDClass) : nullptr;
 }
 
+void UMVUISubsystem::HideHUD()
+{
+	UMVUILayerBase* Layer = GetOrCreateRootLayer();
+	if (Layer)
+	{
+		Layer->HideHUDWidgetWithFade();
+	}
+
+	CachedHUD = nullptr;
+}
+
 UCommonActivatableWidget* UMVUISubsystem::ShowLoadingWindow()
 {
 	const UMVUISettings* Settings = GetDefault<UMVUISettings>();
-	return Settings ? PushWindowByClass(Settings->LoadingWindowClass) : nullptr;
+	if (!Settings || !Settings->LoadingWindowClass)
+	{
+		return nullptr;
+	}
+
+	HideHUD();
+	return PushWindowByClass(Settings->LoadingWindowClass);
 }
 
 UCommonActivatableWidget* UMVUISubsystem::ShowDeathOverlay()
@@ -553,7 +570,12 @@ UMVMessagePopup* UMVUISubsystem::ShowPopupMessageById(FName MessageId)
 	return ShowPopupMessage(MessageData);
 }
 
-void UMVUISubsystem::ClearAllUI()
+void UMVUISubsystem::ClearAllUI(bool bUseFadeOut)
+{
+	ClearAllUIInternal(bUseFadeOut);
+}
+
+void UMVUISubsystem::ClearAllUIInternal(bool bUseFadeOut)
 {
 	for (UMVUILayerBase* Layer : LayerStack)
 	{
@@ -562,11 +584,24 @@ void UMVUISubsystem::ClearAllUI()
 			continue;
 		}
 
-		Layer->ClearLayer();
-		Layer->RemoveFromParent();
+		if (bUseFadeOut)
+		{
+			Layer->SetVisibility(ESlateVisibility::HitTestInvisible);
+			Layer->RemoveFromParentWithFade();
+		}
+		else
+		{
+			Layer->ClearLayer();
+			Layer->RemoveFromParent();
+		}
 	}
 
 	LayerStack.Reset();
+	ResetUITrackingState();
+}
+
+void UMVUISubsystem::ResetUITrackingState()
+{
 	CachedHUD = nullptr;
 	ActiveInteractionPrompt = nullptr;
 	ActiveDialogueWindow = nullptr;
@@ -600,6 +635,20 @@ void UMVUISubsystem::ClearAllUI()
 	DialogueZoomCamera.Reset();
 	bDialogueCameraZoomApplied = false;
 	bDialogueCameraZoomRestoring = false;
+}
+
+void UMVUISubsystem::ResetToDefaultUI()
+{
+	UWorld* World = GetWorld();
+	ClearAllUIInternal(true);
+
+	if (!World || !World->IsGameWorld())
+	{
+		return;
+	}
+
+	GetOrCreateRootLayer(World);
+	ShowDefaultHUD();
 }
 
 void UMVUISubsystem::HandleWorldInit(UWorld* World, const UWorld::InitializationValues IVS)

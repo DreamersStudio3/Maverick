@@ -14,6 +14,8 @@
 #include "UI/Window/MVDeathOverlayWindow.h"
 #include "UI/Window/MVLoadingWindow.h"
 
+DEFINE_LOG_CATEGORY_STATIC(LogMVRespawnSubsystem, Log, All);
+
 void UMVRespawnSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Collection.InitializeDependency(UMVWorldStateSubsystem::StaticClass());
@@ -48,12 +50,23 @@ bool UMVRespawnSubsystem::BeginDeathSequence(AActor* DeadActor)
 	PendingDeadActor = DeadActor;
 	bDeathMontageEnded = false;
 	bDeathOverlayMinimumElapsed = false;
+	if (UMVUISubsystem* UISubsystem = GetUISubsystem())
+	{
+		UISubsystem->ClearAllUI(true);
+		ActiveDeathOverlay = nullptr;
+		ActiveLoadingWindow = nullptr;
+		UE_LOG(
+			LogMVRespawnSubsystem,
+			Display,
+			TEXT("[DeathFlowTest] Death.ClearAllUI"));
+	}
+
 	SetRespawnPhase(EMVRespawnPhase::DeathStarted);
 	UpdateRespawnProgress(0.0f, NSLOCTEXT("MaverickRespawn", "DeathStarted", "사망 처리 시작"));
 	return true;
 }
 
-void UMVRespawnSubsystem::NotifyDeathDissolveStarted()
+void UMVRespawnSubsystem::NotifyDeathOverlayRequested()
 {
 	if (RespawnPhase == EMVRespawnPhase::LoadingReset || RespawnPhase == EMVRespawnPhase::Respawning)
 	{
@@ -63,6 +76,17 @@ void UMVRespawnSubsystem::NotifyDeathDissolveStarted()
 	if (RespawnPhase == EMVRespawnPhase::Idle)
 	{
 		PendingDeadActor = ResolvePlayerCharacter(GetWorld());
+		if (UMVUISubsystem* UISubsystem = GetUISubsystem())
+		{
+			UISubsystem->ClearAllUI(true);
+			ActiveDeathOverlay = nullptr;
+			ActiveLoadingWindow = nullptr;
+			UE_LOG(
+				LogMVRespawnSubsystem,
+				Display,
+				TEXT("[DeathFlowTest] Death.ClearAllUI"));
+		}
+
 		SetRespawnPhase(EMVRespawnPhase::DeathStarted);
 	}
 
@@ -89,18 +113,40 @@ void UMVRespawnSubsystem::NotifyDeathDissolveStarted()
 	}
 }
 
+void UMVRespawnSubsystem::NotifyDeathDissolveStarted()
+{
+	NotifyDeathOverlayRequested();
+}
+
 void UMVRespawnSubsystem::NotifyDeathMontageEnded()
 {
 	if (RespawnPhase == EMVRespawnPhase::Idle)
 	{
 		PendingDeadActor = ResolvePlayerCharacter(GetWorld());
+		if (UMVUISubsystem* UISubsystem = GetUISubsystem())
+		{
+			UISubsystem->ClearAllUI(true);
+			ActiveDeathOverlay = nullptr;
+			ActiveLoadingWindow = nullptr;
+			UE_LOG(
+				LogMVRespawnSubsystem,
+				Display,
+				TEXT("[DeathFlowTest] Death.ClearAllUI"));
+		}
+
 		SetRespawnPhase(EMVRespawnPhase::DeathStarted);
 	}
 
 	bDeathMontageEnded = true;
-	if (!ActiveDeathOverlay || bDeathOverlayMinimumElapsed)
+	if (bDeathOverlayMinimumElapsed)
 	{
 		BeginRespawnLoading();
+		return;
+	}
+
+	if (!ActiveDeathOverlay)
+	{
+		NotifyDeathOverlayRequested();
 	}
 }
 
@@ -118,7 +164,8 @@ void UMVRespawnSubsystem::BeginRespawnLoading()
 		ActiveDeathOverlay->OnMinimumDisplayElapsed.RemoveDynamic(
 			this,
 			&UMVRespawnSubsystem::HandleDeathOverlayMinimumDisplayElapsed);
-		ActiveDeathOverlay->DeactivateWidgetWithFade();
+		ActiveDeathOverlay->DeactivateWidget();
+		ActiveDeathOverlay = nullptr;
 	}
 
 	UMVUISubsystem* UISubsystem = GetUISubsystem();
@@ -155,7 +202,7 @@ void UMVRespawnSubsystem::CompleteRespawn()
 
 	if (ActiveLoadingWindow)
 	{
-		ActiveLoadingWindow->DeactivateWidgetWithFade();
+		ActiveLoadingWindow->DeactivateWidget();
 	}
 
 	if (ActiveDeathOverlay)
@@ -163,8 +210,11 @@ void UMVRespawnSubsystem::CompleteRespawn()
 		ActiveDeathOverlay->OnMinimumDisplayElapsed.RemoveDynamic(
 			this,
 			&UMVRespawnSubsystem::HandleDeathOverlayMinimumDisplayElapsed);
+		ActiveDeathOverlay->DeactivateWidget();
 	}
 
+	ResetUIToDefaultAfterRespawn();
+	RestorePlayerInputAfterRespawn();
 	ResetRespawnState();
 	SetRespawnPhase(EMVRespawnPhase::Idle);
 }
@@ -227,12 +277,12 @@ void UMVRespawnSubsystem::BindToPlayerDeath(UWorld* World)
 	DeathComponent->OnDeathPresentationStarted.AddUniqueDynamic(
 		this,
 		&UMVRespawnSubsystem::HandlePlayerDeathPresentationStarted);
-	DeathComponent->OnDeathDissolveStarted.RemoveDynamic(
+	DeathComponent->OnDeathOverlayRequested.RemoveDynamic(
 		this,
-		&UMVRespawnSubsystem::HandlePlayerDeathDissolveStarted);
-	DeathComponent->OnDeathDissolveStarted.AddUniqueDynamic(
+		&UMVRespawnSubsystem::HandlePlayerDeathOverlayRequested);
+	DeathComponent->OnDeathOverlayRequested.AddUniqueDynamic(
 		this,
-		&UMVRespawnSubsystem::HandlePlayerDeathDissolveStarted);
+		&UMVRespawnSubsystem::HandlePlayerDeathOverlayRequested);
 	DeathComponent->OnDeathPresentationFinished.RemoveDynamic(
 		this,
 		&UMVRespawnSubsystem::HandlePlayerDeathPresentationFinished);
@@ -432,6 +482,43 @@ void UMVRespawnSubsystem::ResetPlayerStatsForRespawn(AMVCharacterBase& Character
 	StatComponent->SetCurrentGroggy(0.0f);
 }
 
+void UMVRespawnSubsystem::ResetUIToDefaultAfterRespawn()
+{
+	if (UMVUISubsystem* UISubsystem = GetUISubsystem())
+	{
+		UISubsystem->ResetToDefaultUI();
+		ActiveDeathOverlay = nullptr;
+		ActiveLoadingWindow = nullptr;
+		UE_LOG(
+			LogMVRespawnSubsystem,
+			Display,
+			TEXT("[DeathFlowTest] Respawn.UIResetToDefault"));
+	}
+}
+
+void UMVRespawnSubsystem::RestorePlayerInputAfterRespawn() const
+{
+	UWorld* World = GetWorld();
+	APlayerController* PlayerController = World ? World->GetFirstPlayerController() : nullptr;
+	if (!PlayerController)
+	{
+		return;
+	}
+
+	FInputModeGameOnly InputMode;
+	InputMode.SetConsumeCaptureMouseDown(false);
+	PlayerController->SetInputMode(InputMode);
+	PlayerController->SetShowMouseCursor(false);
+	PlayerController->ResetIgnoreMoveInput();
+	PlayerController->ResetIgnoreLookInput();
+
+	UE_LOG(
+		LogMVRespawnSubsystem,
+		Display,
+		TEXT("[DeathFlowTest] Respawn.InputRestored Controller=%s"),
+		*GetNameSafe(PlayerController));
+}
+
 AMVCharacterBase* UMVRespawnSubsystem::ResolvePlayerCharacter(UWorld* World) const
 {
 	APlayerController* PlayerController = World ? World->GetFirstPlayerController() : nullptr;
@@ -456,9 +543,9 @@ void UMVRespawnSubsystem::HandlePlayerDeathPresentationStarted(AActor* DeadActor
 	BeginDeathSequence(DeadActor);
 }
 
-void UMVRespawnSubsystem::HandlePlayerDeathDissolveStarted(AActor* /*DeadActor*/)
+void UMVRespawnSubsystem::HandlePlayerDeathOverlayRequested(AActor* /*DeadActor*/)
 {
-	NotifyDeathDissolveStarted();
+	NotifyDeathOverlayRequested();
 }
 
 void UMVRespawnSubsystem::HandlePlayerDeathPresentationFinished(AActor* /*DeadActor*/)

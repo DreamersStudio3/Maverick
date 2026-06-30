@@ -171,37 +171,25 @@ bool UMVActionComponent::TryTransitionActionFromTable(
 	const FName ActionTableName,
 	const FName ActionRowName,
 	const FName StartSection,
-	const float /*BlendOutTime*/)
+	const float BlendOutTime)
 {
 	if (ActionTableName.IsNone() || ActionRowName.IsNone())
 	{
 		return false;
 	}
 
-	const FMVActionRow* ActionRow = FindActionRow(ActionTableName, ActionRowName);
-	if (!ActionRow)
-	{
-		UE_LOG(
-			LogMVActionComponent,
-			Warning,
-			TEXT("Action row transition was not resolved. Table=%s, RowName=%s."),
-			*ActionTableName.ToString(),
-			*ActionRowName.ToString());
-		return false;
-	}
-
 	if (IsActionRunning())
 	{
-		InterruptActiveActionForTransition();
+		CancelActiveAction(BlendOutTime);
 	}
 
-	return TryStartResolvedAction(ActionTableName, ActionRowName, *ActionRow, StartSection);
+	return TryStartActionFromTable(ActionTableName, ActionRowName, StartSection);
 }
 
 bool UMVActionComponent::TryTransitionActionFromRowHandle(
 	const FDataTableRowHandle ActionRowHandle,
 	const FName StartSection,
-	const float /*BlendOutTime*/)
+	const float BlendOutTime)
 {
 	FName ActionTableName = NAME_None;
 	FName ActionRowName = NAME_None;
@@ -219,7 +207,7 @@ bool UMVActionComponent::TryTransitionActionFromRowHandle(
 
 	if (IsActionRunning())
 	{
-		InterruptActiveActionForTransition();
+		CancelActiveAction(BlendOutTime);
 	}
 
 	return TryStartResolvedAction(ActionTableName, ActionRowName, *ActionRow, StartSection);
@@ -261,13 +249,6 @@ void UMVActionComponent::CancelActiveAction(const float BlendOutTime)
 	{
 		AnimInstance->Montage_Stop(FMath::Max(0.0f, BlendOutTime), MontageToStop);
 	}
-}
-
-void UMVActionComponent::InterruptActiveActionForTransition()
-{
-	// Transition starts another montage immediately. Do not pre-stop the current montage here,
-	// because that can insert a base-pose frame before the next montage blends in.
-	FinishActiveAction(true);
 }
 
 void UMVActionComponent::BeginRecoverableStatRecoveryPause()

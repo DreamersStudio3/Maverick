@@ -12,7 +12,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMVOnDeathOverlayMinimumDisplayElapsed);
 /**
  * 사망 연출 중 고정 사망 문구를 표시하는 오버레이 창.
  *
- * 이 창은 `YOU DIED` 같은 사망 알림을 화면에 표시하고 최소 표시 시간이 지났음을 알릴 뿐,
+ * 이 창은 `YOU DIED` 같은 사망 알림을 fade in, hold, fade out으로 표시하고 표시 완료 시점을 알릴 뿐,
  * 로딩 창 전환이나 부활 처리는 직접 수행하지 않는다. 사망 몽타주 종료, 필드 초기화, 부활 흐름은
  * `UMVRespawnSubsystem`이 담당한다.
  */
@@ -38,12 +38,13 @@ protected:
 	virtual void NativeOnActivated() override;
 	virtual void NativeOnDeactivated() override;
 	virtual void HandleFadeInFinished() override;
+	virtual void HandleFadeOutFinished() override;
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional), Category = "Maverick|UI|Death")
 	TObjectPtr<UTextBlock> DeathText;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Maverick|UI|Death", meta = (ClampMin = "0.0"))
-	float MinimumDisplaySeconds = 3.0f;
+	float MinimumDisplaySeconds = 2.0f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Maverick|UI|Death|Animation", meta = (ClampMin = "0.0"))
 	float DeathOverlayFadeInSeconds = 1.0f;
@@ -57,9 +58,11 @@ private:
 	void ApplyDeathOverlayFadeDurations();
 	void StartMinimumDisplayTimer();
 	void ClearMinimumDisplayTimer();
+	void BeginFadeOutAfterDisplay();
 	void HandleMinimumDisplayTimeElapsed();
 
 	FTimerHandle MinimumDisplayTimerHandle;
 	bool bMinimumDisplayElapsed = false;
 	bool bFadeInFinished = false;
+	bool bFadeOutRequested = false;
 };

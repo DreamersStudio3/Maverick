@@ -41,6 +41,7 @@ void UMVDeathOverlayWindow::NativeOnActivated()
 {
 	bMinimumDisplayElapsed = false;
 	bFadeInFinished = false;
+	bFadeOutRequested = false;
 	ApplyDeathOverlayFadeDurations();
 	RefreshDeathText();
 	ClearMinimumDisplayTimer();
@@ -53,6 +54,7 @@ void UMVDeathOverlayWindow::NativeOnDeactivated()
 	ClearMinimumDisplayTimer();
 	bMinimumDisplayElapsed = false;
 	bFadeInFinished = false;
+	bFadeOutRequested = false;
 
 	Super::NativeOnDeactivated();
 }
@@ -63,6 +65,13 @@ void UMVDeathOverlayWindow::HandleFadeInFinished()
 
 	bFadeInFinished = true;
 	StartMinimumDisplayTimer();
+}
+
+void UMVDeathOverlayWindow::HandleFadeOutFinished()
+{
+	Super::HandleFadeOutFinished();
+
+	HandleMinimumDisplayTimeElapsed();
 }
 
 void UMVDeathOverlayWindow::BuildNativeWidgetTree()
@@ -99,7 +108,9 @@ void UMVDeathOverlayWindow::BuildNativeWidgetTree()
 
 void UMVDeathOverlayWindow::ApplyDeathOverlayFadeDurations()
 {
-	SetUIFadeDurations(DeathOverlayFadeInSeconds, DeathOverlayFadeOutSeconds);
+	const float DeathOverlayFadeSeconds = FMath::Max(0.0f, DeathOverlayFadeInSeconds);
+	DeathOverlayFadeOutSeconds = DeathOverlayFadeSeconds;
+	SetUIFadeDurations(DeathOverlayFadeSeconds, DeathOverlayFadeSeconds);
 }
 
 void UMVDeathOverlayWindow::RefreshDeathText()
@@ -113,11 +124,14 @@ void UMVDeathOverlayWindow::RefreshDeathText()
 void UMVDeathOverlayWindow::StartMinimumDisplayTimer()
 {
 	ClearMinimumDisplayTimer();
-	bMinimumDisplayElapsed = false;
+	if (bFadeOutRequested || !IsActivated())
+	{
+		return;
+	}
 
 	if (MinimumDisplaySeconds <= 0.0f)
 	{
-		HandleMinimumDisplayTimeElapsed();
+		BeginFadeOutAfterDisplay();
 		return;
 	}
 
@@ -126,7 +140,7 @@ void UMVDeathOverlayWindow::StartMinimumDisplayTimer()
 		World->GetTimerManager().SetTimer(
 			MinimumDisplayTimerHandle,
 			this,
-			&UMVDeathOverlayWindow::HandleMinimumDisplayTimeElapsed,
+			&UMVDeathOverlayWindow::BeginFadeOutAfterDisplay,
 			MinimumDisplaySeconds,
 			false);
 	}
@@ -138,6 +152,18 @@ void UMVDeathOverlayWindow::ClearMinimumDisplayTimer()
 	{
 		World->GetTimerManager().ClearTimer(MinimumDisplayTimerHandle);
 	}
+}
+
+void UMVDeathOverlayWindow::BeginFadeOutAfterDisplay()
+{
+	ClearMinimumDisplayTimer();
+	if (bFadeOutRequested || !IsActivated())
+	{
+		return;
+	}
+
+	bFadeOutRequested = true;
+	DeactivateWidgetWithFade();
 }
 
 void UMVDeathOverlayWindow::HandleMinimumDisplayTimeElapsed()

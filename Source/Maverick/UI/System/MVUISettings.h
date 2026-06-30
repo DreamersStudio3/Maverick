@@ -46,8 +46,8 @@ public:
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Window")
 	TSubclassOf<UMVWindowBase> SkillTreeWindowClass;
 
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Window", meta = (ClampMin = "0.0"))
-	float DeathOverlayDuration = 3.0f;
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Window", meta = (ClampMin = "0.0", DisplayName = "Death Overlay Hold Seconds"))
+	float DeathOverlayDuration = 1.0f;
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Popup")
 	TSubclassOf<UMVPopupBase> InteractionPromptPopupClass;
