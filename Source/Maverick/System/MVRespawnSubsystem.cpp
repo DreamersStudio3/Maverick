@@ -55,10 +55,6 @@ bool UMVRespawnSubsystem::BeginDeathSequence(AActor* DeadActor)
 		UISubsystem->ClearAllUI(true);
 		ActiveDeathOverlay = nullptr;
 		ActiveLoadingWindow = nullptr;
-		UE_LOG(
-			LogMVRespawnSubsystem,
-			Display,
-			TEXT("[DeathFlowTest] Death.ClearAllUI"));
 	}
 
 	SetRespawnPhase(EMVRespawnPhase::DeathStarted);
@@ -81,10 +77,6 @@ void UMVRespawnSubsystem::NotifyDeathOverlayRequested()
 			UISubsystem->ClearAllUI(true);
 			ActiveDeathOverlay = nullptr;
 			ActiveLoadingWindow = nullptr;
-			UE_LOG(
-				LogMVRespawnSubsystem,
-				Display,
-				TEXT("[DeathFlowTest] Death.ClearAllUI"));
 		}
 
 		SetRespawnPhase(EMVRespawnPhase::DeathStarted);
@@ -128,10 +120,6 @@ void UMVRespawnSubsystem::NotifyDeathMontageEnded()
 			UISubsystem->ClearAllUI(true);
 			ActiveDeathOverlay = nullptr;
 			ActiveLoadingWindow = nullptr;
-			UE_LOG(
-				LogMVRespawnSubsystem,
-				Display,
-				TEXT("[DeathFlowTest] Death.ClearAllUI"));
 		}
 
 		SetRespawnPhase(EMVRespawnPhase::DeathStarted);
@@ -489,10 +477,6 @@ void UMVRespawnSubsystem::ResetUIToDefaultAfterRespawn()
 		UISubsystem->ResetToDefaultUI();
 		ActiveDeathOverlay = nullptr;
 		ActiveLoadingWindow = nullptr;
-		UE_LOG(
-			LogMVRespawnSubsystem,
-			Display,
-			TEXT("[DeathFlowTest] Respawn.UIResetToDefault"));
 	}
 }
 
@@ -511,12 +495,6 @@ void UMVRespawnSubsystem::RestorePlayerInputAfterRespawn() const
 	PlayerController->SetShowMouseCursor(false);
 	PlayerController->ResetIgnoreMoveInput();
 	PlayerController->ResetIgnoreLookInput();
-
-	UE_LOG(
-		LogMVRespawnSubsystem,
-		Display,
-		TEXT("[DeathFlowTest] Respawn.InputRestored Controller=%s"),
-		*GetNameSafe(PlayerController));
 }
 
 AMVCharacterBase* UMVRespawnSubsystem::ResolvePlayerCharacter(UWorld* World) const

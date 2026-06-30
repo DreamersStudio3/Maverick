@@ -25,11 +25,12 @@ HP가 0이 된 순간부터 사망 액션, 디졸브, 사망 오버레이, 로�
 - [x] 로딩 초기화 진행률 이벤트와 LoadingWindow progress API가 있다.
 - [x] DeathOverlay 표시 cue를 death dissolve notify에서 분리해 `MV Death Overlay` notify와 `OnDeathOverlayRequested` 이벤트로 독립시켰다.
 - [x] `MV Death Dissolve` notify에서 mesh material slot별 Dynamic Material Instance를 만들고 `DeathDissolveAmount`를 0에서 1로 구동하게 했다.
-- [x] 기존 BP/컴포넌트 기본값에 남은 1.2초 dissolve duration을 런타임에서 3초로 보정하고 실제 적용 시간을 로그로 확인할 수 있게 했다.
+- [x] 기존 BP/컴포넌트 기본값에 남은 1.2초 dissolve duration을 런타임에서 3초로 보정했다.
 - [x] dissolve material이 낮은 amount에서 완전히 사라지는 경우를 보정하기 위해 duration 끝에 도달할 material amount를 별도 설정으로 분리했다.
 - [x] DeathComponent에서는 dissolve cue/reset만 관리하고 실제 DMI/material/mesh hide 처리는 instanced `UMVDeathDissolveEffect` UObject로 분리했다.
 - [x] LoadingWindow 전환 시 DeathOverlay를 즉시 deactivate해 respawn 뒤 overlay가 다시 leaf-most로 올라오는 문제를 막았다.
 - [x] 부활 완료 시 LoadingWindow를 즉시 deactivate하고 PlayerController 입력 모드를 GameOnly로 복구해 move/look 입력 차단을 해제한다.
+- [x] 개발 빌드에서 `MV.UI.LoadingTest.Show`, `Hide`, `Advance` 콘솔 명령으로 로딩 화면과 GameGuide 카드 UI를 고정 테스트할 수 있다.
 - [x] 부활 완료 시 UI 시스템을 default HUD만 남는 기본 상태로 재초기화해 사망 전/중 떠 있던 위젯을 제거한다.
 - [x] 사망 시작 시 펼쳐져 있던 모든 UI를 fade-out으로 내리고, 이후 DeathOverlay만 새 레이어에 올리게 했다.
 - [x] Respawn loading은 DeathOverlay fade-out 완료와 death montage 종료가 모두 확인된 뒤에만 시작한다.
@@ -41,7 +42,12 @@ HP가 0이 된 순간부터 사망 액션, 디졸브, 사망 오버레이, 로�
 - [x] PIE 재확인: lethal Airborne/KD hit이 Getup으로 빠지지 않고 handoff 뒤 death presentation으로 이어지는 흐름을 확인했다.
 - [x] KD/AB 몽타주의 Lying 섹션 진입 직전에 `MV HitReaction Death Handoff` notify를 배치한다.
 - [x] 사망 몽타주마다 dissolve보다 뒤쪽의 의도한 프레임에 `MV Death Overlay` notify를 배치한다.
-- [ ] 도움말 카드 UI와 실제 필드 액터 리셋 정책 적용은 아직 없다.
+- [x] LoadingWindow는 GameGuide 테이블에서 로딩 노출 항목을 읽어 도움말 카드를 표시한다.
+- [x] LoadingWindow 테스트용 콘솔 명령으로 로딩 화면을 오래 띄우고 카드 전환을 확인할 수 있다.
+- [x] LoadingWindow는 `IA_Interact` 입력 액션에 매핑된 키로 가이드 카드를 넘기며, 카드 전환 때 title/body를 fade-out 후 fade-in한다.
+- [x] 사망 UI 정리 중 PIE 피격 테스트 패널이 열려 있어도 기존 패널 닫기 경로를 통해 게임 입력 모드와 마우스 커서를 복원한다.
+- [x] 사망 흐름 검증용 임시 로그와 별도 debug TODO를 제거했다.
+- [ ] 실제 필드 액터 리셋 정책 적용은 아직 없다.
 
 ## UI 흐름
 
@@ -53,6 +59,7 @@ HP가 0이 된 순간부터 사망 액션, 디졸브, 사망 오버레이, 로�
 - [x] 문구는 항상 동일하므로 DataTable로 관리하지 않는다.
 - [x] 단, 로컬라이징 수집을 고려해 `NSLOCTEXT` 기반 `FText`로 둔다.
 - [x] Death overlay는 이동 입력을 막되 look 입력은 막지 않는다.
+- [x] Death overlay는 게임 입력 모드와 마우스 캡처를 요구해 UI 표시 중에도 카메라 look 입력이 분리되지 않게 한다.
 - [x] Death overlay는 타이머가 끝났다는 이유만으로 `LoadingWindow`를 직접 열지 않는다.
 - [x] Death overlay는 1초 fade in, 1초 hold, 1초 fade out을 사용하고 fade out 완료를 표시 완료 시점으로 알린다.
 - [x] 디졸브 시작 notify에서 `UMVDeathComponent::NotifyDeathDissolveStarted()`를 호출한다.
@@ -62,8 +69,9 @@ HP가 0이 된 순간부터 사망 액션, 디졸브, 사망 오버레이, 로�
 ### LoadingWindow
 
 - [x] 로딩 진행률을 표시하는 progress bar를 가진다.
-- [ ] 도움말 카드/캐러셀을 표시한다.
-- [ ] 상호작용 키로 다음 카드를 넘길 수 있다.
+- [x] 도움말 카드/캐러셀을 표시한다.
+- [x] `IA_Interact` 입력 액션에 매핑된 키로 가이드 카드를 넘길 수 있다.
+- [x] 가이드 카드 전환은 0.25초 fade-out 뒤 다음 카드로 교체하고 0.25초 fade-in한다.
 - [x] 초기화 완료 전에는 닫히거나 게임 입력으로 복귀하지 않는다.
 - [x] 진행률이 100%가 되면 `UMVRespawnSubsystem`이 부활 단계로 넘어갈 수 있다.
 
@@ -162,4 +170,4 @@ HP가 0이 된 순간부터 사망 액션, 디졸브, 사망 오버레이, 로�
 - [x] lethal standing hit은 HitReaction 없이 DeathComponent가 death action을 즉시 시작하게 한다.
 - [x] lethal KD/AB hit에서 활성 HitReaction 완료 또는 handoff 뒤 DeathComponent가 death action을 시작하게 한다.
 - [x] KD/AB lethal hit에서 Lying 진입 직전 death action으로 넘기는 handoff notify를 추가한다.
-- [ ] LoadingWindow card UI를 구현한다.
+- [x] LoadingWindow card UI를 구현한다.

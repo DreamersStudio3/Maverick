@@ -4,10 +4,12 @@
 #include "Camera/CameraComponent.h"
 #include "Character/MVCharacterBase.h"
 #include "CommonActivatableWidget.h"
+#include "Engine/GameInstance.h"
 #include "Engine/World.h"
 #include "GameFramework/Pawn.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "HAL/IConsoleManager.h"
 #include "Tables/MVDialogueTableTypes.h"
 #include "Tables/MVTableManager.h"
 #include "Tables/MVUIMessageTableTypes.h"
@@ -21,6 +23,70 @@
 #include "UI/System/MVUISettings.h"
 #include "UI/Window/MVDeathOverlayWindow.h"
 #include "UI/Window/MVDialogueWindow.h"
+#include "UI/Window/MVLoadingWindow.h"
+
+namespace
+{
+UMVUISubsystem* MVUISubsystemResolveLoadingTestSubsystem(UWorld* World)
+{
+	UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr;
+	return GameInstance ? GameInstance->GetSubsystem<UMVUISubsystem>() : nullptr;
+}
+
+bool MVUISubsystemShouldUseNativeLoadingTestWindow(const TArray<FString>& Args)
+{
+	for (const FString& Arg : Args)
+	{
+		if (Arg.Equals(TEXT("native"), ESearchCase::IgnoreCase))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void MVUISubsystemShowLoadingTestCommand(const TArray<FString>& Args, UWorld* World)
+{
+	if (UMVUISubsystem* UISubsystem = MVUISubsystemResolveLoadingTestSubsystem(World))
+	{
+		UISubsystem->ShowLoadingWindowForTest(MVUISubsystemShouldUseNativeLoadingTestWindow(Args));
+	}
+}
+
+void MVUISubsystemHideLoadingTestCommand(const TArray<FString>& Args, UWorld* World)
+{
+	if (UMVUISubsystem* UISubsystem = MVUISubsystemResolveLoadingTestSubsystem(World))
+	{
+		UISubsystem->HideLoadingWindowForTest();
+	}
+}
+
+void MVUISubsystemAdvanceLoadingTestCardCommand(const TArray<FString>& Args, UWorld* World)
+{
+	if (UMVUISubsystem* UISubsystem = MVUISubsystemResolveLoadingTestSubsystem(World))
+	{
+		UISubsystem->AdvanceLoadingGuideCardForTest();
+	}
+}
+
+#if !UE_BUILD_SHIPPING
+static FAutoConsoleCommandWithWorldAndArgs MVUISubsystemShowLoadingTestConsoleCommand(
+	TEXT("MV.UI.LoadingTest.Show"),
+	TEXT("Show a persistent loading window for UI testing. Pass 'native' to use the C++ fallback layout."),
+	FConsoleCommandWithWorldAndArgsDelegate::CreateStatic(&MVUISubsystemShowLoadingTestCommand));
+
+static FAutoConsoleCommandWithWorldAndArgs MVUISubsystemHideLoadingTestConsoleCommand(
+	TEXT("MV.UI.LoadingTest.Hide"),
+	TEXT("Hide the persistent loading window test and restore the default UI."),
+	FConsoleCommandWithWorldAndArgsDelegate::CreateStatic(&MVUISubsystemHideLoadingTestCommand));
+
+static FAutoConsoleCommandWithWorldAndArgs MVUISubsystemAdvanceLoadingTestCardConsoleCommand(
+	TEXT("MV.UI.LoadingTest.Advance"),
+	TEXT("Advance the guide card in the active loading window test."),
+	FConsoleCommandWithWorldAndArgsDelegate::CreateStatic(&MVUISubsystemAdvanceLoadingTestCardCommand));
+#endif
+}
 
 void UMVUISubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
@@ -101,6 +167,7 @@ void UMVUISubsystem::PopLayer()
 	ActiveInteractionPrompt = nullptr;
 	ActiveDialogueWindow = nullptr;
 	ActivePopup = nullptr;
+	ActiveLoadingWindowForTest = nullptr;
 	bHasPendingDialogueRequest = false;
 	PendingDialogueText = FText::GetEmpty();
 	PendingDialogueDuration = -1.0f;
@@ -396,6 +463,66 @@ bool UMVUISubsystem::IsPIEActionTestPanelActiveOrPending() const
 #endif
 }
 
+UMVLoadingWindow* UMVUISubsystem::ShowLoadingWindowForTest(const bool bUseNativeWindow)
+{
+#if !UE_BUILD_SHIPPING
+	UWorld* World = GetWorld();
+	if (!World || !World->IsGameWorld())
+	{
+		return nullptr;
+	}
+
+	ClearAllUI(true);
+	HideHUD();
+
+	UCommonActivatableWidget* LoadingWidget = bUseNativeWindow
+		? PushWindowByClass(UMVLoadingWindow::StaticClass())
+		: ShowLoadingWindow();
+	ActiveLoadingWindowForTest = Cast<UMVLoadingWindow>(LoadingWidget);
+	if (!ActiveLoadingWindowForTest)
+	{
+		return nullptr;
+	}
+
+	ActiveLoadingWindowForTest->LoadLoadingGuideCards();
+	ActiveLoadingWindowForTest->SetLoadingProgress(
+		0.35f,
+		NSLOCTEXT("MaverickLoading", "LoadingTestStepText", "Loading screen test"));
+	ActiveLoadingWindowForTest->SetKeyboardFocus();
+	return ActiveLoadingWindowForTest;
+#else
+	return nullptr;
+#endif
+}
+
+void UMVUISubsystem::HideLoadingWindowForTest()
+{
+#if !UE_BUILD_SHIPPING
+	ActiveLoadingWindowForTest = nullptr;
+	ResetToDefaultUI();
+
+	UWorld* World = GetWorld();
+	APlayerController* PlayerController = World ? World->GetFirstPlayerController() : nullptr;
+	if (PlayerController)
+	{
+		PlayerController->SetShowMouseCursor(false);
+		FInputModeGameOnly InputMode;
+		PlayerController->SetInputMode(InputMode);
+	}
+#endif
+}
+
+bool UMVUISubsystem::AdvanceLoadingGuideCardForTest()
+{
+#if !UE_BUILD_SHIPPING
+	return ActiveLoadingWindowForTest
+		? ActiveLoadingWindowForTest->AdvanceLoadingGuideCard()
+		: false;
+#else
+	return false;
+#endif
+}
+
 UMVDialogueWindow* UMVUISubsystem::OpenDialogueWindowText(FText DialogueText, float Duration, float MinimumSkipDelay)
 {
 	const UMVUISettings* Settings = GetDefault<UMVUISettings>();
@@ -606,11 +733,11 @@ void UMVUISubsystem::ResetUITrackingState()
 	ActiveInteractionPrompt = nullptr;
 	ActiveDialogueWindow = nullptr;
 	ActivePopup = nullptr;
-	if (ActivePIEActionTestWidget)
+	ActiveLoadingWindowForTest = nullptr;
+	if (ActivePIEActionTestWidget || bHasPendingPIEActionTestPanel)
 	{
-		ActivePIEActionTestWidget->RemoveFromParent();
+		HidePIEActionTestPanel();
 	}
-	ActivePIEActionTestWidget = nullptr;
 	PendingPIEActionTestTargetCharacter.Reset();
 	bHasPendingPIEActionTestPanel = false;
 	bHasPendingDialogueRequest = false;

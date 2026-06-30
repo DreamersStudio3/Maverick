@@ -13,6 +13,7 @@ class AMVCharacterBase;
 class UMVDialogueWindow;
 class UMVHUDWidgetBase;
 class UMVInteractionPromptPopup;
+class UMVLoadingWindow;
 class UMVMessagePopup;
 class UMVPIEActionTestWidget;
 class UMVPopupBase;
@@ -82,6 +83,15 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Maverick|UI|Debug")
 	bool IsPIEActionTestPanelActiveOrPending() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Debug")
+	UMVLoadingWindow* ShowLoadingWindowForTest(bool bUseNativeWindow = false);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Debug")
+	void HideLoadingWindowForTest();
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Debug")
+	bool AdvanceLoadingGuideCardForTest();
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
 	void HideDialogueWindow();
@@ -176,6 +186,9 @@ private:
 
 	UPROPERTY(Transient)
 	TObjectPtr<UMVPIEActionTestWidget> ActivePIEActionTestWidget;
+
+	UPROPERTY(Transient)
+	TObjectPtr<UMVLoadingWindow> ActiveLoadingWindowForTest;
 
 	TWeakObjectPtr<AMVCharacterBase> PendingPIEActionTestTargetCharacter;
 	bool bHasPendingPIEActionTestPanel = false;

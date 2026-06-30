@@ -124,17 +124,6 @@ void UMVStatComponent::HandleDamaged(const FMVResolvedHitData& HitData)
 	const float HPDamage = MVStatNonNegative(HitData.FinalDamage);
 	if (HPDamage > 0.0f)
 	{
-		UE_LOG(
-			LogMVStatComponent,
-			Display,
-			TEXT("[DeathFlowTest] Stat.HandleDamaged Owner=%s HP=%.1f Damage=%.1f PredictedHP=%.1f HitReactionType=%d VictimTag=%s"),
-			*GetNameSafe(GetOwner()),
-			CurrentHP,
-			HPDamage,
-			CurrentHP - HPDamage,
-			static_cast<int32>(HitData.HitReactionType),
-			*HitData.VictimCharacterIndexCode.ToString());
-
 		PendingDeathHitData = HitData;
 		bHasPendingDeathHitData = true;
 		SetCurrentHP(CurrentHP - HPDamage);
@@ -477,16 +466,6 @@ void UMVStatComponent::BroadcastDeathStarted(const EMVDeathReason Reason)
 	{
 		DeathContext.HitData = PendingDeathHitData;
 	}
-
-	UE_LOG(
-		LogMVStatComponent,
-		Display,
-		TEXT("[DeathFlowTest] Stat.BroadcastDeathStarted Owner=%s Reason=%d HP=%.1f HasHitData=%s HitReactionType=%d"),
-		*GetNameSafe(GetOwner()),
-		static_cast<int32>(Reason),
-		CurrentHP,
-		bHasPendingDeathHitData ? TEXT("true") : TEXT("false"),
-		bHasPendingDeathHitData ? static_cast<int32>(PendingDeathHitData.HitReactionType) : static_cast<int32>(EMVActionHitReactionType::None));
 
 	OnDeathStarted.Broadcast(DeathContext);
 	OnDead.Broadcast();

@@ -14,7 +14,10 @@ UMVDeathOverlayWindow::UMVDeathOverlayWindow(const FObjectInitializer& ObjectIni
 	: Super(ObjectInitializer)
 {
 	bCloseOnBack = false;
-	DesiredInputMode = ECommonInputMode::All;
+	DesiredInputMode = ECommonInputMode::Game;
+	DesiredMouseCaptureMode = EMouseCaptureMode::CapturePermanently;
+	DesiredMouseLockMode = EMouseLockMode::LockOnCapture;
+	bHideCursorDuringViewportCapture = true;
 	bIgnoreMoveInput = true;
 	bIgnoreLookInput = false;
 	ApplyDeathOverlayFadeDurations();
@@ -39,6 +42,13 @@ void UMVDeathOverlayWindow::NativeOnInitialized()
 
 void UMVDeathOverlayWindow::NativeOnActivated()
 {
+	DesiredInputMode = ECommonInputMode::Game;
+	DesiredMouseCaptureMode = EMouseCaptureMode::CapturePermanently;
+	DesiredMouseLockMode = EMouseLockMode::LockOnCapture;
+	bHideCursorDuringViewportCapture = true;
+	bIgnoreMoveInput = true;
+	bIgnoreLookInput = false;
+
 	bMinimumDisplayElapsed = false;
 	bFadeInFinished = false;
 	bFadeOutRequested = false;
