@@ -17,19 +17,19 @@ struct FMVCombatDecisionConditionInstanceData
 	EMVAICombatDecisionState DesiredState = EMVAICombatDecisionState::Idle;
 
 	UPROPERTY(EditAnywhere, Category = "Input|Action")
-	FMVAICombatActionCandidate CounterAttack;
+	FMVAICombatActionCondition CounterAttack;
 
 	UPROPERTY(EditAnywhere, Category = "Input|Action")
-	FMVAICombatActionCandidate SprintAttack;
+	FMVAICombatActionCondition SprintAttack;
 
 	UPROPERTY(EditAnywhere, Category = "Input|Action")
-	FMVAICombatActionCandidate AirborneChargeAttack;
+	FMVAICombatActionCondition AirborneChargeAttack;
 
 	UPROPERTY(EditAnywhere, Category = "Input|Action")
-	TArray<FMVAICombatActionCandidate> SkillAttacks;
+	TArray<FMVAICombatActionCondition> SkillAttacks;
 
 	UPROPERTY(EditAnywhere, Category = "Input|Action")
-	TArray<FMVAICombatActionCandidate> BasicAttacks;
+	TArray<FMVAICombatActionCondition> BasicAttacks;
 
 	UPROPERTY(EditAnywhere, Category = "Input|Range")
 	float SprintMaxReach = 2200.0f;

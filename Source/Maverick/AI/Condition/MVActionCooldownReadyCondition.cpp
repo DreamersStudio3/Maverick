@@ -27,11 +27,11 @@ bool FMVActionCooldownReadyCondition::TestCondition(FStateTreeExecutionContext& 
 	const FInstanceDataType& InstanceData = Context.GetInstanceData<FInstanceDataType>(*this);
 
 	const APawn* Owner = ResolveCooldownConditionOwner(Context, InstanceData.Owner);
-	if (!Owner || InstanceData.ActionId.IsNone())
+	if (!Owner || InstanceData.CooldownActionId.IsNone())
 	{
 		return false;
 	}
 
 	const UMVActionCooldownComponent* CooldownComponent = Owner->FindComponentByClass<UMVActionCooldownComponent>();
-	return CooldownComponent ? CooldownComponent->IsCooldownReady(InstanceData.ActionId) : false;
+	return CooldownComponent ? CooldownComponent->IsCooldownReady(InstanceData.CooldownActionId) : false;
 }

@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "AI/Enum/MVBossCombatArea.h"
 #include "Engine/DataTable.h"
+#include "Tables/MVActionTableTypes.h"
 #include "MVAICombatTypes.generated.h"
 
 UENUM(BlueprintType)
@@ -33,35 +34,53 @@ enum class EMVAICombatDecisionState : uint8
 	Idle
 };
 
-UENUM(BlueprintType)
-enum class EMVAICombatAttackSelectionMode : uint8
-{
-	SkillAttack,
-	BasicAttack
-};
-
 USTRUCT(BlueprintType)
-struct FMVAICombatActionCandidate
+struct FMVAttackActionRowHandle
 {
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Action")
 	FDataTableRowHandle ActionRow;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Action")
-	FName StartSection = NAME_None;
+	bool IsValid() const
+	{
+		return ActionRow.DataTable && !ActionRow.RowName.IsNone();
+	}
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Action")
-	int32 ActionId = INDEX_NONE;
+	void Reset()
+	{
+		ActionRow.DataTable = nullptr;
+		ActionRow.RowName = NAME_None;
+	}
+};
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Action")
-	FName ActionTag = NAME_None;
+USTRUCT(BlueprintType)
+struct FMVAICombatActionMetadata
+{
+	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Action")
 	FName CooldownActionId = NAME_None;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Action")
 	EMVAICombatActionRole Role = EMVAICombatActionRole::None;
+};
+
+USTRUCT(BlueprintType)
+struct FMVAICombatActionCondition
+{
+	GENERATED_BODY()
+
+	FMVAICombatActionCondition()
+	{
+		ActionRequest.Domain = EMVActionDomain::Attack;
+	}
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Action")
+	FMVActionRequest ActionRequest;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Action")
+	FMVAICombatActionMetadata Metadata;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Range")
 	float MinDistance = 0.0f;
@@ -89,6 +108,24 @@ struct FMVAICombatActionCandidate
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Condition")
 	bool bRequiresAirbornePattern = false;
+};
+
+USTRUCT(BlueprintType)
+struct FMVAICombatResolvedAction
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Action")
+	FDataTableRowHandle ActionRow;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Action")
+	FName StartSection = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Action")
+	FName CooldownActionId = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Action")
+	EMVAICombatActionRole Role = EMVAICombatActionRole::None;
 };
 
 USTRUCT(BlueprintType)
@@ -159,34 +196,41 @@ struct FMVAICombatContext
 
 namespace MVAICombat
 {
-	FORCEINLINE FName MakeCooldownActionId(const FMVAICombatActionCandidate& Candidate)
+	FORCEINLINE FName MakeCooldownActionId(
+		const FMVAICombatActionMetadata& Metadata,
+		const FMVActionRequest& ActionRequest)
 	{
-		if (!Candidate.CooldownActionId.IsNone())
+		if (!Metadata.CooldownActionId.IsNone())
 		{
-			return Candidate.CooldownActionId;
+			return Metadata.CooldownActionId;
 		}
 
-		if (!Candidate.ActionRow.RowName.IsNone())
-		{
-			return Candidate.ActionRow.RowName;
-		}
-
-		return Candidate.ActionId > 0 ? FName(*FString::FromInt(Candidate.ActionId)) : NAME_None;
+		return ActionRequest.RowName;
 	}
 
-	FORCEINLINE FName MakeActionTag(const FMVAICombatActionCandidate& Candidate)
+	FORCEINLINE FName MakeCooldownActionId(const FMVAICombatResolvedAction& ResolvedAction)
 	{
-		if (!Candidate.ActionTag.IsNone())
+		if (!ResolvedAction.CooldownActionId.IsNone())
 		{
-			return Candidate.ActionTag;
+			return ResolvedAction.CooldownActionId;
 		}
 
-		if (!Candidate.ActionRow.RowName.IsNone())
+		if (!ResolvedAction.ActionRow.RowName.IsNone())
 		{
-			return Candidate.ActionRow.RowName;
+			return ResolvedAction.ActionRow.RowName;
 		}
 
-		return Candidate.ActionId > 0 ? FName(*FString::FromInt(Candidate.ActionId)) : NAME_None;
+		return NAME_None;
+	}
+
+	FORCEINLINE FName MakeActionTag(const FMVAICombatResolvedAction& ResolvedAction)
+	{
+		if (!ResolvedAction.ActionRow.RowName.IsNone())
+		{
+			return ResolvedAction.ActionRow.RowName;
+		}
+
+		return NAME_None;
 	}
 
 	FORCEINLINE bool IsActionReady(const FMVAICombatContext& Context, const FName ActionId)
@@ -194,9 +238,9 @@ namespace MVAICombat
 		return !ActionId.IsNone() && Context.ReadyActionIds.Contains(ActionId);
 	}
 
-	FORCEINLINE bool HasExecutableActionRow(const FMVAICombatActionCandidate& Candidate)
+	FORCEINLINE bool HasExecutableActionRow(const FMVAICombatResolvedAction& ResolvedAction)
 	{
-		return Candidate.ActionRow.DataTable && !Candidate.ActionRow.RowName.IsNone();
+		return ResolvedAction.ActionRow.DataTable && !ResolvedAction.ActionRow.RowName.IsNone();
 	}
 
 	FORCEINLINE bool IsDistanceInRange(const FMVAICombatContext& Context, const float MinDistance, const float MaxDistance)

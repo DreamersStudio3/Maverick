@@ -199,73 +199,58 @@ void UpdateGlobalSensingCombatContext(FMVGlobalSensingTaskInstanceData& Instance
 	CombatContext.bStrafePathClear = InstanceData.bStrafePathClear;
 	CombatContext.bIsDead = InstanceData.bIsDead;
 }
-}
 
-EStateTreeRunStatus FMVGlobalSensingTask::EnterState(
-	FStateTreeExecutionContext& Context,
-	const FStateTreeTransitionResult& Transition) const
+EStateTreeRunStatus UpdateGlobalSensingSnapshot(
+	FMVGlobalSensingTaskInstanceData& InstanceData,
+	const float DeltaTime)
 {
-	FInstanceDataType& InstanceData = Context.GetInstanceData(*this);
-	
-	if (const AAIController* AIController = Cast<AAIController>(Context.GetOwner()))
-	{
-		InstanceData.Owner = AIController->GetPawn();
-	}
-	else
-	{
-		InstanceData.Owner = Cast<APawn>(Context.GetOwner());
-	}
-
 	if (!InstanceData.Owner)
 	{
-		return EStateTreeRunStatus::Failed;
-	}
-
-	InstanceData.CooldownComponent = GlobalSensingEnsureCooldownComponent(*InstanceData.Owner);
-	if (InstanceData.CooldownComponent)
-	{
-		InstanceData.CooldownComponent->ConfigureCooldowns(InstanceData.ActionCooldowns);
-	}
-	UpdateGlobalSensingCooldownContext(InstanceData, 0.0f);
-
-	UWorld* World = InstanceData.Owner->GetWorld();
-	if (!World)
-	{
-		return EStateTreeRunStatus::Failed;
-	}
-
-	InstanceData.Target = UGameplayStatics::GetPlayerPawn(World, 0);
-	InstanceData.bHasTarget = InstanceData.Target != nullptr;
-	UpdateGlobalSensingCombatContext(InstanceData);
-
-	return EStateTreeRunStatus::Running;
-}
-
-EStateTreeRunStatus FMVGlobalSensingTask::Tick(FStateTreeExecutionContext& Context, const float DeltaTime) const
-{
-	FInstanceDataType& InstanceData = Context.GetInstanceData(*this);
-
-	if (!InstanceData.Target || !InstanceData.Owner)
-	{
-		UpdateGlobalSensingCooldownContext(InstanceData, DeltaTime);
-		InstanceData.bHasTarget = false;
-		InstanceData.bActionRunning = false;
 		UpdateGlobalSensingCombatContext(InstanceData);
 		return EStateTreeRunStatus::Failed;
 	}
 
+	if (!InstanceData.Target)
+	{
+		if (UWorld* World = InstanceData.Owner->GetWorld())
+		{
+			InstanceData.Target = UGameplayStatics::GetPlayerPawn(World, 0);
+		}
+	}
+
 	UpdateGlobalSensingCooldownContext(InstanceData, DeltaTime);
+
+	if (!InstanceData.Target)
+	{
+		InstanceData.bHasTarget = false;
+		InstanceData.DistanceToTarget = 0.0f;
+		InstanceData.AngleToTarget = 0.0f;
+		InstanceData.AttackDirection = EMVAttackDirection::Forward;
+		InstanceData.CurrentArea = EMVBossCombatArea::OutsideArea;
+		InstanceData.bHasLineOfSight = false;
+		InstanceData.bActionRunning = false;
+		InstanceData.bSprintPathClear = false;
+		InstanceData.bAirborneChargePathClear = false;
+		InstanceData.bNeedAttackAngle = false;
+		InstanceData.bNeedClearAttackPath = false;
+		InstanceData.bStrafePathClear = false;
+		UpdateGlobalSensingCombatContext(InstanceData);
+		return EStateTreeRunStatus::Running;
+	}
 
 	const FVector TargetLocation = InstanceData.Target->GetActorLocation();
 	const FVector OwnerLocation = InstanceData.Owner->GetActorLocation();
 	InstanceData.DistanceToTarget = FVector::Dist(OwnerLocation, TargetLocation);
-	
+
 	FVector TargetDirection = TargetLocation - OwnerLocation;
 	TargetDirection.Z = 0.0f;
 
 	if (TargetDirection.IsNearlyZero())
 	{
-		return EStateTreeRunStatus::Failed;
+		InstanceData.bHasTarget = true;
+		InstanceData.AngleToTarget = 0.0f;
+		UpdateGlobalSensingCombatContext(InstanceData);
+		return EStateTreeRunStatus::Running;
 	}
 
 	TargetDirection.Normalize();
@@ -276,12 +261,12 @@ EStateTreeRunStatus FMVGlobalSensingTask::Tick(FStateTreeExecutionContext& Conte
 	{
 		InstanceData.bActionRunning = ActionComponent->IsActionRunning();
 	}
-	
+
 	const float DotProduct = FVector::DotProduct(InstanceData.Owner->GetActorForwardVector(), TargetDirection);
 	InstanceData.AngleToTarget = FMath::RadiansToDegrees(FMath::Acos(FMath::Clamp(DotProduct, -1.0f, 1.0f)));
-	
+
 	const FVector CrossProduct = FVector::CrossProduct(InstanceData.Owner->GetActorForwardVector(), TargetDirection);
-	
+
 	if (DotProduct > 0.5f)
 	{
 		InstanceData.AttackDirection = EMVAttackDirection::Forward;
@@ -298,7 +283,7 @@ EStateTreeRunStatus FMVGlobalSensingTask::Tick(FStateTreeExecutionContext& Conte
 	{
 		InstanceData.AttackDirection = EMVAttackDirection::Right;
 	}
-	
+
 	if (InstanceData.DistanceToTarget > InstanceData.DefensiveArea)
 	{
 		InstanceData.CurrentArea = EMVBossCombatArea::OutsideArea;
@@ -330,8 +315,56 @@ EStateTreeRunStatus FMVGlobalSensingTask::Tick(FStateTreeExecutionContext& Conte
 
 	UpdateGlobalSensingCombatContext(InstanceData);
 	DrawGlobalSensingCombatAreaDebug(InstanceData, OwnerLocation, TargetLocation);
-	
+
 	return EStateTreeRunStatus::Running;
+}
+}
+
+FMVGlobalSensingTask::FMVGlobalSensingTask()
+{
+	bShouldCallTick = true;
+}
+
+EStateTreeRunStatus FMVGlobalSensingTask::EnterState(
+	FStateTreeExecutionContext& Context,
+	const FStateTreeTransitionResult& Transition) const
+{
+	FInstanceDataType& InstanceData = Context.GetInstanceData(*this);
+
+	if (const AAIController* AIController = Cast<AAIController>(Context.GetOwner()))
+	{
+		InstanceData.Owner = AIController->GetPawn();
+	}
+	else
+	{
+		InstanceData.Owner = Cast<APawn>(Context.GetOwner());
+	}
+
+	if (!InstanceData.Owner)
+	{
+		return EStateTreeRunStatus::Failed;
+	}
+
+	InstanceData.CooldownComponent = GlobalSensingEnsureCooldownComponent(*InstanceData.Owner);
+	if (InstanceData.CooldownComponent)
+	{
+		InstanceData.CooldownComponent->ConfigureCooldowns(InstanceData.ActionCooldowns);
+	}
+
+	UWorld* World = InstanceData.Owner->GetWorld();
+	if (!World)
+	{
+		return EStateTreeRunStatus::Failed;
+	}
+
+	InstanceData.Target = UGameplayStatics::GetPlayerPawn(World, 0);
+	return UpdateGlobalSensingSnapshot(InstanceData, 0.0f);
+}
+
+EStateTreeRunStatus FMVGlobalSensingTask::Tick(FStateTreeExecutionContext& Context, const float DeltaTime) const
+{
+	FInstanceDataType& InstanceData = Context.GetInstanceData(*this);
+	return UpdateGlobalSensingSnapshot(InstanceData, DeltaTime);
 }
 
 void FMVGlobalSensingTask::ExitState(

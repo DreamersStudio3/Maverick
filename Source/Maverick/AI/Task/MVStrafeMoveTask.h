@@ -14,6 +14,9 @@ struct FMVStrafeMoveTaskInstanceData
 	float MoveDuration = 2.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Input")
+	float StrafeMoveSpeed = 300.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
 	float StrafeMinDuration = 0.75f;
 
 	UPROPERTY(EditAnywhere, Category = "Input")
@@ -45,6 +48,12 @@ struct FMVStrafeMoveTaskInstanceData
 	
 	UPROPERTY()
 	float ElapsedTime = 0.0f;
+
+	UPROPERTY()
+	float PreviousMaxWalkSpeed = 0.0f;
+
+	UPROPERTY()
+	bool bAppliedStrafeMoveSpeed = false;
 };
 
 USTRUCT()

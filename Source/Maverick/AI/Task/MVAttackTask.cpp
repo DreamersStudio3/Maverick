@@ -1,6 +1,6 @@
 #include "MVAttackTask.h"
 
-#include "Character/Npc/Enemy/MVEnemy.h"
+#include "Character/NPC/Enemy/MVEnemy.h"
 #include "AIController.h"
 #include "StateTreeAsyncExecutionContext.h"
 #include "StateTreeExecutionContext.h"
