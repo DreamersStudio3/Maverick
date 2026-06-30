@@ -23,8 +23,24 @@ HP가 0이 된 순간부터 사망 액션, 디졸브, 사망 오버레이, 로�
 - [x] KD/AB lethal hit은 Lying 진입 전 `MV HitReaction Death Handoff` notify에서 DeathComponent가 death action으로 전환할 수 있게 했다.
 - [x] 사망 흐름의 컴포넌트별 책임과 DeathComponent의 입력/출력/상태 전환 계약을 문서화했다.
 - [x] 로딩 초기화 진행률 이벤트와 LoadingWindow progress API가 있다.
-- [ ] PIE 재확인: lethal Airborne hit이 Land까지 재생된 뒤 death handoff 없이 Getup으로 빠지는 문제가 남아 있다. 최신 로그에서는 이전 `CHT_HitReaction` context 오류는 사라졌지만, DeathComponent/HitReaction handoff 관련 커스텀 로그가 없어 HP 0 이벤트, notify 순서, dead state 차단 중 어느 지점에서 끊기는지 추가 계측이 필요하다.
-- [ ] KD/AB 몽타주의 Lying 섹션 진입 직전에 `MV HitReaction Death Handoff` notify를 배치한다.
+- [x] DeathOverlay 표시 cue를 death dissolve notify에서 분리해 `MV Death Overlay` notify와 `OnDeathOverlayRequested` 이벤트로 독립시켰다.
+- [x] `MV Death Dissolve` notify에서 mesh material slot별 Dynamic Material Instance를 만들고 `DeathDissolveAmount`를 0에서 1로 구동하게 했다.
+- [x] 기존 BP/컴포넌트 기본값에 남은 1.2초 dissolve duration을 런타임에서 3초로 보정하고 실제 적용 시간을 로그로 확인할 수 있게 했다.
+- [x] dissolve material이 낮은 amount에서 완전히 사라지는 경우를 보정하기 위해 duration 끝에 도달할 material amount를 별도 설정으로 분리했다.
+- [x] DeathComponent에서는 dissolve cue/reset만 관리하고 실제 DMI/material/mesh hide 처리는 instanced `UMVDeathDissolveEffect` UObject로 분리했다.
+- [x] LoadingWindow 전환 시 DeathOverlay를 즉시 deactivate해 respawn 뒤 overlay가 다시 leaf-most로 올라오는 문제를 막았다.
+- [x] 부활 완료 시 LoadingWindow를 즉시 deactivate하고 PlayerController 입력 모드를 GameOnly로 복구해 move/look 입력 차단을 해제한다.
+- [x] 부활 완료 시 UI 시스템을 default HUD만 남는 기본 상태로 재초기화해 사망 전/중 떠 있던 위젯을 제거한다.
+- [x] 사망 시작 시 펼쳐져 있던 모든 UI를 fade-out으로 내리고, 이후 DeathOverlay만 새 레이어에 올리게 했다.
+- [x] Respawn loading은 DeathOverlay fade-out 완료와 death montage 종료가 모두 확인된 뒤에만 시작한다.
+- [x] 사망 중 InteractionDetector가 InteractionPrompt를 즉시 숨기고 dead state에서는 감지를 중단해 프롬프트가 다시 올라오지 않게 했다.
+- [x] LoadingWindow 표시 시 HUDLayer를 비워 로딩 화면 뒤에 기본 HUD가 남지 않게 했다.
+- [x] HUD hide와 기본 UI reset은 즉시 제거 대신 짧은 fade-out을 거쳐 화면에서 사라지게 했다.
+- [x] HUD status bar 최초 값 반영은 RecentLoss shrinking 없이 즉시 스냅해 새 HUD 생성 시 불필요한 손실 애니메이션을 막는다.
+- [x] DeathOverlay는 fade in 완료 뒤 1초간 유지하고 같은 fade duration으로 fade out하며, fade out 완료 뒤 respawn gate를 열도록 조정했다.
+- [x] PIE 재확인: lethal Airborne/KD hit이 Getup으로 빠지지 않고 handoff 뒤 death presentation으로 이어지는 흐름을 확인했다.
+- [x] KD/AB 몽타주의 Lying 섹션 진입 직전에 `MV HitReaction Death Handoff` notify를 배치한다.
+- [x] 사망 몽타주마다 dissolve보다 뒤쪽의 의도한 프레임에 `MV Death Overlay` notify를 배치한다.
 - [ ] 도움말 카드 UI와 실제 필드 액터 리셋 정책 적용은 아직 없다.
 
 ## UI 흐름
@@ -38,16 +54,17 @@ HP가 0이 된 순간부터 사망 액션, 디졸브, 사망 오버레이, 로�
 - [x] 단, 로컬라이징 수집을 고려해 `NSLOCTEXT` 기반 `FText`로 둔다.
 - [x] Death overlay는 이동 입력을 막되 look 입력은 막지 않는다.
 - [x] Death overlay는 타이머가 끝났다는 이유만으로 `LoadingWindow`를 직접 열지 않는다.
-- [x] Death overlay는 1초 fade in/out을 사용하고, 최소 표시 시간은 fade in 완료 뒤부터 계산한다.
+- [x] Death overlay는 1초 fade in, 1초 hold, 1초 fade out을 사용하고 fade out 완료를 표시 완료 시점으로 알린다.
 - [x] 디졸브 시작 notify에서 `UMVDeathComponent::NotifyDeathDissolveStarted()`를 호출한다.
+- [x] DeathOverlay 표시 notify에서 `UMVDeathComponent::NotifyDeathOverlayRequested()`를 호출한다.
 - [x] 사망 몽타주 종료 이벤트에서 `UMVDeathComponent`가 `OnDeathPresentationFinished`를 발행한다.
 
 ### LoadingWindow
 
-- [ ] 로딩 진행률을 표시하는 progress bar를 가진다.
+- [x] 로딩 진행률을 표시하는 progress bar를 가진다.
 - [ ] 도움말 카드/캐러셀을 표시한다.
 - [ ] 상호작용 키로 다음 카드를 넘길 수 있다.
-- [ ] 초기화 완료 전에는 닫히거나 게임 입력으로 복귀하지 않는다.
+- [x] 초기화 완료 전에는 닫히거나 게임 입력으로 복귀하지 않는다.
 - [x] 진행률이 100%가 되면 `UMVRespawnSubsystem`이 부활 단계로 넘어갈 수 있다.
 
 ## GameGuide 테이블
@@ -115,13 +132,13 @@ HP가 0이 된 순간부터 사망 액션, 디졸브, 사망 오버레이, 로�
 
 ### 사망 리셋 단계
 
-- [ ] 플레이어 입력과 전투 처리를 정지한다.
+- [x] 플레이어 입력과 전투 처리를 정지한다.
 - [ ] 임시 액터와 투사체를 제거한다.
 - [ ] 일반 몬스터/아이템을 초기 상태로 되돌린다.
-- [ ] 1회성 몬스터/아이템의 소비 상태를 저장 데이터에서 확인한다.
+- [x] 1회성 몬스터/아이템의 소비 상태를 저장 데이터에서 확인한다.
 - [ ] 숏컷/문/보스 처치처럼 보존 상태를 재적용한다.
-- [ ] 플레이어를 마지막 저장 위치로 이동 또는 재스폰한다.
-- [ ] HP/스태미너/MP 등 스탯을 부활 기준으로 초기화한다.
+- [x] 플레이어를 마지막 저장 위치로 이동 또는 재스폰한다.
+- [x] HP/스태미너/MP 등 스탯을 부활 기준으로 초기화한다.
 - [ ] 부활 몽타주를 재생한다.
 - [ ] 현재 필드 이름 알림 위젯을 표시했다가 숨긴다.
 
@@ -134,7 +151,8 @@ HP가 0이 된 순간부터 사망 액션, 디졸브, 사망 오버레이, 로�
 - [x] 사망 중 look 외 입력 차단 게이트를 추가한다.
 - [x] `UMVDeathComponent`가 사망 이벤트로 death row를 선택해 `UMVActionComponent`에 전달하게 한다.
 - [x] 사망 디졸브 notify를 추가한다.
-- [ ] dissolve component를 추가한다.
+- [x] 사망 오버레이 notify를 디졸브 notify에서 분리한다.
+- [x] DeathComponent의 dissolve cue를 받아 런타임 dissolve와 respawn 복구를 처리하는 `UMVDeathDissolveEffect` UObject를 추가한다.
 - [x] `UMVWorldStateSubsystem` 저장/로드 골격을 추가한다.
 - [x] `UMVRespawnSubsystem` 골격을 추가한다.
 - [x] `UMVQuestSubsystem`이 WorldState에 요청하는 구조를 추가한다.
