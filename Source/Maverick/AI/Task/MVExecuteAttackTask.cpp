@@ -1,12 +1,15 @@
 #include "AI/Task/MVExecuteAttackTask.h"
 
 #include "AI/MVActionCooldownComponent.h"
-#include "AI/MVEnemy.h"
+#include "Character/NPC/Enemy/MVEnemy.h"
 #include "AIController.h"
+#include "Chooser.h"
 #include "Components/MVActionComponent.h"
 #include "Engine/DataTable.h"
 #include "StateTreeAsyncExecutionContext.h"
 #include "StateTreeExecutionContext.h"
+
+DEFINE_LOG_CATEGORY_STATIC(LogMVExecuteAttackTask, Log, All);
 
 namespace
 {
@@ -37,9 +40,135 @@ FName ExecuteAttackActionTableNameFromDataTable(const UDataTable* DataTable)
 	return FName(*TableName);
 }
 
+bool ExecuteAttackEvaluateChooserActionRowHandle(
+	UObject& OwnerObject,
+	const FSoftObjectPath& AttackChooserTable,
+	FMVActionRequest& ActionRequest,
+	FMVAttackActionRowHandle& ChooserAttackActionRowHandle,
+	FMVAttackActionRowHandle& OutActionRowHandle)
+{
+	OutActionRowHandle.Reset();
+	ChooserAttackActionRowHandle.Reset();
+
+	if (!AttackChooserTable.IsValid())
+	{
+		UE_LOG(LogMVExecuteAttackTask, Warning, TEXT("Attack chooser path is invalid."));
+		return false;
+	}
+
+	UChooserTable* ChooserTable = Cast<UChooserTable>(AttackChooserTable.TryLoad());
+	if (!ChooserTable)
+	{
+		UE_LOG(
+			LogMVExecuteAttackTask,
+			Warning,
+			TEXT("Attack chooser failed to load. Path=%s."),
+			*AttackChooserTable.ToString());
+		return false;
+	}
+
+	FChooserEvaluationContext ChooserContext;
+	ChooserContext.AddObjectParam(&OwnerObject);
+	ChooserContext.AddStructParam(ActionRequest);
+	ChooserContext.AddStructParam(ChooserAttackActionRowHandle);
+
+	TSoftObjectPtr<UObject> SelectedObject;
+	UChooserTable::EvaluateChooser(
+		ChooserContext,
+		ChooserTable,
+		FObjectChooserBase::FObjectChooserSoftObjectIteratorCallback::CreateLambda(
+			[&SelectedObject](const TSoftObjectPtr<UObject>& InResult)
+			{
+				SelectedObject = InResult;
+				return FObjectChooserBase::EIteratorStatus::Stop;
+			}));
+
+	if (ChooserAttackActionRowHandle.ActionRow.DataTable)
+	{
+		OutActionRowHandle = ChooserAttackActionRowHandle;
+		OutActionRowHandle.ActionRow.RowName = ActionRequest.RowName;
+		return OutActionRowHandle.IsValid();
+	}
+
+	UObject* ResolvedObject = SelectedObject.IsValid()
+		? SelectedObject.Get()
+		: SelectedObject.LoadSynchronous();
+	UDataTable* SelectedDataTable = Cast<UDataTable>(ResolvedObject);
+	if (!SelectedDataTable)
+	{
+		UE_LOG(
+			LogMVExecuteAttackTask,
+			Warning,
+			TEXT("Attack chooser did not return FMVAttackActionRowHandle or UDataTable fallback. SelectedObject=%s."),
+			*GetNameSafe(ResolvedObject));
+		return false;
+	}
+
+	OutActionRowHandle.ActionRow.DataTable = SelectedDataTable;
+	OutActionRowHandle.ActionRow.RowName = ActionRequest.RowName;
+	return OutActionRowHandle.IsValid();
+}
+
+FMVActionRequest ExecuteAttackResolveActionRequest(
+	const FMVActionRequest& ActionRequest)
+{
+	FMVActionRequest ResolvedActionRequest = ActionRequest;
+	if (ResolvedActionRequest.Domain == EMVActionDomain::None)
+	{
+		ResolvedActionRequest.Domain = EMVActionDomain::Attack;
+	}
+
+	return ResolvedActionRequest;
+}
+
+bool ExecuteAttackResolveActionCandidate(
+	APawn& Owner,
+	const FMVAICombatActionMetadata& AttackMetadata,
+	FMVActionRequest& ActionRequest,
+	const FSoftObjectPath& AttackChooserTable,
+	FMVAttackActionRowHandle& ChooserAttackActionRowHandle,
+	FMVAICombatResolvedAction& OutAttack)
+{
+	OutAttack = FMVAICombatResolvedAction();
+	OutAttack.StartSection = ActionRequest.StartSection;
+	OutAttack.CooldownActionId = AttackMetadata.CooldownActionId;
+	OutAttack.Role = AttackMetadata.Role;
+
+	if (ActionRequest.Domain != EMVActionDomain::Attack)
+	{
+		UE_LOG(
+			LogMVExecuteAttackTask,
+			Warning,
+			TEXT("Execute Attack Task received non-attack action domain. Domain=%d RowName=%s."),
+			static_cast<int32>(ActionRequest.Domain),
+			*ActionRequest.RowName.ToString());
+		return false;
+	}
+
+	if (ActionRequest.RowName.IsNone())
+	{
+		UE_LOG(LogMVExecuteAttackTask, Warning, TEXT("Execute Attack Task requires ActionRequest.RowName."));
+		return false;
+	}
+
+	FMVAttackActionRowHandle ResolvedActionRowHandle;
+	if (!ExecuteAttackEvaluateChooserActionRowHandle(
+		Owner,
+		AttackChooserTable,
+		ActionRequest,
+		ChooserAttackActionRowHandle,
+		ResolvedActionRowHandle))
+	{
+		return false;
+	}
+
+	OutAttack.ActionRow = ResolvedActionRowHandle.ActionRow;
+	return MVAICombat::HasExecutableActionRow(OutAttack);
+}
+
 bool ExecuteAttackTryStartAction(
 	UMVActionComponent& ActionComponent,
-	const FMVAICombatActionCandidate& Candidate,
+	const FMVAICombatResolvedAction& Candidate,
 	FName& OutActionTableName,
 	FName& OutActionRowName)
 {
@@ -63,7 +192,7 @@ bool ExecuteAttackIsStartedActionRunning(
 		&& ActionComponent.GetActiveActionRowName() == StartedActionRowName;
 }
 
-bool ExecuteAttackStartCooldown(APawn& Owner, const FMVAICombatActionCandidate& Candidate)
+bool ExecuteAttackStartCooldown(APawn& Owner, const FMVAICombatResolvedAction& Candidate)
 {
 	UMVActionCooldownComponent* CooldownComponent = Owner.FindComponentByClass<UMVActionCooldownComponent>();
 	if (!CooldownComponent)
@@ -77,10 +206,11 @@ bool ExecuteAttackStartCooldown(APawn& Owner, const FMVAICombatActionCandidate& 
 
 bool ExecuteAttackCanSelectCandidate(
 	const FMVAICombatContext& CombatContext,
-	const FMVAICombatActionCandidate& Candidate,
+	const FMVAICombatActionCondition& Candidate,
 	const bool bAllowRepeatedLastAttack)
 {
-	if (!MVAICombat::HasExecutableActionRow(Candidate))
+	const FMVActionRequest ActionRequest = ExecuteAttackResolveActionRequest(Candidate.ActionRequest);
+	if (ActionRequest.Domain != EMVActionDomain::Attack || ActionRequest.RowName.IsNone())
 	{
 		return false;
 	}
@@ -95,12 +225,14 @@ bool ExecuteAttackCanSelectCandidate(
 		return false;
 	}
 
-	if (!MVAICombat::IsActionReady(CombatContext, MVAICombat::MakeCooldownActionId(Candidate)))
+	if (!MVAICombat::IsActionReady(
+		CombatContext,
+		MVAICombat::MakeCooldownActionId(Candidate.Metadata, ActionRequest)))
 	{
 		return false;
 	}
 
-	if (!bAllowRepeatedLastAttack && MVAICombat::MakeActionTag(Candidate) == CombatContext.LastAttackTag)
+	if (!bAllowRepeatedLastAttack && ActionRequest.RowName == CombatContext.LastAttackTag)
 	{
 		return false;
 	}
@@ -140,10 +272,10 @@ bool ExecuteAttackCanSelectCandidate(
 
 bool ExecuteAttackSelectCandidate(
 	const FMVAICombatContext& CombatContext,
-	const TArray<FMVAICombatActionCandidate>& Candidates,
-	FMVAICombatActionCandidate& OutCandidate)
+	const TArray<FMVAICombatActionCondition>& Candidates,
+	FMVAICombatActionCondition& OutCandidate)
 {
-	for (const FMVAICombatActionCandidate& Candidate : Candidates)
+	for (const FMVAICombatActionCondition& Candidate : Candidates)
 	{
 		if (ExecuteAttackCanSelectCandidate(CombatContext, Candidate, false))
 		{
@@ -152,7 +284,7 @@ bool ExecuteAttackSelectCandidate(
 		}
 	}
 
-	for (const FMVAICombatActionCandidate& Candidate : Candidates)
+	for (const FMVAICombatActionCondition& Candidate : Candidates)
 	{
 		if (ExecuteAttackCanSelectCandidate(CombatContext, Candidate, true))
 		{
@@ -186,9 +318,23 @@ EStateTreeRunStatus FMVExecuteFixedAttackTask::EnterState(
 	InstanceData.StartedActionRowName = NAME_None;
 	InstanceData.AttackInstanceId = INDEX_NONE;
 	InstanceData.AttackMontageEndedHandle.Reset();
+	InstanceData.ChooserAttackActionRowHandle.Reset();
 
 	APawn* Owner = ExecuteAttackResolveOwner(Context, InstanceData.Owner);
-	if (!Owner || !MVAICombat::HasExecutableActionRow(InstanceData.Attack))
+	if (!Owner)
+	{
+		return EStateTreeRunStatus::Failed;
+	}
+
+	FMVAICombatResolvedAction ResolvedAttack;
+	FMVActionRequest ResolvedActionRequest = ExecuteAttackResolveActionRequest(InstanceData.ActionRequest);
+	if (!ExecuteAttackResolveActionCandidate(
+		*Owner,
+		InstanceData.AttackMetadata,
+		ResolvedActionRequest,
+		InstanceData.AttackChooserTable,
+		InstanceData.ChooserAttackActionRowHandle,
+		ResolvedAttack))
 	{
 		return EStateTreeRunStatus::Failed;
 	}
@@ -198,20 +344,20 @@ EStateTreeRunStatus FMVExecuteFixedAttackTask::EnterState(
 	{
 		if (!ExecuteAttackTryStartAction(
 			*InstanceData.ActionComponent,
-			InstanceData.Attack,
+			ResolvedAttack,
 			InstanceData.StartedActionTableName,
 			InstanceData.StartedActionRowName))
 		{
 			return EStateTreeRunStatus::Failed;
 		}
 
-		if (!ExecuteAttackStartCooldown(*Owner, InstanceData.Attack))
+		if (!ExecuteAttackStartCooldown(*Owner, ResolvedAttack))
 		{
 			InstanceData.ActionComponent->CancelActiveAction(0.0f);
 			return EStateTreeRunStatus::Failed;
 		}
 
-		InstanceData.LastAttackTag = MVAICombat::MakeActionTag(InstanceData.Attack);
+		InstanceData.LastAttackTag = MVAICombat::MakeActionTag(ResolvedAttack);
 		return EStateTreeRunStatus::Running;
 	}
 
@@ -221,7 +367,7 @@ EStateTreeRunStatus FMVExecuteFixedAttackTask::EnterState(
 		return EStateTreeRunStatus::Failed;
 	}
 
-	if (!ExecuteAttackStartCooldown(*Owner, InstanceData.Attack))
+	if (!ExecuteAttackStartCooldown(*Owner, ResolvedAttack))
 	{
 		return EStateTreeRunStatus::Failed;
 	}
@@ -241,7 +387,7 @@ EStateTreeRunStatus FMVExecuteFixedAttackTask::EnterState(
 			}
 		});
 
-	InstanceData.LastAttackTag = MVAICombat::MakeActionTag(InstanceData.Attack);
+	InstanceData.LastAttackTag = MVAICombat::MakeActionTag(ResolvedAttack);
 	return EStateTreeRunStatus::Running;
 }
 
@@ -297,7 +443,9 @@ EStateTreeRunStatus FMVSelectAndExecuteAttackTask::EnterState(
 	InstanceData.ActionComponent = nullptr;
 	InstanceData.StartedActionTableName = NAME_None;
 	InstanceData.StartedActionRowName = NAME_None;
-	InstanceData.SelectedAttack = FMVAICombatActionCandidate();
+	InstanceData.SelectedActionRequest.Reset();
+	InstanceData.SelectedMetadata = FMVAICombatActionMetadata();
+	InstanceData.ChooserAttackActionRowHandle.Reset();
 
 	APawn* Owner = ExecuteAttackResolveOwner(Context, InstanceData.Owner);
 	if (!Owner)
@@ -305,7 +453,23 @@ EStateTreeRunStatus FMVSelectAndExecuteAttackTask::EnterState(
 		return EStateTreeRunStatus::Failed;
 	}
 
-	if (!ExecuteAttackSelectCandidate(InstanceData.CombatContext, InstanceData.Candidates, InstanceData.SelectedAttack))
+	FMVAICombatActionCondition SelectedCandidate;
+	if (!ExecuteAttackSelectCandidate(InstanceData.CombatContext, InstanceData.Candidates, SelectedCandidate))
+	{
+		return EStateTreeRunStatus::Failed;
+	}
+
+	InstanceData.SelectedActionRequest = ExecuteAttackResolveActionRequest(SelectedCandidate.ActionRequest);
+	InstanceData.SelectedMetadata = SelectedCandidate.Metadata;
+
+	FMVAICombatResolvedAction ResolvedAttack;
+	if (!ExecuteAttackResolveActionCandidate(
+		*Owner,
+		InstanceData.SelectedMetadata,
+		InstanceData.SelectedActionRequest,
+		InstanceData.AttackChooserTable,
+		InstanceData.ChooserAttackActionRowHandle,
+		ResolvedAttack))
 	{
 		return EStateTreeRunStatus::Failed;
 	}
@@ -314,20 +478,20 @@ EStateTreeRunStatus FMVSelectAndExecuteAttackTask::EnterState(
 	if (!InstanceData.ActionComponent
 		|| !ExecuteAttackTryStartAction(
 			*InstanceData.ActionComponent,
-			InstanceData.SelectedAttack,
+			ResolvedAttack,
 			InstanceData.StartedActionTableName,
 			InstanceData.StartedActionRowName))
 	{
 		return EStateTreeRunStatus::Failed;
 	}
 
-	if (!ExecuteAttackStartCooldown(*Owner, InstanceData.SelectedAttack))
+	if (!ExecuteAttackStartCooldown(*Owner, ResolvedAttack))
 	{
 		InstanceData.ActionComponent->CancelActiveAction(0.0f);
 		return EStateTreeRunStatus::Failed;
 	}
 
-	InstanceData.LastAttackTag = MVAICombat::MakeActionTag(InstanceData.SelectedAttack);
+	InstanceData.LastAttackTag = MVAICombat::MakeActionTag(ResolvedAttack);
 	return EStateTreeRunStatus::Running;
 }
 

@@ -735,6 +735,7 @@ void UMVHitReactionComponent::BeginAirborneLandDetector()
 	BindAirborneMovementModeChanged();
 	TryJumpAirborneLandSection();
 }
+
 void UMVHitReactionComponent::EndAirborneLandDetector()
 {
 	AirborneLandDetectorCount = FMath::Max(0, AirborneLandDetectorCount - 1);

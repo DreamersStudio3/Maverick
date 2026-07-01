@@ -5,6 +5,8 @@
 #include "AI/Enum/MVAttackDirection.h"
 #include "GameFramework/Pawn.h"
 #include "StateTreeTaskBase.h"
+#include "Tables/MVActionTableTypes.h"
+#include "UObject/SoftObjectPath.h"
 #include "MVExecuteAttackTask.generated.h"
 
 class AMVEnemy;
@@ -15,11 +17,22 @@ struct FMVExecuteFixedAttackTaskInstanceData
 {
 	GENERATED_BODY()
 
+	FMVExecuteFixedAttackTaskInstanceData()
+	{
+		ActionRequest.Domain = EMVActionDomain::Attack;
+	}
+
 	UPROPERTY(EditAnywhere, Category = "Input|Owner")
 	TObjectPtr<APawn> Owner = nullptr;
 
 	UPROPERTY(EditAnywhere, Category = "Input|Attack")
-	FMVAICombatActionCandidate Attack;
+	FMVAICombatActionMetadata AttackMetadata;
+
+	UPROPERTY(EditAnywhere, Category = "Input|Action")
+	FMVActionRequest ActionRequest;
+
+	UPROPERTY(EditAnywhere, Category = "Input|Attack|Chooser")
+	FSoftObjectPath AttackChooserTable;
 
 	UPROPERTY(EditAnywhere, Category = "Input|Attack")
 	EMVAttackDirection FallbackAttackDirection = EMVAttackDirection::Forward;
@@ -32,6 +45,9 @@ struct FMVExecuteFixedAttackTaskInstanceData
 
 	UPROPERTY(Transient)
 	TObjectPtr<AMVEnemy> Enemy = nullptr;
+
+	UPROPERTY(Transient)
+	FMVAttackActionRowHandle ChooserAttackActionRowHandle;
 
 	FName StartedActionTableName = NAME_None;
 	FName StartedActionRowName = NAME_None;
@@ -70,19 +86,25 @@ struct FMVSelectAndExecuteAttackTaskInstanceData
 	FMVAICombatContext CombatContext;
 
 	UPROPERTY(EditAnywhere, Category = "Input|Selection")
-	EMVAICombatAttackSelectionMode SelectionMode = EMVAICombatAttackSelectionMode::SkillAttack;
+	FSoftObjectPath AttackChooserTable;
 
 	UPROPERTY(EditAnywhere, Category = "Input|Selection")
-	TArray<FMVAICombatActionCandidate> Candidates;
+	TArray<FMVAICombatActionCondition> Candidates;
 
 	UPROPERTY(EditAnywhere, Category = "Output")
-	FMVAICombatActionCandidate SelectedAttack;
+	FMVActionRequest SelectedActionRequest;
+
+	UPROPERTY(EditAnywhere, Category = "Output")
+	FMVAICombatActionMetadata SelectedMetadata;
 
 	UPROPERTY(EditAnywhere, Category = "Output")
 	FName LastAttackTag = NAME_None;
 
 	UPROPERTY(Transient)
 	TObjectPtr<UMVActionComponent> ActionComponent = nullptr;
+
+	UPROPERTY(Transient)
+	FMVAttackActionRowHandle ChooserAttackActionRowHandle;
 
 	FName StartedActionTableName = NAME_None;
 	FName StartedActionRowName = NAME_None;

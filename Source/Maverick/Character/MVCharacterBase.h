@@ -140,7 +140,6 @@ public:
 
 private:
 	void ApplyCharacterIndexCodeToComponents();
-	void BindDamageHandlers();
 	void UpdateCharacterValue();
 	void UpdateRotation();
 	void UpdateMovement(float DeltaTime);
@@ -153,6 +152,7 @@ private:
 protected:
 	UFUNCTION(BlueprintCallable, Category = "LocomotionData")
 	void SetStrafeMode(bool StrafeModeOn);
+	virtual void BindDamageHandlers();
 	
 private:
 	EGait DesiredGait();

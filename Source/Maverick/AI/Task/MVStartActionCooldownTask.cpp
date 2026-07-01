@@ -2,6 +2,7 @@
 
 #include "AI/MVActionCooldownComponent.h"
 #include "AIController.h"
+#include "Components/MVActionComponent.h"
 #include "StateTreeExecutionContext.h"
 
 namespace
@@ -31,6 +32,21 @@ EStateTreeRunStatus FMVStartActionCooldownTask::EnterState(FStateTreeExecutionCo
 	if (!Owner || InstanceData.ActionId.IsNone())
 	{
 		return EStateTreeRunStatus::Failed;
+	}
+
+	if (InstanceData.bRequireStartedAction)
+	{
+		const UMVActionComponent* ActionComponent = Owner->FindComponentByClass<UMVActionComponent>();
+		const bool bHasMatchingAction = ActionComponent
+			&& ActionComponent->IsActionRunning()
+			&& (InstanceData.StartedActionTableName.IsNone()
+				|| ActionComponent->GetActiveActionTableName() == InstanceData.StartedActionTableName)
+			&& (InstanceData.StartedActionRowName.IsNone()
+				|| ActionComponent->GetActiveActionRowName() == InstanceData.StartedActionRowName);
+		if (!bHasMatchingAction)
+		{
+			return EStateTreeRunStatus::Failed;
+		}
 	}
 
 	UMVActionCooldownComponent* CooldownComponent = Owner->FindComponentByClass<UMVActionCooldownComponent>();

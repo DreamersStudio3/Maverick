@@ -555,6 +555,85 @@ namespace
 		return bSucceeded;
 	}
 
+	bool TableAssetGeneratorReadIntegerKeySet(
+		const FString& JsonPath,
+		const FString& TableName,
+		const FString& KeyColumnName,
+		TSet<FString>& OutKeys,
+		TArray<FString>& OutErrors)
+	{
+		FString Raw;
+		if (!FFileHelper::LoadFileToString(Raw, *JsonPath))
+		{
+			OutErrors.Add(FString::Printf(TEXT("Cannot read JSON for validation: %s"), *JsonPath));
+			return false;
+		}
+
+		TSharedPtr<FJsonObject> Root;
+		const TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(Raw);
+		if (!FJsonSerializer::Deserialize(Reader, Root) || !Root.IsValid())
+		{
+			OutErrors.Add(FString::Printf(TEXT("Invalid JSON for validation: %s"), *JsonPath));
+			return false;
+		}
+
+		TSharedPtr<FJsonObject> TablesObject;
+		TSharedPtr<FJsonObject> TableObject;
+		const TArray<TSharedPtr<FJsonValue>>* Rows = nullptr;
+		if (!TryGetObjectField(Root, TEXT("tables"), TablesObject)
+			|| !TryGetObjectField(TablesObject, TableName, TableObject)
+			|| !TryGetArrayField(TableObject, TEXT("rows"), Rows)
+			|| !Rows)
+		{
+			OutErrors.Add(FString::Printf(TEXT("%s: table '%s' has no rows for validation."), *JsonPath, *TableName));
+			return false;
+		}
+
+		bool bSucceeded = true;
+		for (const TSharedPtr<FJsonValue>& Element : *Rows)
+		{
+			if (!Element.IsValid() || Element->Type != EJson::Object)
+			{
+				OutErrors.Add(FString::Printf(TEXT("%s: table '%s' has a non-object row."), *JsonPath, *TableName));
+				bSucceeded = false;
+				continue;
+			}
+
+			const TSharedPtr<FJsonObject> RowObject = Element->AsObject();
+			const TSharedPtr<FJsonValue>* KeyValue = RowObject->Values.Find(KeyColumnName);
+			FString KeyString;
+			if (!KeyValue
+				|| !KeyValue->IsValid()
+				|| !JsonValueToGeneratorString(*KeyValue, KeyString)
+				|| KeyString.IsEmpty())
+			{
+				OutErrors.Add(FString::Printf(
+					TEXT("%s: table '%s' has an invalid '%s' value."),
+					*JsonPath,
+					*TableName,
+					*KeyColumnName));
+				bSucceeded = false;
+				continue;
+			}
+
+			if (OutKeys.Contains(KeyString))
+			{
+				OutErrors.Add(FString::Printf(
+					TEXT("%s: table '%s' has duplicate '%s' value '%s'."),
+					*JsonPath,
+					*TableName,
+					*KeyColumnName,
+					*KeyString));
+				bSucceeded = false;
+				continue;
+			}
+
+			OutKeys.Add(KeyString);
+		}
+
+		return bSucceeded;
+	}
+
 	bool SaveDataTableAsset(UDataTable* DataTable, const FString& PackagePath, FString& OutError)
 	{
 		if (!DataTable)

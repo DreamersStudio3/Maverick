@@ -29,7 +29,6 @@ FName MVActionTableNameFromDataTable(const UDataTable* DataTable)
 UMVActionComponent::UMVActionComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
-	CharacterIndexCode = MVGameplayTags::Character_Player_P1;
 }
 
 void UMVActionComponent::BeginPlay()

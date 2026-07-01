@@ -23,6 +23,44 @@ namespace MVActionIds
 #define ACTIONID_USE_CONSUMABLE (::MVActionIds::UseConsumable)
 
 UENUM(BlueprintType)
+enum class EMVActionDomain : uint8
+{
+	None UMETA(DisplayName = "None"),
+	Attack UMETA(DisplayName = "Attack"),
+	Dead UMETA(DisplayName = "Dead"),
+	HitReaction UMETA(DisplayName = "Hit Reaction"),
+	Dodge UMETA(DisplayName = "Dodge"),
+	Skill UMETA(DisplayName = "Skill")
+};
+
+USTRUCT(BlueprintType)
+struct MAVERICK_API FMVActionRequest
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Action")
+	EMVActionDomain Domain = EMVActionDomain::None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Action")
+	FName RowName = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Action")
+	FName StartSection = NAME_None;
+
+	bool IsValid() const
+	{
+		return Domain != EMVActionDomain::None && !RowName.IsNone();
+	}
+
+	void Reset()
+	{
+		Domain = EMVActionDomain::None;
+		RowName = NAME_None;
+		StartSection = NAME_None;
+	}
+};
+
+UENUM(BlueprintType)
 enum class EMVActionId : uint8
 {
 	None UMETA(DisplayName = "None"),

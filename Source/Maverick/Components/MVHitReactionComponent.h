@@ -76,7 +76,7 @@ public:
 	bool RequestDefaultRecoveryAction();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|HitReaction|Chooser")
-	FSoftObjectPath HitReactionChooserTable = TEXT("/Game/Table/Chooser/CHT_HitReaction.CHT_HitReaction");
+	FSoftObjectPath HitReactionChooserTable = TEXT("/Game/Table/HitReaction/CHT_HitReaction.CHT_HitReaction");
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|HitReaction|Chooser")
 	bool bUseNamingConventionWhenChooserUnavailable = true;

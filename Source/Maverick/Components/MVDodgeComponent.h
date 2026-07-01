@@ -58,7 +58,7 @@ public:
 	void EndDodgeLaunchWindow(bool bClearHorizontalVelocity, int32 MontageInstanceId);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Action|Dodge|Chooser")
-	FSoftObjectPath DodgeChooserTable = TEXT("/Game/Table/Chooser/CHT_Dodge.CHT_Dodge");
+	FSoftObjectPath DodgeChooserTable = TEXT("/Game/Table/Dodge/CHT_Dodge.CHT_Dodge");
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Action|Dodge|Chooser")
 	bool bUseNamingConventionWhenChooserUnavailable = true;
