@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Components/MVInputManagerComponent.h"
+#include "Components/MVStatComponent.h"
 #include "Engine/EngineTypes.h"
 #include "Enum/MVEquipmentEnums.h"
 #include "GameplayTagContainer.h"
@@ -75,7 +76,7 @@ public:
 	bool RequestDefaultRecoveryAction();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|HitReaction|Chooser")
-	FSoftObjectPath HitReactionChooserTable = TEXT("/Game/Table/Chooser/CHT_HitReaction.CHT_HitReaction");
+	FSoftObjectPath HitReactionChooserTable = TEXT("/Game/Table/HitReaction/CHT_HitReaction.CHT_HitReaction");
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|HitReaction|Chooser")
 	bool bUseNamingConventionWhenChooserUnavailable = true;
@@ -205,6 +206,9 @@ private:
 
 	UPROPERTY(Transient)
 	TObjectPtr<UMVInputManagerComponent> CachedInputManager;
+
+	UPROPERTY(Transient)
+	TObjectPtr<UMVStatComponent> CachedStatComponent;
 
 	FName ActiveHitReactionActionRowName = NAME_None;
 	EMVActionHitReactionType ActiveHitReactionType = EMVActionHitReactionType::None;

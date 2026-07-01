@@ -1,0 +1,40 @@
+{
+    "version": 1,
+    "tables": {
+        "GameGuide": {
+            "key": "GuideId",
+            "rows": [
+                {
+                    "GuideId": "Respawn.DeathRespawn",
+                    "GuideKind": "RespawnTip",
+                    "Title": "마지막 저장 위치",
+                    "Body": "사망하면 마지막 저장 위치에서 부활한다. 필드는 부활 규칙에 따라 다시 정리된다.",
+                    "bShowInLoading": true,
+                    "Priority": 100,
+                    "Weight": 1.0,
+                    "bEnabled": true
+                },
+                {
+                    "GuideId": "Combat.StaminaReserve",
+                    "GuideKind": "CombatTip",
+                    "Title": "스태미너 관리",
+                    "Body": "공격과 회피 뒤에는 다음 행동을 위한 스태미너를 남겨 두는 편이 좋다.",
+                    "bShowInLoading": true,
+                    "Priority": 50,
+                    "Weight": 1.0,
+                    "bEnabled": true
+                },
+                {
+                    "GuideId": "Respawn.OneTimeSpawn",
+                    "GuideKind": "RespawnTip",
+                    "Title": "한 번뿐인 대상",
+                    "Body": "일부 대상은 한 번만 등장한다. 사망으로 필드가 초기화되어도 다시 나타나지 않을 수 있다.",
+                    "bShowInLoading": true,
+                    "Priority": 25,
+                    "Weight": 1.0,
+                    "bEnabled": true
+                }
+            ]
+        }
+    }
+}

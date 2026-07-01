@@ -1,6 +1,7 @@
 #include "Components/MVInteractionDetectorComponent.h"
 
 #include "Character/MVCharacterBase.h"
+#include "Components/MVStatComponent.h"
 #include "Components/PrimitiveComponent.h"
 #include "Engine/EngineTypes.h"
 #include "Engine/GameInstance.h"
@@ -330,6 +331,7 @@ void UMVInteractionDetectorComponent::ClearFocusedInteractable()
 	InteractionCandidates.Reset();
 	SelectedCandidateIndex = INDEX_NONE;
 	ReleaseSuppressedInteractable(true);
+	HideInteractionPrompt();
 	SetFocusedInteractable(nullptr);
 }
 
@@ -394,6 +396,11 @@ bool UMVInteractionDetectorComponent::SelectPreviousInteractable()
 bool UMVInteractionDetectorComponent::ShouldRunDetection() const
 {
 	if (!bDetectionEnabled || !IsActive())
+	{
+		return false;
+	}
+
+	if (IsOwnerDead())
 	{
 		return false;
 	}
@@ -596,6 +603,12 @@ bool UMVInteractionDetectorComponent::IsDialogueInteractionBlocked() const
 	return UISubsystem && UISubsystem->IsDialogueWindowBlockingInteraction();
 }
 
+bool UMVInteractionDetectorComponent::IsOwnerDead() const
+{
+	const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
+	return OwnerCharacter && OwnerCharacter->StatComponent && OwnerCharacter->StatComponent->IsDead();
+}
+
 bool UMVInteractionDetectorComponent::IsPIEActionTestPanelActiveOrPending() const
 {
 #if !UE_BUILD_SHIPPING
@@ -644,6 +657,17 @@ bool UMVInteractionDetectorComponent::SkipActiveDialogueWindow() const
 
 	UISubsystem->SkipDialogueWindow();
 	return true;
+}
+
+void UMVInteractionDetectorComponent::HideInteractionPrompt() const
+{
+	UWorld* World = GetWorld();
+	UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr;
+	UMVUISubsystem* UISubsystem = GameInstance ? GameInstance->GetSubsystem<UMVUISubsystem>() : nullptr;
+	if (UISubsystem)
+	{
+		UISubsystem->HideInteractionPrompt();
+	}
 }
 
 void UMVInteractionDetectorComponent::HideActiveDialogueWindow() const

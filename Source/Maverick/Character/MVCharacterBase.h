@@ -17,6 +17,7 @@
 class UMVStatComponent;
 class UMVActionComponent;
 class UMVDodgeComponent;
+class UMVDeathComponent;
 class UMVHitReactionComponent;
 class UMVInputManagerComponent;
 
@@ -26,7 +27,7 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FMVOnMovementInputReceived, const FVector&);
  * 공통 캐릭터 런타임 본체.
  *
  * 플레이어와 NPC가 공유할 수 있는 캐릭터 데이터 태그, 이동 상태, 공용 컴포넌트 연결, 무적 상태,
- * 피격 이벤트 브리지, 질주 스태미너 소비를 관리한다. 회피, 피격 리액션, 액션 버퍼 같은 도메인 세부 정책은
+ * 피격 이벤트 브리지, 질주 스태미너 소비를 관리한다. 회피, 피격 리액션, 사망 표현, 액션 버퍼 같은 도메인 세부 정책은
  * 전용 컴포넌트가 이 클래스의 공통 상태 변수와 이벤트 함수를 호출해 컴포넌트 안에서 개별적으로 처리한다.
  *
  * 책임:
@@ -127,6 +128,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UMVDodgeComponent> DodgeComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<UMVDeathComponent> DeathComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UMVHitReactionComponent> HitReactionComponent;
