@@ -11,6 +11,7 @@
 class AMVCharacterBase;
 class UCurveFloat;
 class UMVActionComponent;
+class UMVInputManagerComponent;
 
 /**
  * 회피 액션 전용 런타임 컴포넌트.
@@ -84,7 +85,7 @@ private:
 	FName MakeDodgeActionTableName(const UDataTable* ActionDataTable) const;
 	FName MakeDodgeActionRowName(FGameplayTag CharacterIndexCode, int32 Index) const;
 	FGameplayTag ResolveCharacterIndexCode() const;
-	bool CanTransitionActiveDodgeAction(const UMVActionComponent& ActionComponent) const;
+	bool CanTransitionActiveDodgeAction(const UMVInputManagerComponent& InputManager, const UMVActionComponent& ActionComponent) const;
 	const FMVDodgeActionRow* FindDodgeActionRow(FDataTableRowHandle ActionRowHandle) const;
 	bool CanConsumeDodgeCost(const FMVDodgeActionRow& DodgeActionRow) const;
 	bool ConsumeDodgeCost(const FMVDodgeActionRow& DodgeActionRow);

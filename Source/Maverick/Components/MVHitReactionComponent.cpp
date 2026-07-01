@@ -104,7 +104,7 @@ void UMVHitReactionComponent::HandleDamaged(const FMVResolvedHitData& HitData)
 		const bool bActiveActionIsHitReaction = CachedActionComponent->GetActiveActionTableName()
 			.ToString()
 			.StartsWith(TEXT("HR_"));
-		if (bActiveActionIsHitReaction && !CachedActionComponent->IsRecoveryEscapeWindowOpen())
+		if (bActiveActionIsHitReaction && !CachedInputManager->IsRecoveryEscapeWindowOpen())
 		{
 			return;
 		}
@@ -223,10 +223,10 @@ void UMVHitReactionComponent::BindActionComponentHandlers()
 		CachedActionComponent->OnActionEnded.AddUniqueDynamic(
 			this,
 			&UMVHitReactionComponent::HandleActionEnded);
-		CachedActionComponent->OnRecoveryEscapeWindowChanged.RemoveDynamic(
+		CachedInputManager->OnRecoveryEscapeWindowChanged.RemoveDynamic(
 			this,
 			&UMVHitReactionComponent::HandleRecoveryEscapeWindowChanged);
-		CachedActionComponent->OnRecoveryEscapeWindowChanged.AddUniqueDynamic(
+		CachedInputManager->OnRecoveryEscapeWindowChanged.AddUniqueDynamic(
 			this,
 			&UMVHitReactionComponent::HandleRecoveryEscapeWindowChanged);
 	}
@@ -403,7 +403,7 @@ bool UMVHitReactionComponent::TryConsumeRecoveryInput(
 		|| !CachedInputManager
 		|| ActiveHitReactionActionRowName.IsNone()
 		|| CachedActionComponent->GetActiveActionRowName() != ActiveHitReactionActionRowName
-		|| !CachedActionComponent->IsRecoveryEscapeWindowOpen())
+		|| !CachedInputManager->IsRecoveryEscapeWindowOpen())
 	{
 		return false;
 	}
@@ -449,7 +449,7 @@ bool UMVHitReactionComponent::TryConsumeRecoveryMovementInput(
 		|| !CachedInputManager
 		|| ActiveHitReactionActionRowName.IsNone()
 		|| CachedActionComponent->GetActiveActionRowName() != ActiveHitReactionActionRowName
-		|| !CachedActionComponent->IsRecoveryEscapeWindowOpen())
+		|| !CachedInputManager->IsRecoveryEscapeWindowOpen())
 	{
 		return false;
 	}
@@ -494,7 +494,7 @@ bool UMVHitReactionComponent::TryStartDefaultRecoveryAction(const bool bRequireR
 		return false;
 	}
 
-	if (bRequireRecoveryWindow && !CachedActionComponent->IsRecoveryEscapeWindowOpen())
+	if (bRequireRecoveryWindow && !CachedInputManager->IsRecoveryEscapeWindowOpen())
 	{
 		return false;
 	}
@@ -592,7 +592,7 @@ bool UMVHitReactionComponent::TryStartRecoveryAction(
 		return false;
 	}
 
-	if (bRequireRecoveryWindow && !CachedActionComponent->IsRecoveryEscapeWindowOpen())
+	if (bRequireRecoveryWindow && !CachedInputManager->IsRecoveryEscapeWindowOpen())
 	{
 		return false;
 	}
@@ -668,7 +668,7 @@ bool UMVHitReactionComponent::TryCancelActiveRecoveryAction()
 	if (!CachedActionComponent
 		|| ActiveHitReactionActionRowName.IsNone()
 		|| CachedActionComponent->GetActiveActionRowName() != ActiveHitReactionActionRowName
-		|| !CachedActionComponent->IsRecoveryEscapeWindowOpen())
+		|| !CachedInputManager->IsRecoveryEscapeWindowOpen())
 	{
 		return false;
 	}

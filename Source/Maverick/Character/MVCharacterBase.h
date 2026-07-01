@@ -93,12 +93,6 @@ public:
 	UFUNCTION(BlueprintPure, Category = "LocomotionData|Equipment")
 	EMVEquippedStyle GetEquippedStyle() const;
 
-	UFUNCTION(BlueprintCallable, Category = "Maverick|Character|State")
-	void BeginMovementInputBlock();
-
-	UFUNCTION(BlueprintCallable, Category = "Maverick|Character|State")
-	void EndMovementInputBlock();
-
 	UFUNCTION(BlueprintPure, Category = "Maverick|Character|State")
 	bool IsMovementInputBlocked() const;
 

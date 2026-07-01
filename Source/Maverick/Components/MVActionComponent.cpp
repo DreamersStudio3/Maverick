@@ -8,6 +8,7 @@
 #include "GameFramework/Character.h"
 #include "Tables/MVTableManager.h"
 #include "Tags/MVGameplayTags.h"
+#include "Components/MVInputManagerComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogMVActionComponent, Log, All);
 
@@ -158,10 +159,6 @@ bool UMVActionComponent::TryStartResolvedAction(
 	AnimInstance->Montage_SetEndDelegate(EndDelegate, ActionMontage);
 
 	BeginRecoverableStatRecoveryPause();
-	if (ActionRow.bLocksMovement)
-	{
-		BeginMovementInputBlock();
-	}
 
 	OnActionStarted.Broadcast(ActionTableName, ActionRowName);
 	return true;
@@ -239,7 +236,16 @@ void UMVActionComponent::FinishActiveAction(bool bInterrupted)
 	ActiveActionMontage = nullptr;
 	ActiveActionInstanceId = INDEX_NONE;
 	bActiveActionCanBeInterrupted = true;
-	ResetActionNotifyState();
+
+	// Reset any input-related state owned by InputManager
+	if (AActor* Owner = GetOwner())
+	{
+		if (UMVInputManagerComponent* InputManager =
+			Owner->FindComponentByClass<UMVInputManagerComponent>())
+		{
+			InputManager->ResetNotifyState();
+		}
+	}
 
 	EndRecoverableStatRecoveryPause();
 	OnActionEnded.Broadcast(FinishedActionTableName, FinishedActionRowName, bInterrupted);
@@ -316,17 +322,7 @@ void UMVActionComponent::EndRecoverableStatRecoveryPause()
 	}
 }
 
-void UMVActionComponent::ResetActionNotifyState()
-{
-	const bool bWasRecoveryEscapeWindowOpen = IsRecoveryEscapeWindowOpen();
-	InputBufferWindowCount = 0;
-	MovementInputBlockCount = 0;
-	RecoveryEscapeWindowCount = 0;
-	if (bWasRecoveryEscapeWindowOpen)
-	{
-		OnRecoveryEscapeWindowChanged.Broadcast(false);
-	}
-}
+
 
 bool UMVActionComponent::IsRecoverableStatRecoveryPaused() const
 {
@@ -358,68 +354,6 @@ UAnimMontage* UMVActionComponent::GetActiveActionMontage() const
 	return ActiveActionMontage;
 }
 
-bool UMVActionComponent::IsInputBufferOpen() const
-{
-	return InputBufferWindowCount > 0;
-}
-
-void UMVActionComponent::BeginInputBufferWindow()
-{
-	++InputBufferWindowCount;
-}
-
-void UMVActionComponent::EndInputBufferWindow()
-{
-	InputBufferWindowCount = FMath::Max(0, InputBufferWindowCount - 1);
-}
-
-void UMVActionComponent::BeginMovementInputBlock()
-{
-	++MovementInputBlockCount;
-}
-
-void UMVActionComponent::EndMovementInputBlock()
-{
-	const bool bWasBlocked = MovementInputBlockCount > 0;
-	MovementInputBlockCount = FMath::Max(0, MovementInputBlockCount - 1);
-}
-
-bool UMVActionComponent::IsMovementInputBlocked() const
-{
-	return MovementInputBlockCount > 0;
-}
-
-void UMVActionComponent::BeginRecoveryEscapeWindow()
-{
-	const bool bWasOpen = IsRecoveryEscapeWindowOpen();
-	++RecoveryEscapeWindowCount;
-	if (!bWasOpen)
-	{
-		OnRecoveryEscapeWindowChanged.Broadcast(true);
-	}
-}
-
-void UMVActionComponent::EndRecoveryEscapeWindow()
-{
-	const bool bWasOpen = IsRecoveryEscapeWindowOpen();
-	if (RecoveryEscapeWindowCount <= 0)
-	{
-		RecoveryEscapeWindowCount = 0;
-		return;
-	}
-
-	RecoveryEscapeWindowCount = FMath::Max(0, RecoveryEscapeWindowCount - 1);
-	if (bWasOpen && !IsRecoveryEscapeWindowOpen())
-	{
-		OnRecoveryEscapeWindowChanged.Broadcast(false);
-	}
-}
-
-bool UMVActionComponent::IsRecoveryEscapeWindowOpen() const
-{
-	return RecoveryEscapeWindowCount > 0;
-}
-
 bool UMVActionComponent::TryJumpActiveActionSection(const FName SectionName)
 {
 	if (SectionName.IsNone() || !IsActionRunning())
@@ -449,12 +383,6 @@ bool UMVActionComponent::TryJumpActiveActionSection(const FName SectionName)
 
 	AnimInstance->Montage_JumpToSection(SectionName, Montage);
 	return true;
-}
-
-bool UMVActionComponent::TryJumpActiveActionRecoverySection(const FName SectionName)
-{
-	return IsRecoveryEscapeWindowOpen()
-		&& TryJumpActiveActionSection(SectionName);
 }
 
 const FMVActionRow* UMVActionComponent::FindActionRow(

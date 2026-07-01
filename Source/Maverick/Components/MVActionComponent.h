@@ -15,7 +15,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnRecoverableStatRecoveryPauseCha
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FMVOnActionPreparing, FName, ActionTableName, FName, ActionRowName);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FMVOnActionStarted, FName, ActionTableName, FName, ActionRowName);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FMVOnActionEnded, FName, ActionTableName, FName, ActionRowName, bool, bInterrupted);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnActionRecoveryEscapeWindowChanged, bool, bOpen);
+
 
 /**
  * 공용 Action 실행 컴포넌트.
@@ -98,38 +98,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Maverick|Action")
 	UAnimMontage* GetActiveActionMontage() const;
 
-	UFUNCTION(BlueprintPure, Category = "Maverick|Action|Buffer")
-	bool IsInputBufferOpen() const;
-
-	UFUNCTION(BlueprintCallable, Category = "Maverick|Action|NotifyState")
-	void BeginInputBufferWindow();
-
-	UFUNCTION(BlueprintCallable, Category = "Maverick|Action|NotifyState")
-	void EndInputBufferWindow();
-
-	UFUNCTION(BlueprintCallable, Category = "Maverick|Action|NotifyState")
-	void BeginMovementInputBlock();
-
-	UFUNCTION(BlueprintCallable, Category = "Maverick|Action|NotifyState")
-	void EndMovementInputBlock();
-
-	UFUNCTION(BlueprintPure, Category = "Maverick|Action|NotifyState")
-	bool IsMovementInputBlocked() const;
-
-	UFUNCTION(BlueprintCallable, Category = "Maverick|Action|NotifyState")
-	void BeginRecoveryEscapeWindow();
-
-	UFUNCTION(BlueprintCallable, Category = "Maverick|Action|NotifyState")
-	void EndRecoveryEscapeWindow();
-
-	UFUNCTION(BlueprintPure, Category = "Maverick|Action|NotifyState")
-	bool IsRecoveryEscapeWindowOpen() const;
-
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Action|Recovery")
 	bool TryJumpActiveActionSection(FName SectionName);
 
-	UFUNCTION(BlueprintCallable, Category = "Maverick|Action|Recovery")
-	bool TryJumpActiveActionRecoverySection(FName SectionName);
 
 	const FMVActionRow* FindActionRow(FName ActionTableName, FName ActionRowName) const;
 	const FMVActionRow* FindActionRow(FDataTableRowHandle ActionRowHandle, FName& OutActionTableName, FName& OutActionRowName) const;
@@ -146,9 +117,6 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|Action|Event")
 	FMVOnActionEnded OnActionEnded;
 
-	UPROPERTY(BlueprintAssignable, Category = "Maverick|Action|Event")
-	FMVOnActionRecoveryEscapeWindowChanged OnRecoveryEscapeWindowChanged;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Action|Character", meta = (Categories = "Character"))
 	FGameplayTag CharacterIndexCode;
 
@@ -161,7 +129,7 @@ private:
 	void HandleActionMontageEnded(UAnimMontage* Montage, bool bInterrupted, int32 ActionInstanceId);
 	void BeginRecoverableStatRecoveryPause();
 	void EndRecoverableStatRecoveryPause();
-	void ResetActionNotifyState();
+	
 	UPROPERTY(Transient)
 	TObjectPtr<UMVStatComponent> CachedStatComponent;
 
