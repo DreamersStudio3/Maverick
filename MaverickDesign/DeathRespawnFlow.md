@@ -11,7 +11,8 @@
 - ActionComponent는 전달받은 row handle의 몽타주 실행기 역할에 집중한다.
 - UI 창은 표시 책임만 갖고, 게임 상태 전환을 직접 수행하지 않는다.
 - `UMVWorldStateSubsystem`은 저장되어야 하는 게임 상태와 세이브 슬롯을 소유한다.
-- `UMVRespawnSubsystem`은 사망, 로딩, 부활 흐름을 소유한다.
+- `UMVDeathRespawnFlow`는 사망 몽타주 종료와 DeathOverlay 표시 완료 gate를 관리한다.
+- `UMVFieldTransitionSubsystem`은 로딩, 필드 리셋, 체크포인트 이동, 도착 후 복원을 소유한다.
 - `UMVQuestSubsystem`은 퀘스트 규칙만 처리하고, 저장이 필요한 변경은 WorldState에 요청한다.
 
 ## 책임 분리
@@ -26,7 +27,8 @@
 | `UMVStatComponent` | HP 차감, lethal 확정, dead state, `FMVDeathContext` 발행을 담당한다. | montage나 UI 전환을 직접 호출하지 않는다. |
 | `UMVDeathComponent` | actor-local 사망 표현을 선택하고 시작/디졸브/완료 이벤트를 발행한다. | HP 판정, 피격 리액션 선택, 플레이어 부활/월드 리셋을 처리하지 않는다. |
 | `UMVActionComponent` | 전달받은 action row의 montage 실행과 action lifecycle 이벤트를 담당한다. | 어떤 row를 재생할지 정책적으로 선택하지 않는다. |
-| `UMVRespawnSubsystem` | 플레이어 DeathComponent 이벤트를 구독해 overlay, loading, world reset, checkpoint respawn을 진행한다. | 개별 actor의 사망 표현 row를 고르지 않는다. |
+| `UMVDeathRespawnFlow` | 플레이어 DeathComponent 이벤트를 구독해 DeathOverlay와 death montage gate를 관리한다. | 로딩 이후 필드 리셋과 위치 이동을 직접 처리하지 않는다. |
+| `UMVFieldTransitionSubsystem` | 로딩창, 필드 actor 리셋, 플레이어 목적지 이동, UI/입력 복원을 진행한다. | 사망 표현 row나 DeathOverlay 표시 타이밍을 고르지 않는다. |
 
 ## 사망 런타임 흐름
 
@@ -48,11 +50,12 @@
 7. HitReaction handoff 또는 death event 즉시 `UMVDeathComponent`가 사망 액션 row handle 또는 ragdoll/immediate 표현 방식을 결정한다.
 8. `UMVActionComponent`가 사망 몽타주를 재생한다.
 9. `UMVAnimNotify_DeathDissolve`가 `UMVDeathComponent`에 디졸브 cue를 알린다.
-10. 플레이어의 디졸브 cue는 `UMVRespawnSubsystem`이 구독해 `UMVUISubsystem::ShowDeathOverlay()`로 연결한다.
-11. 사망 표현이 끝나면 `UMVRespawnSubsystem`이 `UMVUISubsystem::ShowLoadingWindow()`를 호출한다.
-12. LoadingWindow는 필드 초기화 진행률과 도움말 카드 캐러셀을 표시한다.
-13. 필드 초기화가 끝나면 마지막 저장 위치에서 플레이어를 부활시킨다.
-14. 부활 몽타주를 재생하고 현재 필드 이름 알림을 표시한다.
+10. `UMVAnimNotify_DeathOverlay`가 `UMVDeathComponent`에 사망 오버레이 cue를 알린다.
+11. `UMVDeathRespawnFlow`가 플레이어 DeathComponent 이벤트를 구독해 `UMVUISubsystem::ShowDeathOverlay()`로 연결한다.
+12. 사망 표현과 DeathOverlay 표시가 모두 끝나면 `UMVDeathRespawnFlow`가 `UMVFieldTransitionSubsystem`에 death respawn 전환을 요청한다.
+13. LoadingWindow는 필드 초기화 진행률과 도움말 카드 캐러셀을 표시한다.
+14. 필드 초기화가 끝나면 마지막 저장 위치에서 플레이어를 부활시킨다.
+15. 부활 몽타주를 재생하고 현재 필드 이름 알림을 표시한다.
 
 ## UI 책임 분리
 
@@ -68,7 +71,7 @@
 - 기본 1초 fade in/out을 사용하고, 최소 표시 시간은 fade in 완료 뒤부터 계산한다.
 - look 입력은 막지 않는다.
 
-DeathOverlay가 LoadingWindow를 직접 열면 사망 몽타주 종료 시점과 UI 타이머가 경쟁하게 된다. 따라서 로딩 전환은 반드시 `UMVRespawnSubsystem`이 몽타주 종료 이벤트를 기준으로 처리한다.
+DeathOverlay가 LoadingWindow를 직접 열면 사망 몽타주 종료 시점과 UI 타이머가 경쟁하게 된다. 따라서 로딩 전환은 반드시 `UMVDeathRespawnFlow`가 사망 몽타주 종료와 overlay 표시 완료를 모두 확인한 뒤 `UMVFieldTransitionSubsystem`에 요청한다.
 
 ## Stat / Death Context
 
@@ -106,7 +109,7 @@ DeathOverlay가 LoadingWindow를 직접 열면 사망 몽타주 종료 시점과
 - `OnDeathDissolveStarted`: death montage notify나 immediate fallback에서 디졸브 cue를 알린다.
 - `OnDeathPresentationFinished`: death action 종료, ragdoll 적용, immediate 완료 뒤 표현이 끝났음을 알린다.
 
-이 이벤트는 actor-local 표현 이벤트다. 플레이어 UI, 로딩, 월드 리셋, 체크포인트 부활은 `UMVRespawnSubsystem`이 플레이어의 DeathComponent 이벤트를 구독해 이어간다.
+이 이벤트는 actor-local 표현 이벤트다. 플레이어 사망 UI gate는 `UMVDeathRespawnFlow`가 구독하고, 로딩, 월드 리셋, 체크포인트 부활은 `UMVFieldTransitionSubsystem`이 이어간다.
 
 ### 사망 표현 선택
 
@@ -150,7 +153,7 @@ standing lethal은 HitReactionComponent가 HitReaction을 생략하므로 DeathC
 - pending landing height와 falling/landing 추적값을 지운다.
 - ragdoll이 적용되어 있으면 physics와 collision profile을 기본값으로 되돌리고 movement mode를 walking으로 복구한다.
 
-`UMVDeathComponent`는 `UMVRespawnSubsystem`을 직접 호출하지 않는다. 플레이어의 월드 리셋, 로딩, 부활은 `UMVRespawnSubsystem`이 플레이어 DeathComponent 이벤트를 구독해 처리한다.
+`UMVDeathComponent`는 `UMVFieldTransitionSubsystem`을 직접 호출하지 않는다. 플레이어 사망 gate는 `UMVDeathRespawnFlow`가 DeathComponent 이벤트를 구독해 처리하고, 월드 리셋, 로딩, 부활은 FieldTransition 요청으로 이어진다.
 
 ## Death Action Row
 
@@ -235,13 +238,13 @@ AM_Death_Land_Heavy
 - `UMVInputManagerComponent::SubmitActionInputById`는 dead state에서 액션 입력 버퍼를 비우고 입력을 거절한다.
 - `UMVDeathOverlayWindow`는 move input을 무시하지만 look input은 무시하지 않는다.
 
-메뉴성 입력은 프로젝트의 실제 메뉴 입력 entry point가 확정되면 같은 방식으로 Respawn/Stat 상태를 조회해 막는다.
+메뉴성 입력은 프로젝트의 실제 메뉴 입력 entry point가 확정되면 같은 방식으로 Death/Stat 상태를 조회해 막는다.
 
 ### LoadingWindow
 
 `UMVLoadingWindow`는 초기화 진행률과 도움말 카드만 표시한다.
 
-- progress bar는 `UMVRespawnSubsystem`이 넘기는 단계 진행률을 반영한다.
+- progress bar는 `UMVFieldTransitionSubsystem`이 넘기는 단계 진행률을 반영한다.
 - 도움말 카드는 `GameGuide` DataTable에서 로딩 노출이 허용된 항목을 가져온다.
 - 상호작용 키 입력은 카드 넘김에만 사용한다.
 - 초기화 완료 전에는 창을 닫거나 게임 입력으로 복귀하지 않는다.
@@ -285,18 +288,30 @@ AM_Death_Land_Heavy
 - 숏컷, 열린 문, 보스 처치 같은 영구 월드 플래그 저장.
 - 퀘스트 상태와 목표 카운트 저장.
 
-### RespawnSubsystem
+### DeathRespawnFlow
 
-`UMVRespawnSubsystem`도 `UGameInstanceSubsystem`으로 둔다. 사망 뒤 로딩 윈도우, 맵 전환, 플레이어 재스폰까지 같은 흐름을 이어가야 하므로 월드 생명주기보다 GameInstance 생명주기에 맞춘다.
+`UMVDeathRespawnFlow`는 `UMVFieldTransitionSubsystem`이 소유하는 UObject다. DeathComponent 이벤트를 구독하고, death montage 종료와 DeathOverlay 최소 표시 완료를 모두 확인한 뒤 death respawn 전환 요청을 만든다.
 
 책임:
 
 - 플레이어 사망 이벤트 구독.
-- 플레이어 DeathComponent의 표현 시작, 디졸브 cue, 표현 완료 이벤트 구독.
-- DeathOverlayWindow와 LoadingWindow 표시 요청.
+- 플레이어 DeathComponent의 표현 시작, overlay cue, 표현 완료 이벤트 구독.
+- DeathOverlayWindow 표시 요청.
+- DeathOverlay 표시 완료와 death montage 종료 gate 관리.
+- `UMVFieldTransitionSubsystem`에 death respawn 전환 요청 전달.
+
+### FieldTransitionSubsystem
+
+`UMVFieldTransitionSubsystem`은 `UGameInstanceSubsystem`으로 둔다. 사망 부활과 체크포인트 이동이 모두 로딩, 필드 리셋, 목적지 이동, 도착 후 복원을 공유하므로 GameInstance 생명주기에 맞춘다.
+
+책임:
+
+- LoadingWindow 표시 요청.
 - 로딩 progress 이벤트 발행.
-- 현재 월드의 `MVRespawnResettableInterface` actor에게 사망 리셋 context 전달.
-- WorldState의 마지막 체크포인트를 조회해 플레이어 transform과 스탯을 초기화.
+- 현재 월드의 `MVFieldTransitionResettableInterface` actor에게 필드 전환 리셋 context 전달.
+- WorldState의 마지막 체크포인트 또는 요청 목적지를 조회해 플레이어 transform과 선택적 스탯을 초기화.
+- UI 기본 상태와 입력 모드 복원.
+- `UMVFieldTransitionSettings`의 action row 설정을 읽어 로딩 전후 몽타주를 요청한다.
 - 실제 몬스터/아이템/필드 오브젝트 초기화 방식은 각 actor 도메인 구현에 위임.
 
 ### QuestSubsystem
@@ -313,59 +328,60 @@ QuestSubsystem -> WorldStateSubsystem::CompleteQuest()
 
 ### 필드 오브젝트 정책
 
-별도 `FieldStateSubsystem`은 만들지 않는다. 현재 월드의 리셋 대상 actor가 `MVRespawnResettableInterface`를 구현하고, `UMVRespawnSubsystem`은 로딩 단계에서 이 actor들에게 `FMVRespawnResetContext`를 전달한다.
+별도 `FieldStateSubsystem`은 만들지 않는다. 현재 월드의 리셋 대상 actor가 `MVFieldTransitionResettableInterface`를 구현하고, `UMVFieldTransitionSubsystem`은 로딩 단계에서 이 actor들에게 `FMVFieldTransitionResetContext`를 전달한다.
 
 인터페이스 계약:
 
 ```cpp
 UENUM(BlueprintType)
-enum class EMVRespawnResetPolicy : uint8
+enum class EMVFieldTransitionResetPolicy : uint8
 {
-    RespawnEveryDeath,
+    ResetEveryTransition,
     PersistIfConsumed,
     PersistState,
     TransientOnly
 };
 
-GetRespawnResetPolicy()
-GetRespawnResetFieldId()
-GetRespawnResetObjectId()
-HandleRespawnReset(const FMVRespawnResetContext& ResetContext)
+GetFieldTransitionResetPolicy()
+GetFieldTransitionResetFieldId()
+GetFieldTransitionResetObjectId()
+HandleFieldTransitionReset(const FMVFieldTransitionResetContext& ResetContext)
 ```
 
 `PersistIfConsumed` 대상은 `WorldStateSubsystem::IsOneTimeSpawnConsumed(FieldId, ObjectId)` 결과를 `ResetContext.bIsConsumed`로 받는다. 실제 actor를 숨길지, 제거할지, 초기 상태로 복구할지는 해당 actor 구현이 결정한다.
 
 ### ResetPolicy 의미
 
-`RespawnEveryDeath`
+`ResetEveryTransition`
 
-일반 몬스터, 일반 필드 아이템, 다시 켜져야 하는 장치에 사용한다. 사망 리셋 때 초기 transform, HP, 활성 상태, AI 상태를 복구한다.
+일반 몬스터, 일반 필드 아이템, 다시 켜져야 하는 장치에 사용한다. 필드 전환 리셋 때 초기 transform, HP, 활성 상태, AI 상태를 복구한다.
 
 `PersistIfConsumed`
 
-1회성 아이템, 1회성 몬스터에 사용한다. 저장 데이터에 소비됨으로 기록되어 있으면 사망 리셋 때 다시 스폰하지 않는다.
+1회성 아이템, 1회성 몬스터에 사용한다. 저장 데이터에 소비됨으로 기록되어 있으면 필드 전환 리셋 때 다시 스폰하지 않는다.
 
 `PersistState`
 
-숏컷 문, 보스 처치, 영구 해금 장치에 사용한다. 사망 리셋 때도 저장된 상태를 유지한다.
+숏컷 문, 보스 처치, 영구 해금 장치에 사용한다. 필드 전환 리셋 때도 저장된 상태를 유지한다.
 
 `TransientOnly`
 
 투사체, 임시 소환물, 지속 이펙트에 사용한다. 리셋 때 제거만 하고 재생성하지 않는다.
 
-## 사망 리셋 단계
+## 필드 전환 리셋 단계
 
-`UMVRespawnSubsystem`은 LoadingWindow가 열린 뒤 다음 단계를 순서대로 처리한다.
+`UMVFieldTransitionSubsystem`은 요청에 로딩 전 액션 row가 있으면 먼저 액션을 재생하고, 액션 종료 뒤 LoadingWindow를 열어 다음 단계를 순서대로 처리한다.
 
-1. 게임 입력과 전투 처리를 정지한다.
-2. `MVRespawnResettableInterface`를 구현한 actor를 수집한다.
-3. 마지막 체크포인트 FieldId와 actor FieldId를 기준으로 리셋 대상을 필터링한다.
-4. 1회성 대상의 소비 상태를 WorldState 저장 데이터에서 확인해 context로 전달한다.
-5. 일반 리셋, 임시 actor 제거, 영구 상태 재적용은 각 actor의 `HandleRespawnReset` 구현에 위임한다.
-6. 플레이어를 마지막 저장 위치로 이동 또는 재스폰한다.
-7. 플레이어 스탯과 사망 상태를 초기화한다.
-8. 부활 몽타주를 재생한다.
-9. 현재 필드 이름 알림을 표시한다.
-10. 입력 게이트를 일반 플레이 상태로 되돌린다.
+1. 로딩 전 액션 row가 있으면 재생 완료를 기다린다.
+2. 게임 입력과 전투 처리를 정지한다.
+3. `MVFieldTransitionResettableInterface`를 구현한 actor를 수집한다.
+4. 마지막 체크포인트 FieldId와 actor FieldId를 기준으로 리셋 대상을 필터링한다.
+5. 1회성 대상의 소비 상태를 WorldState 저장 데이터에서 확인해 context로 전달한다.
+6. 일반 리셋, 임시 actor 제거, 영구 상태 재적용은 각 actor의 `HandleFieldTransitionReset` 구현에 위임한다.
+7. 플레이어를 요청된 목적지 또는 마지막 저장 위치로 이동한다.
+8. 요청 옵션에 따라 플레이어 스탯과 사망 상태를 초기화한다.
+9. 도착/부활 몽타주를 재생한다.
+10. 현재 필드 이름 알림을 표시한다.
+11. 입력 게이트를 일반 플레이 상태로 되돌린다.
 
 각 단계는 LoadingWindow progress bar에 반영할 수 있도록 명시적인 진행률을 발행한다.

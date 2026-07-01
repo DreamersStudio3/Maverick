@@ -33,7 +33,7 @@ struct FMVLoadingGuideCard
 /**
  * 로딩 중 초기화 진행률과 도움말 카드 UI를 표시하는 창.
  *
- * RespawnSubsystem이 넘기는 progress/step text를 표시하고,
+ * FieldTransitionSubsystem이 넘기는 progress/step text를 표시하고,
  * GameGuide 테이블에서 로딩 노출이 허용된 항목을 카드/캐러셀로 렌더링한다.
  */
 UCLASS(Blueprintable)

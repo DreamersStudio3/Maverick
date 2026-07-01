@@ -27,13 +27,14 @@ HP가 0이 된 순간부터 사망 액션, 디졸브, 사망 오버레이, 로�
 - [x] `MV Death Dissolve` notify에서 mesh material slot별 Dynamic Material Instance를 만들고 `DeathDissolveAmount`를 0에서 1로 구동하게 했다.
 - [x] 기존 BP/컴포넌트 기본값에 남은 1.2초 dissolve duration을 런타임에서 3초로 보정했다.
 - [x] dissolve material이 낮은 amount에서 완전히 사라지는 경우를 보정하기 위해 duration 끝에 도달할 material amount를 별도 설정으로 분리했다.
-- [x] DeathComponent에서는 dissolve cue/reset만 관리하고 실제 DMI/material/mesh hide 처리는 instanced `UMVDeathDissolveEffect` UObject로 분리했다.
+- [x] DeathComponent에서는 dissolve cue/reset만 관리하고 실제 DMI/material/mesh hide 처리는 런타임 `UMVDeathDissolveEffect` UObject로 분리했다.
+- [x] `UMVDeathDissolveEffect`는 캐릭터 BP Details 패널에서 인라인 편집하지 않고 class reference로 지정한 뒤 런타임에 생성한다.
 - [x] LoadingWindow 전환 시 DeathOverlay를 즉시 deactivate해 respawn 뒤 overlay가 다시 leaf-most로 올라오는 문제를 막았다.
 - [x] 부활 완료 시 LoadingWindow를 즉시 deactivate하고 PlayerController 입력 모드를 GameOnly로 복구해 move/look 입력 차단을 해제한다.
 - [x] 개발 빌드에서 `MV.UI.LoadingTest.Show`, `Hide`, `Advance` 콘솔 명령으로 로딩 화면과 GameGuide 카드 UI를 고정 테스트할 수 있다.
 - [x] 부활 완료 시 UI 시스템을 default HUD만 남는 기본 상태로 재초기화해 사망 전/중 떠 있던 위젯을 제거한다.
 - [x] 사망 시작 시 펼쳐져 있던 모든 UI를 fade-out으로 내리고, 이후 DeathOverlay만 새 레이어에 올리게 했다.
-- [x] Respawn loading은 DeathOverlay fade-out 완료와 death montage 종료가 모두 확인된 뒤에만 시작한다.
+- [x] 필드 전환 로딩은 DeathOverlay fade-out 완료와 death montage 종료가 모두 확인된 뒤에만 시작한다.
 - [x] 사망 중 InteractionDetector가 InteractionPrompt를 즉시 숨기고 dead state에서는 감지를 중단해 프롬프트가 다시 올라오지 않게 했다.
 - [x] LoadingWindow 표시 시 HUDLayer를 비워 로딩 화면 뒤에 기본 HUD가 남지 않게 했다.
 - [x] HUD hide와 기본 UI reset은 즉시 제거 대신 짧은 fade-out을 거쳐 화면에서 사라지게 했다.
@@ -51,7 +52,7 @@ HP가 0이 된 순간부터 사망 액션, 디졸브, 사망 오버레이, 로�
 
 ## UI 흐름
 
-사망 UI는 사망 액션의 타이밍을 직접 결정하지 않는다. UI는 표시 책임만 갖고, 사망 진행 상태 전환은 `UMVRespawnSubsystem`이 담당한다.
+사망 UI는 사망 액션의 타이밍을 직접 결정하지 않는다. UI는 표시 책임만 갖고, 사망 gate는 `UMVDeathRespawnFlow`, 로딩 이후 필드 전환은 `UMVFieldTransitionSubsystem`이 담당한다.
 
 ### DeathOverlayWindow
 
@@ -73,7 +74,7 @@ HP가 0이 된 순간부터 사망 액션, 디졸브, 사망 오버레이, 로�
 - [x] `IA_Interact` 입력 액션에 매핑된 키로 가이드 카드를 넘길 수 있다.
 - [x] 가이드 카드 전환은 0.25초 fade-out 뒤 다음 카드로 교체하고 0.25초 fade-in한다.
 - [x] 초기화 완료 전에는 닫히거나 게임 입력으로 복귀하지 않는다.
-- [x] 진행률이 100%가 되면 `UMVRespawnSubsystem`이 부활 단계로 넘어갈 수 있다.
+- [x] 진행률이 100%가 되면 `UMVFieldTransitionSubsystem`이 목적지 적용 단계로 넘어갈 수 있다.
 
 ## GameGuide 테이블
 
@@ -113,30 +114,32 @@ HP가 0이 된 순간부터 사망 액션, 디졸브, 사망 오버레이, 로�
 - [x] 퀘스트 데이터 저장이 필요하면 `UMVWorldStateSubsystem` API를 호출한다.
 - [x] 퀘스트 전용 규칙은 QuestSubsystem에 두고, 저장 포맷은 WorldState에 집중한다.
 
-### RespawnSubsystem 책임
+### FieldTransitionSubsystem 책임
 
-- [x] 사망 상태 진입부터 로딩, 부활까지의 상태 머신을 소유한다.
+- [x] 로딩 이후 필드 리셋, 위치 이동, UI/입력 복원까지의 전환 상태 머신을 소유한다.
 - [x] LoadingWindow progress에 연결될 진행률 이벤트를 발행한다.
 - [x] 마지막 체크포인트 조회와 플레이어 부활 처리를 위해 WorldState에 요청한다.
-- [x] 사망 로딩 중 `MVRespawnResettableInterface`를 구현한 월드 actor에게 리셋 context를 전달한다.
+- [x] 필드 전환 로딩 중 `MVFieldTransitionResettableInterface`를 구현한 월드 actor에게 리셋 context를 전달한다.
+- [x] `UMVDeathRespawnFlow`가 DeathOverlay와 death montage gate 이후 death respawn 전환 요청을 보낸다.
+- [x] `UMVFieldTransitionSettings`에서 death respawn과 checkpoint travel의 전후 액션 row를 설정으로 공급한다.
 
 ### Spawn/Reset 정책
 
-- `RespawnEveryDeath`: 일반 몬스터, 일반 소모성 필드 오브젝트. 사망 리셋 때 다시 생성하거나 초기 상태로 복원한다.
+- `ResetEveryTransition`: 일반 몬스터, 일반 소모성 필드 오브젝트. 필드 전환 리셋 때 다시 생성하거나 초기 상태로 복원한다.
 - `PersistIfConsumed`: 1회성 아이템, 1회성 몬스터. 이미 획득/처치했다면 다시 생성하지 않는다.
 - `PersistState`: 숏컷, 열린 문, 보스 처치 상태처럼 저장 이후 유지되어야 하는 상태.
 - `TransientOnly`: 투사체, 임시 소환물, 이펙트. 리셋 때 제거만 하고 재생성하지 않는다.
 
-### `MVRespawnResettableInterface`
+### `MVFieldTransitionResettableInterface`
 
-필드 상태 전용 서브시스템은 만들지 않는다. 대신 로딩 단계에서 `UMVRespawnSubsystem`이 현재 월드의 actor 중 `MVRespawnResettableInterface`를 구현한 대상만 찾아 `FMVRespawnResetContext`를 전달한다.
+필드 상태 전용 서브시스템은 만들지 않는다. 대신 로딩 단계에서 `UMVFieldTransitionSubsystem`이 현재 월드의 actor 중 `MVFieldTransitionResettableInterface`를 구현한 대상만 찾아 `FMVFieldTransitionResetContext`를 전달한다.
 
-- `GetRespawnResetPolicy`: 대상의 리셋 정책을 반환한다.
-- `GetRespawnResetFieldId`: 특정 필드에만 속한 대상이면 FieldId를 반환한다. 비워두면 현재 리셋에 항상 참여할 수 있다.
-- `GetRespawnResetObjectId`: 1회성 소비 상태 조회가 필요한 대상의 ObjectId를 반환한다.
-- `HandleRespawnReset`: 실제 초기화, 비활성화, 제거, 저장 상태 재적용을 actor 도메인에서 수행한다.
+- `GetFieldTransitionResetPolicy`: 대상의 리셋 정책을 반환한다.
+- `GetFieldTransitionResetFieldId`: 특정 필드에만 속한 대상이면 FieldId를 반환한다. 비워두면 현재 리셋에 항상 참여할 수 있다.
+- `GetFieldTransitionResetObjectId`: 1회성 소비 상태 조회가 필요한 대상의 ObjectId를 반환한다.
+- `HandleFieldTransitionReset`: 실제 초기화, 비활성화, 제거, 저장 상태 재적용을 actor 도메인에서 수행한다.
 
-`PersistIfConsumed` 대상은 `WorldStateSubsystem::IsOneTimeSpawnConsumed(FieldId, ObjectId)` 결과를 `FMVRespawnResetContext::bIsConsumed`로 받는다. 실제 actor를 숨길지, 제거할지, 초기화할지는 해당 actor 구현이 결정한다.
+`PersistIfConsumed` 대상은 `WorldStateSubsystem::IsOneTimeSpawnConsumed(FieldId, ObjectId)` 결과를 `FMVFieldTransitionResetContext::bIsConsumed`로 받는다. 실제 actor를 숨길지, 제거할지, 초기화할지는 해당 actor 구현이 결정한다.
 
 ### 사망 리셋 단계
 
@@ -147,7 +150,7 @@ HP가 0이 된 순간부터 사망 액션, 디졸브, 사망 오버레이, 로�
 - [ ] 숏컷/문/보스 처치처럼 보존 상태를 재적용한다.
 - [x] 플레이어를 마지막 저장 위치로 이동 또는 재스폰한다.
 - [x] HP/스태미너/MP 등 스탯을 부활 기준으로 초기화한다.
-- [ ] 부활 몽타주를 재생한다.
+- [x] 부활 몽타주를 설정 row handle로 받아 전환 완료 후 재생한다.
 - [ ] 현재 필드 이름 알림 위젯을 표시했다가 숨긴다.
 
 ## 구현 순서
@@ -162,11 +165,11 @@ HP가 0이 된 순간부터 사망 액션, 디졸브, 사망 오버레이, 로�
 - [x] 사망 오버레이 notify를 디졸브 notify에서 분리한다.
 - [x] DeathComponent의 dissolve cue를 받아 런타임 dissolve와 respawn 복구를 처리하는 `UMVDeathDissolveEffect` UObject를 추가한다.
 - [x] `UMVWorldStateSubsystem` 저장/로드 골격을 추가한다.
-- [x] `UMVRespawnSubsystem` 골격을 추가한다.
+- [x] `UMVFieldTransitionSubsystem`과 `UMVDeathRespawnFlow`로 공통 필드 전환과 사망 gate를 분리한다.
 - [x] `UMVQuestSubsystem`이 WorldState에 요청하는 구조를 추가한다.
 - [x] LoadingWindow progress API를 추가한다.
-- [x] 사망 로딩 중 월드 actor 리셋을 요청하는 `MVRespawnResettableInterface` 계약을 추가한다.
-- [x] `UMVHitReactionComponent`에서 death action과 RespawnSubsystem 직접 호출 책임을 제거한다.
+- [x] 필드 전환 로딩 중 월드 actor 리셋을 요청하는 `MVFieldTransitionResettableInterface` 계약을 추가한다.
+- [x] `UMVHitReactionComponent`에서 death action과 필드 전환 직접 호출 책임을 제거한다.
 - [x] lethal standing hit은 HitReaction 없이 DeathComponent가 death action을 즉시 시작하게 한다.
 - [x] lethal KD/AB hit에서 활성 HitReaction 완료 또는 handoff 뒤 DeathComponent가 death action을 시작하게 한다.
 - [x] KD/AB lethal hit에서 Lying 진입 직전 death action으로 넘기는 handoff notify를 추가한다.

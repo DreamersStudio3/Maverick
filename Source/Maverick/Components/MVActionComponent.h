@@ -59,6 +59,12 @@ public:
 	bool TryStartActionFromRowHandle(FDataTableRowHandle ActionRowHandle, FName StartSection = NAME_None);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Action")
+	bool PauseActiveAction();
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Action")
+	bool ResumeActiveAction();
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Action")
 	bool TryTransitionActionFromTable(
 		FName ActionTableName,
 		FName ActionRowName,
@@ -153,7 +159,11 @@ public:
 	FGameplayTag CharacterIndexCode;
 
 private:
-	bool TryStartResolvedAction(FName ActionTableName, FName ActionRowName, const FMVActionRow& ActionRow, FName StartSection);
+	bool TryStartResolvedAction(
+		FName ActionTableName,
+		FName ActionRowName,
+		const FMVActionRow& ActionRow,
+		FName StartSection);
 	void CacheOwnerReferences();
 	UAnimInstance* GetOwnerAnimInstance() const;
 	UAnimMontage* ResolveActionRowMontage(FName ActionTableName, FName ActionRowName, const FMVActionRow& ActionRow) const;

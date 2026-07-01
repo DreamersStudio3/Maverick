@@ -60,10 +60,10 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnDeathPresentationEvent, AActor*
  *   - death action row 선택. Stand, Down, LandLight, LandHeavy pose와 F/B facing을 death context에서 해석한다.
  *   - lethal KD/AB HitReaction이 먼저 재생 중이면 death context를 보류하고, handoff notify 또는 HR 종료 뒤 Down death로 전환한다.
  *   - 낙하 사망 높이를 기록해 LandLight/LandHeavy death action 선택에 반영한다.
- *   - death dissolve notify를 받아 instanced effect UObject를 실행하고 외부 시스템용 cue 이벤트를 발행한다.
+ *   - death dissolve notify를 받아 런타임 effect UObject를 실행하고 외부 시스템용 cue 이벤트를 발행한다.
  *   - death overlay notify를 받아 사망 UI 표시 cue 이벤트를 발행한다.
  *   - death action 종료, ragdoll 적용, immediate 완료 뒤 OnDeathPresentationFinished를 발행한다.
- *   - death dissolve effect UObject를 초기화하고 dissolve cue/reset 시 effect를 호출한다.
+ *   - death dissolve effect class로 런타임 effect UObject를 만들고 dissolve cue/reset 시 effect를 호출한다.
  *   - 부활 시 ResetDeathPresentationForRespawn으로 actor-local death state, ragdoll, 낙하 기록을 초기화하고 reset 이벤트를 발행한다.
  *
  * 소유하지 않는 책임:
@@ -71,7 +71,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnDeathPresentationEvent, AActor*
  *   - non-lethal HitReaction과 lethal KD/AB의 pre-death HitReaction 선택은 UMVHitReactionComponent가 담당한다.
  *   - montage 재생 자체와 Action 이벤트 브로드캐스트는 UMVActionComponent가 담당한다.
  *   - dissolve material, Dynamic Material Instance, mesh hide/restore 같은 세부 시각 효과 구현은 UMVDeathDissolveEffect가 담당한다.
- *   - 플레이어 사망 UI, 로딩, 월드 리셋, 체크포인트 부활은 UMVRespawnSubsystem이 이 컴포넌트의 이벤트를 구독해 처리한다.
+ *   - 플레이어 사망 UI gate는 UMVDeathRespawnFlow가 구독하고, 로딩/필드 리셋/체크포인트 이동은
+ *     UMVFieldTransitionSubsystem이 처리한다.
  *
  * 라이프사이클:
  *   1) BeginPlay -> 소유 CharacterBase, StatComponent, ActionComponent를 캐시하고 사망/액션 종료 이벤트를 구독한다.
@@ -132,8 +133,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Death")
 	EMVDeathPresentationMode DeathPresentationMode = EMVDeathPresentationMode::DeathAction;
 
-	UPROPERTY(EditAnywhere, Instanced, BlueprintReadWrite, Category = "Maverick|Death|Dissolve")
-	TObjectPtr<UMVDeathDissolveEffect> DeathDissolveEffect;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Death|Dissolve")
+	TSubclassOf<UMVDeathDissolveEffect> DeathDissolveEffectClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Death|Action")
 	FDataTableRowHandle DeathActionRow;
@@ -182,6 +183,7 @@ private:
 	void StartRagdollDeathPresentation();
 	void StartDeathDissolveEffect();
 	void ResetDeathDissolveEffect();
+	UMVDeathDissolveEffect* EnsureDeathDissolveEffect();
 	void FinishDeathPresentation();
 	bool ResolveDeathActionRowHandle(const FMVDeathContext& DeathContext, FDataTableRowHandle& OutActionRowHandle) const;
 	FName ResolveDeathActionTableName() const;
@@ -219,6 +221,9 @@ private:
 
 	UPROPERTY(Transient)
 	TObjectPtr<UMVStatComponent> CachedStatComponent;
+
+	UPROPERTY(Transient)
+	TObjectPtr<UMVDeathDissolveEffect> DeathDissolveEffect;
 
 	EMVDeathPresentationPhase DeathPresentationPhase = EMVDeathPresentationPhase::Idle;
 	FMVDeathContext DeferredDeathContext;

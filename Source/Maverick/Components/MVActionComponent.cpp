@@ -100,6 +100,32 @@ bool UMVActionComponent::TryStartActionFromRowHandle(
 	return TryStartResolvedAction(ActionTableName, ActionRowName, *ActionRow, StartSection);
 }
 
+bool UMVActionComponent::PauseActiveAction()
+{
+	UAnimInstance* AnimInstance = GetOwnerAnimInstance();
+	UAnimMontage* ActionMontage = ActiveActionMontage.Get();
+	if (!AnimInstance || !ActionMontage)
+	{
+		return false;
+	}
+
+	AnimInstance->Montage_Pause(ActionMontage);
+	return true;
+}
+
+bool UMVActionComponent::ResumeActiveAction()
+{
+	UAnimInstance* AnimInstance = GetOwnerAnimInstance();
+	UAnimMontage* ActionMontage = ActiveActionMontage.Get();
+	if (!AnimInstance || !ActionMontage)
+	{
+		return false;
+	}
+
+	AnimInstance->Montage_Resume(ActionMontage);
+	return true;
+}
+
 bool UMVActionComponent::TryStartResolvedAction(
 	const FName ActionTableName,
 	const FName ActionRowName,

@@ -29,16 +29,16 @@ struct FMVDeathDissolveMeshState
 /**
  * DeathComponent가 소유하는 사망 dissolve effect strategy 객체.
  *
- * Actor에 별도 컴포넌트로 붙지 않고 DeathComponent의 instanced UObject로 존재하며, death dissolve cue를 받으면
+ * Actor에 별도 컴포넌트로 붙지 않고 DeathComponent가 런타임 UObject로 생성하며, death dissolve cue를 받으면
  * 대상 actor의 skeletal mesh material slot에 Dynamic Material Instance를 만들고 dissolve parameter를 시간에 따라
- * 구동한다. 캐릭터별로 BP subclass를 꽂거나 이 객체를 비활성화해 C++ 기본 dissolve 대신 커스텀 연출을 사용할 수 있다.
+ * 구동한다. 캐릭터별로 BP subclass를 지정하거나 이 객체를 비활성화해 C++ 기본 dissolve 대신 커스텀 연출을 사용할 수 있다.
  *
  * 라이프사이클:
  *   1) DeathComponent BeginPlay -> InitializeEffect로 대상 actor context를 받는다.
  *   2) DeathComponent dissolve cue -> StartDeathDissolve로 기본 dissolve 또는 BP override 연출을 실행한다.
  *   3) DeathComponent reset/EndPlay -> ResetDeathDissolveVisuals로 material과 hidden 상태를 복구한다.
  */
-UCLASS(Blueprintable, EditInlineNew, DefaultToInstanced)
+UCLASS(Blueprintable)
 class MAVERICK_API UMVDeathDissolveEffect : public UObject
 {
 	GENERATED_BODY()

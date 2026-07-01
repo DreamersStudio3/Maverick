@@ -13,8 +13,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMVOnDeathOverlayMinimumDisplayElapsed);
  * 사망 연출 중 고정 사망 문구를 표시하는 오버레이 창.
  *
  * 이 창은 `YOU DIED` 같은 사망 알림을 fade in, hold, fade out으로 표시하고 표시 완료 시점을 알릴 뿐,
- * 로딩 창 전환이나 부활 처리는 직접 수행하지 않는다. 사망 몽타주 종료, 필드 초기화, 부활 흐름은
- * `UMVRespawnSubsystem`이 담당한다.
+ * 로딩 창 전환이나 부활 처리는 직접 수행하지 않는다. DeathOverlay 이후 로딩 전환은 `UMVDeathRespawnFlow`,
+ * 필드 초기화와 체크포인트 이동은 `UMVFieldTransitionSubsystem`이 담당한다.
  */
 UCLASS(Blueprintable)
 class MAVERICK_API UMVDeathOverlayWindow : public UMVWindowBase

@@ -14,7 +14,7 @@ DEFINE_LOG_CATEGORY_STATIC(LogMVDeathComponent, Log, All);
 UMVDeathComponent::UMVDeathComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
-	DeathDissolveEffect = CreateDefaultSubobject<UMVDeathDissolveEffect>(TEXT("DeathDissolveEffect"));
+	DeathDissolveEffectClass = UMVDeathDissolveEffect::StaticClass();
 }
 
 void UMVDeathComponent::BeginPlay()
@@ -22,9 +22,9 @@ void UMVDeathComponent::BeginPlay()
 	Super::BeginPlay();
 
 	CacheOwnerReferences();
-	if (DeathDissolveEffect)
+	if (UMVDeathDissolveEffect* Effect = EnsureDeathDissolveEffect())
 	{
-		DeathDissolveEffect->InitializeEffect(GetOwner());
+		Effect->InitializeEffect(GetOwner());
 	}
 	BindMovementModeChanged();
 	BindStatComponentHandlers();
@@ -440,24 +440,45 @@ void UMVDeathComponent::StartRagdollDeathPresentation()
 
 void UMVDeathComponent::StartDeathDissolveEffect()
 {
-	if (!DeathDissolveEffect)
+	UMVDeathDissolveEffect* Effect = EnsureDeathDissolveEffect();
+	if (!Effect)
 	{
 		return;
 	}
 
-	DeathDissolveEffect->InitializeEffect(GetOwner());
-	DeathDissolveEffect->StartDeathDissolve(GetOwner());
+	Effect->InitializeEffect(GetOwner());
+	Effect->StartDeathDissolve(GetOwner());
 }
 
 void UMVDeathComponent::ResetDeathDissolveEffect()
 {
-	if (!DeathDissolveEffect)
+	UMVDeathDissolveEffect* Effect = EnsureDeathDissolveEffect();
+	if (!Effect)
 	{
 		return;
 	}
 
-	DeathDissolveEffect->InitializeEffect(GetOwner());
-	DeathDissolveEffect->ResetDeathDissolveVisuals();
+	Effect->InitializeEffect(GetOwner());
+	Effect->ResetDeathDissolveVisuals();
+}
+
+UMVDeathDissolveEffect* UMVDeathComponent::EnsureDeathDissolveEffect()
+{
+	if (DeathDissolveEffect)
+	{
+		return DeathDissolveEffect;
+	}
+
+	if (!DeathDissolveEffectClass)
+	{
+		return nullptr;
+	}
+
+	DeathDissolveEffect = NewObject<UMVDeathDissolveEffect>(
+		this,
+		DeathDissolveEffectClass,
+		TEXT("DeathDissolveEffect"));
+	return DeathDissolveEffect;
 }
 
 void UMVDeathComponent::FinishDeathPresentation()
