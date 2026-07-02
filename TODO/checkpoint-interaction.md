@@ -28,3 +28,5 @@
 - [x] 액션 step에 `StepId`/`ActionName` 기반 시작/완료 delegate 추가
 - [x] 재사용 가능한 `UMVInteractionFlowDataAsset` 추가
 - [x] InteractableComponent가 flow asset 또는 inline definition을 실행하도록 확장
+- [x] Flow step을 단일 struct에서 instanced polymorphic UObject 데이터로 전환
+- [x] PropertyEditor 재귀 크래시 방지를 위해 DataAsset의 step 배열을 struct 밖 직접 소유로 전환

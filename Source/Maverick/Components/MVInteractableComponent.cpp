@@ -9,6 +9,14 @@
 #include "UI/Window/MVDialogueWindow.h"
 #include "UI/Window/MVInteractionMenuWindow.h"
 
+namespace
+{
+FName MVInteractableResolveActionStepName(const UMVInteractionActionStepData& Step)
+{
+	return Step.ActionName.IsNone() ? Step.StepId : Step.ActionName;
+}
+}
+
 UMVInteractableComponent::UMVInteractableComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
@@ -30,11 +38,6 @@ void UMVInteractableComponent::SetUseInteractionDefinition(const bool bInUseInte
 	bUseInteractionDefinition = bInUseInteractionDefinition;
 }
 
-void UMVInteractableComponent::SetInteractionDefinition(const FMVInteractionDefinition& InInteractionDefinition)
-{
-	InteractionDefinition = InInteractionDefinition;
-}
-
 void UMVInteractableComponent::SetInteractionFlowAsset(UMVInteractionFlowDataAsset* InInteractionFlowAsset)
 {
 	InteractionFlowAsset = InInteractionFlowAsset;
@@ -47,13 +50,14 @@ void UMVInteractableComponent::FinishInteractionAction()
 		return;
 	}
 
-	const FMVInteractionStepConfig* Step = FindInteractionStep(ActiveStepId);
-	if (!Step || Step->StepType != EMVInteractionStepType::Action)
+	const UMVInteractionStepData* Step = FindInteractionStep(ActiveStepId);
+	const UMVInteractionActionStepData* ActionStep = Cast<UMVInteractionActionStepData>(Step);
+	if (!ActionStep)
 	{
 		return;
 	}
 
-	const FName ActionName = Step->ActionName.IsNone() ? Step->StepId : Step->ActionName;
+	const FName ActionName = MVInteractableResolveActionStepName(*ActionStep);
 	OnInteractionActionCompleted.Broadcast(ActiveInteractor.Get(), this, Step->StepId, ActionName);
 	CompleteConfiguredStep(Step->NextStepId);
 }
@@ -166,7 +170,7 @@ void UMVInteractableComponent::EndConfiguredInteractionSession()
 
 bool UMVInteractableComponent::ExecuteConfiguredStep(const FName StepId)
 {
-	const FMVInteractionStepConfig* Step = FindInteractionStep(StepId);
+	const UMVInteractionStepData* Step = FindInteractionStep(StepId);
 	if (!Step)
 	{
 		return false;
@@ -177,17 +181,16 @@ bool UMVInteractableComponent::ExecuteConfiguredStep(const FName StepId)
 	bHasPendingStepAfterMenuClose = false;
 	PendingStepAfterMenuClose = NAME_None;
 
-	switch (Step->StepType)
+	if (const UMVInteractionDialogueStepData* DialogueStep = Cast<UMVInteractionDialogueStepData>(Step))
 	{
-	case EMVInteractionStepType::Dialogue:
 		if (UMVUISubsystem* UISubsystem = GetUISubsystem())
 		{
-			ActiveConfiguredDialogueWindow = Step->DialogueId.IsNone()
+			ActiveConfiguredDialogueWindow = DialogueStep->DialogueId.IsNone()
 				? UISubsystem->ShowDialogueWindowTextWithTiming(
-					Step->DialogueText,
-					Step->DialogueDuration,
-					Step->DialogueMinimumSkipDelay)
-				: UISubsystem->ShowDialogueWindowById(Step->DialogueId);
+					DialogueStep->DialogueText,
+					DialogueStep->DialogueDuration,
+					DialogueStep->DialogueMinimumSkipDelay)
+				: UISubsystem->ShowDialogueWindowById(DialogueStep->DialogueId);
 			if (ActiveConfiguredDialogueWindow)
 			{
 				bWaitingForConfiguredStep = true;
@@ -199,21 +202,23 @@ bool UMVInteractableComponent::ExecuteConfiguredStep(const FName StepId)
 		}
 		CompleteConfiguredStep(Step->NextStepId);
 		return true;
+	}
 
-	case EMVInteractionStepType::Action:
+	if (const UMVInteractionActionStepData* ActionStep = Cast<UMVInteractionActionStepData>(Step))
 	{
-		const FName ActionName = Step->ActionName.IsNone() ? Step->StepId : Step->ActionName;
+		const FName ActionName = MVInteractableResolveActionStepName(*ActionStep);
 		bWaitingForConfiguredStep = true;
 		OnInteractionActionRequested.Broadcast(ActiveInteractor.Get(), this, Step->StepId, ActionName);
 		return true;
 	}
 
-	case EMVInteractionStepType::WarningPopup:
+	if (const UMVInteractionWarningPopupStepData* WarningStep = Cast<UMVInteractionWarningPopupStepData>(Step))
+	{
 		if (UMVUISubsystem* UISubsystem = GetUISubsystem())
 		{
-			ActiveConfiguredPopup = Step->WarningMessageId.IsNone()
-				? UISubsystem->ShowPopupMessageText(Step->WarningMessageText, Step->WarningDuration)
-				: UISubsystem->ShowPopupMessageById(Step->WarningMessageId);
+			ActiveConfiguredPopup = WarningStep->WarningMessageId.IsNone()
+				? UISubsystem->ShowPopupMessageText(WarningStep->WarningMessageText, WarningStep->WarningDuration)
+				: UISubsystem->ShowPopupMessageById(WarningStep->WarningMessageId);
 			if (ActiveConfiguredPopup)
 			{
 				bWaitingForConfiguredStep = true;
@@ -225,12 +230,13 @@ bool UMVInteractableComponent::ExecuteConfiguredStep(const FName StepId)
 		}
 		CompleteConfiguredStep(Step->NextStepId);
 		return true;
+	}
 
-	case EMVInteractionStepType::Menu:
-	case EMVInteractionStepType::Choice:
+	if (const UMVInteractionSelectionStepData* SelectionStep = Cast<UMVInteractionSelectionStepData>(Step))
+	{
 		if (UMVUISubsystem* UISubsystem = GetUISubsystem())
 		{
-			ActiveConfiguredMenuWindow = UISubsystem->ShowInteractionMenu(Step->MenuData, this);
+			ActiveConfiguredMenuWindow = UISubsystem->ShowInteractionMenu(SelectionStep->MenuData, this);
 			if (ActiveConfiguredMenuWindow)
 			{
 				bWaitingForConfiguredStep = true;
@@ -245,11 +251,13 @@ bool UMVInteractableComponent::ExecuteConfiguredStep(const FName StepId)
 		}
 		CompleteConfiguredStep(Step->NextStepId);
 		return true;
+	}
 
-	case EMVInteractionStepType::Window:
+	if (const UMVInteractionWindowStepData* WindowStep = Cast<UMVInteractionWindowStepData>(Step))
+	{
 		if (UMVUISubsystem* UISubsystem = GetUISubsystem())
 		{
-			ActiveConfiguredWindow = Cast<UMVWindowBase>(UISubsystem->PushWindowByClass(Step->WindowClass));
+			ActiveConfiguredWindow = Cast<UMVWindowBase>(UISubsystem->PushWindowByClass(WindowStep->WindowClass));
 			if (ActiveConfiguredWindow)
 			{
 				bWaitingForConfiguredStep = true;
@@ -261,12 +269,10 @@ bool UMVInteractableComponent::ExecuteConfiguredStep(const FName StepId)
 		}
 		CompleteConfiguredStep(Step->NextStepId);
 		return true;
-
-	case EMVInteractionStepType::None:
-	default:
-		CompleteConfiguredStep(Step->NextStepId);
-		return true;
 	}
+
+	CompleteConfiguredStep(Step->NextStepId);
+	return true;
 }
 
 void UMVInteractableComponent::CompleteConfiguredStep(const FName NextStepId)
@@ -317,22 +323,34 @@ void UMVInteractableComponent::CompleteConfiguredStep(const FName NextStepId)
 
 FName UMVInteractableComponent::ResolveStartStepId() const
 {
-	const FMVInteractionDefinition& Definition = ResolveInteractionDefinition();
-	if (!Definition.StartStepId.IsNone())
+	if (InteractionFlowAsset && !InteractionFlowAsset->GetStartStepId().IsNone())
 	{
-		return Definition.StartStepId;
+		return InteractionFlowAsset->GetStartStepId();
 	}
 
-	return Definition.Steps.IsEmpty() ? NAME_None : Definition.Steps[0].StepId;
+	if (!InteractionFlowAsset && !InlineStartStepId.IsNone())
+	{
+		return InlineStartStepId;
+	}
+
+	for (const TObjectPtr<UMVInteractionStepData>& Step : ResolveInteractionSteps())
+	{
+		if (Step)
+		{
+			return Step->StepId;
+		}
+	}
+
+	return NAME_None;
 }
 
-const FMVInteractionDefinition& UMVInteractableComponent::ResolveInteractionDefinition() const
+const TArray<TObjectPtr<UMVInteractionStepData>>& UMVInteractableComponent::ResolveInteractionSteps() const
 {
-	return InteractionFlowAsset ? InteractionFlowAsset->GetInteractionDefinition() : InteractionDefinition;
+	return InteractionFlowAsset ? InteractionFlowAsset->GetSteps() : InlineSteps;
 }
 
 FName UMVInteractableComponent::ResolveStepTransition(
-	const FMVInteractionStepConfig& Step,
+	const UMVInteractionSelectionStepData& Step,
 	const FName TriggerName) const
 {
 	for (const FMVInteractionStepTransition& Transition : Step.Transitions)
@@ -346,13 +364,14 @@ FName UMVInteractableComponent::ResolveStepTransition(
 	return Step.NextStepId;
 }
 
-const FMVInteractionStepConfig* UMVInteractableComponent::FindInteractionStep(const FName StepId) const
+const UMVInteractionStepData* UMVInteractableComponent::FindInteractionStep(const FName StepId) const
 {
-	const FMVInteractionDefinition& Definition = ResolveInteractionDefinition();
-	return Definition.Steps.FindByPredicate([StepId](const FMVInteractionStepConfig& Step)
+	const TObjectPtr<UMVInteractionStepData>* FoundStep =
+		ResolveInteractionSteps().FindByPredicate([StepId](const TObjectPtr<UMVInteractionStepData>& Step)
 	{
-		return Step.StepId == StepId;
+		return Step && Step->StepId == StepId;
 	});
+	return FoundStep ? FoundStep->Get() : nullptr;
 }
 
 UMVUISubsystem* UMVInteractableComponent::GetUISubsystem() const
@@ -369,7 +388,7 @@ void UMVInteractableComponent::HandleConfiguredDialogueClosed(UMVDialogueWindow*
 		return;
 	}
 
-	const FMVInteractionStepConfig* Step = FindInteractionStep(ActiveStepId);
+	const UMVInteractionStepData* Step = FindInteractionStep(ActiveStepId);
 	CompleteConfiguredStep(Step ? Step->NextStepId : NAME_None);
 }
 
@@ -380,7 +399,7 @@ void UMVInteractableComponent::HandleConfiguredPopupClosed(UMVPopupBase* ClosedP
 		return;
 	}
 
-	const FMVInteractionStepConfig* Step = FindInteractionStep(ActiveStepId);
+	const UMVInteractionStepData* Step = FindInteractionStep(ActiveStepId);
 	CompleteConfiguredStep(Step ? Step->NextStepId : NAME_None);
 }
 
@@ -399,7 +418,7 @@ void UMVInteractableComponent::HandleConfiguredMenuClosed(UMVInteractionMenuWind
 		&UMVInteractableComponent::HandleConfiguredMenuActionSelected);
 	ActiveConfiguredMenuWindow = nullptr;
 
-	const FMVInteractionStepConfig* Step = FindInteractionStep(ActiveStepId);
+	const UMVInteractionStepData* Step = FindInteractionStep(ActiveStepId);
 	const FName NextStepId = bHasPendingStepAfterMenuClose
 		? PendingStepAfterMenuClose
 		: (Step ? Step->NextStepId : NAME_None);
@@ -415,14 +434,15 @@ void UMVInteractableComponent::HandleConfiguredMenuActionSelected(UObject* Sourc
 		return;
 	}
 
-	const FMVInteractionStepConfig* Step = FindInteractionStep(ActiveStepId);
-	if (!Step)
+	const UMVInteractionStepData* Step = FindInteractionStep(ActiveStepId);
+	const UMVInteractionSelectionStepData* SelectionStep = Cast<UMVInteractionSelectionStepData>(Step);
+	if (!SelectionStep)
 	{
 		return;
 	}
 
 	OnInteractionMenuActionRequested.Broadcast(ActiveInteractor.Get(), this, Step->StepId, ActionName);
-	PendingStepAfterMenuClose = ResolveStepTransition(*Step, ActionName);
+	PendingStepAfterMenuClose = ResolveStepTransition(*SelectionStep, ActionName);
 	bHasPendingStepAfterMenuClose = true;
 
 	if (ActiveConfiguredMenuWindow)
@@ -445,6 +465,6 @@ void UMVInteractableComponent::HandleConfiguredWindowDeactivated(UMVWindowBase* 
 		return;
 	}
 
-	const FMVInteractionStepConfig* Step = FindInteractionStep(ActiveStepId);
+	const UMVInteractionStepData* Step = FindInteractionStep(ActiveStepId);
 	CompleteConfiguredStep(Step ? Step->NextStepId : NAME_None);
 }
