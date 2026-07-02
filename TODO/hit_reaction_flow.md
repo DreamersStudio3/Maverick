@@ -47,13 +47,13 @@ HitReaction 테이블은 CSV 생성 체인에서 빼고 `Content/Table/HitReacti
 - [x] HitReaction 상황별 테이블은 CSV 생성 체인에서 제외하고 `Content/Table/HitReaction/P1` 아래 uasset DataTable로 직접 관리한다.
 - [x] `Refresh Table Manifest` 명령으로 직접관리 DataTable을 manifest에 등록한다.
 - [x] 리커버리/팔로쓰루 window 입력은 `InputManagerComponent`가 입력 의도와 이동 입력 스냅샷으로 버퍼링/브로드캐스트한다.
-- [x] DodgeComponent는 `InputManagerComponent.SubmitActionInput(Dodge)` 이벤트를 구독해 기존 Dodge 액션 실행을 담당한다.
+- [x] PlayerCharacter.Dodge 서브모듈은 `InputManagerComponent.SubmitActionInput(Dodge)` 이벤트를 구독해 기존 Dodge 액션 실행을 담당한다.
 - [x] `HitReactionComponent`는 액션 입력 이벤트를 구독하고, Dodge 입력은 별도 `EscapeDodge` recovery 액션, Dodge 외 액션 입력은 별도 `Getup` recovery 액션으로 소비한다.
 - [x] 이동 입력은 HitReactionComponent가 이벤트로 직접 소비하지 않고, Recovery window가 열리는 순간 InputManager에 저장된 최근 이동 입력을 조회해 SH/LH는 현재 HitReaction 취소, KD/AB는 별도 `EscapeDodge` recovery 액션으로 소비한다.
 - [x] SmallHit/LargeHit은 넘어지는 리액션이 아니므로 Getup/EscapeDodge 섹션을 찾지 않고, Recovery window 안에서 이동 또는 Dodge 입력이 있으면 현재 피격 몽타주를 직접 cancel한다.
 - [x] KnockDown/Airborne은 Recovery window 안에 저장된 입력이 있으면 별도 `EscapeDodge` recovery 액션으로 전환한다.
 - [x] KD/AB 본 리액션은 상태 표현까지만 담당하고, Recovery window 안에서 입력이 없으면 별도 `MV HitReaction Start Getup` Notify가 Getup row로 전환한다.
-- [x] Getup/EscapeDodge recovery 액션도 active HR recovery row로 추적해, 해당 몽타주의 Recovery window에서 이동 입력은 직접 cancel하고 Dodge 입력은 DodgeComponent 전환으로 넘긴다.
+- [x] Getup/EscapeDodge recovery 액션도 active HR recovery row로 추적해, 해당 몽타주의 Recovery window에서 이동 입력은 직접 cancel하고 Dodge 입력은 PlayerCharacter.Dodge 전환으로 넘긴다.
 - [x] HR EscapeDodge 시작 직전 actor yaw를 컨트롤러 기준 yaw로 맞춰, 누운 방향과 무관하게 F/L/R/B 입력 방향이 컨트롤러 기준으로 적용되게 한다.
 - [x] `CHT_HitReaction`은 0번 context로 `MVHitReactionComponent`, 1번 context로 `FMVHitReactionActionRowHandle` output struct를 받는다.
 - [x] `CHT_HitReaction`은 여러 HitReaction DataTable 중 최종 row를 `FMVHitReactionActionRowHandle` Output Struct Column으로 반환한다.
@@ -63,7 +63,7 @@ HitReaction 테이블은 CSV 생성 체인에서 빼고 `Content/Table/HitReacti
 - [x] Airborne 몽타주는 착지 후 `Land -> Lying` 섹션 순서로 이어지고, `Lying` 구간의 Recovery window는 EscapeDodge 입력만 받으며 `MV HitReaction Start Getup` Notify에서 Getup 전환을 처리한다.
 - [x] lethal standing hit은 HitReaction을 생략하고, lethal KD/AB hit만 HitReaction을 먼저 재생한다.
 - [x] KD/AB lethal hit은 `Lying` 섹션 진입 전 `MV HitReaction Death Handoff` Notify로 DeathComponent에 넘길 수 있게 한다.
-- [x] `CHT_Dodge`는 조건을 통과한 최종 `FMVDodgeActionRowHandle`을 Output Struct Column으로 DodgeComponent에 기록하고, DodgeComponent가 해당 row를 실행한다.
+- [x] `CHT_Dodge`는 조건을 통과한 최종 `FMVDodgeActionRowHandle`을 Output Struct Column으로 PlayerCharacter.Dodge에 기록하고, PlayerCharacter.Dodge가 해당 row를 실행한다.
 - [x] Sprint는 Chooser를 쓰지 않고 단일 `DT_Sprint` 또는 직접 지정된 `FDataTableRowHandle`에서 row를 읽는다.
 - [ ] InputManager 입력 이벤트 소비/우선순위 정책을 추가해 HitReaction/Combat/Dodge 중 하나가 입력을 소비하면 나머지 도메인이 중복 실행하지 않게 한다.
 - [ ] 프로젝트 입력 바인딩에서 Dodge/Combat 입력을 `InputManagerComponent.SubmitActionInput`으로 연결한다.

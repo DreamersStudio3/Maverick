@@ -1,6 +1,8 @@
-#include "Components/MVInteractionDetectorComponent.h"
+#include "Character/PC/InteractionDetector/MVPlayerInteractionDetector.h"
 
 #include "Character/MVCharacterBase.h"
+#include "Character/PC/MVPlayerCharacter.h"
+#include "Components/ActorComponent.h"
 #include "Components/MVStatComponent.h"
 #include "Components/PrimitiveComponent.h"
 #include "Engine/EngineTypes.h"
@@ -17,11 +19,8 @@
 #include "UI/System/MVUIDataTypes.h"
 #include "UI/System/MVUISubsystem.h"
 
-UMVInteractionDetectorComponent::UMVInteractionDetectorComponent()
+UMVPlayerInteractionDetector::UMVPlayerInteractionDetector()
 {
-	PrimaryComponentTick.bCanEverTick = true;
-	PrimaryComponentTick.bStartWithTickEnabled = true;
-
 	DefaultPromptText = NSLOCTEXT("MaverickInteraction", "DefaultInteractPrompt", "Interact");
 	InteractionObjectChannels = {
 		ECC_WorldDynamic,
@@ -30,22 +29,43 @@ UMVInteractionDetectorComponent::UMVInteractionDetectorComponent()
 	};
 }
 
-void UMVInteractionDetectorComponent::BeginPlay()
+UWorld* UMVPlayerInteractionDetector::GetWorld() const
 {
-	Super::BeginPlay();
+	if (const AMVPlayerCharacter* PlayerCharacter = GetPlayerCharacter())
+	{
+		return PlayerCharacter->GetWorld();
+	}
 
+	return Super::GetWorld();
+}
+
+void UMVPlayerInteractionDetector::Initialize(AMVPlayerCharacter& InOwnerCharacter)
+{
+	if (bInitialized)
+	{
+		Deinitialize();
+	}
+
+	OwnerPlayerCharacter = &InOwnerCharacter;
+	bInitialized = true;
 	TimeUntilNextDetection = 0.0f;
 }
 
-void UMVInteractionDetectorComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+void UMVPlayerInteractionDetector::Deinitialize()
 {
 	ClearFocusedInteractable();
-	Super::EndPlay(EndPlayReason);
+	OwnerPlayerCharacter.Reset();
+	TimeUntilNextDetection = 0.0f;
+	bInitialized = false;
+	bWaitForInteractionInputRelease = false;
 }
 
-void UMVInteractionDetectorComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UMVPlayerInteractionDetector::Tick(const float DeltaTime)
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	if (!bInitialized)
+	{
+		return;
+	}
 
 	UpdateInteractionInputReleaseGate();
 	UpdateDialogueEscapeState();
@@ -60,7 +80,17 @@ void UMVInteractionDetectorComponent::TickComponent(float DeltaTime, ELevelTick 
 	RefreshInteractable();
 }
 
-void UMVInteractionDetectorComponent::SetInteractionDetectionEnabled(bool bInEnabled)
+AMVPlayerCharacter* UMVPlayerInteractionDetector::GetPlayerCharacter() const
+{
+	return OwnerPlayerCharacter.Get();
+}
+
+AActor* UMVPlayerInteractionDetector::GetOwnerActor() const
+{
+	return GetPlayerCharacter();
+}
+
+void UMVPlayerInteractionDetector::SetInteractionDetectionEnabled(bool bInEnabled)
 {
 	bDetectionEnabled = bInEnabled;
 	if (!bDetectionEnabled)
@@ -69,7 +99,7 @@ void UMVInteractionDetectorComponent::SetInteractionDetectionEnabled(bool bInEna
 	}
 }
 
-void UMVInteractionDetectorComponent::RefreshInteractable()
+void UMVPlayerInteractionDetector::RefreshInteractable()
 {
 	if (!ShouldRunDetection())
 	{
@@ -78,7 +108,7 @@ void UMVInteractionDetectorComponent::RefreshInteractable()
 	}
 
 	UWorld* World = GetWorld();
-	AActor* OwnerActor = GetOwner();
+	AActor* OwnerActor = GetOwnerActor();
 	if (!World || !OwnerActor || DetectionRange <= 0.0f)
 	{
 		ClearFocusedInteractable();
@@ -326,7 +356,7 @@ void UMVInteractionDetectorComponent::RefreshInteractable()
 	}
 }
 
-void UMVInteractionDetectorComponent::ClearFocusedInteractable()
+void UMVPlayerInteractionDetector::ClearFocusedInteractable()
 {
 	InteractionCandidates.Reset();
 	SelectedCandidateIndex = INDEX_NONE;
@@ -335,7 +365,7 @@ void UMVInteractionDetectorComponent::ClearFocusedInteractable()
 	SetFocusedInteractable(nullptr);
 }
 
-bool UMVInteractionDetectorComponent::TryInteract()
+bool UMVPlayerInteractionDetector::TryInteract()
 {
 	UpdateInteractionInputReleaseGate();
 	if (bWaitForInteractionInputRelease)
@@ -379,23 +409,23 @@ bool UMVInteractionDetectorComponent::TryInteract()
 	SuppressedInteractable = InteractableObject;
 	LockInteractionUntilInputReleased();
 	TryShowPIEActionTestPanelForInteractable(InteractableObject);
-	IMVInteractableInterface::Execute_Interact(InteractableObject, GetOwner());
+	IMVInteractableInterface::Execute_Interact(InteractableObject, GetOwnerActor());
 	return true;
 }
 
-bool UMVInteractionDetectorComponent::SelectNextInteractable()
+bool UMVPlayerInteractionDetector::SelectNextInteractable()
 {
 	return SelectInteractableByOffset(1);
 }
 
-bool UMVInteractionDetectorComponent::SelectPreviousInteractable()
+bool UMVPlayerInteractionDetector::SelectPreviousInteractable()
 {
 	return SelectInteractableByOffset(-1);
 }
 
-bool UMVInteractionDetectorComponent::ShouldRunDetection() const
+bool UMVPlayerInteractionDetector::ShouldRunDetection() const
 {
-	if (!bDetectionEnabled || !IsActive())
+	if (!bDetectionEnabled || !bInitialized)
 	{
 		return false;
 	}
@@ -405,11 +435,11 @@ bool UMVInteractionDetectorComponent::ShouldRunDetection() const
 		return false;
 	}
 
-	const APawn* OwnerPawn = Cast<APawn>(GetOwner());
+	const APawn* OwnerPawn = GetPlayerCharacter();
 	return OwnerPawn && OwnerPawn->IsPlayerControlled() && OwnerPawn->IsLocallyControlled();
 }
 
-bool UMVInteractionDetectorComponent::TryBuildCandidate(
+bool UMVPlayerInteractionDetector::TryBuildCandidate(
 	UPrimitiveComponent* OverlapComponent,
 	const FVector& Origin,
 	const FVector& ViewDirection,
@@ -460,7 +490,7 @@ bool UMVInteractionDetectorComponent::TryBuildCandidate(
 		return false;
 	}
 
-	const int32 Priority = IMVInteractableInterface::Execute_GetInteractionPriority(InteractableObject, GetOwner());
+	const int32 Priority = IMVInteractableInterface::Execute_GetInteractionPriority(InteractableObject, GetOwnerActor());
 	const float DistanceScore = DetectionRange > KINDA_SMALL_NUMBER
 		? 1.0f - FMath::Clamp(Distance / DetectionRange, 0.0f, 1.0f)
 		: 0.0f;
@@ -468,10 +498,10 @@ bool UMVInteractionDetectorComponent::TryBuildCandidate(
 	return true;
 }
 
-bool UMVInteractionDetectorComponent::HasLineOfSight(const FMVInteractionCandidate& Candidate) const
+bool UMVPlayerInteractionDetector::HasLineOfSight(const FMVInteractionCandidate& Candidate) const
 {
 	UWorld* World = GetWorld();
-	AActor* OwnerActor = GetOwner();
+	AActor* OwnerActor = GetOwnerActor();
 	if (!World || !OwnerActor)
 	{
 		return false;
@@ -501,7 +531,7 @@ bool UMVInteractionDetectorComponent::HasLineOfSight(const FMVInteractionCandida
 		|| HitResult.GetComponent() == Candidate.InteractableComponent.Get();
 }
 
-UObject* UMVInteractionDetectorComponent::FindInteractableObject(UPrimitiveComponent* OverlapComponent) const
+UObject* UMVPlayerInteractionDetector::FindInteractableObject(UPrimitiveComponent* OverlapComponent) const
 {
 	AActor* Actor = OverlapComponent ? OverlapComponent->GetOwner() : nullptr;
 	if (Actor && Actor->GetClass()->ImplementsInterface(UMVInteractableInterface::StaticClass()))
@@ -530,7 +560,7 @@ UObject* UMVInteractionDetectorComponent::FindInteractableObject(UPrimitiveCompo
 	return nullptr;
 }
 
-AActor* UMVInteractionDetectorComponent::ResolveInteractableActor(UObject* InteractableObject, UPrimitiveComponent* FallbackComponent) const
+AActor* UMVPlayerInteractionDetector::ResolveInteractableActor(UObject* InteractableObject, UPrimitiveComponent* FallbackComponent) const
 {
 	AActor* InteractableActor = Cast<AActor>(InteractableObject);
 	if (!InteractableActor)
@@ -548,21 +578,21 @@ AActor* UMVInteractionDetectorComponent::ResolveInteractableActor(UObject* Inter
 	return InteractableActor;
 }
 
-bool UMVInteractionDetectorComponent::IsInteractableAvailable(UObject* InteractableObject) const
+bool UMVPlayerInteractionDetector::IsInteractableAvailable(UObject* InteractableObject) const
 {
 	return IsValid(InteractableObject)
 		&& InteractableObject->GetClass()->ImplementsInterface(UMVInteractableInterface::StaticClass())
-		&& IMVInteractableInterface::Execute_CanInteract(InteractableObject, GetOwner());
+		&& IMVInteractableInterface::Execute_CanInteract(InteractableObject, GetOwnerActor());
 }
 
-bool UMVInteractionDetectorComponent::IsInteractableSuppressed(UObject* InteractableObject) const
+bool UMVPlayerInteractionDetector::IsInteractableSuppressed(UObject* InteractableObject) const
 {
 	return InteractableObject && SuppressedInteractable.Get() == InteractableObject;
 }
 
-bool UMVInteractionDetectorComponent::IsInteractableWithinDetectionRange(UObject* InteractableObject) const
+bool UMVPlayerInteractionDetector::IsInteractableWithinDetectionRange(UObject* InteractableObject) const
 {
-	const AActor* OwnerActor = GetOwner();
+	const AActor* OwnerActor = GetOwnerActor();
 	const AActor* InteractableActor = ResolveInteractableActor(InteractableObject);
 	if (!OwnerActor || !InteractableActor || DetectionRange <= 0.0f)
 	{
@@ -573,9 +603,9 @@ bool UMVInteractionDetectorComponent::IsInteractableWithinDetectionRange(UObject
 		<= FMath::Square(DetectionRange);
 }
 
-bool UMVInteractionDetectorComponent::IsInteractableWithinDialogueEscapeRange(UObject* InteractableObject) const
+bool UMVPlayerInteractionDetector::IsInteractableWithinDialogueEscapeRange(UObject* InteractableObject) const
 {
-	const AActor* OwnerActor = GetOwner();
+	const AActor* OwnerActor = GetOwnerActor();
 	const AActor* InteractableActor = ResolveInteractableActor(InteractableObject);
 	const float EscapeRange = FMath::Max(DetectionRange, DialogueEscapeRange);
 	if (!OwnerActor || !InteractableActor || EscapeRange <= 0.0f)
@@ -587,7 +617,7 @@ bool UMVInteractionDetectorComponent::IsInteractableWithinDialogueEscapeRange(UO
 		<= FMath::Square(EscapeRange);
 }
 
-bool UMVInteractionDetectorComponent::IsDialogueWindowActive() const
+bool UMVPlayerInteractionDetector::IsDialogueWindowActive() const
 {
 	UWorld* World = GetWorld();
 	UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr;
@@ -595,7 +625,7 @@ bool UMVInteractionDetectorComponent::IsDialogueWindowActive() const
 	return UISubsystem && UISubsystem->IsDialogueWindowActive();
 }
 
-bool UMVInteractionDetectorComponent::IsDialogueInteractionBlocked() const
+bool UMVPlayerInteractionDetector::IsDialogueInteractionBlocked() const
 {
 	UWorld* World = GetWorld();
 	UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr;
@@ -603,13 +633,13 @@ bool UMVInteractionDetectorComponent::IsDialogueInteractionBlocked() const
 	return UISubsystem && UISubsystem->IsDialogueWindowBlockingInteraction();
 }
 
-bool UMVInteractionDetectorComponent::IsOwnerDead() const
+bool UMVPlayerInteractionDetector::IsOwnerDead() const
 {
-	const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
+	const AMVCharacterBase* OwnerCharacter = GetPlayerCharacter();
 	return OwnerCharacter && OwnerCharacter->StatComponent && OwnerCharacter->StatComponent->IsDead();
 }
 
-bool UMVInteractionDetectorComponent::IsPIEActionTestPanelActiveOrPending() const
+bool UMVPlayerInteractionDetector::IsPIEActionTestPanelActiveOrPending() const
 {
 #if !UE_BUILD_SHIPPING
 	UWorld* World = GetWorld();
@@ -621,7 +651,7 @@ bool UMVInteractionDetectorComponent::IsPIEActionTestPanelActiveOrPending() cons
 #endif
 }
 
-bool UMVInteractionDetectorComponent::IsPIEActionTestInteractable(UObject* InteractableObject) const
+bool UMVPlayerInteractionDetector::IsPIEActionTestInteractable(UObject* InteractableObject) const
 {
 #if !UE_BUILD_SHIPPING
 	const AActor* InteractableActor = ResolveInteractableActor(InteractableObject);
@@ -631,7 +661,7 @@ bool UMVInteractionDetectorComponent::IsPIEActionTestInteractable(UObject* Inter
 		return false;
 	}
 
-	if (Cast<AMVCharacterBase>(InteractableActor) && InteractableActor != GetOwner())
+	if (Cast<AMVCharacterBase>(InteractableActor) && InteractableActor != GetOwnerActor())
 	{
 		return true;
 	}
@@ -650,7 +680,7 @@ bool UMVInteractionDetectorComponent::IsPIEActionTestInteractable(UObject* Inter
 #endif
 }
 
-bool UMVInteractionDetectorComponent::SkipActiveDialogueWindow() const
+bool UMVPlayerInteractionDetector::SkipActiveDialogueWindow() const
 {
 	UWorld* World = GetWorld();
 	UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr;
@@ -664,7 +694,7 @@ bool UMVInteractionDetectorComponent::SkipActiveDialogueWindow() const
 	return true;
 }
 
-void UMVInteractionDetectorComponent::HideInteractionPrompt() const
+void UMVPlayerInteractionDetector::HideInteractionPrompt() const
 {
 	UWorld* World = GetWorld();
 	UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr;
@@ -675,7 +705,7 @@ void UMVInteractionDetectorComponent::HideInteractionPrompt() const
 	}
 }
 
-void UMVInteractionDetectorComponent::HideActiveDialogueWindow() const
+void UMVPlayerInteractionDetector::HideActiveDialogueWindow() const
 {
 	UWorld* World = GetWorld();
 	UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr;
@@ -686,7 +716,7 @@ void UMVInteractionDetectorComponent::HideActiveDialogueWindow() const
 	}
 }
 
-void UMVInteractionDetectorComponent::HidePIEActionTestPanel() const
+void UMVPlayerInteractionDetector::HidePIEActionTestPanel() const
 {
 #if !UE_BUILD_SHIPPING
 	UWorld* World = GetWorld();
@@ -699,7 +729,7 @@ void UMVInteractionDetectorComponent::HidePIEActionTestPanel() const
 #endif
 }
 
-void UMVInteractionDetectorComponent::TryShowPIEActionTestPanelForInteractable(UObject* InteractableObject)
+void UMVPlayerInteractionDetector::TryShowPIEActionTestPanelForInteractable(UObject* InteractableObject)
 {
 #if !UE_BUILD_SHIPPING
 	UWorld* World = GetWorld();
@@ -729,7 +759,7 @@ void UMVInteractionDetectorComponent::TryShowPIEActionTestPanelForInteractable(U
 #endif
 }
 
-void UMVInteractionDetectorComponent::RestoreDialogueCameraZoom() const
+void UMVPlayerInteractionDetector::RestoreDialogueCameraZoom() const
 {
 	UWorld* World = GetWorld();
 	UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr;
@@ -740,7 +770,7 @@ void UMVInteractionDetectorComponent::RestoreDialogueCameraZoom() const
 	}
 }
 
-void UMVInteractionDetectorComponent::ReleaseSuppressedInteractable(bool bHideDialogue)
+void UMVPlayerInteractionDetector::ReleaseSuppressedInteractable(bool bHideDialogue)
 {
 	if (!SuppressedInteractable.IsValid())
 	{
@@ -756,7 +786,7 @@ void UMVInteractionDetectorComponent::ReleaseSuppressedInteractable(bool bHideDi
 	SuppressedInteractable = nullptr;
 }
 
-void UMVInteractionDetectorComponent::UpdateDialogueEscapeState()
+void UMVPlayerInteractionDetector::UpdateDialogueEscapeState()
 {
 	if (!SuppressedInteractable.IsValid()
 		|| (!IsDialogueInteractionBlocked() && !IsPIEActionTestPanelActiveOrPending()))
@@ -804,7 +834,7 @@ void UMVInteractionDetectorComponent::UpdateDialogueEscapeState()
 	RefreshInteractable();
 }
 
-void UMVInteractionDetectorComponent::LockInteractionUntilInputReleased()
+void UMVPlayerInteractionDetector::LockInteractionUntilInputReleased()
 {
 	if (InteractionInputKey.IsValid() && IsInteractionInputHeld())
 	{
@@ -812,7 +842,7 @@ void UMVInteractionDetectorComponent::LockInteractionUntilInputReleased()
 	}
 }
 
-void UMVInteractionDetectorComponent::UpdateInteractionInputReleaseGate()
+void UMVPlayerInteractionDetector::UpdateInteractionInputReleaseGate()
 {
 	if (!bWaitForInteractionInputRelease)
 	{
@@ -825,14 +855,14 @@ void UMVInteractionDetectorComponent::UpdateInteractionInputReleaseGate()
 	}
 }
 
-bool UMVInteractionDetectorComponent::IsInteractionInputHeld() const
+bool UMVPlayerInteractionDetector::IsInteractionInputHeld() const
 {
 	const UWorld* World = GetWorld();
 	const APlayerController* PlayerController = World ? World->GetFirstPlayerController() : nullptr;
 	return PlayerController && InteractionInputKey.IsValid() && PlayerController->IsInputKeyDown(InteractionInputKey);
 }
 
-int32 UMVInteractionDetectorComponent::FindCandidateIndex(UObject* InteractableObject) const
+int32 UMVPlayerInteractionDetector::FindCandidateIndex(UObject* InteractableObject) const
 {
 	if (!InteractableObject)
 	{
@@ -845,7 +875,7 @@ int32 UMVInteractionDetectorComponent::FindCandidateIndex(UObject* InteractableO
 	});
 }
 
-bool UMVInteractionDetectorComponent::SelectInteractableByOffset(int32 Offset)
+bool UMVPlayerInteractionDetector::SelectInteractableByOffset(int32 Offset)
 {
 	if (SuppressedInteractable.IsValid() || IsDialogueInteractionBlocked())
 	{
@@ -864,7 +894,7 @@ bool UMVInteractionDetectorComponent::SelectInteractableByOffset(int32 Offset)
 	return SetSelectedCandidateIndex(NewIndex);
 }
 
-bool UMVInteractionDetectorComponent::SetSelectedCandidateIndex(int32 NewIndex)
+bool UMVPlayerInteractionDetector::SetSelectedCandidateIndex(int32 NewIndex)
 {
 	if (!InteractionCandidates.IsValidIndex(NewIndex))
 	{
@@ -877,7 +907,7 @@ bool UMVInteractionDetectorComponent::SetSelectedCandidateIndex(int32 NewIndex)
 	return true;
 }
 
-void UMVInteractionDetectorComponent::SetFocusedInteractable(UObject* NewInteractable)
+void UMVPlayerInteractionDetector::SetFocusedInteractable(UObject* NewInteractable)
 {
 	if (SuppressedInteractable.IsValid() && SuppressedInteractable.Get() != NewInteractable)
 	{
@@ -907,7 +937,7 @@ void UMVInteractionDetectorComponent::SetFocusedInteractable(UObject* NewInterac
 	UpdateInteractionPrompt();
 }
 
-void UMVInteractionDetectorComponent::UpdateInteractionPrompt()
+void UMVPlayerInteractionDetector::UpdateInteractionPrompt()
 {
 	UWorld* World = GetWorld();
 	UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr;
@@ -925,7 +955,7 @@ void UMVInteractionDetectorComponent::UpdateInteractionPrompt()
 	}
 
 	FMVInteractionPromptData PromptData;
-	PromptData.PromptText = IMVInteractableInterface::Execute_GetInteractionPromptText(InteractableObject, GetOwner());
+	PromptData.PromptText = IMVInteractableInterface::Execute_GetInteractionPromptText(InteractableObject, GetOwnerActor());
 	if (PromptData.PromptText.IsEmpty())
 	{
 		PromptData.PromptText = DefaultPromptText;

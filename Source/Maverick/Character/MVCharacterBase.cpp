@@ -5,7 +5,6 @@
 
 #include "Components/MVActionComponent.h"
 #include "Components/MVDeathComponent.h"
-#include "Components/MVDodgeComponent.h"
 #include "Components/MVHitReactionComponent.h"
 #include "Components/MVInputManagerComponent.h"
 #include "Components/MVStatComponent.h"
@@ -14,7 +13,6 @@
 #include "KismetAnimationLibrary.h"
 #include "Math/Vector.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "Tables/MVTableManager.h"
 #include "Tags/MVGameplayTags.h"
 
 namespace
@@ -63,21 +61,6 @@ ELocomotionDirection ResolveCharacterEightWayDirection(const float MoveDirection
 		: ELocomotionDirection::L;
 }
 
-FString CharacterBaseCharacterIndexCodeToTableToken(const FGameplayTag CharacterIndexCode)
-{
-	if (!CharacterIndexCode.IsValid())
-	{
-		return FString();
-	}
-
-	const FString TagString = CharacterIndexCode.ToString();
-	FString TagPrefix;
-	FString TagLeaf;
-	return TagString.Split(TEXT("."), &TagPrefix, &TagLeaf, ESearchCase::CaseSensitive, ESearchDir::FromEnd)
-		? TagLeaf
-		: TagString;
-}
-
 }
 
 // Sets default values
@@ -88,13 +71,11 @@ AMVCharacterBase::AMVCharacterBase()
 
 	StatComponent = CreateDefaultSubobject<UMVStatComponent>(TEXT("StatComponent"));
 	ActionComponent = CreateDefaultSubobject<UMVActionComponent>(TEXT("ActionComponent"));
-	DodgeComponent = CreateDefaultSubobject<UMVDodgeComponent>(TEXT("DodgeComponent"));
 	DeathComponent = CreateDefaultSubobject<UMVDeathComponent>(TEXT("DeathComponent"));
 	HitReactionComponent = CreateDefaultSubobject<UMVHitReactionComponent>(TEXT("HitReactionComponent"));
 	InputManagerComponent = CreateDefaultSubobject<UMVInputManagerComponent>(TEXT("InputManagerComponent"));
 	CharacterIndexCode = MVGameplayTags::Character_Player_P1;
 	ApplyCharacterIndexCodeToComponents();
-	bIsSprintBlockedByStamina = false;
 	bHasDodgeMovementInput = false;
 	LocomotionDirection = ELocomotionDirection::F;
 }
@@ -127,8 +108,6 @@ void AMVCharacterBase::BeginPlay()
 	{
 		UE_LOG(LogTemp, Error, TEXT("FAILED to load Curve at path: %s. Check the path in Content Browser!"), *CurvePath);
 	}
-
-	CacheSprintActionData();
 }
 
 // Called every frame
@@ -472,55 +451,7 @@ void AMVCharacterBase::UpdateRecoverableStats(float DeltaTime)
 		return;
 	}
 
-	const float SprintStaminaCostPerSecond = ResolveSprintStaminaCostPerSecond();
-	if (SprintStaminaCostPerSecond <= 0.0f)
-	{
-		bIsSprintBlockedByStamina = false;
-	}
-
-	const bool bShouldConsumeStamina = SprintStaminaCostPerSecond > 0.0f && Gait == EGait::Sprinting && bHasMovementInput;
-	if (bShouldConsumeStamina)
-	{
-		StatComponent->ConsumeStamina(CalculateSprintStaminaDrain(DeltaTime));
-
-		if (StatComponent->CurrentStamina <= KINDA_SMALL_NUMBER)
-		{
-			StatComponent->SetCurrentStamina(0.0f);
-			bIsSprintBlockedByStamina = true;
-		}
-		return;
-	}
-
 	StatComponent->TickRecoverableStats(DeltaTime);
-
-	const float ResumeThreshold = StatComponent->MaxStamina * ResolveSprintResumeStaminaRatio();
-	if (bIsSprintBlockedByStamina && StatComponent->CurrentStamina >= ResumeThreshold)
-	{
-		bIsSprintBlockedByStamina = false;
-	}
-}
-
-void AMVCharacterBase::CacheSprintActionData()
-{
-	bHasSprintActionData = false;
-	SprintActionStaminaCost = 20.0f;
-	SprintActionStaminaCostType = EMVActionResourceCostType::PerSecond;
-	SprintActionMinRequiredStamina = 0.0f;
-	SprintActionRestartStaminaPercent = FMath::Clamp(SprintResumeStaminaRatio * 100.0f, 0.0f, 100.0f);
-
-	const FMVSprintActionRow* SprintActionDataRow = FindSprintActionRow();
-	if (!SprintActionDataRow || !SprintActionDataRow->bEnabled)
-	{
-		return;
-	}
-
-	SprintActionStaminaCost = FMath::Max(0.0f, SprintActionDataRow->StaminaCost);
-	SprintActionStaminaCostType = SprintActionDataRow->StaminaCostType;
-	SprintActionMinRequiredStamina = FMath::Max(0.0f, SprintActionDataRow->MinRequiredStamina);
-	SprintActionRestartStaminaPercent = SprintActionDataRow->SprintRestartStaminaPercent > 0.0f
-		? FMath::Clamp(SprintActionDataRow->SprintRestartStaminaPercent, 0.0f, 100.0f)
-		: FMath::Clamp(SprintResumeStaminaRatio * 100.0f, 0.0f, 100.0f);
-	bHasSprintActionData = true;
 }
 
 void AMVCharacterBase::SetStrafeMode(bool StrafeModeOn)
@@ -536,112 +467,6 @@ void AMVCharacterBase::SetStrafeMode(bool StrafeModeOn)
 	{
 		GetCharacterMovement()->RotationRate = FRotator(0.0f, 360.0f, 0.0f);
 	}
-}
-
-float AMVCharacterBase::CalculateSprintStaminaDrain(float DeltaTime) const
-{
-	if (!StatComponent || DeltaTime <= 0.0f)
-	{
-		return 0.0f;
-	}
-
-	switch (SprintActionStaminaCostType)
-	{
-	case EMVActionResourceCostType::PerSecond:
-		return StatComponent->MaxStamina * SprintActionStaminaCost / 100.0f * DeltaTime;
-	case EMVActionResourceCostType::None:
-	case EMVActionResourceCostType::Instant:
-	case EMVActionResourceCostType::OnDemand:
-	default:
-		return 0.0f;
-	}
-}
-
-float AMVCharacterBase::ResolveSprintStaminaCostPerSecond() const
-{
-	if (!StatComponent)
-	{
-		return SprintActionStaminaCost;
-	}
-
-	switch (SprintActionStaminaCostType)
-	{
-	case EMVActionResourceCostType::PerSecond:
-		return StatComponent->MaxStamina * SprintActionStaminaCost / 100.0f;
-	case EMVActionResourceCostType::None:
-	case EMVActionResourceCostType::Instant:
-	case EMVActionResourceCostType::OnDemand:
-	default:
-		return 0.0f;
-	}
-}
-
-float AMVCharacterBase::ResolveSprintMinRequiredStamina() const
-{
-	return SprintActionMinRequiredStamina;
-}
-
-float AMVCharacterBase::ResolveSprintResumeStaminaRatio() const
-{
-	const float RestartPercent = bHasSprintActionData
-		? SprintActionRestartStaminaPercent
-		: SprintResumeStaminaRatio * 100.0f;
-	return FMath::Clamp(RestartPercent / 100.0f, 0.0f, 1.0f);
-}
-
-const FMVSprintActionRow* AMVCharacterBase::FindSprintActionRow() const
-{
-	if (SprintActionRow.DataTable && !SprintActionRow.RowName.IsNone())
-	{
-		if (!SprintActionRow.DataTable->GetRowStruct()
-			|| !SprintActionRow.DataTable->GetRowStruct()->IsChildOf(FMVSprintActionRow::StaticStruct()))
-		{
-			UE_LOG(
-				LogTemp,
-				Warning,
-				TEXT("SprintActionRow has invalid row struct. DataTable=%s RowStruct=%s Expected=MVSprintActionRow."),
-				*GetNameSafe(SprintActionRow.DataTable),
-				SprintActionRow.DataTable->GetRowStruct()
-					? *SprintActionRow.DataTable->GetRowStruct()->GetName()
-					: TEXT("None"));
-			return nullptr;
-		}
-
-		return SprintActionRow.DataTable->FindRow<FMVSprintActionRow>(
-			SprintActionRow.RowName,
-			TEXT("MVCharacterBase"),
-			false);
-	}
-
-	const UMVTableManager* TableManager = UMVTableManager::Get(this);
-	const FName ActionTableName = ResolveSprintActionTableName();
-	const FName ActionRowName = ResolveSprintActionRowName();
-	return TableManager && !ActionTableName.IsNone() && !ActionRowName.IsNone()
-		? TableManager->FindRow<FMVSprintActionRow>(ActionTableName, ActionRowName.ToString())
-		: nullptr;
-}
-
-FName AMVCharacterBase::ResolveSprintActionTableName() const
-{
-	if (!SprintActionTableName.IsNone())
-	{
-		return SprintActionTableName;
-	}
-
-	return TEXT("Sprint");
-}
-
-FName AMVCharacterBase::ResolveSprintActionRowName() const
-{
-	if (!SprintActionRowName.IsNone())
-	{
-		return SprintActionRowName;
-	}
-
-	const FString CharacterIndexCodeToken = CharacterBaseCharacterIndexCodeToTableToken(CharacterIndexCode);
-	return CharacterIndexCodeToken.IsEmpty()
-		? NAME_None
-		: FName(*FString::Printf(TEXT("Sprint_%s_%02d"), *CharacterIndexCodeToken, FMath::Max(1, DefaultSprintRowIndex)));
 }
 
 EGait AMVCharacterBase::DesiredGait()
@@ -661,7 +486,7 @@ EGait AMVCharacterBase::DesiredGait()
 	return EGait::Running;
 }
 
-bool AMVCharacterBase::CanSprint()
+bool AMVCharacterBase::CanSprint() const
 {
 	return
 		(
@@ -669,25 +494,13 @@ bool AMVCharacterBase::CanSprint()
 			bHasMovementInput &&
 			CharacterInputState.WantsToSprint &&
 			!CharacterInputState.WantsToAim &&
-			CanUseSprintStamina()
+			CanUseSprint()
 			);
 }
 
-bool AMVCharacterBase::CanUseSprintStamina() const
+bool AMVCharacterBase::CanUseSprint() const
 {
-	if (!StatComponent)
-	{
-		return true;
-	}
-
-	if (bIsSprintBlockedByStamina)
-	{
-		return false;
-	}
-
-	const float SprintStaminaCostPerSecond = ResolveSprintStaminaCostPerSecond();
-	return StatComponent->CurrentStamina >= ResolveSprintMinRequiredStamina()
-		&& (SprintStaminaCostPerSecond <= 0.0f || StatComponent->CurrentStamina > KINDA_SMALL_NUMBER);
+	return true;
 }
 
 float AMVCharacterBase::CalculateCharacterMovementSpeed(float WalkSpeed, float RunSpeed, float SprintSpeed)
