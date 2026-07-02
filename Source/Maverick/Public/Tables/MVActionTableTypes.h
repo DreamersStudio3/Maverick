@@ -8,6 +8,8 @@ namespace MVActionIds
 	inline constexpr int32 None = 0;
 	inline constexpr int32 LightAttack = 10001;
 	inline constexpr int32 HeavyAttack = 10002;
+	inline constexpr int32 ChargeAttack = 10003;
+	inline constexpr int32 Skill = 10004;
 	inline constexpr int32 Guard = 10010;
 	inline constexpr int32 Sprint = 10020;
 	inline constexpr int32 Dodge = 10021;
@@ -66,6 +68,8 @@ enum class EMVActionId : uint8
 	None UMETA(DisplayName = "None"),
 	LightAttack UMETA(DisplayName = "Light Attack"),
 	HeavyAttack UMETA(DisplayName = "Heavy Attack"),
+	ChargeAttack UMETA(DisplayName = "Charge Attack"),
+	Skill UMETA(DisplayName = "Skill"),
 	Guard UMETA(DisplayName = "Guard"),
 	Sprint UMETA(DisplayName = "Sprint"),
 	Dodge UMETA(DisplayName = "Dodge"),
@@ -82,6 +86,10 @@ namespace MVActionIds
 			return LightAttack;
 		case EMVActionId::HeavyAttack:
 			return HeavyAttack;
+		case EMVActionId::ChargeAttack:
+			return ChargeAttack;
+		case EMVActionId::Skill:
+			return Skill;
 		case EMVActionId::Guard:
 			return Guard;
 		case EMVActionId::Sprint:

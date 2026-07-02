@@ -29,9 +29,35 @@ void UMVCombatComponent::BeginPlay()
 
 	RefreshActionMaps();
 
+
+
+
 	// This goes to the UActorComponent BeginPlay()
 	// And UActorComponent will goes to the Blueprint Function If Blueprint exist
 	Super::BeginPlay();
+
+
+	AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
+	if (!OwnerCharacter)
+	{
+		return;
+	}
+
+	if (UMVInputManagerComponent* InputManager = OwnerCharacter->InputManagerComponent)
+	{
+		InputManager->OnActionInputSubmitted.RemoveDynamic(
+			this,
+			&UMVCombatComponent::HandleActionInputSubmitted);
+		InputManager->OnActionInputSubmitted.AddUniqueDynamic(
+			this,
+			&UMVCombatComponent::HandleActionInputSubmitted);
+		InputManager->OnRecoveryEscapeWindowChanged.RemoveDynamic(
+			this,
+			&UMVCombatComponent::HandleRecoveryEscapeWindowChanged);
+		InputManager->OnRecoveryEscapeWindowChanged.AddUniqueDynamic(
+			this,
+			&UMVCombatComponent::HandleRecoveryEscapeWindowChanged);
+	}
 	
 }
 
@@ -46,22 +72,141 @@ void UMVCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 
 bool UMVCombatComponent::TryCombatAction(EMVCombatActionTypes InActionType, int32 SkillIndex)
 {
-	if (InActionType == EMVCombatActionTypes::LightAttack ||
-		InActionType == EMVCombatActionTypes::HeavyAttack ||
-		InActionType == EMVCombatActionTypes::ChargeAttack)
+	// Check Input State
+	AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
+	if (!OwnerCharacter)
 	{
-		return TryBasicAttack(InActionType);
-	}
-	else if (InActionType == EMVCombatActionTypes::Skill)
-	{
-		return TrySkill(InActionType, SkillIndex);
+		return false;
 	}
 
+	UMVActionComponent* ActionComponent = OwnerCharacter->ActionComponent;
+	if (!ActionComponent)
+	{
+		return false;
+	}
+	
+	bool bIsRevoveryEscapeWindowOpen = false;
+	UMVInputManagerComponent* InputManager = OwnerCharacter->InputManagerComponent;
+	if (!InputManager)
+	{
+		// In case of not Player
+		bIsRevoveryEscapeWindowOpen = true;
+	}
+	else
+	{
+		// In case of Player, Check Recovery Escape Window
+		bIsRevoveryEscapeWindowOpen =InputManager->IsRecoveryEscapeWindowOpen();
+	}
+	
+	bool CanInterrupt = ActionComponent->CanInterruptActiveAction();
 
-	// Other Actions --> If Other action should concern, add logic
-	// Todo: ChargeAttack --> Pressed will be same as basic attack, But key Release of ChargeSkill, Another function need
+	if (bIsRevoveryEscapeWindowOpen || CanInterrupt)
+	{
+		if (InActionType == EMVCombatActionTypes::LightAttack ||
+			InActionType == EMVCombatActionTypes::HeavyAttack ||
+			InActionType == EMVCombatActionTypes::ChargeAttack)
+		{
+			return TryBasicAttack(InActionType);
+		}
+		else if (InActionType == EMVCombatActionTypes::Skill)
+		{
+			return TrySkill(InActionType, SkillIndex);
+		}
+
+		// Other Actions --> If Other action should concern, add logic
+	}
+	
 	return false;
 }
+
+void UMVCombatComponent::HandleActionInputSubmitted(
+	const int32 ActionId,
+	const FVector2D ControllerSpaceInput,
+	const bool bHasMovementInput)
+{
+	if (!ValidActionIds.Contains(ActionId))
+	{
+		return;
+	}
+
+	bool result = ChooseTryCombatAction(ActionId);
+
+	if (result)
+	{
+		if (const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner()))
+		{
+			if (UMVInputManagerComponent* InputManager = OwnerCharacter->InputManagerComponent)
+			{
+				InputManager->ClearBufferedActionInput();
+			}
+		}
+	}
+
+}
+
+void UMVCombatComponent::HandleRecoveryEscapeWindowChanged(const bool bOpen)
+{
+	if (!bOpen)
+	{
+		return;
+	}
+
+	const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
+	UMVInputManagerComponent* InputManager = OwnerCharacter	? OwnerCharacter->InputManagerComponent	: nullptr;
+	if (!InputManager)
+	{
+		return;
+	}
+
+	int32 ActionId = INDEX_NONE;
+	FVector2D ControllerSpaceInput = FVector2D::ZeroVector;
+	bool bHasMovementInput = false;
+	if (!InputManager->TryGetBufferedActionInput(ActionId, ControllerSpaceInput, bHasMovementInput)
+		|| !ValidActionIds.Contains(ActionId))
+	{
+		return;
+	}
+
+	bool result = ChooseTryCombatAction(ActionId);
+
+	if (result)
+	{
+		InputManager->ClearBufferedActionInput();
+	}
+
+
+}
+
+bool UMVCombatComponent::ChooseTryCombatAction(const int32 ActionId)
+{
+	if (ActionId == MVActionIds::Skill)
+	{
+		// Todo: SkillIndex should be passed from InputManagerComponent
+		TryCombatAction(EMVCombatActionTypes::Skill, 0);
+		return true;
+	}
+	// Basic attack - Light attack, Heavy Attack, Charge Attack
+	else if(ActionId == MVActionIds::LightAttack)
+	{
+		TryCombatAction(EMVCombatActionTypes::LightAttack);
+		return true;
+	}
+	else if (ActionId == MVActionIds::HeavyAttack)
+	{
+		TryCombatAction(EMVCombatActionTypes::HeavyAttack);
+		return true;
+	}
+	else if (ActionId == MVActionIds::ChargeAttack)
+	{
+		TryCombatAction(EMVCombatActionTypes::ChargeAttack);
+		return true;
+	}
+
+	return false;
+}
+
+
+
 
 bool UMVCombatComponent::TryBasicAttack(EMVCombatActionTypes InActionType)
 {

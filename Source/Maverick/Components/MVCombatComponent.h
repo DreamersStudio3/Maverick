@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "Public/Tables/MVSkillDataTableColumn.h"
 #include "Public/Struct/MVCombatActionTableInput.h"
+#include "Components/MVInputManagerComponent.h"
 
 #include "MVCombatComponent.generated.h"
 
@@ -255,6 +256,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Action")
 	bool TryCombatAction(EMVCombatActionTypes InActionType, int32 SkillIndex = 0);
 
+protected:
+	UFUNCTION()
+	void HandleActionInputSubmitted(int32 ActionId, FVector2D ControllerSpaceInput, bool bHasMovementInput);
+	UFUNCTION()
+	void HandleRecoveryEscapeWindowChanged(bool bOpen);
+	bool ChooseTryCombatAction(const int32 ActionId);
+
 	bool TryBasicAttack(EMVCombatActionTypes InActionType);
 	bool TrySkill(EMVCombatActionTypes InActionType, int32 SkillIndex = 0);
 
@@ -267,12 +275,7 @@ public:
 	void ResetBasicAttackMap();
 	void ResetSkillMap();
 	
-	// Set All basic attack indices to 0
-	//void ResetCurrentIndex();
-
-	
-
-	// Call When Character Change Weapon
+	// Call When Character Change Weapon --> have to receive Event from Character
 	void ChangeWeapon(EMVEquippedStyle NewStyle);
 	
 protected:
@@ -287,6 +290,7 @@ protected:
 
 private:
 	void BuildChainedEntry(const FName& StartingName, const UDataTable& CurrentDT, FMVSkillEntry& OutEntry);
+	bool SendDataToActionComp(EMVCombatActionTypes InActionType, FName RowName);
 
 public:
 
@@ -303,11 +307,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Infomation")
 	float ResetBasicAttackTime = 2.0f;
 
-
-private:
-	bool SendDataToActionComp(EMVCombatActionTypes InActionType, FName RowName);
-
 private:
 	double LastBasicAttackedTime;
-
+	TSet<int32> ValidActionIds = {
+		MVActionIds::LightAttack,
+		MVActionIds::HeavyAttack,
+		MVActionIds::ChargeAttack,
+		MVActionIds::Skill
+	};
 };
