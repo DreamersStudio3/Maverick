@@ -2,6 +2,7 @@
 
 
 #include "MVPlayerCharacter.h"
+#include "Components/MVHitReactionComponent.h"
 
 
 // Sets default values
@@ -15,6 +16,17 @@ AMVPlayerCharacter::AMVPlayerCharacter()
 void AMVPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+void AMVPlayerCharacter::BindDamageHandlers()
+{
+	Super::BindDamageHandlers();
+	
+	if (HitReactionComponent)
+	{
+		OnDamaged.RemoveDynamic(HitReactionComponent, &UMVHitReactionComponent::HandleDamaged);
+		OnDamaged.AddUniqueDynamic(HitReactionComponent, &UMVHitReactionComponent::HandleDamaged);
+	}
 }
 
 // Called every frame
