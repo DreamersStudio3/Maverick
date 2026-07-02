@@ -1,0 +1,5 @@
+- [x] Check `POLICY.md` before starting work.
+- [x] Move lock-on pawn rotation suppression from `MVCharacterBase` to `MVPlayerCharacter`.
+- [x] Make `MVDodgeComponent` call the player-only lock-on hook only for player owners.
+- [x] Verify `MVCharacterBase` no longer depends on `LockOnTarget`.
+- [x] Build-check the refactor.

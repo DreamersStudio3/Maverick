@@ -76,6 +76,8 @@ public:
 private:
 	void CacheControllerSpaceMovementInput(const FVector2D& ControllerSpaceMovementInput);
 	void HandleOwnerMovementInput(const FVector& MovementInputDirection);
+	void BeginLockOnPawnRotationSuppressionForDodge(AMVCharacterBase& OwnerCharacter);
+	void EndLockOnPawnRotationSuppressionForDodge();
 	FVector2D CaptureControllerSpaceMovementInput(const AMVCharacterBase& OwnerCharacter) const;
 	bool TryStartDodgeAction();
 	bool TryConsumeBufferedDodgeInput();
@@ -98,10 +100,13 @@ private:
 	UFUNCTION()
 	void HandleActionInputSubmitted(int32 ActionId, FVector2D ControllerSpaceInput, bool bHasMovementInput);
 	UFUNCTION()
+	void HandleActionEnded(FName ActionTableName, FName ActionRowName, bool bInterrupted);
+	UFUNCTION()
 	void HandleRecoveryEscapeWindowChanged(bool bOpen);
 
 	FName ActiveDodgeActionTableName = NAME_None;
 	FName ActiveDodgeActionRowName = NAME_None;
 	FVector2D CachedControllerSpaceMovementInput = FVector2D::ZeroVector;
 	uint64 CachedControllerSpaceMovementInputFrame = 0;
+	bool bLockOnPawnRotationSuppressedForDodge = false;
 };

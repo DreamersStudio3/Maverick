@@ -3,6 +3,8 @@
 
 #include "MVPlayerCharacter.h"
 #include "Components/MVHitReactionComponent.h"
+#include "LockOnTargetComponent.h"
+#include "LockOnTargetExtensions/PawnRotationExtension.h"
 
 
 // Sets default values
@@ -33,10 +35,45 @@ void AMVPlayerCharacter::BindDamageHandlers()
 void AMVPlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	RefreshLockOnPawnRotationExtension();
 }
 
 // Called to bind functionality to input
 void AMVPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+}
+
+void AMVPlayerCharacter::BeginLockOnPawnRotationSuppression()
+{
+	++LockOnPawnRotationSuppressionCount;
+	RefreshLockOnPawnRotationExtension();
+}
+
+void AMVPlayerCharacter::EndLockOnPawnRotationSuppression()
+{
+	LockOnPawnRotationSuppressionCount = FMath::Max(0, LockOnPawnRotationSuppressionCount - 1);
+	RefreshLockOnPawnRotationExtension();
+}
+
+void AMVPlayerCharacter::RefreshLockOnPawnRotationExtension()
+{
+	ULockOnTargetComponent* LockOnTargetComponent = FindComponentByClass<ULockOnTargetComponent>();
+	UPawnRotationExtension* PawnRotationExtension = LockOnTargetComponent
+		? Cast<UPawnRotationExtension>(LockOnTargetComponent->FindExtensionByClass(UPawnRotationExtension::StaticClass()))
+		: nullptr;
+	if (!PawnRotationExtension)
+	{
+		return;
+	}
+
+	const bool bShouldTick = LockOnTargetComponent->IsTargetLocked()
+		&& !ShouldSuppressLockOnPawnRotation();
+	PawnRotationExtension->SetTickEnabled(bShouldTick);
+}
+
+bool AMVPlayerCharacter::ShouldSuppressLockOnPawnRotation() const
+{
+	return LockOnPawnRotationSuppressionCount > 0
+		|| Gait == EGait::Sprinting;
 }

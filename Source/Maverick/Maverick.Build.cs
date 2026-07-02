@@ -30,6 +30,7 @@ public class Maverick : ModuleRules
 			"CommonInput",
 			"DeveloperSettings",
 			"Chooser",
+			"LockOnTarget",
 		});
 
 		if (Target.Type == TargetRules.TargetType.Editor)

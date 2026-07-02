@@ -1,6 +1,7 @@
 #include "Components/MVDodgeComponent.h"
 
 #include "Character/MVCharacterBase.h"
+#include "Character/PC/MVPlayerCharacter.h"
 #include "Chooser.h"
 #include "Components/MVActionComponent.h"
 #include "Components/MVInputManagerComponent.h"
@@ -308,7 +309,6 @@ void UMVDodgeComponent::BeginPlay()
 			this,
 			&UMVDodgeComponent::HandleRecoveryEscapeWindowChanged);
 	}
-
 }
 
 void UMVDodgeComponent::PrepareDodgeAction()
@@ -351,6 +351,7 @@ void UMVDodgeComponent::PrepareDodgeAction()
 		InputDirection);
 	if (!DodgeFacingDirection.IsNearlyZero())
 	{
+		BeginLockOnPawnRotationSuppressionForDodge(*OwnerCharacter);
 		OwnerCharacter->SetActorRotation(MakeYawRotationFromDirection(DodgeFacingDirection));
 		if (UCharacterMovementComponent* MovementComponent = OwnerCharacter->GetCharacterMovement())
 		{
@@ -393,6 +394,34 @@ void UMVDodgeComponent::HandleOwnerMovementInput(const FVector& MovementInputDir
 	{
 		CacheControllerSpaceMovementInput(ControllerSpaceMovementInput);
 	}
+}
+
+void UMVDodgeComponent::BeginLockOnPawnRotationSuppressionForDodge(AMVCharacterBase& OwnerCharacter)
+{
+	if (bLockOnPawnRotationSuppressedForDodge)
+	{
+		return;
+	}
+
+	if (AMVPlayerCharacter* OwnerPlayerCharacter = Cast<AMVPlayerCharacter>(&OwnerCharacter))
+	{
+		OwnerPlayerCharacter->BeginLockOnPawnRotationSuppression();
+		bLockOnPawnRotationSuppressedForDodge = true;
+	}
+}
+
+void UMVDodgeComponent::EndLockOnPawnRotationSuppressionForDodge()
+{
+	if (!bLockOnPawnRotationSuppressedForDodge)
+	{
+		return;
+	}
+
+	if (AMVPlayerCharacter* OwnerPlayerCharacter = Cast<AMVPlayerCharacter>(GetOwner()))
+	{
+		OwnerPlayerCharacter->EndLockOnPawnRotationSuppression();
+	}
+	bLockOnPawnRotationSuppressedForDodge = false;
 }
 
 bool UMVDodgeComponent::BeginDodgeLaunchWindow(
@@ -497,6 +526,7 @@ bool UMVDodgeComponent::TryStartDodgeAction()
 	if (!ResolveDodgeActionRowHandle(ActionRowHandle))
 	{
 		UE_LOG(LogMVDodgeComponent, Warning, TEXT("TryStartDodgeAction failed because Dodge row handle was not resolved."));
+		EndLockOnPawnRotationSuppressionForDodge();
 		return false;
 	}
 
@@ -506,11 +536,13 @@ bool UMVDodgeComponent::TryStartDodgeAction()
 	const FMVDodgeActionRow* DodgeActionRow = FindDodgeActionRow(ActionRowHandle.ActionRow);
 	if (!DodgeActionRow)
 	{
+		EndLockOnPawnRotationSuppressionForDodge();
 		return false;
 	}
 
 	if (!CanConsumeDodgeCost(*DodgeActionRow))
 	{
+		EndLockOnPawnRotationSuppressionForDodge();
 		return false;
 	}
 
@@ -533,9 +565,11 @@ bool UMVDodgeComponent::TryStartDodgeAction()
 			*ActionTableName.ToString(),
 			*ActionRowName.ToString(),
 			*StartSection.ToString());
+		EndLockOnPawnRotationSuppressionForDodge();
 		return false;
 	}
 
+	BeginLockOnPawnRotationSuppressionForDodge(*OwnerCharacter);
 	if (!ConsumeDodgeCost(*DodgeActionRow))
 	{
 		UE_LOG(
@@ -544,6 +578,7 @@ bool UMVDodgeComponent::TryStartDodgeAction()
 			TEXT("TryStartDodgeAction started but failed to consume stamina, cancelling. Table=%s Row=%s."),
 			*ActionTableName.ToString(),
 			*ActionRowName.ToString());
+		EndLockOnPawnRotationSuppressionForDodge();
 		ActionComponent->CancelActiveAction(0.0f);
 		return false;
 	}
@@ -899,6 +934,25 @@ void UMVDodgeComponent::HandleActionInputSubmitted(
 			}
 		}
 	}
+}
+
+void UMVDodgeComponent::HandleActionEnded(
+	const FName ActionTableName,
+	const FName ActionRowName,
+	const bool)
+{
+	const bool bEndedActiveDodgeAction = !ActiveDodgeActionTableName.IsNone()
+		&& !ActiveDodgeActionRowName.IsNone()
+		&& ActionTableName == ActiveDodgeActionTableName
+		&& ActionRowName == ActiveDodgeActionRowName;
+	if (!bEndedActiveDodgeAction)
+	{
+		return;
+	}
+
+	ActiveDodgeActionTableName = NAME_None;
+	ActiveDodgeActionRowName = NAME_None;
+	EndLockOnPawnRotationSuppressionForDodge();
 }
 
 void UMVDodgeComponent::HandleRecoveryEscapeWindowChanged(const bool bOpen)
