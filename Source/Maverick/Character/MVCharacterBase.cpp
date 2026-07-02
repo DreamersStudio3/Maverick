@@ -272,25 +272,9 @@ EMVEquippedStyle AMVCharacterBase::GetEquippedStyle() const
 	return EquippedStyle;
 }
 
-void AMVCharacterBase::BeginMovementInputBlock()
-{
-	if (ActionComponent)
-	{
-		ActionComponent->BeginMovementInputBlock();
-	}
-}
-
-void AMVCharacterBase::EndMovementInputBlock()
-{
-	if (ActionComponent)
-	{
-		ActionComponent->EndMovementInputBlock();
-	}
-}
-
 bool AMVCharacterBase::IsMovementInputBlocked() const
 {
-	return ActionComponent && ActionComponent->IsMovementInputBlocked();
+	return InputManagerComponent && InputManagerComponent->IsMovementInputBlocked();
 }
 
 void AMVCharacterBase::BeginInvincibility()

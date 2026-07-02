@@ -33,6 +33,9 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
 	bool,
 	bHasMovementInput);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnActionRecoveryEscapeWindowChanged, bool, bOpen);
+
+
 /**
  * 캐릭터 공용 액션 입력 관리자.
  *
@@ -81,6 +84,31 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Maverick|Input|Action")
 	EMVActionInputDirection ResolveActionInputDirection(FVector2D ControllerSpaceInput) const;
 
+	// Moved From ActionComponent to InputManagerComponent
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Action|NotifyState")
+	void BeginMovementInputBlock();
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Action|NotifyState")
+	void EndMovementInputBlock();
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|Action|NotifyState")
+	bool IsMovementInputBlocked() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Action|NotifyState")
+	void BeginRecoveryEscapeWindow();
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Action|NotifyState")
+	void EndRecoveryEscapeWindow();
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|Action|NotifyState")
+	bool IsRecoveryEscapeWindowOpen() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Action|NotifyState")
+	void ResetNotifyState();
+
+	UPROPERTY(BlueprintAssignable, Category = "Maverick|Action|NotifyState")
+	FMVOnActionRecoveryEscapeWindowChanged OnRecoveryEscapeWindowChanged;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Input|Action", meta = (ClampMin = "0.0", ClampMax = "1.0"))
 	float ActionInputDeadZone = 0.25f;
 
@@ -114,4 +142,8 @@ private:
 
 	FVector2D CachedActionControllerSpaceInput = FVector2D::ZeroVector;
 	uint64 CachedActionControllerSpaceInputFrame = 0;
+
+private:
+	int32 MovementInputBlockCount = 0;
+	int32 RecoveryEscapeWindowCount = 0;
 };
