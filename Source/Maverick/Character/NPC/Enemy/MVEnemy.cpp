@@ -6,6 +6,8 @@
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimMontage.h"
 #include "Character/NPC/Enemy/MVEnemyWeapon.h"
+#include "Components/MVHitReactionComponent.h"
+#include "Components/MVStatComponent.h"
 
 AMVEnemy::AMVEnemy()
 {
@@ -98,6 +100,23 @@ bool AMVEnemy::Attack(const EMVAttackDirection AttackDirection, int32& OutAttack
 	return false;
 }
 
+void AMVEnemy::BindDamageHandlers()
+{
+	if (StatComponent)
+	{
+		OnDamaged.RemoveDynamic(StatComponent, &UMVStatComponent::HandleDamaged);
+		OnDamaged.AddUniqueDynamic(StatComponent, &UMVStatComponent::HandleDamaged);
+	}
+
+	if (HitReactionComponent)
+	{
+		OnDamaged.RemoveDynamic(HitReactionComponent, &UMVHitReactionComponent::HandleDamaged);
+	}
+
+	OnDamaged.RemoveDynamic(this, &AMVEnemy::HandleEnemyDamaged);
+	OnDamaged.AddUniqueDynamic(this, &AMVEnemy::HandleEnemyDamaged);
+}
+
 void AMVEnemy::HandleAttackMontageEnded(UAnimMontage* Montage, const bool bInterrupted, const int32 AttackInstanceId)
 {
 	if (Montage != AttackMontage || AttackInstanceId == INDEX_NONE)
@@ -115,4 +134,9 @@ void AMVEnemy::HandleAttackMontageEnded(UAnimMontage* Montage, const bool bInter
 		*GetNameSafe(Montage));
 
 	OnAttackMontageEnded.Broadcast(AttackInstanceId, Montage, bInterrupted);
+}
+
+void AMVEnemy::HandleEnemyDamaged(const FMVResolvedHitData& HitData)
+{
+	OnEnemyDamaged.Broadcast(HitData);
 }

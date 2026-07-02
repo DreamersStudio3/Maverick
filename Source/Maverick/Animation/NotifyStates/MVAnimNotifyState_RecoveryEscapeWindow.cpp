@@ -1,15 +1,15 @@
 #include "Animation/NotifyStates/MVAnimNotifyState_RecoveryEscapeWindow.h"
 
-#include "Components/MVActionComponent.h"
+#include "Components/MVInputManagerComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/Actor.h"
 
 namespace
 {
-UMVActionComponent* FindRecoveryEscapeActionComponent(const USkeletalMeshComponent* MeshComp)
+UMVInputManagerComponent* FindRecoveryEscapeInputManagerComponent(const USkeletalMeshComponent* MeshComp)
 {
 	AActor* Owner = MeshComp ? MeshComp->GetOwner() : nullptr;
-	return Owner ? Owner->FindComponentByClass<UMVActionComponent>() : nullptr;
+	return Owner ? Owner->FindComponentByClass<UMVInputManagerComponent>() : nullptr;
 }
 }
 
@@ -21,9 +21,9 @@ void UMVAnimNotifyState_RecoveryEscapeWindow::NotifyBegin(
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
 
-	if (UMVActionComponent* ActionComponent = FindRecoveryEscapeActionComponent(MeshComp))
+	if (UMVInputManagerComponent* InputManager = FindRecoveryEscapeInputManagerComponent(MeshComp))
 	{
-		ActionComponent->BeginRecoveryEscapeWindow();
+		InputManager->BeginRecoveryEscapeWindow();
 	}
 }
 
@@ -34,9 +34,9 @@ void UMVAnimNotifyState_RecoveryEscapeWindow::NotifyEnd(
 {
 	Super::NotifyEnd(MeshComp, Animation, EventReference);
 
-	if (UMVActionComponent* ActionComponent = FindRecoveryEscapeActionComponent(MeshComp))
+	if (UMVInputManagerComponent* InputManager = FindRecoveryEscapeInputManagerComponent(MeshComp))
 	{
-		ActionComponent->EndRecoveryEscapeWindow();
+		InputManager->EndRecoveryEscapeWindow();
 	}
 }
 

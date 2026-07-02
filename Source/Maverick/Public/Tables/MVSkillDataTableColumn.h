@@ -26,26 +26,26 @@ public:
 
 	}
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skill|Data")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Common")
 	TSubclassOf<UMVAbilityBase> AbilityReference;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skill|Data")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Common")
 	float Damage;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skill|Data")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Skill")
 	float CooldownDuration;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skill|Chaining")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Chain")
 	uint32 bIsChained : 1;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skill|Chaining")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Chain")
 	FName NextChainName;
 
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skill|Chaining")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skill|Chain|Skill")
 	float InterStageCooldown;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skill|Chaining")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skill|Chain|Skill")
 	float InputWindowDuration;
 
 };

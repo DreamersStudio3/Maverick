@@ -180,6 +180,64 @@ EMVActionInputDirection UMVInputManagerComponent::ResolveActionInputDirection(
 		: EMVActionInputDirection::Left;
 }
 
+void UMVInputManagerComponent::BeginMovementInputBlock()
+{
+	++MovementInputBlockCount;
+}
+
+void UMVInputManagerComponent::EndMovementInputBlock()
+{
+	const bool bWasBlocked = MovementInputBlockCount > 0;
+	MovementInputBlockCount = FMath::Max(0, MovementInputBlockCount - 1);
+}
+
+bool UMVInputManagerComponent::IsMovementInputBlocked() const
+{
+	return MovementInputBlockCount > 0;
+}
+
+void UMVInputManagerComponent::BeginRecoveryEscapeWindow()
+{
+	const bool bWasOpen = IsRecoveryEscapeWindowOpen();
+	++RecoveryEscapeWindowCount;
+	if (!bWasOpen)
+	{
+		OnRecoveryEscapeWindowChanged.Broadcast(true);
+	}
+}
+
+void UMVInputManagerComponent::EndRecoveryEscapeWindow()
+{
+	const bool bWasOpen = IsRecoveryEscapeWindowOpen();
+	if (RecoveryEscapeWindowCount <= 0)
+	{
+		RecoveryEscapeWindowCount = 0;
+		return;
+	}
+
+	RecoveryEscapeWindowCount = FMath::Max(0, RecoveryEscapeWindowCount - 1);
+	if (bWasOpen && !IsRecoveryEscapeWindowOpen())
+	{
+		OnRecoveryEscapeWindowChanged.Broadcast(false);
+	}
+}
+
+bool UMVInputManagerComponent::IsRecoveryEscapeWindowOpen() const
+{
+	return RecoveryEscapeWindowCount > 0;
+}
+
+void UMVInputManagerComponent::ResetNotifyState()
+{
+	const bool bWasRecoveryEscapeWindowOpen = IsRecoveryEscapeWindowOpen();
+	MovementInputBlockCount = 0;
+	RecoveryEscapeWindowCount = 0;
+	if (bWasRecoveryEscapeWindowOpen)
+	{
+		OnRecoveryEscapeWindowChanged.Broadcast(false);
+	}
+}
+
 void UMVInputManagerComponent::CacheOwnerReferences()
 {
 	OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());

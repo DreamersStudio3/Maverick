@@ -302,21 +302,10 @@ void UMVDodgeComponent::BeginPlay()
 		InputManager->OnActionInputSubmitted.AddUniqueDynamic(
 			this,
 			&UMVDodgeComponent::HandleActionInputSubmitted);
-	}
-
-	if (UMVActionComponent* ActionComponent = OwnerCharacter->ActionComponent)
-	{
-		ActionComponent->OnActionEnded.RemoveDynamic(
-			this,
-			&UMVDodgeComponent::HandleActionEnded);
-		ActionComponent->OnActionEnded.AddUniqueDynamic(
-			this,
-			&UMVDodgeComponent::HandleActionEnded);
-
-		ActionComponent->OnRecoveryEscapeWindowChanged.RemoveDynamic(
+		InputManager->OnRecoveryEscapeWindowChanged.RemoveDynamic(
 			this,
 			&UMVDodgeComponent::HandleRecoveryEscapeWindowChanged);
-		ActionComponent->OnRecoveryEscapeWindowChanged.AddUniqueDynamic(
+		InputManager->OnRecoveryEscapeWindowChanged.AddUniqueDynamic(
 			this,
 			&UMVDodgeComponent::HandleRecoveryEscapeWindowChanged);
 	}
@@ -510,9 +499,22 @@ bool UMVDodgeComponent::TryStartDodgeAction()
 			*GetNameSafe(OwnerCharacter));
 		return false;
 	}
+	UMVInputManagerComponent* InputManager = OwnerCharacter
+		? OwnerCharacter->InputManagerComponent
+		: nullptr;
+	if (!InputManager)
+	{
+		UE_LOG(
+			LogMVDodgeComponent,
+			Warning,
+			TEXT("TryStartDodgeAction failed because InputManagerComponent is missing. Owner=%s."),
+			*GetNameSafe(OwnerCharacter));
+		return false;
+	}
+
 
 	const bool bActionRunning = ActionComponent->IsActionRunning();
-	const bool bCanTransitionActiveDodge = bActionRunning && CanTransitionActiveDodgeAction(*ActionComponent);
+	const bool bCanTransitionActiveDodge = bActionRunning && CanTransitionActiveDodgeAction(*InputManager, *ActionComponent);
 	if (bActionRunning && !bCanTransitionActiveDodge)
 	{
 		return false;
@@ -772,9 +774,9 @@ FGameplayTag UMVDodgeComponent::ResolveCharacterIndexCode() const
 	return OwnerCharacter ? OwnerCharacter->GetCharacterIndexCode() : FGameplayTag();
 }
 
-bool UMVDodgeComponent::CanTransitionActiveDodgeAction(const UMVActionComponent& ActionComponent) const
+bool UMVDodgeComponent::CanTransitionActiveDodgeAction(const UMVInputManagerComponent& InputManager, const UMVActionComponent& ActionComponent) const
 {
-	if (!ActionComponent.IsRecoveryEscapeWindowOpen() || !ActionComponent.CanInterruptActiveAction())
+	if (!InputManager.IsRecoveryEscapeWindowOpen() || !ActionComponent.CanInterruptActiveAction())
 	{
 		return false;
 	}

@@ -1,15 +1,15 @@
 #include "Animation/NotifyStates/MVAnimNotifyState_BlockMovementInput.h"
 
-#include "Components/MVActionComponent.h"
+#include "Components/MVInputManagerComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/Actor.h"
 
 namespace
 {
-UMVActionComponent* FindBlockMovementInputActionComponent(const USkeletalMeshComponent* MeshComp)
+UMVInputManagerComponent* FindBlockMovementInputInputManagerComponent(const USkeletalMeshComponent* MeshComp)
 {
 	AActor* Owner = MeshComp ? MeshComp->GetOwner() : nullptr;
-	return Owner ? Owner->FindComponentByClass<UMVActionComponent>() : nullptr;
+	return Owner ? Owner->FindComponentByClass<UMVInputManagerComponent>() : nullptr;
 }
 }
 
@@ -21,9 +21,9 @@ void UMVAnimNotifyState_BlockMovementInput::NotifyBegin(
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
 
-	if (UMVActionComponent* ActionComponent = FindBlockMovementInputActionComponent(MeshComp))
+	if (UMVInputManagerComponent* InputManager = FindBlockMovementInputInputManagerComponent(MeshComp))
 	{
-		ActionComponent->BeginMovementInputBlock();
+		InputManager->BeginMovementInputBlock();
 	}
 }
 
@@ -34,9 +34,9 @@ void UMVAnimNotifyState_BlockMovementInput::NotifyEnd(
 {
 	Super::NotifyEnd(MeshComp, Animation, EventReference);
 
-	if (UMVActionComponent* ActionComponent = FindBlockMovementInputActionComponent(MeshComp))
+	if (UMVInputManagerComponent* InputManager = FindBlockMovementInputInputManagerComponent(MeshComp))
 	{
-		ActionComponent->EndMovementInputBlock();
+		InputManager->EndMovementInputBlock();
 	}
 }
 

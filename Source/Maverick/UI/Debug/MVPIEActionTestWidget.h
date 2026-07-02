@@ -31,6 +31,7 @@ private:
 	void ExecuteTestByIndex(int32 TestIndex);
 	void SetStatusText(const FString& Message);
 	AMVCharacterBase* ResolveTargetCharacter() const;
+	AMVCharacterBase* ResolveAttackerCharacter() const;
 	void HideDialogueWindow() const;
 	void CloseSideWindow();
 
