@@ -38,6 +38,10 @@
 		{
 			"Name": "Chooser",
 			"Enabled": true
+		},
+		{
+			"Name": "LockOnTarget",
+			"Enabled": true
 		}
 	]
 }

@@ -15,10 +15,16 @@ public:
 	AMVPlayerCharacter();
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	void BeginLockOnPawnRotationSuppression();
+	void EndLockOnPawnRotationSuppression();
 
 protected:
 	virtual void BeginPlay() override;
 
 private:
 	virtual void BindDamageHandlers() override;
+	void RefreshLockOnPawnRotationExtension();
+	bool ShouldSuppressLockOnPawnRotation() const;
+
+	int32 LockOnPawnRotationSuppressionCount = 0;
 };

@@ -137,8 +137,8 @@ void AMVCharacterBase::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	
 	UpdateCharacterValue();
-	UpdateRotation();
 	UpdateMovement(DeltaTime);
+	UpdateRotation();
 
 
 }
@@ -430,9 +430,12 @@ FVector2D AMVCharacterBase::ResolveControllerSpaceMovementInput(
 
 void AMVCharacterBase::UpdateRotation()
 {
-	if ((bHasMovementInput || bIsFalling)										&&
-		(CharacterInputState.WantsToStrafe || CharacterInputState.WantsToAim)
-		)
+	if (Gait == EGait::Sprinting)
+	{
+		SetStrafeMode(false);
+	}
+	else if ((bHasMovementInput || bIsFalling)
+		&& (CharacterInputState.WantsToStrafe || CharacterInputState.WantsToAim))
 	{
 		SetStrafeMode(true);
 	}
@@ -676,20 +679,12 @@ EGait AMVCharacterBase::DesiredGait()
 
 bool AMVCharacterBase::CanSprint()
 {
-	bool StrafeCondition = true;
-	if (CharacterInputState.WantsToStrafe)
-	{
-		//StrafeCondition = UKismetMathLibrary::InRange_FloatFloat(CharacterMoveDirectionAngle, -50, 50);
-		StrafeCondition = false;
-	}
-
 	return
 		(
 			!IsCrouched() &&
 			bHasMovementInput &&
 			CharacterInputState.WantsToSprint &&
 			!CharacterInputState.WantsToAim &&
-			StrafeCondition &&
 			CanUseSprintStamina()
 			);
 }
