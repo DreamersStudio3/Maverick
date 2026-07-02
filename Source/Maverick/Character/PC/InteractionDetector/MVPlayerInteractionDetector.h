@@ -1,28 +1,49 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/ActorComponent.h"
 #include "InputCoreTypes.h"
-#include "MVInteractionDetectorComponent.generated.h"
+#include "UObject/Object.h"
+#include "MVPlayerInteractionDetector.generated.h"
 
+class AActor;
+class AMVPlayerCharacter;
 class UPrimitiveComponent;
+class UWorld;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
 	FMVOnFocusedInteractableChanged,
 	UObject*, PreviousInteractable,
 	UObject*, NewInteractable);
 
-UCLASS(ClassGroup = (Maverick), meta = (BlueprintSpawnableComponent))
-class MAVERICK_API UMVInteractionDetectorComponent : public UActorComponent
+/**
+ * PlayerCharacter 전용 상호작용 감지 서브모듈.
+ *
+ * 로컬 플레이어가 바라보는 범위 안의 interactable 후보를 모아 선택 상태와 UI 프롬프트를 갱신한다.
+ * 플레이어 입력으로 상호작용을 실행하고, 대화/PIE 테스트 패널이 열린 동안 같은 대상의 재감지와 해제를 관리한다.
+ *
+ * 책임:
+ *   - PlayerCharacter의 위치/시야 기준으로 interactable 후보를 주기적으로 감지하고 우선순위 점수로 정렬한다.
+ *   - 선택된 interactable 변경 이벤트와 InteractionPrompt 표시/숨김을 관리한다.
+ *   - 대화창 스킵, 대화 이탈 거리, PIE 액션 테스트 패널을 플레이어 상호작용 흐름 안에서 처리한다.
+ *
+ * 라이프사이클:
+ *   1) PlayerCharacter BeginPlay -> Initialize로 owner를 저장하고 감지 타이머를 초기화한다.
+ *   2) PlayerCharacter Tick -> Tick에서 입력 해제 게이트, 대화 이탈 상태, 후보 감지를 갱신한다.
+ *   3) PlayerCharacter EndPlay -> Deinitialize로 포커스/프롬프트/억제 상태를 정리한다.
+ */
+UCLASS(BlueprintType, DefaultToInstanced, EditInlineNew)
+class MAVERICK_API UMVPlayerInteractionDetector : public UObject
 {
 	GENERATED_BODY()
 
 public:
-	UMVInteractionDetectorComponent();
+	UMVPlayerInteractionDetector();
 
-	virtual void BeginPlay() override;
-	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	virtual UWorld* GetWorld() const override;
+
+	void Initialize(AMVPlayerCharacter& InOwnerCharacter);
+	void Deinitialize();
+	void Tick(float DeltaTime);
 
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|Interaction")
 	FMVOnFocusedInteractableChanged OnFocusedInteractableChanged;
@@ -104,6 +125,8 @@ private:
 		float Score = 0.0f;
 	};
 
+	AMVPlayerCharacter* GetPlayerCharacter() const;
+	AActor* GetOwnerActor() const;
 	bool ShouldRunDetection() const;
 	bool TryBuildCandidate(UPrimitiveComponent* OverlapComponent, const FVector& Origin, const FVector& ViewDirection, FMVInteractionCandidate& OutCandidate) const;
 	bool HasLineOfSight(const FMVInteractionCandidate& Candidate) const;
@@ -138,7 +161,9 @@ private:
 	TArray<FMVInteractionCandidate> InteractionCandidates;
 	TWeakObjectPtr<UObject> FocusedInteractable;
 	TWeakObjectPtr<UObject> SuppressedInteractable;
+	TWeakObjectPtr<AMVPlayerCharacter> OwnerPlayerCharacter;
 	int32 SelectedCandidateIndex = INDEX_NONE;
 	float TimeUntilNextDetection = 0.0f;
+	bool bInitialized = false;
 	bool bWaitForInteractionInputRelease = false;
 };

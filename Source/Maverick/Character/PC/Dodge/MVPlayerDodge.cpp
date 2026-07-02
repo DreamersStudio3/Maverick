@@ -1,4 +1,4 @@
-#include "Components/MVDodgeComponent.h"
+#include "Character/PC/Dodge/MVPlayerDodge.h"
 
 #include "Character/MVCharacterBase.h"
 #include "Character/PC/MVPlayerCharacter.h"
@@ -10,7 +10,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Tables/MVTableManager.h"
 
-DEFINE_LOG_CATEGORY_STATIC(LogMVDodgeComponent, Log, All);
+DEFINE_LOG_CATEGORY_STATIC(LogMVPlayerDodge, Log, All);
 
 namespace
 {
@@ -277,43 +277,92 @@ ELocomotionDirection ResolveDodgeChooserDirection(
 }
 }
 
-UMVDodgeComponent::UMVDodgeComponent()
+UMVPlayerDodge::UMVPlayerDodge()
 {
-	PrimaryComponentTick.bCanEverTick = false;
 }
 
-void UMVDodgeComponent::BeginPlay()
+UWorld* UMVPlayerDodge::GetWorld() const
 {
-	Super::BeginPlay();
+	if (const AMVPlayerCharacter* PlayerCharacter = GetPlayerCharacter())
+	{
+		return PlayerCharacter->GetWorld();
+	}
 
-	AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
-	if (!OwnerCharacter)
+	return Super::GetWorld();
+}
+
+void UMVPlayerDodge::Initialize(AMVPlayerCharacter& InOwnerCharacter)
+{
+	if (OwnerPlayerCharacter.IsValid())
+	{
+		Deinitialize();
+	}
+
+	OwnerPlayerCharacter = &InOwnerCharacter;
+	InOwnerCharacter.OnMovementInputReceived.AddUObject(this, &UMVPlayerDodge::HandleOwnerMovementInput);
+
+	if (UMVInputManagerComponent* InputManager = InOwnerCharacter.InputManagerComponent)
+	{
+		InputManager->OnActionInputSubmitted.RemoveDynamic(
+			this,
+			&UMVPlayerDodge::HandleActionInputSubmitted);
+		InputManager->OnActionInputSubmitted.AddUniqueDynamic(
+			this,
+			&UMVPlayerDodge::HandleActionInputSubmitted);
+		InputManager->OnRecoveryEscapeWindowChanged.RemoveDynamic(
+			this,
+			&UMVPlayerDodge::HandleRecoveryEscapeWindowChanged);
+		InputManager->OnRecoveryEscapeWindowChanged.AddUniqueDynamic(
+			this,
+			&UMVPlayerDodge::HandleRecoveryEscapeWindowChanged);
+	}
+
+	if (UMVActionComponent* ActionComponent = InOwnerCharacter.ActionComponent)
+	{
+		ActionComponent->OnActionEnded.RemoveDynamic(this, &UMVPlayerDodge::HandleActionEnded);
+		ActionComponent->OnActionEnded.AddUniqueDynamic(this, &UMVPlayerDodge::HandleActionEnded);
+	}
+}
+
+void UMVPlayerDodge::Deinitialize()
+{
+	AMVPlayerCharacter* PlayerCharacter = GetPlayerCharacter();
+	if (!PlayerCharacter)
 	{
 		return;
 	}
 
-	OwnerCharacter->OnMovementInputReceived.AddUObject(this, &UMVDodgeComponent::HandleOwnerMovementInput);
+	PlayerCharacter->OnMovementInputReceived.RemoveAll(this);
 
-	if (UMVInputManagerComponent* InputManager = OwnerCharacter->InputManagerComponent)
+	if (UMVInputManagerComponent* InputManager = PlayerCharacter->InputManagerComponent)
 	{
 		InputManager->OnActionInputSubmitted.RemoveDynamic(
 			this,
-			&UMVDodgeComponent::HandleActionInputSubmitted);
-		InputManager->OnActionInputSubmitted.AddUniqueDynamic(
-			this,
-			&UMVDodgeComponent::HandleActionInputSubmitted);
+			&UMVPlayerDodge::HandleActionInputSubmitted);
 		InputManager->OnRecoveryEscapeWindowChanged.RemoveDynamic(
 			this,
-			&UMVDodgeComponent::HandleRecoveryEscapeWindowChanged);
-		InputManager->OnRecoveryEscapeWindowChanged.AddUniqueDynamic(
-			this,
-			&UMVDodgeComponent::HandleRecoveryEscapeWindowChanged);
+			&UMVPlayerDodge::HandleRecoveryEscapeWindowChanged);
 	}
+
+	if (UMVActionComponent* ActionComponent = PlayerCharacter->ActionComponent)
+	{
+		ActionComponent->OnActionEnded.RemoveDynamic(this, &UMVPlayerDodge::HandleActionEnded);
+	}
+
+	EndLockOnPawnRotationSuppressionForDodge();
+	ActiveDodgeActionTableName = NAME_None;
+	ActiveDodgeActionRowName = NAME_None;
+	OwnerPlayerCharacter.Reset();
 }
 
-void UMVDodgeComponent::PrepareDodgeAction()
+AMVPlayerCharacter* UMVPlayerDodge::GetPlayerCharacter() const
 {
-	AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
+	return OwnerPlayerCharacter.Get();
+}
+
+void UMVPlayerDodge::PrepareDodgeAction()
+{
+	AMVCharacterBase* OwnerCharacter = GetPlayerCharacter();
 	if (!OwnerCharacter)
 	{
 		return;
@@ -365,20 +414,20 @@ void UMVDodgeComponent::PrepareDodgeAction()
 	CachedControllerSpaceMovementInputFrame = 0;
 }
 
-void UMVDodgeComponent::UpdateBufferedDodgeMovementInput(const FVector& MovementInputDirection)
+void UMVPlayerDodge::UpdateBufferedDodgeMovementInput(const FVector& MovementInputDirection)
 {
 	HandleOwnerMovementInput(MovementInputDirection);
 }
 
-void UMVDodgeComponent::CacheControllerSpaceMovementInput(const FVector2D& ControllerSpaceMovementInput)
+void UMVPlayerDodge::CacheControllerSpaceMovementInput(const FVector2D& ControllerSpaceMovementInput)
 {
 	CachedControllerSpaceMovementInput = DodgeClampControllerSpaceInput(ControllerSpaceMovementInput);
 	CachedControllerSpaceMovementInputFrame = GFrameCounter;
 }
 
-void UMVDodgeComponent::HandleOwnerMovementInput(const FVector& MovementInputDirection)
+void UMVPlayerDodge::HandleOwnerMovementInput(const FVector& MovementInputDirection)
 {
-	const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
+	const AMVCharacterBase* OwnerCharacter = GetPlayerCharacter();
 	FVector2D ControllerSpaceMovementInput = FVector2D::ZeroVector;
 	if (OwnerCharacter)
 	{
@@ -396,57 +445,35 @@ void UMVDodgeComponent::HandleOwnerMovementInput(const FVector& MovementInputDir
 	}
 }
 
-void UMVDodgeComponent::BeginLockOnPawnRotationSuppressionForDodge(AMVCharacterBase& OwnerCharacter)
+void UMVPlayerDodge::BeginLockOnPawnRotationSuppressionForDodge(AMVCharacterBase& OwnerCharacter)
 {
 	if (bLockOnPawnRotationSuppressedForDodge)
 	{
 		return;
 	}
 
-	if (AMVPlayerCharacter* OwnerPlayerCharacter = Cast<AMVPlayerCharacter>(&OwnerCharacter))
+	if (AMVPlayerCharacter* PlayerCharacter = Cast<AMVPlayerCharacter>(&OwnerCharacter))
 	{
-		OwnerPlayerCharacter->BeginLockOnPawnRotationSuppression();
+		PlayerCharacter->BeginLockOnPawnRotationSuppression();
 		bLockOnPawnRotationSuppressedForDodge = true;
 	}
 }
 
-void UMVDodgeComponent::EndLockOnPawnRotationSuppressionForDodge()
+void UMVPlayerDodge::EndLockOnPawnRotationSuppressionForDodge()
 {
 	if (!bLockOnPawnRotationSuppressedForDodge)
 	{
 		return;
 	}
 
-	if (AMVPlayerCharacter* OwnerPlayerCharacter = Cast<AMVPlayerCharacter>(GetOwner()))
+	if (AMVPlayerCharacter* PlayerCharacter = GetPlayerCharacter())
 	{
-		OwnerPlayerCharacter->EndLockOnPawnRotationSuppression();
+		PlayerCharacter->EndLockOnPawnRotationSuppression();
 	}
 	bLockOnPawnRotationSuppressedForDodge = false;
 }
 
-bool UMVDodgeComponent::BeginDodgeLaunchWindow(
-	const float,
-	UCurveFloat*,
-	const float,
-	const bool,
-	const int32,
-	const bool)
-{
-	// Dodge movement is now authored as montage root motion. The notify remains as an asset compatibility no-op.
-	return false;
-}
-
-void UMVDodgeComponent::TickDodgeLaunchWindow(const float, const int32)
-{
-}
-
-void UMVDodgeComponent::EndDodgeLaunchWindow(
-	const bool,
-	const int32)
-{
-}
-
-FVector2D UMVDodgeComponent::CaptureControllerSpaceMovementInput(const AMVCharacterBase& OwnerCharacter) const
+FVector2D UMVPlayerDodge::CaptureControllerSpaceMovementInput(const AMVCharacterBase& OwnerCharacter) const
 {
 	if (CachedControllerSpaceMovementInputFrame == GFrameCounter
 		&& !CachedControllerSpaceMovementInput.IsNearlyZero())
@@ -474,16 +501,16 @@ FVector2D UMVDodgeComponent::CaptureControllerSpaceMovementInput(const AMVCharac
 	return FVector2D::ZeroVector;
 }
 
-bool UMVDodgeComponent::TryStartDodgeAction()
+bool UMVPlayerDodge::TryStartDodgeAction()
 {
-	AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
+	AMVCharacterBase* OwnerCharacter = GetPlayerCharacter();
 	if (!OwnerCharacter)
 	{
 		UE_LOG(
-			LogMVDodgeComponent,
+			LogMVPlayerDodge,
 			Warning,
 			TEXT("TryStartDodgeAction failed because owner is not AMVCharacterBase. Owner=%s."),
-			*GetNameSafe(GetOwner()));
+			*GetNameSafe(GetPlayerCharacter()));
 		return false;
 	}
 
@@ -493,7 +520,7 @@ bool UMVDodgeComponent::TryStartDodgeAction()
 	if (!ActionComponent)
 	{
 		UE_LOG(
-			LogMVDodgeComponent,
+			LogMVPlayerDodge,
 			Warning,
 			TEXT("TryStartDodgeAction failed because ActionComponent is missing. Owner=%s."),
 			*GetNameSafe(OwnerCharacter));
@@ -505,7 +532,7 @@ bool UMVDodgeComponent::TryStartDodgeAction()
 	if (!InputManager)
 	{
 		UE_LOG(
-			LogMVDodgeComponent,
+			LogMVPlayerDodge,
 			Warning,
 			TEXT("TryStartDodgeAction failed because InputManagerComponent is missing. Owner=%s."),
 			*GetNameSafe(OwnerCharacter));
@@ -525,7 +552,7 @@ bool UMVDodgeComponent::TryStartDodgeAction()
 	FMVDodgeActionRowHandle ActionRowHandle;
 	if (!ResolveDodgeActionRowHandle(ActionRowHandle))
 	{
-		UE_LOG(LogMVDodgeComponent, Warning, TEXT("TryStartDodgeAction failed because Dodge row handle was not resolved."));
+		UE_LOG(LogMVPlayerDodge, Warning, TEXT("TryStartDodgeAction failed because Dodge row handle was not resolved."));
 		EndLockOnPawnRotationSuppressionForDodge();
 		return false;
 	}
@@ -558,7 +585,7 @@ bool UMVDodgeComponent::TryStartDodgeAction()
 	if (!bStarted)
 	{
 		UE_LOG(
-			LogMVDodgeComponent,
+			LogMVPlayerDodge,
 			Warning,
 			TEXT("TryStartDodgeAction failed because ActionComponent rejected %s. Table=%s Row=%s StartSection=%s."),
 			bCanTransitionActiveDodge ? TEXT("transition") : TEXT("start"),
@@ -573,7 +600,7 @@ bool UMVDodgeComponent::TryStartDodgeAction()
 	if (!ConsumeDodgeCost(*DodgeActionRow))
 	{
 		UE_LOG(
-			LogMVDodgeComponent,
+			LogMVPlayerDodge,
 			Warning,
 			TEXT("TryStartDodgeAction started but failed to consume stamina, cancelling. Table=%s Row=%s."),
 			*ActionTableName.ToString(),
@@ -588,9 +615,9 @@ bool UMVDodgeComponent::TryStartDodgeAction()
 	return true;
 }
 
-bool UMVDodgeComponent::TryConsumeBufferedDodgeInput()
+bool UMVPlayerDodge::TryConsumeBufferedDodgeInput()
 {
-	const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
+	const AMVCharacterBase* OwnerCharacter = GetPlayerCharacter();
 	UMVInputManagerComponent* InputManager = OwnerCharacter
 		? OwnerCharacter->InputManagerComponent
 		: nullptr;
@@ -625,7 +652,7 @@ bool UMVDodgeComponent::TryConsumeBufferedDodgeInput()
 	return true;
 }
 
-bool UMVDodgeComponent::ResolveDodgeActionRowHandle(FMVDodgeActionRowHandle& OutActionRowHandle)
+bool UMVPlayerDodge::ResolveDodgeActionRowHandle(FMVDodgeActionRowHandle& OutActionRowHandle)
 {
 	OutActionRowHandle.Reset();
 	if (EvaluateDodgeChooserActionRowHandle(OutActionRowHandle))
@@ -635,7 +662,7 @@ bool UMVDodgeComponent::ResolveDodgeActionRowHandle(FMVDodgeActionRowHandle& Out
 
 	if (!bUseNamingConventionWhenChooserUnavailable)
 	{
-		UE_LOG(LogMVDodgeComponent, Warning, TEXT("Dodge chooser did not resolve a row handle and naming fallback is disabled."));
+		UE_LOG(LogMVPlayerDodge, Warning, TEXT("Dodge chooser did not resolve a row handle and naming fallback is disabled."));
 		return false;
 	}
 
@@ -644,7 +671,7 @@ bool UMVDodgeComponent::ResolveDodgeActionRowHandle(FMVDodgeActionRowHandle& Out
 	const UMVTableManager* TableManager = UMVTableManager::Get(this);
 	if (!TableManager)
 	{
-		UE_LOG(LogMVDodgeComponent, Warning, TEXT("Dodge naming fallback failed because TableManager is not available."));
+		UE_LOG(LogMVPlayerDodge, Warning, TEXT("Dodge naming fallback failed because TableManager is not available."));
 		return false;
 	}
 
@@ -654,7 +681,7 @@ bool UMVDodgeComponent::ResolveDodgeActionRowHandle(FMVDodgeActionRowHandle& Out
 	if (!ActionDataTable)
 	{
 		UE_LOG(
-			LogMVDodgeComponent,
+			LogMVPlayerDodge,
 			Warning,
 			TEXT("Dodge naming fallback failed because table was not found. CharacterIndexCode=%s Table=%s."),
 			*CharacterIndexCode.ToString(),
@@ -667,14 +694,14 @@ bool UMVDodgeComponent::ResolveDodgeActionRowHandle(FMVDodgeActionRowHandle& Out
 	return OutActionRowHandle.IsValid();
 }
 
-bool UMVDodgeComponent::EvaluateDodgeChooserActionRowHandle(FMVDodgeActionRowHandle& OutActionRowHandle)
+bool UMVPlayerDodge::EvaluateDodgeChooserActionRowHandle(FMVDodgeActionRowHandle& OutActionRowHandle)
 {
 	OutActionRowHandle.Reset();
 	ChooserDodgeActionRowHandle.Reset();
 
 	if (!DodgeChooserTable.IsValid())
 	{
-		UE_LOG(LogMVDodgeComponent, Warning, TEXT("Dodge chooser path is invalid."));
+		UE_LOG(LogMVPlayerDodge, Warning, TEXT("Dodge chooser path is invalid."));
 		return false;
 	}
 
@@ -682,7 +709,7 @@ bool UMVDodgeComponent::EvaluateDodgeChooserActionRowHandle(FMVDodgeActionRowHan
 	if (!ChooserTable)
 	{
 		UE_LOG(
-			LogMVDodgeComponent,
+			LogMVPlayerDodge,
 			Warning,
 			TEXT("Dodge chooser failed to load. Path=%s."),
 			*DodgeChooserTable.ToString());
@@ -690,7 +717,7 @@ bool UMVDodgeComponent::EvaluateDodgeChooserActionRowHandle(FMVDodgeActionRowHan
 	}
 
 	FChooserEvaluationContext Context;
-	if (UObject* OwnerObject = GetOwner())
+	if (UObject* OwnerObject = GetPlayerCharacter())
 	{
 		Context.AddObjectParam(OwnerObject);
 	}
@@ -724,7 +751,7 @@ bool UMVDodgeComponent::EvaluateDodgeChooserActionRowHandle(FMVDodgeActionRowHan
 	if (!SelectedDataTable)
 	{
 		UE_LOG(
-			LogMVDodgeComponent,
+			LogMVPlayerDodge,
 			Warning,
 			TEXT("Dodge chooser did not return FMVDodgeActionRowHandle or UDataTable fallback. SelectedObject=%s."),
 			*GetNameSafe(ResolvedObject));
@@ -738,7 +765,7 @@ bool UMVDodgeComponent::EvaluateDodgeChooserActionRowHandle(FMVDodgeActionRowHan
 	return OutActionRowHandle.IsValid();
 }
 
-FName UMVDodgeComponent::MakeDodgeActionTableName(const FGameplayTag CharacterIndexCode) const
+FName UMVPlayerDodge::MakeDodgeActionTableName(const FGameplayTag CharacterIndexCode) const
 {
 	const FString CharacterIndexCodeToken = DodgeCharacterIndexCodeToTableToken(CharacterIndexCode);
 	return CharacterIndexCodeToken.IsEmpty()
@@ -746,7 +773,7 @@ FName UMVDodgeComponent::MakeDodgeActionTableName(const FGameplayTag CharacterIn
 		: FName(*FString::Printf(TEXT("Dodge_%s"), *CharacterIndexCodeToken));
 }
 
-FName UMVDodgeComponent::MakeDodgeActionTableName(const UDataTable* ActionDataTable) const
+FName UMVPlayerDodge::MakeDodgeActionTableName(const UDataTable* ActionDataTable) const
 {
 	if (!ActionDataTable)
 	{
@@ -758,7 +785,7 @@ FName UMVDodgeComponent::MakeDodgeActionTableName(const UDataTable* ActionDataTa
 	return FName(*TableName);
 }
 
-FName UMVDodgeComponent::MakeDodgeActionRowName(
+FName UMVPlayerDodge::MakeDodgeActionRowName(
 	const FGameplayTag CharacterIndexCode,
 	const int32 Index) const
 {
@@ -768,13 +795,13 @@ FName UMVDodgeComponent::MakeDodgeActionRowName(
 		: FName(*FString::Printf(TEXT("Dodge_%s_%02d"), *CharacterIndexCodeToken, FMath::Max(1, Index)));
 }
 
-FGameplayTag UMVDodgeComponent::ResolveCharacterIndexCode() const
+FGameplayTag UMVPlayerDodge::ResolveCharacterIndexCode() const
 {
-	const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
+	const AMVCharacterBase* OwnerCharacter = GetPlayerCharacter();
 	return OwnerCharacter ? OwnerCharacter->GetCharacterIndexCode() : FGameplayTag();
 }
 
-bool UMVDodgeComponent::CanTransitionActiveDodgeAction(const UMVInputManagerComponent& InputManager, const UMVActionComponent& ActionComponent) const
+bool UMVPlayerDodge::CanTransitionActiveDodgeAction(const UMVInputManagerComponent& InputManager, const UMVActionComponent& ActionComponent) const
 {
 	if (!InputManager.IsRecoveryEscapeWindowOpen() || !ActionComponent.CanInterruptActiveAction())
 	{
@@ -791,13 +818,13 @@ bool UMVDodgeComponent::CanTransitionActiveDodgeAction(const UMVInputManagerComp
 		|| MVDodgeIsHitReactionTerminalRecoveryAction(ActiveActionTableName, ActiveActionRowName);
 }
 
-const FMVDodgeActionRow* UMVDodgeComponent::FindDodgeActionRow(
+const FMVDodgeActionRow* UMVPlayerDodge::FindDodgeActionRow(
 	const FDataTableRowHandle ActionRowHandle) const
 {
 	if (!ActionRowHandle.DataTable || ActionRowHandle.RowName.IsNone())
 	{
 		UE_LOG(
-			LogMVDodgeComponent,
+			LogMVPlayerDodge,
 			Warning,
 			TEXT("FindDodgeActionRow failed because row handle is invalid. DataTable=%s Row=%s."),
 			*GetNameSafe(ActionRowHandle.DataTable),
@@ -809,7 +836,7 @@ const FMVDodgeActionRow* UMVDodgeComponent::FindDodgeActionRow(
 		|| !ActionRowHandle.DataTable->GetRowStruct()->IsChildOf(FMVDodgeActionRow::StaticStruct()))
 	{
 		UE_LOG(
-			LogMVDodgeComponent,
+			LogMVPlayerDodge,
 			Warning,
 			TEXT("FindDodgeActionRow failed because table row struct is invalid. DataTable=%s RowStruct=%s Expected=MVDodgeActionRow."),
 			*GetNameSafe(ActionRowHandle.DataTable),
@@ -819,12 +846,12 @@ const FMVDodgeActionRow* UMVDodgeComponent::FindDodgeActionRow(
 
 	const FMVDodgeActionRow* DodgeActionRow = ActionRowHandle.DataTable->FindRow<FMVDodgeActionRow>(
 		ActionRowHandle.RowName,
-		TEXT("MVDodgeComponent"),
+		TEXT("MVPlayerDodge"),
 		false);
 	if (!DodgeActionRow)
 	{
 		UE_LOG(
-			LogMVDodgeComponent,
+			LogMVPlayerDodge,
 			Warning,
 			TEXT("FindDodgeActionRow failed because row was not found. DataTable=%s Row=%s AvailableRows=%s."),
 			*GetNameSafe(ActionRowHandle.DataTable),
@@ -841,9 +868,9 @@ const FMVDodgeActionRow* UMVDodgeComponent::FindDodgeActionRow(
 	return DodgeActionRow;
 }
 
-bool UMVDodgeComponent::CanConsumeDodgeCost(const FMVDodgeActionRow& DodgeActionRow) const
+bool UMVPlayerDodge::CanConsumeDodgeCost(const FMVDodgeActionRow& DodgeActionRow) const
 {
-	const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
+	const AMVCharacterBase* OwnerCharacter = GetPlayerCharacter();
 	const UMVStatComponent* StatComponent = OwnerCharacter
 		? OwnerCharacter->FindComponentByClass<UMVStatComponent>()
 		: nullptr;
@@ -861,9 +888,9 @@ bool UMVDodgeComponent::CanConsumeDodgeCost(const FMVDodgeActionRow& DodgeAction
 	return StatComponent->HasStamina(RequiredStamina);
 }
 
-bool UMVDodgeComponent::ConsumeDodgeCost(const FMVDodgeActionRow& DodgeActionRow)
+bool UMVPlayerDodge::ConsumeDodgeCost(const FMVDodgeActionRow& DodgeActionRow)
 {
-	AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
+	AMVCharacterBase* OwnerCharacter = GetPlayerCharacter();
 	UMVStatComponent* StatComponent = OwnerCharacter
 		? OwnerCharacter->FindComponentByClass<UMVStatComponent>()
 		: nullptr;
@@ -884,7 +911,7 @@ bool UMVDodgeComponent::ConsumeDodgeCost(const FMVDodgeActionRow& DodgeActionRow
 	}
 }
 
-void UMVDodgeComponent::ApplyDodgeChooserSnapshot(
+void UMVPlayerDodge::ApplyDodgeChooserSnapshot(
 	AMVCharacterBase& OwnerCharacter,
 	const bool bHasMovementInput,
 	const ELocomotionDirection InputDirection,
@@ -909,7 +936,7 @@ void UMVDodgeComponent::ApplyDodgeChooserSnapshot(
 	OwnerCharacter.LocomotionDirectionFromAcceleration = InputDirection;
 }
 
-void UMVDodgeComponent::HandleActionInputSubmitted(
+void UMVPlayerDodge::HandleActionInputSubmitted(
 	const int32 ActionId,
 	const FVector2D ControllerSpaceInput,
 	const bool bHasMovementInput)
@@ -926,7 +953,7 @@ void UMVDodgeComponent::HandleActionInputSubmitted(
 
 	if (TryStartDodgeAction())
 	{
-		if (const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner()))
+		if (const AMVCharacterBase* OwnerCharacter = GetPlayerCharacter())
 		{
 			if (UMVInputManagerComponent* InputManager = OwnerCharacter->InputManagerComponent)
 			{
@@ -936,7 +963,7 @@ void UMVDodgeComponent::HandleActionInputSubmitted(
 	}
 }
 
-void UMVDodgeComponent::HandleActionEnded(
+void UMVPlayerDodge::HandleActionEnded(
 	const FName ActionTableName,
 	const FName ActionRowName,
 	const bool)
@@ -955,7 +982,7 @@ void UMVDodgeComponent::HandleActionEnded(
 	EndLockOnPawnRotationSuppressionForDodge();
 }
 
-void UMVDodgeComponent::HandleRecoveryEscapeWindowChanged(const bool bOpen)
+void UMVPlayerDodge::HandleRecoveryEscapeWindowChanged(const bool bOpen)
 {
 	if (bOpen)
 	{

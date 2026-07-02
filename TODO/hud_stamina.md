@@ -21,8 +21,8 @@
 ## 전력질주 스태미나
 
 - [x] 전력질주 초당 스태미나 소모량은 단일 `DT_Sprint` 또는 직접 지정된 `FDataTableRowHandle`의 `FMVSprintActionRow`에서 읽는다.
-- [x] `AMVCharacterBase`가 Sprint row handle을 우선 사용하고, 없으면 `Sprint` / `Sprint_{Character}_01` fallback row에서 전력질주 비용/재시작 기준을 캐시한다.
-- [x] `AMVCharacterBase` 전력질주 상태에서 스태미나를 소모하고 지연 후 회복한다.
+- [x] `AMVPlayerCharacter`가 Sprint row handle을 우선 사용하고, 없으면 `Sprint` / `Sprint_{Character}_01` fallback row에서 전력질주 비용/재시작 기준을 캐시한다.
+- [x] `AMVPlayerCharacter` 전력질주 상태에서 스태미나를 소모하고 지연 후 회복한다.
 - [x] 스태미나가 고갈되면 일정량 회복 전까지 전력질주를 막는다.
 - [x] 스태미나 고갈 후 재개 기준을 `FMVSprintActionRow.SprintRestartStaminaPercent = 70`으로 관리한다.
 - [x] 스태미나 회복 지연 사용 여부를 `bUseStaminaRecoveryDelay` 변수로 분리하고 기본값을 끈다.
@@ -31,7 +31,7 @@
 - [x] 액션 중 회복 pause를 `BeginRecoverableStatRecoveryPause` / `EndRecoverableStatRecoveryPause` 공통 API로 일반화한다.
 - [x] MP 회복도 캐릭터의 공통 회복 틱에 연결하고 액션 회복 pause를 따르게 한다.
 - [x] `MVActionComponent`는 선택/비용 소모를 하지 않고, 전달받은 `ActionTableName + ActionRowName` 실행만 담당한다.
-- [x] Dodge 입력은 `InputManagerComponent.SubmitActionInput(Dodge)` 이벤트를 통해 `MVDodgeComponent`가 처리한다.
+- [x] Dodge 입력은 `InputManagerComponent.SubmitActionInput(Dodge)` 이벤트를 통해 `PlayerCharacter.Dodge` 서브모듈이 처리한다.
 - [x] Dodge는 `CHT_Dodge`가 출력한 `FMVDodgeActionRowHandle` 또는 `Dodge_{Character}` 명명 규칙 fallback으로 `FMVDodgeActionRow`를 찾고 비용/launch를 직접 처리한다.
 - [x] 입력 의도 ID를 `MVActionIds`/`ACTIONID_*` 상수와 BP용 `EMVActionId` enum으로 중앙화한다.
 - [x] BP 회피 입력은 `InputManagerComponent.SubmitActionInput(Dodge)`를 통해 도메인 컴포넌트에 전달한다.
