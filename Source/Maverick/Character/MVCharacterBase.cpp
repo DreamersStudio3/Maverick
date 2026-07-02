@@ -339,12 +339,6 @@ void AMVCharacterBase::BindDamageHandlers()
 		OnDamaged.RemoveDynamic(StatComponent, &UMVStatComponent::HandleDamaged);
 		OnDamaged.AddUniqueDynamic(StatComponent, &UMVStatComponent::HandleDamaged);
 	}
-
-	if (HitReactionComponent)
-	{
-		OnDamaged.RemoveDynamic(HitReactionComponent, &UMVHitReactionComponent::HandleDamaged);
-		OnDamaged.AddUniqueDynamic(HitReactionComponent, &UMVHitReactionComponent::HandleDamaged);
-	}
 }
 
 void AMVCharacterBase::UpdateCharacterValue()
