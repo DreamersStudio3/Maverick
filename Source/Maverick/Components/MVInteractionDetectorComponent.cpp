@@ -378,8 +378,8 @@ bool UMVInteractionDetectorComponent::TryInteract()
 
 	SuppressedInteractable = InteractableObject;
 	LockInteractionUntilInputReleased();
-	IMVInteractableInterface::Execute_Interact(InteractableObject, GetOwner());
 	TryShowPIEActionTestPanelForInteractable(InteractableObject);
+	IMVInteractableInterface::Execute_Interact(InteractableObject, GetOwner());
 	return true;
 }
 
@@ -631,6 +631,11 @@ bool UMVInteractionDetectorComponent::IsPIEActionTestInteractable(UObject* Inter
 		return false;
 	}
 
+	if (Cast<AMVCharacterBase>(InteractableActor) && InteractableActor != GetOwner())
+	{
+		return true;
+	}
+
 	const FString ObjectName = ObjectForName->GetName();
 	const UClass* ObjectClass = ObjectForName->GetClass();
 	const FString ClassName = ObjectClass ? ObjectClass->GetName() : FString();
@@ -703,22 +708,22 @@ void UMVInteractionDetectorComponent::TryShowPIEActionTestPanelForInteractable(U
 		return;
 	}
 
-	TWeakObjectPtr<AMVCharacterBase> OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
-	if (!OwnerCharacter.IsValid())
+	TWeakObjectPtr<AMVCharacterBase> TargetCharacter = Cast<AMVCharacterBase>(ResolveInteractableActor(InteractableObject));
+	if (!TargetCharacter.IsValid())
 	{
 		return;
 	}
 
 	World->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateWeakLambda(
 		this,
-		[this, OwnerCharacter]()
+		[this, TargetCharacter]()
 		{
 			UWorld* CallbackWorld = GetWorld();
 			UGameInstance* GameInstance = CallbackWorld ? CallbackWorld->GetGameInstance() : nullptr;
 			UMVUISubsystem* UISubsystem = GameInstance ? GameInstance->GetSubsystem<UMVUISubsystem>() : nullptr;
-			if (OwnerCharacter.IsValid() && UISubsystem)
+			if (TargetCharacter.IsValid() && UISubsystem)
 			{
-				UISubsystem->ShowPIEActionTestPanel(OwnerCharacter.Get());
+				UISubsystem->ShowPIEActionTestPanel(TargetCharacter.Get());
 			}
 		}));
 #endif

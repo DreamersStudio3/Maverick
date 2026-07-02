@@ -10,6 +10,7 @@
 #include "Components/TextBlock.h"
 #include "Components/VerticalBox.h"
 #include "Components/VerticalBoxSlot.h"
+#include "Combat/MVHitResolverSubsystem.h"
 #include "Engine/GameInstance.h"
 #include "GameFramework/PlayerController.h"
 #include "InputCoreTypes.h"
@@ -193,35 +194,57 @@ void UMVPIEActionTestWidget::BuildNativeWidgetTree()
 
 void UMVPIEActionTestWidget::ExecuteTestByIndex(const int32 TestIndex)
 {
-	AMVCharacterBase* Character = ResolveTargetCharacter();
-	if (!Character)
+	AMVCharacterBase* Target = ResolveTargetCharacter();
+	if (!Target)
 	{
 		SetStatusText(TEXT("No target character."));
+		return;
+	}
+
+	AMVCharacterBase* Attacker = ResolveAttackerCharacter();
+	if (!Attacker)
+	{
+		SetStatusText(TEXT("No attacker character."));
+		return;
+	}
+
+	if (Attacker == Target)
+	{
+		SetStatusText(TEXT("Target must not be the player attacker."));
+		return;
+	}
+
+	UMVHitResolverSubsystem* HitResolver = UMVHitResolverSubsystem::Get(this);
+	if (!HitResolver)
+	{
+		SetStatusText(TEXT("No HitResolverSubsystem."));
 		return;
 	}
 
 	const FMVPIEActionTestSpec& Spec = GetPIEActionTestSpec(TestIndex);
 	HideDialogueWindow();
 
+	FMVHitResolveRequest Request;
+	Request.Attacker = Attacker;
+	Request.Victim = Target;
+	Request.ActionRowName = TEXT("PIE_HitReactionTest");
+	Request.DamageMultiplier = 1.0f;
+	Request.HitReactionType = Spec.HitReactionType;
+	Request.WeaponAttackPower = Spec.HPDamage;
+	Request.HitLocation = Target->GetActorLocation();
+	Request.HitDirection = Target->GetActorLocation() - Attacker->GetActorLocation();
+
 	FMVResolvedHitData HitData;
-	HitData.Victim = Character;
-	HitData.VictimCharacterIndexCode = Character->GetCharacterIndexCode();
-	HitData.ActionRowName = TEXT("PIE_HitReactionTest");
-	HitData.FinalDamage = Spec.HPDamage;
-	HitData.DamageMultiplier = 1.0f;
-	HitData.HitReactionType = Spec.HitReactionType;
-	HitData.HitLocation = Character->GetActorLocation();
-	HitData.HitDirection = -Character->GetActorForwardVector();
+	const bool bHandled = HitResolver->ResolveAttackHit(Request, HitData);
 
-	const bool bHandled = Character->OnHitResolved(HitData);
-
-	UMVStatComponent* StatComponent = Character->FindComponentByClass<UMVStatComponent>();
+	UMVStatComponent* StatComponent = Target->FindComponentByClass<UMVStatComponent>();
 	if (StatComponent)
 	{
 		SetStatusText(FString::Printf(
-			TEXT("%s | %s | HP %.0f/%.0f"),
+			TEXT("%s | %s | Damage %.0f | HP %.0f/%.0f"),
 			Spec.Label,
 			bHandled ? TEXT("Damaged") : TEXT("Ignored"),
+			HitData.FinalDamage,
 			StatComponent->CurrentHP,
 			StatComponent->MaxHP));
 		return;
@@ -246,6 +269,16 @@ AMVCharacterBase* UMVPIEActionTestWidget::ResolveTargetCharacter() const
 	}
 
 	const APlayerController* PlayerController = GetOwningPlayer();
+	return PlayerController
+		? Cast<AMVCharacterBase>(PlayerController->GetPawn())
+		: nullptr;
+}
+
+AMVCharacterBase* UMVPIEActionTestWidget::ResolveAttackerCharacter() const
+{
+	const APlayerController* PlayerController = GetOwningPlayer()
+		? GetOwningPlayer()
+		: (GetWorld() ? GetWorld()->GetFirstPlayerController() : nullptr);
 	return PlayerController
 		? Cast<AMVCharacterBase>(PlayerController->GetPawn())
 		: nullptr;
