@@ -30,6 +30,9 @@ public:
 	void SetHUDWidget(UUserWidget* InHUDWidget);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Layer")
+	void HideHUDWidgetWithFade();
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Layer")
 	void AddWidgetLayerWidget(UUserWidget* InWidget);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Layer")

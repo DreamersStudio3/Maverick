@@ -4,6 +4,7 @@
 #include "Character/MVCharacterBase.h"
 
 #include "Components/MVActionComponent.h"
+#include "Components/MVDeathComponent.h"
 #include "Components/MVDodgeComponent.h"
 #include "Components/MVHitReactionComponent.h"
 #include "Components/MVInputManagerComponent.h"
@@ -88,6 +89,7 @@ AMVCharacterBase::AMVCharacterBase()
 	StatComponent = CreateDefaultSubobject<UMVStatComponent>(TEXT("StatComponent"));
 	ActionComponent = CreateDefaultSubobject<UMVActionComponent>(TEXT("ActionComponent"));
 	DodgeComponent = CreateDefaultSubobject<UMVDodgeComponent>(TEXT("DodgeComponent"));
+	DeathComponent = CreateDefaultSubobject<UMVDeathComponent>(TEXT("DeathComponent"));
 	HitReactionComponent = CreateDefaultSubobject<UMVHitReactionComponent>(TEXT("HitReactionComponent"));
 	InputManagerComponent = CreateDefaultSubobject<UMVInputManagerComponent>(TEXT("InputManagerComponent"));
 	CharacterIndexCode = MVGameplayTags::Character_Player_P1;
@@ -149,6 +151,11 @@ void AMVCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 void AMVCharacterBase::AddMovementInput(const FVector WorldDirection, const float ScaleValue, const bool bForce)
 {
+	if (!bForce && StatComponent && StatComponent->IsDead())
+	{
+		return;
+	}
+
 	CacheControllerSpaceMovementInput(WorldDirection, ScaleValue);
 	OnMovementInputReceived.Broadcast(WorldDirection * ScaleValue);
 	Super::AddMovementInput(WorldDirection, ScaleValue, bForce);
@@ -316,17 +323,12 @@ void AMVCharacterBase::BindDamageHandlers()
 		OnDamaged.RemoveDynamic(StatComponent, &UMVStatComponent::HandleDamaged);
 		OnDamaged.AddUniqueDynamic(StatComponent, &UMVStatComponent::HandleDamaged);
 	}
-
-	if (HitReactionComponent)
-	{
-		OnDamaged.RemoveDynamic(HitReactionComponent, &UMVHitReactionComponent::HandleDamaged);
-		OnDamaged.AddUniqueDynamic(HitReactionComponent, &UMVHitReactionComponent::HandleDamaged);
-	}
 }
 
 void AMVCharacterBase::UpdateCharacterValue()
 {
-	const bool bMovementInputBlocked = IsMovementInputBlocked();
+	const bool bDead = StatComponent && StatComponent->IsDead();
+	const bool bMovementInputBlocked = IsMovementInputBlocked() || bDead;
 
 	// IsFalling
 	bIsFalling = GetCharacterMovement()->IsFalling();
@@ -437,7 +439,7 @@ void AMVCharacterBase::UpdateMovement(float DeltaTime)
 	GetCharacterMovement()->MaxWalkSpeed = CalculateCharacterMovementSpeed(WalkSpeed, RunSpeed, SprintSpeed);
 
 	// Acceleration
-	const bool bMovementInputBlocked = IsMovementInputBlocked();
+	const bool bMovementInputBlocked = IsMovementInputBlocked() || (StatComponent && StatComponent->IsDead());
 	GetCharacterMovement()->MaxAcceleration = bMovementInputBlocked ? 0.0f : 1000.0f;
 
 	// Braking Deceleration
@@ -458,6 +460,11 @@ void AMVCharacterBase::UpdateMovement(float DeltaTime)
 void AMVCharacterBase::UpdateRecoverableStats(float DeltaTime)
 {
 	if (!StatComponent || DeltaTime <= 0.0f)
+	{
+		return;
+	}
+
+	if (StatComponent->IsDead())
 	{
 		return;
 	}

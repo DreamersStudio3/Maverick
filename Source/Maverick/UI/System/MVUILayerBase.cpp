@@ -88,6 +88,28 @@ void UMVUILayerBase::SetHUDWidget(UUserWidget* InHUDWidget)
 	}
 }
 
+void UMVUILayerBase::HideHUDWidgetWithFade()
+{
+	if (!ActiveHUDWidget)
+	{
+		return;
+	}
+
+	UUserWidget* HUDWidget = ActiveHUDWidget;
+	ActiveHUDWidget = nullptr;
+
+	if (UMVWidgetBase* MVWidget = Cast<UMVWidgetBase>(HUDWidget))
+	{
+		MVWidget->RemoveFromParentWithFade();
+		return;
+	}
+
+	if (HUDLayer)
+	{
+		HUDLayer->ClearChildren();
+	}
+}
+
 void UMVUILayerBase::AddWidgetLayerWidget(UUserWidget* InWidget)
 {
 	if (!WidgetLayer || !InWidget)

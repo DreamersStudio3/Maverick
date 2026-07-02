@@ -13,6 +13,7 @@ class AMVCharacterBase;
 class UMVDialogueWindow;
 class UMVHUDWidgetBase;
 class UMVInteractionPromptPopup;
+class UMVLoadingWindow;
 class UMVMessagePopup;
 class UMVPIEActionTestWidget;
 class UMVPopupBase;
@@ -51,6 +52,9 @@ public:
 	UMVHUDWidgetBase* ShowDefaultHUD();
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
+	void HideHUD();
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
 	UCommonActivatableWidget* ShowLoadingWindow();
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
@@ -79,6 +83,15 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Maverick|UI|Debug")
 	bool IsPIEActionTestPanelActiveOrPending() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Debug")
+	UMVLoadingWindow* ShowLoadingWindowForTest(bool bUseNativeWindow = false);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Debug")
+	void HideLoadingWindowForTest();
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Debug")
+	bool AdvanceLoadingGuideCardForTest();
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
 	void HideDialogueWindow();
@@ -114,17 +127,16 @@ public:
 	UMVMessagePopup* ShowPopupMessageById(FName MessageId);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
-	void ClearAllUI();
+	void ClearAllUI(bool bUseFadeOut = false);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
+	void ResetToDefaultUI();
 
 	UFUNCTION(BlueprintPure, Category = "Maverick|UI")
 	UMVHUDWidgetBase* GetMainHUD() const { return CachedHUD; }
 
 private:
 	void HandleWorldInit(UWorld* World, const UWorld::InitializationValues IVS);
-	void BindToPlayerDeath(UWorld* World);
-
-	UFUNCTION()
-	void HandlePlayerDeath();
 
 	UFUNCTION()
 	void HandlePopupClosed(UMVPopupBase* ClosedPopup);
@@ -141,6 +153,8 @@ private:
 	float ResolveDialogueCameraZoomDuration(float DurationOverride, bool bRestoring) const;
 	void UpdateDialogueCameraZoom();
 	void FinishDialogueCameraZoom();
+	void ClearAllUIInternal(bool bUseFadeOut);
+	void ResetUITrackingState();
 	bool IsPopupActive(const UMVPopupBase* Popup) const;
 	bool IsDialogueWindowActive(const UMVDialogueWindow* DialogueWindow) const;
 	bool IsDialogueWindowPresent(const UMVDialogueWindow* DialogueWindow) const;
@@ -172,6 +186,9 @@ private:
 
 	UPROPERTY(Transient)
 	TObjectPtr<UMVPIEActionTestWidget> ActivePIEActionTestWidget;
+
+	UPROPERTY(Transient)
+	TObjectPtr<UMVLoadingWindow> ActiveLoadingWindowForTest;
 
 	TWeakObjectPtr<AMVCharacterBase> PendingPIEActionTestTargetCharacter;
 	bool bHasPendingPIEActionTestPanel = false;

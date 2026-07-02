@@ -115,3 +115,12 @@ enum class EMVActionHitReactionType : uint8
 	KnockDown,
 	Airborne
 };
+
+namespace MVActionHitReactions
+{
+	FORCEINLINE bool IsKnockDownOrAirborne(const EMVActionHitReactionType HitReactionType)
+	{
+		return HitReactionType == EMVActionHitReactionType::KnockDown
+			|| HitReactionType == EMVActionHitReactionType::Airborne;
+	}
+}

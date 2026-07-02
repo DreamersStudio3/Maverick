@@ -67,12 +67,17 @@ void UMVHitReactionComponent::HandleDamaged(const FMVResolvedHitData& HitData)
 		return;
 	}
 
-	if (!OwnerCharacter || !CachedActionComponent)
+	if (!OwnerCharacter || !CachedActionComponent || !CachedStatComponent)
 	{
 		CacheOwnerReferences();
 	}
 
 	if (!OwnerCharacter || !CachedActionComponent)
+	{
+		return;
+	}
+
+	if (CachedStatComponent && CachedStatComponent->IsDead())
 	{
 		return;
 	}
@@ -83,6 +88,13 @@ void UMVHitReactionComponent::HandleDamaged(const FMVResolvedHitData& HitData)
 	}
 
 	if (OwnerCharacter->IsInvincible())
+	{
+		return;
+	}
+
+	const bool bLethalHit = CachedStatComponent && CachedStatComponent->WouldDieFromHit(HitData);
+
+	if (bLethalHit && !MVActionHitReactions::IsKnockDownOrAirborne(HitData.HitReactionType))
 	{
 		return;
 	}
@@ -187,6 +199,9 @@ void UMVHitReactionComponent::CacheOwnerReferences()
 		: nullptr;
 	CachedInputManager = GetOwner()
 		? GetOwner()->FindComponentByClass<UMVInputManagerComponent>()
+		: nullptr;
+	CachedStatComponent = GetOwner()
+		? GetOwner()->FindComponentByClass<UMVStatComponent>()
 		: nullptr;
 }
 
@@ -408,6 +423,11 @@ bool UMVHitReactionComponent::TryConsumeRecoveryInput(
 		return false;
 	}
 
+	if (CachedStatComponent && CachedStatComponent->IsDead())
+	{
+		return false;
+	}
+
 	if (bActiveHitReactionActionIsRecoveryAction)
 	{
 		return false;
@@ -454,6 +474,11 @@ bool UMVHitReactionComponent::TryConsumeRecoveryMovementInput(
 		return false;
 	}
 
+	if (CachedStatComponent && CachedStatComponent->IsDead())
+	{
+		return false;
+	}
+
 	const EMVActionInputDirection Direction = CachedInputManager->ResolveActionInputDirection(ControllerSpaceInput);
 	if (Direction == EMVActionInputDirection::None)
 	{
@@ -489,6 +514,12 @@ bool UMVHitReactionComponent::TryStartDefaultRecoveryAction(const bool bRequireR
 		return false;
 	}
 
+	if (CachedStatComponent && CachedStatComponent->IsDead())
+	{
+
+		return false;
+	}
+
 	if (CachedActionComponent->GetActiveActionRowName() != ActiveHitReactionActionRowName)
 	{
 		return false;
@@ -519,6 +550,11 @@ bool UMVHitReactionComponent::TryStartDefaultRecoveryAction(const bool bRequireR
 
 bool UMVHitReactionComponent::TryStartEscapeDodgeRecoveryAction(const EMVActionInputDirection Direction)
 {
+	if (CachedStatComponent && CachedStatComponent->IsDead())
+	{
+		return false;
+	}
+
 	EMVActionInputDirection EscapeDirection = Direction;
 	if (EscapeDirection == EMVActionInputDirection::None)
 	{
@@ -713,7 +749,21 @@ void UMVHitReactionComponent::EndAirborneLandDetector()
 
 bool UMVHitReactionComponent::RequestDefaultRecoveryAction()
 {
-	return TryStartDefaultRecoveryAction(false);
+	if (!CachedStatComponent)
+	{
+		CacheOwnerReferences();
+	}
+
+	const bool bDead = CachedStatComponent && CachedStatComponent->IsDead();
+
+	if (bDead)
+	{
+		return false;
+	}
+
+	const bool bStarted = TryStartDefaultRecoveryAction(false);
+
+	return bStarted;
 }
 
 bool UMVHitReactionComponent::IsAirborneLandDetectorActive() const
@@ -887,10 +937,6 @@ bool UMVHitReactionComponent::EvaluateHitReactionChooserActionRowHandle(FMVHitRe
 
 	FChooserEvaluationContext Context;
 	Context.AddObjectParam(this);
-	if (UObject* OwnerObject = GetOwner())
-	{
-		Context.AddObjectParam(OwnerObject);
-	}
 	Context.AddStructParam(ChooserHitReactionActionRowHandle);
 
 	TSoftObjectPtr<UObject> SelectedObject;
@@ -1261,7 +1307,7 @@ void UMVHitReactionComponent::HandleRecoveryEscapeWindowChanged(const bool bOpen
 		return;
 	}
 
-	// 기본 Getup 전환은 MV HitReaction Default Recovery Notify가 담당한다.
+	// 기본 Getup 전환은 MV HitReaction Start Getup Notify가 담당한다.
 }
 
 void UMVHitReactionComponent::HandleOwnerMovementModeChanged(
