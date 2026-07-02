@@ -10,3 +10,10 @@ UMVWindowBase::UMVWindowBase(const FObjectInitializer& ObjectInitializer)
 	bIgnoreMoveInput = true;
 	bIgnoreLookInput = true;
 }
+
+void UMVWindowBase::NativeOnDeactivated()
+{
+	Super::NativeOnDeactivated();
+
+	OnWindowDeactivated.Broadcast(this);
+}

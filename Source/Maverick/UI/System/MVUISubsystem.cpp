@@ -23,6 +23,7 @@
 #include "UI/System/MVUISettings.h"
 #include "UI/Window/MVDeathOverlayWindow.h"
 #include "UI/Window/MVDialogueWindow.h"
+#include "UI/Window/MVInteractionMenuWindow.h"
 #include "UI/Window/MVLoadingWindow.h"
 
 namespace
@@ -85,6 +86,11 @@ static FAutoConsoleCommandWithWorldAndArgs MVUISubsystemAdvanceLoadingTestCardCo
 	TEXT("MV.UI.LoadingTest.Advance"),
 	TEXT("Advance the guide card in the active loading window test."),
 	FConsoleCommandWithWorldAndArgsDelegate::CreateStatic(&MVUISubsystemAdvanceLoadingTestCardCommand));
+
+static TAutoConsoleVariable<int32> MVUISubsystemPIEActionTestEnabledCVar(
+	TEXT("MV.UI.PIEActionTest.Enabled"),
+	0,
+	TEXT("Enables the legacy PIE hit reaction side panel. Disabled by default so gameplay interactables cannot open it."));
 #endif
 }
 
@@ -165,9 +171,12 @@ void UMVUISubsystem::PopLayer()
 
 	CachedHUD = nullptr;
 	ActiveInteractionPrompt = nullptr;
+	ActiveInteractionMenuWindow = nullptr;
 	ActiveDialogueWindow = nullptr;
 	ActivePopup = nullptr;
 	ActiveLoadingWindowForTest = nullptr;
+	ActiveInteractionMenuSource.Reset();
+	InteractionSessionSources.Reset();
 	bHasPendingDialogueRequest = false;
 	PendingDialogueText = FText::GetEmpty();
 	PendingDialogueDuration = -1.0f;
@@ -284,7 +293,10 @@ UCommonActivatableWidget* UMVUISubsystem::ShowDeathOverlay()
 
 UMVInteractionPromptPopup* UMVUISubsystem::ShowInteractionPrompt(const FMVInteractionPromptData& PromptData)
 {
-	if (IsDialogueWindowBlockingInteraction() || IsPIEActionTestPanelActiveOrPending())
+	if (IsDialogueWindowBlockingInteraction()
+		|| IsPIEActionTestPanelActiveOrPending()
+		|| IsInteractionMenuActive()
+		|| IsInteractionSessionActive())
 	{
 		HideInteractionPrompt();
 		return nullptr;
@@ -331,6 +343,98 @@ void UMVUISubsystem::HideInteractionPrompt()
 	}
 }
 
+UMVInteractionMenuWindow* UMVUISubsystem::ShowInteractionMenu(const FMVInteractionMenuData& MenuData, UObject* SourceObject)
+{
+	HideInteractionPrompt();
+
+	if (ActiveInteractionMenuWindow && ActiveInteractionMenuWindow->IsActivated())
+	{
+		ActiveInteractionMenuWindow->SetMenuData(MenuData, SourceObject);
+		ActiveInteractionMenuSource = SourceObject ? SourceObject : ActiveInteractionMenuWindow;
+		BeginInteractionSession(ActiveInteractionMenuSource.Get());
+		return ActiveInteractionMenuWindow;
+	}
+
+	ActiveInteractionMenuWindow = Cast<UMVInteractionMenuWindow>(PushWindowByClass(UMVInteractionMenuWindow::StaticClass()));
+	if (!ActiveInteractionMenuWindow)
+	{
+		return nullptr;
+	}
+
+	ActiveInteractionMenuSource = SourceObject ? SourceObject : ActiveInteractionMenuWindow;
+	BeginInteractionSession(ActiveInteractionMenuSource.Get());
+	ActiveInteractionMenuWindow->OnInteractionMenuClosed.AddUniqueDynamic(this, &UMVUISubsystem::HandleInteractionMenuClosed);
+	ActiveInteractionMenuWindow->SetMenuData(MenuData, SourceObject);
+	return ActiveInteractionMenuWindow;
+}
+
+void UMVUISubsystem::HideInteractionMenu()
+{
+	if (ActiveInteractionMenuWindow && ActiveInteractionMenuWindow->IsActivated())
+	{
+		ActiveInteractionMenuWindow->DeactivateWidgetWithFade();
+	}
+}
+
+bool UMVUISubsystem::IsInteractionMenuActive() const
+{
+	return ActiveInteractionMenuWindow && ActiveInteractionMenuWindow->IsActivated();
+}
+
+void UMVUISubsystem::BeginInteractionSession(UObject* SourceObject)
+{
+	UObject* SessionSource = SourceObject ? SourceObject : this;
+	if (!SessionSource)
+	{
+		return;
+	}
+
+	for (int32 Index = InteractionSessionSources.Num() - 1; Index >= 0; --Index)
+	{
+		UObject* ExistingSource = InteractionSessionSources[Index].Get();
+		if (!ExistingSource)
+		{
+			InteractionSessionSources.RemoveAt(Index);
+			continue;
+		}
+
+		if (ExistingSource == SessionSource)
+		{
+			HideInteractionPrompt();
+			return;
+		}
+	}
+
+	InteractionSessionSources.Add(SessionSource);
+	HideInteractionPrompt();
+}
+
+void UMVUISubsystem::EndInteractionSession(UObject* SourceObject)
+{
+	UObject* SessionSource = SourceObject ? SourceObject : this;
+	for (int32 Index = InteractionSessionSources.Num() - 1; Index >= 0; --Index)
+	{
+		UObject* ExistingSource = InteractionSessionSources[Index].Get();
+		if (!ExistingSource || ExistingSource == SessionSource)
+		{
+			InteractionSessionSources.RemoveAt(Index);
+		}
+	}
+}
+
+bool UMVUISubsystem::IsInteractionSessionActive() const
+{
+	for (const TWeakObjectPtr<UObject>& SessionSource : InteractionSessionSources)
+	{
+		if (SessionSource.IsValid())
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 UMVDialogueWindow* UMVUISubsystem::ShowDialogueWindowText(FText DialogueText, float Duration)
 {
 	return ShowDialogueWindowTextWithTiming(DialogueText, Duration);
@@ -362,6 +466,11 @@ UMVDialogueWindow* UMVUISubsystem::ShowDialogueWindowTextWithTiming(FText Dialog
 UMVPIEActionTestWidget* UMVUISubsystem::ShowPIEActionTestPanel(AMVCharacterBase* TargetCharacter)
 {
 #if !UE_BUILD_SHIPPING
+	if (MVUISubsystemPIEActionTestEnabledCVar.GetValueOnGameThread() == 0)
+	{
+		return nullptr;
+	}
+
 	UWorld* World = GetWorld();
 	if (!World || World->WorldType != EWorldType::PIE)
 	{
@@ -597,6 +706,8 @@ bool UMVUISubsystem::CanUseInteractionPrompt() const
 {
 	return !IsDialogueWindowBlockingInteraction()
 		&& !IsPIEActionTestPanelActiveOrPending()
+		&& !IsInteractionMenuActive()
+		&& !IsInteractionSessionActive()
 		&& IsPopupActive(ActiveInteractionPrompt)
 		&& ActivePopup == ActiveInteractionPrompt
 		&& !ActiveInteractionPrompt->IsClosing()
@@ -731,9 +842,12 @@ void UMVUISubsystem::ResetUITrackingState()
 {
 	CachedHUD = nullptr;
 	ActiveInteractionPrompt = nullptr;
+	ActiveInteractionMenuWindow = nullptr;
 	ActiveDialogueWindow = nullptr;
 	ActivePopup = nullptr;
 	ActiveLoadingWindowForTest = nullptr;
+	ActiveInteractionMenuSource.Reset();
+	InteractionSessionSources.Reset();
 	if (ActivePIEActionTestWidget || bHasPendingPIEActionTestPanel)
 	{
 		HidePIEActionTestPanel();
@@ -857,6 +971,24 @@ void UMVUISubsystem::HandlePopupClosed(UMVPopupBase* ClosedPopup)
 	}
 
 	TryOpenPendingDialogueWindow();
+}
+
+void UMVUISubsystem::HandleInteractionMenuClosed(UMVInteractionMenuWindow* ClosedMenuWindow)
+{
+	if (!ClosedMenuWindow)
+	{
+		return;
+	}
+
+	ClosedMenuWindow->OnInteractionMenuClosed.RemoveDynamic(this, &UMVUISubsystem::HandleInteractionMenuClosed);
+
+	if (ClosedMenuWindow == ActiveInteractionMenuWindow)
+	{
+		UObject* SessionSource = ActiveInteractionMenuSource.Get();
+		EndInteractionSession(SessionSource ? SessionSource : ClosedMenuWindow);
+		ActiveInteractionMenuWindow = nullptr;
+		ActiveInteractionMenuSource.Reset();
+	}
 }
 
 void UMVUISubsystem::HandleDialogueWindowClosed(UMVDialogueWindow* ClosedDialogueWindow)

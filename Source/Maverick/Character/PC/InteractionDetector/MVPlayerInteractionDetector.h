@@ -19,12 +19,12 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
  * PlayerCharacter 전용 상호작용 감지 서브모듈.
  *
  * 로컬 플레이어가 바라보는 범위 안의 interactable 후보를 모아 선택 상태와 UI 프롬프트를 갱신한다.
- * 플레이어 입력으로 상호작용을 실행하고, 대화/PIE 테스트 패널이 열린 동안 같은 대상의 재감지와 해제를 관리한다.
+ * 플레이어 입력으로 상호작용을 실행하고, 대화/상호작용 세션이 열린 동안 같은 대상의 재감지와 해제를 관리한다.
  *
  * 책임:
  *   - PlayerCharacter의 위치/시야 기준으로 interactable 후보를 주기적으로 감지하고 우선순위 점수로 정렬한다.
  *   - 선택된 interactable 변경 이벤트와 InteractionPrompt 표시/숨김을 관리한다.
- *   - 대화창 스킵, 대화 이탈 거리, PIE 액션 테스트 패널을 플레이어 상호작용 흐름 안에서 처리한다.
+ *   - 대화창 스킵, 대화/메뉴 이탈 거리, 공통 상호작용 세션 억제 상태를 플레이어 상호작용 흐름 안에서 처리한다.
  *
  * 라이프사이클:
  *   1) PlayerCharacter BeginPlay -> Initialize로 owner를 저장하고 감지 타이머를 초기화한다.
@@ -138,15 +138,13 @@ private:
 	bool IsInteractableWithinDialogueEscapeRange(UObject* InteractableObject) const;
 	bool IsDialogueWindowActive() const;
 	bool IsDialogueInteractionBlocked() const;
+	bool IsInteractionSessionActive() const;
 	bool IsOwnerDead() const;
-	bool IsPIEActionTestPanelActiveOrPending() const;
-	bool IsPIEActionTestInteractable(UObject* InteractableObject) const;
 	bool SkipActiveDialogueWindow() const;
 	void HideInteractionPrompt() const;
 	void HideActiveDialogueWindow() const;
-	void HidePIEActionTestPanel() const;
+	void HideInteractionMenu() const;
 	void RestoreDialogueCameraZoom() const;
-	void TryShowPIEActionTestPanelForInteractable(UObject* InteractableObject);
 	void ReleaseSuppressedInteractable(bool bHideDialogue);
 	void UpdateDialogueEscapeState();
 	void LockInteractionUntilInputReleased();
