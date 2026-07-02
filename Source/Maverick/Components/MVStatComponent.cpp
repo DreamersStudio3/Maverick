@@ -293,6 +293,10 @@ void UMVStatComponent::SetStaminaRecoveryDelay(float InStaminaRecoveryDelay)
 
 bool UMVStatComponent::HasStamina(float RequiredAmount) const
 {
+	if(RequiredAmount <= 0.0f)
+	{
+		return true;
+	}
 	return CurrentStamina >= MVStatNonNegative(RequiredAmount);
 }
 
@@ -352,6 +356,10 @@ void UMVStatComponent::SetMPRecoveryPerSecond(float InMPRecoveryPerSecond)
 
 bool UMVStatComponent::HasMP(float RequiredAmount) const
 {
+	if(RequiredAmount <= 0.0f)
+	{
+		return true;
+	}
 	return CurrentMP >= MVStatNonNegative(RequiredAmount);
 }
 

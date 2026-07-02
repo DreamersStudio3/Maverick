@@ -36,23 +36,6 @@ void UMVAbilityBase::InitAbility(FMVSkillDataTableColumn Data)
 	AbilityData = Data;
 }
 
-bool UMVAbilityBase::CheckCooldown()
-{
-	float CurrentCheckTime = GetWorld()->GetTimeSeconds();
-
-	if (LastUsedTime == 0 || CurrentCheckTime - LastUsedTime > AbilityData.CooldownDuration)
-	{
-		return true;
-	}
-
-	return false;
-}
-
-void UMVAbilityBase::UpdateLastUsedTime()
-{
-	LastUsedTime = GetWorld()->GetTimeSeconds();
-}
-
 void UMVAbilityBase::StartAbility_Implementation()
 {
 	

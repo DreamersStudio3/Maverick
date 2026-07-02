@@ -31,14 +31,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void InitAbility(FMVSkillDataTableColumn Data);
 	
-	UFUNCTION(BlueprintCallable)
-	bool CheckCooldown();
-
-	UFUNCTION(BlueprintCallable)
-	void UpdateLastUsedTime();
-
-
-
 	virtual void StartAbility_Implementation() override;
 	virtual void EndAbility_Implementation() override;
 
@@ -48,9 +40,6 @@ public:
 	
 	UPROPERTY(BlueprintReadOnly)
 	FMVSkillDataTableColumn AbilityData;
-
-	UPROPERTY(BlueprintReadOnly)
-	float LastUsedTime = 0.0f;
 
 private:
 
