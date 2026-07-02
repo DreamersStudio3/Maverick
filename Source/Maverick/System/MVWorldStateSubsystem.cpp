@@ -91,6 +91,7 @@ bool UMVWorldStateSubsystem::LoadFromSlot(const FString& SlotName, const int32 U
 	{
 		CurrentSaveData.SaveVersion = MVWorldStateCurrentSaveVersion;
 	}
+	NormalizeCheckpointSaveData();
 
 	ActiveSaveSlotName = ResolvedSlotName;
 	ActiveUserIndex = UserIndex;
@@ -142,6 +143,7 @@ void UMVWorldStateSubsystem::ApplySaveData(const FMVWorldSaveData& InSaveData)
 	{
 		CurrentSaveData.SaveVersion = MVWorldStateCurrentSaveVersion;
 	}
+	NormalizeCheckpointSaveData();
 
 	MarkSaveDataDirty();
 }
@@ -157,11 +159,13 @@ bool UMVWorldStateSubsystem::SetLastCheckpoint(
 		return false;
 	}
 
+	const FName ResolvedMapName = MapName.IsNone() ? ResolveCurrentMapName() : MapName;
 	CurrentSaveData.LastCheckpoint.bHasCheckpoint = true;
 	CurrentSaveData.LastCheckpoint.CheckpointId = CheckpointId;
 	CurrentSaveData.LastCheckpoint.FieldId = FieldId;
-	CurrentSaveData.LastCheckpoint.MapName = MapName.IsNone() ? ResolveCurrentMapName() : MapName;
+	CurrentSaveData.LastCheckpoint.MapName = ResolvedMapName;
 	CurrentSaveData.LastCheckpoint.Transform = Transform;
+	UpsertActivatedCheckpointRecord(CheckpointId, FieldId, Transform, ResolvedMapName);
 	MarkSaveDataDirty();
 	return true;
 }
@@ -170,6 +174,52 @@ bool UMVWorldStateSubsystem::TryGetLastCheckpoint(FMVCheckpointSaveData& OutChec
 {
 	OutCheckpoint = CurrentSaveData.LastCheckpoint;
 	return CurrentSaveData.LastCheckpoint.bHasCheckpoint;
+}
+
+bool UMVWorldStateSubsystem::AddOrUpdateActivatedCheckpoint(
+	const FName CheckpointId,
+	const FName FieldId,
+	const FTransform& Transform,
+	const FName MapName)
+{
+	if (!UpsertActivatedCheckpointRecord(
+		CheckpointId,
+		FieldId,
+		Transform,
+		MapName.IsNone() ? ResolveCurrentMapName() : MapName))
+	{
+		return false;
+	}
+
+	MarkSaveDataDirty();
+	return true;
+}
+
+bool UMVWorldStateSubsystem::TryGetActivatedCheckpoint(
+	const FName CheckpointId,
+	FMVCheckpointSaveData& OutCheckpoint) const
+{
+	const FMVCheckpointSaveData* Record = FindActivatedCheckpointRecord(CheckpointId);
+	if (!Record || !Record->bHasCheckpoint)
+	{
+		OutCheckpoint = FMVCheckpointSaveData();
+		return false;
+	}
+
+	OutCheckpoint = *Record;
+	return true;
+}
+
+void UMVWorldStateSubsystem::GetActivatedCheckpoints(TArray<FMVCheckpointSaveData>& OutCheckpoints) const
+{
+	OutCheckpoints.Reset();
+	for (const FMVCheckpointSaveData& Record : CurrentSaveData.ActivatedCheckpoints)
+	{
+		if (Record.bHasCheckpoint && !Record.CheckpointId.IsNone())
+		{
+			OutCheckpoints.Add(Record);
+		}
+	}
 }
 
 bool UMVWorldStateSubsystem::SetFieldObjectState(
@@ -352,6 +402,61 @@ FName UMVWorldStateSubsystem::ResolveCurrentMapName() const
 	}
 
 	return FName(*UGameplayStatics::GetCurrentLevelName(World, true));
+}
+
+void UMVWorldStateSubsystem::NormalizeCheckpointSaveData()
+{
+	const FMVCheckpointSaveData& LastCheckpoint = CurrentSaveData.LastCheckpoint;
+	if (LastCheckpoint.bHasCheckpoint && !LastCheckpoint.CheckpointId.IsNone())
+	{
+		UpsertActivatedCheckpointRecord(
+			LastCheckpoint.CheckpointId,
+			LastCheckpoint.FieldId,
+			LastCheckpoint.Transform,
+			LastCheckpoint.MapName);
+	}
+}
+
+bool UMVWorldStateSubsystem::UpsertActivatedCheckpointRecord(
+	const FName CheckpointId,
+	const FName FieldId,
+	const FTransform& Transform,
+	const FName MapName)
+{
+	if (CheckpointId.IsNone())
+	{
+		return false;
+	}
+
+	FMVCheckpointSaveData* Record = FindActivatedCheckpointRecord(CheckpointId);
+	if (!Record)
+	{
+		FMVCheckpointSaveData NewRecord;
+		Record = &CurrentSaveData.ActivatedCheckpoints.Add_GetRef(NewRecord);
+	}
+
+	Record->bHasCheckpoint = true;
+	Record->CheckpointId = CheckpointId;
+	Record->FieldId = FieldId;
+	Record->MapName = MapName;
+	Record->Transform = Transform;
+	return true;
+}
+
+FMVCheckpointSaveData* UMVWorldStateSubsystem::FindActivatedCheckpointRecord(const FName CheckpointId)
+{
+	return CurrentSaveData.ActivatedCheckpoints.FindByPredicate([CheckpointId](const FMVCheckpointSaveData& Record)
+	{
+		return Record.CheckpointId == CheckpointId;
+	});
+}
+
+const FMVCheckpointSaveData* UMVWorldStateSubsystem::FindActivatedCheckpointRecord(const FName CheckpointId) const
+{
+	return CurrentSaveData.ActivatedCheckpoints.FindByPredicate([CheckpointId](const FMVCheckpointSaveData& Record)
+	{
+		return Record.CheckpointId == CheckpointId;
+	});
 }
 
 FMVFieldObjectSaveData* UMVWorldStateSubsystem::FindFieldObjectRecord(const FName FieldId, const FName ObjectId)

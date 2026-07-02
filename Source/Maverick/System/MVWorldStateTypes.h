@@ -7,8 +7,8 @@
  * WorldState 저장 데이터의 공통 레코드 타입.
  *
  * `UMVWorldStateSubsystem`과 `UMVWorldSaveGame`이 공유하는 순수 데이터 구조만 둔다.
- * 런타임 정책은 subsystem이 담당하고, 이 파일은 마지막 체크포인트, 1회성 필드 오브젝트,
- * 월드 플래그, 퀘스트 진행처럼 세이브 슬롯에 직렬화되어야 하는 값만 표현한다.
+ * 런타임 정책은 subsystem이 담당하고, 이 파일은 체크포인트, 1회성 필드 오브젝트, 월드 플래그,
+ * 퀘스트 진행처럼 세이브 슬롯에 직렬화되어야 하는 값만 표현한다.
  */
 USTRUCT(BlueprintType)
 struct MAVERICK_API FMVCheckpointSaveData
@@ -97,6 +97,9 @@ struct MAVERICK_API FMVWorldSaveData
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Save")
 	FMVCheckpointSaveData LastCheckpoint;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Save")
+	TArray<FMVCheckpointSaveData> ActivatedCheckpoints;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Save")
 	TArray<FMVFieldObjectSaveData> FieldObjects;

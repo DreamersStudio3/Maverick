@@ -11,7 +11,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnWorldStateSlotEvent, FString, S
 /**
  * 저장되어야 하는 전체 게임 상태를 소유하는 GameInstance 서브시스템.
  *
- * 마지막 체크포인트, 1회성 필드 오브젝트 소비 상태, 영구 월드 플래그, 퀘스트 진행 상태를
+ * 마지막/활성 체크포인트, 1회성 필드 오브젝트 소비 상태, 영구 월드 플래그, 퀘스트 진행 상태를
  * `FMVWorldSaveData`로 모아 `UMVWorldSaveGame` 슬롯에 저장/로드한다. 퀘스트나 부활 흐름 같은
  * 도메인 시스템은 SaveGame을 직접 수정하지 않고 이 서브시스템에 변경을 요청한다.
  *
@@ -75,6 +75,15 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Maverick|WorldState|Checkpoint")
 	bool HasLastCheckpoint() const { return CurrentSaveData.LastCheckpoint.bHasCheckpoint; }
 
+	UFUNCTION(BlueprintCallable, Category = "Maverick|WorldState|Checkpoint")
+	bool AddOrUpdateActivatedCheckpoint(FName CheckpointId, FName FieldId, const FTransform& Transform, FName MapName);
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|WorldState|Checkpoint")
+	bool TryGetActivatedCheckpoint(FName CheckpointId, FMVCheckpointSaveData& OutCheckpoint) const;
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|WorldState|Checkpoint")
+	void GetActivatedCheckpoints(TArray<FMVCheckpointSaveData>& OutCheckpoints) const;
+
 	UFUNCTION(BlueprintCallable, Category = "Maverick|WorldState|Field")
 	bool SetFieldObjectState(FName FieldId, FName ObjectId, bool bConsumed, FName StateId);
 
@@ -133,6 +142,10 @@ private:
 	void MarkSaveDataDirty();
 	FString ResolveSlotName(const FString& SlotName) const;
 	FName ResolveCurrentMapName() const;
+	void NormalizeCheckpointSaveData();
+	bool UpsertActivatedCheckpointRecord(FName CheckpointId, FName FieldId, const FTransform& Transform, FName MapName);
+	FMVCheckpointSaveData* FindActivatedCheckpointRecord(FName CheckpointId);
+	const FMVCheckpointSaveData* FindActivatedCheckpointRecord(FName CheckpointId) const;
 	FMVFieldObjectSaveData* FindFieldObjectRecord(FName FieldId, FName ObjectId);
 	const FMVFieldObjectSaveData* FindFieldObjectRecord(FName FieldId, FName ObjectId) const;
 	FMVWorldFlagSaveData* FindWorldFlagRecord(FName FlagId);
