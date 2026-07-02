@@ -8,6 +8,7 @@
 
 class UMVInteractableComponent;
 class UMVDialogueWindow;
+class UMVInteractionFlowDataAsset;
 class UMVInteractionMenuWindow;
 class UMVPopupBase;
 class UMVWindowBase;
@@ -42,9 +43,9 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(
  * 액터를 공통 상호작용 대상으로 노출하고 선택형 interaction flow를 실행하는 컴포넌트.
  *
  * detector는 이 컴포넌트의 prompt, priority, interact 가능 여부만 보고 후보를 고른다. 정의 기반 실행을
- * 켜면 `FMVInteractionDefinition`의 step 그래프를 따라 대화, 액션, 경고, 메뉴/선택지, window를 순차
- * 실행하고, 액션 step은 외부 애니메이션 notify나 도메인 로직이 `FinishInteractionAction`을 호출할 때
- * 다음 step으로 넘어간다. 정의 기반 실행을 끄면 기존처럼 `OnInteractionRequested`만 방송한다.
+ * 켜면 asset 또는 inline `FMVInteractionDefinition`의 step 그래프를 따라 대화, 액션, 경고, 메뉴/선택지,
+ * window를 순차 실행한다. 액션 step은 외부 애니메이션 notify나 도메인 로직이 `FinishInteractionAction`을
+ * 호출할 때 다음 step으로 넘어간다. 정의 기반 실행을 끄면 기존처럼 `OnInteractionRequested`만 방송한다.
  */
 UCLASS(ClassGroup = (Maverick), meta = (BlueprintSpawnableComponent))
 class MAVERICK_API UMVInteractableComponent : public UActorComponent, public IMVInteractableInterface
@@ -79,6 +80,12 @@ public:
 	void SetInteractionDefinition(const FMVInteractionDefinition& InInteractionDefinition);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Interaction")
+	void SetInteractionFlowAsset(UMVInteractionFlowDataAsset* InInteractionFlowAsset);
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|Interaction")
+	UMVInteractionFlowDataAsset* GetInteractionFlowAsset() const { return InteractionFlowAsset; }
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Interaction")
 	void FinishInteractionAction();
 
 	UFUNCTION(BlueprintPure, Category = "Maverick|Interaction")
@@ -95,6 +102,9 @@ public:
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Interaction|Definition")
 	bool bUseInteractionDefinition = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Interaction|Definition", meta = (EditCondition = "bUseInteractionDefinition"))
+	TObjectPtr<UMVInteractionFlowDataAsset> InteractionFlowAsset;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Interaction|Definition", meta = (EditCondition = "bUseInteractionDefinition"))
 	FMVInteractionDefinition InteractionDefinition;
@@ -114,6 +124,7 @@ private:
 	void EndConfiguredInteractionSession();
 	bool ExecuteConfiguredStep(FName StepId);
 	void CompleteConfiguredStep(FName NextStepId);
+	const FMVInteractionDefinition& ResolveInteractionDefinition() const;
 	FName ResolveStartStepId() const;
 	FName ResolveStepTransition(const FMVInteractionStepConfig& Step, FName TriggerName) const;
 	const FMVInteractionStepConfig* FindInteractionStep(FName StepId) const;

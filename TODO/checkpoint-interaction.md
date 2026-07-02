@@ -26,3 +26,5 @@
 - [x] `Entry + FollowUp` 고정 길이 모델을 step 기반 interaction flow로 확장
 - [x] 메뉴/선택지 항목별 `TriggerName -> NextStepId` 분기 연결
 - [x] 액션 step에 `StepId`/`ActionName` 기반 시작/완료 delegate 추가
+- [x] 재사용 가능한 `UMVInteractionFlowDataAsset` 추가
+- [x] InteractableComponent가 flow asset 또는 inline definition을 실행하도록 확장

@@ -1,6 +1,7 @@
 #include "Components/MVInteractableComponent.h"
 
 #include "Engine/GameInstance.h"
+#include "Interaction/MVInteractionFlowDataAsset.h"
 #include "UI/Base/MVPopupBase.h"
 #include "UI/Base/MVWindowBase.h"
 #include "UI/Popup/MVMessagePopup.h"
@@ -32,6 +33,11 @@ void UMVInteractableComponent::SetUseInteractionDefinition(const bool bInUseInte
 void UMVInteractableComponent::SetInteractionDefinition(const FMVInteractionDefinition& InInteractionDefinition)
 {
 	InteractionDefinition = InInteractionDefinition;
+}
+
+void UMVInteractableComponent::SetInteractionFlowAsset(UMVInteractionFlowDataAsset* InInteractionFlowAsset)
+{
+	InteractionFlowAsset = InInteractionFlowAsset;
 }
 
 void UMVInteractableComponent::FinishInteractionAction()
@@ -311,12 +317,18 @@ void UMVInteractableComponent::CompleteConfiguredStep(const FName NextStepId)
 
 FName UMVInteractableComponent::ResolveStartStepId() const
 {
-	if (!InteractionDefinition.StartStepId.IsNone())
+	const FMVInteractionDefinition& Definition = ResolveInteractionDefinition();
+	if (!Definition.StartStepId.IsNone())
 	{
-		return InteractionDefinition.StartStepId;
+		return Definition.StartStepId;
 	}
 
-	return InteractionDefinition.Steps.IsEmpty() ? NAME_None : InteractionDefinition.Steps[0].StepId;
+	return Definition.Steps.IsEmpty() ? NAME_None : Definition.Steps[0].StepId;
+}
+
+const FMVInteractionDefinition& UMVInteractableComponent::ResolveInteractionDefinition() const
+{
+	return InteractionFlowAsset ? InteractionFlowAsset->GetInteractionDefinition() : InteractionDefinition;
 }
 
 FName UMVInteractableComponent::ResolveStepTransition(
@@ -336,7 +348,8 @@ FName UMVInteractableComponent::ResolveStepTransition(
 
 const FMVInteractionStepConfig* UMVInteractableComponent::FindInteractionStep(const FName StepId) const
 {
-	return InteractionDefinition.Steps.FindByPredicate([StepId](const FMVInteractionStepConfig& Step)
+	const FMVInteractionDefinition& Definition = ResolveInteractionDefinition();
+	return Definition.Steps.FindByPredicate([StepId](const FMVInteractionStepConfig& Step)
 	{
 		return Step.StepId == StepId;
 	});
