@@ -36,10 +36,10 @@ UMVInteractionMenuWindow::UMVInteractionMenuWindow(const FObjectInitializer& Obj
 void UMVInteractionMenuWindow::SetMenuData(const FMVInteractionMenuData& InMenuData, UObject* InSourceObject)
 {
 	MenuData = InMenuData;
-	MenuData.NormalizeEntryParentMenuIds();
 	SourceObject = InSourceObject;
 	MenuStack.Reset();
-	CurrentMenuId = MenuData.RootMenuId;
+	CurrentMenuPage.Title = MenuData.Title;
+	CurrentMenuPage.Entries = MenuData.Entries;
 	RefreshMenu();
 }
 
@@ -212,52 +212,21 @@ bool UMVInteractionMenuWindow::NavigateBack()
 		return false;
 	}
 
-	CurrentMenuId = MenuStack.Pop();
+	CurrentMenuPage = MenuStack.Pop();
 	RefreshMenu();
 	return true;
 }
 
 TArray<FMVMenuEntryData> UMVInteractionMenuWindow::GetCurrentEntries() const
 {
-	TArray<FMVMenuEntryData> Result;
-	for (const FMVMenuEntryData& EntryData : MenuData.Entries)
-	{
-		if (!CurrentMenuId.IsValid())
-		{
-			if (!EntryData.ParentMenuId.IsValid())
-			{
-				Result.Add(EntryData);
-			}
-			continue;
-		}
-
-		if (EntryData.ParentMenuId == CurrentMenuId
-			|| (CurrentMenuId == MenuData.RootMenuId && !EntryData.ParentMenuId.IsValid()))
-		{
-			Result.Add(EntryData);
-		}
-	}
-
-	for (const FMVInteractionMenuPageData& SubMenu : MenuData.SubMenus)
-	{
-		if (SubMenu.MenuId == CurrentMenuId)
-		{
-			Result.Append(SubMenu.Entries);
-			break;
-		}
-	}
-
-	return Result;
+	return CurrentMenuPage.Entries;
 }
 
 FText UMVInteractionMenuWindow::ResolveCurrentTitle() const
 {
-	for (const FMVInteractionMenuPageData& SubMenu : MenuData.SubMenus)
+	if (!CurrentMenuPage.Title.IsEmpty())
 	{
-		if (SubMenu.MenuId == CurrentMenuId && !SubMenu.Title.IsEmpty())
-		{
-			return SubMenu.Title;
-		}
+		return CurrentMenuPage.Title;
 	}
 
 	return MenuData.Title;
@@ -294,10 +263,13 @@ void UMVInteractionMenuWindow::HandleEntryButtonClicked(UMVInteractionMenuEntryB
 		return;
 	}
 
-	if (EntryData.SubMenuId.IsValid())
+	if (EntryData.HasSubMenu())
 	{
-		MenuStack.Add(CurrentMenuId);
-		CurrentMenuId = EntryData.SubMenuId;
+		MenuStack.Add(CurrentMenuPage);
+		CurrentMenuPage.Title = EntryData.SubMenu->Title.IsEmpty()
+			? CurrentMenuPage.Title
+			: EntryData.SubMenu->Title;
+		CurrentMenuPage.Entries = EntryData.SubMenu->Entries;
 		RefreshMenu();
 		return;
 	}

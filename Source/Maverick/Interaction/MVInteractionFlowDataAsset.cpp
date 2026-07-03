@@ -10,21 +10,6 @@ FPrimaryAssetId UMVInteractionFlowDataAsset::GetPrimaryAssetId() const
 	return FPrimaryAssetId(PrimaryAssetType, GetFName());
 }
 
-#if WITH_EDITOR
-void UMVInteractionFlowDataAsset::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
-{
-	Super::PostEditChangeProperty(PropertyChangedEvent);
-
-	for (FInstancedStruct& StepInstance : Steps)
-	{
-		if (FMVInteractionSelectionStepData* SelectionStep = StepInstance.GetMutablePtr<FMVInteractionSelectionStepData>())
-		{
-			SelectionStep->MenuData.NormalizeEntryParentMenuIds();
-		}
-	}
-}
-#endif
-
 EDataValidationResult UMVInteractionFlowDataAsset::IsDataValid(FDataValidationContext& Context) const
 {
 	EDataValidationResult Result = Super::IsDataValid(Context);
@@ -205,37 +190,6 @@ EDataValidationResult UMVInteractionFlowDataAsset::IsDataValid(FDataValidationCo
 		}
 
 		TSet<FGameplayTag> EntryIds;
-		TSet<FGameplayTag> MenuIds;
-		TSet<FGameplayTag> SubMenuIds;
-		if (SelectionStep->MenuData.RootMenuId.IsValid())
-		{
-			MenuIds.Add(SelectionStep->MenuData.RootMenuId);
-		}
-
-		for (int32 SubMenuIndex = 0; SubMenuIndex < SelectionStep->MenuData.SubMenus.Num(); ++SubMenuIndex)
-		{
-			const FMVInteractionMenuPageData& SubMenu = SelectionStep->MenuData.SubMenus[SubMenuIndex];
-			if (!SubMenu.MenuId.IsValid())
-			{
-				MarkInvalid(FString::Printf(
-					TEXT("%s submenu[%d] has no MenuId."),
-					*StepDescription,
-					SubMenuIndex));
-			}
-			else if (SubMenuIds.Contains(SubMenu.MenuId))
-			{
-				MarkInvalid(FString::Printf(
-					TEXT("%s submenu id '%s' is duplicated."),
-					*StepDescription,
-					*SubMenu.MenuId.ToString()));
-			}
-			else
-			{
-				SubMenuIds.Add(SubMenu.MenuId);
-				MenuIds.Add(SubMenu.MenuId);
-			}
-		}
-
 		auto ValidateMenuEntry = [&EntryIds, &MarkInvalid, &ValidateActionRowHandle](
 			const FMVMenuEntryData& Entry,
 			const FString& EntryDescription)
@@ -261,91 +215,51 @@ EDataValidationResult UMVInteractionFlowDataAsset::IsDataValid(FDataValidationCo
 			ValidateActionRowHandle(Entry.ActionRow, FString::Printf(TEXT("%s ActionRow"), *EntryDescription), false);
 		};
 
-		for (int32 EntryIndex = 0; EntryIndex < SelectionStep->MenuData.Entries.Num(); ++EntryIndex)
+		auto ValidateMenuEntries = [
+			&Context,
+			&StepDescription,
+			&ValidateMenuEntry
+		](auto&& ValidateMenuEntriesRef, const TArray<FMVMenuEntryData>& Entries, const FString& EntriesDescription) -> void
 		{
-			ValidateMenuEntry(
-				SelectionStep->MenuData.Entries[EntryIndex],
-				FString::Printf(TEXT("%s root menu entry[%d]"), *StepDescription, EntryIndex));
-		}
-
-		for (int32 SubMenuIndex = 0; SubMenuIndex < SelectionStep->MenuData.SubMenus.Num(); ++SubMenuIndex)
-		{
-			const FMVInteractionMenuPageData& SubMenu = SelectionStep->MenuData.SubMenus[SubMenuIndex];
-			for (int32 EntryIndex = 0; EntryIndex < SubMenu.Entries.Num(); ++EntryIndex)
+			for (int32 EntryIndex = 0; EntryIndex < Entries.Num(); ++EntryIndex)
 			{
-				ValidateMenuEntry(
-					SubMenu.Entries[EntryIndex],
-					FString::Printf(
-						TEXT("%s submenu[%d] entry[%d]"),
-						*StepDescription,
-						SubMenuIndex,
-						EntryIndex));
-			}
-		}
+				const FMVMenuEntryData& Entry = Entries[EntryIndex];
+				const FString EntryDescription = FString::Printf(
+					TEXT("%s %s entry[%d]"),
+					*StepDescription,
+					*EntriesDescription,
+					EntryIndex);
+				ValidateMenuEntry(Entry, EntryDescription);
 
-		auto ValidateMenuEntryLinks = [&MenuIds, &MarkInvalid](
-			const FMVMenuEntryData& Entry,
-			const FString& EntryDescription)
-		{
-			if (Entry.ParentMenuId.IsValid() && !MenuIds.Contains(Entry.ParentMenuId))
-			{
-				MarkInvalid(FString::Printf(
-					TEXT("%s points to missing ParentMenuId '%s'."),
-					*EntryDescription,
-					*Entry.ParentMenuId.ToString()));
-			}
+				if (!Entry.SubMenu)
+				{
+					continue;
+				}
 
-			if (Entry.SubMenuId.IsValid() && !MenuIds.Contains(Entry.SubMenuId))
-			{
-				MarkInvalid(FString::Printf(
-					TEXT("%s points to missing SubMenuId '%s'. Add a SubMenus page with the same MenuId."),
-					*EntryDescription,
-					*Entry.SubMenuId.ToString()));
+				if (Entry.SubMenu->Entries.IsEmpty())
+				{
+					Context.AddWarning(FText::FromString(FString::Printf(
+						TEXT("%s has SubMenu but no entries."),
+						*EntryDescription)));
+					continue;
+				}
+
+				ValidateMenuEntriesRef(
+					ValidateMenuEntriesRef,
+					Entry.SubMenu->Entries,
+					FString::Printf(TEXT("%s entry[%d] submenu"), *EntriesDescription, EntryIndex));
 			}
 		};
 
-		for (int32 EntryIndex = 0; EntryIndex < SelectionStep->MenuData.Entries.Num(); ++EntryIndex)
-		{
-			const FMVMenuEntryData& Entry = SelectionStep->MenuData.Entries[EntryIndex];
-			ValidateMenuEntryLinks(
-				Entry,
-				FString::Printf(TEXT("%s root menu entry[%d] '%s'"), *StepDescription, EntryIndex, *Entry.EntryId.ToString()));
-		}
-
-		for (int32 SubMenuIndex = 0; SubMenuIndex < SelectionStep->MenuData.SubMenus.Num(); ++SubMenuIndex)
-		{
-			const FMVInteractionMenuPageData& SubMenu = SelectionStep->MenuData.SubMenus[SubMenuIndex];
-			for (int32 EntryIndex = 0; EntryIndex < SubMenu.Entries.Num(); ++EntryIndex)
-			{
-				const FMVMenuEntryData& Entry = SubMenu.Entries[EntryIndex];
-				ValidateMenuEntryLinks(
-					Entry,
-					FString::Printf(
-						TEXT("%s submenu[%d] entry[%d] '%s'"),
-						*StepDescription,
-						SubMenuIndex,
-						EntryIndex,
-						*Entry.EntryId.ToString()));
-			}
-		}
-
-		if (SelectionStep->MenuData.Entries.IsEmpty() && SelectionStep->MenuData.SubMenus.IsEmpty())
+		if (SelectionStep->MenuData.Entries.IsEmpty())
 		{
 			MarkInvalid(FString::Printf(
-				TEXT("%s has no menu entries or submenus."),
+				TEXT("%s has no menu entries."),
 				*StepDescription));
 		}
-
-		for (int32 SubMenuIndex = 0; SubMenuIndex < SelectionStep->MenuData.SubMenus.Num(); ++SubMenuIndex)
+		else
 		{
-			const FMVInteractionMenuPageData& SubMenu = SelectionStep->MenuData.SubMenus[SubMenuIndex];
-			if (SubMenu.Entries.IsEmpty())
-			{
-				Context.AddWarning(FText::FromString(FString::Printf(
-					TEXT("%s submenu '%s' has no entries."),
-					*StepDescription,
-					*SubMenu.MenuId.ToString())));
-			}
+			ValidateMenuEntries(ValidateMenuEntries, SelectionStep->MenuData.Entries, TEXT("root menu"));
 		}
 
 		for (int32 TransitionIndex = 0; TransitionIndex < SelectionStep->Transitions.Num(); ++TransitionIndex)

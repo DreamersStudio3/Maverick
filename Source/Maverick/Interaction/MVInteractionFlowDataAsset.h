@@ -22,9 +22,6 @@ public:
 
 	virtual FPrimaryAssetId GetPrimaryAssetId() const override;
 	virtual EDataValidationResult IsDataValid(FDataValidationContext& Context) const override;
-#if WITH_EDITOR
-	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
-#endif
 
 	UFUNCTION(BlueprintPure, Category = "Maverick|Interaction")
 	FGameplayTag GetStartStepId() const { return StartStepId; }

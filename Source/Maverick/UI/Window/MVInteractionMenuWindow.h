@@ -49,9 +49,9 @@ private:
 /**
  * CommonUI stack에 올라가는 공통 상호작용 메뉴 윈도우.
  *
- * `FMVInteractionMenuData`의 root entry와 submenu page로 하위 메뉴 트리를 구성하고, back 입력으로
- * 이전 메뉴로 복귀한다. 메뉴 항목은 entry/action row 브로드캐스트, 하위 메뉴 이동, 또는 별도 window
- * push를 선택적으로 수행할 수 있다.
+ * `FMVInteractionMenuData`의 root entry와 각 entry에 귀속된 submenu entry로 메뉴 트리를 구성하고,
+ * back 입력으로 이전 메뉴로 복귀한다. 메뉴 항목은 entry/action row 브로드캐스트, 하위 메뉴 이동, 또는
+ * 별도 window push를 선택적으로 수행할 수 있다.
  */
 UCLASS(Blueprintable)
 class MAVERICK_API UMVInteractionMenuWindow : public UMVWindowBase
@@ -85,6 +85,12 @@ protected:
 	TObjectPtr<UVerticalBox> EntryBox;
 
 private:
+	struct FMVInteractionMenuPageState
+	{
+		FText Title;
+		TArray<FMVMenuEntryData> Entries;
+	};
+
 	void BuildNativeMenuTree();
 	bool NavigateBack();
 	TArray<FMVMenuEntryData> GetCurrentEntries() const;
@@ -100,7 +106,7 @@ private:
 	UPROPERTY(Transient)
 	TObjectPtr<UObject> SourceObject;
 
-	TArray<FGameplayTag> MenuStack;
-	FGameplayTag CurrentMenuId;
+	TArray<FMVInteractionMenuPageState> MenuStack;
+	FMVInteractionMenuPageState CurrentMenuPage;
 	bool bClosedEventBroadcast = false;
 };

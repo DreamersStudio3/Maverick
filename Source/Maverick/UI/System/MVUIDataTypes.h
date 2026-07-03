@@ -8,6 +8,7 @@
 #include "MVUIDataTypes.generated.h"
 
 class UMVWindowBase;
+class UMVInteractionMenuPageData;
 
 USTRUCT(BlueprintType)
 struct FMVInteractionPromptData
@@ -50,9 +51,6 @@ struct FMVMenuEntryData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu", meta = (Categories = "Interaction.Menu.Entry", ToolTip = "메뉴 항목의 고유 ID입니다. 버튼이나 선택 가능한 항목을 구분합니다."))
 	FGameplayTag EntryId;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu", meta = (Categories = "Interaction.Menu.Page", AdvancedDisplay, ToolTip = "자동 보정되는 부모 페이지 ID입니다. 일반 데이터 제작에서는 직접 수정하지 않고 Entries 또는 SubMenus 페이지 안에 항목을 추가합니다."))
-	FGameplayTag ParentMenuId;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu", meta = (ToolTip = "화면에 표시할 항목 문구입니다."))
 	FText Label;
 
@@ -62,14 +60,14 @@ struct FMVMenuEntryData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu", meta = (ToolTip = "false면 항목은 표시되지만 선택할 수 없습니다."))
 	bool bEnabled = true;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu", meta = (Categories = "Interaction.Menu.Page", ToolTip = "선택하면 이동할 하위 메뉴 페이지 ID입니다. 비워두면 하위 메뉴로 이동하지 않습니다."))
-	FGameplayTag SubMenuId;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu", meta = (ToolTip = "선택하면 추가로 열어야 할 CommonUI window 클래스입니다."))
 	TSubclassOf<UMVWindowBase> WindowClass;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu", meta = (ToolTip = "항목 실행 후 메뉴를 닫을지 여부입니다. 하위 메뉴 이동 항목은 보통 false입니다."))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu", meta = (ToolTip = "항목 실행 후 메뉴를 닫을지 여부입니다. SubMenu가 있으면 이 값과 관계없이 하위 메뉴로 이동합니다."))
 	bool bCloseMenuOnExecute = true;
+
+	UPROPERTY(EditAnywhere, Instanced, BlueprintReadWrite, Category = "Maverick|UI|Menu|SubMenu", meta = (ToolTip = "이 항목에 1:1로 귀속된 하위 메뉴입니다. 설정하면 선택 시 이 메뉴로 들어갑니다."))
+	TObjectPtr<UMVInteractionMenuPageData> SubMenu;
 
 	FName RuntimeActionId = NAME_None;
 	bool bInternalBackEntry = false;
@@ -78,6 +76,8 @@ struct FMVMenuEntryData
 	{
 		return ActionRow.DataTable && !ActionRow.RowName.IsNone();
 	}
+
+	bool HasSubMenu() const;
 
 	FName ResolveSelectionName() const
 	{
@@ -95,20 +95,23 @@ struct FMVMenuEntryData
 	}
 };
 
-USTRUCT(BlueprintType, meta = (ToolTip = "MenuStep 안에서 Entry.SubMenuId가 가리키는 하위 메뉴 페이지입니다."))
-struct FMVInteractionMenuPageData
+UCLASS(BlueprintType, EditInlineNew, DefaultToInstanced, CollapseCategories)
+class MAVERICK_API UMVInteractionMenuPageData : public UObject
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu", meta = (Categories = "Interaction.Menu.Page", ToolTip = "이 하위 메뉴 페이지의 고유 ID입니다. Entry의 SubMenuId와 같은 태그를 넣습니다."))
-	FGameplayTag MenuId;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu", meta = (ToolTip = "하위 메뉴에 들어갔을 때 상단에 표시할 제목입니다. 비워두면 루트 메뉴 제목을 사용합니다."))
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu", meta = (ToolTip = "하위 메뉴에 들어갔을 때 상단에 표시할 제목입니다. 비워두면 이전 메뉴 제목을 유지합니다."))
 	FText Title;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu", meta = (ToolTip = "이 하위 메뉴 페이지에 표시할 항목 목록입니다."))
 	TArray<FMVMenuEntryData> Entries;
 };
+
+inline bool FMVMenuEntryData::HasSubMenu() const
+{
+	return SubMenu != nullptr;
+}
 
 USTRUCT(BlueprintType, meta = (ToolTip = "MenuStep과 SelectionStep에서 표시할 메뉴 페이지와 항목 목록입니다."))
 struct FMVInteractionMenuData
@@ -121,33 +124,6 @@ struct FMVInteractionMenuData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu", meta = (Categories = "Interaction.Menu.Page", ToolTip = "처음 열릴 메뉴 페이지 ID입니다. 비워두면 root 페이지를 사용합니다."))
 	FGameplayTag RootMenuId;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu", meta = (ToolTip = "처음 메뉴 페이지에 표시할 항목 목록입니다. 하위 메뉴로 들어가려면 Entry의 SubMenuId를 설정하고 SubMenus에 같은 MenuId의 페이지를 추가합니다."))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu", meta = (ToolTip = "처음 메뉴 페이지에 표시할 항목 목록입니다. 하위 메뉴는 각 Entry의 SubMenu에 직접 추가합니다."))
 	TArray<FMVMenuEntryData> Entries;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu", meta = (ToolTip = "Entry.SubMenuId로 연결되는 하위 메뉴 페이지 목록입니다. 각 페이지의 MenuId가 SubMenuId와 일치해야 합니다."))
-	TArray<FMVInteractionMenuPageData> SubMenus;
-
-	void NormalizeEntryParentMenuIds()
-	{
-		if (RootMenuId.IsValid())
-		{
-			for (FMVMenuEntryData& Entry : Entries)
-			{
-				Entry.ParentMenuId = RootMenuId;
-			}
-		}
-
-		for (FMVInteractionMenuPageData& SubMenu : SubMenus)
-		{
-			if (!SubMenu.MenuId.IsValid())
-			{
-				continue;
-			}
-
-			for (FMVMenuEntryData& Entry : SubMenu.Entries)
-			{
-				Entry.ParentMenuId = SubMenu.MenuId;
-			}
-		}
-	}
 };

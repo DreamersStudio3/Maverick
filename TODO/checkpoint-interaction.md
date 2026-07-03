@@ -39,6 +39,7 @@
 - [x] InteractionFlow step과 주요 field에 에디터 tooltip 추가
 - [x] Interaction menu에 명시적 submenu page 구조와 Entry ActionRow handle 추가
 - [x] Interaction menu root page validation과 entry ParentMenuId 자동 보정 추가
+- [x] Interaction menu submenu를 Entry별 1:1 nested data 구조로 단순화
 - [ ] InteractionFlow 샘플 asset과 테스트용 액터 구성
 - [ ] InteractionFlow 제작 규칙 문서화
 - [ ] 기획자가 flow 구조를 노드 그래프로 확인/편집할 수 있는 에디터 GUI 툴 추가

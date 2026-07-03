@@ -17,24 +17,10 @@
 
 namespace
 {
-FMVInteractionMenuPageData* MVCheckpointFindSubMenuPage(FMVInteractionMenuData& MenuData, const FGameplayTag MenuId)
+UMVInteractionMenuPageData* MVCheckpointCreateRuntimeEntrySubMenu(FMVMenuEntryData& Entry, UObject* Outer)
 {
-	return MenuData.SubMenus.FindByPredicate([MenuId](const FMVInteractionMenuPageData& Page)
-	{
-		return Page.MenuId == MenuId;
-	});
-}
-
-FMVInteractionMenuPageData& MVCheckpointFindOrAddSubMenuPage(FMVInteractionMenuData& MenuData, const FGameplayTag MenuId)
-{
-	if (FMVInteractionMenuPageData* ExistingPage = MVCheckpointFindSubMenuPage(MenuData, MenuId))
-	{
-		return *ExistingPage;
-	}
-
-	FMVInteractionMenuPageData& NewPage = MenuData.SubMenus.AddDefaulted_GetRef();
-	NewPage.MenuId = MenuId;
-	return NewPage;
+	Entry.SubMenu = NewObject<UMVInteractionMenuPageData>(Outer);
+	return Entry.SubMenu;
 }
 }
 
@@ -191,7 +177,6 @@ FMVInteractionMenuData AMVCheckpointActor::MakeDefaultCheckpointMenuData()
 	FMVMenuEntryData TravelEntry;
 	TravelEntry.EntryId = MVGameplayTags::Interaction_Menu_Entry_Checkpoint_Travel;
 	TravelEntry.Label = NSLOCTEXT("MaverickCheckpoint", "Travel", "다른 체크포인트로 이동한다");
-	TravelEntry.SubMenuId = MVGameplayTags::Interaction_Menu_Page_Checkpoint_Travel;
 	TravelEntry.bCloseMenuOnExecute = false;
 	MenuData.Entries.Add(TravelEntry);
 
@@ -217,44 +202,29 @@ FMVInteractionMenuData AMVCheckpointActor::BuildCheckpointMenuData()
 		: CheckpointMenuData;
 	PendingTravelTargets.Reset();
 
-	FGameplayTag TravelMenuId = MVGameplayTags::Interaction_Menu_Page_Checkpoint_Travel;
-	bool bHasTravelEntry = false;
+	FMVMenuEntryData* TravelEntry = nullptr;
 	for (FMVMenuEntryData& Entry : MenuData.Entries)
 	{
 		if (Entry.EntryId == MVGameplayTags::Interaction_Menu_Entry_Checkpoint_Travel)
 		{
-			if (!Entry.EntryId.IsValid())
-			{
-				Entry.EntryId = MVGameplayTags::Interaction_Menu_Entry_Checkpoint_Travel;
-			}
-			if (Entry.SubMenuId.IsValid())
-			{
-				TravelMenuId = Entry.SubMenuId;
-			}
-			else
-			{
-				Entry.SubMenuId = TravelMenuId;
-			}
-			Entry.bEnabled = true;
-			Entry.bCloseMenuOnExecute = false;
-			bHasTravelEntry = true;
+			TravelEntry = &Entry;
 			break;
 		}
 	}
 
-	if (!bHasTravelEntry)
+	if (!TravelEntry)
 	{
-		FMVMenuEntryData TravelEntry;
-		TravelEntry.EntryId = MVGameplayTags::Interaction_Menu_Entry_Checkpoint_Travel;
-		TravelEntry.Label = NSLOCTEXT("MaverickCheckpoint", "Travel", "다른 체크포인트로 이동한다");
-		TravelEntry.SubMenuId = TravelMenuId;
-		TravelEntry.bCloseMenuOnExecute = false;
-		MenuData.Entries.Add(TravelEntry);
+		FMVMenuEntryData& NewTravelEntry = MenuData.Entries.AddDefaulted_GetRef();
+		NewTravelEntry.EntryId = MVGameplayTags::Interaction_Menu_Entry_Checkpoint_Travel;
+		NewTravelEntry.Label = NSLOCTEXT("MaverickCheckpoint", "Travel", "다른 체크포인트로 이동한다");
+		TravelEntry = &NewTravelEntry;
 	}
 
-	FMVInteractionMenuPageData& TravelPage = MVCheckpointFindOrAddSubMenuPage(MenuData, TravelMenuId);
-	TravelPage.Title = NSLOCTEXT("MaverickCheckpoint", "TravelMenuTitle", "체크포인트 이동");
-	TravelPage.Entries.Reset();
+	UMVInteractionMenuPageData* TravelSubMenu = MVCheckpointCreateRuntimeEntrySubMenu(*TravelEntry, this);
+	TravelSubMenu->Title = NSLOCTEXT("MaverickCheckpoint", "TravelMenuTitle", "체크포인트 이동");
+	TravelSubMenu->Entries.Reset();
+	TravelEntry->bEnabled = true;
+	TravelEntry->bCloseMenuOnExecute = false;
 
 	const FName CurrentCheckpointId = ResolveCheckpointId();
 	const FName CurrentMapName = ResolveCurrentMapName();
@@ -285,7 +255,7 @@ FMVInteractionMenuData AMVCheckpointActor::BuildCheckpointMenuData()
 		TargetEntry.Label = FText::FromString(Checkpoint.CheckpointId.ToString());
 		TargetEntry.RuntimeActionId = ActionName;
 		TargetEntry.bCloseMenuOnExecute = true;
-		TravelPage.Entries.Add(TargetEntry);
+		TravelSubMenu->Entries.Add(TargetEntry);
 	}
 
 	if (PendingTravelTargets.IsEmpty())
@@ -295,7 +265,7 @@ FMVInteractionMenuData AMVCheckpointActor::BuildCheckpointMenuData()
 		EmptyEntry.Label = NSLOCTEXT("MaverickCheckpoint", "NoTravelTargets", "이동 가능한 체크포인트가 없습니다");
 		EmptyEntry.bEnabled = false;
 		EmptyEntry.bCloseMenuOnExecute = false;
-		TravelPage.Entries.Add(EmptyEntry);
+		TravelSubMenu->Entries.Add(EmptyEntry);
 	}
 
 	return MenuData;
