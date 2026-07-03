@@ -43,6 +43,7 @@
 - [x] ActionStep/MenuEntry leaf 실행을 InteractionCommand 배열 모델로 확장
 - [x] `Event.HitReaction.ApplyDamage` command를 확정 대미지/HitReaction 처리에 연결
 - [x] DialogueStep을 `FMVDialogueRow` DataTable row handle 전용으로 제한
+- [x] Dialogue row 식별자를 `Interaction.Dialogue.*` GameplayTag로 제한
 - [ ] InteractionFlow 샘플 asset과 테스트용 액터 구성
 - [ ] InteractionFlow 제작 규칙 문서화
 - [ ] 기획자가 flow 구조를 노드 그래프로 확인/편집할 수 있는 에디터 GUI 툴 추가

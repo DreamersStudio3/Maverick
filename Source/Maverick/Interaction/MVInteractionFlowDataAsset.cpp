@@ -151,6 +151,16 @@ EDataValidationResult UMVInteractionFlowDataAsset::IsDataValid(FDataValidationCo
 				*SourceDescription,
 				*DialogueRow.RowName.ToString(),
 				*GetNameSafe(DialogueRow.DataTable)));
+			return;
+		}
+
+		if (!FoundDialogueRow->DialogueId.IsValid())
+		{
+			MarkInvalid(FString::Printf(
+				TEXT("%s uses dialogue row '%s' in table '%s' but the row has no DialogueId tag."),
+				*SourceDescription,
+				*DialogueRow.RowName.ToString(),
+				*GetNameSafe(DialogueRow.DataTable)));
 		}
 	};
 

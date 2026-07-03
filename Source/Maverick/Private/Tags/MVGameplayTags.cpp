@@ -9,6 +9,7 @@ namespace MVGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Event_HitReaction_ApplyDamage, "Event.HitReaction.ApplyDamage");
 	UE_DEFINE_GAMEPLAY_TAG(Interaction_Command_Event_HitReaction_ApplyDamage, "Interaction.Command.Event.HitReaction.ApplyDamage");
 	UE_DEFINE_GAMEPLAY_TAG(Interaction_Choice_Entry, "Interaction.Choice.Entry");
+	UE_DEFINE_GAMEPLAY_TAG(Interaction_Dialogue, "Interaction.Dialogue");
 	UE_DEFINE_GAMEPLAY_TAG(Interaction_Flow_Step, "Interaction.Flow.Step");
 	UE_DEFINE_GAMEPLAY_TAG(Interaction_Menu, "Interaction.Menu");
 	UE_DEFINE_GAMEPLAY_TAG(Interaction_Menu_Entry, "Interaction.Menu.Entry");
