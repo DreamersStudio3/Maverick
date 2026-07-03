@@ -24,6 +24,8 @@
 #include "UI/Window/MVInteractionMenuWindow.h"
 #include "UI/Window/MVLoadingWindow.h"
 
+DEFINE_LOG_CATEGORY_STATIC(LogMVUISubsystem, Log, All);
+
 namespace
 {
 UMVUISubsystem* MVUISubsystemResolveLoadingTestSubsystem(UWorld* World)
@@ -609,32 +611,50 @@ bool UMVUISubsystem::IsDialogueWindowBlockingInteraction() const
 		|| IsDialogueWindowPresent(ActiveDialogueWindow);
 }
 
-UMVDialogueWindow* UMVUISubsystem::ShowDialogueWindowById(FName DialogueId)
+UMVDialogueWindow* UMVUISubsystem::ShowDialogueWindowByRow(FDataTableRowHandle DialogueRow)
 {
-	const UMVUISettings* Settings = GetDefault<UMVUISettings>();
-	if (!Settings || Settings->DialogueTableName.IsNone() || DialogueId.IsNone())
+	if (!DialogueRow.DataTable || DialogueRow.RowName.IsNone())
 	{
+		UE_LOG(
+			LogMVUISubsystem,
+			Warning,
+			TEXT("Dialogue window by row failed. DialogueRow is incomplete. DataTable=%s, RowName=%s."),
+			*GetNameSafe(DialogueRow.DataTable),
+			*DialogueRow.RowName.ToString());
 		return nullptr;
 	}
 
-	const UMVTableManager* TableManager = UMVTableManager::Get(this);
-	if (!TableManager)
+	const UScriptStruct* RowStruct = DialogueRow.DataTable->GetRowStruct();
+	if (!RowStruct || !RowStruct->IsChildOf(FMVDialogueRow::StaticStruct()))
 	{
+		UE_LOG(
+			LogMVUISubsystem,
+			Warning,
+			TEXT("Dialogue window by row failed. DataTable '%s' uses invalid row struct '%s'. Expected MVDialogueRow."),
+			*GetNameSafe(DialogueRow.DataTable),
+			RowStruct ? *RowStruct->GetName() : TEXT("None"));
 		return nullptr;
 	}
 
-	const FMVDialogueRow* DialogueRow = TableManager->FindRow<FMVDialogueRow>(
-		Settings->DialogueTableName,
-		DialogueId.ToString());
-	if (!DialogueRow)
+	const FMVDialogueRow* FoundDialogueRow = DialogueRow.DataTable->FindRow<FMVDialogueRow>(
+		DialogueRow.RowName,
+		TEXT("MVUISubsystem"),
+		false);
+	if (!FoundDialogueRow)
 	{
+		UE_LOG(
+			LogMVUISubsystem,
+			Warning,
+			TEXT("Dialogue window by row failed. Row '%s' was not found in table '%s'."),
+			*DialogueRow.RowName.ToString(),
+			*GetNameSafe(DialogueRow.DataTable));
 		return nullptr;
 	}
 
 	return ShowDialogueWindowTextWithTiming(
-		DialogueRow->DialogueText,
-		DialogueRow->DisplayDuration,
-		DialogueRow->MinimumSkipDelay);
+		FoundDialogueRow->DialogueText,
+		FoundDialogueRow->DisplayDuration,
+		FoundDialogueRow->MinimumSkipDelay);
 }
 
 UMVMessagePopup* UMVUISubsystem::ShowPopupMessage(const FMVPopupMessageData& MessageData)

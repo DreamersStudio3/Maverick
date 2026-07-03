@@ -293,12 +293,7 @@ bool UMVInteractableComponent::ExecuteConfiguredStep(const FGameplayTag StepId)
 	{
 		if (UMVUISubsystem* UISubsystem = GetUISubsystem())
 		{
-			ActiveConfiguredDialogueWindow = DialogueStep->DialogueId.IsNone()
-				? UISubsystem->ShowDialogueWindowTextWithTiming(
-					DialogueStep->DialogueText,
-					DialogueStep->DialogueDuration,
-					DialogueStep->DialogueMinimumSkipDelay)
-				: UISubsystem->ShowDialogueWindowById(DialogueStep->DialogueId);
+			ActiveConfiguredDialogueWindow = UISubsystem->ShowDialogueWindowByRow(DialogueStep->DialogueRow);
 			if (ActiveConfiguredDialogueWindow)
 			{
 				bWaitingForConfiguredStep = true;

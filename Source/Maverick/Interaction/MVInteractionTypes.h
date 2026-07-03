@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Engine/DataTable.h"
 #include "GameplayTagContainer.h"
 #include "Interaction/MVInteractionCommandTypes.h"
 #include "StructUtils/InstancedStruct.h"
@@ -81,17 +82,8 @@ struct MAVERICK_API FMVInteractionDialogueStepData : public FMVInteractionStepDa
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Interaction|Dialogue", meta = (ToolTip = "등록된 대화 ID로 대화창을 엽니다. 비워두면 DialogueText를 직접 표시합니다."))
-	FName DialogueId = NAME_None;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Interaction|Dialogue", meta = (ToolTip = "DialogueId가 비어 있을 때 표시할 직접 입력 대사입니다."))
-	FText DialogueText;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Interaction|Dialogue", meta = (ClampMin = "-1.0", ToolTip = "대사를 자동으로 닫을 시간입니다. -1이면 기본값이나 수동 닫기를 사용합니다."))
-	float DialogueDuration = -1.0f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Interaction|Dialogue", meta = (ClampMin = "-1.0", ToolTip = "플레이어가 대사를 넘기기 전 최소로 기다려야 하는 시간입니다. -1이면 기본값을 사용합니다."))
-	float DialogueMinimumSkipDelay = -1.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Interaction|Dialogue", meta = (RowType = "/Script/Maverick.MVDialogueRow", ToolTip = "재생할 대화 DataTable row입니다. FMVDialogueRow 테이블의 행만 선택할 수 있습니다."))
+	FDataTableRowHandle DialogueRow;
 };
 
 USTRUCT(BlueprintType, meta = (DisplayName = "Interaction Action Step", ToolTip = "애니메이션이나 도메인 이벤트 command를 순서대로 실행합니다."))

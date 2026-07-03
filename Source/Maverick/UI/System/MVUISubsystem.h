@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Engine/DataTable.h"
 #include "Engine/World.h"
 #include "TimerManager.h"
 #include "Subsystems/GameInstanceSubsystem.h"
@@ -123,7 +124,7 @@ public:
 	bool IsDialogueWindowBlockingInteraction() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
-	UMVDialogueWindow* ShowDialogueWindowById(FName DialogueId);
+	UMVDialogueWindow* ShowDialogueWindowByRow(FDataTableRowHandle DialogueRow);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
 	UMVMessagePopup* ShowPopupMessage(const FMVPopupMessageData& MessageData);

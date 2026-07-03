@@ -2,6 +2,7 @@
 
 #include "Misc/DataValidation.h"
 #include "Tables/MVActionRowTableTypes.h"
+#include "Tables/MVDialogueTableTypes.h"
 
 const FPrimaryAssetType UMVInteractionFlowDataAsset::PrimaryAssetType(TEXT("InteractionFlow"));
 
@@ -111,6 +112,48 @@ EDataValidationResult UMVInteractionFlowDataAsset::IsDataValid(FDataValidationCo
 			*SourceDescription));
 	};
 
+	auto ValidateDialogueRowHandle = [&HasAnyActionRowValue, &MarkInvalid](
+		const FDataTableRowHandle& DialogueRow,
+		const FString& SourceDescription)
+	{
+		if (!HasAnyActionRowValue(DialogueRow))
+		{
+			MarkInvalid(FString::Printf(TEXT("%s has no DialogueRow."), *SourceDescription));
+			return;
+		}
+
+		if (!DialogueRow.DataTable || DialogueRow.RowName.IsNone())
+		{
+			MarkInvalid(FString::Printf(
+				TEXT("%s has incomplete DialogueRow."),
+				*SourceDescription));
+			return;
+		}
+
+		const UScriptStruct* RowStruct = DialogueRow.DataTable->GetRowStruct();
+		if (!RowStruct || !RowStruct->IsChildOf(FMVDialogueRow::StaticStruct()))
+		{
+			MarkInvalid(FString::Printf(
+				TEXT("%s uses invalid dialogue table '%s'. Expected MVDialogueRow row struct."),
+				*SourceDescription,
+				*GetNameSafe(DialogueRow.DataTable)));
+			return;
+		}
+
+		const FMVDialogueRow* FoundDialogueRow = DialogueRow.DataTable->FindRow<FMVDialogueRow>(
+			DialogueRow.RowName,
+			TEXT("InteractionFlowDataAssetValidation"),
+			false);
+		if (!FoundDialogueRow)
+		{
+			MarkInvalid(FString::Printf(
+				TEXT("%s uses missing dialogue row '%s' in table '%s'."),
+				*SourceDescription,
+				*DialogueRow.RowName.ToString(),
+				*GetNameSafe(DialogueRow.DataTable)));
+		}
+	};
+
 	if (Steps.IsEmpty())
 	{
 		MarkInvalid(TEXT("Interaction flow has no steps."));
@@ -196,6 +239,12 @@ EDataValidationResult UMVInteractionFlowDataAsset::IsDataValid(FDataValidationCo
 			? FString::Printf(TEXT("Step '%s'"), *Step->StepId.ToString())
 			: FString::Printf(TEXT("Steps[%d]"), StepIndex);
 		ValidateTargetStepId(Step->NextStepId, FString::Printf(TEXT("%s NextStepId"), *StepDescription));
+
+		if (const FMVInteractionDialogueStepData* DialogueStep =
+			StepInstance.GetPtr<FMVInteractionDialogueStepData>())
+		{
+			ValidateDialogueRowHandle(DialogueStep->DialogueRow, StepDescription);
+		}
 
 		const FMVInteractionChoiceStepData* ChoiceStep = StepInstance.GetPtr<FMVInteractionChoiceStepData>();
 		if (ChoiceStep)
