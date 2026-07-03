@@ -12,6 +12,7 @@
 
 class UMVAbilityBase;
 
+
 USTRUCT(BlueprintType)
 struct FMVSkillActionStruct
 {
@@ -48,11 +49,6 @@ public:
 	// For chained skills: multiple row names in progression order
 	UPROPERTY(BlueprintReadOnly, Category = "Skill")
 	TArray<FName> SkillRowNames;
-
-	// For simple skills: single skill data
-	// For chained skills: multiple skill data (one per stage)
-	UPROPERTY(BlueprintReadOnly, Category = "Skill")
-	TArray<FMVSkillDataTableColumn> SkillDataArray;
 
 	// DataTable reference
 	UPROPERTY(BlueprintReadOnly, Category = "Skill")
@@ -96,9 +92,14 @@ public:
 	// Get current skill data (for simple skills or current chain stage)
 	const FMVSkillDataTableColumn* GetCurrentSkillData() const
 	{
-		if (SkillDataArray.IsValidIndex(CurrentChainStageIndex))
+		if (!DataTable)
 		{
-			return &SkillDataArray[CurrentChainStageIndex];
+			return nullptr;
+		}
+		const FMVSkillDataTableColumn* SkillData = DataTable->FindRow<FMVSkillDataTableColumn>(SkillRowNames[CurrentChainStageIndex], TEXT(""));
+		if (SkillData)
+		{
+			return SkillData;
 		}
 		return nullptr;
 	}
@@ -147,12 +148,16 @@ public:
 	// Check if inter-stage cooldown is valid for chain advancement
 	bool IsInterStageCooldownValid(float CurrentTime) const
 	{
-		if (!bChainActive || !SkillDataArray.IsValidIndex(CurrentChainStageIndex))
+		if (!bChainActive || !SkillRowNames.IsValidIndex(CurrentChainStageIndex))
 		{
 			return false;
 		}
-		const FMVSkillDataTableColumn& CurrentData = SkillDataArray[CurrentChainStageIndex];
-		return (CurrentTime - LastStageActivationTime) >= CurrentData.InterStageCooldown;
+		const FMVSkillDataTableColumn* CurrentData = GetCurrentSkillData();
+		if (!CurrentData)
+		{
+			return false;
+		}
+		return (CurrentTime - LastStageActivationTime) >= CurrentData->InterStageCooldown;
 	}
 
 	// Reset chain to stage 0
@@ -219,7 +224,6 @@ public:
 	}
 };
 
-
 /*
 CombatComponent
 Fetch Data from DataTable through ChooserTable.
@@ -233,8 +237,8 @@ Note:	Getting DataTable through ChooserTable should be implemented in blueprint.
 
 */
 
-
 class UChooserTable;
+class UMVStatComponent;
 
 UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class MAVERICK_API UMVCombatComponent : public UActorComponent
@@ -266,9 +270,6 @@ protected:
 	bool TryBasicAttack(EMVCombatActionTypes InActionType);
 	bool TrySkill(EMVCombatActionTypes InActionType, int32 SkillIndex = 0);
 
-	//bool TryBasicAttack(EMVCombatActionTypes InActionType, FMVSkillDataTableColumn& OutRow);
-	//bool TrySkill(uint32 SkillIndex, bool FullyStacked);
-
 	// Call when Beginplay or Change Weapon Style
 	void RefreshActionMaps();
 	
@@ -291,6 +292,8 @@ protected:
 private:
 	void BuildChainedEntry(const FName& StartingName, const UDataTable& CurrentDT, FMVSkillEntry& OutEntry);
 	bool SendDataToActionComp(EMVCombatActionTypes InActionType, FName RowName);
+	bool CanConsumeActionCost(const FMVSkillDataTableColumn* SkillData) const;
+	void ConsumeActionCost(const FMVSkillDataTableColumn* SkillData) const;
 
 public:
 
@@ -315,4 +318,6 @@ private:
 		MVActionIds::ChargeAttack,
 		MVActionIds::Skill
 	};
+
+	TObjectPtr<UMVStatComponent> StatComponent;
 };
