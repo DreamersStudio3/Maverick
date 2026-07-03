@@ -3,6 +3,7 @@
 #include "Tables/MVTableManager.h"
 #include "Tables/MVStatTableTypes.h"
 #include "Tags/MVGameplayTags.h"
+#include "Components/MVActionComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogMVStatComponent, Log, All);
 
@@ -40,6 +41,20 @@ void UMVStatComponent::BeginPlay()
 	{
 		LoadStatsFromTable();
 	}
+
+	ActionCompRef = GetOwner()->FindComponentByClass<UMVActionComponent>();
+	if(ActionCompRef)
+	{
+		ActionCompRef->OnStatPauseStart.Unbind();
+		ActionCompRef->OnStatPauseStart.BindUObject(this, &UMVStatComponent::BeginRecoverableStatRecoveryPause);
+		ActionCompRef->OnStatPauseEnd.Unbind();
+		ActionCompRef->OnStatPauseEnd.BindUObject(this, &UMVStatComponent::EndRecoverableStatRecoveryPause);
+	}
+	else
+	{
+		UE_LOG(LogMVStatComponent, Warning, TEXT("No ActionComponent found on %s. Recoverable stat recovery pause will not work."), *GetOwner()->GetName());
+	}
+
 }
 
 void UMVStatComponent::SetStatTableReference(FName InStatTableName, const FString& InStatRowKey)
@@ -165,25 +180,30 @@ void UMVStatComponent::TickRecoverableStats(float DeltaTime)
 		return;
 	}
 
-	if (bUseRecoverableStatRecoveryDelay)
+	// Stamina: while not playing an action that pauses recovery, the cooldown timer counts down. Once the cooldown timer reaches 0, stamina recovers at the specified rate.
+	if (!IsRecoverableStatRecoveryPaused())
 	{
-		RecoverableStatCooldownRemaining = FMath::Max(0.0f, RecoverableStatCooldownRemaining - DeltaTime);
-	}
-	else
-	{
-		RecoverableStatCooldownRemaining = 0.0f;
-	}
+		if (bUseRecoverableStatRecoveryDelay)
+		{
+			StaminaCooldownRemaining = FMath::Max(0.0f, StaminaCooldownRemaining - DeltaTime);
+		}
+		else
+		{
+			StaminaCooldownRemaining = 0.0f;
+		}
 
-	if (RecoverableStatCooldownRemaining <= 0.0f)
-	{
-		RecoverStamina(StaminaRecoveryPerSecond * DeltaTime);
+		if(StaminaCooldownRemaining <= 0.0f)
+		{
+			RecoverStamina(StaminaRecoveryPerSecond * DeltaTime);
+		}
 		RecoverMP(MPRecoveryPerSecond * DeltaTime);
 	}
+
 }
 
 void UMVStatComponent::RestartRecoverableStatCooldown()
 {
-	RecoverableStatCooldownRemaining = bUseRecoverableStatRecoveryDelay
+	StaminaCooldownRemaining = bUseRecoverableStatRecoveryDelay
 		? StaminaRecoveryDelay
 		: 0.0f;
 }
@@ -194,7 +214,7 @@ void UMVStatComponent::BeginRecoverableStatRecoveryPause()
 	++RecoverableStatRecoveryPauseCount;
 	if (!bWasPaused)
 	{
-		RecoverableStatCooldownRemaining = 0.0f;
+		StaminaCooldownRemaining = 0.0f;
 		OnStatRecentLossHoldChanged.Broadcast(true);
 	}
 }
@@ -373,7 +393,6 @@ bool UMVStatComponent::ConsumeMP(float Amount)
 
 	const bool bHadEnoughMP = CurrentMP >= NormalizedAmount;
 	SetCurrentMP(CurrentMP - NormalizedAmount);
-	RestartRecoverableStatCooldown();
 	return bHadEnoughMP;
 }
 
