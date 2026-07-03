@@ -11,9 +11,9 @@
 
 namespace
 {
-bool MVInteractableHasActionStepRow(const FMVInteractionActionStepData& Step)
+bool MVInteractableCommandWaitsForCompletion(const FMVInteractionCommandRequest& CommandRequest)
 {
-	return Step.ActionRow.DataTable && !Step.ActionRow.RowName.IsNone();
+	return CommandRequest.bWaitForCompletion;
 }
 }
 
@@ -43,28 +43,31 @@ void UMVInteractableComponent::SetInteractionFlowAsset(UMVInteractionFlowDataAss
 	InteractionFlowAsset = InInteractionFlowAsset;
 }
 
-void UMVInteractableComponent::FinishInteractionAction()
+void UMVInteractableComponent::FinishInteractionCommand()
 {
-	if (!bConfiguredInteractionRunning || !bWaitingForConfiguredStep)
+	if (!bConfiguredInteractionRunning || !bWaitingForConfiguredCommand)
 	{
 		return;
 	}
 
-	const FInstancedStruct* StepInstance = FindInteractionStep(ActiveStepId);
-	const FMVInteractionStepData* Step = StepInstance ? StepInstance->GetPtr<FMVInteractionStepData>() : nullptr;
-	const FMVInteractionActionStepData* ActionStep = StepInstance ? StepInstance->GetPtr<FMVInteractionActionStepData>() : nullptr;
-	if (!Step || !ActionStep || !MVInteractableHasActionStepRow(*ActionStep))
+	if (bBroadcastingConfiguredCommandRequest)
 	{
+		bCompleteConfiguredCommandAfterRequest = true;
 		return;
 	}
 
-	OnInteractionActionCompleted.Broadcast(
+	OnInteractionCommandCompleted.Broadcast(
 		ActiveInteractor.Get(),
 		this,
-		Step->StepId,
-		ActionStep->ActionRow,
-		ActionStep->StartSection);
-	CompleteConfiguredStep(Step->NextStepId);
+		ActiveStepId,
+		ActiveCommandRequest);
+
+	bWaitingForConfiguredCommand = false;
+	++ActiveCommandIndex;
+	if (!ExecuteNextConfiguredCommand())
+	{
+		EndConfiguredInteractionSession();
+	}
 }
 
 bool UMVInteractableComponent::CanInteract_Implementation(AActor* Interactor) const
@@ -116,10 +119,19 @@ void UMVInteractableComponent::BeginConfiguredInteractionSession(AActor* Interac
 {
 	bConfiguredInteractionRunning = true;
 	bWaitingForConfiguredStep = false;
+	bWaitingForConfiguredCommand = false;
+	bBroadcastingConfiguredCommandRequest = false;
+	bCompleteConfiguredCommandAfterRequest = false;
 	bHasPendingStepAfterMenuClose = false;
+	bHasPendingCommandsAfterMenuClose = false;
 	ActiveInteractor = Interactor;
 	ActiveStepId = FGameplayTag();
 	PendingStepAfterMenuClose = FGameplayTag();
+	PendingStepAfterCommands = FGameplayTag();
+	ActiveCommandIndex = INDEX_NONE;
+	ActiveCommandInstances.Reset();
+	PendingCommandsAfterMenuClose.Reset();
+	ActiveCommandRequest = FMVInteractionCommandRequest();
 
 	if (UMVUISubsystem* UISubsystem = GetUISubsystem())
 	{
@@ -168,9 +180,18 @@ void UMVInteractableComponent::EndConfiguredInteractionSession()
 	ActiveInteractor = nullptr;
 	ActiveStepId = FGameplayTag();
 	PendingStepAfterMenuClose = FGameplayTag();
+	PendingStepAfterCommands = FGameplayTag();
+	ActiveCommandIndex = INDEX_NONE;
+	ActiveCommandInstances.Reset();
+	PendingCommandsAfterMenuClose.Reset();
+	ActiveCommandRequest = FMVInteractionCommandRequest();
 	bWaitingForConfiguredStep = false;
+	bWaitingForConfiguredCommand = false;
+	bBroadcastingConfiguredCommandRequest = false;
+	bCompleteConfiguredCommandAfterRequest = false;
 	bConfiguredInteractionRunning = false;
 	bHasPendingStepAfterMenuClose = false;
+	bHasPendingCommandsAfterMenuClose = false;
 }
 
 bool UMVInteractableComponent::ExecuteConfiguredStep(const FGameplayTag StepId)
@@ -212,19 +233,7 @@ bool UMVInteractableComponent::ExecuteConfiguredStep(const FGameplayTag StepId)
 
 	if (const FMVInteractionActionStepData* ActionStep = StepInstance->GetPtr<FMVInteractionActionStepData>())
 	{
-		if (!MVInteractableHasActionStepRow(*ActionStep))
-		{
-			return false;
-		}
-
-		bWaitingForConfiguredStep = true;
-		OnInteractionActionRequested.Broadcast(
-			ActiveInteractor.Get(),
-			this,
-			Step->StepId,
-			ActionStep->ActionRow,
-			ActionStep->StartSection);
-		return true;
+		return ExecuteConfiguredCommands(ActionStep->Commands, Step->NextStepId);
 	}
 
 	if (const FMVInteractionWarningPopupStepData* WarningStep = StepInstance->GetPtr<FMVInteractionWarningPopupStepData>())
@@ -314,6 +323,9 @@ bool UMVInteractableComponent::ExecuteConfiguredStep(const FGameplayTag StepId)
 void UMVInteractableComponent::CompleteConfiguredStep(const FGameplayTag NextStepId)
 {
 	bWaitingForConfiguredStep = false;
+	bWaitingForConfiguredCommand = false;
+	bBroadcastingConfiguredCommandRequest = false;
+	bCompleteConfiguredCommandAfterRequest = false;
 
 	if (ActiveConfiguredDialogueWindow)
 	{
@@ -355,6 +367,127 @@ void UMVInteractableComponent::CompleteConfiguredStep(const FGameplayTag NextSte
 	{
 		EndConfiguredInteractionSession();
 	}
+}
+
+bool UMVInteractableComponent::ExecuteConfiguredCommands(
+	const TArray<FInstancedStruct>& Commands,
+	const FGameplayTag NextStepId)
+{
+	if (Commands.IsEmpty())
+	{
+		CompleteConfiguredStep(NextStepId);
+		return true;
+	}
+
+	ActiveCommandInstances = Commands;
+	ActiveCommandIndex = 0;
+	PendingStepAfterCommands = NextStepId;
+	ActiveCommandRequest = FMVInteractionCommandRequest();
+	bWaitingForConfiguredStep = true;
+	bWaitingForConfiguredCommand = false;
+	return ExecuteNextConfiguredCommand();
+}
+
+bool UMVInteractableComponent::ExecuteNextConfiguredCommand()
+{
+	while (ActiveCommandInstances.IsValidIndex(ActiveCommandIndex))
+	{
+		const FInstancedStruct& CommandInstance = ActiveCommandInstances[ActiveCommandIndex];
+		const FMVInteractionCommandData* Command = CommandInstance.GetPtr<FMVInteractionCommandData>();
+		if (!Command)
+		{
+			return false;
+		}
+
+		ActiveCommandRequest = MakeCommandRequest(CommandInstance);
+		if (ActiveCommandRequest.CommandKind == EMVInteractionCommandKind::None)
+		{
+			return false;
+		}
+
+		bWaitingForConfiguredCommand = MVInteractableCommandWaitsForCompletion(ActiveCommandRequest);
+		bCompleteConfiguredCommandAfterRequest = false;
+		bBroadcastingConfiguredCommandRequest = true;
+		OnInteractionCommandRequested.Broadcast(
+			ActiveInteractor.Get(),
+			this,
+			ActiveStepId,
+			ActiveCommandRequest);
+		bBroadcastingConfiguredCommandRequest = false;
+
+		if (bWaitingForConfiguredCommand)
+		{
+			if (!bCompleteConfiguredCommandAfterRequest)
+			{
+				return true;
+			}
+
+			bCompleteConfiguredCommandAfterRequest = false;
+			OnInteractionCommandCompleted.Broadcast(
+				ActiveInteractor.Get(),
+				this,
+				ActiveStepId,
+				ActiveCommandRequest);
+			bWaitingForConfiguredCommand = false;
+			++ActiveCommandIndex;
+			continue;
+		}
+
+		OnInteractionCommandCompleted.Broadcast(
+			ActiveInteractor.Get(),
+			this,
+			ActiveStepId,
+			ActiveCommandRequest);
+		++ActiveCommandIndex;
+	}
+
+	const FGameplayTag NextStepId = PendingStepAfterCommands;
+	ActiveCommandInstances.Reset();
+	ActiveCommandIndex = INDEX_NONE;
+	PendingStepAfterCommands = FGameplayTag();
+	ActiveCommandRequest = FMVInteractionCommandRequest();
+	bWaitingForConfiguredCommand = false;
+	bBroadcastingConfiguredCommandRequest = false;
+	bCompleteConfiguredCommandAfterRequest = false;
+	CompleteConfiguredStep(NextStepId);
+	return true;
+}
+
+FMVInteractionCommandRequest UMVInteractableComponent::MakeCommandRequest(
+	const FInstancedStruct& CommandInstance) const
+{
+	FMVInteractionCommandRequest Request;
+	const FMVInteractionCommandData* Command = CommandInstance.GetPtr<FMVInteractionCommandData>();
+	if (!Command)
+	{
+		return Request;
+	}
+
+	Request.CommandId = Command->CommandId;
+	Request.bWaitForCompletion = Command->bWaitForCompletion;
+
+	if (const FMVInteractionPlayActionCommandData* PlayActionCommand =
+		CommandInstance.GetPtr<FMVInteractionPlayActionCommandData>())
+	{
+		Request.CommandKind = EMVInteractionCommandKind::PlayAction;
+		Request.ActionRow = PlayActionCommand->ActionRow;
+		Request.StartSection = PlayActionCommand->StartSection;
+		return Request;
+	}
+
+	if (const FMVInteractionGameplayEventCommandData* EventCommand =
+		CommandInstance.GetPtr<FMVInteractionGameplayEventCommandData>())
+	{
+		Request.CommandKind = EMVInteractionCommandKind::GameplayEvent;
+		Request.EventTag = EventCommand->EventTag;
+		Request.Tags = EventCommand->Tags;
+		Request.Name = EventCommand->Name;
+		Request.Magnitude = EventCommand->Magnitude;
+		Request.PayloadObject = EventCommand->PayloadObject;
+		return Request;
+	}
+
+	return Request;
 }
 
 FGameplayTag UMVInteractableComponent::ResolveStartStepId() const
@@ -492,9 +625,21 @@ void UMVInteractableComponent::HandleConfiguredMenuClosed(UMVInteractionMenuWind
 	const FGameplayTag NextStepId = bHasPendingStepAfterMenuClose
 		? PendingStepAfterMenuClose
 		: (Step ? Step->NextStepId : FGameplayTag());
+	const bool bShouldExecutePendingCommands = bHasPendingCommandsAfterMenuClose;
+	const TArray<FInstancedStruct> Commands = PendingCommandsAfterMenuClose;
 	bHasPendingStepAfterMenuClose = false;
+	bHasPendingCommandsAfterMenuClose = false;
 	PendingStepAfterMenuClose = FGameplayTag();
-	CompleteConfiguredStep(NextStepId);
+	PendingCommandsAfterMenuClose.Reset();
+
+	if (bShouldExecutePendingCommands)
+	{
+		ExecuteConfiguredCommands(Commands, NextStepId);
+	}
+	else
+	{
+		CompleteConfiguredStep(NextStepId);
+	}
 }
 
 void UMVInteractableComponent::HandleConfiguredMenuEntrySelected(UObject* SourceObject, FMVMenuEntryData EntryData)
@@ -520,6 +665,8 @@ void UMVInteractableComponent::HandleConfiguredMenuEntrySelected(UObject* Source
 		? ResolveChoiceTransition(*ChoiceStep, EntryData.EntryId)
 		: ResolveStepTransition(*SelectionStep, EntryData.EntryId);
 	bHasPendingStepAfterMenuClose = true;
+	PendingCommandsAfterMenuClose = EntryData.Commands;
+	bHasPendingCommandsAfterMenuClose = !PendingCommandsAfterMenuClose.IsEmpty();
 
 	if (ActiveConfiguredMenuWindow)
 	{
@@ -528,9 +675,21 @@ void UMVInteractableComponent::HandleConfiguredMenuEntrySelected(UObject* Source
 	else
 	{
 		const FGameplayTag NextStepId = PendingStepAfterMenuClose;
+		const bool bShouldExecutePendingCommands = bHasPendingCommandsAfterMenuClose;
+		const TArray<FInstancedStruct> Commands = PendingCommandsAfterMenuClose;
 		bHasPendingStepAfterMenuClose = false;
+		bHasPendingCommandsAfterMenuClose = false;
 		PendingStepAfterMenuClose = FGameplayTag();
-		CompleteConfiguredStep(NextStepId);
+		PendingCommandsAfterMenuClose.Reset();
+
+		if (bShouldExecutePendingCommands)
+		{
+			ExecuteConfiguredCommands(Commands, NextStepId);
+		}
+		else
+		{
+			CompleteConfiguredStep(NextStepId);
+		}
 	}
 }
 

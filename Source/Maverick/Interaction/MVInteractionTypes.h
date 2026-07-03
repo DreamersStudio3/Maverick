@@ -1,8 +1,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Engine/DataTable.h"
 #include "GameplayTagContainer.h"
+#include "Interaction/MVInteractionCommandTypes.h"
 #include "StructUtils/InstancedStruct.h"
 #include "Templates/SubclassOf.h"
 #include "UI/System/MVUIDataTypes.h"
@@ -94,16 +94,13 @@ struct MAVERICK_API FMVInteractionDialogueStepData : public FMVInteractionStepDa
 	float DialogueMinimumSkipDelay = -1.0f;
 };
 
-USTRUCT(BlueprintType, meta = (DisplayName = "Interaction Action Step", ToolTip = "애니메이션이나 도메인 이벤트를 시작하고 FinishInteractionAction 호출을 기다립니다."))
+USTRUCT(BlueprintType, meta = (DisplayName = "Interaction Action Step", ToolTip = "애니메이션이나 도메인 이벤트 command를 순서대로 실행합니다."))
 struct MAVERICK_API FMVInteractionActionStepData : public FMVInteractionStepData
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Interaction|Action", meta = (RowType = "/Script/Maverick.MVActionRow", ToolTip = "실행할 액션 DataTable row입니다. MVActionRow 계열 테이블만 선택합니다."))
-	FDataTableRowHandle ActionRow;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Interaction|Action", meta = (ToolTip = "액션 몽타주를 특정 섹션에서 시작해야 할 때 입력합니다."))
-	FName StartSection = NAME_None;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Interaction|Command", meta = (BaseStruct = "/Script/Maverick.MVInteractionCommandData", ExcludeBaseStruct, ToolTip = "이 step에서 순서대로 실행할 command 목록입니다."))
+	TArray<FInstancedStruct> Commands;
 };
 
 USTRUCT(BlueprintType, meta = (DisplayName = "Interaction Warning Popup Step", ToolTip = "짧은 경고 팝업을 표시하고 닫힌 뒤 다음 step으로 넘어갑니다."))

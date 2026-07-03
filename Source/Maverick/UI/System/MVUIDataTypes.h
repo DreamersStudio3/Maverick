@@ -1,9 +1,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Engine/DataTable.h"
 #include "GameplayTagContainer.h"
 #include "InputCoreTypes.h"
+#include "Interaction/MVInteractionCommandTypes.h"
+#include "StructUtils/InstancedStruct.h"
 #include "Templates/SubclassOf.h"
 #include "MVUIDataTypes.generated.h"
 
@@ -54,8 +55,8 @@ struct FMVMenuEntryData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu", meta = (ToolTip = "화면에 표시할 항목 문구입니다."))
 	FText Label;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu", meta = (RowType = "/Script/Maverick.MVActionRow", ToolTip = "선택 시 외부 로직에 전달할 action DataTable row입니다. MVActionRow 계열 테이블만 선택합니다."))
-	FDataTableRowHandle ActionRow;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu|Command", meta = (BaseStruct = "/Script/Maverick.MVInteractionCommandData", ExcludeBaseStruct, ToolTip = "이 항목을 선택했을 때 순서대로 실행할 command 목록입니다."))
+	TArray<FInstancedStruct> Commands;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu", meta = (ToolTip = "false면 항목은 표시되지만 선택할 수 없습니다."))
 	bool bEnabled = true;
@@ -72,11 +73,6 @@ struct FMVMenuEntryData
 	FName RuntimeActionId = NAME_None;
 	bool bInternalBackEntry = false;
 
-	bool HasActionRow() const
-	{
-		return ActionRow.DataTable && !ActionRow.RowName.IsNone();
-	}
-
 	bool HasSubMenu() const;
 
 	FName ResolveSelectionName() const
@@ -84,11 +80,6 @@ struct FMVMenuEntryData
 		if (!RuntimeActionId.IsNone())
 		{
 			return RuntimeActionId;
-		}
-
-		if (HasActionRow())
-		{
-			return ActionRow.RowName;
 		}
 
 		return EntryId.GetTagName();

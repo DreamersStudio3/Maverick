@@ -25,29 +25,28 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(
 	FGameplayTag, StepId,
 	FMVMenuEntryData, EntryData);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_FiveParams(
-	FMVOnInteractionActionRequested,
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(
+	FMVOnInteractionCommandRequested,
 	AActor*, Interactor,
 	UMVInteractableComponent*, InteractableComponent,
 	FGameplayTag, StepId,
-	FDataTableRowHandle, ActionRow,
-	FName, StartSection);
+	FMVInteractionCommandRequest, CommandRequest);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_FiveParams(
-	FMVOnInteractionActionCompleted,
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(
+	FMVOnInteractionCommandCompleted,
 	AActor*, Interactor,
 	UMVInteractableComponent*, InteractableComponent,
 	FGameplayTag, StepId,
-	FDataTableRowHandle, ActionRow,
-	FName, StartSection);
+	FMVInteractionCommandRequest, CommandRequest);
 
 /**
  * 액터를 공통 상호작용 대상으로 노출하고 선택형 interaction flow를 실행하는 컴포넌트.
  *
  * detector는 이 컴포넌트의 prompt, priority, interact 가능 여부만 보고 후보를 고른다. 정의 기반 실행을
  * 켜면 flow asset 또는 inline instanced struct step 그래프를 따라 대화, 액션, 경고, 메뉴/선택지, window를
- * 순차 실행한다. 액션 step은 외부 애니메이션 notify나 도메인 로직이 `FinishInteractionAction`을 호출할
- * 때 다음 step으로 넘어간다. 정의 기반 실행을 끄면 기존처럼 `OnInteractionRequested`만 방송한다.
+ * 순차 실행한다. command가 완료 대기를 요구하면 외부 애니메이션 notify나 도메인 로직이
+ * `FinishInteractionCommand`를 호출할 때 다음 command나 step으로 넘어간다. 정의 기반 실행을 끄면 기존처럼
+ * `OnInteractionRequested`만 방송한다.
  */
 UCLASS(ClassGroup = (Maverick), meta = (BlueprintSpawnableComponent))
 class MAVERICK_API UMVInteractableComponent : public UActorComponent, public IMVInteractableInterface
@@ -64,10 +63,10 @@ public:
 	FMVOnInteractionMenuEntryRequested OnInteractionMenuEntryRequested;
 
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|Interaction")
-	FMVOnInteractionActionRequested OnInteractionActionRequested;
+	FMVOnInteractionCommandRequested OnInteractionCommandRequested;
 
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|Interaction")
-	FMVOnInteractionActionCompleted OnInteractionActionCompleted;
+	FMVOnInteractionCommandCompleted OnInteractionCommandCompleted;
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Interaction")
 	void SetCanInteract(bool bInCanInteract);
@@ -85,7 +84,7 @@ public:
 	UMVInteractionFlowDataAsset* GetInteractionFlowAsset() const { return InteractionFlowAsset; }
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Interaction")
-	void FinishInteractionAction();
+	void FinishInteractionCommand();
 
 	UFUNCTION(BlueprintPure, Category = "Maverick|Interaction")
 	bool IsConfiguredInteractionRunning() const { return bConfiguredInteractionRunning; }
@@ -126,6 +125,9 @@ private:
 	void EndConfiguredInteractionSession();
 	bool ExecuteConfiguredStep(FGameplayTag StepId);
 	void CompleteConfiguredStep(FGameplayTag NextStepId);
+	bool ExecuteConfiguredCommands(const TArray<FInstancedStruct>& Commands, FGameplayTag NextStepId);
+	bool ExecuteNextConfiguredCommand();
+	FMVInteractionCommandRequest MakeCommandRequest(const FInstancedStruct& CommandInstance) const;
 	FGameplayTag ResolveStartStepId() const;
 	const TArray<FInstancedStruct>& ResolveInteractionSteps() const;
 	FMVInteractionMenuData MakeChoiceMenuData(const FMVInteractionChoiceStepData& Step) const;
@@ -164,9 +166,18 @@ private:
 	UPROPERTY(Transient)
 	TObjectPtr<UMVWindowBase> ActiveConfiguredWindow;
 
+	TArray<FInstancedStruct> ActiveCommandInstances;
+	TArray<FInstancedStruct> PendingCommandsAfterMenuClose;
+	FMVInteractionCommandRequest ActiveCommandRequest;
 	FGameplayTag ActiveStepId;
 	FGameplayTag PendingStepAfterMenuClose;
+	FGameplayTag PendingStepAfterCommands;
+	int32 ActiveCommandIndex = INDEX_NONE;
 	bool bConfiguredInteractionRunning = false;
 	bool bWaitingForConfiguredStep = false;
+	bool bWaitingForConfiguredCommand = false;
+	bool bBroadcastingConfiguredCommandRequest = false;
+	bool bCompleteConfiguredCommandAfterRequest = false;
 	bool bHasPendingStepAfterMenuClose = false;
+	bool bHasPendingCommandsAfterMenuClose = false;
 };

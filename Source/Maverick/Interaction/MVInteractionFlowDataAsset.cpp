@@ -71,6 +71,46 @@ EDataValidationResult UMVInteractionFlowDataAsset::IsDataValid(FDataValidationCo
 		}
 	};
 
+	auto ValidateCommandInstance = [&MarkInvalid, &ValidateActionRowHandle](
+		const FInstancedStruct& CommandInstance,
+		const FString& SourceDescription)
+	{
+		const FMVInteractionCommandData* Command = CommandInstance.GetPtr<FMVInteractionCommandData>();
+		if (!Command)
+		{
+			MarkInvalid(FString::Printf(
+				TEXT("%s is empty or is not an interaction command."),
+				*SourceDescription));
+			return;
+		}
+
+		if (const FMVInteractionPlayActionCommandData* PlayActionCommand =
+			CommandInstance.GetPtr<FMVInteractionPlayActionCommandData>())
+		{
+			ValidateActionRowHandle(
+				PlayActionCommand->ActionRow,
+				FString::Printf(TEXT("%s PlayAction"), *SourceDescription),
+				true);
+			return;
+		}
+
+		if (const FMVInteractionGameplayEventCommandData* EventCommand =
+			CommandInstance.GetPtr<FMVInteractionGameplayEventCommandData>())
+		{
+			if (!EventCommand->EventTag.IsValid())
+			{
+				MarkInvalid(FString::Printf(
+					TEXT("%s GameplayEvent has no EventTag."),
+					*SourceDescription));
+			}
+			return;
+		}
+
+		MarkInvalid(FString::Printf(
+			TEXT("%s uses unsupported command type."),
+			*SourceDescription));
+	};
+
 	if (Steps.IsEmpty())
 	{
 		MarkInvalid(TEXT("Interaction flow has no steps."));
@@ -103,10 +143,23 @@ EDataValidationResult UMVInteractionFlowDataAsset::IsDataValid(FDataValidationCo
 
 		if (const FMVInteractionActionStepData* ActionStep = StepInstance.GetPtr<FMVInteractionActionStepData>())
 		{
-			ValidateActionRowHandle(
-				ActionStep->ActionRow,
-				FString::Printf(TEXT("Action step '%s'"), *Step->StepId.ToString()),
-				true);
+			if (ActionStep->Commands.IsEmpty())
+			{
+				MarkInvalid(FString::Printf(
+					TEXT("Action step '%s' has no commands."),
+					*Step->StepId.ToString()));
+				continue;
+			}
+
+			for (int32 CommandIndex = 0; CommandIndex < ActionStep->Commands.Num(); ++CommandIndex)
+			{
+				ValidateCommandInstance(
+					ActionStep->Commands[CommandIndex],
+					FString::Printf(
+						TEXT("Action step '%s' command[%d]"),
+						*Step->StepId.ToString(),
+						CommandIndex));
+			}
 		}
 	}
 
@@ -190,7 +243,7 @@ EDataValidationResult UMVInteractionFlowDataAsset::IsDataValid(FDataValidationCo
 		}
 
 		TSet<FGameplayTag> EntryIds;
-		auto ValidateMenuEntry = [&EntryIds, &MarkInvalid, &ValidateActionRowHandle](
+		auto ValidateMenuEntry = [&EntryIds, &MarkInvalid, &ValidateCommandInstance](
 			const FMVMenuEntryData& Entry,
 			const FString& EntryDescription)
 		{
@@ -212,7 +265,12 @@ EDataValidationResult UMVInteractionFlowDataAsset::IsDataValid(FDataValidationCo
 				EntryIds.Add(Entry.EntryId);
 			}
 
-			ValidateActionRowHandle(Entry.ActionRow, FString::Printf(TEXT("%s ActionRow"), *EntryDescription), false);
+			for (int32 CommandIndex = 0; CommandIndex < Entry.Commands.Num(); ++CommandIndex)
+			{
+				ValidateCommandInstance(
+					Entry.Commands[CommandIndex],
+					FString::Printf(TEXT("%s command[%d]"), *EntryDescription, CommandIndex));
+			}
 		};
 
 		auto ValidateMenuEntries = [
