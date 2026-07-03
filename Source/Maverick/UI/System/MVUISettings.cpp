@@ -3,6 +3,7 @@
 #include "UI/HUD/MVMainHUDWidget.h"
 #include "UI/Popup/MVBossClearPopup.h"
 #include "UI/Popup/MVDialoguePopup.h"
+#include "UI/Popup/MVInteractionChoicePopup.h"
 #include "UI/Popup/MVInteractionPromptPopup.h"
 #include "UI/Popup/MVMessagePopup.h"
 #include "UI/System/MVUILayerBase.h"
@@ -24,5 +25,6 @@ UMVUISettings::UMVUISettings()
 	InteractionPromptPopupClass = UMVInteractionPromptPopup::StaticClass();
 	BossClearPopupClass = UMVBossClearPopup::StaticClass();
 	DialoguePopupClass = UMVDialoguePopup::StaticClass();
+	ChoicePopupClass = UMVChoicePopup::StaticClass();
 	MessagePopupClass = UMVMessagePopup::StaticClass();
 }

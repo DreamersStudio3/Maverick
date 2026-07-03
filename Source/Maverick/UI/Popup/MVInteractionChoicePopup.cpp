@@ -2,36 +2,134 @@
 
 #include "Blueprint/WidgetTree.h"
 #include "Components/Border.h"
+#include "Components/Button.h"
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
 #include "Components/TextBlock.h"
 #include "Components/VerticalBox.h"
 #include "Components/VerticalBoxSlot.h"
 
-UMVInteractionChoicePopupEntryButton::UMVInteractionChoicePopupEntryButton(const FObjectInitializer& ObjectInitializer)
+UMVChoiceEntryWidget::UMVChoiceEntryWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	OnClicked.AddDynamic(this, &UMVInteractionChoicePopupEntryButton::HandleClicked);
 }
 
-void UMVInteractionChoicePopupEntryButton::SetEntryData(const FMVMenuEntryData& InEntryData)
+void UMVChoiceEntryWidget::SetEntryData(const FMVMenuEntryData& InEntryData)
 {
 	EntryData = InEntryData;
 	SetIsEnabled(EntryData.bEnabled);
+	if (EntryButton)
+	{
+		EntryButton->SetIsEnabled(EntryData.bEnabled);
+	}
+	RefreshEntry();
 }
 
-void UMVInteractionChoicePopupEntryButton::HandleClicked()
+void UMVChoiceEntryWidget::NativeConstruct()
 {
-	OnEntryButtonClicked.Broadcast(this);
+	CacheBoundEntryWidgets();
+	if (!EntryButton)
+	{
+		BuildNativeEntryTree();
+	}
+	CacheBoundEntryWidgets();
+
+	Super::NativeConstruct();
+
+	if (EntryButton)
+	{
+		EntryButton->OnClicked.AddUniqueDynamic(this, &UMVChoiceEntryWidget::HandleClicked);
+	}
+	RefreshEntry();
 }
 
-UMVInteractionChoicePopup::UMVInteractionChoicePopup(const FObjectInitializer& ObjectInitializer)
+void UMVChoiceEntryWidget::NativeDestruct()
+{
+	if (EntryButton)
+	{
+		EntryButton->OnClicked.RemoveDynamic(this, &UMVChoiceEntryWidget::HandleClicked);
+	}
+
+	Super::NativeDestruct();
+}
+
+void UMVChoiceEntryWidget::CacheBoundEntryWidgets()
+{
+	if (!WidgetTree)
+	{
+		return;
+	}
+
+	if (!EntryButton)
+	{
+		EntryButton = Cast<UButton>(WidgetTree->FindWidget(TEXT("EntryButton")));
+	}
+	if (!LabelText)
+	{
+		LabelText = Cast<UTextBlock>(WidgetTree->FindWidget(TEXT("LabelText")));
+	}
+}
+
+void UMVChoiceEntryWidget::BuildNativeEntryTree()
+{
+	if (!WidgetTree)
+	{
+		return;
+	}
+
+	EntryButton = WidgetTree->ConstructWidget<UButton>(
+		UButton::StaticClass(),
+		TEXT("EntryButton"));
+	LabelText = WidgetTree->ConstructWidget<UTextBlock>(
+		UTextBlock::StaticClass(),
+		TEXT("LabelText"));
+	if (!EntryButton || !LabelText)
+	{
+		return;
+	}
+
+	WidgetTree->RootWidget = EntryButton;
+
+	FButtonStyle ButtonStyle = EntryButton->GetStyle();
+	ButtonStyle.Normal.TintColor = FSlateColor(FLinearColor(0.10f, 0.095f, 0.08f, 0.82f));
+	ButtonStyle.Hovered.TintColor = FSlateColor(FLinearColor(0.24f, 0.22f, 0.17f, 0.92f));
+	ButtonStyle.Pressed.TintColor = FSlateColor(FLinearColor(0.32f, 0.29f, 0.20f, 0.96f));
+	ButtonStyle.Disabled.TintColor = FSlateColor(FLinearColor(0.04f, 0.04f, 0.04f, 0.55f));
+	EntryButton->SetStyle(ButtonStyle);
+	EntryButton->SetContent(LabelText);
+}
+
+void UMVChoiceEntryWidget::RefreshEntry()
+{
+	if (LabelText)
+	{
+		LabelText->SetText(ResolveEntryLabel());
+		LabelText->SetJustification(ETextJustify::Center);
+		LabelText->SetAutoWrapText(true);
+		LabelText->SetColorAndOpacity(EntryData.bEnabled
+			? FSlateColor(FLinearColor(0.88f, 0.84f, 0.75f, 1.0f))
+			: FSlateColor(FLinearColor(0.48f, 0.46f, 0.42f, 1.0f)));
+	}
+}
+
+FText UMVChoiceEntryWidget::ResolveEntryLabel() const
+{
+	return EntryData.Label;
+}
+
+void UMVChoiceEntryWidget::HandleClicked()
+{
+	OnEntryWidgetClicked.Broadcast(this);
+}
+
+UMVChoicePopup::UMVChoicePopup(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	AutoDismissSeconds = 0.0f;
+	EntryWidgetClass = UMVChoiceEntryWidget::StaticClass();
 }
 
-void UMVInteractionChoicePopup::SetChoiceData(
+void UMVChoicePopup::SetChoiceData(
 	const FMVInteractionChoiceData& InChoiceData,
 	UObject* InSourceObject)
 {
@@ -40,11 +138,27 @@ void UMVInteractionChoicePopup::SetChoiceData(
 	RefreshChoice();
 }
 
-void UMVInteractionChoicePopup::RefreshChoice()
+void UMVChoicePopup::RefreshChoice()
 {
-	if (!ChoiceBox)
+	UVerticalBox* EntryContainer = ResolveChoiceBox();
+	if (!EntryContainer)
 	{
-		return;
+		BuildNativeChoiceTree();
+		EntryContainer = ResolveChoiceBox();
+		if (!EntryContainer)
+		{
+			SetVisibility(ESlateVisibility::Collapsed);
+			return;
+		}
+	}
+
+	const bool bHasChoices = !ChoiceData.Choices.IsEmpty();
+	SetVisibility(bHasChoices ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
+	if (WidgetTree && WidgetTree->RootWidget)
+	{
+		WidgetTree->RootWidget->SetVisibility(bHasChoices
+			? ESlateVisibility::SelfHitTestInvisible
+			: ESlateVisibility::Collapsed);
 	}
 
 	if (PromptText)
@@ -55,67 +169,87 @@ void UMVInteractionChoicePopup::RefreshChoice()
 			: ESlateVisibility::SelfHitTestInvisible);
 	}
 
-	ChoiceBox->ClearChildren();
+	EntryContainer->ClearChildren();
+	if (!bHasChoices)
+	{
+		return;
+	}
 
 	int32 ChoiceIndex = 0;
 	for (const FMVInteractionChoiceEntryData& Choice : ChoiceData.Choices)
 	{
-		const FName ButtonName = *FString::Printf(TEXT("InteractionChoiceEntry_%d"), ChoiceIndex++);
-		UMVInteractionChoicePopupEntryButton* EntryButton =
-			WidgetTree->ConstructWidget<UMVInteractionChoicePopupEntryButton>(
-				UMVInteractionChoicePopupEntryButton::StaticClass(),
-				ButtonName);
-		if (!EntryButton)
+		const FName EntryName = *FString::Printf(TEXT("InteractionChoiceEntry_%d"), ChoiceIndex++);
+		TSubclassOf<UMVChoiceEntryWidget> ResolvedEntryWidgetClass = EntryWidgetClass;
+		if (!ResolvedEntryWidgetClass)
+		{
+			ResolvedEntryWidgetClass = UMVChoiceEntryWidget::StaticClass();
+		}
+		UMVChoiceEntryWidget* EntryWidget =
+			WidgetTree->ConstructWidget<UMVChoiceEntryWidget>(
+				ResolvedEntryWidgetClass,
+				EntryName);
+		if (!EntryWidget)
 		{
 			continue;
 		}
 
-		FMVMenuEntryData EntryData = MakeEntryData(Choice);
-		EntryButton->SetEntryData(EntryData);
-		EntryButton->OnEntryButtonClicked.AddUniqueDynamic(
+		EntryWidget->SetEntryData(MakeEntryData(Choice));
+		EntryWidget->OnEntryWidgetClicked.AddUniqueDynamic(
 			this,
-			&UMVInteractionChoicePopup::HandleChoiceButtonClicked);
+			&UMVChoicePopup::HandleChoiceEntryClicked);
 
-		FButtonStyle ButtonStyle = EntryButton->GetStyle();
-		ButtonStyle.Normal.TintColor = FSlateColor(FLinearColor(0.10f, 0.095f, 0.08f, 0.82f));
-		ButtonStyle.Hovered.TintColor = FSlateColor(FLinearColor(0.24f, 0.22f, 0.17f, 0.92f));
-		ButtonStyle.Pressed.TintColor = FSlateColor(FLinearColor(0.32f, 0.29f, 0.20f, 0.96f));
-		ButtonStyle.Disabled.TintColor = FSlateColor(FLinearColor(0.04f, 0.04f, 0.04f, 0.55f));
-		EntryButton->SetStyle(ButtonStyle);
-
-		UTextBlock* ButtonText = WidgetTree->ConstructWidget<UTextBlock>(
-			UTextBlock::StaticClass(),
-			*FString::Printf(TEXT("%s_Text"), *ButtonName.ToString()));
-		if (ButtonText)
-		{
-			ButtonText->SetText(ResolveEntryLabel(EntryData));
-			ButtonText->SetJustification(ETextJustify::Center);
-			ButtonText->SetAutoWrapText(true);
-			ButtonText->SetColorAndOpacity(EntryData.bEnabled
-				? FSlateColor(FLinearColor(0.88f, 0.84f, 0.75f, 1.0f))
-				: FSlateColor(FLinearColor(0.48f, 0.46f, 0.42f, 1.0f)));
-			EntryButton->SetContent(ButtonText);
-		}
-
-		if (UVerticalBoxSlot* EntrySlot = ChoiceBox->AddChildToVerticalBox(EntryButton))
+		if (UVerticalBoxSlot* EntrySlot = EntryContainer->AddChildToVerticalBox(EntryWidget))
 		{
 			EntrySlot->SetPadding(FMargin(0.0f, 0.0f, 0.0f, 6.0f));
 		}
 	}
 }
 
-void UMVInteractionChoicePopup::NativeConstruct()
+void UMVChoicePopup::NativeConstruct()
 {
-	if (!WidgetTree || !WidgetTree->RootWidget)
+	CacheBoundChoiceWidgets();
+	if (!ResolveChoiceBox())
 	{
 		BuildNativeChoiceTree();
 	}
+	CacheBoundChoiceWidgets();
 
 	Super::NativeConstruct();
 	RefreshChoice();
 }
 
-void UMVInteractionChoicePopup::BuildNativeChoiceTree()
+void UMVChoicePopup::CacheBoundChoiceWidgets()
+{
+	if (!WidgetTree)
+	{
+		return;
+	}
+
+	if (!PromptText)
+	{
+		PromptText = Cast<UTextBlock>(WidgetTree->FindWidget(TEXT("PromptText")));
+		if (!PromptText)
+		{
+			PromptText = Cast<UTextBlock>(WidgetTree->FindWidget(TEXT("InteractionChoicePrompt")));
+		}
+	}
+
+	if (!ChoiceBox)
+	{
+		ChoiceBox = Cast<UVerticalBox>(WidgetTree->FindWidget(TEXT("ChoiceBox")));
+		if (!ChoiceBox)
+		{
+			ChoiceBox = Cast<UVerticalBox>(WidgetTree->FindWidget(TEXT("InteractionChoiceEntryBox")));
+		}
+	}
+
+	if (!EntryList)
+	{
+		EntryList = Cast<UVerticalBox>(WidgetTree->FindWidget(TEXT("EntryList")));
+	}
+}
+
+void UMVChoicePopup::BuildNativeChoiceTree()
 {
 	if (!WidgetTree)
 	{
@@ -137,6 +271,7 @@ void UMVInteractionChoicePopup::BuildNativeChoiceTree()
 	ChoiceBox = WidgetTree->ConstructWidget<UVerticalBox>(
 		UVerticalBox::StaticClass(),
 		TEXT("InteractionChoiceEntryBox"));
+	EntryList = ChoiceBox;
 
 	if (!RootCanvas || !PanelBorder || !PanelBox || !PromptText || !ChoiceBox)
 	{
@@ -173,7 +308,13 @@ void UMVInteractionChoicePopup::BuildNativeChoiceTree()
 	}
 }
 
-FMVMenuEntryData UMVInteractionChoicePopup::MakeEntryData(
+UVerticalBox* UMVChoicePopup::ResolveChoiceBox()
+{
+	CacheBoundChoiceWidgets();
+	return ChoiceBox ? ChoiceBox.Get() : EntryList.Get();
+}
+
+FMVMenuEntryData UMVChoicePopup::MakeEntryData(
 	const FMVInteractionChoiceEntryData& Choice) const
 {
 	FMVMenuEntryData EntryData;
@@ -183,24 +324,19 @@ FMVMenuEntryData UMVInteractionChoicePopup::MakeEntryData(
 	return EntryData;
 }
 
-FText UMVInteractionChoicePopup::ResolveEntryLabel(const FMVMenuEntryData& EntryData) const
+void UMVChoicePopup::HandleChoiceEntryClicked(UMVChoiceEntryWidget* EntryWidget)
 {
-	return EntryData.Label;
-}
-
-void UMVInteractionChoicePopup::HandleChoiceButtonClicked(UMVInteractionChoicePopupEntryButton* Button)
-{
-	if (!Button)
+	if (!EntryWidget)
 	{
 		return;
 	}
 
-	const FMVMenuEntryData& EntryData = Button->GetEntryData();
+	const FMVMenuEntryData& EntryData = EntryWidget->GetEntryData();
 	if (!EntryData.bEnabled)
 	{
 		return;
 	}
 
-	OnInteractionChoiceEntrySelected.Broadcast(SourceObject, EntryData);
+	OnChoiceEntrySelected.Broadcast(SourceObject, EntryData);
 	ClosePopup();
 }

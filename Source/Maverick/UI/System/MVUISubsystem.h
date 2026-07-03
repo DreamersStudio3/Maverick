@@ -11,9 +11,10 @@
 
 class UCommonActivatableWidget;
 class UCameraComponent;
+class APlayerController;
 class UMVDialoguePopup;
 class UMVHUDWidgetBase;
-class UMVInteractionChoicePopup;
+class UMVChoicePopup;
 class UMVInteractionMenuWindow;
 class UMVInteractionPromptPopup;
 class UMVLoadingWindow;
@@ -81,7 +82,7 @@ public:
 	bool IsInteractionMenuActive() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Interaction")
-	UMVInteractionChoicePopup* ShowInteractionChoice(const FMVInteractionChoiceData& ChoiceData, UObject* SourceObject = nullptr);
+	UMVChoicePopup* ShowInteractionChoice(const FMVInteractionChoiceData& ChoiceData, UObject* SourceObject = nullptr);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Interaction")
 	void HideInteractionChoice();
@@ -186,11 +187,15 @@ private:
 	bool IsDialoguePopupPresent(const UMVDialoguePopup* DialoguePopup) const;
 	void CloseActivePopupImmediately();
 	void CloseActivePopup();
+	void CloseActiveInteractionChoice(bool bImmediate);
 	UMVDialoguePopup* OpenDialoguePopupText(FText DialogueText, float Duration, float MinimumSkipDelay);
 	void QueueDialoguePopupText(FText DialogueText, float Duration, float MinimumSkipDelay);
 	void TryOpenPendingDialoguePopup();
 	void TrackActivePopup(UMVPopupBase* Popup);
 	void TrackActiveDialoguePopup(UMVDialoguePopup* DialoguePopup);
+	APlayerController* ResolvePrimaryPlayerController() const;
+	void ApplyChoiceMouseInputMode(UMVChoicePopup* ChoicePopup);
+	void RestoreChoiceMouseInputMode();
 
 	UPROPERTY(Transient)
 	TArray<TObjectPtr<UMVUILayerBase>> LayerStack;
@@ -205,7 +210,7 @@ private:
 	TObjectPtr<UMVInteractionMenuWindow> ActiveInteractionMenuWindow;
 
 	UPROPERTY(Transient)
-	TObjectPtr<UMVInteractionChoicePopup> ActiveInteractionChoicePopup;
+	TObjectPtr<UMVChoicePopup> ActiveInteractionChoicePopup;
 
 	UPROPERTY(Transient)
 	TObjectPtr<UMVDialoguePopup> ActiveDialoguePopup;
@@ -236,6 +241,10 @@ private:
 	bool bDialoguePromptRestoreDelayActive = false;
 	bool bDialogueCameraZoomApplied = false;
 	bool bDialogueCameraZoomRestoring = false;
+	bool bChoiceMouseInputModeApplied = false;
+	bool bChoiceSavedShowMouseCursor = false;
+	bool bChoiceSavedClickEvents = false;
+	bool bChoiceSavedMouseOverEvents = false;
 
 	FText PendingDialogueText;
 	float PendingDialogueDuration = -1.0f;

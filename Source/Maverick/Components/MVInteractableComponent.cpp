@@ -247,7 +247,7 @@ void UMVInteractableComponent::EndConfiguredInteractionSession()
 		ActiveConfiguredChoicePopup->OnPopupClosed.RemoveDynamic(
 			this,
 			&UMVInteractableComponent::HandleConfiguredChoiceClosed);
-		ActiveConfiguredChoicePopup->OnInteractionChoiceEntrySelected.RemoveDynamic(
+		ActiveConfiguredChoicePopup->OnChoiceEntrySelected.RemoveDynamic(
 			this,
 			&UMVInteractableComponent::HandleConfiguredChoiceEntrySelected);
 	}
@@ -354,7 +354,7 @@ bool UMVInteractableComponent::ExecuteConfiguredStep(const FGameplayTag StepId)
 				ActiveConfiguredChoicePopup->OnPopupClosed.AddUniqueDynamic(
 					this,
 					&UMVInteractableComponent::HandleConfiguredChoiceClosed);
-				ActiveConfiguredChoicePopup->OnInteractionChoiceEntrySelected.AddUniqueDynamic(
+				ActiveConfiguredChoicePopup->OnChoiceEntrySelected.AddUniqueDynamic(
 					this,
 					&UMVInteractableComponent::HandleConfiguredChoiceEntrySelected);
 				return true;
@@ -441,7 +441,7 @@ void UMVInteractableComponent::CompleteConfiguredStep(const FGameplayTag NextSte
 		ActiveConfiguredChoicePopup->OnPopupClosed.RemoveDynamic(
 			this,
 			&UMVInteractableComponent::HandleConfiguredChoiceClosed);
-		ActiveConfiguredChoicePopup->OnInteractionChoiceEntrySelected.RemoveDynamic(
+		ActiveConfiguredChoicePopup->OnChoiceEntrySelected.RemoveDynamic(
 			this,
 			&UMVInteractableComponent::HandleConfiguredChoiceEntrySelected);
 		ActiveConfiguredChoicePopup = nullptr;
@@ -832,7 +832,7 @@ void UMVInteractableComponent::HandleConfiguredChoiceClosed(UMVPopupBase* Closed
 	ActiveConfiguredChoicePopup->OnPopupClosed.RemoveDynamic(
 		this,
 		&UMVInteractableComponent::HandleConfiguredChoiceClosed);
-	ActiveConfiguredChoicePopup->OnInteractionChoiceEntrySelected.RemoveDynamic(
+	ActiveConfiguredChoicePopup->OnChoiceEntrySelected.RemoveDynamic(
 		this,
 		&UMVInteractableComponent::HandleConfiguredChoiceEntrySelected);
 	ActiveConfiguredChoicePopup = nullptr;

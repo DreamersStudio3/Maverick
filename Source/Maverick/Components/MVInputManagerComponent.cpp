@@ -7,14 +7,15 @@
 
 namespace
 {
-bool MVInputManagerIsInteractionMenuBlockingAction(const UActorComponent& Component)
+bool MVInputManagerIsInteractionUIBlockingAction(const UActorComponent& Component)
 {
 	const UWorld* World = Component.GetWorld();
 	const UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr;
 	const UMVUISubsystem* UISubsystem = GameInstance
 		? GameInstance->GetSubsystem<UMVUISubsystem>()
 		: nullptr;
-	return UISubsystem && UISubsystem->IsInteractionMenuActive();
+	return UISubsystem
+		&& (UISubsystem->IsInteractionMenuActive() || UISubsystem->IsInteractionChoiceActive());
 }
 }
 
@@ -48,7 +49,7 @@ bool UMVInputManagerComponent::SubmitActionInputById(const int32 ActionId)
 		return false;
 	}
 
-	if (MVInputManagerIsInteractionMenuBlockingAction(*this))
+	if (MVInputManagerIsInteractionUIBlockingAction(*this))
 	{
 		ClearBufferedActionInput();
 		return false;

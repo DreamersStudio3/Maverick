@@ -9,7 +9,7 @@
 class UMVInteractableComponent;
 class UMVDialoguePopup;
 class UMVInteractionFlowDataAsset;
-class UMVInteractionChoicePopup;
+class UMVChoicePopup;
 class UMVInteractionMenuWindow;
 class UMVPopupBase;
 class UMVWindowBase;
@@ -171,7 +171,7 @@ private:
 	TObjectPtr<UMVInteractionMenuWindow> ActiveConfiguredMenuWindow;
 
 	UPROPERTY(Transient)
-	TObjectPtr<UMVInteractionChoicePopup> ActiveConfiguredChoicePopup;
+	TObjectPtr<UMVChoicePopup> ActiveConfiguredChoicePopup;
 
 	UPROPERTY(Transient)
 	TObjectPtr<UMVWindowBase> ActiveConfiguredWindow;

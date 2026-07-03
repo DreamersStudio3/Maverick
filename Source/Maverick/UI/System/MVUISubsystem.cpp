@@ -176,6 +176,7 @@ void UMVUISubsystem::PopLayer()
 	ActiveInteractionMenuSource.Reset();
 	ActiveInteractionChoiceSource.Reset();
 	InteractionSessionSources.Reset();
+	RestoreChoiceMouseInputMode();
 	bHasPendingDialogueRequest = false;
 	PendingDialogueText = FText::GetEmpty();
 	PendingDialogueDuration = -1.0f;
@@ -380,7 +381,7 @@ bool UMVUISubsystem::IsInteractionMenuActive() const
 	return ActiveInteractionMenuWindow && ActiveInteractionMenuWindow->IsActivated();
 }
 
-UMVInteractionChoicePopup* UMVUISubsystem::ShowInteractionChoice(
+UMVChoicePopup* UMVUISubsystem::ShowInteractionChoice(
 	const FMVInteractionChoiceData& ChoiceData,
 	UObject* SourceObject)
 {
@@ -391,12 +392,20 @@ UMVInteractionChoicePopup* UMVUISubsystem::ShowInteractionChoice(
 		ActiveInteractionChoicePopup->SetChoiceData(ChoiceData, SourceObject);
 		ActiveInteractionChoiceSource = SourceObject ? SourceObject : ActiveInteractionChoicePopup;
 		BeginInteractionSession(ActiveInteractionChoiceSource.Get());
+		ApplyChoiceMouseInputMode(ActiveInteractionChoicePopup);
 		return ActiveInteractionChoicePopup;
 	}
 
 	UMVUILayerBase* Layer = GetOrCreateRootLayer();
+	const UMVUISettings* Settings = GetDefault<UMVUISettings>();
+	TSubclassOf<UMVChoicePopup> ChoicePopupClass =
+		Settings ? Settings->ChoicePopupClass : nullptr;
+	if (!ChoicePopupClass)
+	{
+		ChoicePopupClass = UMVChoicePopup::StaticClass();
+	}
 	ActiveInteractionChoicePopup = Layer
-		? Cast<UMVInteractionChoicePopup>(Layer->PushPopup(UMVInteractionChoicePopup::StaticClass()))
+		? Cast<UMVChoicePopup>(Layer->PushPopup(ChoicePopupClass))
 		: nullptr;
 	if (!ActiveInteractionChoicePopup)
 	{
@@ -409,15 +418,13 @@ UMVInteractionChoicePopup* UMVUISubsystem::ShowInteractionChoice(
 		this,
 		&UMVUISubsystem::HandleInteractionChoiceClosed);
 	ActiveInteractionChoicePopup->SetChoiceData(ChoiceData, SourceObject);
+	ApplyChoiceMouseInputMode(ActiveInteractionChoicePopup);
 	return ActiveInteractionChoicePopup;
 }
 
 void UMVUISubsystem::HideInteractionChoice()
 {
-	if (IsPopupActive(ActiveInteractionChoicePopup) && !ActiveInteractionChoicePopup->IsClosing())
-	{
-		ActiveInteractionChoicePopup->ClosePopup();
-	}
+	CloseActiveInteractionChoice(false);
 }
 
 bool UMVUISubsystem::IsInteractionChoiceActive() const
@@ -583,6 +590,8 @@ UMVDialoguePopup* UMVUISubsystem::OpenDialoguePopupText(FText DialogueText, floa
 	{
 		return ActiveDialoguePopup;
 	}
+
+	CloseActiveInteractionChoice(true);
 
 	UMVUILayerBase* Layer = GetOrCreateRootLayer();
 	if (!Layer)
@@ -926,6 +935,7 @@ void UMVUISubsystem::HandleInteractionChoiceClosed(UMVPopupBase* ClosedChoicePop
 		EndInteractionSession(SessionSource ? SessionSource : ClosedChoicePopup);
 		ActiveInteractionChoicePopup = nullptr;
 		ActiveInteractionChoiceSource.Reset();
+		RestoreChoiceMouseInputMode();
 	}
 }
 
@@ -1183,6 +1193,28 @@ void UMVUISubsystem::CloseActivePopup()
 	ActivePopup->ClosePopup();
 }
 
+void UMVUISubsystem::CloseActiveInteractionChoice(bool bImmediate)
+{
+	if (!IsPopupActive(ActiveInteractionChoicePopup))
+	{
+		ActiveInteractionChoicePopup = nullptr;
+		ActiveInteractionChoiceSource.Reset();
+		RestoreChoiceMouseInputMode();
+		return;
+	}
+
+	if (bImmediate)
+	{
+		ActiveInteractionChoicePopup->ClosePopupImmediately();
+		return;
+	}
+
+	if (!ActiveInteractionChoicePopup->IsClosing())
+	{
+		ActiveInteractionChoicePopup->ClosePopup();
+	}
+}
+
 void UMVUISubsystem::QueueDialoguePopupText(FText DialogueText, float Duration, float MinimumSkipDelay)
 {
 	PendingDialogueText = DialogueText;
@@ -1237,4 +1269,64 @@ void UMVUISubsystem::TrackActiveDialoguePopup(UMVDialoguePopup* DialoguePopup)
 		ActiveDialoguePopup->OnDialoguePopupClosing.AddUniqueDynamic(this, &UMVUISubsystem::HandleDialoguePopupClosing);
 		ActiveDialoguePopup->OnDialoguePopupClosed.AddUniqueDynamic(this, &UMVUISubsystem::HandleDialoguePopupClosed);
 	}
+}
+
+APlayerController* UMVUISubsystem::ResolvePrimaryPlayerController() const
+{
+	UWorld* World = GetWorld();
+	return World ? World->GetFirstPlayerController() : nullptr;
+}
+
+void UMVUISubsystem::ApplyChoiceMouseInputMode(UMVChoicePopup* ChoicePopup)
+{
+	APlayerController* PlayerController = ResolvePrimaryPlayerController();
+	if (!PlayerController || !ChoicePopup)
+	{
+		return;
+	}
+
+	if (!bChoiceMouseInputModeApplied)
+	{
+		bChoiceSavedShowMouseCursor = PlayerController->bShowMouseCursor;
+		bChoiceSavedClickEvents = PlayerController->bEnableClickEvents;
+		bChoiceSavedMouseOverEvents = PlayerController->bEnableMouseOverEvents;
+		bChoiceMouseInputModeApplied = true;
+	}
+
+	FInputModeGameAndUI InputMode;
+	InputMode.SetWidgetToFocus(ChoicePopup->TakeWidget());
+	InputMode.SetHideCursorDuringCapture(false);
+	InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+
+	PlayerController->SetInputMode(InputMode);
+	PlayerController->bShowMouseCursor = true;
+	PlayerController->bEnableClickEvents = true;
+	PlayerController->bEnableMouseOverEvents = true;
+}
+
+void UMVUISubsystem::RestoreChoiceMouseInputMode()
+{
+	if (!bChoiceMouseInputModeApplied)
+	{
+		return;
+	}
+
+	APlayerController* PlayerController = ResolvePrimaryPlayerController();
+	if (PlayerController)
+	{
+		PlayerController->bShowMouseCursor = bChoiceSavedShowMouseCursor;
+		PlayerController->bEnableClickEvents = bChoiceSavedClickEvents;
+		PlayerController->bEnableMouseOverEvents = bChoiceSavedMouseOverEvents;
+
+		if (!bChoiceSavedShowMouseCursor)
+		{
+			FInputModeGameOnly InputMode;
+			PlayerController->SetInputMode(InputMode);
+		}
+	}
+
+	bChoiceMouseInputModeApplied = false;
+	bChoiceSavedShowMouseCursor = false;
+	bChoiceSavedClickEvents = false;
+	bChoiceSavedMouseOverEvents = false;
 }

@@ -1,39 +1,62 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/Button.h"
 #include "Interaction/MVInteractionTypes.h"
 #include "UI/Base/MVPopupBase.h"
+#include "UI/Base/MVWidgetBase.h"
 #include "MVInteractionChoicePopup.generated.h"
 
+class UButton;
 class UTextBlock;
 class UVerticalBox;
-class UMVInteractionChoicePopupEntryButton;
+class UMVChoiceEntryWidget;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
-	FMVOnInteractionChoicePopupEntryButtonClicked,
-	UMVInteractionChoicePopupEntryButton*, Button);
+	FMVOnChoiceEntryWidgetClicked,
+	UMVChoiceEntryWidget*, EntryWidget);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
-	FMVOnInteractionChoiceEntrySelected,
+	FMVOnChoiceEntrySelected,
 	UObject*, SourceObject,
 	FMVMenuEntryData, EntryData);
 
-UCLASS()
-class MAVERICK_API UMVInteractionChoicePopupEntryButton : public UButton
+/**
+ * Choice popup 안에서 동적으로 생성되는 단일 선택지 row.
+ *
+ * Widget Blueprint parent로 사용할 수 있으며, `EntryButton`과 `LabelText`를 선택적으로 바인딩한다.
+ * 별도 WBP가 없으면 native fallback button/text 구성을 만든다.
+ */
+UCLASS(Blueprintable)
+class MAVERICK_API UMVChoiceEntryWidget : public UMVWidgetBase
 {
 	GENERATED_BODY()
 
 public:
-	UMVInteractionChoicePopupEntryButton(const FObjectInitializer& ObjectInitializer);
+	UMVChoiceEntryWidget(const FObjectInitializer& ObjectInitializer);
 
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Choice")
 	void SetEntryData(const FMVMenuEntryData& InEntryData);
 	const FMVMenuEntryData& GetEntryData() const { return EntryData; }
 
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|UI|Choice")
-	FMVOnInteractionChoicePopupEntryButtonClicked OnEntryButtonClicked;
+	FMVOnChoiceEntryWidgetClicked OnEntryWidgetClicked;
+
+protected:
+	virtual void NativeConstruct() override;
+	virtual void NativeDestruct() override;
+
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional), Category = "Maverick|UI|Choice")
+	TObjectPtr<UButton> EntryButton;
+
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional), Category = "Maverick|UI|Choice")
+	TObjectPtr<UTextBlock> LabelText;
 
 private:
+	void CacheBoundEntryWidgets();
+	void BuildNativeEntryTree();
+	void RefreshEntry();
+	FText ResolveEntryLabel() const;
+
 	UFUNCTION()
 	void HandleClicked();
 
@@ -48,12 +71,12 @@ private:
  * hit-test 대상으로 두고, 선택된 항목을 flow transition용 entry 데이터로 방송한 뒤 닫힌다.
  */
 UCLASS(Blueprintable)
-class MAVERICK_API UMVInteractionChoicePopup : public UMVPopupBase
+class MAVERICK_API UMVChoicePopup : public UMVPopupBase
 {
 	GENERATED_BODY()
 
 public:
-	UMVInteractionChoicePopup(const FObjectInitializer& ObjectInitializer);
+	UMVChoicePopup(const FObjectInitializer& ObjectInitializer);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Choice")
 	void SetChoiceData(const FMVInteractionChoiceData& InChoiceData, UObject* InSourceObject);
@@ -62,7 +85,7 @@ public:
 	void RefreshChoice();
 
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|UI|Choice")
-	FMVOnInteractionChoiceEntrySelected OnInteractionChoiceEntrySelected;
+	FMVOnChoiceEntrySelected OnChoiceEntrySelected;
 
 protected:
 	virtual void NativeConstruct() override;
@@ -73,13 +96,20 @@ protected:
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional), Category = "Maverick|UI|Choice")
 	TObjectPtr<UVerticalBox> ChoiceBox;
 
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional), Category = "Maverick|UI|Choice")
+	TObjectPtr<UVerticalBox> EntryList;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Maverick|UI|Choice", meta = (AllowAbstract = "false"))
+	TSubclassOf<UMVChoiceEntryWidget> EntryWidgetClass;
+
 private:
+	void CacheBoundChoiceWidgets();
 	void BuildNativeChoiceTree();
+	UVerticalBox* ResolveChoiceBox();
 	FMVMenuEntryData MakeEntryData(const FMVInteractionChoiceEntryData& Choice) const;
-	FText ResolveEntryLabel(const FMVMenuEntryData& EntryData) const;
 
 	UFUNCTION()
-	void HandleChoiceButtonClicked(UMVInteractionChoicePopupEntryButton* Button);
+	void HandleChoiceEntryClicked(UMVChoiceEntryWidget* EntryWidget);
 
 	UPROPERTY(Transient)
 	FMVInteractionChoiceData ChoiceData;

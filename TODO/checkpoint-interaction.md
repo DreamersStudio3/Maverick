@@ -49,6 +49,26 @@
 - [x] Interaction menu window 활성 중 전투 액션 입력 차단
 - [x] Dialogue 표시를 window stack이 아닌 popup layer로 전환
 - [x] Interaction menu window 활성 중 액션 입력 차단을 InputManager 단계로 이동
+- [x] DialogueWindow -> DialoguePopup class redirect 및 UI 설정 경로 정리
+- [x] Choice popup entry를 Widget Blueprint parent로 제작 가능한 구조로 전환
+- [x] Choice popup/entry/editor setting 이름에서 Interaction 접두어 제거
+- [x] Dialogue 표시 시 남은 Choice popup 정리 및 Choice mouse input mode 적용
+- [x] Choice popup widget binding fallback 추가
+- [ ] 다른 로컬에서 `feat/check-point` pull 후 `MaverickEditor Win64 Development` 빌드 확인
+- [ ] 에디터에서 `MVUISettings` 연결 상태 확인
+  - `DialoguePopupClass = /Game/UI/Popups/WBP_DialoguePopup`
+  - `ChoicePopupClass = /Game/UI/Popups/WBP_ChoicePopup`
+  - `WBP_ChoicePopup.EntryWidgetClass = WBP_ChoiceEntry`
+- [ ] PIE에서 `Dialogue -> Choice -> Dialogue` 흐름 재검증
+  - Dialogue 표시 중 Choice popup이 같이 뜨지 않는지 확인
+  - Dialogue 닫힘 후 Choice popup이 하단 중앙에 표시되는지 확인
+  - Choice popup 표시 중 이동/카메라 조작은 유지되고 마우스 클릭으로 선택 가능한지 확인
+  - Choice popup 표시 중 좌클릭이 공격 액션으로 소비되지 않는지 확인
+- [ ] Choice popup이 계속 안 뜨면 `WBP_ChoicePopup` 내부 이름/visibility부터 확인
+  - 선택지 컨테이너 이름은 `ChoiceBox` 또는 `EntryList`
+  - 선택지 entry는 `WBP_ChoiceEntry`, 내부 버튼/텍스트 이름은 `EntryButton` / `LabelText`
+  - Root/Panel은 `Self Hit Test Invisible`, 실제 `EntryButton`은 `Visible`
+  - `ChoiceData.Choices`가 비어 있으면 popup은 의도적으로 `Collapsed` 처리됨
 - [ ] InteractionFlow 샘플 asset과 테스트용 액터 구성
 - [ ] InteractionFlow 제작 규칙 문서화
 - [ ] 기획자가 flow 구조를 노드 그래프로 확인/편집할 수 있는 에디터 GUI 툴 추가

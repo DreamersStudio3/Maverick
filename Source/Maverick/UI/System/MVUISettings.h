@@ -6,6 +6,7 @@
 
 class UMVHUDWidgetBase;
 class UMVDialoguePopup;
+class UMVChoicePopup;
 class UMVMessagePopup;
 class UMVPopupBase;
 class UMVUILayerBase;
@@ -57,6 +58,9 @@ public:
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Popup")
 	TSubclassOf<UMVDialoguePopup> DialoguePopupClass;
+
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Popup")
+	TSubclassOf<UMVChoicePopup> ChoicePopupClass;
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Popup", meta = (ClampMin = "0.0"))
 	float DialoguePopupDuration = 3.0f;
