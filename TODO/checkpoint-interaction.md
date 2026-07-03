@@ -32,6 +32,7 @@
 - [x] PropertyEditor 재귀 크래시 방지를 위해 instanced UObject step 저장 제거
 - [x] InteractionFlow step id를 `Interaction.Flow.Step.*` GameplayTag 기반으로 전환
 - [x] Interaction menu entry/menu id를 GameplayTag 기반으로 전환
+- [x] MenuId picker가 `Interaction.Menu.Page.*`만 표시하도록 entry tag와 분리
 - [x] ChoiceStep을 단층 선택지 데이터로 분리
 - [x] ActionStep을 `FMVActionRow` DataTable row handle 기반으로 제한
 - [x] InteractionFlow DataAsset 검증 로직 추가

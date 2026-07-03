@@ -49,7 +49,7 @@ struct FMVMenuEntryData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu", meta = (Categories = "Interaction.Menu.Entry"))
 	FGameplayTag EntryId;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu", meta = (Categories = "Interaction.Menu"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu", meta = (Categories = "Interaction.Menu.Page"))
 	FGameplayTag ParentMenuId;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu")
@@ -61,7 +61,7 @@ struct FMVMenuEntryData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu")
 	bool bEnabled = true;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu", meta = (Categories = "Interaction.Menu"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu", meta = (Categories = "Interaction.Menu.Page"))
 	FGameplayTag SubMenuId;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu")
@@ -79,7 +79,7 @@ struct FMVInteractionMenuData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu")
 	FText Title;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu", meta = (Categories = "Interaction.Menu"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu", meta = (Categories = "Interaction.Menu.Page"))
 	FGameplayTag RootMenuId;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu")

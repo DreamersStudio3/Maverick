@@ -169,7 +169,7 @@ FMVInteractionMenuData AMVCheckpointActor::MakeDefaultCheckpointMenuData()
 	FMVMenuEntryData TravelEntry;
 	TravelEntry.EntryId = MVGameplayTags::Interaction_Menu_Entry_Checkpoint_Travel;
 	TravelEntry.Label = NSLOCTEXT("MaverickCheckpoint", "Travel", "다른 체크포인트로 이동한다");
-	TravelEntry.SubMenuId = MVGameplayTags::Interaction_Menu_Checkpoint_Travel;
+	TravelEntry.SubMenuId = MVGameplayTags::Interaction_Menu_Page_Checkpoint_Travel;
 	TravelEntry.bCloseMenuOnExecute = false;
 	MenuData.Entries.Add(TravelEntry);
 
@@ -197,7 +197,7 @@ FMVInteractionMenuData AMVCheckpointActor::BuildCheckpointMenuData()
 		: CheckpointMenuData;
 	PendingTravelTargets.Reset();
 
-	FGameplayTag TravelMenuId = MVGameplayTags::Interaction_Menu_Checkpoint_Travel;
+	FGameplayTag TravelMenuId = MVGameplayTags::Interaction_Menu_Page_Checkpoint_Travel;
 	bool bHasTravelEntry = false;
 	for (FMVMenuEntryData& Entry : MenuData.Entries)
 	{
