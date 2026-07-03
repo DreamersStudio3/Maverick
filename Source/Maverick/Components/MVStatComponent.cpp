@@ -175,6 +175,8 @@ bool UMVStatComponent::WouldDieFromHit(const FMVResolvedHitData& HitData) const
 
 void UMVStatComponent::TickRecoverableStats(float DeltaTime)
 {
+	//MP recovers at the specified rate, regardless of whether the character is playing an action that pauses recovery.
+	RecoverMP(MPRecoveryPerSecond * DeltaTime);
 	if (DeltaTime <= 0.0f || IsRecoverableStatRecoveryPaused())
 	{
 		return;
@@ -196,7 +198,6 @@ void UMVStatComponent::TickRecoverableStats(float DeltaTime)
 		{
 			RecoverStamina(StaminaRecoveryPerSecond * DeltaTime);
 		}
-		RecoverMP(MPRecoveryPerSecond * DeltaTime);
 	}
 
 }
