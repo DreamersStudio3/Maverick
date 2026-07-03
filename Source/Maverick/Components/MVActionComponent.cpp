@@ -36,7 +36,6 @@ void UMVActionComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	CacheOwnerReferences();
 }
 
 void UMVActionComponent::SetCharacterIndexCode(const FGameplayTag NewCharacterIndexCode)
@@ -183,9 +182,13 @@ bool UMVActionComponent::TryStartResolvedAction(
 	EndDelegate.BindUObject(this, &UMVActionComponent::HandleActionMontageEnded, ActiveActionInstanceId);
 	AnimInstance->Montage_SetEndDelegate(EndDelegate, ActionMontage);
 
-	BeginRecoverableStatRecoveryPause();
-
 	OnActionStarted.Broadcast(ActionTableName, ActionRowName);
+	
+	if (OnStatPauseStart.IsBound())
+	{
+		OnStatPauseStart.Execute();
+	}
+	
 	return true;
 }
 
@@ -260,8 +263,11 @@ void UMVActionComponent::FinishActiveAction(bool bInterrupted)
 		}
 	}
 
-	EndRecoverableStatRecoveryPause();
 	OnActionEnded.Broadcast(FinishedActionTableName, FinishedActionRowName, bInterrupted);
+	if (OnStatPauseEnd.IsBound())
+	{
+		OnStatPauseEnd.Execute();
+	}
 }
 
 void UMVActionComponent::CompleteActiveAction()
@@ -280,59 +286,6 @@ void UMVActionComponent::CancelActiveAction(const float BlendOutTime)
 	{
 		AnimInstance->Montage_Stop(FMath::Max(0.0f, BlendOutTime), MontageToStop);
 	}
-}
-
-void UMVActionComponent::BeginRecoverableStatRecoveryPause()
-{
-	const bool bWasPaused = RecoverableStatRecoveryPauseCount > 0;
-	++RecoverableStatRecoveryPauseCount;
-	if (!bWasPaused)
-	{
-		if (!CachedStatComponent)
-		{
-			CacheOwnerReferences();
-		}
-
-		if (CachedStatComponent)
-		{
-			CachedStatComponent->BeginRecoverableStatRecoveryPause();
-		}
-
-		OnRecoverableStatRecoveryPauseChanged.Broadcast(true);
-	}
-}
-
-void UMVActionComponent::EndRecoverableStatRecoveryPause()
-{
-	if (RecoverableStatRecoveryPauseCount <= 0)
-	{
-		RecoverableStatRecoveryPauseCount = 0;
-		return;
-	}
-
-	--RecoverableStatRecoveryPauseCount;
-	if (RecoverableStatRecoveryPauseCount <= 0)
-	{
-		RecoverableStatRecoveryPauseCount = 0;
-		if (!CachedStatComponent)
-		{
-			CacheOwnerReferences();
-		}
-
-		if (CachedStatComponent)
-		{
-			CachedStatComponent->EndRecoverableStatRecoveryPause();
-		}
-
-		OnRecoverableStatRecoveryPauseChanged.Broadcast(false);
-	}
-}
-
-
-
-bool UMVActionComponent::IsRecoverableStatRecoveryPaused() const
-{
-	return RecoverableStatRecoveryPauseCount > 0;
 }
 
 bool UMVActionComponent::IsActionRunning() const
@@ -484,13 +437,6 @@ const FMVActionRow* UMVActionComponent::FindActionRow(
 	}
 
 	return ActionRow;
-}
-
-void UMVActionComponent::CacheOwnerReferences()
-{
-	CachedStatComponent = GetOwner()
-		? GetOwner()->FindComponentByClass<UMVStatComponent>()
-		: nullptr;
 }
 
 UAnimInstance* UMVActionComponent::GetOwnerAnimInstance() const

@@ -58,6 +58,9 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnDeathStarted, const FMVDeathCon
  *   2) ConsumeStamina/ConsumeMP -> 값을 감소시키고 회복 쿨다운을 다시 시작한다.
  *   3) TickRecoverableStats -> 외부 이동/액션 정책이 회복 가능한 프레임에 호출해 스태미너와 MP를 회복한다.
  */
+
+class UMVActionComponent;
+
 UCLASS(ClassGroup = (Maverick), meta = (BlueprintSpawnableComponent))
 class MAVERICK_API UMVStatComponent : public UActorComponent
 {
@@ -66,6 +69,9 @@ class MAVERICK_API UMVStatComponent : public UActorComponent
 public:
 	UMVStatComponent();
 
+	UPROPERTY(Transient)
+	TObjectPtr<UMVActionComponent> ActionCompRef;
+	
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|Stat|Event")
 	FMVOnStatValueChanged OnHPChanged;
 
@@ -234,7 +240,7 @@ public:
 	float StaminaRecoveryPerSecond = 35.0f;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Stamina")
-	float StaminaRecoveryDelay = 1.0f;
+	float StaminaRecoveryDelay = 0.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Stat|Recovery")
 	bool bUseRecoverableStatRecoveryDelay = false;
@@ -246,7 +252,7 @@ public:
 	float CurrentMP = 100.0f;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|MP")
-	float MPRecoveryPerSecond = 5.0f;
+	float MPRecoveryPerSecond = 0.1f;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Attack")
 	float AttackPower = 10.0f;
@@ -279,7 +285,7 @@ public:
 	float GroggyRecoveryDelay = 2.0f;
 
 private:
-	float RecoverableStatCooldownRemaining = 0.0f;
+	float StaminaCooldownRemaining = 0.0f;
 	int32 RecoverableStatRecoveryPauseCount = 0;
 	FMVResolvedHitData PendingDeathHitData;
 	bool bHasPendingDeathHitData = false;
