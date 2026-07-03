@@ -36,6 +36,7 @@ UMVInteractionMenuWindow::UMVInteractionMenuWindow(const FObjectInitializer& Obj
 void UMVInteractionMenuWindow::SetMenuData(const FMVInteractionMenuData& InMenuData, UObject* InSourceObject)
 {
 	MenuData = InMenuData;
+	MenuData.NormalizeEntryParentMenuIds();
 	SourceObject = InSourceObject;
 	MenuStack.Reset();
 	CurrentMenuId = MenuData.RootMenuId;

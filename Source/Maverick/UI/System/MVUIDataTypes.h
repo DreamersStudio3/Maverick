@@ -50,7 +50,7 @@ struct FMVMenuEntryData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu", meta = (Categories = "Interaction.Menu.Entry", ToolTip = "메뉴 항목의 고유 ID입니다. 버튼이나 선택 가능한 항목을 구분합니다."))
 	FGameplayTag EntryId;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu", meta = (Categories = "Interaction.Menu.Page", AdvancedDisplay, ToolTip = "레거시/런타임 flat menu용 부모 페이지 ID입니다. 일반 데이터 제작에서는 비워두고 SubMenus 페이지 안에 Entry를 추가합니다."))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu", meta = (Categories = "Interaction.Menu.Page", AdvancedDisplay, ToolTip = "자동 보정되는 부모 페이지 ID입니다. 일반 데이터 제작에서는 직접 수정하지 않고 Entries 또는 SubMenus 페이지 안에 항목을 추가합니다."))
 	FGameplayTag ParentMenuId;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu", meta = (ToolTip = "화면에 표시할 항목 문구입니다."))
@@ -126,4 +126,28 @@ struct FMVInteractionMenuData
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu", meta = (ToolTip = "Entry.SubMenuId로 연결되는 하위 메뉴 페이지 목록입니다. 각 페이지의 MenuId가 SubMenuId와 일치해야 합니다."))
 	TArray<FMVInteractionMenuPageData> SubMenus;
+
+	void NormalizeEntryParentMenuIds()
+	{
+		if (RootMenuId.IsValid())
+		{
+			for (FMVMenuEntryData& Entry : Entries)
+			{
+				Entry.ParentMenuId = RootMenuId;
+			}
+		}
+
+		for (FMVInteractionMenuPageData& SubMenu : SubMenus)
+		{
+			if (!SubMenu.MenuId.IsValid())
+			{
+				continue;
+			}
+
+			for (FMVMenuEntryData& Entry : SubMenu.Entries)
+			{
+				Entry.ParentMenuId = SubMenu.MenuId;
+			}
+		}
+	}
 };

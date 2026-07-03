@@ -10,6 +10,21 @@ FPrimaryAssetId UMVInteractionFlowDataAsset::GetPrimaryAssetId() const
 	return FPrimaryAssetId(PrimaryAssetType, GetFName());
 }
 
+#if WITH_EDITOR
+void UMVInteractionFlowDataAsset::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+	Super::PostEditChangeProperty(PropertyChangedEvent);
+
+	for (FInstancedStruct& StepInstance : Steps)
+	{
+		if (FMVInteractionSelectionStepData* SelectionStep = StepInstance.GetMutablePtr<FMVInteractionSelectionStepData>())
+		{
+			SelectionStep->MenuData.NormalizeEntryParentMenuIds();
+		}
+	}
+}
+#endif
+
 EDataValidationResult UMVInteractionFlowDataAsset::IsDataValid(FDataValidationContext& Context) const
 {
 	EDataValidationResult Result = Super::IsDataValid(Context);
@@ -191,6 +206,7 @@ EDataValidationResult UMVInteractionFlowDataAsset::IsDataValid(FDataValidationCo
 
 		TSet<FGameplayTag> EntryIds;
 		TSet<FGameplayTag> MenuIds;
+		TSet<FGameplayTag> SubMenuIds;
 		if (SelectionStep->MenuData.RootMenuId.IsValid())
 		{
 			MenuIds.Add(SelectionStep->MenuData.RootMenuId);
@@ -206,7 +222,7 @@ EDataValidationResult UMVInteractionFlowDataAsset::IsDataValid(FDataValidationCo
 					*StepDescription,
 					SubMenuIndex));
 			}
-			else if (MenuIds.Contains(SubMenu.MenuId))
+			else if (SubMenuIds.Contains(SubMenu.MenuId))
 			{
 				MarkInvalid(FString::Printf(
 					TEXT("%s submenu id '%s' is duplicated."),
@@ -215,6 +231,7 @@ EDataValidationResult UMVInteractionFlowDataAsset::IsDataValid(FDataValidationCo
 			}
 			else
 			{
+				SubMenuIds.Add(SubMenu.MenuId);
 				MenuIds.Add(SubMenu.MenuId);
 			}
 		}
