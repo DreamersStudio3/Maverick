@@ -8,6 +8,9 @@
 #include "Character/NPC/Enemy/MVEnemyWeapon.h"
 #include "Components/MVHitReactionComponent.h"
 #include "Components/MVStatComponent.h"
+#include "TimerManager.h"
+#include "UI/HUD/MVMainHUDWidget.h"
+#include "UI/System/MVUISubsystem.h"
 
 AMVEnemy::AMVEnemy()
 {
@@ -16,6 +19,10 @@ AMVEnemy::AMVEnemy()
 void AMVEnemy::BeginPlay()
 {
 	Super::BeginPlay();
+
+	BossHUDBindAttemptsRemaining = 20;
+	ScheduleBossHUDBindRetry(0.0f);
+
 	if (!WeaponClass || !GetWorld() || !GetMesh())
 	{
 		return;
@@ -100,6 +107,64 @@ bool AMVEnemy::Attack(const EMVAttackDirection AttackDirection, int32& OutAttack
 	return false;
 }
 
+void AMVEnemy::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().ClearTimer(BossHUDBindRetryTimerHandle);
+	}
+
+	Super::EndPlay(EndPlayReason);
+}
+
+void AMVEnemy::ScheduleBossHUDBindRetry(float DelaySeconds)
+{
+	UWorld* World = GetWorld();
+	if (!World || BossHUDBindAttemptsRemaining <= 0)
+	{
+		return;
+	}
+
+	FTimerDelegate BossHUDBindDelegate;
+	BossHUDBindDelegate.BindUObject(this, &AMVEnemy::BindBossHUDToMainHUD);
+	if (DelaySeconds <= 0.0f)
+	{
+		World->GetTimerManager().SetTimerForNextTick(BossHUDBindDelegate);
+		return;
+	}
+
+	World->GetTimerManager().SetTimer(
+		BossHUDBindRetryTimerHandle,
+		BossHUDBindDelegate,
+		DelaySeconds,
+		false);
+}
+
+void AMVEnemy::BindBossHUDToMainHUD()
+{
+	--BossHUDBindAttemptsRemaining;
+
+	if (!StatComponent)
+	{
+		return;
+	}
+
+	UGameInstance* GameInstance = GetGameInstance();
+	UMVUISubsystem* UISubsystem = GameInstance ? GameInstance->GetSubsystem<UMVUISubsystem>() : nullptr;
+	UMVMainHUDWidget* MainHUD = UISubsystem ? Cast<UMVMainHUDWidget>(UISubsystem->GetMainHUD()) : nullptr;
+
+	if (MainHUD && BoundBossHUD.Get() != MainHUD)
+	{
+		MainHUD->BindBossStatus(StatComponent, FText::FromString(GetName()));
+		BoundBossHUD = MainHUD;
+	}
+
+	if (BossHUDBindAttemptsRemaining > 0)
+	{
+		ScheduleBossHUDBindRetry(0.1f);
+	}
+}
+
 void AMVEnemy::BindDamageHandlers()
 {
 	if (StatComponent)
@@ -124,19 +189,20 @@ void AMVEnemy::HandleAttackMontageEnded(UAnimMontage* Montage, const bool bInter
 		return;
 	}
 
-	UE_LOG(
-		LogTemp,
-		Verbose,
-		TEXT("Enemy attack montage ended. Enemy=%s AttackInstanceId=%d Interrupted=%s Montage=%s"),
-		*GetNameSafe(this),
-		AttackInstanceId,
-		bInterrupted ? TEXT("true") : TEXT("false"),
-		*GetNameSafe(Montage));
-
 	OnAttackMontageEnded.Broadcast(AttackInstanceId, Montage, bInterrupted);
 }
 
 void AMVEnemy::HandleEnemyDamaged(const FMVResolvedHitData& HitData)
 {
 	OnEnemyDamaged.Broadcast(HitData);
+}
+
+void AMVEnemy::HandleEnemyGroggyStarted()
+{
+	OnEnemyGroggyStarted.Broadcast();
+}
+
+void AMVEnemy::HandleEnemyGroggyEnded()
+{
+	OnEnemyGroggyEnded.Broadcast();
 }

@@ -121,7 +121,8 @@ enum class EMVActionHitReactionType : uint8
 	SmallHit,
 	LargeHit,
 	KnockDown,
-	Airborne
+	Airborne,
+	Groggy
 };
 
 namespace MVActionHitReactions

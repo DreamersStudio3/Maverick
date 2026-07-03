@@ -22,6 +22,7 @@ struct FMVPIEActionTestSpec
 	const TCHAR* Label = TEXT("");
 	EMVActionHitReactionType HitReactionType = EMVActionHitReactionType::None;
 	float HPDamage = 0.0f;
+	float GroggyDamage = 0.0f;
 };
 
 namespace
@@ -30,10 +31,10 @@ const FMVPIEActionTestSpec& GetPIEActionTestSpec(const int32 Index)
 {
 	static const FMVPIEActionTestSpec Specs[] =
 	{
-		{ TEXT("SmallHit F / HP -5"), EMVActionHitReactionType::SmallHit, 5.0f },
-		{ TEXT("LargeHit F / HP -10"), EMVActionHitReactionType::LargeHit, 10.0f },
-		{ TEXT("KnockDown F / HP -15"), EMVActionHitReactionType::KnockDown, 15.0f },
-		{ TEXT("Airborne F / HP -20"), EMVActionHitReactionType::Airborne, 20.0f },
+		{ TEXT("SmallHit F / HP -5 / Groggy +25"), EMVActionHitReactionType::SmallHit, 5.0f, 25.0f },
+		{ TEXT("LargeHit F / HP -10 / Groggy +50"), EMVActionHitReactionType::LargeHit, 10.0f, 50.0f },
+		{ TEXT("KnockDown F / HP -15 / Groggy +75"), EMVActionHitReactionType::KnockDown, 15.0f, 75.0f },
+		{ TEXT("Airborne F / HP -20 / Groggy +100"), EMVActionHitReactionType::Airborne, 20.0f, 100.0f },
 	};
 
 	return Specs[FMath::Clamp(Index, 0, UE_ARRAY_COUNT(Specs) - 1)];
@@ -173,7 +174,7 @@ void UMVPIEActionTestWidget::BuildNativeWidgetTree()
 	{
 		Button->OnClicked.AddDynamic(this, &UMVPIEActionTestWidget::HandleAirborneClicked);
 	}
-	if (UButton* Button = PIEActionTestAddButton(*WidgetTree, *ButtonBox, TEXT("PIEActionTestResetStats"), TEXT("Reset HP/ST/MP")))
+	if (UButton* Button = PIEActionTestAddButton(*WidgetTree, *ButtonBox, TEXT("PIEActionTestResetStats"), TEXT("Reset HP/ST/MP/Groggy")))
 	{
 		Button->OnClicked.AddDynamic(this, &UMVPIEActionTestWidget::HandleResetStatsClicked);
 	}
@@ -231,6 +232,7 @@ void UMVPIEActionTestWidget::ExecuteTestByIndex(const int32 TestIndex)
 	Request.DamageMultiplier = 1.0f;
 	Request.HitReactionType = Spec.HitReactionType;
 	Request.WeaponAttackPower = Spec.HPDamage;
+	Request.GroggyDamage = Spec.GroggyDamage;
 	Request.HitLocation = Target->GetActorLocation();
 	Request.HitDirection = Target->GetActorLocation() - Attacker->GetActorLocation();
 
@@ -241,12 +243,14 @@ void UMVPIEActionTestWidget::ExecuteTestByIndex(const int32 TestIndex)
 	if (StatComponent)
 	{
 		SetStatusText(FString::Printf(
-			TEXT("%s | %s | Damage %.0f | HP %.0f/%.0f"),
+			TEXT("%s | %s | Damage %.0f | HP %.0f/%.0f | Groggy %.0f/%.0f"),
 			Spec.Label,
 			bHandled ? TEXT("Damaged") : TEXT("Ignored"),
 			HitData.FinalDamage,
 			StatComponent->CurrentHP,
-			StatComponent->MaxHP));
+			StatComponent->MaxHP,
+			StatComponent->CurrentGroggy,
+			StatComponent->MaxGroggy));
 		return;
 	}
 
@@ -347,5 +351,6 @@ void UMVPIEActionTestWidget::HandleResetStatsClicked()
 	StatComponent->SetCurrentHP(StatComponent->MaxHP);
 	StatComponent->SetCurrentStamina(StatComponent->MaxStamina);
 	StatComponent->SetCurrentMP(StatComponent->MaxMP);
-	SetStatusText(TEXT("Stats reset."));
+	StatComponent->ResetGroggyState();
+	SetStatusText(TEXT("Stats reset. Groggy reset."));
 }

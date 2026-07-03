@@ -12,6 +12,8 @@ class AActor;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FMVOnStatValueChanged, float, CurrentValue, float, MaxValue);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnStatRecentLossHoldChanged, bool, bHold);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMVOnDead);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMVOnGroggyStarted);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMVOnGroggyEnded);
 
 UENUM(BlueprintType)
 enum class EMVDeathReason : uint8
@@ -91,6 +93,12 @@ public:
 	FMVOnDead OnDead;
 
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|Stat|Event")
+	FMVOnGroggyStarted OnGroggyStarted;
+
+	UPROPERTY(BlueprintAssignable, Category = "Maverick|Stat|Event")
+	FMVOnGroggyEnded OnGroggyEnded;
+
+	UPROPERTY(BlueprintAssignable, Category = "Maverick|Stat|Event")
 	FMVOnDeathStarted OnDeathStarted;
 
 protected:
@@ -118,8 +126,14 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Maverick|Stat|Death")
 	bool IsDead() const { return bIsDead; }
 
+	UFUNCTION(BlueprintPure, Category = "Maverick|Stat|Groggy")
+	bool IsGroggy() const { return bIsGroggy; }
+
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Death")
 	void ResetDeathState();
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Groggy")
+	void ResetGroggyState();
 
 	void TickRecoverableStats(float DeltaTime);
 
@@ -205,6 +219,9 @@ public:
 	void SetCurrentGroggy(float InCurrentGroggy);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Groggy")
+	void RecoverGroggy(float Amount);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Groggy")
 	void SetGroggyRecoveryPerSecond(float InGroggyRecoveryPerSecond);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Groggy")
@@ -212,7 +229,12 @@ public:
 
 private:
 	FString MakeStatRowKey() const;
+	void TickGroggyRecovery(float DeltaTime);
+	void TickRecoverableResourceRecovery(float DeltaTime);
 	void BroadcastDeathStarted(EMVDeathReason Reason);
+	void RestartGroggyRecoveryCooldown();
+	bool TryStartGroggy();
+	void BroadcastGroggyEnded();
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Table")
@@ -286,8 +308,10 @@ public:
 
 private:
 	float StaminaCooldownRemaining = 0.0f;
+	float GroggyRecoveryCooldownRemaining = 0.0f;
 	int32 RecoverableStatRecoveryPauseCount = 0;
 	FMVResolvedHitData PendingDeathHitData;
 	bool bHasPendingDeathHitData = false;
 	bool bIsDead = false;
+	bool bIsGroggy = false;
 };

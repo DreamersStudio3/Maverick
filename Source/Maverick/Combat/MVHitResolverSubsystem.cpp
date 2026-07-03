@@ -1,6 +1,7 @@
 #include "Combat/MVHitResolverSubsystem.h"
 
 #include "Character/MVCharacterBase.h"
+#include "Components/MVHitReactionComponent.h"
 #include "Components/MVStatComponent.h"
 #include "Engine/World.h"
 
@@ -55,6 +56,7 @@ bool UMVHitResolverSubsystem::BuildResolvedHitData(
 		: ResolveNonNegativeStat(FallbackAttackPower);
 	const float WeaponAttackPower = ResolveEquippedWeaponAttackPower(*Attacker, Request);
 	const float DamageMultiplier = ResolveNonNegativeStat(Request.DamageMultiplier);
+	const float GroggyDamage = ResolveNonNegativeStat(Request.GroggyDamage);
 	const float VictimDefence = ResolveNonNegativeStat(VictimStat->Defence);
 	const float RawDamage = (BaseAttackPower + WeaponAttackPower) * DamageMultiplier;
 	const float FinalDamage = FMath::Max(0.0f, RawDamage - VictimDefence);
@@ -64,17 +66,27 @@ bool UMVHitResolverSubsystem::BuildResolvedHitData(
 	OutHitData.AttackerCharacterIndexCode = Attacker->GetCharacterIndexCode();
 	OutHitData.VictimCharacterIndexCode = Victim->GetCharacterIndexCode();
 	OutHitData.ActionRowName = Request.ActionRowName;
+	OutHitData.ActionTag = Request.ActionTag.IsNone()
+		? Request.ActionRowName
+		: Request.ActionTag;
 	OutHitData.CharacterAttackPower = BaseAttackPower;
 	OutHitData.WeaponAttackPower = WeaponAttackPower;
 	OutHitData.VictimDefence = VictimDefence;
 	OutHitData.DamageMultiplier = DamageMultiplier;
 	OutHitData.FinalDamage = FinalDamage;
-	OutHitData.GroggyDamage = 0.0f;
+	OutHitData.GroggyDamage = GroggyDamage;
 	OutHitData.HitReactionType = Request.HitReactionType;
 	OutHitData.HitLocation = Request.HitLocation;
 	OutHitData.HitDirection = Request.HitDirection.IsNearlyZero()
 		? ResolveHitDirection(*Attacker, *Victim)
 		: Request.HitDirection.GetSafeNormal();
+
+	if (const UMVHitReactionComponent* HitReactionComponent = Victim->FindComponentByClass<UMVHitReactionComponent>();
+		HitReactionComponent && HitReactionComponent->CanTriggerGroggy(OutHitData))
+	{
+		OutHitData.HitReactionType = EMVActionHitReactionType::Groggy;
+	}
+
 	return true;
 }
 

@@ -6,18 +6,21 @@
 #include "AI/Enum/MVAttackDirection.h"
 #include "Character/MVCharacterBase.h"
 #include "Character/NPC/Enemy/MVEnemyWeapon.h"
+#include "TimerManager.h"
 #include "MVEnemy.generated.h"
 
 class UAnimMontage;
+class UMVMainHUDWidget;
 
 /**
  * Enemy character bridge for AI-driven combat.
  *
  * Spawns and attaches the configured weapon actor during BeginPlay, and owns
  * attack montage playback notifications so AI tasks can react to animation
- * completion without reaching into animation state directly. Damage reactions
- * are routed to enemy-specific events so StateTree tasks can decide when to run
- * the HitReactionComponent instead of playing reactions immediately.
+ * completion without reaching into animation state directly. Damage
+ * notifications are routed to enemy-specific events so StateTree tasks can
+ * decide when to run combat state presentation instead of reaching into
+ * lower-level components directly.
  */
 UCLASS()
 class MAVERICK_API AMVEnemy : public AMVCharacterBase
@@ -30,6 +33,8 @@ public:
 		int32 /*AttackInstanceId*/,
 		UAnimMontage* /*Montage*/,
 		bool /*bInterrupted*/);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMVEnemyGroggyStartedSignature);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMVEnemyGroggyEndedSignature);
 
 	AMVEnemy();
 	virtual void BeginPlay() override;
@@ -40,15 +45,31 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|Enemy|Event")
 	FMVOnDamagedSignature OnEnemyDamaged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Maverick|Enemy|Event")
+	FMVEnemyGroggyStartedSignature OnEnemyGroggyStarted;
+
+	UPROPERTY(BlueprintAssignable, Category = "Maverick|Enemy|Event")
+	FMVEnemyGroggyEndedSignature OnEnemyGroggyEnded;
 	
 	
 protected:
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	virtual void BindDamageHandlers() override;
+
+	void ScheduleBossHUDBindRetry(float DelaySeconds);
+	void BindBossHUDToMainHUD();
 
 	void HandleAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted, int32 AttackInstanceId);
 
 	UFUNCTION()
 	void HandleEnemyDamaged(const FMVResolvedHitData& HitData);
+
+	UFUNCTION()
+	void HandleEnemyGroggyStarted();
+
+	UFUNCTION()
+	void HandleEnemyGroggyEnded();
 
 	UPROPERTY(EditAnywhere, Category = "Animation")
 	TObjectPtr<UAnimMontage> AttackMontage;
@@ -64,4 +85,8 @@ protected:
 	
 	UPROPERTY(EditAnywhere, Category = "Weapon")
 	bool bUseDualWeapon = true;
+
+	FTimerHandle BossHUDBindRetryTimerHandle;
+	TWeakObjectPtr<UMVMainHUDWidget> BoundBossHUD;
+	int32 BossHUDBindAttemptsRemaining = 0;
 };

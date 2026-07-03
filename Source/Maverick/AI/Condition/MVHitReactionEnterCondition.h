@@ -6,6 +6,14 @@
 #include "Struct/MVHitTypes.h"
 #include "MVHitReactionEnterCondition.generated.h"
 
+UENUM(BlueprintType)
+enum class EMVHitReactionEnterTypeFilter : uint8
+{
+	NonGroggy,
+	GroggyOnly,
+	Any
+};
+
 USTRUCT()
 struct FMVHitReactionEnterConditionInstanceData
 {
@@ -25,6 +33,9 @@ struct FMVHitReactionEnterConditionInstanceData
 
 	UPROPERTY(EditAnywhere, Category = "Input|Hit")
 	bool bRequireStateTreeHandledHitReactionType = true;
+
+	UPROPERTY(EditAnywhere, Category = "Input|Hit")
+	EMVHitReactionEnterTypeFilter HitReactionTypeFilter = EMVHitReactionEnterTypeFilter::NonGroggy;
 
 	UPROPERTY(EditAnywhere, Category = "Input|Component")
 	bool bRequireHitReactionComponent = true;
