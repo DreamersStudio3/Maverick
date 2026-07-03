@@ -49,7 +49,7 @@ public:
 	// For chained skills: multiple row names in progression order
 	UPROPERTY(BlueprintReadOnly, Category = "Skill")
 	TArray<FName> SkillRowNames;
-	
+
 	// DataTable reference
 	UPROPERTY(BlueprintReadOnly, Category = "Skill")
 	TObjectPtr<UDataTable> DataTable;
@@ -89,24 +89,17 @@ public:
 		return nullptr;
 	}
 
-	const FMVSkillDataTableColumn* GetSkillDataByRowName(const FName& RowName) const
-	{
-		if (DataTable)
-		{
-			FDataTableRowHandle RowHandle;
-			RowHandle.DataTable = DataTable;
-			RowHandle.RowName = RowName;
-			return RowHandle.GetRow<FMVSkillDataTableColumn>(TEXT("Fetch Data"));
-		}
-		return nullptr;
-	}
-
 	// Get current skill data (for simple skills or current chain stage)
 	const FMVSkillDataTableColumn* GetCurrentSkillData() const
 	{
-		if (DataTable && SkillRowNames.IsValidIndex(CurrentChainStageIndex))
+		if (!DataTable)
 		{
-			return GetSkillDataByRowName(SkillRowNames[CurrentChainStageIndex]);
+			return nullptr;
+		}
+		const FMVSkillDataTableColumn* SkillData = DataTable->FindRow<FMVSkillDataTableColumn>(SkillRowNames[CurrentChainStageIndex], TEXT(""));
+		if (SkillData)
+		{
+			return SkillData;
 		}
 		return nullptr;
 	}
@@ -160,7 +153,6 @@ public:
 			return false;
 		}
 		const FMVSkillDataTableColumn* CurrentData = GetCurrentSkillData();
-		
 		if (!CurrentData)
 		{
 			return false;
@@ -232,7 +224,6 @@ public:
 	}
 };
 
-
 /*
 CombatComponent
 Fetch Data from DataTable through ChooserTable.
@@ -246,11 +237,10 @@ Note:	Getting DataTable through ChooserTable should be implemented in blueprint.
 
 */
 
-
 class UChooserTable;
 class UMVStatComponent;
 
-UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
+UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class MAVERICK_API UMVCombatComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -270,34 +260,28 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Action")
 	bool TryCombatAction(EMVCombatActionTypes InActionType, int32 SkillIndex = 0);
 
-	// Call When Character Change Weapon --> have to receive Event from Character
-	UFUNCTION(BlueprintCallable, Category = "Action")
-	void ChangeWeapon(EMVEquippedStyle NewStyle);
-
 protected:
-	// For PlayerCharacter --> relative to InputManagerComponent
 	UFUNCTION()
 	void HandleActionInputSubmitted(int32 ActionId, FVector2D ControllerSpaceInput, bool bHasMovementInput);
 	UFUNCTION()
 	void HandleRecoveryEscapeWindowChanged(bool bOpen);
 	bool ChooseTryCombatAction(const int32 ActionId);
-	
+
 	bool TryBasicAttack(EMVCombatActionTypes InActionType);
 	bool TrySkill(EMVCombatActionTypes InActionType, int32 SkillIndex = 0);
 
 	// Call when Beginplay or Change Weapon Style
 	void RefreshActionMaps();
 	
-	// Function for RefreshActionMaps() --> Reset BasicAttackMap and SkillMap
 	void ResetBasicAttackMap();
 	void ResetSkillMap();
 	
-	
+	// Call When Character Change Weapon --> have to receive Event from Character
+	void ChangeWeapon(EMVEquippedStyle NewStyle);
 	
 protected:
 	// Should Return DataTable using ChooserTable In Blueprint
 	// Because Using ChooserTable in C++ is So Fucking Shit
-	// Todo: Should Seperate Player and NPC's ChooerTable Input (FMVCombatActionTableInput)
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable,Category = "Data")
 	UDataTable* GetDataTableFromChooserTable(const FMVCombatActionTableInput& ChooserInput, bool& OutResult);
 
@@ -308,8 +292,8 @@ protected:
 private:
 	void BuildChainedEntry(const FName& StartingName, const UDataTable& CurrentDT, FMVSkillEntry& OutEntry);
 	bool SendDataToActionComp(EMVCombatActionTypes InActionType, FName RowName);
-	bool CheckStatsForAction(const FMVSkillDataTableColumn* SkillData);
-	bool ConsumeStatsForAction(const FMVSkillDataTableColumn* SkillData);
+	bool CanConsumeActionCost(const FMVSkillDataTableColumn* SkillData) const;
+	void ConsumeActionCost(const FMVSkillDataTableColumn* SkillData) const;
 
 public:
 
@@ -334,6 +318,6 @@ private:
 		MVActionIds::ChargeAttack,
 		MVActionIds::Skill
 	};
-	TObjectPtr<UMVStatComponent> StatComp;
 
+	TObjectPtr<UMVStatComponent> StatComponent;
 };

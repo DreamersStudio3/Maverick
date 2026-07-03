@@ -30,6 +30,9 @@ void UMVCombatComponent::BeginPlay()
 
 	RefreshActionMaps();
 
+
+
+
 	// This goes to the UActorComponent BeginPlay()
 	// And UActorComponent will goes to the Blueprint Function If Blueprint exist
 	Super::BeginPlay();
@@ -41,7 +44,6 @@ void UMVCombatComponent::BeginPlay()
 		return;
 	}
 
-	// Only If Player, Bind InputManagerComponent's Delegate
 	if (UMVInputManagerComponent* InputManager = OwnerCharacter->InputManagerComponent)
 	{
 		InputManager->OnActionInputSubmitted.RemoveDynamic(
@@ -57,9 +59,13 @@ void UMVCombatComponent::BeginPlay()
 			this,
 			&UMVCombatComponent::HandleRecoveryEscapeWindowChanged);
 	}
+
+	StatComponent = OwnerCharacter->FindComponentByClass<UMVStatComponent>();
+	if (!StatComponent)
+	{
+		return;
+	}
 	
-	// Cache StatComponent to Check and Consume Stamina, Mana, etc. in TryBasicAttack() and TrySkill()
-	StatComp = OwnerCharacter->FindComponentByClass<UMVStatComponent>();
 }
 
 
@@ -80,14 +86,14 @@ bool UMVCombatComponent::TryCombatAction(EMVCombatActionTypes InActionType, int3
 		return false;
 	}
 
-	UMVActionComponent* ActionComponent = OwnerCharacter->FindComponentByClass<UMVActionComponent>();;
+	UMVActionComponent* ActionComponent = OwnerCharacter->ActionComponent;
 	if (!ActionComponent)
 	{
 		return false;
 	}
 	
 	bool bIsRevoveryEscapeWindowOpen = false;
-	UMVInputManagerComponent* InputManager = OwnerCharacter->FindComponentByClass<UMVInputManagerComponent>();
+	UMVInputManagerComponent* InputManager = OwnerCharacter->InputManagerComponent;
 	if (!InputManager)
 	{
 		// In case of not Player
@@ -136,7 +142,7 @@ void UMVCombatComponent::HandleActionInputSubmitted(
 	{
 		if (const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner()))
 		{
-			if (UMVInputManagerComponent* InputManager = OwnerCharacter->FindComponentByClass<UMVInputManagerComponent>())
+			if (UMVInputManagerComponent* InputManager = OwnerCharacter->InputManagerComponent)
 			{
 				InputManager->ClearBufferedActionInput();
 			}
@@ -153,12 +159,7 @@ void UMVCombatComponent::HandleRecoveryEscapeWindowChanged(const bool bOpen)
 	}
 
 	const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
-	if (!OwnerCharacter)
-	{
-		return;
-	}
-
-	UMVInputManagerComponent* InputManager =OwnerCharacter->FindComponentByClass<UMVInputManagerComponent>();
+	UMVInputManagerComponent* InputManager = OwnerCharacter	? OwnerCharacter->InputManagerComponent	: nullptr;
 	if (!InputManager)
 	{
 		return;
@@ -223,8 +224,13 @@ bool UMVCombatComponent::TryBasicAttack(EMVCombatActionTypes InActionType)
 	RowName = TypeName;
 	FMVSkillEntry* ActionEntry = BasicAttackMap.Find(RowName);
 
-	// Check if action exists and if the character has enough stats to perform the action
-	if (!ActionEntry || !CheckStatsForAction(ActionEntry->GetCurrentSkillData()))
+	if (!ActionEntry)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("MVCombatComponent::TryBasicAttack - Action '%s' not found"), *RowName.ToString());
+		return false;
+	}
+
+	if(!CanConsumeActionCost(ActionEntry->GetCurrentSkillData()))
 	{
 		return false;
 	}
@@ -242,14 +248,9 @@ bool UMVCombatComponent::TryBasicAttack(EMVCombatActionTypes InActionType)
 
 		if (SendDataToActionComp(InActionType, ActionEntry->GetCurrentRowName()))
 		{
-			// Consume Stats for the action
-			ConsumeStatsForAction(ActionEntry->GetCurrentSkillData());
-			
-			// Activate the chain and advance to the next stage
+			ConsumeActionCost(ActionEntry->GetCurrentSkillData());
 			ActionEntry->ActivateChain(CurrentTime);
 			ActionEntry->TryAdvanceChainStage(CurrentTime);
-
-			// Update LastBasicAttackedTime to CurrentTime
 			LastBasicAttackedTime = CurrentTime;
 			return true;
 		}
@@ -260,28 +261,20 @@ bool UMVCombatComponent::TryBasicAttack(EMVCombatActionTypes InActionType)
 
 	}
 
-	// Chain Is Active --> doing chaining actions
 	if (ActionEntry && ActionEntry->bChainActive)
 	{
 		if (SendDataToActionComp(InActionType, ActionEntry->GetCurrentRowName()))
 		{
-			// Consume Stats for the action
-			ConsumeStatsForAction(ActionEntry->GetCurrentSkillData());
-
-			// Advance to the next stage of the chain
+			ConsumeActionCost(ActionEntry->GetCurrentSkillData());
 			ActionEntry->TryAdvanceChainStage(CurrentTime);
 		}
 		
 	}
-	// Chain is not Active --> Start Action
 	else
 	{
 		if (SendDataToActionComp(InActionType, ActionEntry->GetCurrentRowName()))
 		{
-			// Consume Stats for the action
-			ConsumeStatsForAction(ActionEntry->GetCurrentSkillData());
-
-			// Activate the chain and advance to the next stage
+			ConsumeActionCost(ActionEntry->GetCurrentSkillData());
 			ActionEntry->ActivateChain(CurrentTime);
 			ActionEntry->TryAdvanceChainStage(CurrentTime);
 		}
@@ -302,11 +295,14 @@ bool UMVCombatComponent::TrySkill(EMVCombatActionTypes InActionType, int32 Skill
 	RowName = FName(*TypeString);
 
 	FMVSkillEntry* ActionEntry = SkillMap.Find(RowName);
-
-	// Check if action exists and if the character has enough stats to perform the action
-	if (!ActionEntry || !CheckStatsForAction(ActionEntry->GetCurrentSkillData()))
+	if (!ActionEntry)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("MVCombatComponent::TryCombatAction - Action '%s' not found or insufficient stats"), *RowName.ToString());
+		UE_LOG(LogTemp, Warning, TEXT("MVCombatComponent::TryCombatAction - Action '%s' not found"), *RowName.ToString());
+		return false;
+	}
+
+	if (!CanConsumeActionCost(ActionEntry->GetCurrentSkillData()))
+	{
 		return false;
 	}
 
@@ -326,10 +322,7 @@ bool UMVCombatComponent::TrySkill(EMVCombatActionTypes InActionType, int32 Skill
 
 			if (SendDataToActionComp(InActionType, ActionEntry->GetCurrentRowName()))
 			{
-				// Consume Stats for the action
-				ConsumeStatsForAction(ActionEntry->GetCurrentSkillData());
-
-				// Activate the chain and advance to the next stage
+				ConsumeActionCost(ActionEntry->GetCurrentSkillData());
 				ActionEntry->ActivateChain(CurrentTime);
 				ActionEntry->TryAdvanceChainStage(CurrentTime);
 				return true;
@@ -348,12 +341,10 @@ bool UMVCombatComponent::TrySkill(EMVCombatActionTypes InActionType, int32 Skill
 
 		if (ActionEntry->CurrentChainStageIndex < ActionEntry->AbilityInstances.Num())
 		{
+
 			if (SendDataToActionComp(InActionType, ActionEntry->GetCurrentRowName()))
 			{
-				// Consume Stats for the action
-				ConsumeStatsForAction(ActionEntry->GetCurrentSkillData());
-				
-				// Advance to the next stage of the chain
+				ConsumeActionCost(ActionEntry->GetCurrentSkillData());
 				ActionEntry->TryAdvanceChainStage(CurrentTime);
 				return true;
 			}
@@ -370,13 +361,10 @@ bool UMVCombatComponent::TrySkill(EMVCombatActionTypes InActionType, int32 Skill
 		{
 			return false;
 		}
-		
+
 		if (SendDataToActionComp(InActionType, ActionEntry->GetCurrentRowName()))
 		{
-			// Consume Stats for the action
-			ConsumeStatsForAction(ActionEntry->GetCurrentSkillData());
-			
-			// Activate the chain and advance to the next stage
+			ConsumeActionCost(ActionEntry->GetCurrentSkillData());
 			ActionEntry->ActivateChain(CurrentTime);
 			ActionEntry->TryAdvanceChainStage(CurrentTime);
 			return true;
@@ -386,14 +374,13 @@ bool UMVCombatComponent::TrySkill(EMVCombatActionTypes InActionType, int32 Skill
 			return false;
 		}
 
-
 	}
 	return false;
 }
 
 void UMVCombatComponent::RefreshActionMaps()
 {
-	// If Component beginplay or Change Weapon Style, Reset BasicAttackMap and SkillMap
+
 	ResetBasicAttackMap();
 	ResetSkillMap();
 }
@@ -674,19 +661,19 @@ bool UMVCombatComponent::SendDataToActionComp(EMVCombatActionTypes InActionType,
 	return false;
 }
 
-bool UMVCombatComponent::CheckStatsForAction(const FMVSkillDataTableColumn* SkillData)
+bool UMVCombatComponent::CanConsumeActionCost(const FMVSkillDataTableColumn* SkillData) const
 {
-	if (!StatComp)
+	if (!StatComponent)
 	{
 		return false;
 	}
 
-	if(!StatComp->HasStamina(SkillData->StaminaCost))
+	if (!StatComponent->HasStamina(SkillData->StaminaCost))
 	{
 		return false;
 	}
-
-	if(!StatComp->HasMP(SkillData->ManaCost))
+	
+	if (!StatComponent->HasMP(SkillData->MpCost))
 	{
 		return false;
 	}
@@ -694,23 +681,13 @@ bool UMVCombatComponent::CheckStatsForAction(const FMVSkillDataTableColumn* Skil
 	return true;
 }
 
-bool UMVCombatComponent::ConsumeStatsForAction(const FMVSkillDataTableColumn* SkillData)
+void UMVCombatComponent::ConsumeActionCost(const FMVSkillDataTableColumn* SkillData) const
 {
-	if(!StatComp)
+	if(!StatComponent)
 	{
-		return false;
+		return;
 	}
-
-	if(!StatComp->ConsumeStamina(SkillData->StaminaCost))
-	{
-		return false;
-	}
-
-	if(!StatComp->ConsumeMP(SkillData->ManaCost))
-	{
-		return false;
-	}
-
-	return true;
+	StatComponent->ConsumeStamina(SkillData->StaminaCost);
+	StatComponent->ConsumeMP(SkillData->MpCost);
 }
 

@@ -36,7 +36,7 @@ public:
 	float StaminaCost;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Common")
-	float ManaCost;
+	float MpCost;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Skill")
 	float CooldownDuration;
@@ -46,6 +46,7 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Chain")
 	FName NextChainName;
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skill|Chain|Skill")
 	float InterStageCooldown;
