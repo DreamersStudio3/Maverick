@@ -240,7 +240,7 @@ public:
 	float StaminaRecoveryPerSecond = 35.0f;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Stamina")
-	float StaminaRecoveryDelay = 0.5f;
+	float StaminaRecoveryDelay = 0.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Stat|Recovery")
 	bool bUseRecoverableStatRecoveryDelay = false;
@@ -252,7 +252,7 @@ public:
 	float CurrentMP = 100.0f;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|MP")
-	float MPRecoveryPerSecond = 2.0f;
+	float MPRecoveryPerSecond = 0.1f;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Attack")
 	float AttackPower = 10.0f;

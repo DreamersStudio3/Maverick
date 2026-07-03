@@ -653,8 +653,8 @@ bool UMVCombatComponent::SendDataToActionComp(EMVCombatActionTypes InActionType,
 	{
 		return false;
 	}
-	//if (Owner->ActionComponent->TryTransitionActionFromRowHandle(RowHandle))
-	if (Owner->ActionComponent->TryStartActionFromRowHandle(RowHandle))
+	//if (Owner->ActionComponent->TryStartActionFromRowHandle(RowHandle))
+	if (Owner->ActionComponent->TryTransitionActionFromRowHandle(RowHandle))
 	{
 		return true;
 	}
