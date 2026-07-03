@@ -9,6 +9,7 @@
 class UMVInteractableComponent;
 class UMVDialogueWindow;
 class UMVInteractionFlowDataAsset;
+class UMVInteractionChoiceWindow;
 class UMVInteractionMenuWindow;
 class UMVPopupBase;
 class UMVWindowBase;
@@ -131,7 +132,6 @@ private:
 	FMVInteractionCommandRequest MakeCommandRequest(const FInstancedStruct& CommandInstance) const;
 	FGameplayTag ResolveStartStepId() const;
 	const TArray<FInstancedStruct>& ResolveInteractionSteps() const;
-	FMVInteractionMenuData MakeChoiceMenuData(const FMVInteractionChoiceStepData& Step) const;
 	FGameplayTag ResolveChoiceTransition(const FMVInteractionChoiceStepData& Step, FGameplayTag SelectedEntryId) const;
 	FGameplayTag ResolveStepTransition(const FMVInteractionSelectionStepData& Step, FGameplayTag SelectedEntryId) const;
 	const FInstancedStruct* FindInteractionStep(FGameplayTag StepId) const;
@@ -150,6 +150,12 @@ private:
 	void HandleConfiguredMenuEntrySelected(UObject* SourceObject, FMVMenuEntryData EntryData);
 
 	UFUNCTION()
+	void HandleConfiguredChoiceClosed(UMVInteractionChoiceWindow* ClosedChoiceWindow);
+
+	UFUNCTION()
+	void HandleConfiguredChoiceEntrySelected(UObject* SourceObject, FMVMenuEntryData EntryData);
+
+	UFUNCTION()
 	void HandleConfiguredWindowDeactivated(UMVWindowBase* Window);
 
 	UPROPERTY(Transient)
@@ -163,6 +169,9 @@ private:
 
 	UPROPERTY(Transient)
 	TObjectPtr<UMVInteractionMenuWindow> ActiveConfiguredMenuWindow;
+
+	UPROPERTY(Transient)
+	TObjectPtr<UMVInteractionChoiceWindow> ActiveConfiguredChoiceWindow;
 
 	UPROPERTY(Transient)
 	TObjectPtr<UMVWindowBase> ActiveConfiguredWindow;

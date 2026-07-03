@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
 #include "Engine/World.h"
+#include "Interaction/MVInteractionTypes.h"
 #include "TimerManager.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "UI/System/MVUIDataTypes.h"
@@ -12,6 +13,7 @@ class UCommonActivatableWidget;
 class UCameraComponent;
 class UMVDialogueWindow;
 class UMVHUDWidgetBase;
+class UMVInteractionChoiceWindow;
 class UMVInteractionMenuWindow;
 class UMVInteractionPromptPopup;
 class UMVLoadingWindow;
@@ -77,6 +79,15 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Maverick|UI|Interaction")
 	bool IsInteractionMenuActive() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Interaction")
+	UMVInteractionChoiceWindow* ShowInteractionChoice(const FMVInteractionChoiceData& ChoiceData, UObject* SourceObject = nullptr);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Interaction")
+	void HideInteractionChoice();
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|UI|Interaction")
+	bool IsInteractionChoiceActive() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Interaction")
 	void BeginInteractionSession(UObject* SourceObject);
@@ -154,6 +165,9 @@ private:
 	void HandleInteractionMenuClosed(UMVInteractionMenuWindow* ClosedMenuWindow);
 
 	UFUNCTION()
+	void HandleInteractionChoiceClosed(UMVInteractionChoiceWindow* ClosedChoiceWindow);
+
+	UFUNCTION()
 	void HandleDialogueWindowClosed(UMVDialogueWindow* ClosedDialogueWindow);
 
 	UFUNCTION()
@@ -191,6 +205,9 @@ private:
 	TObjectPtr<UMVInteractionMenuWindow> ActiveInteractionMenuWindow;
 
 	UPROPERTY(Transient)
+	TObjectPtr<UMVInteractionChoiceWindow> ActiveInteractionChoiceWindow;
+
+	UPROPERTY(Transient)
 	TObjectPtr<UMVDialogueWindow> ActiveDialogueWindow;
 
 	UPROPERTY(Transient)
@@ -200,6 +217,7 @@ private:
 	TObjectPtr<UMVLoadingWindow> ActiveLoadingWindowForTest;
 
 	TWeakObjectPtr<UObject> ActiveInteractionMenuSource;
+	TWeakObjectPtr<UObject> ActiveInteractionChoiceSource;
 	TArray<TWeakObjectPtr<UObject>> InteractionSessionSources;
 
 	TWeakObjectPtr<USpringArmComponent> DialogueZoomSpringArm;

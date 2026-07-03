@@ -21,6 +21,7 @@
 #include "UI/System/MVUISettings.h"
 #include "UI/Window/MVDeathOverlayWindow.h"
 #include "UI/Window/MVDialogueWindow.h"
+#include "UI/Window/MVInteractionChoiceWindow.h"
 #include "UI/Window/MVInteractionMenuWindow.h"
 #include "UI/Window/MVLoadingWindow.h"
 
@@ -168,10 +169,12 @@ void UMVUISubsystem::PopLayer()
 	CachedHUD = nullptr;
 	ActiveInteractionPrompt = nullptr;
 	ActiveInteractionMenuWindow = nullptr;
+	ActiveInteractionChoiceWindow = nullptr;
 	ActiveDialogueWindow = nullptr;
 	ActivePopup = nullptr;
 	ActiveLoadingWindowForTest = nullptr;
 	ActiveInteractionMenuSource.Reset();
+	ActiveInteractionChoiceSource.Reset();
 	InteractionSessionSources.Reset();
 	bHasPendingDialogueRequest = false;
 	PendingDialogueText = FText::GetEmpty();
@@ -291,6 +294,7 @@ UMVInteractionPromptPopup* UMVUISubsystem::ShowInteractionPrompt(const FMVIntera
 {
 	if (IsDialogueWindowBlockingInteraction()
 		|| IsInteractionMenuActive()
+		|| IsInteractionChoiceActive()
 		|| IsInteractionSessionActive())
 	{
 		HideInteractionPrompt();
@@ -374,6 +378,49 @@ void UMVUISubsystem::HideInteractionMenu()
 bool UMVUISubsystem::IsInteractionMenuActive() const
 {
 	return ActiveInteractionMenuWindow && ActiveInteractionMenuWindow->IsActivated();
+}
+
+UMVInteractionChoiceWindow* UMVUISubsystem::ShowInteractionChoice(
+	const FMVInteractionChoiceData& ChoiceData,
+	UObject* SourceObject)
+{
+	HideInteractionPrompt();
+
+	if (ActiveInteractionChoiceWindow && ActiveInteractionChoiceWindow->IsActivated())
+	{
+		ActiveInteractionChoiceWindow->SetChoiceData(ChoiceData, SourceObject);
+		ActiveInteractionChoiceSource = SourceObject ? SourceObject : ActiveInteractionChoiceWindow;
+		BeginInteractionSession(ActiveInteractionChoiceSource.Get());
+		return ActiveInteractionChoiceWindow;
+	}
+
+	ActiveInteractionChoiceWindow = Cast<UMVInteractionChoiceWindow>(
+		PushWindowByClass(UMVInteractionChoiceWindow::StaticClass()));
+	if (!ActiveInteractionChoiceWindow)
+	{
+		return nullptr;
+	}
+
+	ActiveInteractionChoiceSource = SourceObject ? SourceObject : ActiveInteractionChoiceWindow;
+	BeginInteractionSession(ActiveInteractionChoiceSource.Get());
+	ActiveInteractionChoiceWindow->OnInteractionChoiceClosed.AddUniqueDynamic(
+		this,
+		&UMVUISubsystem::HandleInteractionChoiceClosed);
+	ActiveInteractionChoiceWindow->SetChoiceData(ChoiceData, SourceObject);
+	return ActiveInteractionChoiceWindow;
+}
+
+void UMVUISubsystem::HideInteractionChoice()
+{
+	if (ActiveInteractionChoiceWindow && ActiveInteractionChoiceWindow->IsActivated())
+	{
+		ActiveInteractionChoiceWindow->DeactivateWidgetWithFade();
+	}
+}
+
+bool UMVUISubsystem::IsInteractionChoiceActive() const
+{
+	return ActiveInteractionChoiceWindow && ActiveInteractionChoiceWindow->IsActivated();
 }
 
 void UMVUISubsystem::BeginInteractionSession(UObject* SourceObject)
@@ -592,6 +639,7 @@ bool UMVUISubsystem::CanUseInteractionPrompt() const
 {
 	return !IsDialogueWindowBlockingInteraction()
 		&& !IsInteractionMenuActive()
+		&& !IsInteractionChoiceActive()
 		&& !IsInteractionSessionActive()
 		&& IsPopupActive(ActiveInteractionPrompt)
 		&& ActivePopup == ActiveInteractionPrompt
@@ -746,10 +794,12 @@ void UMVUISubsystem::ResetUITrackingState()
 	CachedHUD = nullptr;
 	ActiveInteractionPrompt = nullptr;
 	ActiveInteractionMenuWindow = nullptr;
+	ActiveInteractionChoiceWindow = nullptr;
 	ActiveDialogueWindow = nullptr;
 	ActivePopup = nullptr;
 	ActiveLoadingWindowForTest = nullptr;
 	ActiveInteractionMenuSource.Reset();
+	ActiveInteractionChoiceSource.Reset();
 	InteractionSessionSources.Reset();
 	bHasPendingDialogueRequest = false;
 	PendingDialogueText = FText::GetEmpty();
@@ -854,6 +904,26 @@ void UMVUISubsystem::HandleInteractionMenuClosed(UMVInteractionMenuWindow* Close
 		EndInteractionSession(SessionSource ? SessionSource : ClosedMenuWindow);
 		ActiveInteractionMenuWindow = nullptr;
 		ActiveInteractionMenuSource.Reset();
+	}
+}
+
+void UMVUISubsystem::HandleInteractionChoiceClosed(UMVInteractionChoiceWindow* ClosedChoiceWindow)
+{
+	if (!ClosedChoiceWindow)
+	{
+		return;
+	}
+
+	ClosedChoiceWindow->OnInteractionChoiceClosed.RemoveDynamic(
+		this,
+		&UMVUISubsystem::HandleInteractionChoiceClosed);
+
+	if (ClosedChoiceWindow == ActiveInteractionChoiceWindow)
+	{
+		UObject* SessionSource = ActiveInteractionChoiceSource.Get();
+		EndInteractionSession(SessionSource ? SessionSource : ClosedChoiceWindow);
+		ActiveInteractionChoiceWindow = nullptr;
+		ActiveInteractionChoiceSource.Reset();
 	}
 }
 
