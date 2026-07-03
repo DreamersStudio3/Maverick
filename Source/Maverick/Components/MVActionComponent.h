@@ -16,6 +16,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FMVOnActionPreparing, FName, Action
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FMVOnActionStarted, FName, ActionTableName, FName, ActionRowName);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FMVOnActionEnded, FName, ActionTableName, FName, ActionRowName, bool, bInterrupted);
 
+DECLARE_DELEGATE(FMVOnStatPauseStart);
+DECLARE_DELEGATE(FMVOnStatPauseEnd);
 
 /**
  * 공용 Action 실행 컴포넌트.
@@ -87,9 +89,6 @@ public:
 	void CancelActiveAction(float BlendOutTime = 0.1f);
 
 	UFUNCTION(BlueprintPure, Category = "Maverick|Action")
-	bool IsRecoverableStatRecoveryPaused() const;
-
-	UFUNCTION(BlueprintPure, Category = "Maverick|Action")
 	bool IsActionRunning() const;
 
 	UFUNCTION(BlueprintPure, Category = "Maverick|Action")
@@ -123,6 +122,10 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|Action|Event")
 	FMVOnActionEnded OnActionEnded;
 
+	// For StatComponent to pause stat recovery while an action is running.
+	FMVOnStatPauseStart OnStatPauseStart;
+	FMVOnStatPauseEnd OnStatPauseEnd;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Action|Character", meta = (Categories = "Character"))
 	FGameplayTag CharacterIndexCode;
 
@@ -132,18 +135,14 @@ private:
 		FName ActionRowName,
 		const FMVActionRow& ActionRow,
 		FName StartSection);
-	void CacheOwnerReferences();
 	UAnimInstance* GetOwnerAnimInstance() const;
 	UAnimMontage* ResolveActionRowMontage(FName ActionTableName, FName ActionRowName, const FMVActionRow& ActionRow) const;
 	void HandleActionMontageEnded(UAnimMontage* Montage, bool bInterrupted, int32 ActionInstanceId);
-	void BeginRecoverableStatRecoveryPause();
-	void EndRecoverableStatRecoveryPause();
 	
 	UPROPERTY(Transient)
-	TObjectPtr<UMVStatComponent> CachedStatComponent;
-
-	UPROPERTY(Transient)
 	TObjectPtr<UAnimMontage> ActiveActionMontage;
+
+	
 
 	FName ActiveActionTableName = NAME_None;
 	FName ActiveActionRowName = NAME_None;
