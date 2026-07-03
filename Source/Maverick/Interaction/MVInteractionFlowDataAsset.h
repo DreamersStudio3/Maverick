@@ -28,9 +28,9 @@ public:
 
 	const TArray<FInstancedStruct>& GetSteps() const { return Steps; }
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Interaction", meta = (Categories = "Interaction.Flow.Step"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Interaction", meta = (Categories = "Interaction.Flow.Step", ToolTip = "flow가 시작될 step ID입니다. 비워두면 Steps 배열의 첫 유효 step에서 시작합니다."))
 	FGameplayTag StartStepId;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Interaction", meta = (BaseStruct = "/Script/Maverick.MVInteractionStepData", ExcludeBaseStruct))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Interaction", meta = (BaseStruct = "/Script/Maverick.MVInteractionStepData", ExcludeBaseStruct, ToolTip = "순서대로 실행되거나 태그 링크로 이동할 interaction step 목록입니다."))
 	TArray<FInstancedStruct> Steps;
 };

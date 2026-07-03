@@ -36,6 +36,7 @@
 - [x] ChoiceStep을 단층 선택지 데이터로 분리
 - [x] ActionStep을 `FMVActionRow` DataTable row handle 기반으로 제한
 - [x] InteractionFlow DataAsset 검증 로직 추가
+- [x] InteractionFlow step과 주요 field에 에디터 tooltip 추가
 - [ ] InteractionFlow 샘플 asset과 테스트용 액터 구성
 - [ ] InteractionFlow 제작 규칙 문서화
 - [ ] 기획자가 flow 구조를 노드 그래프로 확인/편집할 수 있는 에디터 GUI 툴 추가
