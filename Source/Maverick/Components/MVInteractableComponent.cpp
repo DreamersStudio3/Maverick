@@ -1,7 +1,11 @@
 #include "Components/MVInteractableComponent.h"
 
+#include "Character/MVCharacterBase.h"
+#include "Combat/MVHitResolverSubsystem.h"
 #include "Engine/GameInstance.h"
 #include "Interaction/MVInteractionFlowDataAsset.h"
+#include "Struct/MVHitTypes.h"
+#include "Tags/MVGameplayTags.h"
 #include "UI/Base/MVPopupBase.h"
 #include "UI/Base/MVWindowBase.h"
 #include "UI/Popup/MVMessagePopup.h"
@@ -9,11 +13,88 @@
 #include "UI/Window/MVDialogueWindow.h"
 #include "UI/Window/MVInteractionMenuWindow.h"
 
+DEFINE_LOG_CATEGORY_STATIC(LogMVInteractableComponent, Log, All);
+
 namespace
 {
 bool MVInteractableCommandWaitsForCompletion(const FMVInteractionCommandRequest& CommandRequest)
 {
 	return CommandRequest.bWaitForCompletion;
+}
+
+bool MVInteractableIsHitReactionApplyDamageEventTag(const FGameplayTag EventTag)
+{
+	return EventTag == MVGameplayTags::Interaction_Command_Event_HitReaction_ApplyDamage
+		|| EventTag == MVGameplayTags::Event_HitReaction_ApplyDamage;
+}
+
+TArray<FString> MVInteractableParseHitReactionCommandName(const FName CommandName)
+{
+	FString CommandString = CommandName.ToString();
+	CommandString.ReplaceInline(TEXT("_"), TEXT("."));
+
+	TArray<FString> Tokens;
+	CommandString.ParseIntoArray(Tokens, TEXT("."), true);
+	return Tokens;
+}
+
+EMVActionHitReactionType MVInteractableResolveHitReactionTypeFromName(const FName CommandName)
+{
+	const TArray<FString> Tokens = MVInteractableParseHitReactionCommandName(CommandName);
+	const FString TypeToken = Tokens.IsEmpty() ? FString() : Tokens[0];
+
+	if (TypeToken.Equals(TEXT("SmallHit"), ESearchCase::IgnoreCase)
+		|| TypeToken.Equals(TEXT("SH"), ESearchCase::IgnoreCase))
+	{
+		return EMVActionHitReactionType::SmallHit;
+	}
+
+	if (TypeToken.Equals(TEXT("LargeHit"), ESearchCase::IgnoreCase)
+		|| TypeToken.Equals(TEXT("LH"), ESearchCase::IgnoreCase))
+	{
+		return EMVActionHitReactionType::LargeHit;
+	}
+
+	if (TypeToken.Equals(TEXT("KnockDown"), ESearchCase::IgnoreCase)
+		|| TypeToken.Equals(TEXT("KD"), ESearchCase::IgnoreCase))
+	{
+		return EMVActionHitReactionType::KnockDown;
+	}
+
+	if (TypeToken.Equals(TEXT("Airborne"), ESearchCase::IgnoreCase)
+		|| TypeToken.Equals(TEXT("AB"), ESearchCase::IgnoreCase))
+	{
+		return EMVActionHitReactionType::Airborne;
+	}
+
+	return EMVActionHitReactionType::None;
+}
+
+FVector MVInteractableResolveHitReactionDirectionFromName(
+	const AMVCharacterBase& Victim,
+	const FName CommandName)
+{
+	const TArray<FString> Tokens = MVInteractableParseHitReactionCommandName(CommandName);
+	const FString DirectionToken = Tokens.Num() >= 2 ? Tokens.Last() : TEXT("F");
+
+	FVector IncomingDirection = Victim.GetActorForwardVector().GetSafeNormal2D();
+	if (DirectionToken.Equals(TEXT("L"), ESearchCase::IgnoreCase)
+		|| DirectionToken.Equals(TEXT("Left"), ESearchCase::IgnoreCase))
+	{
+		IncomingDirection = -Victim.GetActorRightVector().GetSafeNormal2D();
+	}
+	else if (DirectionToken.Equals(TEXT("R"), ESearchCase::IgnoreCase)
+		|| DirectionToken.Equals(TEXT("Right"), ESearchCase::IgnoreCase))
+	{
+		IncomingDirection = Victim.GetActorRightVector().GetSafeNormal2D();
+	}
+	else if (DirectionToken.Equals(TEXT("B"), ESearchCase::IgnoreCase)
+		|| DirectionToken.Equals(TEXT("Back"), ESearchCase::IgnoreCase))
+	{
+		IncomingDirection = -Victim.GetActorForwardVector().GetSafeNormal2D();
+	}
+
+	return -IncomingDirection;
 }
 }
 
@@ -413,11 +494,12 @@ bool UMVInteractableComponent::ExecuteNextConfiguredCommand()
 			this,
 			ActiveStepId,
 			ActiveCommandRequest);
+		const bool bHandledBuiltInCommand = TryHandleBuiltInGameplayEventCommand(ActiveCommandRequest);
 		bBroadcastingConfiguredCommandRequest = false;
 
 		if (bWaitingForConfiguredCommand)
 		{
-			if (!bCompleteConfiguredCommandAfterRequest)
+			if (!bCompleteConfiguredCommandAfterRequest && !bHandledBuiltInCommand)
 			{
 				return true;
 			}
@@ -450,6 +532,58 @@ bool UMVInteractableComponent::ExecuteNextConfiguredCommand()
 	bBroadcastingConfiguredCommandRequest = false;
 	bCompleteConfiguredCommandAfterRequest = false;
 	CompleteConfiguredStep(NextStepId);
+	return true;
+}
+
+bool UMVInteractableComponent::TryHandleBuiltInGameplayEventCommand(
+	const FMVInteractionCommandRequest& CommandRequest)
+{
+	if (CommandRequest.CommandKind != EMVInteractionCommandKind::GameplayEvent
+		|| !MVInteractableIsHitReactionApplyDamageEventTag(CommandRequest.EventTag))
+	{
+		return false;
+	}
+
+	AMVCharacterBase* Victim = Cast<AMVCharacterBase>(ActiveInteractor.Get());
+	if (!Victim)
+	{
+		UE_LOG(
+			LogMVInteractableComponent,
+			Warning,
+			TEXT("Interaction HitReaction.ApplyDamage command ignored. Interactor is not AMVCharacterBase. Owner=%s, EventTag=%s."),
+			*GetNameSafe(GetOwner()),
+			*CommandRequest.EventTag.ToString());
+		return true;
+	}
+
+	const float FinalDamage = FMath::Max(0.0f, CommandRequest.Magnitude);
+	const EMVActionHitReactionType HitReactionType =
+		MVInteractableResolveHitReactionTypeFromName(CommandRequest.Name);
+
+	FMVResolvedHitData HitData;
+	HitData.Attacker = Cast<AMVCharacterBase>(GetOwner());
+	HitData.Victim = Victim;
+	HitData.AttackerCharacterIndexCode = HitData.Attacker
+		? HitData.Attacker->GetCharacterIndexCode()
+		: FGameplayTag();
+	HitData.VictimCharacterIndexCode = Victim->GetCharacterIndexCode();
+	HitData.ActionRowName = CommandRequest.Name;
+	HitData.CharacterAttackPower = 0.0f;
+	HitData.WeaponAttackPower = FinalDamage;
+	HitData.VictimDefence = 0.0f;
+	HitData.DamageMultiplier = 1.0f;
+	HitData.FinalDamage = FinalDamage;
+	HitData.GroggyDamage = 0.0f;
+	HitData.HitReactionType = HitReactionType;
+	HitData.HitLocation = Victim->GetActorLocation();
+	HitData.HitDirection = MVInteractableResolveHitReactionDirectionFromName(*Victim, CommandRequest.Name);
+
+	if (UMVHitResolverSubsystem* HitResolver = UMVHitResolverSubsystem::Get(this))
+	{
+		HitResolver->OnHitResolved.Broadcast(HitData);
+	}
+
+	Victim->OnHitResolved(HitData);
 	return true;
 }
 

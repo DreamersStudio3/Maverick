@@ -55,7 +55,7 @@ struct MAVERICK_API FMVInteractionGameplayEventCommandData : public FMVInteracti
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Interaction|Command", meta = (Categories = "Interaction.Command.Event", ToolTip = "도메인 로직이 분기할 이벤트 태그입니다. 예: Interaction.Command.Event.Shop.Buy"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Interaction|Command", meta = (Categories = "Interaction.Command.Event,Event", ToolTip = "도메인 로직이 분기할 이벤트 태그입니다. 예: Event.HitReaction.ApplyDamage 또는 Interaction.Command.Event.Shop.Buy"))
 	FGameplayTag EventTag;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Interaction|Command", meta = (ToolTip = "이벤트에 함께 전달할 태그 묶음입니다."))

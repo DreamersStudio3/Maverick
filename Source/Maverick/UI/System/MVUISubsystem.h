@@ -9,14 +9,12 @@
 
 class UCommonActivatableWidget;
 class UCameraComponent;
-class AMVCharacterBase;
 class UMVDialogueWindow;
 class UMVHUDWidgetBase;
 class UMVInteractionMenuWindow;
 class UMVInteractionPromptPopup;
 class UMVLoadingWindow;
 class UMVMessagePopup;
-class UMVPIEActionTestWidget;
 class UMVPopupBase;
 class UMVUILayerBase;
 class UMVWindowBase;
@@ -93,15 +91,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
 	UMVDialogueWindow* ShowDialogueWindowTextWithTiming(FText DialogueText, float Duration = -1.0f, float MinimumSkipDelay = -1.0f);
-
-	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Debug", meta = (AdvancedDisplay = "TargetCharacter"))
-	UMVPIEActionTestWidget* ShowPIEActionTestPanel(AMVCharacterBase* TargetCharacter = nullptr);
-
-	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Debug")
-	void HidePIEActionTestPanel();
-
-	UFUNCTION(BlueprintPure, Category = "Maverick|UI|Debug")
-	bool IsPIEActionTestPanelActiveOrPending() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Debug")
 	UMVLoadingWindow* ShowLoadingWindowForTest(bool bUseNativeWindow = false);
@@ -187,9 +176,6 @@ private:
 	void TryOpenPendingDialogueWindow();
 	void TrackActivePopup(UMVPopupBase* Popup);
 	void TrackActiveDialogueWindow(UMVDialogueWindow* DialogueWindow);
-	UMVPIEActionTestWidget* OpenPIEActionTestPanel(AMVCharacterBase* TargetCharacter);
-	AMVCharacterBase* ResolvePIEActionTestTargetCharacter(AMVCharacterBase* TargetCharacter) const;
-	APlayerController* ResolvePIEActionTestPlayerController(const AMVCharacterBase* TargetCharacter) const;
 
 	UPROPERTY(Transient)
 	TArray<TObjectPtr<UMVUILayerBase>> LayerStack;
@@ -210,15 +196,10 @@ private:
 	TObjectPtr<UMVPopupBase> ActivePopup;
 
 	UPROPERTY(Transient)
-	TObjectPtr<UMVPIEActionTestWidget> ActivePIEActionTestWidget;
-
-	UPROPERTY(Transient)
 	TObjectPtr<UMVLoadingWindow> ActiveLoadingWindowForTest;
 
-	TWeakObjectPtr<AMVCharacterBase> PendingPIEActionTestTargetCharacter;
 	TWeakObjectPtr<UObject> ActiveInteractionMenuSource;
 	TArray<TWeakObjectPtr<UObject>> InteractionSessionSources;
-	bool bHasPendingPIEActionTestPanel = false;
 
 	TWeakObjectPtr<USpringArmComponent> DialogueZoomSpringArm;
 	TWeakObjectPtr<UCameraComponent> DialogueZoomCamera;

@@ -127,6 +127,7 @@ private:
 	void CompleteConfiguredStep(FGameplayTag NextStepId);
 	bool ExecuteConfiguredCommands(const TArray<FInstancedStruct>& Commands, FGameplayTag NextStepId);
 	bool ExecuteNextConfiguredCommand();
+	bool TryHandleBuiltInGameplayEventCommand(const FMVInteractionCommandRequest& CommandRequest);
 	FMVInteractionCommandRequest MakeCommandRequest(const FInstancedStruct& CommandInstance) const;
 	FGameplayTag ResolveStartStepId() const;
 	const TArray<FInstancedStruct>& ResolveInteractionSteps() const;

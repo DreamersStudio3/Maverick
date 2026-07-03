@@ -14,7 +14,7 @@
 - [x] 비활성/활성/메뉴 흐름을 가진 네이티브 체크포인트 액터 추가
 - [x] `/Game/Interaction/BP_Checkpoint` 블루프린트 에셋 생성
 - [x] detector의 `BP_Carcass`/PIE 피격 테스트 특수 처리 제거
-- [x] legacy PIE 피격 테스트 패널을 기본 비활성 CVar 뒤로 이동
+- [x] legacy PIE 피격 테스트 패널 제거
 - [x] `MaverickEditor Win64 Development` 빌드 통과
 - [x] 활성화된 체크포인트 목록을 월드 저장 데이터에 추가
 - [x] 기존 마지막 체크포인트 저장 데이터를 활성 목록으로 정규화
@@ -41,6 +41,7 @@
 - [x] Interaction menu validation을 nested entry command/submenu 구조에 맞게 갱신
 - [x] Interaction menu submenu를 Entry별 1:1 nested data 구조로 단순화
 - [x] ActionStep/MenuEntry leaf 실행을 InteractionCommand 배열 모델로 확장
+- [x] `Event.HitReaction.ApplyDamage` command를 확정 대미지/HitReaction 처리에 연결
 - [ ] InteractionFlow 샘플 asset과 테스트용 액터 구성
 - [ ] InteractionFlow 제작 규칙 문서화
 - [ ] 기획자가 flow 구조를 노드 그래프로 확인/편집할 수 있는 에디터 GUI 툴 추가

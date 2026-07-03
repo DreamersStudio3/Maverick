@@ -8,6 +8,8 @@ namespace MVGameplayTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Character_NPC_Enemy_E1);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Character_NPC_Enemy_NamelessPuppet);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Character_NPC_Neutral_N1);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_HitReaction_ApplyDamage);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Interaction_Command_Event_HitReaction_ApplyDamage);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Interaction_Choice_Entry);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Interaction_Flow_Step);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Interaction_Menu);
