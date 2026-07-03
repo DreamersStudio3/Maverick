@@ -8,7 +8,21 @@
 #include "Combat/MVAbilityBase.h"
 #include "Components/MVActionComponent.h"
 #include "Character/MVCharacterBase.h"
+#include "Engine/GameInstance.h"
+#include "UI/System/MVUISubsystem.h"
 
+namespace
+{
+bool MVCombatComponentIsInteractionMenuBlockingAction(const UActorComponent& Component)
+{
+	const UWorld* World = Component.GetWorld();
+	const UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr;
+	const UMVUISubsystem* UISubsystem = GameInstance
+		? GameInstance->GetSubsystem<UMVUISubsystem>()
+		: nullptr;
+	return UISubsystem && UISubsystem->IsInteractionMenuActive();
+}
+}
 
 // Sets default values for this component's properties
 UMVCombatComponent::UMVCombatComponent()
@@ -46,6 +60,11 @@ void UMVCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 
 bool UMVCombatComponent::TryCombatAction(EMVCombatActionTypes InActionType, int32 SkillIndex)
 {
+	if (MVCombatComponentIsInteractionMenuBlockingAction(*this))
+	{
+		return false;
+	}
+
 	if (InActionType == EMVCombatActionTypes::LightAttack ||
 		InActionType == EMVCombatActionTypes::HeavyAttack ||
 		InActionType == EMVCombatActionTypes::ChargeAttack)

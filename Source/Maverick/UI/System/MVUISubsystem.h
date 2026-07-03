@@ -13,7 +13,7 @@ class UCommonActivatableWidget;
 class UCameraComponent;
 class UMVDialogueWindow;
 class UMVHUDWidgetBase;
-class UMVInteractionChoiceWindow;
+class UMVInteractionChoicePopup;
 class UMVInteractionMenuWindow;
 class UMVInteractionPromptPopup;
 class UMVLoadingWindow;
@@ -81,7 +81,7 @@ public:
 	bool IsInteractionMenuActive() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Interaction")
-	UMVInteractionChoiceWindow* ShowInteractionChoice(const FMVInteractionChoiceData& ChoiceData, UObject* SourceObject = nullptr);
+	UMVInteractionChoicePopup* ShowInteractionChoice(const FMVInteractionChoiceData& ChoiceData, UObject* SourceObject = nullptr);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Interaction")
 	void HideInteractionChoice();
@@ -165,7 +165,7 @@ private:
 	void HandleInteractionMenuClosed(UMVInteractionMenuWindow* ClosedMenuWindow);
 
 	UFUNCTION()
-	void HandleInteractionChoiceClosed(UMVInteractionChoiceWindow* ClosedChoiceWindow);
+	void HandleInteractionChoiceClosed(UMVPopupBase* ClosedChoicePopup);
 
 	UFUNCTION()
 	void HandleDialogueWindowClosed(UMVDialogueWindow* ClosedDialogueWindow);
@@ -205,7 +205,7 @@ private:
 	TObjectPtr<UMVInteractionMenuWindow> ActiveInteractionMenuWindow;
 
 	UPROPERTY(Transient)
-	TObjectPtr<UMVInteractionChoiceWindow> ActiveInteractionChoiceWindow;
+	TObjectPtr<UMVInteractionChoicePopup> ActiveInteractionChoicePopup;
 
 	UPROPERTY(Transient)
 	TObjectPtr<UMVDialogueWindow> ActiveDialogueWindow;

@@ -8,10 +8,10 @@
 #include "Tags/MVGameplayTags.h"
 #include "UI/Base/MVPopupBase.h"
 #include "UI/Base/MVWindowBase.h"
+#include "UI/Popup/MVInteractionChoicePopup.h"
 #include "UI/Popup/MVMessagePopup.h"
 #include "UI/System/MVUISubsystem.h"
 #include "UI/Window/MVDialogueWindow.h"
-#include "UI/Window/MVInteractionChoiceWindow.h"
 #include "UI/Window/MVInteractionMenuWindow.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogMVInteractableComponent, Log, All);
@@ -242,12 +242,12 @@ void UMVInteractableComponent::EndConfiguredInteractionSession()
 			this,
 			&UMVInteractableComponent::HandleConfiguredMenuEntrySelected);
 	}
-	if (ActiveConfiguredChoiceWindow)
+	if (ActiveConfiguredChoicePopup)
 	{
-		ActiveConfiguredChoiceWindow->OnInteractionChoiceClosed.RemoveDynamic(
+		ActiveConfiguredChoicePopup->OnPopupClosed.RemoveDynamic(
 			this,
 			&UMVInteractableComponent::HandleConfiguredChoiceClosed);
-		ActiveConfiguredChoiceWindow->OnInteractionChoiceEntrySelected.RemoveDynamic(
+		ActiveConfiguredChoicePopup->OnInteractionChoiceEntrySelected.RemoveDynamic(
 			this,
 			&UMVInteractableComponent::HandleConfiguredChoiceEntrySelected);
 	}
@@ -261,7 +261,7 @@ void UMVInteractableComponent::EndConfiguredInteractionSession()
 	ActiveConfiguredDialogueWindow = nullptr;
 	ActiveConfiguredPopup = nullptr;
 	ActiveConfiguredMenuWindow = nullptr;
-	ActiveConfiguredChoiceWindow = nullptr;
+	ActiveConfiguredChoicePopup = nullptr;
 	ActiveConfiguredWindow = nullptr;
 
 	if (UMVUISubsystem* UISubsystem = GetUISubsystem())
@@ -347,14 +347,14 @@ bool UMVInteractableComponent::ExecuteConfiguredStep(const FGameplayTag StepId)
 	{
 		if (UMVUISubsystem* UISubsystem = GetUISubsystem())
 		{
-			ActiveConfiguredChoiceWindow = UISubsystem->ShowInteractionChoice(ChoiceStep->ChoiceData, this);
-			if (ActiveConfiguredChoiceWindow)
+			ActiveConfiguredChoicePopup = UISubsystem->ShowInteractionChoice(ChoiceStep->ChoiceData, this);
+			if (ActiveConfiguredChoicePopup)
 			{
 				bWaitingForConfiguredStep = true;
-				ActiveConfiguredChoiceWindow->OnInteractionChoiceClosed.AddUniqueDynamic(
+				ActiveConfiguredChoicePopup->OnPopupClosed.AddUniqueDynamic(
 					this,
 					&UMVInteractableComponent::HandleConfiguredChoiceClosed);
-				ActiveConfiguredChoiceWindow->OnInteractionChoiceEntrySelected.AddUniqueDynamic(
+				ActiveConfiguredChoicePopup->OnInteractionChoiceEntrySelected.AddUniqueDynamic(
 					this,
 					&UMVInteractableComponent::HandleConfiguredChoiceEntrySelected);
 				return true;
@@ -436,15 +436,15 @@ void UMVInteractableComponent::CompleteConfiguredStep(const FGameplayTag NextSte
 			&UMVInteractableComponent::HandleConfiguredMenuEntrySelected);
 		ActiveConfiguredMenuWindow = nullptr;
 	}
-	if (ActiveConfiguredChoiceWindow)
+	if (ActiveConfiguredChoicePopup)
 	{
-		ActiveConfiguredChoiceWindow->OnInteractionChoiceClosed.RemoveDynamic(
+		ActiveConfiguredChoicePopup->OnPopupClosed.RemoveDynamic(
 			this,
 			&UMVInteractableComponent::HandleConfiguredChoiceClosed);
-		ActiveConfiguredChoiceWindow->OnInteractionChoiceEntrySelected.RemoveDynamic(
+		ActiveConfiguredChoicePopup->OnInteractionChoiceEntrySelected.RemoveDynamic(
 			this,
 			&UMVInteractableComponent::HandleConfiguredChoiceEntrySelected);
-		ActiveConfiguredChoiceWindow = nullptr;
+		ActiveConfiguredChoicePopup = nullptr;
 	}
 	if (ActiveConfiguredWindow)
 	{
@@ -822,20 +822,20 @@ void UMVInteractableComponent::HandleConfiguredMenuEntrySelected(UObject* Source
 	}
 }
 
-void UMVInteractableComponent::HandleConfiguredChoiceClosed(UMVInteractionChoiceWindow* ClosedChoiceWindow)
+void UMVInteractableComponent::HandleConfiguredChoiceClosed(UMVPopupBase* ClosedChoicePopup)
 {
-	if (!ClosedChoiceWindow || ClosedChoiceWindow != ActiveConfiguredChoiceWindow)
+	if (!ClosedChoicePopup || ClosedChoicePopup != ActiveConfiguredChoicePopup)
 	{
 		return;
 	}
 
-	ActiveConfiguredChoiceWindow->OnInteractionChoiceClosed.RemoveDynamic(
+	ActiveConfiguredChoicePopup->OnPopupClosed.RemoveDynamic(
 		this,
 		&UMVInteractableComponent::HandleConfiguredChoiceClosed);
-	ActiveConfiguredChoiceWindow->OnInteractionChoiceEntrySelected.RemoveDynamic(
+	ActiveConfiguredChoicePopup->OnInteractionChoiceEntrySelected.RemoveDynamic(
 		this,
 		&UMVInteractableComponent::HandleConfiguredChoiceEntrySelected);
-	ActiveConfiguredChoiceWindow = nullptr;
+	ActiveConfiguredChoicePopup = nullptr;
 
 	const FInstancedStruct* StepInstance = FindInteractionStep(ActiveStepId);
 	const FMVInteractionStepData* Step = StepInstance ? StepInstance->GetPtr<FMVInteractionStepData>() : nullptr;
@@ -881,9 +881,9 @@ void UMVInteractableComponent::HandleConfiguredChoiceEntrySelected(UObject* Sour
 	PendingCommandsAfterMenuClose = EntryData.Commands;
 	bHasPendingCommandsAfterMenuClose = !PendingCommandsAfterMenuClose.IsEmpty();
 
-	if (ActiveConfiguredChoiceWindow)
+	if (ActiveConfiguredChoicePopup)
 	{
-		ActiveConfiguredChoiceWindow->DeactivateWidgetWithFade();
+		ActiveConfiguredChoicePopup->ClosePopup();
 	}
 	else
 	{

@@ -1,4 +1,4 @@
-#include "UI/Window/MVInteractionChoiceWindow.h"
+#include "UI/Popup/MVInteractionChoicePopup.h"
 
 #include "Blueprint/WidgetTree.h"
 #include "Components/Border.h"
@@ -25,23 +25,22 @@ void UMVInteractionChoiceEntryButton::HandleClicked()
 	OnEntryButtonClicked.Broadcast(this);
 }
 
-UMVInteractionChoiceWindow::UMVInteractionChoiceWindow(const FObjectInitializer& ObjectInitializer)
+UMVInteractionChoicePopup::UMVInteractionChoicePopup(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	bCloseOnBack = true;
+	AutoDismissSeconds = 0.0f;
 }
 
-void UMVInteractionChoiceWindow::SetChoiceData(
+void UMVInteractionChoicePopup::SetChoiceData(
 	const FMVInteractionChoiceData& InChoiceData,
 	UObject* InSourceObject)
 {
 	ChoiceData = InChoiceData;
 	SourceObject = InSourceObject;
-	bClosedEventBroadcast = false;
 	RefreshChoice();
 }
 
-void UMVInteractionChoiceWindow::RefreshChoice()
+void UMVInteractionChoicePopup::RefreshChoice()
 {
 	if (!ChoiceBox)
 	{
@@ -57,7 +56,6 @@ void UMVInteractionChoiceWindow::RefreshChoice()
 	}
 
 	ChoiceBox->ClearChildren();
-	InitialFocusTarget = nullptr;
 
 	int32 ChoiceIndex = 0;
 	for (const FMVInteractionChoiceEntryData& Choice : ChoiceData.Choices)
@@ -76,7 +74,7 @@ void UMVInteractionChoiceWindow::RefreshChoice()
 		EntryButton->SetEntryData(EntryData);
 		EntryButton->OnEntryButtonClicked.AddUniqueDynamic(
 			this,
-			&UMVInteractionChoiceWindow::HandleChoiceButtonClicked);
+			&UMVInteractionChoicePopup::HandleChoiceButtonClicked);
 
 		FButtonStyle ButtonStyle = EntryButton->GetStyle();
 		ButtonStyle.Normal.TintColor = FSlateColor(FLinearColor(0.10f, 0.095f, 0.08f, 0.82f));
@@ -103,45 +101,21 @@ void UMVInteractionChoiceWindow::RefreshChoice()
 		{
 			EntrySlot->SetPadding(FMargin(0.0f, 0.0f, 0.0f, 6.0f));
 		}
-
-		if (!InitialFocusTarget && EntryData.bEnabled)
-		{
-			InitialFocusTarget = EntryButton;
-		}
-	}
-
-	if (InitialFocusTarget && IsActivated())
-	{
-		InitialFocusTarget->SetKeyboardFocus();
 	}
 }
 
-void UMVInteractionChoiceWindow::NativeOnInitialized()
+void UMVInteractionChoicePopup::NativeConstruct()
 {
-	Super::NativeOnInitialized();
-
 	if (!WidgetTree || !WidgetTree->RootWidget)
 	{
 		BuildNativeChoiceTree();
 	}
 
+	Super::NativeConstruct();
 	RefreshChoice();
 }
 
-void UMVInteractionChoiceWindow::NativeOnDeactivated()
-{
-	Super::NativeOnDeactivated();
-
-	if (bClosedEventBroadcast)
-	{
-		return;
-	}
-
-	bClosedEventBroadcast = true;
-	OnInteractionChoiceClosed.Broadcast(this);
-}
-
-void UMVInteractionChoiceWindow::BuildNativeChoiceTree()
+void UMVInteractionChoicePopup::BuildNativeChoiceTree()
 {
 	if (!WidgetTree)
 	{
@@ -170,6 +144,10 @@ void UMVInteractionChoiceWindow::BuildNativeChoiceTree()
 	}
 
 	WidgetTree->RootWidget = RootCanvas;
+	RootCanvas->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	PanelBorder->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	PanelBox->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	ChoiceBox->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 
 	PanelBorder->SetPadding(FMargin(18.0f, 14.0f));
 	PanelBorder->SetBrushColor(FLinearColor(0.015f, 0.014f, 0.012f, 0.84f));
@@ -195,7 +173,7 @@ void UMVInteractionChoiceWindow::BuildNativeChoiceTree()
 	}
 }
 
-FMVMenuEntryData UMVInteractionChoiceWindow::MakeEntryData(
+FMVMenuEntryData UMVInteractionChoicePopup::MakeEntryData(
 	const FMVInteractionChoiceEntryData& Choice) const
 {
 	FMVMenuEntryData EntryData;
@@ -205,12 +183,12 @@ FMVMenuEntryData UMVInteractionChoiceWindow::MakeEntryData(
 	return EntryData;
 }
 
-FText UMVInteractionChoiceWindow::ResolveEntryLabel(const FMVMenuEntryData& EntryData) const
+FText UMVInteractionChoicePopup::ResolveEntryLabel(const FMVMenuEntryData& EntryData) const
 {
 	return EntryData.Label;
 }
 
-void UMVInteractionChoiceWindow::HandleChoiceButtonClicked(UMVInteractionChoiceEntryButton* Button)
+void UMVInteractionChoicePopup::HandleChoiceButtonClicked(UMVInteractionChoiceEntryButton* Button)
 {
 	if (!Button)
 	{
@@ -224,5 +202,5 @@ void UMVInteractionChoiceWindow::HandleChoiceButtonClicked(UMVInteractionChoiceE
 	}
 
 	OnInteractionChoiceEntrySelected.Broadcast(SourceObject, EntryData);
-	DeactivateWidgetWithFade();
+	ClosePopup();
 }

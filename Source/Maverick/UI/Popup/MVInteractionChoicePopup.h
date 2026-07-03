@@ -3,13 +3,12 @@
 #include "CoreMinimal.h"
 #include "Components/Button.h"
 #include "Interaction/MVInteractionTypes.h"
-#include "UI/Base/MVWindowBase.h"
-#include "MVInteractionChoiceWindow.generated.h"
+#include "UI/Base/MVPopupBase.h"
+#include "MVInteractionChoicePopup.generated.h"
 
 class UTextBlock;
 class UVerticalBox;
 class UMVInteractionChoiceEntryButton;
-class UMVInteractionChoiceWindow;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
 	FMVOnInteractionChoiceEntryButtonClicked,
@@ -19,10 +18,6 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
 	FMVOnInteractionChoiceEntrySelected,
 	UObject*, SourceObject,
 	FMVMenuEntryData, EntryData);
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
-	FMVOnInteractionChoiceClosed,
-	UMVInteractionChoiceWindow*, ChoiceWindow);
 
 UCLASS()
 class MAVERICK_API UMVInteractionChoiceEntryButton : public UButton
@@ -47,18 +42,18 @@ private:
 };
 
 /**
- * 대화 흐름 중 화면 하단에 표시되는 단층 선택지 window.
+ * 대화 흐름 중 화면 하단에 표시되는 단층 선택지 popup.
  *
- * `FMVInteractionChoiceData`만 표시하는 ChoiceStep 전용 presentation이다. 하위 메뉴나 window push 같은
- * Selection/MenuStep 기능을 갖지 않고, 선택된 항목을 flow transition용 entry 데이터로 방송한 뒤 닫힌다.
+ * Window stack을 사용하지 않아 월드 이동/카메라 입력을 장악하지 않는다. 화면 하단의 선택지 버튼만
+ * hit-test 대상으로 두고, 선택된 항목을 flow transition용 entry 데이터로 방송한 뒤 닫힌다.
  */
 UCLASS(Blueprintable)
-class MAVERICK_API UMVInteractionChoiceWindow : public UMVWindowBase
+class MAVERICK_API UMVInteractionChoicePopup : public UMVPopupBase
 {
 	GENERATED_BODY()
 
 public:
-	UMVInteractionChoiceWindow(const FObjectInitializer& ObjectInitializer);
+	UMVInteractionChoicePopup(const FObjectInitializer& ObjectInitializer);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Choice")
 	void SetChoiceData(const FMVInteractionChoiceData& InChoiceData, UObject* InSourceObject);
@@ -69,12 +64,8 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|UI|Choice")
 	FMVOnInteractionChoiceEntrySelected OnInteractionChoiceEntrySelected;
 
-	UPROPERTY(BlueprintAssignable, Category = "Maverick|UI|Choice")
-	FMVOnInteractionChoiceClosed OnInteractionChoiceClosed;
-
 protected:
-	virtual void NativeOnInitialized() override;
-	virtual void NativeOnDeactivated() override;
+	virtual void NativeConstruct() override;
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional), Category = "Maverick|UI|Choice")
 	TObjectPtr<UTextBlock> PromptText;
@@ -95,6 +86,4 @@ private:
 
 	UPROPERTY(Transient)
 	TObjectPtr<UObject> SourceObject;
-
-	bool bClosedEventBroadcast = false;
 };

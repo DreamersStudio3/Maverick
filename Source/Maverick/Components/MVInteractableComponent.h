@@ -9,7 +9,7 @@
 class UMVInteractableComponent;
 class UMVDialogueWindow;
 class UMVInteractionFlowDataAsset;
-class UMVInteractionChoiceWindow;
+class UMVInteractionChoicePopup;
 class UMVInteractionMenuWindow;
 class UMVPopupBase;
 class UMVWindowBase;
@@ -150,7 +150,7 @@ private:
 	void HandleConfiguredMenuEntrySelected(UObject* SourceObject, FMVMenuEntryData EntryData);
 
 	UFUNCTION()
-	void HandleConfiguredChoiceClosed(UMVInteractionChoiceWindow* ClosedChoiceWindow);
+	void HandleConfiguredChoiceClosed(UMVPopupBase* ClosedChoicePopup);
 
 	UFUNCTION()
 	void HandleConfiguredChoiceEntrySelected(UObject* SourceObject, FMVMenuEntryData EntryData);
@@ -171,7 +171,7 @@ private:
 	TObjectPtr<UMVInteractionMenuWindow> ActiveConfiguredMenuWindow;
 
 	UPROPERTY(Transient)
-	TObjectPtr<UMVInteractionChoiceWindow> ActiveConfiguredChoiceWindow;
+	TObjectPtr<UMVInteractionChoicePopup> ActiveConfiguredChoicePopup;
 
 	UPROPERTY(Transient)
 	TObjectPtr<UMVWindowBase> ActiveConfiguredWindow;
