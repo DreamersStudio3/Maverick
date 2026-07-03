@@ -1,6 +1,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Engine/DataTable.h"
+#include "GameplayTagContainer.h"
 #include "StructUtils/InstancedStruct.h"
 #include "Templates/SubclassOf.h"
 #include "UI/System/MVUIDataTypes.h"
@@ -16,8 +18,8 @@ struct MAVERICK_API FMVInteractionStepTransition
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Interaction|Transition")
 	FName TriggerName = NAME_None;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Interaction|Transition")
-	FName NextStepId = NAME_None;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Interaction|Transition", meta = (Categories = "Interaction.Flow.Step"))
+	FGameplayTag NextStepId;
 };
 
 /**
@@ -31,11 +33,11 @@ struct MAVERICK_API FMVInteractionStepData
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Interaction|Step")
-	FName StepId = NAME_None;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Interaction|Step", meta = (Categories = "Interaction.Flow.Step"))
+	FGameplayTag StepId;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Interaction|Step")
-	FName NextStepId = NAME_None;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Interaction|Step", meta = (Categories = "Interaction.Flow.Step"))
+	FGameplayTag NextStepId;
 };
 
 USTRUCT(BlueprintType, meta = (DisplayName = "Interaction Route Step"))
@@ -67,8 +69,11 @@ struct MAVERICK_API FMVInteractionActionStepData : public FMVInteractionStepData
 {
 	GENERATED_BODY()
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Interaction|Action", meta = (RowType = "/Script/Maverick.MVActionRow"))
+	FDataTableRowHandle ActionRow;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Interaction|Action")
-	FName ActionName = NAME_None;
+	FName StartSection = NAME_None;
 };
 
 USTRUCT(BlueprintType, meta = (DisplayName = "Interaction Warning Popup Step"))

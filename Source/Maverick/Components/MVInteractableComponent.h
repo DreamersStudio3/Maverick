@@ -22,22 +22,24 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(
 	FMVOnInteractionMenuActionRequested,
 	AActor*, Interactor,
 	UMVInteractableComponent*, InteractableComponent,
-	FName, StepId,
+	FGameplayTag, StepId,
 	FName, ActionName);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FiveParams(
 	FMVOnInteractionActionRequested,
 	AActor*, Interactor,
 	UMVInteractableComponent*, InteractableComponent,
-	FName, StepId,
-	FName, ActionName);
+	FGameplayTag, StepId,
+	FDataTableRowHandle, ActionRow,
+	FName, StartSection);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FiveParams(
 	FMVOnInteractionActionCompleted,
 	AActor*, Interactor,
 	UMVInteractableComponent*, InteractableComponent,
-	FName, StepId,
-	FName, ActionName);
+	FGameplayTag, StepId,
+	FDataTableRowHandle, ActionRow,
+	FName, StartSection);
 
 /**
  * 액터를 공통 상호작용 대상으로 노출하고 선택형 interaction flow를 실행하는 컴포넌트.
@@ -89,7 +91,7 @@ public:
 	bool IsConfiguredInteractionRunning() const { return bConfiguredInteractionRunning; }
 
 	UFUNCTION(BlueprintPure, Category = "Maverick|Interaction")
-	FName GetActiveInteractionStepId() const { return ActiveStepId; }
+	FGameplayTag GetActiveInteractionStepId() const { return ActiveStepId; }
 
 	virtual bool CanInteract_Implementation(AActor* Interactor) const override;
 	virtual void Interact_Implementation(AActor* Interactor) override;
@@ -103,8 +105,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Interaction|Definition", meta = (EditCondition = "bUseInteractionDefinition"))
 	TObjectPtr<UMVInteractionFlowDataAsset> InteractionFlowAsset;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Interaction|Definition", meta = (EditCondition = "bUseInteractionDefinition"))
-	FName InlineStartStepId = NAME_None;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Interaction|Definition", meta = (EditCondition = "bUseInteractionDefinition", Categories = "Interaction.Flow.Step"))
+	FGameplayTag InlineStartStepId;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Interaction|Definition", meta = (EditCondition = "bUseInteractionDefinition", BaseStruct = "/Script/Maverick.MVInteractionStepData", ExcludeBaseStruct))
 	TArray<FInstancedStruct> InlineSteps;
@@ -122,12 +124,12 @@ private:
 	void ExecuteConfiguredInteraction(AActor* Interactor);
 	void BeginConfiguredInteractionSession(AActor* Interactor);
 	void EndConfiguredInteractionSession();
-	bool ExecuteConfiguredStep(FName StepId);
-	void CompleteConfiguredStep(FName NextStepId);
-	FName ResolveStartStepId() const;
+	bool ExecuteConfiguredStep(FGameplayTag StepId);
+	void CompleteConfiguredStep(FGameplayTag NextStepId);
+	FGameplayTag ResolveStartStepId() const;
 	const TArray<FInstancedStruct>& ResolveInteractionSteps() const;
-	FName ResolveStepTransition(const FMVInteractionSelectionStepData& Step, FName TriggerName) const;
-	const FInstancedStruct* FindInteractionStep(FName StepId) const;
+	FGameplayTag ResolveStepTransition(const FMVInteractionSelectionStepData& Step, FName TriggerName) const;
+	const FInstancedStruct* FindInteractionStep(FGameplayTag StepId) const;
 	class UMVUISubsystem* GetUISubsystem() const;
 
 	UFUNCTION()
@@ -160,8 +162,8 @@ private:
 	UPROPERTY(Transient)
 	TObjectPtr<UMVWindowBase> ActiveConfiguredWindow;
 
-	FName ActiveStepId = NAME_None;
-	FName PendingStepAfterMenuClose = NAME_None;
+	FGameplayTag ActiveStepId;
+	FGameplayTag PendingStepAfterMenuClose;
 	bool bConfiguredInteractionRunning = false;
 	bool bWaitingForConfiguredStep = false;
 	bool bHasPendingStepAfterMenuClose = false;

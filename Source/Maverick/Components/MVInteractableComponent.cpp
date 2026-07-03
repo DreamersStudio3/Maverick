@@ -11,9 +11,9 @@
 
 namespace
 {
-FName MVInteractableResolveActionStepName(const FMVInteractionActionStepData& Step)
+bool MVInteractableHasActionStepRow(const FMVInteractionActionStepData& Step)
 {
-	return Step.ActionName.IsNone() ? Step.StepId : Step.ActionName;
+	return Step.ActionRow.DataTable && !Step.ActionRow.RowName.IsNone();
 }
 }
 
@@ -53,13 +53,17 @@ void UMVInteractableComponent::FinishInteractionAction()
 	const FInstancedStruct* StepInstance = FindInteractionStep(ActiveStepId);
 	const FMVInteractionStepData* Step = StepInstance ? StepInstance->GetPtr<FMVInteractionStepData>() : nullptr;
 	const FMVInteractionActionStepData* ActionStep = StepInstance ? StepInstance->GetPtr<FMVInteractionActionStepData>() : nullptr;
-	if (!Step || !ActionStep)
+	if (!Step || !ActionStep || !MVInteractableHasActionStepRow(*ActionStep))
 	{
 		return;
 	}
 
-	const FName ActionName = MVInteractableResolveActionStepName(*ActionStep);
-	OnInteractionActionCompleted.Broadcast(ActiveInteractor.Get(), this, Step->StepId, ActionName);
+	OnInteractionActionCompleted.Broadcast(
+		ActiveInteractor.Get(),
+		this,
+		Step->StepId,
+		ActionStep->ActionRow,
+		ActionStep->StartSection);
 	CompleteConfiguredStep(Step->NextStepId);
 }
 
@@ -114,8 +118,8 @@ void UMVInteractableComponent::BeginConfiguredInteractionSession(AActor* Interac
 	bWaitingForConfiguredStep = false;
 	bHasPendingStepAfterMenuClose = false;
 	ActiveInteractor = Interactor;
-	ActiveStepId = NAME_None;
-	PendingStepAfterMenuClose = NAME_None;
+	ActiveStepId = FGameplayTag();
+	PendingStepAfterMenuClose = FGameplayTag();
 
 	if (UMVUISubsystem* UISubsystem = GetUISubsystem())
 	{
@@ -162,14 +166,14 @@ void UMVInteractableComponent::EndConfiguredInteractionSession()
 	}
 
 	ActiveInteractor = nullptr;
-	ActiveStepId = NAME_None;
-	PendingStepAfterMenuClose = NAME_None;
+	ActiveStepId = FGameplayTag();
+	PendingStepAfterMenuClose = FGameplayTag();
 	bWaitingForConfiguredStep = false;
 	bConfiguredInteractionRunning = false;
 	bHasPendingStepAfterMenuClose = false;
 }
 
-bool UMVInteractableComponent::ExecuteConfiguredStep(const FName StepId)
+bool UMVInteractableComponent::ExecuteConfiguredStep(const FGameplayTag StepId)
 {
 	const FInstancedStruct* StepInstance = FindInteractionStep(StepId);
 	const FMVInteractionStepData* Step = StepInstance ? StepInstance->GetPtr<FMVInteractionStepData>() : nullptr;
@@ -181,7 +185,7 @@ bool UMVInteractableComponent::ExecuteConfiguredStep(const FName StepId)
 	ActiveStepId = Step->StepId;
 	bWaitingForConfiguredStep = false;
 	bHasPendingStepAfterMenuClose = false;
-	PendingStepAfterMenuClose = NAME_None;
+	PendingStepAfterMenuClose = FGameplayTag();
 
 	if (const FMVInteractionDialogueStepData* DialogueStep = StepInstance->GetPtr<FMVInteractionDialogueStepData>())
 	{
@@ -208,9 +212,18 @@ bool UMVInteractableComponent::ExecuteConfiguredStep(const FName StepId)
 
 	if (const FMVInteractionActionStepData* ActionStep = StepInstance->GetPtr<FMVInteractionActionStepData>())
 	{
-		const FName ActionName = MVInteractableResolveActionStepName(*ActionStep);
+		if (!MVInteractableHasActionStepRow(*ActionStep))
+		{
+			return false;
+		}
+
 		bWaitingForConfiguredStep = true;
-		OnInteractionActionRequested.Broadcast(ActiveInteractor.Get(), this, Step->StepId, ActionName);
+		OnInteractionActionRequested.Broadcast(
+			ActiveInteractor.Get(),
+			this,
+			Step->StepId,
+			ActionStep->ActionRow,
+			ActionStep->StartSection);
 		return true;
 	}
 
@@ -277,7 +290,7 @@ bool UMVInteractableComponent::ExecuteConfiguredStep(const FName StepId)
 	return true;
 }
 
-void UMVInteractableComponent::CompleteConfiguredStep(const FName NextStepId)
+void UMVInteractableComponent::CompleteConfiguredStep(const FGameplayTag NextStepId)
 {
 	bWaitingForConfiguredStep = false;
 
@@ -311,7 +324,7 @@ void UMVInteractableComponent::CompleteConfiguredStep(const FName NextStepId)
 		ActiveConfiguredWindow = nullptr;
 	}
 
-	if (NextStepId.IsNone())
+	if (!NextStepId.IsValid())
 	{
 		EndConfiguredInteractionSession();
 		return;
@@ -323,14 +336,14 @@ void UMVInteractableComponent::CompleteConfiguredStep(const FName NextStepId)
 	}
 }
 
-FName UMVInteractableComponent::ResolveStartStepId() const
+FGameplayTag UMVInteractableComponent::ResolveStartStepId() const
 {
-	if (InteractionFlowAsset && !InteractionFlowAsset->GetStartStepId().IsNone())
+	if (InteractionFlowAsset && InteractionFlowAsset->GetStartStepId().IsValid())
 	{
 		return InteractionFlowAsset->GetStartStepId();
 	}
 
-	if (!InteractionFlowAsset && !InlineStartStepId.IsNone())
+	if (!InteractionFlowAsset && InlineStartStepId.IsValid())
 	{
 		return InlineStartStepId;
 	}
@@ -343,7 +356,7 @@ FName UMVInteractableComponent::ResolveStartStepId() const
 		}
 	}
 
-	return NAME_None;
+	return FGameplayTag();
 }
 
 const TArray<FInstancedStruct>& UMVInteractableComponent::ResolveInteractionSteps() const
@@ -351,7 +364,7 @@ const TArray<FInstancedStruct>& UMVInteractableComponent::ResolveInteractionStep
 	return InteractionFlowAsset ? InteractionFlowAsset->GetSteps() : InlineSteps;
 }
 
-FName UMVInteractableComponent::ResolveStepTransition(
+FGameplayTag UMVInteractableComponent::ResolveStepTransition(
 	const FMVInteractionSelectionStepData& Step,
 	const FName TriggerName) const
 {
@@ -366,7 +379,7 @@ FName UMVInteractableComponent::ResolveStepTransition(
 	return Step.NextStepId;
 }
 
-const FInstancedStruct* UMVInteractableComponent::FindInteractionStep(const FName StepId) const
+const FInstancedStruct* UMVInteractableComponent::FindInteractionStep(const FGameplayTag StepId) const
 {
 	return ResolveInteractionSteps().FindByPredicate([StepId](const FInstancedStruct& StepInstance)
 	{
@@ -391,7 +404,7 @@ void UMVInteractableComponent::HandleConfiguredDialogueClosed(UMVDialogueWindow*
 
 	const FInstancedStruct* StepInstance = FindInteractionStep(ActiveStepId);
 	const FMVInteractionStepData* Step = StepInstance ? StepInstance->GetPtr<FMVInteractionStepData>() : nullptr;
-	CompleteConfiguredStep(Step ? Step->NextStepId : NAME_None);
+	CompleteConfiguredStep(Step ? Step->NextStepId : FGameplayTag());
 }
 
 void UMVInteractableComponent::HandleConfiguredPopupClosed(UMVPopupBase* ClosedPopup)
@@ -403,7 +416,7 @@ void UMVInteractableComponent::HandleConfiguredPopupClosed(UMVPopupBase* ClosedP
 
 	const FInstancedStruct* StepInstance = FindInteractionStep(ActiveStepId);
 	const FMVInteractionStepData* Step = StepInstance ? StepInstance->GetPtr<FMVInteractionStepData>() : nullptr;
-	CompleteConfiguredStep(Step ? Step->NextStepId : NAME_None);
+	CompleteConfiguredStep(Step ? Step->NextStepId : FGameplayTag());
 }
 
 void UMVInteractableComponent::HandleConfiguredMenuClosed(UMVInteractionMenuWindow* ClosedMenuWindow)
@@ -423,11 +436,11 @@ void UMVInteractableComponent::HandleConfiguredMenuClosed(UMVInteractionMenuWind
 
 	const FInstancedStruct* StepInstance = FindInteractionStep(ActiveStepId);
 	const FMVInteractionStepData* Step = StepInstance ? StepInstance->GetPtr<FMVInteractionStepData>() : nullptr;
-	const FName NextStepId = bHasPendingStepAfterMenuClose
+	const FGameplayTag NextStepId = bHasPendingStepAfterMenuClose
 		? PendingStepAfterMenuClose
-		: (Step ? Step->NextStepId : NAME_None);
+		: (Step ? Step->NextStepId : FGameplayTag());
 	bHasPendingStepAfterMenuClose = false;
-	PendingStepAfterMenuClose = NAME_None;
+	PendingStepAfterMenuClose = FGameplayTag();
 	CompleteConfiguredStep(NextStepId);
 }
 
@@ -457,9 +470,9 @@ void UMVInteractableComponent::HandleConfiguredMenuActionSelected(UObject* Sourc
 	}
 	else
 	{
-		const FName NextStepId = PendingStepAfterMenuClose;
+		const FGameplayTag NextStepId = PendingStepAfterMenuClose;
 		bHasPendingStepAfterMenuClose = false;
-		PendingStepAfterMenuClose = NAME_None;
+		PendingStepAfterMenuClose = FGameplayTag();
 		CompleteConfiguredStep(NextStepId);
 	}
 }
@@ -473,5 +486,5 @@ void UMVInteractableComponent::HandleConfiguredWindowDeactivated(UMVWindowBase* 
 
 	const FInstancedStruct* StepInstance = FindInteractionStep(ActiveStepId);
 	const FMVInteractionStepData* Step = StepInstance ? StepInstance->GetPtr<FMVInteractionStepData>() : nullptr;
-	CompleteConfiguredStep(Step ? Step->NextStepId : NAME_None);
+	CompleteConfiguredStep(Step ? Step->NextStepId : FGameplayTag());
 }

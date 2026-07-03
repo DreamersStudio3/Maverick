@@ -21,14 +21,15 @@ public:
 	static const FPrimaryAssetType PrimaryAssetType;
 
 	virtual FPrimaryAssetId GetPrimaryAssetId() const override;
+	virtual EDataValidationResult IsDataValid(FDataValidationContext& Context) const override;
 
 	UFUNCTION(BlueprintPure, Category = "Maverick|Interaction")
-	FName GetStartStepId() const { return StartStepId; }
+	FGameplayTag GetStartStepId() const { return StartStepId; }
 
 	const TArray<FInstancedStruct>& GetSteps() const { return Steps; }
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Interaction")
-	FName StartStepId = NAME_None;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Interaction", meta = (Categories = "Interaction.Flow.Step"))
+	FGameplayTag StartStepId;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Interaction", meta = (BaseStruct = "/Script/Maverick.MVInteractionStepData", ExcludeBaseStruct))
 	TArray<FInstancedStruct> Steps;
