@@ -29,11 +29,28 @@ bool HitReactionEnterIsStateTreeHandledType(const EMVActionHitReactionType HitRe
 	case EMVActionHitReactionType::LargeHit:
 	case EMVActionHitReactionType::KnockDown:
 	case EMVActionHitReactionType::Airborne:
+	case EMVActionHitReactionType::Groggy:
 		return true;
 	case EMVActionHitReactionType::None:
 	case EMVActionHitReactionType::SmallHit:
 	default:
 		return false;
+	}
+}
+
+bool HitReactionEnterMatchesTypeFilter(
+	const EMVActionHitReactionType HitReactionType,
+	const EMVHitReactionEnterTypeFilter TypeFilter)
+{
+	switch (TypeFilter)
+	{
+	case EMVHitReactionEnterTypeFilter::GroggyOnly:
+		return HitReactionType == EMVActionHitReactionType::Groggy;
+	case EMVHitReactionEnterTypeFilter::Any:
+		return true;
+	case EMVHitReactionEnterTypeFilter::NonGroggy:
+	default:
+		return HitReactionType != EMVActionHitReactionType::Groggy;
 	}
 }
 }
@@ -50,6 +67,13 @@ bool FMVHitReactionEnterCondition::TestCondition(FStateTreeExecutionContext& Con
 
 	if (InstanceData.bRequireStateTreeHandledHitReactionType
 		&& !HitReactionEnterIsStateTreeHandledType(InstanceData.HitData.HitReactionType))
+	{
+		return false;
+	}
+
+	if (!HitReactionEnterMatchesTypeFilter(
+		InstanceData.HitData.HitReactionType,
+		InstanceData.HitReactionTypeFilter))
 	{
 		return false;
 	}

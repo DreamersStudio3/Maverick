@@ -154,6 +154,10 @@ void UMVStatComponent::HandleDamaged(const FMVResolvedHitData& HitData)
 	if (GroggyDamage > 0.0f)
 	{
 		SetCurrentGroggy(CurrentGroggy + GroggyDamage);
+		if (HitData.HitReactionType == EMVActionHitReactionType::Groggy)
+		{
+			TryStartGroggy();
+		}
 	}
 }
 
@@ -175,31 +179,54 @@ bool UMVStatComponent::WouldDieFromHit(const FMVResolvedHitData& HitData) const
 
 void UMVStatComponent::TickRecoverableStats(float DeltaTime)
 {
-	//MP recovers at the specified rate, regardless of whether the character is playing an action that pauses recovery.
-	RecoverMP(MPRecoveryPerSecond * DeltaTime);
-	if (DeltaTime <= 0.0f || IsRecoverableStatRecoveryPaused())
+	if (DeltaTime <= 0.0f)
 	{
 		return;
 	}
 
-	// Stamina: while not playing an action that pauses recovery, the cooldown timer counts down. Once the cooldown timer reaches 0, stamina recovers at the specified rate.
+	// MP recovers regardless of whether an action pauses stamina recovery.
+	RecoverMP(MPRecoveryPerSecond * DeltaTime);
+	TickGroggyRecovery(DeltaTime);
+
 	if (!IsRecoverableStatRecoveryPaused())
 	{
-		if (bUseRecoverableStatRecoveryDelay)
-		{
-			StaminaCooldownRemaining = FMath::Max(0.0f, StaminaCooldownRemaining - DeltaTime);
-		}
-		else
-		{
-			StaminaCooldownRemaining = 0.0f;
-		}
+		TickRecoverableResourceRecovery(DeltaTime);
+	}
+}
 
-		if(StaminaCooldownRemaining <= 0.0f)
-		{
-			RecoverStamina(StaminaRecoveryPerSecond * DeltaTime);
-		}
+void UMVStatComponent::TickGroggyRecovery(float DeltaTime)
+{
+	if (!bIsGroggy)
+	{
+		return;
 	}
 
+	if (GroggyRecoveryCooldownRemaining > 0.0f)
+	{
+		GroggyRecoveryCooldownRemaining = FMath::Max(0.0f, GroggyRecoveryCooldownRemaining - DeltaTime);
+	}
+
+	if (GroggyRecoveryCooldownRemaining <= 0.0f)
+	{
+		RecoverGroggy(GroggyRecoveryPerSecond * DeltaTime);
+	}
+}
+
+void UMVStatComponent::TickRecoverableResourceRecovery(float DeltaTime)
+{
+	if (bUseRecoverableStatRecoveryDelay)
+	{
+		StaminaCooldownRemaining = FMath::Max(0.0f, StaminaCooldownRemaining - DeltaTime);
+	}
+	else
+	{
+		StaminaCooldownRemaining = 0.0f;
+	}
+
+	if (StaminaCooldownRemaining <= 0.0f)
+	{
+		RecoverStamina(StaminaRecoveryPerSecond * DeltaTime);
+	}
 }
 
 void UMVStatComponent::RestartRecoverableStatCooldown()
@@ -247,6 +274,13 @@ void UMVStatComponent::ResetDeathState()
 	bIsDead = false;
 	bHasPendingDeathHitData = false;
 	PendingDeathHitData = FMVResolvedHitData();
+}
+
+void UMVStatComponent::ResetGroggyState()
+{
+	bIsGroggy = false;
+	GroggyRecoveryCooldownRemaining = 0.0f;
+	SetCurrentGroggy(0.0f);
 }
 
 void UMVStatComponent::SetMaxHP(float InMaxHP)
@@ -444,6 +478,10 @@ void UMVStatComponent::SetMaxGroggy(float InMaxGroggy)
 	const float PreviousCurrentGroggy = CurrentGroggy;
 	MaxGroggy = MVStatNonNegative(InMaxGroggy);
 	CurrentGroggy = MVStatClampCurrent(CurrentGroggy, MaxGroggy);
+	if (MaxGroggy <= 0.0f || CurrentGroggy < MaxGroggy)
+	{
+		bIsGroggy = false;
+	}
 
 	if (!FMath::IsNearlyEqual(PreviousMaxGroggy, MaxGroggy) || !FMath::IsNearlyEqual(PreviousCurrentGroggy, CurrentGroggy))
 	{
@@ -460,6 +498,22 @@ void UMVStatComponent::SetCurrentGroggy(float InCurrentGroggy)
 	{
 		OnGroggyChanged.Broadcast(CurrentGroggy, MaxGroggy);
 	}
+
+	if (bIsGroggy && CurrentGroggy <= 0.0f)
+	{
+		BroadcastGroggyEnded();
+	}
+}
+
+void UMVStatComponent::RecoverGroggy(float Amount)
+{
+	const float NormalizedAmount = MVStatNonNegative(Amount);
+	if (NormalizedAmount <= 0.0f)
+	{
+		return;
+	}
+
+	SetCurrentGroggy(CurrentGroggy - NormalizedAmount);
 }
 
 void UMVStatComponent::SetGroggyRecoveryPerSecond(float InGroggyRecoveryPerSecond)
@@ -470,6 +524,24 @@ void UMVStatComponent::SetGroggyRecoveryPerSecond(float InGroggyRecoveryPerSecon
 void UMVStatComponent::SetGroggyRecoveryDelay(float InGroggyRecoveryDelay)
 {
 	GroggyRecoveryDelay = MVStatNonNegative(InGroggyRecoveryDelay);
+}
+
+void UMVStatComponent::RestartGroggyRecoveryCooldown()
+{
+	GroggyRecoveryCooldownRemaining = GroggyRecoveryDelay;
+}
+
+bool UMVStatComponent::TryStartGroggy()
+{
+	if (bIsGroggy || MaxGroggy <= 0.0f || CurrentGroggy < MaxGroggy)
+	{
+		return false;
+	}
+
+	bIsGroggy = true;
+	RestartGroggyRecoveryCooldown();
+	OnGroggyStarted.Broadcast();
+	return true;
 }
 
 FString UMVStatComponent::MakeStatRowKey() const
@@ -497,4 +569,16 @@ void UMVStatComponent::BroadcastDeathStarted(const EMVDeathReason Reason)
 
 	OnDeathStarted.Broadcast(DeathContext);
 	OnDead.Broadcast();
+}
+
+void UMVStatComponent::BroadcastGroggyEnded()
+{
+	if (!bIsGroggy)
+	{
+		return;
+	}
+
+	bIsGroggy = false;
+	GroggyRecoveryCooldownRemaining = 0.0f;
+	OnGroggyEnded.Broadcast();
 }

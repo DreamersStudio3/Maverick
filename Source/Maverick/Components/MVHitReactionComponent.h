@@ -63,6 +63,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Maverick|HitReaction")
 	void HandleDamaged(const FMVResolvedHitData& HitData);
 
+	UFUNCTION(BlueprintPure, Category = "Maverick|HitReaction|Groggy")
+	bool CanTriggerGroggy(const FMVResolvedHitData& HitData) const;
+
 	UFUNCTION(BlueprintPure, Category = "Maverick|HitReaction")
 	EMVHitReactionDirection ResolveHitReactionDirection(const FMVResolvedHitData& HitData) const;
 
@@ -110,6 +113,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|HitReaction|Airborne")
 	bool bRequireFallingBeforeAirborneLand = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|HitReaction|Groggy")
+	TArray<EMVActionHitReactionType> GroggyTriggerHitReactionTypes;
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Maverick|HitReaction|Chooser", meta = (Categories = "Character"))
 	FGameplayTag ChooserCharacterIndexCode;
@@ -160,6 +166,8 @@ private:
 		EMVActionHitReactionType HitReactionType,
 		EMVHitReactionDirection Direction,
 		FMVHitReactionActionRowHandle& OutActionRowHandle);
+	bool CanTriggerGroggyByHitReactionType(EMVActionHitReactionType HitReactionType) const;
+	bool CanTriggerGroggyByActionTag(FName ActionTag) const;
 	FName ResolveHitReactionActionTableName() const;
 	EMVHitReactionDirection ResolveSupportedHitReactionDirection(
 		EMVActionHitReactionType HitReactionType,

@@ -49,6 +49,12 @@ FString MVHitReactionBuildAvailableRowNameLog(const UDataTable& DataTable)
 UMVHitReactionComponent::UMVHitReactionComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
+	GroggyTriggerHitReactionTypes =
+	{
+		EMVActionHitReactionType::LargeHit,
+		EMVActionHitReactionType::KnockDown,
+		EMVActionHitReactionType::Airborne
+	};
 }
 
 void UMVHitReactionComponent::BeginPlay()
@@ -155,6 +161,42 @@ void UMVHitReactionComponent::HandleDamaged(const FMVResolvedHitData& HitData)
 		ApplyHitReactionLaunch(HitData, ActionData.ActionRow);
 		TryConsumeBufferedRecoveryInput();
 	}
+}
+
+bool UMVHitReactionComponent::CanTriggerGroggy(const FMVResolvedHitData& HitData) const
+{
+	const AActor* Owner = GetOwner();
+	const UMVStatComponent* StatComponent = CachedStatComponent.Get();
+	if (!StatComponent && Owner)
+	{
+		StatComponent = Owner->FindComponentByClass<UMVStatComponent>();
+	}
+
+	if (!StatComponent
+		|| StatComponent->IsDead()
+		|| StatComponent->IsGroggy()
+		|| StatComponent->MaxGroggy <= 0.0f)
+	{
+		return false;
+	}
+
+	if (HitData.Victim.Get() != Owner)
+	{
+		return false;
+	}
+
+	if (!CanTriggerGroggyByHitReactionType(HitData.HitReactionType))
+	{
+		return false;
+	}
+
+	if (!CanTriggerGroggyByActionTag(HitData.ActionTag))
+	{
+		return false;
+	}
+
+	const float PredictedGroggy = StatComponent->CurrentGroggy + FMath::Max(0.0f, HitData.GroggyDamage);
+	return PredictedGroggy >= StatComponent->MaxGroggy;
 }
 
 EMVHitReactionDirection UMVHitReactionComponent::ResolveHitReactionDirection(const FMVResolvedHitData& HitData) const
@@ -887,6 +929,19 @@ bool UMVHitReactionComponent::ResolveHitReactionActionRowHandle(
 		OutActionRowHandle);
 }
 
+bool UMVHitReactionComponent::CanTriggerGroggyByHitReactionType(
+	const EMVActionHitReactionType HitReactionType) const
+{
+	return GroggyTriggerHitReactionTypes.Contains(HitReactionType);
+}
+
+bool UMVHitReactionComponent::CanTriggerGroggyByActionTag(const FName ActionTag) const
+{
+	static_cast<void>(ActionTag);
+	// Todo: Add ActionTag-based groggy trigger filtering when attack tags are finalized.
+	return true;
+}
+
 FName UMVHitReactionComponent::ResolveHitReactionActionTableName() const
 {
 	if (!HitReactionActionTableName.IsNone())
@@ -906,6 +961,7 @@ EMVHitReactionDirection UMVHitReactionComponent::ResolveSupportedHitReactionDire
 	switch (HitReactionType)
 	{
 	case EMVActionHitReactionType::LargeHit:
+	case EMVActionHitReactionType::Groggy:
 		return EMVHitReactionDirection::Front;
 	case EMVActionHitReactionType::KnockDown:
 	case EMVActionHitReactionType::Airborne:
@@ -1230,6 +1286,8 @@ FString UMVHitReactionComponent::HitReactionTypeToTableToken(const EMVActionHitR
 		return TEXT("KD");
 	case EMVActionHitReactionType::Airborne:
 		return TEXT("AB");
+	case EMVActionHitReactionType::Groggy:
+		return TEXT("GR");
 	case EMVActionHitReactionType::None:
 	default:
 		return TEXT("NO");

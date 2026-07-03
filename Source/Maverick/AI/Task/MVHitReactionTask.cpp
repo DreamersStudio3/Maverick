@@ -46,6 +46,7 @@ bool HitReactionTaskIsStateTreeHandledType(const EMVActionHitReactionType HitRea
 	case EMVActionHitReactionType::LargeHit:
 	case EMVActionHitReactionType::KnockDown:
 	case EMVActionHitReactionType::Airborne:
+	case EMVActionHitReactionType::Groggy:
 		return true;
 	case EMVActionHitReactionType::None:
 	case EMVActionHitReactionType::SmallHit:

@@ -8,6 +8,7 @@ class UMVBossHPBarWidget;
 class UMVCurrencyStatusWidget;
 class UMVPlayerStatusWidget;
 class UMVQuickSlotWidget;
+class UMVStatComponent;
 
 UCLASS(Blueprintable)
 class MAVERICK_API UMVMainHUDWidget : public UMVHUDWidgetBase
@@ -19,6 +20,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Boss")
 	void InitBossStatus(FText BossName, float MaxHP);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Boss")
+	void BindBossStatus(UMVStatComponent* BossStatComponent, FText BossName);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Boss")
 	void UpdateBossStatus(float CurrentHP, float MaxHP);

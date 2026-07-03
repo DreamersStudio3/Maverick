@@ -36,6 +36,16 @@ void UMVMainHUDWidget::InitBossStatus(FText BossName, float MaxHP)
 	}
 }
 
+void UMVMainHUDWidget::BindBossStatus(UMVStatComponent* BossStatComponent, FText BossName)
+{
+	CachedBossName = BossName;
+
+	if (BossHPBar)
+	{
+		BossHPBar->BindToStatComponent(BossStatComponent, BossName);
+	}
+}
+
 void UMVMainHUDWidget::UpdateBossStatus(float CurrentHP, float MaxHP)
 {
 	if (BossHPBar)

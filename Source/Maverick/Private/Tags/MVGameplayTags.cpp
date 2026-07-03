@@ -7,4 +7,6 @@ namespace MVGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Character_NPC_Enemy_NamelessPuppet, "Character.NPC.Enemy.NamelessPuppet");
 	UE_DEFINE_GAMEPLAY_TAG(Character_NPC_Neutral_N1, "Character.NPC.Neutral.N1");
 	UE_DEFINE_GAMEPLAY_TAG(StateTreeEvent_Enemy_Hit, "StateTreeEvent.Enemy.Hit");
+	UE_DEFINE_GAMEPLAY_TAG(StateTreeEvent_Enemy_Groggy, "StateTreeEvent.Enemy.Groggy");
+	UE_DEFINE_GAMEPLAY_TAG(StateTreeEvent_Enemy_GroggyEnd, "StateTreeEvent.Enemy.GroggyEnd");
 }

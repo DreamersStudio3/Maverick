@@ -28,8 +28,14 @@ struct MAVERICK_API FMVHitResolveRequest
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Hit")
 	FName ActionRowName = NAME_None;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Hit")
+	FName ActionTag = NAME_None;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Hit|Damage", meta = (ClampMin = "0.0"))
 	float DamageMultiplier = 1.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Hit|Damage", meta = (ClampMin = "0.0"))
+	float GroggyDamage = 0.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Hit|Reaction")
 	EMVActionHitReactionType HitReactionType = EMVActionHitReactionType::None;
@@ -71,6 +77,9 @@ struct MAVERICK_API FMVResolvedHitData
 
 	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Hit")
 	FName ActionRowName = NAME_None;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Hit")
+	FName ActionTag = NAME_None;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Hit|Damage")
 	float CharacterAttackPower = 0.0f;
