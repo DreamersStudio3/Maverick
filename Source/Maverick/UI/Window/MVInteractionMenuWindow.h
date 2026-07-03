@@ -99,7 +99,7 @@ private:
 	UPROPERTY(Transient)
 	TObjectPtr<UObject> SourceObject;
 
-	TArray<FName> MenuStack;
-	FName CurrentMenuId = NAME_None;
+	TArray<FGameplayTag> MenuStack;
+	FGameplayTag CurrentMenuId;
 	bool bClosedEventBroadcast = false;
 };

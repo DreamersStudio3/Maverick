@@ -11,6 +11,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "System/MVFieldTransitionSubsystem.h"
 #include "System/MVWorldStateSubsystem.h"
+#include "Tags/MVGameplayTags.h"
 #include "UI/System/MVUISubsystem.h"
 #include "UI/Window/MVInteractionMenuWindow.h"
 
@@ -160,27 +161,27 @@ FMVInteractionMenuData AMVCheckpointActor::MakeDefaultCheckpointMenuData()
 	MenuData.Title = NSLOCTEXT("MaverickCheckpoint", "MenuTitle", "체크포인트");
 
 	FMVMenuEntryData RestEntry;
-	RestEntry.EntryId = TEXT("Rest");
+	RestEntry.EntryId = MVGameplayTags::Interaction_Menu_Entry_Checkpoint_Rest;
 	RestEntry.Label = NSLOCTEXT("MaverickCheckpoint", "Rest", "휴식한다");
 	RestEntry.ActionName = TEXT("Rest");
 	MenuData.Entries.Add(RestEntry);
 
 	FMVMenuEntryData TravelEntry;
-	TravelEntry.EntryId = TEXT("Travel");
+	TravelEntry.EntryId = MVGameplayTags::Interaction_Menu_Entry_Checkpoint_Travel;
 	TravelEntry.Label = NSLOCTEXT("MaverickCheckpoint", "Travel", "다른 체크포인트로 이동한다");
-	TravelEntry.SubMenuId = TEXT("Travel");
+	TravelEntry.SubMenuId = MVGameplayTags::Interaction_Menu_Checkpoint_Travel;
 	TravelEntry.bCloseMenuOnExecute = false;
 	MenuData.Entries.Add(TravelEntry);
 
 	FMVMenuEntryData LevelUpEntry;
-	LevelUpEntry.EntryId = TEXT("LevelUp");
+	LevelUpEntry.EntryId = MVGameplayTags::Interaction_Menu_Entry_Checkpoint_LevelUp;
 	LevelUpEntry.Label = NSLOCTEXT("MaverickCheckpoint", "LevelUp", "레벨 업을 한다");
 	LevelUpEntry.ActionName = TEXT("LevelUp");
 	LevelUpEntry.bEnabled = false;
 	MenuData.Entries.Add(LevelUpEntry);
 
 	FMVMenuEntryData StorageEntry;
-	StorageEntry.EntryId = TEXT("Storage");
+	StorageEntry.EntryId = MVGameplayTags::Interaction_Menu_Entry_Checkpoint_Storage;
 	StorageEntry.Label = NSLOCTEXT("MaverickCheckpoint", "Storage", "보관함을 이용한다");
 	StorageEntry.ActionName = TEXT("Storage");
 	StorageEntry.bEnabled = false;
@@ -196,17 +197,18 @@ FMVInteractionMenuData AMVCheckpointActor::BuildCheckpointMenuData()
 		: CheckpointMenuData;
 	PendingTravelTargets.Reset();
 
-	FName TravelMenuId = TEXT("Travel");
+	FGameplayTag TravelMenuId = MVGameplayTags::Interaction_Menu_Checkpoint_Travel;
 	bool bHasTravelEntry = false;
 	for (FMVMenuEntryData& Entry : MenuData.Entries)
 	{
-		if (Entry.EntryId == TEXT("Travel") || Entry.ActionName == TEXT("Travel"))
+		if (Entry.EntryId == MVGameplayTags::Interaction_Menu_Entry_Checkpoint_Travel
+			|| Entry.ActionName == TEXT("Travel"))
 		{
-			if (Entry.EntryId.IsNone())
+			if (!Entry.EntryId.IsValid())
 			{
-				Entry.EntryId = TEXT("Travel");
+				Entry.EntryId = MVGameplayTags::Interaction_Menu_Entry_Checkpoint_Travel;
 			}
-			if (!Entry.SubMenuId.IsNone())
+			if (Entry.SubMenuId.IsValid())
 			{
 				TravelMenuId = Entry.SubMenuId;
 			}
@@ -225,7 +227,7 @@ FMVInteractionMenuData AMVCheckpointActor::BuildCheckpointMenuData()
 	if (!bHasTravelEntry)
 	{
 		FMVMenuEntryData TravelEntry;
-		TravelEntry.EntryId = TEXT("Travel");
+		TravelEntry.EntryId = MVGameplayTags::Interaction_Menu_Entry_Checkpoint_Travel;
 		TravelEntry.Label = NSLOCTEXT("MaverickCheckpoint", "Travel", "다른 체크포인트로 이동한다");
 		TravelEntry.SubMenuId = TravelMenuId;
 		TravelEntry.bCloseMenuOnExecute = false;
@@ -258,7 +260,6 @@ FMVInteractionMenuData AMVCheckpointActor::BuildCheckpointMenuData()
 		PendingTravelTargets.Add(ActionName, Checkpoint);
 
 		FMVMenuEntryData TargetEntry;
-		TargetEntry.EntryId = Checkpoint.CheckpointId;
 		TargetEntry.ParentMenuId = TravelMenuId;
 		TargetEntry.Label = FText::FromString(Checkpoint.CheckpointId.ToString());
 		TargetEntry.ActionName = ActionName;
@@ -269,7 +270,7 @@ FMVInteractionMenuData AMVCheckpointActor::BuildCheckpointMenuData()
 	if (PendingTravelTargets.IsEmpty())
 	{
 		FMVMenuEntryData EmptyEntry;
-		EmptyEntry.EntryId = TEXT("NoTravelTargets");
+		EmptyEntry.EntryId = MVGameplayTags::Interaction_Menu_Entry_Checkpoint_NoTravelTargets;
 		EmptyEntry.ParentMenuId = TravelMenuId;
 		EmptyEntry.Label = NSLOCTEXT("MaverickCheckpoint", "NoTravelTargets", "이동 가능한 체크포인트가 없습니다");
 		EmptyEntry.bEnabled = false;

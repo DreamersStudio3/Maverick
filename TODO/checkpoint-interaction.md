@@ -24,13 +24,15 @@
 - [x] 상호작용 액션과 체크포인트 활성화를 notify/콜백 기반 수동 완료로 단순화
 - [x] BP 호환용 deprecated 완료 alias 제거
 - [x] `Entry + FollowUp` 고정 길이 모델을 step 기반 interaction flow로 확장
-- [x] 메뉴/선택지 항목별 `TriggerName -> NextStepId` 분기 연결
-- [x] 액션 step에 `StepId`/`ActionName` 기반 시작/완료 delegate 추가
+- [x] 메뉴/선택지 항목별 `TriggerId -> NextStepId` 분기 연결
+- [x] 액션 step에 `StepId`/`ActionRow` 기반 시작/완료 delegate 추가
 - [x] 재사용 가능한 `UMVInteractionFlowDataAsset` 추가
 - [x] InteractableComponent가 flow asset 또는 inline definition을 실행하도록 확장
 - [x] Flow step을 단일 struct에서 `FInstancedStruct` 기반 polymorphic struct 데이터로 전환
 - [x] PropertyEditor 재귀 크래시 방지를 위해 instanced UObject step 저장 제거
 - [x] InteractionFlow step id를 `Interaction.Flow.Step.*` GameplayTag 기반으로 전환
+- [x] Interaction menu entry/menu id를 GameplayTag 기반으로 전환
+- [x] ChoiceStep을 단층 선택지 데이터로 분리
 - [x] ActionStep을 `FMVActionRow` DataTable row handle 기반으로 제한
 - [x] InteractionFlow DataAsset 검증 로직 추가
 - [ ] InteractionFlow 샘플 asset과 테스트용 액터 구성

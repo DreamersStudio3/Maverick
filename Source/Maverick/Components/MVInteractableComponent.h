@@ -128,7 +128,9 @@ private:
 	void CompleteConfiguredStep(FGameplayTag NextStepId);
 	FGameplayTag ResolveStartStepId() const;
 	const TArray<FInstancedStruct>& ResolveInteractionSteps() const;
-	FGameplayTag ResolveStepTransition(const FMVInteractionSelectionStepData& Step, FName TriggerName) const;
+	FMVInteractionMenuData MakeChoiceMenuData(const FMVInteractionChoiceStepData& Step) const;
+	FGameplayTag ResolveChoiceTransition(const FMVInteractionChoiceStepData& Step, FName SelectedActionName) const;
+	FGameplayTag ResolveStepTransition(const FMVInteractionSelectionStepData& Step, FName SelectedActionName) const;
 	const FInstancedStruct* FindInteractionStep(FGameplayTag StepId) const;
 	class UMVUISubsystem* GetUISubsystem() const;
 

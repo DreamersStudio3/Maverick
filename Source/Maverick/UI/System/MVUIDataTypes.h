@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "InputCoreTypes.h"
 #include "Templates/SubclassOf.h"
 #include "MVUIDataTypes.generated.h"
@@ -45,11 +46,11 @@ struct FMVMenuEntryData
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu")
-	FName EntryId = NAME_None;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu", meta = (Categories = "Interaction.Menu.Entry"))
+	FGameplayTag EntryId;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu")
-	FName ParentMenuId = NAME_None;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu", meta = (Categories = "Interaction.Menu"))
+	FGameplayTag ParentMenuId;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu")
 	FText Label;
@@ -60,8 +61,8 @@ struct FMVMenuEntryData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu")
 	bool bEnabled = true;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu")
-	FName SubMenuId = NAME_None;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu", meta = (Categories = "Interaction.Menu"))
+	FGameplayTag SubMenuId;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu")
 	TSubclassOf<UMVWindowBase> WindowClass;
@@ -78,8 +79,8 @@ struct FMVInteractionMenuData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu")
 	FText Title;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu")
-	FName RootMenuId = NAME_None;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu", meta = (Categories = "Interaction.Menu"))
+	FGameplayTag RootMenuId;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|UI|Menu")
 	TArray<FMVMenuEntryData> Entries;

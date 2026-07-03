@@ -59,7 +59,6 @@ void UMVInteractionMenuWindow::RefreshMenu()
 	if (!MenuStack.IsEmpty())
 	{
 		FMVMenuEntryData BackEntry;
-		BackEntry.EntryId = TEXT("Back");
 		BackEntry.Label = NSLOCTEXT("MaverickInteractionMenu", "Back", "Back");
 		BackEntry.ActionName = TEXT("__Back");
 		BackEntry.bCloseMenuOnExecute = false;
@@ -262,7 +261,7 @@ void UMVInteractionMenuWindow::HandleEntryButtonClicked(UMVInteractionMenuEntryB
 		return;
 	}
 
-	if (!EntryData.SubMenuId.IsNone())
+	if (EntryData.SubMenuId.IsValid())
 	{
 		MenuStack.Add(CurrentMenuId);
 		CurrentMenuId = EntryData.SubMenuId;
@@ -281,7 +280,9 @@ void UMVInteractionMenuWindow::HandleEntryButtonClicked(UMVInteractionMenuEntryB
 		}
 	}
 
-	const FName SelectedActionName = EntryData.ActionName.IsNone() ? EntryData.EntryId : EntryData.ActionName;
+	const FName SelectedActionName = EntryData.ActionName.IsNone()
+		? EntryData.EntryId.GetTagName()
+		: EntryData.ActionName;
 	if (!SelectedActionName.IsNone())
 	{
 		OnInteractionMenuActionSelected.Broadcast(SourceObject, SelectedActionName);

@@ -15,11 +15,41 @@ struct MAVERICK_API FMVInteractionStepTransition
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Interaction|Transition")
-	FName TriggerName = NAME_None;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Interaction|Transition", meta = (Categories = "Interaction.Menu.Entry"))
+	FGameplayTag TriggerId;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Interaction|Transition", meta = (Categories = "Interaction.Flow.Step"))
 	FGameplayTag NextStepId;
+};
+
+USTRUCT(BlueprintType)
+struct MAVERICK_API FMVInteractionChoiceEntryData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Interaction|Choice", meta = (Categories = "Interaction.Choice.Entry"))
+	FGameplayTag ChoiceId;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Interaction|Choice")
+	FText Label;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Interaction|Choice")
+	bool bEnabled = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Interaction|Choice", meta = (Categories = "Interaction.Flow.Step"))
+	FGameplayTag NextStepId;
+};
+
+USTRUCT(BlueprintType)
+struct MAVERICK_API FMVInteractionChoiceData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Interaction|Choice")
+	FText PromptText;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Interaction|Choice")
+	TArray<FMVInteractionChoiceEntryData> Choices;
 };
 
 /**
@@ -110,9 +140,12 @@ struct MAVERICK_API FMVInteractionMenuStepData : public FMVInteractionSelectionS
 };
 
 USTRUCT(BlueprintType, meta = (DisplayName = "Interaction Choice Step"))
-struct MAVERICK_API FMVInteractionChoiceStepData : public FMVInteractionSelectionStepData
+struct MAVERICK_API FMVInteractionChoiceStepData : public FMVInteractionStepData
 {
 	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Interaction|Choice")
+	FMVInteractionChoiceData ChoiceData;
 };
 
 USTRUCT(BlueprintType, meta = (DisplayName = "Interaction Window Step"))
