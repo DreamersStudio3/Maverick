@@ -374,9 +374,9 @@ bool UMVPlayerInteractionDetector::TryInteract()
 		return false;
 	}
 
-	if (IsDialogueWindowActive())
+	if (IsDialoguePopupActive())
 	{
-		const bool bSkipped = SkipActiveDialogueWindow();
+		const bool bSkipped = SkipActiveDialoguePopup();
 		if (bSkipped)
 		{
 			LockInteractionUntilInputReleased();
@@ -621,12 +621,12 @@ bool UMVPlayerInteractionDetector::IsInteractableWithinDialogueEscapeRange(UObje
 		<= FMath::Square(EscapeRange);
 }
 
-bool UMVPlayerInteractionDetector::IsDialogueWindowActive() const
+bool UMVPlayerInteractionDetector::IsDialoguePopupActive() const
 {
 	UWorld* World = GetWorld();
 	UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr;
 	UMVUISubsystem* UISubsystem = GameInstance ? GameInstance->GetSubsystem<UMVUISubsystem>() : nullptr;
-	return UISubsystem && UISubsystem->IsDialogueWindowActive();
+	return UISubsystem && UISubsystem->IsDialoguePopupActive();
 }
 
 bool UMVPlayerInteractionDetector::IsDialogueInteractionBlocked() const
@@ -634,7 +634,7 @@ bool UMVPlayerInteractionDetector::IsDialogueInteractionBlocked() const
 	UWorld* World = GetWorld();
 	UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr;
 	UMVUISubsystem* UISubsystem = GameInstance ? GameInstance->GetSubsystem<UMVUISubsystem>() : nullptr;
-	return UISubsystem && UISubsystem->IsDialogueWindowBlockingInteraction();
+	return UISubsystem && UISubsystem->IsDialoguePopupBlockingInteraction();
 }
 
 bool UMVPlayerInteractionDetector::IsInteractionSessionActive() const
@@ -651,17 +651,17 @@ bool UMVPlayerInteractionDetector::IsOwnerDead() const
 	return OwnerCharacter && OwnerCharacter->StatComponent && OwnerCharacter->StatComponent->IsDead();
 }
 
-bool UMVPlayerInteractionDetector::SkipActiveDialogueWindow() const
+bool UMVPlayerInteractionDetector::SkipActiveDialoguePopup() const
 {
 	UWorld* World = GetWorld();
 	UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr;
 	UMVUISubsystem* UISubsystem = GameInstance ? GameInstance->GetSubsystem<UMVUISubsystem>() : nullptr;
-	if (!UISubsystem || !UISubsystem->CanSkipDialogueWindow())
+	if (!UISubsystem || !UISubsystem->CanSkipDialoguePopup())
 	{
 		return false;
 	}
 
-	UISubsystem->SkipDialogueWindow();
+	UISubsystem->SkipDialoguePopup();
 	return true;
 }
 
@@ -676,14 +676,14 @@ void UMVPlayerInteractionDetector::HideInteractionPrompt() const
 	}
 }
 
-void UMVPlayerInteractionDetector::HideActiveDialogueWindow() const
+void UMVPlayerInteractionDetector::HideActiveDialoguePopup() const
 {
 	UWorld* World = GetWorld();
 	UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr;
 	UMVUISubsystem* UISubsystem = GameInstance ? GameInstance->GetSubsystem<UMVUISubsystem>() : nullptr;
 	if (UISubsystem)
 	{
-		UISubsystem->HideDialogueWindow();
+		UISubsystem->HideDialoguePopup();
 	}
 }
 
@@ -718,7 +718,7 @@ void UMVPlayerInteractionDetector::ReleaseSuppressedInteractable(bool bHideDialo
 
 	if (bHideDialogue)
 	{
-		HideActiveDialogueWindow();
+		HideActiveDialoguePopup();
 		HideInteractionMenu();
 	}
 

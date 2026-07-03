@@ -15,13 +15,13 @@
 #include "UI/Base/MVHUDWidgetBase.h"
 #include "UI/Base/MVPopupBase.h"
 #include "UI/Base/MVWindowBase.h"
+#include "UI/Popup/MVDialoguePopup.h"
 #include "UI/Popup/MVInteractionChoicePopup.h"
 #include "UI/Popup/MVInteractionPromptPopup.h"
 #include "UI/Popup/MVMessagePopup.h"
 #include "UI/System/MVUILayerBase.h"
 #include "UI/System/MVUISettings.h"
 #include "UI/Window/MVDeathOverlayWindow.h"
-#include "UI/Window/MVDialogueWindow.h"
 #include "UI/Window/MVInteractionMenuWindow.h"
 #include "UI/Window/MVLoadingWindow.h"
 
@@ -170,7 +170,7 @@ void UMVUISubsystem::PopLayer()
 	ActiveInteractionPrompt = nullptr;
 	ActiveInteractionMenuWindow = nullptr;
 	ActiveInteractionChoicePopup = nullptr;
-	ActiveDialogueWindow = nullptr;
+	ActiveDialoguePopup = nullptr;
 	ActivePopup = nullptr;
 	ActiveLoadingWindowForTest = nullptr;
 	ActiveInteractionMenuSource.Reset();
@@ -292,7 +292,7 @@ UCommonActivatableWidget* UMVUISubsystem::ShowDeathOverlay()
 
 UMVInteractionPromptPopup* UMVUISubsystem::ShowInteractionPrompt(const FMVInteractionPromptData& PromptData)
 {
-	if (IsDialogueWindowBlockingInteraction()
+	if (IsDialoguePopupBlockingInteraction()
 		|| IsInteractionMenuActive()
 		|| IsInteractionChoiceActive()
 		|| IsInteractionSessionActive())
@@ -479,32 +479,32 @@ bool UMVUISubsystem::IsInteractionSessionActive() const
 	return false;
 }
 
-UMVDialogueWindow* UMVUISubsystem::ShowDialogueWindowText(FText DialogueText, float Duration)
+UMVDialoguePopup* UMVUISubsystem::ShowDialoguePopupText(FText DialogueText, float Duration)
 {
-	return ShowDialogueWindowTextWithTiming(DialogueText, Duration);
+	return ShowDialoguePopupTextWithTiming(DialogueText, Duration);
 }
 
-UMVDialogueWindow* UMVUISubsystem::ShowDialogueWindowTextWithTiming(FText DialogueText, float Duration, float MinimumSkipDelay)
+UMVDialoguePopup* UMVUISubsystem::ShowDialoguePopupTextWithTiming(FText DialogueText, float Duration, float MinimumSkipDelay)
 {
 	const UMVUISettings* Settings = GetDefault<UMVUISettings>();
-	if (!Settings || !Settings->DialogueWindowClass)
+	if (!Settings || !Settings->DialoguePopupClass)
 	{
 		return nullptr;
 	}
 
-	if (IsDialogueWindowBlockingInteraction())
+	if (IsDialoguePopupBlockingInteraction())
 	{
-		return ActiveDialogueWindow;
+		return ActiveDialoguePopup;
 	}
 
 	if (IsPopupActive(ActivePopup))
 	{
-		QueueDialogueWindowText(DialogueText, Duration, MinimumSkipDelay);
+		QueueDialoguePopupText(DialogueText, Duration, MinimumSkipDelay);
 		CloseActivePopup();
 		return nullptr;
 	}
 
-	return OpenDialogueWindowText(DialogueText, Duration, MinimumSkipDelay);
+	return OpenDialoguePopupText(DialogueText, Duration, MinimumSkipDelay);
 }
 
 UMVLoadingWindow* UMVUISubsystem::ShowLoadingWindowForTest(const bool bUseNativeWindow)
@@ -567,21 +567,21 @@ bool UMVUISubsystem::AdvanceLoadingGuideCardForTest()
 #endif
 }
 
-UMVDialogueWindow* UMVUISubsystem::OpenDialogueWindowText(FText DialogueText, float Duration, float MinimumSkipDelay)
+UMVDialoguePopup* UMVUISubsystem::OpenDialoguePopupText(FText DialogueText, float Duration, float MinimumSkipDelay)
 {
 	const UMVUISettings* Settings = GetDefault<UMVUISettings>();
-	if (!Settings || !Settings->DialogueWindowClass)
+	if (!Settings || !Settings->DialoguePopupClass)
 	{
 		return nullptr;
 	}
 
-	const float DisplayDuration = Duration >= 0.0f ? Duration : Settings->DialogueWindowDuration;
+	const float DisplayDuration = Duration >= 0.0f ? Duration : Settings->DialoguePopupDuration;
 	const float ResolvedMinimumSkipDelay = MinimumSkipDelay >= 0.0f
 		? MinimumSkipDelay
-		: Settings->DialogueWindowMinimumSkipDelay;
-	if (IsDialogueWindowPresent(ActiveDialogueWindow))
+		: Settings->DialoguePopupMinimumSkipDelay;
+	if (IsDialoguePopupPresent(ActiveDialoguePopup))
 	{
-		return ActiveDialogueWindow;
+		return ActiveDialoguePopup;
 	}
 
 	UMVUILayerBase* Layer = GetOrCreateRootLayer();
@@ -590,56 +590,56 @@ UMVDialogueWindow* UMVUISubsystem::OpenDialogueWindowText(FText DialogueText, fl
 		return nullptr;
 	}
 
-	ActiveDialogueWindow = Cast<UMVDialogueWindow>(Layer->PushWindow(Settings->DialogueWindowClass));
-	if (ActiveDialogueWindow)
+	ActiveDialoguePopup = Cast<UMVDialoguePopup>(Layer->PushPopup(Settings->DialoguePopupClass));
+	if (ActiveDialoguePopup)
 	{
-		TrackActiveDialogueWindow(ActiveDialogueWindow);
-		ApplyDialogueCameraZoom(ActiveDialogueWindow->GetFadeInSeconds());
-		ActiveDialogueWindow->SetMinimumSkipDelay(ResolvedMinimumSkipDelay);
-		ActiveDialogueWindow->SetAutoDismissSeconds(DisplayDuration);
-		ActiveDialogueWindow->SetDialogueText(DialogueText);
+		TrackActiveDialoguePopup(ActiveDialoguePopup);
+		ApplyDialogueCameraZoom(ActiveDialoguePopup->GetDialogueFadeSeconds());
+		ActiveDialoguePopup->SetMinimumSkipDelay(ResolvedMinimumSkipDelay);
+		ActiveDialoguePopup->SetDialogueAutoDismissSeconds(DisplayDuration);
+		ActiveDialoguePopup->SetDialogueText(DialogueText);
 	}
 
 	bHasPendingDialogueRequest = false;
 	PendingDialogueText = FText::GetEmpty();
 	PendingDialogueDuration = -1.0f;
 	PendingDialogueMinimumSkipDelay = -1.0f;
-	return ActiveDialogueWindow;
+	return ActiveDialoguePopup;
 }
 
-void UMVUISubsystem::HideDialogueWindow()
+void UMVUISubsystem::HideDialoguePopup()
 {
 	bHasPendingDialogueRequest = false;
 	PendingDialogueText = FText::GetEmpty();
 	PendingDialogueDuration = -1.0f;
 	PendingDialogueMinimumSkipDelay = -1.0f;
 
-	if (IsDialogueWindowPresent(ActiveDialogueWindow))
+	if (IsDialoguePopupPresent(ActiveDialoguePopup))
 	{
-		ActiveDialogueWindow->CloseDialogue();
+		ActiveDialoguePopup->CloseDialogue();
 		return;
 	}
 
-	ActiveDialogueWindow = nullptr;
+	ActiveDialoguePopup = nullptr;
 }
 
-void UMVUISubsystem::SkipDialogueWindow()
+void UMVUISubsystem::SkipDialoguePopup()
 {
-	if (CanSkipDialogueWindow())
+	if (CanSkipDialoguePopup())
 	{
-		HideDialogueWindow();
+		HideDialoguePopup();
 	}
 }
 
-bool UMVUISubsystem::CanSkipDialogueWindow() const
+bool UMVUISubsystem::CanSkipDialoguePopup() const
 {
-	return IsDialogueWindowPresent(ActiveDialogueWindow)
-		&& ActiveDialogueWindow->CanSkipDialogue();
+	return IsDialoguePopupPresent(ActiveDialoguePopup)
+		&& ActiveDialoguePopup->CanSkipDialogue();
 }
 
 bool UMVUISubsystem::CanUseInteractionPrompt() const
 {
-	return !IsDialogueWindowBlockingInteraction()
+	return !IsDialoguePopupBlockingInteraction()
 		&& !IsInteractionMenuActive()
 		&& !IsInteractionChoiceActive()
 		&& !IsInteractionSessionActive()
@@ -649,19 +649,19 @@ bool UMVUISubsystem::CanUseInteractionPrompt() const
 		&& !ActiveInteractionPrompt->IsFading();
 }
 
-bool UMVUISubsystem::IsDialogueWindowActive() const
+bool UMVUISubsystem::IsDialoguePopupActive() const
 {
-	return IsDialogueWindowActive(ActiveDialogueWindow);
+	return IsDialoguePopupActive(ActiveDialoguePopup);
 }
 
-bool UMVUISubsystem::IsDialogueWindowBlockingInteraction() const
+bool UMVUISubsystem::IsDialoguePopupBlockingInteraction() const
 {
 	return bHasPendingDialogueRequest
 		|| bDialoguePromptRestoreDelayActive
-		|| IsDialogueWindowPresent(ActiveDialogueWindow);
+		|| IsDialoguePopupPresent(ActiveDialoguePopup);
 }
 
-UMVDialogueWindow* UMVUISubsystem::ShowDialogueWindowByRow(FDataTableRowHandle DialogueRow)
+UMVDialoguePopup* UMVUISubsystem::ShowDialoguePopupByRow(FDataTableRowHandle DialogueRow)
 {
 	if (!DialogueRow.DataTable || DialogueRow.RowName.IsNone())
 	{
@@ -701,7 +701,7 @@ UMVDialogueWindow* UMVUISubsystem::ShowDialogueWindowByRow(FDataTableRowHandle D
 		return nullptr;
 	}
 
-	return ShowDialogueWindowTextWithTiming(
+	return ShowDialoguePopupTextWithTiming(
 		FoundDialogueRow->DialogueText,
 		FoundDialogueRow->DisplayDuration,
 		FoundDialogueRow->MinimumSkipDelay);
@@ -797,7 +797,7 @@ void UMVUISubsystem::ResetUITrackingState()
 	ActiveInteractionPrompt = nullptr;
 	ActiveInteractionMenuWindow = nullptr;
 	ActiveInteractionChoicePopup = nullptr;
-	ActiveDialogueWindow = nullptr;
+	ActiveDialoguePopup = nullptr;
 	ActivePopup = nullptr;
 	ActiveLoadingWindowForTest = nullptr;
 	ActiveInteractionMenuSource.Reset();
@@ -888,7 +888,7 @@ void UMVUISubsystem::HandlePopupClosed(UMVPopupBase* ClosedPopup)
 		ActivePopup = nullptr;
 	}
 
-	TryOpenPendingDialogueWindow();
+	TryOpenPendingDialoguePopup();
 }
 
 void UMVUISubsystem::HandleInteractionMenuClosed(UMVInteractionMenuWindow* ClosedMenuWindow)
@@ -929,19 +929,19 @@ void UMVUISubsystem::HandleInteractionChoiceClosed(UMVPopupBase* ClosedChoicePop
 	}
 }
 
-void UMVUISubsystem::HandleDialogueWindowClosed(UMVDialogueWindow* ClosedDialogueWindow)
+void UMVUISubsystem::HandleDialoguePopupClosed(UMVDialoguePopup* ClosedDialoguePopup)
 {
-	if (!ClosedDialogueWindow)
+	if (!ClosedDialoguePopup)
 	{
 		return;
 	}
 
-	ClosedDialogueWindow->OnDialogueWindowClosed.RemoveDynamic(this, &UMVUISubsystem::HandleDialogueWindowClosed);
-	ClosedDialogueWindow->OnDialogueWindowClosing.RemoveDynamic(this, &UMVUISubsystem::HandleDialogueWindowClosing);
+	ClosedDialoguePopup->OnDialoguePopupClosed.RemoveDynamic(this, &UMVUISubsystem::HandleDialoguePopupClosed);
+	ClosedDialoguePopup->OnDialoguePopupClosing.RemoveDynamic(this, &UMVUISubsystem::HandleDialoguePopupClosing);
 
-	if (ClosedDialogueWindow == ActiveDialogueWindow)
+	if (ClosedDialoguePopup == ActiveDialoguePopup)
 	{
-		ActiveDialogueWindow = nullptr;
+		ActiveDialoguePopup = nullptr;
 	}
 
 	const UMVUISettings* Settings = GetDefault<UMVUISettings>();
@@ -970,10 +970,10 @@ void UMVUISubsystem::HandleDialogueWindowClosed(UMVDialogueWindow* ClosedDialogu
 
 }
 
-void UMVUISubsystem::HandleDialogueWindowClosing(UMVDialogueWindow* ClosingDialogueWindow)
+void UMVUISubsystem::HandleDialoguePopupClosing(UMVDialoguePopup* ClosingDialoguePopup)
 {
-	const float DurationSeconds = IsValid(ClosingDialogueWindow)
-		? ClosingDialogueWindow->GetFadeOutSeconds()
+	const float DurationSeconds = IsValid(ClosingDialoguePopup)
+		? ClosingDialoguePopup->GetDialogueFadeSeconds()
 		: -1.0f;
 	RestoreDialogueCameraZoom(DurationSeconds);
 }
@@ -1084,11 +1084,9 @@ float UMVUISubsystem::ResolveDialogueCameraZoomDuration(float DurationOverride, 
 		return DurationOverride;
 	}
 
-	if (IsValid(ActiveDialogueWindow))
+	if (IsValid(ActiveDialoguePopup))
 	{
-		return bRestoring
-			? ActiveDialogueWindow->GetFadeOutSeconds()
-			: ActiveDialogueWindow->GetFadeInSeconds();
+		return ActiveDialoguePopup->GetDialogueFadeSeconds();
 	}
 
 	return 0.0f;
@@ -1153,14 +1151,14 @@ bool UMVUISubsystem::IsPopupActive(const UMVPopupBase* Popup) const
 	return IsValid(Popup) && Popup->GetParent();
 }
 
-bool UMVUISubsystem::IsDialogueWindowActive(const UMVDialogueWindow* DialogueWindow) const
+bool UMVUISubsystem::IsDialoguePopupActive(const UMVDialoguePopup* DialoguePopup) const
 {
-	return IsValid(DialogueWindow) && DialogueWindow->IsActivated();
+	return IsPopupActive(DialoguePopup) && !DialoguePopup->IsClosing();
 }
 
-bool UMVUISubsystem::IsDialogueWindowPresent(const UMVDialogueWindow* DialogueWindow) const
+bool UMVUISubsystem::IsDialoguePopupPresent(const UMVDialoguePopup* DialoguePopup) const
 {
-	return IsValid(DialogueWindow);
+	return IsPopupActive(DialoguePopup);
 }
 
 void UMVUISubsystem::CloseActivePopupImmediately()
@@ -1185,7 +1183,7 @@ void UMVUISubsystem::CloseActivePopup()
 	ActivePopup->ClosePopup();
 }
 
-void UMVUISubsystem::QueueDialogueWindowText(FText DialogueText, float Duration, float MinimumSkipDelay)
+void UMVUISubsystem::QueueDialoguePopupText(FText DialogueText, float Duration, float MinimumSkipDelay)
 {
 	PendingDialogueText = DialogueText;
 	PendingDialogueDuration = Duration;
@@ -1193,7 +1191,7 @@ void UMVUISubsystem::QueueDialogueWindowText(FText DialogueText, float Duration,
 	bHasPendingDialogueRequest = true;
 }
 
-void UMVUISubsystem::TryOpenPendingDialogueWindow()
+void UMVUISubsystem::TryOpenPendingDialoguePopup()
 {
 	if (!bHasPendingDialogueRequest || IsPopupActive(ActivePopup))
 	{
@@ -1208,7 +1206,7 @@ void UMVUISubsystem::TryOpenPendingDialogueWindow()
 	PendingDialogueDuration = -1.0f;
 	PendingDialogueMinimumSkipDelay = -1.0f;
 
-	OpenDialogueWindowText(DialogueText, DialogueDuration, DialogueMinimumSkipDelay);
+	OpenDialoguePopupText(DialogueText, DialogueDuration, DialogueMinimumSkipDelay);
 }
 
 void UMVUISubsystem::TrackActivePopup(UMVPopupBase* Popup)
@@ -1225,18 +1223,18 @@ void UMVUISubsystem::TrackActivePopup(UMVPopupBase* Popup)
 	}
 }
 
-void UMVUISubsystem::TrackActiveDialogueWindow(UMVDialogueWindow* DialogueWindow)
+void UMVUISubsystem::TrackActiveDialoguePopup(UMVDialoguePopup* DialoguePopup)
 {
-	if (IsValid(ActiveDialogueWindow))
+	if (IsValid(ActiveDialoguePopup))
 	{
-		ActiveDialogueWindow->OnDialogueWindowClosing.RemoveDynamic(this, &UMVUISubsystem::HandleDialogueWindowClosing);
-		ActiveDialogueWindow->OnDialogueWindowClosed.RemoveDynamic(this, &UMVUISubsystem::HandleDialogueWindowClosed);
+		ActiveDialoguePopup->OnDialoguePopupClosing.RemoveDynamic(this, &UMVUISubsystem::HandleDialoguePopupClosing);
+		ActiveDialoguePopup->OnDialoguePopupClosed.RemoveDynamic(this, &UMVUISubsystem::HandleDialoguePopupClosed);
 	}
 
-	ActiveDialogueWindow = DialogueWindow;
-	if (IsValid(ActiveDialogueWindow))
+	ActiveDialoguePopup = DialoguePopup;
+	if (IsValid(ActiveDialoguePopup))
 	{
-		ActiveDialogueWindow->OnDialogueWindowClosing.AddUniqueDynamic(this, &UMVUISubsystem::HandleDialogueWindowClosing);
-		ActiveDialogueWindow->OnDialogueWindowClosed.AddUniqueDynamic(this, &UMVUISubsystem::HandleDialogueWindowClosed);
+		ActiveDialoguePopup->OnDialoguePopupClosing.AddUniqueDynamic(this, &UMVUISubsystem::HandleDialoguePopupClosing);
+		ActiveDialoguePopup->OnDialoguePopupClosed.AddUniqueDynamic(this, &UMVUISubsystem::HandleDialoguePopupClosed);
 	}
 }

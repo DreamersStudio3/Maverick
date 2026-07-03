@@ -2,6 +2,21 @@
 
 #include "Character/MVCharacterBase.h"
 #include "Components/MVStatComponent.h"
+#include "Engine/GameInstance.h"
+#include "UI/System/MVUISubsystem.h"
+
+namespace
+{
+bool MVInputManagerIsInteractionMenuBlockingAction(const UActorComponent& Component)
+{
+	const UWorld* World = Component.GetWorld();
+	const UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr;
+	const UMVUISubsystem* UISubsystem = GameInstance
+		? GameInstance->GetSubsystem<UMVUISubsystem>()
+		: nullptr;
+	return UISubsystem && UISubsystem->IsInteractionMenuActive();
+}
+}
 
 UMVInputManagerComponent::UMVInputManagerComponent()
 {
@@ -30,6 +45,12 @@ bool UMVInputManagerComponent::SubmitActionInputById(const int32 ActionId)
 {
 	if (ActionId <= MVActionIds::None)
 	{
+		return false;
+	}
+
+	if (MVInputManagerIsInteractionMenuBlockingAction(*this))
+	{
+		ClearBufferedActionInput();
 		return false;
 	}
 

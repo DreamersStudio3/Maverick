@@ -136,13 +136,13 @@ private:
 	bool IsInteractableSuppressed(UObject* InteractableObject) const;
 	bool IsInteractableWithinDetectionRange(UObject* InteractableObject) const;
 	bool IsInteractableWithinDialogueEscapeRange(UObject* InteractableObject) const;
-	bool IsDialogueWindowActive() const;
+	bool IsDialoguePopupActive() const;
 	bool IsDialogueInteractionBlocked() const;
 	bool IsInteractionSessionActive() const;
 	bool IsOwnerDead() const;
-	bool SkipActiveDialogueWindow() const;
+	bool SkipActiveDialoguePopup() const;
 	void HideInteractionPrompt() const;
-	void HideActiveDialogueWindow() const;
+	void HideActiveDialoguePopup() const;
 	void HideInteractionMenu() const;
 	void RestoreDialogueCameraZoom() const;
 	void ReleaseSuppressedInteractable(bool bHideDialogue);

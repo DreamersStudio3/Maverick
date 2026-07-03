@@ -5,7 +5,7 @@
 #include "MVUISettings.generated.h"
 
 class UMVHUDWidgetBase;
-class UMVDialogueWindow;
+class UMVDialoguePopup;
 class UMVMessagePopup;
 class UMVPopupBase;
 class UMVUILayerBase;
@@ -55,28 +55,28 @@ public:
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Popup")
 	TSubclassOf<UMVPopupBase> BossClearPopupClass;
 
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Window")
-	TSubclassOf<UMVDialogueWindow> DialogueWindowClass;
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Popup")
+	TSubclassOf<UMVDialoguePopup> DialoguePopupClass;
 
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Window", meta = (ClampMin = "0.0"))
-	float DialogueWindowDuration = 3.0f;
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Popup", meta = (ClampMin = "0.0"))
+	float DialoguePopupDuration = 3.0f;
 
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Window", meta = (ClampMin = "0.0"))
-	float DialogueWindowMinimumSkipDelay = 0.0f;
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Popup", meta = (ClampMin = "0.0"))
+	float DialoguePopupMinimumSkipDelay = 0.0f;
 
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Window", meta = (ClampMin = "0.0"))
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Popup", meta = (ClampMin = "0.0"))
 	float DialoguePromptRestoreDelay = 0.5f;
 
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Window|Camera")
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Popup|Camera")
 	bool bEnableDialogueCameraZoom = true;
 
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Window|Camera", meta = (ClampMin = "1.0"))
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Popup|Camera", meta = (ClampMin = "1.0"))
 	float DialogueCameraZoomDecelerationExponent = 2.0f;
 
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Window|Camera")
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Popup|Camera")
 	float DialogueCameraSpringArmLengthOffset = -15.0f;
 
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Window|Camera")
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Popup|Camera")
 	float DialogueCameraFOVOffset = -6.0f;
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Popup")

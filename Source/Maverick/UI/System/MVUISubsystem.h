@@ -11,7 +11,7 @@
 
 class UCommonActivatableWidget;
 class UCameraComponent;
-class UMVDialogueWindow;
+class UMVDialoguePopup;
 class UMVHUDWidgetBase;
 class UMVInteractionChoicePopup;
 class UMVInteractionMenuWindow;
@@ -99,10 +99,10 @@ public:
 	bool IsInteractionSessionActive() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
-	UMVDialogueWindow* ShowDialogueWindowText(FText DialogueText, float Duration = -1.0f);
+	UMVDialoguePopup* ShowDialoguePopupText(FText DialogueText, float Duration = -1.0f);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
-	UMVDialogueWindow* ShowDialogueWindowTextWithTiming(FText DialogueText, float Duration = -1.0f, float MinimumSkipDelay = -1.0f);
+	UMVDialoguePopup* ShowDialoguePopupTextWithTiming(FText DialogueText, float Duration = -1.0f, float MinimumSkipDelay = -1.0f);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Debug")
 	UMVLoadingWindow* ShowLoadingWindowForTest(bool bUseNativeWindow = false);
@@ -114,13 +114,13 @@ public:
 	bool AdvanceLoadingGuideCardForTest();
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
-	void HideDialogueWindow();
+	void HideDialoguePopup();
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
-	void SkipDialogueWindow();
+	void SkipDialoguePopup();
 
 	UFUNCTION(BlueprintPure, Category = "Maverick|UI")
-	bool CanSkipDialogueWindow() const;
+	bool CanSkipDialoguePopup() const;
 
 	UFUNCTION(BlueprintPure, Category = "Maverick|UI")
 	bool CanUseInteractionPrompt() const;
@@ -129,13 +129,13 @@ public:
 	void RestoreDialogueCameraZoom(float DurationOverride = -1.0f);
 
 	UFUNCTION(BlueprintPure, Category = "Maverick|UI")
-	bool IsDialogueWindowActive() const;
+	bool IsDialoguePopupActive() const;
 
 	UFUNCTION(BlueprintPure, Category = "Maverick|UI")
-	bool IsDialogueWindowBlockingInteraction() const;
+	bool IsDialoguePopupBlockingInteraction() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
-	UMVDialogueWindow* ShowDialogueWindowByRow(FDataTableRowHandle DialogueRow);
+	UMVDialoguePopup* ShowDialoguePopupByRow(FDataTableRowHandle DialogueRow);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
 	UMVMessagePopup* ShowPopupMessage(const FMVPopupMessageData& MessageData);
@@ -168,10 +168,10 @@ private:
 	void HandleInteractionChoiceClosed(UMVPopupBase* ClosedChoicePopup);
 
 	UFUNCTION()
-	void HandleDialogueWindowClosed(UMVDialogueWindow* ClosedDialogueWindow);
+	void HandleDialoguePopupClosed(UMVDialoguePopup* ClosedDialoguePopup);
 
 	UFUNCTION()
-	void HandleDialogueWindowClosing(UMVDialogueWindow* ClosingDialogueWindow);
+	void HandleDialoguePopupClosing(UMVDialoguePopup* ClosingDialoguePopup);
 
 	void HandleDialoguePromptRestoreDelayElapsed();
 	void ApplyDialogueCameraZoom(float DurationOverride = -1.0f);
@@ -182,15 +182,15 @@ private:
 	void ClearAllUIInternal(bool bUseFadeOut);
 	void ResetUITrackingState();
 	bool IsPopupActive(const UMVPopupBase* Popup) const;
-	bool IsDialogueWindowActive(const UMVDialogueWindow* DialogueWindow) const;
-	bool IsDialogueWindowPresent(const UMVDialogueWindow* DialogueWindow) const;
+	bool IsDialoguePopupActive(const UMVDialoguePopup* DialoguePopup) const;
+	bool IsDialoguePopupPresent(const UMVDialoguePopup* DialoguePopup) const;
 	void CloseActivePopupImmediately();
 	void CloseActivePopup();
-	UMVDialogueWindow* OpenDialogueWindowText(FText DialogueText, float Duration, float MinimumSkipDelay);
-	void QueueDialogueWindowText(FText DialogueText, float Duration, float MinimumSkipDelay);
-	void TryOpenPendingDialogueWindow();
+	UMVDialoguePopup* OpenDialoguePopupText(FText DialogueText, float Duration, float MinimumSkipDelay);
+	void QueueDialoguePopupText(FText DialogueText, float Duration, float MinimumSkipDelay);
+	void TryOpenPendingDialoguePopup();
 	void TrackActivePopup(UMVPopupBase* Popup);
-	void TrackActiveDialogueWindow(UMVDialogueWindow* DialogueWindow);
+	void TrackActiveDialoguePopup(UMVDialoguePopup* DialoguePopup);
 
 	UPROPERTY(Transient)
 	TArray<TObjectPtr<UMVUILayerBase>> LayerStack;
@@ -208,7 +208,7 @@ private:
 	TObjectPtr<UMVInteractionChoicePopup> ActiveInteractionChoicePopup;
 
 	UPROPERTY(Transient)
-	TObjectPtr<UMVDialogueWindow> ActiveDialogueWindow;
+	TObjectPtr<UMVDialoguePopup> ActiveDialoguePopup;
 
 	UPROPERTY(Transient)
 	TObjectPtr<UMVPopupBase> ActivePopup;

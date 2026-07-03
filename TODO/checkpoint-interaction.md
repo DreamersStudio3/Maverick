@@ -47,6 +47,8 @@
 - [x] ChoiceStep을 메뉴 윈도우에서 분리해 하단 선택지 전용 window로 표시
 - [x] ChoiceStep 표시를 window stack이 아닌 popup layer로 전환
 - [x] Interaction menu window 활성 중 전투 액션 입력 차단
+- [x] Dialogue 표시를 window stack이 아닌 popup layer로 전환
+- [x] Interaction menu window 활성 중 액션 입력 차단을 InputManager 단계로 이동
 - [ ] InteractionFlow 샘플 asset과 테스트용 액터 구성
 - [ ] InteractionFlow 제작 규칙 문서화
 - [ ] 기획자가 flow 구조를 노드 그래프로 확인/편집할 수 있는 에디터 GUI 툴 추가

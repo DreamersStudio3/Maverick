@@ -8,11 +8,11 @@
 
 class UTextBlock;
 class UVerticalBox;
-class UMVInteractionChoiceEntryButton;
+class UMVInteractionChoicePopupEntryButton;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
-	FMVOnInteractionChoiceEntryButtonClicked,
-	UMVInteractionChoiceEntryButton*, Button);
+	FMVOnInteractionChoicePopupEntryButtonClicked,
+	UMVInteractionChoicePopupEntryButton*, Button);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
 	FMVOnInteractionChoiceEntrySelected,
@@ -20,18 +20,18 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
 	FMVMenuEntryData, EntryData);
 
 UCLASS()
-class MAVERICK_API UMVInteractionChoiceEntryButton : public UButton
+class MAVERICK_API UMVInteractionChoicePopupEntryButton : public UButton
 {
 	GENERATED_BODY()
 
 public:
-	UMVInteractionChoiceEntryButton(const FObjectInitializer& ObjectInitializer);
+	UMVInteractionChoicePopupEntryButton(const FObjectInitializer& ObjectInitializer);
 
 	void SetEntryData(const FMVMenuEntryData& InEntryData);
 	const FMVMenuEntryData& GetEntryData() const { return EntryData; }
 
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|UI|Choice")
-	FMVOnInteractionChoiceEntryButtonClicked OnEntryButtonClicked;
+	FMVOnInteractionChoicePopupEntryButtonClicked OnEntryButtonClicked;
 
 private:
 	UFUNCTION()
@@ -79,7 +79,7 @@ private:
 	FText ResolveEntryLabel(const FMVMenuEntryData& EntryData) const;
 
 	UFUNCTION()
-	void HandleChoiceButtonClicked(UMVInteractionChoiceEntryButton* Button);
+	void HandleChoiceButtonClicked(UMVInteractionChoicePopupEntryButton* Button);
 
 	UPROPERTY(Transient)
 	FMVInteractionChoiceData ChoiceData;

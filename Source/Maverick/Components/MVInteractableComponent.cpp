@@ -8,10 +8,10 @@
 #include "Tags/MVGameplayTags.h"
 #include "UI/Base/MVPopupBase.h"
 #include "UI/Base/MVWindowBase.h"
+#include "UI/Popup/MVDialoguePopup.h"
 #include "UI/Popup/MVInteractionChoicePopup.h"
 #include "UI/Popup/MVMessagePopup.h"
 #include "UI/System/MVUISubsystem.h"
-#include "UI/Window/MVDialogueWindow.h"
 #include "UI/Window/MVInteractionMenuWindow.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogMVInteractableComponent, Log, All);
@@ -223,9 +223,9 @@ void UMVInteractableComponent::BeginConfiguredInteractionSession(AActor* Interac
 
 void UMVInteractableComponent::EndConfiguredInteractionSession()
 {
-	if (ActiveConfiguredDialogueWindow)
+	if (ActiveConfiguredDialoguePopup)
 	{
-		ActiveConfiguredDialogueWindow->OnDialogueWindowClosed.RemoveDynamic(
+		ActiveConfiguredDialoguePopup->OnDialoguePopupClosed.RemoveDynamic(
 			this,
 			&UMVInteractableComponent::HandleConfiguredDialogueClosed);
 	}
@@ -258,7 +258,7 @@ void UMVInteractableComponent::EndConfiguredInteractionSession()
 			&UMVInteractableComponent::HandleConfiguredWindowDeactivated);
 	}
 
-	ActiveConfiguredDialogueWindow = nullptr;
+	ActiveConfiguredDialoguePopup = nullptr;
 	ActiveConfiguredPopup = nullptr;
 	ActiveConfiguredMenuWindow = nullptr;
 	ActiveConfiguredChoicePopup = nullptr;
@@ -304,11 +304,11 @@ bool UMVInteractableComponent::ExecuteConfiguredStep(const FGameplayTag StepId)
 	{
 		if (UMVUISubsystem* UISubsystem = GetUISubsystem())
 		{
-			ActiveConfiguredDialogueWindow = UISubsystem->ShowDialogueWindowByRow(DialogueStep->DialogueRow);
-			if (ActiveConfiguredDialogueWindow)
+			ActiveConfiguredDialoguePopup = UISubsystem->ShowDialoguePopupByRow(DialogueStep->DialogueRow);
+			if (ActiveConfiguredDialoguePopup)
 			{
 				bWaitingForConfiguredStep = true;
-				ActiveConfiguredDialogueWindow->OnDialogueWindowClosed.AddUniqueDynamic(
+				ActiveConfiguredDialoguePopup->OnDialoguePopupClosed.AddUniqueDynamic(
 					this,
 					&UMVInteractableComponent::HandleConfiguredDialogueClosed);
 				return true;
@@ -414,12 +414,12 @@ void UMVInteractableComponent::CompleteConfiguredStep(const FGameplayTag NextSte
 	bBroadcastingConfiguredCommandRequest = false;
 	bCompleteConfiguredCommandAfterRequest = false;
 
-	if (ActiveConfiguredDialogueWindow)
+	if (ActiveConfiguredDialoguePopup)
 	{
-		ActiveConfiguredDialogueWindow->OnDialogueWindowClosed.RemoveDynamic(
+		ActiveConfiguredDialoguePopup->OnDialoguePopupClosed.RemoveDynamic(
 			this,
 			&UMVInteractableComponent::HandleConfiguredDialogueClosed);
-		ActiveConfiguredDialogueWindow = nullptr;
+		ActiveConfiguredDialoguePopup = nullptr;
 	}
 	if (ActiveConfiguredPopup)
 	{
@@ -714,9 +714,9 @@ UMVUISubsystem* UMVInteractableComponent::GetUISubsystem() const
 	return GameInstance ? GameInstance->GetSubsystem<UMVUISubsystem>() : nullptr;
 }
 
-void UMVInteractableComponent::HandleConfiguredDialogueClosed(UMVDialogueWindow* ClosedDialogueWindow)
+void UMVInteractableComponent::HandleConfiguredDialogueClosed(UMVDialoguePopup* ClosedDialoguePopup)
 {
-	if (!ClosedDialogueWindow || ClosedDialogueWindow != ActiveConfiguredDialogueWindow)
+	if (!ClosedDialoguePopup || ClosedDialoguePopup != ActiveConfiguredDialoguePopup)
 	{
 		return;
 	}

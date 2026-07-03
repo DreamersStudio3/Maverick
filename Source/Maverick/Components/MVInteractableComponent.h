@@ -7,7 +7,7 @@
 #include "MVInteractableComponent.generated.h"
 
 class UMVInteractableComponent;
-class UMVDialogueWindow;
+class UMVDialoguePopup;
 class UMVInteractionFlowDataAsset;
 class UMVInteractionChoicePopup;
 class UMVInteractionMenuWindow;
@@ -138,7 +138,7 @@ private:
 	class UMVUISubsystem* GetUISubsystem() const;
 
 	UFUNCTION()
-	void HandleConfiguredDialogueClosed(UMVDialogueWindow* ClosedDialogueWindow);
+	void HandleConfiguredDialogueClosed(UMVDialoguePopup* ClosedDialoguePopup);
 
 	UFUNCTION()
 	void HandleConfiguredPopupClosed(UMVPopupBase* ClosedPopup);
@@ -162,7 +162,7 @@ private:
 	TObjectPtr<AActor> ActiveInteractor;
 
 	UPROPERTY(Transient)
-	TObjectPtr<UMVDialogueWindow> ActiveConfiguredDialogueWindow;
+	TObjectPtr<UMVDialoguePopup> ActiveConfiguredDialoguePopup;
 
 	UPROPERTY(Transient)
 	TObjectPtr<UMVPopupBase> ActiveConfiguredPopup;

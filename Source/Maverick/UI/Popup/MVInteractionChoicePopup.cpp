@@ -8,19 +8,19 @@
 #include "Components/VerticalBox.h"
 #include "Components/VerticalBoxSlot.h"
 
-UMVInteractionChoiceEntryButton::UMVInteractionChoiceEntryButton(const FObjectInitializer& ObjectInitializer)
+UMVInteractionChoicePopupEntryButton::UMVInteractionChoicePopupEntryButton(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	OnClicked.AddDynamic(this, &UMVInteractionChoiceEntryButton::HandleClicked);
+	OnClicked.AddDynamic(this, &UMVInteractionChoicePopupEntryButton::HandleClicked);
 }
 
-void UMVInteractionChoiceEntryButton::SetEntryData(const FMVMenuEntryData& InEntryData)
+void UMVInteractionChoicePopupEntryButton::SetEntryData(const FMVMenuEntryData& InEntryData)
 {
 	EntryData = InEntryData;
 	SetIsEnabled(EntryData.bEnabled);
 }
 
-void UMVInteractionChoiceEntryButton::HandleClicked()
+void UMVInteractionChoicePopupEntryButton::HandleClicked()
 {
 	OnEntryButtonClicked.Broadcast(this);
 }
@@ -61,9 +61,9 @@ void UMVInteractionChoicePopup::RefreshChoice()
 	for (const FMVInteractionChoiceEntryData& Choice : ChoiceData.Choices)
 	{
 		const FName ButtonName = *FString::Printf(TEXT("InteractionChoiceEntry_%d"), ChoiceIndex++);
-		UMVInteractionChoiceEntryButton* EntryButton =
-			WidgetTree->ConstructWidget<UMVInteractionChoiceEntryButton>(
-				UMVInteractionChoiceEntryButton::StaticClass(),
+		UMVInteractionChoicePopupEntryButton* EntryButton =
+			WidgetTree->ConstructWidget<UMVInteractionChoicePopupEntryButton>(
+				UMVInteractionChoicePopupEntryButton::StaticClass(),
 				ButtonName);
 		if (!EntryButton)
 		{
@@ -188,7 +188,7 @@ FText UMVInteractionChoicePopup::ResolveEntryLabel(const FMVMenuEntryData& Entry
 	return EntryData.Label;
 }
 
-void UMVInteractionChoicePopup::HandleChoiceButtonClicked(UMVInteractionChoiceEntryButton* Button)
+void UMVInteractionChoicePopup::HandleChoiceButtonClicked(UMVInteractionChoicePopupEntryButton* Button)
 {
 	if (!Button)
 	{
