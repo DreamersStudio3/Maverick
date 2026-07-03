@@ -43,7 +43,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(
  * 액터를 공통 상호작용 대상으로 노출하고 선택형 interaction flow를 실행하는 컴포넌트.
  *
  * detector는 이 컴포넌트의 prompt, priority, interact 가능 여부만 보고 후보를 고른다. 정의 기반 실행을
- * 켜면 flow asset 또는 inline instanced step 그래프를 따라 대화, 액션, 경고, 메뉴/선택지, window를
+ * 켜면 flow asset 또는 inline instanced struct step 그래프를 따라 대화, 액션, 경고, 메뉴/선택지, window를
  * 순차 실행한다. 액션 step은 외부 애니메이션 notify나 도메인 로직이 `FinishInteractionAction`을 호출할
  * 때 다음 step으로 넘어간다. 정의 기반 실행을 끄면 기존처럼 `OnInteractionRequested`만 방송한다.
  */
@@ -106,8 +106,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Interaction|Definition", meta = (EditCondition = "bUseInteractionDefinition"))
 	FName InlineStartStepId = NAME_None;
 
-	UPROPERTY(EditAnywhere, Instanced, BlueprintReadOnly, Category = "Maverick|Interaction|Definition", meta = (EditCondition = "bUseInteractionDefinition"))
-	TArray<TObjectPtr<UMVInteractionStepData>> InlineSteps;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Interaction|Definition", meta = (EditCondition = "bUseInteractionDefinition", BaseStruct = "/Script/Maverick.MVInteractionStepData", ExcludeBaseStruct))
+	TArray<FInstancedStruct> InlineSteps;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Interaction")
 	bool bCanInteract = true;
@@ -125,9 +125,9 @@ private:
 	bool ExecuteConfiguredStep(FName StepId);
 	void CompleteConfiguredStep(FName NextStepId);
 	FName ResolveStartStepId() const;
-	const TArray<TObjectPtr<UMVInteractionStepData>>& ResolveInteractionSteps() const;
-	FName ResolveStepTransition(const UMVInteractionSelectionStepData& Step, FName TriggerName) const;
-	const UMVInteractionStepData* FindInteractionStep(FName StepId) const;
+	const TArray<FInstancedStruct>& ResolveInteractionSteps() const;
+	FName ResolveStepTransition(const FMVInteractionSelectionStepData& Step, FName TriggerName) const;
+	const FInstancedStruct* FindInteractionStep(FName StepId) const;
 	class UMVUISubsystem* GetUISubsystem() const;
 
 	UFUNCTION()

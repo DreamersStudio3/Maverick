@@ -25,11 +25,11 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Maverick|Interaction")
 	FName GetStartStepId() const { return StartStepId; }
 
-	const TArray<TObjectPtr<UMVInteractionStepData>>& GetSteps() const { return Steps; }
+	const TArray<FInstancedStruct>& GetSteps() const { return Steps; }
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Interaction")
 	FName StartStepId = NAME_None;
 
-	UPROPERTY(EditAnywhere, Instanced, BlueprintReadOnly, Category = "Maverick|Interaction")
-	TArray<TObjectPtr<UMVInteractionStepData>> Steps;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Interaction", meta = (BaseStruct = "/Script/Maverick.MVInteractionStepData", ExcludeBaseStruct))
+	TArray<FInstancedStruct> Steps;
 };

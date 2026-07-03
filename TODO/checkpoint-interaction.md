@@ -28,5 +28,12 @@
 - [x] 액션 step에 `StepId`/`ActionName` 기반 시작/완료 delegate 추가
 - [x] 재사용 가능한 `UMVInteractionFlowDataAsset` 추가
 - [x] InteractableComponent가 flow asset 또는 inline definition을 실행하도록 확장
-- [x] Flow step을 단일 struct에서 instanced polymorphic UObject 데이터로 전환
-- [x] PropertyEditor 재귀 크래시 방지를 위해 DataAsset의 step 배열을 struct 밖 직접 소유로 전환
+- [x] Flow step을 단일 struct에서 `FInstancedStruct` 기반 polymorphic struct 데이터로 전환
+- [x] PropertyEditor 재귀 크래시 방지를 위해 instanced UObject step 저장 제거
+- [ ] InteractionFlow DataAsset 검증 로직 추가
+- [ ] InteractionFlow 샘플 asset과 테스트용 액터 구성
+- [ ] InteractionFlow 제작 규칙 문서화
+- [ ] 기획자가 flow 구조를 노드 그래프로 확인/편집할 수 있는 에디터 GUI 툴 추가
+  - Reference Viewer처럼 step 노드, `NextStepId`, 선택지 transition, 액션 이름, 연결 끊김 상태를 한 화면에서 확인
+  - 노드 선택 시 해당 step 데이터 편집 패널 표시
+  - 코드 확인 없이 데이터 연결 상태와 오류를 이해할 수 있는 validation overlay 제공
