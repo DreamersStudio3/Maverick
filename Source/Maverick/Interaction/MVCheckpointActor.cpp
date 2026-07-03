@@ -15,6 +15,29 @@
 #include "UI/System/MVUISubsystem.h"
 #include "UI/Window/MVInteractionMenuWindow.h"
 
+namespace
+{
+FMVInteractionMenuPageData* MVCheckpointFindSubMenuPage(FMVInteractionMenuData& MenuData, const FGameplayTag MenuId)
+{
+	return MenuData.SubMenus.FindByPredicate([MenuId](const FMVInteractionMenuPageData& Page)
+	{
+		return Page.MenuId == MenuId;
+	});
+}
+
+FMVInteractionMenuPageData& MVCheckpointFindOrAddSubMenuPage(FMVInteractionMenuData& MenuData, const FGameplayTag MenuId)
+{
+	if (FMVInteractionMenuPageData* ExistingPage = MVCheckpointFindSubMenuPage(MenuData, MenuId))
+	{
+		return *ExistingPage;
+	}
+
+	FMVInteractionMenuPageData& NewPage = MenuData.SubMenus.AddDefaulted_GetRef();
+	NewPage.MenuId = MenuId;
+	return NewPage;
+}
+}
+
 AMVCheckpointActor::AMVCheckpointActor()
 {
 	PrimaryActorTick.bCanEverTick = false;
@@ -109,9 +132,9 @@ void AMVCheckpointActor::OpenCheckpointMenu(AActor* Interactor)
 		if (ActiveMenuWindow)
 		{
 			ActiveMenuWindow->OnInteractionMenuClosed.AddUniqueDynamic(this, &AMVCheckpointActor::HandleCheckpointMenuClosed);
-			ActiveMenuWindow->OnInteractionMenuActionSelected.AddUniqueDynamic(
+			ActiveMenuWindow->OnInteractionMenuEntrySelected.AddUniqueDynamic(
 				this,
-				&AMVCheckpointActor::HandleCheckpointMenuActionSelected);
+				&AMVCheckpointActor::HandleCheckpointMenuEntrySelected);
 			return;
 		}
 	}
@@ -163,7 +186,6 @@ FMVInteractionMenuData AMVCheckpointActor::MakeDefaultCheckpointMenuData()
 	FMVMenuEntryData RestEntry;
 	RestEntry.EntryId = MVGameplayTags::Interaction_Menu_Entry_Checkpoint_Rest;
 	RestEntry.Label = NSLOCTEXT("MaverickCheckpoint", "Rest", "휴식한다");
-	RestEntry.ActionName = TEXT("Rest");
 	MenuData.Entries.Add(RestEntry);
 
 	FMVMenuEntryData TravelEntry;
@@ -176,14 +198,12 @@ FMVInteractionMenuData AMVCheckpointActor::MakeDefaultCheckpointMenuData()
 	FMVMenuEntryData LevelUpEntry;
 	LevelUpEntry.EntryId = MVGameplayTags::Interaction_Menu_Entry_Checkpoint_LevelUp;
 	LevelUpEntry.Label = NSLOCTEXT("MaverickCheckpoint", "LevelUp", "레벨 업을 한다");
-	LevelUpEntry.ActionName = TEXT("LevelUp");
 	LevelUpEntry.bEnabled = false;
 	MenuData.Entries.Add(LevelUpEntry);
 
 	FMVMenuEntryData StorageEntry;
 	StorageEntry.EntryId = MVGameplayTags::Interaction_Menu_Entry_Checkpoint_Storage;
 	StorageEntry.Label = NSLOCTEXT("MaverickCheckpoint", "Storage", "보관함을 이용한다");
-	StorageEntry.ActionName = TEXT("Storage");
 	StorageEntry.bEnabled = false;
 	MenuData.Entries.Add(StorageEntry);
 
@@ -201,8 +221,7 @@ FMVInteractionMenuData AMVCheckpointActor::BuildCheckpointMenuData()
 	bool bHasTravelEntry = false;
 	for (FMVMenuEntryData& Entry : MenuData.Entries)
 	{
-		if (Entry.EntryId == MVGameplayTags::Interaction_Menu_Entry_Checkpoint_Travel
-			|| Entry.ActionName == TEXT("Travel"))
+		if (Entry.EntryId == MVGameplayTags::Interaction_Menu_Entry_Checkpoint_Travel)
 		{
 			if (!Entry.EntryId.IsValid())
 			{
@@ -216,7 +235,6 @@ FMVInteractionMenuData AMVCheckpointActor::BuildCheckpointMenuData()
 			{
 				Entry.SubMenuId = TravelMenuId;
 			}
-			Entry.ActionName = NAME_None;
 			Entry.bEnabled = true;
 			Entry.bCloseMenuOnExecute = false;
 			bHasTravelEntry = true;
@@ -233,6 +251,10 @@ FMVInteractionMenuData AMVCheckpointActor::BuildCheckpointMenuData()
 		TravelEntry.bCloseMenuOnExecute = false;
 		MenuData.Entries.Add(TravelEntry);
 	}
+
+	FMVInteractionMenuPageData& TravelPage = MVCheckpointFindOrAddSubMenuPage(MenuData, TravelMenuId);
+	TravelPage.Title = NSLOCTEXT("MaverickCheckpoint", "TravelMenuTitle", "체크포인트 이동");
+	TravelPage.Entries.Reset();
 
 	const FName CurrentCheckpointId = ResolveCheckpointId();
 	const FName CurrentMapName = ResolveCurrentMapName();
@@ -260,22 +282,20 @@ FMVInteractionMenuData AMVCheckpointActor::BuildCheckpointMenuData()
 		PendingTravelTargets.Add(ActionName, Checkpoint);
 
 		FMVMenuEntryData TargetEntry;
-		TargetEntry.ParentMenuId = TravelMenuId;
 		TargetEntry.Label = FText::FromString(Checkpoint.CheckpointId.ToString());
-		TargetEntry.ActionName = ActionName;
+		TargetEntry.RuntimeActionId = ActionName;
 		TargetEntry.bCloseMenuOnExecute = true;
-		MenuData.Entries.Add(TargetEntry);
+		TravelPage.Entries.Add(TargetEntry);
 	}
 
 	if (PendingTravelTargets.IsEmpty())
 	{
 		FMVMenuEntryData EmptyEntry;
 		EmptyEntry.EntryId = MVGameplayTags::Interaction_Menu_Entry_Checkpoint_NoTravelTargets;
-		EmptyEntry.ParentMenuId = TravelMenuId;
 		EmptyEntry.Label = NSLOCTEXT("MaverickCheckpoint", "NoTravelTargets", "이동 가능한 체크포인트가 없습니다");
 		EmptyEntry.bEnabled = false;
 		EmptyEntry.bCloseMenuOnExecute = false;
-		MenuData.Entries.Add(EmptyEntry);
+		TravelPage.Entries.Add(EmptyEntry);
 	}
 
 	return MenuData;
@@ -348,9 +368,9 @@ void AMVCheckpointActor::HandleCheckpointMenuClosed(UMVInteractionMenuWindow* Me
 	if (MenuWindow && MenuWindow == ActiveMenuWindow)
 	{
 		ActiveMenuWindow->OnInteractionMenuClosed.RemoveDynamic(this, &AMVCheckpointActor::HandleCheckpointMenuClosed);
-		ActiveMenuWindow->OnInteractionMenuActionSelected.RemoveDynamic(
+		ActiveMenuWindow->OnInteractionMenuEntrySelected.RemoveDynamic(
 			this,
-			&AMVCheckpointActor::HandleCheckpointMenuActionSelected);
+			&AMVCheckpointActor::HandleCheckpointMenuEntrySelected);
 		ActiveMenuWindow = nullptr;
 	}
 
@@ -358,18 +378,19 @@ void AMVCheckpointActor::HandleCheckpointMenuClosed(UMVInteractionMenuWindow* Me
 	ActiveInteractor = nullptr;
 }
 
-void AMVCheckpointActor::HandleCheckpointMenuActionSelected(UObject* SourceObject, FName ActionName)
+void AMVCheckpointActor::HandleCheckpointMenuEntrySelected(UObject* SourceObject, FMVMenuEntryData EntryData)
 {
 	if (SourceObject && SourceObject != this)
 	{
 		return;
 	}
 
-	if (ActionName == TEXT("Rest"))
+	const FName SelectionName = EntryData.ResolveSelectionName();
+	if (EntryData.EntryId == MVGameplayTags::Interaction_Menu_Entry_Checkpoint_Rest)
 	{
 		RestAtCheckpoint(ActiveInteractor.Get());
 	}
-	else if (const FMVCheckpointSaveData* TravelTarget = PendingTravelTargets.Find(ActionName))
+	else if (const FMVCheckpointSaveData* TravelTarget = PendingTravelTargets.Find(SelectionName))
 	{
 		if (UMVFieldTransitionSubsystem* FieldTransition = UMVFieldTransitionSubsystem::Get(this))
 		{
@@ -381,5 +402,5 @@ void AMVCheckpointActor::HandleCheckpointMenuActionSelected(UObject* SourceObjec
 		}
 	}
 
-	OnCheckpointMenuActionSelected.Broadcast(this, ActionName);
+	OnCheckpointMenuActionSelected.Broadcast(this, SelectionName);
 }

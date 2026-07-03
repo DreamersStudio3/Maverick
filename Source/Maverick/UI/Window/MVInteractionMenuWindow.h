@@ -16,9 +16,9 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
 	UMVInteractionMenuEntryButton*, Button);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
-	FMVOnInteractionMenuActionSelected,
+	FMVOnInteractionMenuEntrySelected,
 	UObject*, SourceObject,
-	FName, ActionName);
+	FMVMenuEntryData, EntryData);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
 	FMVOnInteractionMenuClosed,
@@ -49,9 +49,9 @@ private:
 /**
  * CommonUI stack에 올라가는 공통 상호작용 메뉴 윈도우.
  *
- * `FMVInteractionMenuData`의 `ParentMenuId`와 `SubMenuId`로 하위 메뉴 트리를 구성하고,
- * back 입력으로 이전 메뉴로 복귀한다. 메뉴 항목은 액션 이름 브로드캐스트, 하위 메뉴 이동,
- * 또는 별도 window push를 선택적으로 수행할 수 있다.
+ * `FMVInteractionMenuData`의 root entry와 submenu page로 하위 메뉴 트리를 구성하고, back 입력으로
+ * 이전 메뉴로 복귀한다. 메뉴 항목은 entry/action row 브로드캐스트, 하위 메뉴 이동, 또는 별도 window
+ * push를 선택적으로 수행할 수 있다.
  */
 UCLASS(Blueprintable)
 class MAVERICK_API UMVInteractionMenuWindow : public UMVWindowBase
@@ -68,7 +68,7 @@ public:
 	void RefreshMenu();
 
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|UI|Menu")
-	FMVOnInteractionMenuActionSelected OnInteractionMenuActionSelected;
+	FMVOnInteractionMenuEntrySelected OnInteractionMenuEntrySelected;
 
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|UI|Menu")
 	FMVOnInteractionMenuClosed OnInteractionMenuClosed;
@@ -88,6 +88,7 @@ private:
 	void BuildNativeMenuTree();
 	bool NavigateBack();
 	TArray<FMVMenuEntryData> GetCurrentEntries() const;
+	FText ResolveCurrentTitle() const;
 	FText ResolveEntryLabel(const FMVMenuEntryData& EntryData) const;
 
 	UFUNCTION()

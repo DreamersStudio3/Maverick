@@ -116,7 +116,7 @@ private:
 	void HandleCheckpointMenuClosed(UMVInteractionMenuWindow* MenuWindow);
 
 	UFUNCTION()
-	void HandleCheckpointMenuActionSelected(UObject* SourceObject, FName ActionName);
+	void HandleCheckpointMenuEntrySelected(UObject* SourceObject, FMVMenuEntryData EntryData);
 
 	UPROPERTY(Transient)
 	TObjectPtr<AActor> ActiveInteractor;

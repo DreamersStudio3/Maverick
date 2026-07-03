@@ -51,7 +51,7 @@ void UMVInteractionMenuWindow::RefreshMenu()
 
 	if (TitleText)
 	{
-		TitleText->SetText(MenuData.Title);
+		TitleText->SetText(ResolveCurrentTitle());
 	}
 
 	EntryBox->ClearChildren();
@@ -60,8 +60,8 @@ void UMVInteractionMenuWindow::RefreshMenu()
 	{
 		FMVMenuEntryData BackEntry;
 		BackEntry.Label = NSLOCTEXT("MaverickInteractionMenu", "Back", "Back");
-		BackEntry.ActionName = TEXT("__Back");
 		BackEntry.bCloseMenuOnExecute = false;
+		BackEntry.bInternalBackEntry = true;
 
 		UMVInteractionMenuEntryButton* BackButton =
 			WidgetTree->ConstructWidget<UMVInteractionMenuEntryButton>(
@@ -188,7 +188,7 @@ void UMVInteractionMenuWindow::BuildNativeMenuTree()
 	PanelBorder->SetBrushColor(FLinearColor(0.025f, 0.028f, 0.03f, 0.88f));
 	PanelBorder->SetContent(PanelBox);
 
-	TitleText->SetText(MenuData.Title);
+	TitleText->SetText(ResolveCurrentTitle());
 
 	if (UVerticalBoxSlot* TitleSlot = PanelBox->AddChildToVerticalBox(TitleText))
 	{
@@ -221,13 +221,45 @@ TArray<FMVMenuEntryData> UMVInteractionMenuWindow::GetCurrentEntries() const
 	TArray<FMVMenuEntryData> Result;
 	for (const FMVMenuEntryData& EntryData : MenuData.Entries)
 	{
-		if (EntryData.ParentMenuId == CurrentMenuId)
+		if (!CurrentMenuId.IsValid())
+		{
+			if (!EntryData.ParentMenuId.IsValid())
+			{
+				Result.Add(EntryData);
+			}
+			continue;
+		}
+
+		if (EntryData.ParentMenuId == CurrentMenuId
+			|| (CurrentMenuId == MenuData.RootMenuId && !EntryData.ParentMenuId.IsValid()))
 		{
 			Result.Add(EntryData);
 		}
 	}
 
+	for (const FMVInteractionMenuPageData& SubMenu : MenuData.SubMenus)
+	{
+		if (SubMenu.MenuId == CurrentMenuId)
+		{
+			Result.Append(SubMenu.Entries);
+			break;
+		}
+	}
+
 	return Result;
+}
+
+FText UMVInteractionMenuWindow::ResolveCurrentTitle() const
+{
+	for (const FMVInteractionMenuPageData& SubMenu : MenuData.SubMenus)
+	{
+		if (SubMenu.MenuId == CurrentMenuId && !SubMenu.Title.IsEmpty())
+		{
+			return SubMenu.Title;
+		}
+	}
+
+	return MenuData.Title;
 }
 
 FText UMVInteractionMenuWindow::ResolveEntryLabel(const FMVMenuEntryData& EntryData) const
@@ -255,7 +287,7 @@ void UMVInteractionMenuWindow::HandleEntryButtonClicked(UMVInteractionMenuEntryB
 		return;
 	}
 
-	if (EntryData.ActionName == TEXT("__Back"))
+	if (EntryData.bInternalBackEntry)
 	{
 		NavigateBack();
 		return;
@@ -280,12 +312,10 @@ void UMVInteractionMenuWindow::HandleEntryButtonClicked(UMVInteractionMenuEntryB
 		}
 	}
 
-	const FName SelectedActionName = EntryData.ActionName.IsNone()
-		? EntryData.EntryId.GetTagName()
-		: EntryData.ActionName;
-	if (!SelectedActionName.IsNone())
+	const FName SelectionName = EntryData.ResolveSelectionName();
+	if (!SelectionName.IsNone())
 	{
-		OnInteractionMenuActionSelected.Broadcast(SourceObject, SelectedActionName);
+		OnInteractionMenuEntrySelected.Broadcast(SourceObject, EntryData);
 	}
 
 	if (EntryData.bCloseMenuOnExecute)

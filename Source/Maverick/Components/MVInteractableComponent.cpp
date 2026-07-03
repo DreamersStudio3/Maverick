@@ -144,9 +144,9 @@ void UMVInteractableComponent::EndConfiguredInteractionSession()
 		ActiveConfiguredMenuWindow->OnInteractionMenuClosed.RemoveDynamic(
 			this,
 			&UMVInteractableComponent::HandleConfiguredMenuClosed);
-		ActiveConfiguredMenuWindow->OnInteractionMenuActionSelected.RemoveDynamic(
+		ActiveConfiguredMenuWindow->OnInteractionMenuEntrySelected.RemoveDynamic(
 			this,
-			&UMVInteractableComponent::HandleConfiguredMenuActionSelected);
+			&UMVInteractableComponent::HandleConfiguredMenuEntrySelected);
 	}
 	if (ActiveConfiguredWindow)
 	{
@@ -258,9 +258,9 @@ bool UMVInteractableComponent::ExecuteConfiguredStep(const FGameplayTag StepId)
 				ActiveConfiguredMenuWindow->OnInteractionMenuClosed.AddUniqueDynamic(
 					this,
 					&UMVInteractableComponent::HandleConfiguredMenuClosed);
-				ActiveConfiguredMenuWindow->OnInteractionMenuActionSelected.AddUniqueDynamic(
+				ActiveConfiguredMenuWindow->OnInteractionMenuEntrySelected.AddUniqueDynamic(
 					this,
-					&UMVInteractableComponent::HandleConfiguredMenuActionSelected);
+					&UMVInteractableComponent::HandleConfiguredMenuEntrySelected);
 				return true;
 			}
 		}
@@ -279,9 +279,9 @@ bool UMVInteractableComponent::ExecuteConfiguredStep(const FGameplayTag StepId)
 				ActiveConfiguredMenuWindow->OnInteractionMenuClosed.AddUniqueDynamic(
 					this,
 					&UMVInteractableComponent::HandleConfiguredMenuClosed);
-				ActiveConfiguredMenuWindow->OnInteractionMenuActionSelected.AddUniqueDynamic(
+				ActiveConfiguredMenuWindow->OnInteractionMenuEntrySelected.AddUniqueDynamic(
 					this,
-					&UMVInteractableComponent::HandleConfiguredMenuActionSelected);
+					&UMVInteractableComponent::HandleConfiguredMenuEntrySelected);
 				return true;
 			}
 		}
@@ -332,9 +332,9 @@ void UMVInteractableComponent::CompleteConfiguredStep(const FGameplayTag NextSte
 		ActiveConfiguredMenuWindow->OnInteractionMenuClosed.RemoveDynamic(
 			this,
 			&UMVInteractableComponent::HandleConfiguredMenuClosed);
-		ActiveConfiguredMenuWindow->OnInteractionMenuActionSelected.RemoveDynamic(
+		ActiveConfiguredMenuWindow->OnInteractionMenuEntrySelected.RemoveDynamic(
 			this,
-			&UMVInteractableComponent::HandleConfiguredMenuActionSelected);
+			&UMVInteractableComponent::HandleConfiguredMenuEntrySelected);
 		ActiveConfiguredMenuWindow = nullptr;
 	}
 	if (ActiveConfiguredWindow)
@@ -404,11 +404,11 @@ FMVInteractionMenuData UMVInteractableComponent::MakeChoiceMenuData(const FMVInt
 
 FGameplayTag UMVInteractableComponent::ResolveChoiceTransition(
 	const FMVInteractionChoiceStepData& Step,
-	const FName SelectedActionName) const
+	const FGameplayTag SelectedEntryId) const
 {
 	for (const FMVInteractionChoiceEntryData& Choice : Step.ChoiceData.Choices)
 	{
-		if (Choice.ChoiceId.GetTagName() == SelectedActionName)
+		if (Choice.ChoiceId == SelectedEntryId)
 		{
 			return Choice.NextStepId.IsValid() ? Choice.NextStepId : Step.NextStepId;
 		}
@@ -419,11 +419,11 @@ FGameplayTag UMVInteractableComponent::ResolveChoiceTransition(
 
 FGameplayTag UMVInteractableComponent::ResolveStepTransition(
 	const FMVInteractionSelectionStepData& Step,
-	const FName SelectedActionName) const
+	const FGameplayTag SelectedEntryId) const
 {
 	for (const FMVInteractionStepTransition& Transition : Step.Transitions)
 	{
-		if (Transition.TriggerId.GetTagName() == SelectedActionName)
+		if (Transition.TriggerId == SelectedEntryId)
 		{
 			return Transition.NextStepId;
 		}
@@ -482,9 +482,9 @@ void UMVInteractableComponent::HandleConfiguredMenuClosed(UMVInteractionMenuWind
 	ActiveConfiguredMenuWindow->OnInteractionMenuClosed.RemoveDynamic(
 		this,
 		&UMVInteractableComponent::HandleConfiguredMenuClosed);
-	ActiveConfiguredMenuWindow->OnInteractionMenuActionSelected.RemoveDynamic(
+	ActiveConfiguredMenuWindow->OnInteractionMenuEntrySelected.RemoveDynamic(
 		this,
-		&UMVInteractableComponent::HandleConfiguredMenuActionSelected);
+		&UMVInteractableComponent::HandleConfiguredMenuEntrySelected);
 	ActiveConfiguredMenuWindow = nullptr;
 
 	const FInstancedStruct* StepInstance = FindInteractionStep(ActiveStepId);
@@ -497,7 +497,7 @@ void UMVInteractableComponent::HandleConfiguredMenuClosed(UMVInteractionMenuWind
 	CompleteConfiguredStep(NextStepId);
 }
 
-void UMVInteractableComponent::HandleConfiguredMenuActionSelected(UObject* SourceObject, FName ActionName)
+void UMVInteractableComponent::HandleConfiguredMenuEntrySelected(UObject* SourceObject, FMVMenuEntryData EntryData)
 {
 	if (SourceObject && SourceObject != this)
 	{
@@ -515,10 +515,10 @@ void UMVInteractableComponent::HandleConfiguredMenuActionSelected(UObject* Sourc
 		return;
 	}
 
-	OnInteractionMenuActionRequested.Broadcast(ActiveInteractor.Get(), this, Step->StepId, ActionName);
+	OnInteractionMenuEntryRequested.Broadcast(ActiveInteractor.Get(), this, Step->StepId, EntryData);
 	PendingStepAfterMenuClose = ChoiceStep
-		? ResolveChoiceTransition(*ChoiceStep, ActionName)
-		: ResolveStepTransition(*SelectionStep, ActionName);
+		? ResolveChoiceTransition(*ChoiceStep, EntryData.EntryId)
+		: ResolveStepTransition(*SelectionStep, EntryData.EntryId);
 	bHasPendingStepAfterMenuClose = true;
 
 	if (ActiveConfiguredMenuWindow)

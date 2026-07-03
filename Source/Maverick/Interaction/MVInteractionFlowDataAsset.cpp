@@ -20,6 +20,57 @@ EDataValidationResult UMVInteractionFlowDataAsset::IsDataValid(FDataValidationCo
 		Result = EDataValidationResult::Invalid;
 	};
 
+	auto HasAnyActionRowValue = [](const FDataTableRowHandle& ActionRow)
+	{
+		return ActionRow.DataTable || !ActionRow.RowName.IsNone();
+	};
+
+	auto ValidateActionRowHandle = [&HasAnyActionRowValue, &MarkInvalid](
+		const FDataTableRowHandle& ActionRow,
+		const FString& SourceDescription,
+		const bool bRequired)
+	{
+		if (!HasAnyActionRowValue(ActionRow))
+		{
+			if (bRequired)
+			{
+				MarkInvalid(FString::Printf(TEXT("%s has no ActionRow."), *SourceDescription));
+			}
+			return;
+		}
+
+		if (!ActionRow.DataTable || ActionRow.RowName.IsNone())
+		{
+			MarkInvalid(FString::Printf(
+				TEXT("%s has incomplete ActionRow."),
+				*SourceDescription));
+			return;
+		}
+
+		const UScriptStruct* RowStruct = ActionRow.DataTable->GetRowStruct();
+		if (!RowStruct || !RowStruct->IsChildOf(FMVActionRow::StaticStruct()))
+		{
+			MarkInvalid(FString::Printf(
+				TEXT("%s uses invalid action table '%s'. Expected MVActionRow or child row struct."),
+				*SourceDescription,
+				*GetNameSafe(ActionRow.DataTable)));
+			return;
+		}
+
+		const FMVActionRow* FoundActionRow = ActionRow.DataTable->FindRow<FMVActionRow>(
+			ActionRow.RowName,
+			TEXT("InteractionFlowDataAssetValidation"),
+			false);
+		if (!FoundActionRow || !FoundActionRow->bEnabled)
+		{
+			MarkInvalid(FString::Printf(
+				TEXT("%s uses missing or disabled action row '%s' in table '%s'."),
+				*SourceDescription,
+				*ActionRow.RowName.ToString(),
+				*GetNameSafe(ActionRow.DataTable)));
+		}
+	};
+
 	if (Steps.IsEmpty())
 	{
 		MarkInvalid(TEXT("Interaction flow has no steps."));
@@ -52,36 +103,10 @@ EDataValidationResult UMVInteractionFlowDataAsset::IsDataValid(FDataValidationCo
 
 		if (const FMVInteractionActionStepData* ActionStep = StepInstance.GetPtr<FMVInteractionActionStepData>())
 		{
-			if (!ActionStep->ActionRow.DataTable || ActionStep->ActionRow.RowName.IsNone())
-			{
-				MarkInvalid(FString::Printf(
-					TEXT("Action step '%s' has no ActionRow."),
-					*Step->StepId.ToString()));
-				continue;
-			}
-
-			const UScriptStruct* RowStruct = ActionStep->ActionRow.DataTable->GetRowStruct();
-			if (!RowStruct || !RowStruct->IsChildOf(FMVActionRow::StaticStruct()))
-			{
-				MarkInvalid(FString::Printf(
-					TEXT("Action step '%s' uses invalid action table '%s'. Expected MVActionRow or child row struct."),
-					*Step->StepId.ToString(),
-					*GetNameSafe(ActionStep->ActionRow.DataTable)));
-				continue;
-			}
-
-			const FMVActionRow* ActionRow = ActionStep->ActionRow.DataTable->FindRow<FMVActionRow>(
-				ActionStep->ActionRow.RowName,
-				TEXT("InteractionFlowDataAssetValidation"),
-				false);
-			if (!ActionRow || !ActionRow->bEnabled)
-			{
-				MarkInvalid(FString::Printf(
-					TEXT("Action step '%s' uses missing or disabled action row '%s' in table '%s'."),
-					*Step->StepId.ToString(),
-					*ActionStep->ActionRow.RowName.ToString(),
-					*GetNameSafe(ActionStep->ActionRow.DataTable)));
-			}
+			ValidateActionRowHandle(
+				ActionStep->ActionRow,
+				FString::Printf(TEXT("Action step '%s'"), *Step->StepId.ToString()),
+				true);
 		}
 	}
 
@@ -170,21 +195,45 @@ EDataValidationResult UMVInteractionFlowDataAsset::IsDataValid(FDataValidationCo
 		{
 			MenuIds.Add(SelectionStep->MenuData.RootMenuId);
 		}
-		for (int32 EntryIndex = 0; EntryIndex < SelectionStep->MenuData.Entries.Num(); ++EntryIndex)
+
+		for (int32 SubMenuIndex = 0; SubMenuIndex < SelectionStep->MenuData.SubMenus.Num(); ++SubMenuIndex)
 		{
-			const FMVMenuEntryData& Entry = SelectionStep->MenuData.Entries[EntryIndex];
+			const FMVInteractionMenuPageData& SubMenu = SelectionStep->MenuData.SubMenus[SubMenuIndex];
+			if (!SubMenu.MenuId.IsValid())
+			{
+				MarkInvalid(FString::Printf(
+					TEXT("%s submenu[%d] has no MenuId."),
+					*StepDescription,
+					SubMenuIndex));
+			}
+			else if (MenuIds.Contains(SubMenu.MenuId))
+			{
+				MarkInvalid(FString::Printf(
+					TEXT("%s submenu id '%s' is duplicated."),
+					*StepDescription,
+					*SubMenu.MenuId.ToString()));
+			}
+			else
+			{
+				MenuIds.Add(SubMenu.MenuId);
+			}
+		}
+
+		auto ValidateMenuEntry = [&EntryIds, &MarkInvalid, &ValidateActionRowHandle](
+			const FMVMenuEntryData& Entry,
+			const FString& EntryDescription)
+		{
 			if (!Entry.EntryId.IsValid())
 			{
 				MarkInvalid(FString::Printf(
-					TEXT("%s menu entry[%d] has no EntryId."),
-					*StepDescription,
-					EntryIndex));
+					TEXT("%s has no EntryId."),
+					*EntryDescription));
 			}
 			else if (EntryIds.Contains(Entry.EntryId))
 			{
 				MarkInvalid(FString::Printf(
-					TEXT("%s menu entry id '%s' is duplicated."),
-					*StepDescription,
+					TEXT("%s id '%s' is duplicated."),
+					*EntryDescription,
 					*Entry.EntryId.ToString()));
 			}
 			else
@@ -192,21 +241,93 @@ EDataValidationResult UMVInteractionFlowDataAsset::IsDataValid(FDataValidationCo
 				EntryIds.Add(Entry.EntryId);
 			}
 
-			if (Entry.SubMenuId.IsValid())
-			{
-				MenuIds.Add(Entry.SubMenuId);
-			}
-		}
+			ValidateActionRowHandle(Entry.ActionRow, FString::Printf(TEXT("%s ActionRow"), *EntryDescription), false);
+		};
+
 		for (int32 EntryIndex = 0; EntryIndex < SelectionStep->MenuData.Entries.Num(); ++EntryIndex)
 		{
-			const FMVMenuEntryData& Entry = SelectionStep->MenuData.Entries[EntryIndex];
+			ValidateMenuEntry(
+				SelectionStep->MenuData.Entries[EntryIndex],
+				FString::Printf(TEXT("%s root menu entry[%d]"), *StepDescription, EntryIndex));
+		}
+
+		for (int32 SubMenuIndex = 0; SubMenuIndex < SelectionStep->MenuData.SubMenus.Num(); ++SubMenuIndex)
+		{
+			const FMVInteractionMenuPageData& SubMenu = SelectionStep->MenuData.SubMenus[SubMenuIndex];
+			for (int32 EntryIndex = 0; EntryIndex < SubMenu.Entries.Num(); ++EntryIndex)
+			{
+				ValidateMenuEntry(
+					SubMenu.Entries[EntryIndex],
+					FString::Printf(
+						TEXT("%s submenu[%d] entry[%d]"),
+						*StepDescription,
+						SubMenuIndex,
+						EntryIndex));
+			}
+		}
+
+		auto ValidateMenuEntryLinks = [&MenuIds, &MarkInvalid](
+			const FMVMenuEntryData& Entry,
+			const FString& EntryDescription)
+		{
 			if (Entry.ParentMenuId.IsValid() && !MenuIds.Contains(Entry.ParentMenuId))
 			{
 				MarkInvalid(FString::Printf(
-					TEXT("%s menu entry '%s' points to missing ParentMenuId '%s'."),
-					*StepDescription,
-					*Entry.EntryId.ToString(),
+					TEXT("%s points to missing ParentMenuId '%s'."),
+					*EntryDescription,
 					*Entry.ParentMenuId.ToString()));
+			}
+
+			if (Entry.SubMenuId.IsValid() && !MenuIds.Contains(Entry.SubMenuId))
+			{
+				MarkInvalid(FString::Printf(
+					TEXT("%s points to missing SubMenuId '%s'. Add a SubMenus page with the same MenuId."),
+					*EntryDescription,
+					*Entry.SubMenuId.ToString()));
+			}
+		};
+
+		for (int32 EntryIndex = 0; EntryIndex < SelectionStep->MenuData.Entries.Num(); ++EntryIndex)
+		{
+			const FMVMenuEntryData& Entry = SelectionStep->MenuData.Entries[EntryIndex];
+			ValidateMenuEntryLinks(
+				Entry,
+				FString::Printf(TEXT("%s root menu entry[%d] '%s'"), *StepDescription, EntryIndex, *Entry.EntryId.ToString()));
+		}
+
+		for (int32 SubMenuIndex = 0; SubMenuIndex < SelectionStep->MenuData.SubMenus.Num(); ++SubMenuIndex)
+		{
+			const FMVInteractionMenuPageData& SubMenu = SelectionStep->MenuData.SubMenus[SubMenuIndex];
+			for (int32 EntryIndex = 0; EntryIndex < SubMenu.Entries.Num(); ++EntryIndex)
+			{
+				const FMVMenuEntryData& Entry = SubMenu.Entries[EntryIndex];
+				ValidateMenuEntryLinks(
+					Entry,
+					FString::Printf(
+						TEXT("%s submenu[%d] entry[%d] '%s'"),
+						*StepDescription,
+						SubMenuIndex,
+						EntryIndex,
+						*Entry.EntryId.ToString()));
+			}
+		}
+
+		if (SelectionStep->MenuData.Entries.IsEmpty() && SelectionStep->MenuData.SubMenus.IsEmpty())
+		{
+			MarkInvalid(FString::Printf(
+				TEXT("%s has no menu entries or submenus."),
+				*StepDescription));
+		}
+
+		for (int32 SubMenuIndex = 0; SubMenuIndex < SelectionStep->MenuData.SubMenus.Num(); ++SubMenuIndex)
+		{
+			const FMVInteractionMenuPageData& SubMenu = SelectionStep->MenuData.SubMenus[SubMenuIndex];
+			if (SubMenu.Entries.IsEmpty())
+			{
+				Context.AddWarning(FText::FromString(FString::Printf(
+					TEXT("%s submenu '%s' has no entries."),
+					*StepDescription,
+					*SubMenu.MenuId.ToString())));
 			}
 		}
 

@@ -19,11 +19,11 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
 	UMVInteractableComponent*, InteractableComponent);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(
-	FMVOnInteractionMenuActionRequested,
+	FMVOnInteractionMenuEntryRequested,
 	AActor*, Interactor,
 	UMVInteractableComponent*, InteractableComponent,
 	FGameplayTag, StepId,
-	FName, ActionName);
+	FMVMenuEntryData, EntryData);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FiveParams(
 	FMVOnInteractionActionRequested,
@@ -61,7 +61,7 @@ public:
 	FMVOnInteractionRequested OnInteractionRequested;
 
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|Interaction")
-	FMVOnInteractionMenuActionRequested OnInteractionMenuActionRequested;
+	FMVOnInteractionMenuEntryRequested OnInteractionMenuEntryRequested;
 
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|Interaction")
 	FMVOnInteractionActionRequested OnInteractionActionRequested;
@@ -129,8 +129,8 @@ private:
 	FGameplayTag ResolveStartStepId() const;
 	const TArray<FInstancedStruct>& ResolveInteractionSteps() const;
 	FMVInteractionMenuData MakeChoiceMenuData(const FMVInteractionChoiceStepData& Step) const;
-	FGameplayTag ResolveChoiceTransition(const FMVInteractionChoiceStepData& Step, FName SelectedActionName) const;
-	FGameplayTag ResolveStepTransition(const FMVInteractionSelectionStepData& Step, FName SelectedActionName) const;
+	FGameplayTag ResolveChoiceTransition(const FMVInteractionChoiceStepData& Step, FGameplayTag SelectedEntryId) const;
+	FGameplayTag ResolveStepTransition(const FMVInteractionSelectionStepData& Step, FGameplayTag SelectedEntryId) const;
 	const FInstancedStruct* FindInteractionStep(FGameplayTag StepId) const;
 	class UMVUISubsystem* GetUISubsystem() const;
 
@@ -144,7 +144,7 @@ private:
 	void HandleConfiguredMenuClosed(UMVInteractionMenuWindow* ClosedMenuWindow);
 
 	UFUNCTION()
-	void HandleConfiguredMenuActionSelected(UObject* SourceObject, FName ActionName);
+	void HandleConfiguredMenuEntrySelected(UObject* SourceObject, FMVMenuEntryData EntryData);
 
 	UFUNCTION()
 	void HandleConfiguredWindowDeactivated(UMVWindowBase* Window);
