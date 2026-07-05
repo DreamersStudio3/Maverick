@@ -148,6 +148,7 @@ protected:
 	virtual void BindDamageHandlers();
 	virtual void UpdateRecoverableStats(float DeltaTime);
 	virtual bool CanUseSprint() const;
+	virtual bool ShouldForceWalkGait() const;
 	
 private:
 	EGait DesiredGait();

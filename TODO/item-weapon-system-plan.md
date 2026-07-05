@@ -272,7 +272,7 @@
 ## PlayerConsumableComponent 책임
 
 - 플레이어 전용 회복약 슬롯 상태를 소유한다.
-- `InputManagerComponent.OnActionInputSubmitted`를 구독하고 `UseConsumable` 입력을 처리한다.
+- `InputManagerComponent`의 액션 입력 handler로 등록하고 `UseConsumable` 입력을 처리한다.
 - 회복약 사용 가능 여부를 판정한다.
 - 사용 액션 row가 설정되어 있으면 `ActionComponent`로 회복약 사용 액션을 실행한다.
 - 사용이 확정되면 HP를 회복하고 카운트를 1 감소시킨다.
@@ -294,11 +294,14 @@
 
 - 플레이어가 사망 상태가 아니다.
 - 회복약 카운트가 1 이상이다.
-- `StatComponent.CurrentHP < StatComponent.MaxHP`이다.
-- `ActionComponent`가 다른 액션을 실행 중이지 않다.
-- 회복약 사용 액션 row가 지정되어 있다면 해당 액션을 시작할 수 있다.
+- HP가 최대치여도 회복약은 사용할 수 있다. 이 경우 HP는 최대치로 유지되고 카운트만 감소한다.
+- `ActionComponent`가 다른 액션을 실행 중이지 않거나, 현재 액션의 `RecoveryEscapeWindow`가 열려 있어 전환할 수 있다.
+- 회복약 사용 액션 row가 지정되어 있다면 입력 시점에는 해당 액션만 시작하고, 실제 HP 회복과 카운트 감소는 몽타주 안의 `MV Apply Healing Potion` notify에서 적용한다.
+- 회복약 사용 몽타주에는 회복 확정 지점부터 `MV Recovery Escape Window` notify state를 붙여, 회복 직후 연속 회복 또는 다른 액션 몽타주로 탈출할 수 있게 한다.
 
-이번 브랜치에서는 회복 적용 타이밍을 단순화한다. 사용 액션이 정상 시작되면 즉시 회복과 카운트 감소를 적용한다. AnimNotify 기반 확정 타이밍, 피격 취소, 사용 도중 소모 롤백은 이후 확장으로 둔다.
+`InputManagerComponent`는 `Combat`, `Dodge`, `HitReaction`, `PlayerConsumableComponent`가 등록한 handler를 우선순위대로 호출한다. 입력 의도는 `Action.Input.*` GameplayTag로 전달한다. 입력 시점에 처리되지 않은 액션 입력은 짧게 버퍼에 남고, `RecoveryEscapeWindow`가 열릴 때 같은 라우팅 경로로 한 번 더 처리된다. 개별 도메인 컴포넌트가 window 이벤트를 직접 구독해 buffer를 비우는 방식은 늘리지 않는다.
+
+회복 몽타주는 full body가 아니라 upper body 슬롯으로 제작한다. 액션 row는 이동 입력을 막지 않고, 회복약 액션 실행 중 플레이어는 걷기만 가능하며 달리기/전력질주는 막는다. 피격 취소와 사용 도중 소모 롤백은 이후 확장으로 둔다.
 
 ## QuickSlot 연동
 
@@ -459,12 +462,15 @@ Q 스킬 스택은 아직 책임 소유자가 명확하지 않다. 구현 시에
 - [x] `AMVPlayerCharacter`에서 `PlayerConsumableComponent` 생성 및 초기화
 - [x] `UseConsumable` 입력을 `PlayerConsumableComponent.TryUseHealingPotion()`으로 연결
 - [x] `UMVStatComponent::RecoverHP(float Amount)` 추가
-- [x] 회복약 사용 성공 시 HP 회복과 카운트 감소 적용
+- [x] `MV Apply Healing Potion` notify 추가
+- [x] 회복약 사용 액션 row가 있으면 입력 시점에는 몽타주만 시작하고 notify 시점에 HP 회복과 카운트 감소 적용
 - [x] 회복약 카운트 변경 이벤트 브로드캐스트
 - [x] `MVMainHUDWidget`에서 플레이어 회복약 상태를 `HPSlot`에 바인딩
 - [x] 회복약 카운트 변경 시 퀵슬롯 카운트 갱신
 - [x] 회복약 카운트가 0이면 퀵슬롯 `bLocked` 처리
+- [x] 회복약 액션이 재생 중일 때 플레이어 이동을 걷기로 제한하고 전력질주를 막는다.
 - [x] `UMVFieldTransitionSubsystem::ResetPlayerStatsForTransition`에서 회복약 카운트 기본값 복구
+- [ ] 회복약 사용 몽타주를 upper body 슬롯으로 만들고 `MV Apply Healing Potion`, `MV Recovery Escape Window` notify를 배치한다.
 - [ ] 월드 리셋/사망 부활 후 퀵슬롯 카운트와 잠금 상태가 갱신되는지 확인
 
 ### 5.5단계: Skill HUD vertical slice 추가
@@ -489,7 +495,11 @@ Q 스킬 스택은 아직 책임 소유자가 명확하지 않다. 구현 시에
 - [ ] 테스트 무기 장착 시 현재 호환 경로의 `EquippedStyle` 갱신과 Combat map refresh가 깨지지 않는지 확인
 - [ ] 테스트 무기 장착 후 기존 공격/스킬 row의 `AbilityReference` 흐름이 유지되는지 확인
 - [ ] `UseConsumable` 입력으로 회복약이 사용되는지 확인
-- [ ] HP가 최대치면 회복약이 소비되지 않는지 확인
+- [ ] `UseConsumable` 키를 한 번 눌렀을 때 회복약이 1개만 소비되는지 확인
+- [ ] 회복약 HP 회복과 카운트 감소가 입력 프레임이 아니라 `MV Apply Healing Potion` notify 프레임에서 적용되는지 확인
+- [ ] 회복약 몽타주의 recovery escape window에서 연속 회복 또는 다른 액션 전환이 가능한지 확인
+- [ ] 회복약 몽타주 재생 중 하체 걷기는 가능하고 달리기/전력질주는 막히는지 확인
+- [ ] HP가 최대치여도 회복약이 사용되고 카운트가 감소하는지 확인
 - [ ] 회복약 카운트가 0이면 사용되지 않고 퀵슬롯이 비활성화되는지 확인
 - [ ] 사망 부활 또는 월드 리셋 이후 회복약 카운트가 기본값으로 복구되는지 확인
 - [ ] Q/R 스킬 쿨타임이 HUD에 표시되는지 확인
@@ -520,7 +530,11 @@ Q 스킬 스택은 아직 책임 소유자가 명확하지 않다. 구현 시에
 - 무기가 개별 어빌리티 클래스를 중복 소유하지 않고, 공격/스킬 row의 `AbilityReference` 흐름을 유지한다.
 - 인벤토리나 UI 없이도 BP 또는 테스트 코드에서 무기 교체를 검증할 수 있다.
 - `UseConsumable` 입력으로 회복약을 사용할 수 있다.
-- 회복약 사용 시 HP가 회복되고 카운트가 1 감소한다.
+- `UseConsumable` 키 입력 한 번에 회복약은 1개만 소비된다.
+- 회복약 사용 몽타주의 `MV Apply Healing Potion` notify 시점에 HP가 회복되고 카운트가 1 감소한다.
+- 회복약 사용 몽타주의 `MV Recovery Escape Window` 구간에서는 연속 회복 또는 다른 액션 전환이 가능하다.
+- 회복약 사용 몽타주 재생 중 플레이어는 걷기만 가능하고 달리기/전력질주는 불가능하다.
+- HP가 최대치여도 회복약은 사용되고 카운트가 1 감소한다.
 - 회복약 카운트가 0이면 퀵슬롯이 비활성화되고 사용이 실패한다.
 - 월드 리셋 또는 사망 부활 이후 회복약 카운트가 기본값으로 복구된다.
 - Q/R 스킬 쿨타임이 HUD에서 진행 상태로 표시된다.

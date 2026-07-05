@@ -71,6 +71,7 @@ private:
 	const FMVSprintActionRow* FindSprintActionRow() const;
 	FName ResolveSprintActionTableName() const;
 	FName ResolveSprintActionRowName() const;
+	virtual bool ShouldForceWalkGait() const override;
 	bool ShouldEquipConfiguredTestWeaponOnBeginPlay() const;
 	const FMVWeaponTableRow* ResolveConfiguredTestWeaponRow() const;
 	void RefreshLockOnPawnRotationExtension();

@@ -479,7 +479,7 @@ EGait AMVCharacterBase::DesiredGait()
 	}
 	else
 	{
-		if (CharacterInputState.WantsToWalk)
+		if (CharacterInputState.WantsToWalk || ShouldForceWalkGait())
 		{
 			return EGait::Walking;
 		}
@@ -503,6 +503,11 @@ bool AMVCharacterBase::CanSprint() const
 bool AMVCharacterBase::CanUseSprint() const
 {
 	return true;
+}
+
+bool AMVCharacterBase::ShouldForceWalkGait() const
+{
+	return false;
 }
 
 float AMVCharacterBase::CalculateCharacterMovementSpeed(float WalkSpeed, float RunSpeed, float SprintSpeed)

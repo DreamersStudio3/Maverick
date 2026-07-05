@@ -139,6 +139,11 @@ void AMVPlayerCharacter::UpdateRecoverableStats(const float DeltaTime)
 
 bool AMVPlayerCharacter::CanUseSprint() const
 {
+	if (PlayerConsumableComponent && PlayerConsumableComponent->IsHealingPotionUseActionRunning())
+	{
+		return false;
+	}
+
 	if (!StatComponent)
 	{
 		return true;
@@ -152,6 +157,11 @@ bool AMVPlayerCharacter::CanUseSprint() const
 	const float SprintStaminaCostPerSecond = ResolveSprintStaminaCostPerSecond();
 	return StatComponent->CurrentStamina >= ResolveSprintMinRequiredStamina()
 		&& (SprintStaminaCostPerSecond <= 0.0f || StatComponent->CurrentStamina > KINDA_SMALL_NUMBER);
+}
+
+bool AMVPlayerCharacter::ShouldForceWalkGait() const
+{
+	return PlayerConsumableComponent && PlayerConsumableComponent->IsHealingPotionUseActionRunning();
 }
 
 void AMVPlayerCharacter::CacheSprintActionData()
