@@ -4,9 +4,11 @@
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
 #include "GameFramework/Pawn.h"
+#include "Character/PC/Consumable/MVPlayerConsumableComponent.h"
 #include "Components/MVStatComponent.h"
 #include "UI/HUD/MVBossHPBarWidget.h"
 #include "UI/HUD/MVPlayerStatusWidget.h"
+#include "UI/HUD/MVQuickSlotWidget.h"
 
 void UMVMainHUDWidget::NativeOnInitialized()
 {
@@ -17,13 +19,14 @@ void UMVMainHUDWidget::NativeOnInitialized()
 
 void UMVMainHUDWidget::RefreshHUD()
 {
-	if (!PlayerStatus)
+	APawn* OwningPawn = GetOwningPlayerPawn();
+	if (PlayerStatus)
 	{
-		return;
+		PlayerStatus->BindToStatComponent(OwningPawn ? OwningPawn->FindComponentByClass<UMVStatComponent>() : nullptr);
 	}
 
-	APawn* OwningPawn = GetOwningPlayerPawn();
-	PlayerStatus->BindToStatComponent(OwningPawn ? OwningPawn->FindComponentByClass<UMVStatComponent>() : nullptr);
+	BindPlayerConsumableComponent(
+		OwningPawn ? OwningPawn->FindComponentByClass<UMVPlayerConsumableComponent>() : nullptr);
 }
 
 void UMVMainHUDWidget::InitBossStatus(FText BossName, float MaxHP)
@@ -71,6 +74,7 @@ void UMVMainHUDWidget::BuildNativeWidgetTree()
 
 	UCanvasPanel* RootCanvas = WidgetTree->ConstructWidget<UCanvasPanel>(UCanvasPanel::StaticClass(), TEXT("HUDRoot"));
 	PlayerStatus = WidgetTree->ConstructWidget<UMVPlayerStatusWidget>(UMVPlayerStatusWidget::StaticClass(), TEXT("PlayerStatus"));
+	HPSlot = WidgetTree->ConstructWidget<UMVQuickSlotWidget>(UMVQuickSlotWidget::StaticClass(), TEXT("HPSlot"));
 
 	WidgetTree->RootWidget = RootCanvas;
 
@@ -81,4 +85,63 @@ void UMVMainHUDWidget::BuildNativeWidgetTree()
 		PlayerStatusSlot->SetAutoSize(true);
 		PlayerStatusSlot->SetPosition(FVector2D(32.0f, 32.0f));
 	}
+
+	if (UCanvasPanelSlot* HPSlotCanvasSlot = RootCanvas->AddChildToCanvas(HPSlot))
+	{
+		HPSlotCanvasSlot->SetAnchors(FAnchors(0.0f, 1.0f));
+		HPSlotCanvasSlot->SetAlignment(FVector2D(0.0f, 1.0f));
+		HPSlotCanvasSlot->SetAutoSize(true);
+		HPSlotCanvasSlot->SetPosition(FVector2D(32.0f, -32.0f));
+	}
+}
+
+void UMVMainHUDWidget::BindPlayerConsumableComponent(UMVPlayerConsumableComponent* ConsumableComponent)
+{
+	if (BoundPlayerConsumableComponent == ConsumableComponent)
+	{
+		ApplyHealingPotionQuickSlotView();
+		return;
+	}
+
+	if (BoundPlayerConsumableComponent)
+	{
+		BoundPlayerConsumableComponent->OnHealingPotionStateChanged.RemoveDynamic(
+			this,
+			&UMVMainHUDWidget::HandleHealingPotionStateChanged);
+	}
+
+	BoundPlayerConsumableComponent = ConsumableComponent;
+
+	if (BoundPlayerConsumableComponent)
+	{
+		BoundPlayerConsumableComponent->OnHealingPotionStateChanged.AddUniqueDynamic(
+			this,
+			&UMVMainHUDWidget::HandleHealingPotionStateChanged);
+	}
+
+	ApplyHealingPotionQuickSlotView();
+}
+
+void UMVMainHUDWidget::ApplyHealingPotionQuickSlotView()
+{
+	if (!HPSlot)
+	{
+		return;
+	}
+
+	if (!BoundPlayerConsumableComponent)
+	{
+		FMVQuickSlotViewData EmptyViewData;
+		EmptyViewData.bLocked = true;
+		HPSlot->SetViewData(EmptyViewData);
+		return;
+	}
+
+	HPSlot->SetViewData(BoundPlayerConsumableComponent->BuildHealingPotionQuickSlotViewData());
+}
+
+void UMVMainHUDWidget::HandleHealingPotionStateChanged(
+	const FMVHealingPotionRuntimeState& /*HealingPotionState*/)
+{
+	ApplyHealingPotionQuickSlotView();
 }

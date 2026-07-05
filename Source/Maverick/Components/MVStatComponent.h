@@ -155,6 +155,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|HP")
 	void SetCurrentHP(float InCurrentHP);
 
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|HP")
+	void RecoverHP(float Amount);
+
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Stamina")
 	void SetMaxStamina(float InMaxStamina);
 

@@ -90,8 +90,8 @@ HitReaction 테이블은 CSV 생성 체인에서 빼고 `Content/Table/HitReacti
 
 ## WeaponComponent 연계
 
-- [ ] `WeaponComponent`가 추가되면 HitResolver의 `ResolveEquippedWeaponAttackPower`에서 현재 무기 스탯을 직접 조회한다.
-- [ ] 무기 아이템이 없는 상태도 맨손 무기 기본 장착으로 처리한다.
+- [x] `WeaponComponent`가 추가되면 HitResolver의 `ResolveWeaponHitSnapshot`에서 현재 무기 state를 캡처해 히트 데이터에 전달한다.
+- [x] 무기 아이템이 없는 상태도 맨손 무기 기본 장착으로 처리한다.
 
 ## develop 병합 정리
 

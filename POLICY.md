@@ -2,6 +2,13 @@
 
 ## C++ 구현 규칙
 
+### 식별자와 GameplayTag
+
+- 새 게임플레이 도메인 식별자, 코드, 분류 키를 추가할 때는 `FName`, `FString`, 정수 ID보다 `FGameplayTag` 사용을 먼저 검토한다.
+- 아이템, 캐릭터, 액션 프로필, 전투 프로필처럼 런타임 규칙과 데이터 테이블을 가로질러 참조되는 값은 특별한 이유가 없으면 `FGameplayTag`를 표준 식별자로 둔다.
+- DataTable row name, 에디터 전용 임시 키, 외부 도구가 요구하는 정수 키처럼 엔진/툴 제약이 있는 경우에는 `FName`이나 정수 ID를 사용할 수 있다.
+- 같은 개념에 대해 `ItemId`와 `ItemTag`처럼 별도 ID와 GameplayTag를 중복으로 두지 않는다. 둘 다 필요하다면 각 필드의 책임과 동기화 규칙을 문서화한다.
+
 ### Unreal Engine Unity Build 호환성
 
 - Unreal Engine unity build에서는 여러 `.cpp` 파일이 하나의 번역 단위로 묶일 수 있으므로, 익명 네임스페이스나 `static`만으로 파일 간 이름 충돌을 피할 수 있다고 가정하지 않는다.

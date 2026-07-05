@@ -260,6 +260,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Action")
 	bool TryCombatAction(EMVCombatActionTypes InActionType, int32 SkillIndex = 0);
 
+	// Call When Character Change Weapon --> have to receive Event from Character
+	UFUNCTION(BlueprintCallable, Category = "Combat|Weapon")
+	void ChangeWeapon(EMVEquippedStyle NewStyle);
+
 protected:
 	UFUNCTION()
 	void HandleActionInputSubmitted(int32 ActionId, FVector2D ControllerSpaceInput, bool bHasMovementInput);
@@ -275,9 +279,6 @@ protected:
 	
 	void ResetBasicAttackMap();
 	void ResetSkillMap();
-	
-	// Call When Character Change Weapon --> have to receive Event from Character
-	void ChangeWeapon(EMVEquippedStyle NewStyle);
 	
 protected:
 	// Should Return DataTable using ChooserTable In Blueprint

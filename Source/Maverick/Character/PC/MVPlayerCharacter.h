@@ -5,20 +5,22 @@
 #include "CoreMinimal.h"
 #include "Character/MVCharacterBase.h"
 #include "Tables/MVMovementActionTableTypes.h"
+#include "Tables/MVWeaponTableTypes.h"
 #include "MVPlayerCharacter.generated.h"
 
 class UMVPlayerDodge;
 class UMVPlayerInteractionDetector;
+class UMVPlayerConsumableComponent;
 
 /**
  * 로컬 플레이어 캐릭터 런타임 본체.
  *
- * CharacterBase의 공통 이동/스탯/액션 연결 위에 플레이어 입력에 묶인 회피, 상호작용 감지,
+ * CharacterBase의 공통 이동/스탯/액션 연결 위에 플레이어 입력에 묶인 회피, 회복약, 상호작용 감지,
  * 락온 회전 억제 정책을 얹는다. 플레이어 전용 정책은 컴포넌트로 공개하지 않고 이 클래스가 소유한
  * UObject 서브모듈에 위임해 NPC 재사용 가능 컴포넌트와 구분한다.
  *
  * 책임:
- *   - Dodge와 InteractionDetector 서브모듈을 생성하고 BeginPlay/Tick/EndPlay 수명주기를 전달한다.
+ *   - Dodge와 InteractionDetector 서브모듈, 회복약 컴포넌트를 생성하고 BeginPlay/Tick/EndPlay 수명주기를 전달한다.
  *   - 전력질주 스태미너 비용과 고갈 후 재개 조건을 플레이어 액션 데이터 기준으로 관리한다.
  *   - 플레이어 피격 리액션 핸들러를 공통 피격 이벤트에 연결한다.
  *   - 락온 대상이 있을 때 질주/회피 구간의 pawn rotation extension tick 억제를 관리한다.
@@ -47,6 +49,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Interaction")
 	bool SelectPreviousInteractable();
 
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Weapon|Debug")
+	bool EquipConfiguredTestWeapon();
+
 	void BeginLockOnPawnRotationSuppression();
 	void EndLockOnPawnRotationSuppression();
 
@@ -66,6 +71,8 @@ private:
 	const FMVSprintActionRow* FindSprintActionRow() const;
 	FName ResolveSprintActionTableName() const;
 	FName ResolveSprintActionRowName() const;
+	bool ShouldEquipConfiguredTestWeaponOnBeginPlay() const;
+	const FMVWeaponTableRow* ResolveConfiguredTestWeaponRow() const;
 	void RefreshLockOnPawnRotationExtension();
 	bool ShouldSuppressLockOnPawnRotation() const;
 
@@ -75,6 +82,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Instanced, Category = "PlayerCharacter")
 	TObjectPtr<UMVPlayerInteractionDetector> InteractionDetector;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "PlayerCharacter")
+	TObjectPtr<UMVPlayerConsumableComponent> PlayerConsumableComponent;
 
 	UPROPERTY(BlueprintReadOnly, Category = "LocomotionData|Stamina")
 	uint8 bIsSprintBlockedByStamina : 1;
@@ -93,6 +103,15 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LocomotionData|Sprint|Table", meta = (ClampMin = "1"))
 	int32 DefaultSprintRowIndex = 1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Weapon|Debug")
+	bool bEquipTestWeaponOnBeginPlay = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Weapon|Debug", meta = (EditCondition = "bEquipTestWeaponOnBeginPlay"))
+	FDataTableRowHandle TestWeaponRow;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Weapon|Debug", meta = (EditCondition = "bEquipTestWeaponOnBeginPlay"))
+	FMVWeaponTableRow InlineTestWeapon;
 
 private:
 	bool bHasSprintActionData = false;

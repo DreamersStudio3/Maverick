@@ -2,12 +2,16 @@
 
 
 #include "MVPlayerCharacter.h"
+#include "Character/PC/Consumable/MVPlayerConsumableComponent.h"
 #include "Character/PC/Dodge/MVPlayerDodge.h"
 #include "Character/PC/InteractionDetector/MVPlayerInteractionDetector.h"
 #include "Components/MVHitReactionComponent.h"
 #include "Components/MVStatComponent.h"
+#include "Components/MVWeaponComponent.h"
+#include "Engine/DataTable.h"
 #include "LockOnTargetComponent.h"
 #include "LockOnTargetExtensions/PawnRotationExtension.h"
+#include "Tags/MVGameplayTags.h"
 #include "Tables/MVTableManager.h"
 
 namespace
@@ -37,7 +41,15 @@ AMVPlayerCharacter::AMVPlayerCharacter()
 
 	Dodge = CreateDefaultSubobject<UMVPlayerDodge>(TEXT("Dodge"));
 	InteractionDetector = CreateDefaultSubobject<UMVPlayerInteractionDetector>(TEXT("InteractionDetector"));
+	PlayerConsumableComponent = CreateDefaultSubobject<UMVPlayerConsumableComponent>(TEXT("PlayerConsumableComponent"));
 	bIsSprintBlockedByStamina = false;
+
+	InlineTestWeapon.ItemTag = MVGameplayTags::Item_Weapon_OneHand_TestSword;
+	InlineTestWeapon.DisplayName = NSLOCTEXT("MaverickWeapon", "TestSwordDisplayName", "Test Sword");
+	InlineTestWeapon.EquippedStyle = EMVEquippedStyle::OneHand;
+	InlineTestWeapon.AttackPower = 20.0f;
+	InlineTestWeapon.RangeType = EMVWeaponRangeType::Melee;
+	InlineTestWeapon.AttachSocketName = TEXT("hand_r_socket");
 }
 
 // Called when the game starts or when spawned
@@ -55,6 +67,16 @@ void AMVPlayerCharacter::BeginPlay()
 	if (InteractionDetector)
 	{
 		InteractionDetector->Initialize(*this);
+	}
+
+	if (PlayerConsumableComponent)
+	{
+		PlayerConsumableComponent->Initialize(this);
+	}
+
+	if (ShouldEquipConfiguredTestWeaponOnBeginPlay())
+	{
+		EquipConfiguredTestWeapon();
 	}
 }
 
@@ -261,6 +283,49 @@ FName AMVPlayerCharacter::ResolveSprintActionRowName() const
 		: FName(*FString::Printf(TEXT("Sprint_%s_%02d"), *CharacterIndexCodeToken, FMath::Max(1, DefaultSprintRowIndex)));
 }
 
+bool AMVPlayerCharacter::ShouldEquipConfiguredTestWeaponOnBeginPlay() const
+{
+	return bEquipTestWeaponOnBeginPlay
+		|| (TestWeaponRow.DataTable && !TestWeaponRow.RowName.IsNone());
+}
+
+const FMVWeaponTableRow* AMVPlayerCharacter::ResolveConfiguredTestWeaponRow() const
+{
+	if (TestWeaponRow.DataTable)
+	{
+		if (TestWeaponRow.RowName.IsNone())
+		{
+			UE_LOG(
+				LogTemp,
+				Warning,
+				TEXT("TestWeaponRow has a DataTable but no RowName. DataTable=%s."),
+				*GetNameSafe(TestWeaponRow.DataTable));
+			return nullptr;
+		}
+
+		if (!TestWeaponRow.DataTable->GetRowStruct()
+			|| !TestWeaponRow.DataTable->GetRowStruct()->IsChildOf(FMVWeaponTableRow::StaticStruct()))
+		{
+			UE_LOG(
+				LogTemp,
+				Warning,
+				TEXT("TestWeaponRow has invalid row struct. DataTable=%s RowStruct=%s Expected=MVWeaponTableRow."),
+				*GetNameSafe(TestWeaponRow.DataTable),
+				TestWeaponRow.DataTable->GetRowStruct()
+					? *TestWeaponRow.DataTable->GetRowStruct()->GetName()
+					: TEXT("None"));
+			return nullptr;
+		}
+
+		return TestWeaponRow.DataTable->FindRow<FMVWeaponTableRow>(
+			TestWeaponRow.RowName,
+			TEXT("MVPlayerCharacter"),
+			false);
+	}
+
+	return InlineTestWeapon.ItemTag.IsValid() ? &InlineTestWeapon : nullptr;
+}
+
 void AMVPlayerCharacter::BindDamageHandlers()
 {
 	Super::BindDamageHandlers();
@@ -304,6 +369,33 @@ bool AMVPlayerCharacter::SelectNextInteractable()
 bool AMVPlayerCharacter::SelectPreviousInteractable()
 {
 	return InteractionDetector ? InteractionDetector->SelectPreviousInteractable() : false;
+}
+
+bool AMVPlayerCharacter::EquipConfiguredTestWeapon()
+{
+	if (!WeaponComponent)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Cannot equip configured test weapon because WeaponComponent is missing."));
+		return false;
+	}
+
+	const FMVWeaponTableRow* WeaponRow = ResolveConfiguredTestWeaponRow();
+	if (!WeaponRow)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Cannot equip configured test weapon because no valid weapon row was resolved."));
+		return false;
+	}
+
+	const bool bEquipped = WeaponComponent->EquipWeaponFromRow(*WeaponRow);
+	if (!bEquipped)
+	{
+		UE_LOG(
+			LogTemp,
+			Warning,
+			TEXT("Failed to equip configured test weapon. ItemTag=%s."),
+			*WeaponRow->ItemTag.ToString());
+	}
+	return bEquipped;
 }
 
 void AMVPlayerCharacter::BeginLockOnPawnRotationSuppression()

@@ -15,6 +15,13 @@ void UMVQuickSlotWidget::UpdateCount(int32 NewCount)
 	ApplyViewData(CurrentViewData);
 }
 
+void UMVQuickSlotWidget::UpdateCountAndLocked(const int32 NewCount, const bool bLocked)
+{
+	CurrentViewData.Count = NewCount;
+	CurrentViewData.bLocked = bLocked;
+	ApplyViewData(CurrentViewData);
+}
+
 void UMVQuickSlotWidget::NativePreConstruct()
 {
 	Super::NativePreConstruct();
@@ -46,5 +53,6 @@ void UMVQuickSlotWidget::ApplyViewData(const FMVQuickSlotViewData& InViewData)
 		HotKeyTextBlock->SetText(InViewData.HotKeyText);
 	}
 
-	SetIsEnabled(!InViewData.bLocked);
+	const bool bEffectiveLocked = InViewData.bLocked || InViewData.Count <= 0;
+	SetIsEnabled(!bEffectiveLocked);
 }

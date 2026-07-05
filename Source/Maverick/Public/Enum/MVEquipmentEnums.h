@@ -10,3 +10,10 @@ enum class EMVEquippedStyle : uint8
 	OneHand UMETA(DisplayName = "One Hand"),
 	TwoHand UMETA(DisplayName = "Two Hand")
 };
+
+UENUM(BlueprintType)
+enum class EMVWeaponRangeType : uint8
+{
+	Melee UMETA(DisplayName = "Melee"),
+	Ranged UMETA(DisplayName = "Ranged")
+};
