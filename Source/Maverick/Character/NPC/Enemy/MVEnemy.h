@@ -41,6 +41,16 @@ public:
 	bool Attack(EMVAttackDirection AttackDirection);
 	bool Attack(EMVAttackDirection AttackDirection, int32& OutAttackInstanceId);
 
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Maverick|Enemy|Combat")
+	bool TryHeavyAttack();
+	virtual bool TryHeavyAttack_Implementation();
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Maverick|Enemy|Combat")
+	bool TrySkillAttack(int32 SkillIndex);
+	virtual bool TrySkillAttack_Implementation(int32 SkillIndex);
+
+	void DestroyWeaponActor();
+
 	FMVEnemyAttackMontageEndedSignature OnAttackMontageEnded;
 
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|Enemy|Event")

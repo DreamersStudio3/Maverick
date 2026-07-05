@@ -2,6 +2,7 @@
 
 #include "AIController.h"
 #include "Components/MVActionComponent.h"
+#include "Components/MVStatComponent.h"
 #include "DrawDebugHelpers.h"
 #include "Kismet/GameplayStatics.h"
 #include "StateTreeExecutionContext.h"
@@ -142,6 +143,21 @@ void UpdateGlobalSensingCooldownContext(FMVGlobalSensingTaskInstanceData& Instan
 		|| InstanceData.CooldownComponent->IsCooldownReady(InstanceData.AttackCadenceActionId);
 }
 
+void UpdateGlobalSensingLifeContext(FMVGlobalSensingTaskInstanceData& InstanceData)
+{
+	InstanceData.bIsDead = false;
+
+	if (!InstanceData.Owner)
+	{
+		return;
+	}
+
+	if (const UMVStatComponent* StatComponent = InstanceData.Owner->FindComponentByClass<UMVStatComponent>())
+	{
+		InstanceData.bIsDead = StatComponent->IsDead();
+	}
+}
+
 void DrawGlobalSensingCombatAreaDebug(
 	const FMVGlobalSensingTaskInstanceData& InstanceData,
 	const FVector& OwnerLocation,
@@ -209,6 +225,8 @@ EStateTreeRunStatus UpdateGlobalSensingSnapshot(
 		UpdateGlobalSensingCombatContext(InstanceData);
 		return EStateTreeRunStatus::Failed;
 	}
+
+	UpdateGlobalSensingLifeContext(InstanceData);
 
 	if (!InstanceData.Target)
 	{

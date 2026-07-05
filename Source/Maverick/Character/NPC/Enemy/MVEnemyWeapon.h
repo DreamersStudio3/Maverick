@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "MVEnemyWeapon.generated.h"
 
+class USkeletalMeshComponent;
+
 UCLASS()
 class MAVERICK_API AMVEnemyWeapon : public AActor
 {

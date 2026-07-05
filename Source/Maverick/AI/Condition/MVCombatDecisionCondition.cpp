@@ -95,9 +95,13 @@ bool FMVCombatDecisionCondition::TestCondition(FStateTreeExecutionContext& Conte
 	const FInstanceDataType& InstanceData = Context.GetInstanceData<FInstanceDataType>(*this);
 	const FMVAICombatContext& CombatContext = InstanceData.CombatContext;
 
-	if (InstanceData.DesiredState == EMVAICombatDecisionState::Dead)
+	switch (InstanceData.DesiredState)
 	{
+	case EMVAICombatDecisionState::Dead:
 		return CombatContext.bIsDead;
+
+	default:
+		break;
 	}
 
 	if (CombatContext.bIsDead || !CombatContext.bHasTarget || CombatContext.bActionRunning)
@@ -107,6 +111,9 @@ bool FMVCombatDecisionCondition::TestCondition(FStateTreeExecutionContext& Conte
 
 	switch (InstanceData.DesiredState)
 	{
+	case EMVAICombatDecisionState::Dead:
+		return false;
+
 	case EMVAICombatDecisionState::CounterAttack:
 		return CombatContext.bCounterWindow
 			&& CombatDecisionIsCandidateReady(CombatContext, InstanceData.CounterAttack);

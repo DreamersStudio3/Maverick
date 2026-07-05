@@ -6,8 +6,10 @@
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimMontage.h"
 #include "Character/NPC/Enemy/MVEnemyWeapon.h"
+#include "Components/MVCombatComponent.h"
 #include "Components/MVHitReactionComponent.h"
 #include "Components/MVStatComponent.h"
+#include "Enum/MVCombatActionTypes.h"
 #include "TimerManager.h"
 #include "UI/HUD/MVMainHUDWidget.h"
 #include "UI/System/MVUISubsystem.h"
@@ -107,12 +109,37 @@ bool AMVEnemy::Attack(const EMVAttackDirection AttackDirection, int32& OutAttack
 	return false;
 }
 
+bool AMVEnemy::TryHeavyAttack_Implementation()
+{
+	UMVCombatComponent* CombatComponent = FindComponentByClass<UMVCombatComponent>();
+	return CombatComponent
+		&& CombatComponent->TryCombatAction(EMVCombatActionTypes::HeavyAttack);
+}
+
+bool AMVEnemy::TrySkillAttack_Implementation(const int32 SkillIndex)
+{
+	UMVCombatComponent* CombatComponent = FindComponentByClass<UMVCombatComponent>();
+	return CombatComponent
+		&& CombatComponent->TryCombatAction(EMVCombatActionTypes::Skill, SkillIndex);
+}
+
+void AMVEnemy::DestroyWeaponActor()
+{
+	if (WeaponActor)
+	{
+		WeaponActor->Destroy();
+		WeaponActor = nullptr;
+	}
+}
+
 void AMVEnemy::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	if (UWorld* World = GetWorld())
 	{
 		World->GetTimerManager().ClearTimer(BossHUDBindRetryTimerHandle);
 	}
+
+	DestroyWeaponActor();
 
 	Super::EndPlay(EndPlayReason);
 }
