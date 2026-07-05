@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Interface/MVActionInputHandlerInterface.h"
 #include "Struct/MVHealingPotionTypes.h"
 #include "Tables/MVHealingPotionTableTypes.h"
 #include "UI/HUD/MVQuickSlotWidget.h"
@@ -24,7 +25,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnHealingPotionStateChanged, cons
  *   3) EndPlay -> 입력 이벤트를 해제한다.
  */
 UCLASS(ClassGroup = (Maverick), meta = (BlueprintSpawnableComponent))
-class MAVERICK_API UMVPlayerConsumableComponent : public UActorComponent
+class MAVERICK_API UMVPlayerConsumableComponent : public UActorComponent, public IMVActionInputHandlerInterface
 {
 	GENERATED_BODY()
 
@@ -66,17 +67,29 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Consumable|HealingPotion")
 	FText HealingPotionHotKeyText;
 
+	UFUNCTION(BlueprintPure, Category = "Maverick|Consumable")
+	bool IsHealingPotionUseActionRunning() const;
+
+	virtual bool TryHandleActionInput(FGameplayTag ActionInputTag, FVector2D ControllerSpaceInput, bool bHasMovementInput) override;
+
 private:
 	UFUNCTION()
-	void HandleActionInputSubmitted(int32 ActionId, FVector2D ControllerSpaceInput, bool bHasMovementInput);
+	void HandleHPChanged(float CurrentValue, float MaxValue);
 
 	UFUNCTION()
-	void HandleHPChanged(float CurrentValue, float MaxValue);
+	void HandleActionStarted(FName ActionTableName, FName ActionRowName);
+
+	UFUNCTION()
+	void HandleActionEnded(FName ActionTableName, FName ActionRowName, bool bInterrupted);
 
 	void BindOwnerEvents();
 	void UnbindOwnerEvents();
 	void InitializeHealingPotionState();
 	bool CanUseHealingPotion() const;
+	bool HasHealingPotionUseAction() const;
+	bool CanTransitionActiveActionForHealingPotion() const;
+	bool IsHealingPotionUseAction(FName ActionTableName, FName ActionRowName) const;
+	FName ResolveHealingPotionUseActionTableName() const;
 	void BroadcastHealingPotionStateChanged();
 
 	UPROPERTY(Transient)
@@ -84,4 +97,7 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Consumable", meta = (AllowPrivateAccess = "true"))
 	FMVHealingPotionRuntimeState HealingPotionState;
+
+	UPROPERTY(Transient)
+	bool bHealingPotionUseActionRunning = false;
 };

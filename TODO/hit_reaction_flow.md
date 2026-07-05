@@ -47,8 +47,8 @@ HitReaction 테이블은 CSV 생성 체인에서 빼고 `Content/Table/HitReacti
 - [x] HitReaction 상황별 테이블은 CSV 생성 체인에서 제외하고 `Content/Table/HitReaction/P1` 아래 uasset DataTable로 직접 관리한다.
 - [x] `Refresh Table Manifest` 명령으로 직접관리 DataTable을 manifest에 등록한다.
 - [x] 리커버리/팔로쓰루 window 입력은 `InputManagerComponent`가 입력 의도와 이동 입력 스냅샷으로 버퍼링/브로드캐스트한다.
-- [x] PlayerCharacter.Dodge 서브모듈은 `InputManagerComponent.SubmitActionInput(Dodge)` 이벤트를 구독해 기존 Dodge 액션 실행을 담당한다.
-- [x] `HitReactionComponent`는 액션 입력 이벤트를 구독하고, Dodge 입력은 별도 `EscapeDodge` recovery 액션, Dodge 외 액션 입력은 별도 `Getup` recovery 액션으로 소비한다.
+- [x] PlayerCharacter.Dodge 서브모듈은 `InputManagerComponent.SubmitActionInput(Action.Input.Dodge)` 라우팅을 통해 기존 Dodge 액션 실행을 담당한다.
+- [x] `HitReactionComponent`는 `InputManagerComponent`의 high-priority handler로 등록되고, `Action.Input.Dodge` 입력은 별도 `EscapeDodge` recovery 액션, Dodge 외 액션 입력은 별도 `Getup` recovery 액션으로 소비한다.
 - [x] 이동 입력은 HitReactionComponent가 이벤트로 직접 소비하지 않고, Recovery window가 열리는 순간 InputManager에 저장된 최근 이동 입력을 조회해 SH/LH는 현재 HitReaction 취소, KD/AB는 별도 `EscapeDodge` recovery 액션으로 소비한다.
 - [x] SmallHit/LargeHit은 넘어지는 리액션이 아니므로 Getup/EscapeDodge 섹션을 찾지 않고, Recovery window 안에서 이동 또는 Dodge 입력이 있으면 현재 피격 몽타주를 직접 cancel한다.
 - [x] KnockDown/Airborne은 Recovery window 안에 저장된 입력이 있으면 별도 `EscapeDodge` recovery 액션으로 전환한다.

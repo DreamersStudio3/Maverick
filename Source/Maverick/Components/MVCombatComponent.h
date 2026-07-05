@@ -7,6 +7,7 @@
 #include "Public/Tables/MVSkillDataTableColumn.h"
 #include "Public/Struct/MVCombatActionTableInput.h"
 #include "Components/MVInputManagerComponent.h"
+#include "Interface/MVActionInputHandlerInterface.h"
 
 #include "MVCombatComponent.generated.h"
 
@@ -241,7 +242,7 @@ class UChooserTable;
 class UMVStatComponent;
 
 UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class MAVERICK_API UMVCombatComponent : public UActorComponent
+class MAVERICK_API UMVCombatComponent : public UActorComponent, public IMVActionInputHandlerInterface
 {
 	GENERATED_BODY()
 
@@ -252,6 +253,7 @@ public:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 public:
 	// Called every frame
@@ -265,11 +267,9 @@ public:
 	void ChangeWeapon(EMVEquippedStyle NewStyle);
 
 protected:
-	UFUNCTION()
-	void HandleActionInputSubmitted(int32 ActionId, FVector2D ControllerSpaceInput, bool bHasMovementInput);
-	UFUNCTION()
-	void HandleRecoveryEscapeWindowChanged(bool bOpen);
-	bool ChooseTryCombatAction(const int32 ActionId);
+	virtual bool TryHandleActionInput(FGameplayTag ActionInputTag, FVector2D ControllerSpaceInput, bool bHasMovementInput) override;
+	bool ChooseTryCombatAction(FGameplayTag ActionInputTag);
+	bool IsCombatActionInputTag(FGameplayTag ActionInputTag) const;
 
 	bool TryBasicAttack(EMVCombatActionTypes InActionType);
 	bool TrySkill(EMVCombatActionTypes InActionType, int32 SkillIndex = 0);
@@ -313,12 +313,5 @@ public:
 
 private:
 	double LastBasicAttackedTime;
-	TSet<int32> ValidActionIds = {
-		MVActionIds::LightAttack,
-		MVActionIds::HeavyAttack,
-		MVActionIds::ChargeAttack,
-		MVActionIds::Skill
-	};
-
 	TObjectPtr<UMVStatComponent> StatComponent;
 };

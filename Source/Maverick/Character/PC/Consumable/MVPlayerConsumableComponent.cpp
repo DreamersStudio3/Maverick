@@ -4,6 +4,7 @@
 #include "Components/MVActionComponent.h"
 #include "Components/MVInputManagerComponent.h"
 #include "Components/MVStatComponent.h"
+#include "Engine/DataTable.h"
 #include "Tables/MVActionTableTypes.h"
 #include "Tags/MVGameplayTags.h"
 
@@ -54,14 +55,23 @@ bool UMVPlayerConsumableComponent::TryUseHealingPotion()
 	if (HealingPotionData.UseActionRow.DataTable && !HealingPotionData.UseActionRow.RowName.IsNone())
 	{
 		UMVActionComponent* ActionComponent = OwnerCharacter ? OwnerCharacter->ActionComponent : nullptr;
-		if (!ActionComponent
-			|| !ActionComponent->TryStartActionFromRowHandle(
-				HealingPotionData.UseActionRow,
-				HealingPotionData.UseActionStartSection))
+		const bool bShouldTransition = CanTransitionActiveActionForHealingPotion();
+		const bool bStarted = ActionComponent
+			&& (bShouldTransition
+				? ActionComponent->TryTransitionActionFromRowHandle(
+					HealingPotionData.UseActionRow,
+					HealingPotionData.UseActionStartSection)
+				: ActionComponent->TryStartActionFromRowHandle(
+					HealingPotionData.UseActionRow,
+					HealingPotionData.UseActionStartSection));
+		if (!bStarted)
 		{
 			BroadcastHealingPotionStateChanged();
 			return false;
 		}
+
+		BroadcastHealingPotionStateChanged();
+		return true;
 	}
 
 	return ApplyHealingPotionEffect();
@@ -76,8 +86,7 @@ bool UMVPlayerConsumableComponent::ApplyHealingPotionEffect()
 	}
 
 	if (HealingPotionState.CurrentCount <= 0
-		|| HealingPotionState.HealAmount <= 0.0f
-		|| StatComponent->CurrentHP >= StatComponent->MaxHP)
+		|| HealingPotionState.HealAmount <= 0.0f)
 	{
 		BroadcastHealingPotionStateChanged();
 		return false;
@@ -94,6 +103,7 @@ void UMVPlayerConsumableComponent::RestoreHealingPotionCountForWorldReset()
 	const int32 DefaultCount = FMath::Clamp(HealingPotionData.DefaultCount, 0, MaxCarryCount);
 	HealingPotionState.CurrentCount = DefaultCount;
 	HealingPotionState.MaxCarryCount = MaxCarryCount;
+	bHealingPotionUseActionRunning = false;
 	BroadcastHealingPotionStateChanged();
 }
 
@@ -123,20 +133,45 @@ FMVQuickSlotViewData UMVPlayerConsumableComponent::BuildHealingPotionQuickSlotVi
 	return ViewData;
 }
 
-void UMVPlayerConsumableComponent::HandleActionInputSubmitted(
-	const int32 ActionId,
+bool UMVPlayerConsumableComponent::IsHealingPotionUseActionRunning() const
+{
+	return bHealingPotionUseActionRunning;
+}
+
+bool UMVPlayerConsumableComponent::TryHandleActionInput(
+	const FGameplayTag ActionInputTag,
 	const FVector2D /*ControllerSpaceInput*/,
 	const bool /*bHasMovementInput*/)
 {
-	if (ActionId == MVActionIds::UseConsumable)
+	if (ActionInputTag.MatchesTagExact(MVGameplayTags::Action_Input_UseConsumable))
 	{
-		TryUseHealingPotion();
+		return TryUseHealingPotion();
 	}
+
+	return false;
 }
 
 void UMVPlayerConsumableComponent::HandleHPChanged(float /*CurrentValue*/, float /*MaxValue*/)
 {
 	BroadcastHealingPotionStateChanged();
+}
+
+void UMVPlayerConsumableComponent::HandleActionStarted(const FName ActionTableName, const FName ActionRowName)
+{
+	bHealingPotionUseActionRunning = IsHealingPotionUseAction(ActionTableName, ActionRowName);
+	BroadcastHealingPotionStateChanged();
+}
+
+void UMVPlayerConsumableComponent::HandleActionEnded(
+	const FName ActionTableName,
+	const FName ActionRowName,
+	bool /*bInterrupted*/)
+{
+	if (bHealingPotionUseActionRunning || IsHealingPotionUseAction(ActionTableName, ActionRowName))
+	{
+		bHealingPotionUseActionRunning = false;
+		BroadcastHealingPotionStateChanged();
+	}
 }
 
 void UMVPlayerConsumableComponent::BindOwnerEvents()
@@ -148,12 +183,23 @@ void UMVPlayerConsumableComponent::BindOwnerEvents()
 
 	if (UMVInputManagerComponent* InputManager = OwnerCharacter->InputManagerComponent)
 	{
-		InputManager->OnActionInputSubmitted.RemoveDynamic(
+		InputManager->RegisterActionInputHandler(this, MVActionInputHandlerPriorities::Consumable);
+	}
+
+	if (UMVActionComponent* ActionComponent = OwnerCharacter->ActionComponent)
+	{
+		ActionComponent->OnActionStarted.RemoveDynamic(
 			this,
-			&UMVPlayerConsumableComponent::HandleActionInputSubmitted);
-		InputManager->OnActionInputSubmitted.AddUniqueDynamic(
+			&UMVPlayerConsumableComponent::HandleActionStarted);
+		ActionComponent->OnActionStarted.AddUniqueDynamic(
 			this,
-			&UMVPlayerConsumableComponent::HandleActionInputSubmitted);
+			&UMVPlayerConsumableComponent::HandleActionStarted);
+		ActionComponent->OnActionEnded.RemoveDynamic(
+			this,
+			&UMVPlayerConsumableComponent::HandleActionEnded);
+		ActionComponent->OnActionEnded.AddUniqueDynamic(
+			this,
+			&UMVPlayerConsumableComponent::HandleActionEnded);
 	}
 
 	if (UMVStatComponent* StatComponent = OwnerCharacter->StatComponent)
@@ -176,9 +222,17 @@ void UMVPlayerConsumableComponent::UnbindOwnerEvents()
 
 	if (UMVInputManagerComponent* InputManager = OwnerCharacter->InputManagerComponent)
 	{
-		InputManager->OnActionInputSubmitted.RemoveDynamic(
+		InputManager->UnregisterActionInputHandler(this);
+	}
+
+	if (UMVActionComponent* ActionComponent = OwnerCharacter->ActionComponent)
+	{
+		ActionComponent->OnActionStarted.RemoveDynamic(
 			this,
-			&UMVPlayerConsumableComponent::HandleActionInputSubmitted);
+			&UMVPlayerConsumableComponent::HandleActionStarted);
+		ActionComponent->OnActionEnded.RemoveDynamic(
+			this,
+			&UMVPlayerConsumableComponent::HandleActionEnded);
 	}
 
 	if (UMVStatComponent* StatComponent = OwnerCharacter->StatComponent)
@@ -198,6 +252,7 @@ void UMVPlayerConsumableComponent::InitializeHealingPotionState()
 	HealingPotionState.MaxCarryCount = MaxCarryCount;
 	HealingPotionState.CurrentCount = FMath::Clamp(HealingPotionData.DefaultCount, 0, MaxCarryCount);
 	HealingPotionState.bCanUse = false;
+	bHealingPotionUseActionRunning = false;
 }
 
 bool UMVPlayerConsumableComponent::CanUseHealingPotion() const
@@ -211,12 +266,53 @@ bool UMVPlayerConsumableComponent::CanUseHealingPotion() const
 
 	if (ActionComponent && ActionComponent->IsActionRunning())
 	{
-		return false;
+		if (!HasHealingPotionUseAction() || !CanTransitionActiveActionForHealingPotion())
+		{
+			return false;
+		}
 	}
 
 	return HealingPotionState.CurrentCount > 0
-		&& HealingPotionState.HealAmount > 0.0f
-		&& StatComponent->CurrentHP < StatComponent->MaxHP;
+		&& HealingPotionState.HealAmount > 0.0f;
+}
+
+bool UMVPlayerConsumableComponent::HasHealingPotionUseAction() const
+{
+	return HealingPotionData.UseActionRow.DataTable && !HealingPotionData.UseActionRow.RowName.IsNone();
+}
+
+bool UMVPlayerConsumableComponent::CanTransitionActiveActionForHealingPotion() const
+{
+	const UMVActionComponent* ActionComponent = OwnerCharacter ? OwnerCharacter->ActionComponent : nullptr;
+	if (!ActionComponent || !ActionComponent->IsActionRunning() || !ActionComponent->CanInterruptActiveAction())
+	{
+		return false;
+	}
+
+	const UMVInputManagerComponent* InputManager = OwnerCharacter ? OwnerCharacter->InputManagerComponent : nullptr;
+	return InputManager && InputManager->IsRecoveryEscapeWindowOpen();
+}
+
+bool UMVPlayerConsumableComponent::IsHealingPotionUseAction(
+	const FName ActionTableName,
+	const FName ActionRowName) const
+{
+	return HasHealingPotionUseAction()
+		&& ActionTableName == ResolveHealingPotionUseActionTableName()
+		&& ActionRowName == HealingPotionData.UseActionRow.RowName;
+}
+
+FName UMVPlayerConsumableComponent::ResolveHealingPotionUseActionTableName() const
+{
+	const UDataTable* DataTable = HealingPotionData.UseActionRow.DataTable;
+	if (!DataTable)
+	{
+		return NAME_None;
+	}
+
+	FString TableName = DataTable->GetName();
+	TableName.RemoveFromStart(TEXT("DT_"));
+	return FName(*TableName);
 }
 
 void UMVPlayerConsumableComponent::BroadcastHealingPotionStateChanged()

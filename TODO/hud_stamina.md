@@ -31,17 +31,17 @@
 - [x] 액션 중 회복 pause를 `BeginRecoverableStatRecoveryPause` / `EndRecoverableStatRecoveryPause` 공통 API로 일반화한다.
 - [x] MP 회복도 캐릭터의 공통 회복 틱에 연결하고 액션 회복 pause를 따르게 한다.
 - [x] `MVActionComponent`는 선택/비용 소모를 하지 않고, 전달받은 `ActionTableName + ActionRowName` 실행만 담당한다.
-- [x] Dodge 입력은 `InputManagerComponent.SubmitActionInput(Dodge)` 이벤트를 통해 `PlayerCharacter.Dodge` 서브모듈이 처리한다.
+- [x] Dodge 입력은 `InputManagerComponent.SubmitActionInput(Action.Input.Dodge)` 라우팅을 통해 `PlayerCharacter.Dodge` 서브모듈이 처리한다.
 - [x] Dodge는 `CHT_Dodge`가 출력한 `FMVDodgeActionRowHandle` 또는 `Dodge_{Character}` 명명 규칙 fallback으로 `FMVDodgeActionRow`를 찾고 비용/launch를 직접 처리한다.
-- [x] 입력 의도 ID를 `MVActionIds`/`ACTIONID_*` 상수와 BP용 `EMVActionId` enum으로 중앙화한다.
-- [x] BP 회피 입력은 `InputManagerComponent.SubmitActionInput(Dodge)`를 통해 도메인 컴포넌트에 전달한다.
+- [x] 입력 의도 ID를 숫자/enum 대신 `Action.Input.*` GameplayTag로 중앙화한다.
+- [x] BP 회피 입력은 `InputManagerComponent.SubmitActionInput(Action.Input.Dodge)`를 통해 도메인 컴포넌트에 전달한다.
 - [x] Dodge Chooser가 직접 조건을 관리하도록 C++ 방향 variant 결정을 제거하고 `bHasDodgeMovementInput`/`CharacterInputState.WantsToStrafe` 원천 조건을 사용한다.
 - [x] Dodge Chooser가 락온 회피를 8방향으로 나눌 때 `LocomotionDirection`을 방향 조건으로 사용하도록 정리한다.
 - [x] 몽타주 NotifyState 기반으로 이동입력 차단, 무적, 입력 버퍼 구간을 `ActionComponent` 상태에 연결한다.
 - [x] `GenerateDataTables` 성공 직후 `MVTableManager` 캐시를 reload해 새 `CharacterIndex` 테이블이 PIE에 즉시 반영되도록 한다.
 - [ ] `Content/Table/Sprint`에 `FMVSprintActionRow` 기반 `DT_Sprint` row `Sprint_P1_01`을 생성하고 manifest를 refresh한다.
 - [ ] `Content/Table/Dodge/P1`에 `FMVDodgeActionRow` 기반 `DT_Dodge_P1` rows를 생성하고 `CHT_Dodge` Output Struct Column의 `FMVDodgeActionRowHandle`로 연결한다.
-- [ ] BP 회피 입력 경로는 직접 몽타주/API 호출 대신 `InputManagerComponent.SubmitActionInput(Dodge)`만 호출하도록 정리한다.
+- [ ] BP 회피 입력 경로는 직접 몽타주/API 호출 대신 `InputManagerComponent.SubmitActionInput(Action.Input.Dodge)`만 호출하도록 정리한다.
 - [ ] Combat 쪽 공격/가드도 각 도메인 Chooser가 상황별 row를 확정한 뒤 `ActionComponent.TryStartActionFromTable`을 호출하게 연결한다.
 
 ## 검증

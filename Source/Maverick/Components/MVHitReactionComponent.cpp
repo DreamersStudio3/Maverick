@@ -7,6 +7,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Tables/MVCharacterTableTypes.h"
 #include "Tables/MVTableManager.h"
+#include "Tags/MVGameplayTags.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogMVHitReactionComponent, Log, All);
 
@@ -64,6 +65,23 @@ void UMVHitReactionComponent::BeginPlay()
 	CacheOwnerReferences();
 	BindInputManagerHandlers();
 	BindActionComponentHandlers();
+}
+
+void UMVHitReactionComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	if (CachedInputManager)
+	{
+		CachedInputManager->UnregisterActionInputHandler(this);
+	}
+
+	if (CachedActionComponent)
+	{
+		CachedActionComponent->OnActionEnded.RemoveDynamic(
+			this,
+			&UMVHitReactionComponent::HandleActionEnded);
+	}
+
+	Super::EndPlay(EndPlayReason);
 }
 
 void UMVHitReactionComponent::HandleDamaged(const FMVResolvedHitData& HitData)
@@ -256,12 +274,7 @@ void UMVHitReactionComponent::BindInputManagerHandlers()
 
 	if (CachedInputManager)
 	{
-		CachedInputManager->OnActionInputSubmitted.RemoveDynamic(
-			this,
-			&UMVHitReactionComponent::HandleActionInputSubmitted);
-		CachedInputManager->OnActionInputSubmitted.AddUniqueDynamic(
-			this,
-			&UMVHitReactionComponent::HandleActionInputSubmitted);
+		CachedInputManager->RegisterActionInputHandler(this, MVActionInputHandlerPriorities::HitReaction);
 	}
 }
 
@@ -280,12 +293,6 @@ void UMVHitReactionComponent::BindActionComponentHandlers()
 		CachedActionComponent->OnActionEnded.AddUniqueDynamic(
 			this,
 			&UMVHitReactionComponent::HandleActionEnded);
-		CachedInputManager->OnRecoveryEscapeWindowChanged.RemoveDynamic(
-			this,
-			&UMVHitReactionComponent::HandleRecoveryEscapeWindowChanged);
-		CachedInputManager->OnRecoveryEscapeWindowChanged.AddUniqueDynamic(
-			this,
-			&UMVHitReactionComponent::HandleRecoveryEscapeWindowChanged);
 	}
 }
 
@@ -402,18 +409,18 @@ bool UMVHitReactionComponent::TryConsumeBufferedRecoveryInput()
 		return false;
 	}
 
-	int32 ActionId = INDEX_NONE;
+	FGameplayTag ActionInputTag;
 	FVector2D ControllerSpaceInput = FVector2D::ZeroVector;
 	bool bHasMovementInput = false;
 	if (!CachedInputManager->TryGetBufferedActionInput(
-		ActionId,
+		ActionInputTag,
 		ControllerSpaceInput,
 		bHasMovementInput))
 	{
 		return false;
 	}
 
-	if (!TryConsumeRecoveryInput(ActionId, ControllerSpaceInput, bHasMovementInput))
+	if (!TryConsumeRecoveryInput(ActionInputTag, ControllerSpaceInput, bHasMovementInput))
 	{
 		return false;
 	}
@@ -445,7 +452,7 @@ bool UMVHitReactionComponent::TryConsumeBufferedRecoveryMovementInput()
 }
 
 bool UMVHitReactionComponent::TryConsumeRecoveryInput(
-	const int32 ActionId,
+	const FGameplayTag ActionInputTag,
 	const FVector2D ControllerSpaceInput,
 	const bool bHasMovementInput)
 {
@@ -480,7 +487,7 @@ bool UMVHitReactionComponent::TryConsumeRecoveryInput(
 		return TryCancelActiveRecoveryAction();
 	}
 
-	if (ActionId == MVActionIds::Dodge)
+	if (ActionInputTag.MatchesTagExact(MVGameplayTags::Action_Input_Dodge))
 	{
 		const EMVActionInputDirection Direction = bHasMovementInput
 			? CachedInputManager->ResolveActionInputDirection(ControllerSpaceInput)
@@ -717,11 +724,11 @@ bool UMVHitReactionComponent::HasBufferedRecoveryActionInput() const
 		return false;
 	}
 
-	int32 ActionId = INDEX_NONE;
+	FGameplayTag ActionInputTag;
 	FVector2D ControllerSpaceInput = FVector2D::ZeroVector;
 	bool bHasMovementInput = false;
 	return CachedInputManager->TryGetBufferedActionInput(
-		ActionId,
+		ActionInputTag,
 		ControllerSpaceInput,
 		bHasMovementInput);
 }
@@ -1326,15 +1333,12 @@ FString UMVHitReactionComponent::ActionInputDirectionToTableToken(const EMVActio
 	}
 }
 
-void UMVHitReactionComponent::HandleActionInputSubmitted(
-	const int32 ActionId,
+bool UMVHitReactionComponent::TryHandleActionInput(
+	const FGameplayTag ActionInputTag,
 	const FVector2D ControllerSpaceInput,
 	const bool bHasMovementInput)
 {
-	if (TryConsumeRecoveryInput(ActionId, ControllerSpaceInput, bHasMovementInput) && CachedInputManager)
-	{
-		CachedInputManager->ClearBufferedActionInput();
-	}
+	return TryConsumeRecoveryInput(ActionInputTag, ControllerSpaceInput, bHasMovementInput);
 }
 
 void UMVHitReactionComponent::HandleActionEnded(
@@ -1348,24 +1352,15 @@ void UMVHitReactionComponent::HandleActionEnded(
 	}
 }
 
-void UMVHitReactionComponent::HandleRecoveryEscapeWindowChanged(const bool bOpen)
+bool UMVHitReactionComponent::TryHandleRecoveryWindowOpened()
 {
-	if (bOpen)
+	if (bActiveHitReactionActionIsRecoveryAction && HasBufferedRecoveryActionInput())
 	{
-		if (bActiveHitReactionActionIsRecoveryAction && HasBufferedRecoveryActionInput())
-		{
-			return;
-		}
-
-		// window는 기본 Getup 시작점이 아니라, 이전에 저장된 입력으로 KD/AB를 끊을 수 있는 구간이다.
-		if (!TryConsumeBufferedRecoveryInput())
-		{
-			TryConsumeBufferedRecoveryMovementInput();
-		}
-		return;
+		return false;
 	}
 
-	// 기본 Getup 전환은 MV HitReaction Start Getup Notify가 담당한다.
+	// window는 기본 Getup 시작점이 아니라, 이전에 저장된 이동 의도를 KD/AB 탈출로 소비할 수 있는 구간이다.
+	return TryConsumeBufferedRecoveryMovementInput();
 }
 
 void UMVHitReactionComponent::HandleOwnerMovementModeChanged(

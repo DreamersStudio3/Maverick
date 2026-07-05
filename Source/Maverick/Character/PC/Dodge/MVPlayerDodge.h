@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "Enum/CharacterLocomotionEnums.h"
 #include "GameplayTagContainer.h"
+#include "Interface/MVActionInputHandlerInterface.h"
 #include "Tables/MVMovementActionTableTypes.h"
 #include "UObject/Object.h"
 #include "UObject/SoftObjectPath.h"
@@ -14,6 +15,7 @@ class UDataTable;
 class UWorld;
 class UMVActionComponent;
 class UMVInputManagerComponent;
+enum class EMVActionInputDirection : uint8;
 
 /**
  * PlayerCharacter 전용 회피 런타임 서브모듈.
@@ -33,7 +35,7 @@ class UMVInputManagerComponent;
  *   4) PlayerCharacter EndPlay -> Deinitialize로 입력 이벤트 바인딩을 해제한다.
  */
 UCLASS(BlueprintType, DefaultToInstanced, EditInlineNew)
-class MAVERICK_API UMVPlayerDodge : public UObject
+class MAVERICK_API UMVPlayerDodge : public UObject, public IMVActionInputHandlerInterface
 {
 	GENERATED_BODY()
 
@@ -45,6 +47,7 @@ public:
 	void Initialize(AMVPlayerCharacter& InOwnerCharacter);
 	void Deinitialize();
 	void PrepareDodgeAction();
+	virtual bool TryHandleActionInput(FGameplayTag ActionInputTag, FVector2D ControllerSpaceInput, bool bHasMovementInput) override;
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Action|Dodge")
 	void UpdateBufferedDodgeMovementInput(const FVector& MovementInputDirection);
@@ -90,11 +93,7 @@ private:
 		const FVector& MovementDirection) const;
 
 	UFUNCTION()
-	void HandleActionInputSubmitted(int32 ActionId, FVector2D ControllerSpaceInput, bool bHasMovementInput);
-	UFUNCTION()
 	void HandleActionEnded(FName ActionTableName, FName ActionRowName, bool bInterrupted);
-	UFUNCTION()
-	void HandleRecoveryEscapeWindowChanged(bool bOpen);
 
 	FName ActiveDodgeActionTableName = NAME_None;
 	FName ActiveDodgeActionRowName = NAME_None;
