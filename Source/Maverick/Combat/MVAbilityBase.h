@@ -12,6 +12,9 @@
 /**
  * 
  */
+
+class AMVCharacterBase;
+
 UCLASS(Blueprintable, meta = (ShowWorldContextPin))
 class MAVERICK_API UMVAbilityBase : public UObject, public IMVAbilityInterface
 {
@@ -22,14 +25,14 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetOwner(UMVCombatComponent* Owner);
 	
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, BlueprintPure)
 	UMVCombatComponent* GetOwner();
 	
-	UFUNCTION(BlueprintCallable)
-	ACharacter* GetComponentOwner();
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	AMVCharacterBase* GetOwnerCharacter();
 
 	UFUNCTION(BlueprintCallable)
-	void InitAbility(FMVSkillDataTableColumn Data);
+	void InitAbility(const FMVSkillDataTableColumn& Data);
 	
 	virtual void StartAbility_Implementation() override;
 	virtual void EndAbility_Implementation() override;
@@ -40,6 +43,9 @@ public:
 	
 	UPROPERTY(BlueprintReadOnly)
 	FMVSkillDataTableColumn AbilityData;
+
+	UPROPERTY(Transient)
+	bool bAbilityActive = false;
 
 private:
 
