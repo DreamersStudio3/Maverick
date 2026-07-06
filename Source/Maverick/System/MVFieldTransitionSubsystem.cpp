@@ -1,6 +1,7 @@
 #include "System/MVFieldTransitionSubsystem.h"
 
 #include "Character/MVCharacterBase.h"
+#include "Character/PC/Consumable/MVPlayerConsumableComponent.h"
 #include "Components/MVActionComponent.h"
 #include "Components/MVDeathComponent.h"
 #include "Components/MVStatComponent.h"
@@ -562,6 +563,12 @@ void UMVFieldTransitionSubsystem::ResetPlayerStatsForTransition(AMVCharacterBase
 	StatComponent->SetCurrentStamina(StatComponent->MaxStamina);
 	StatComponent->SetCurrentMP(StatComponent->MaxMP);
 	StatComponent->SetCurrentGroggy(0.0f);
+
+	if (UMVPlayerConsumableComponent* ConsumableComponent =
+		Character.FindComponentByClass<UMVPlayerConsumableComponent>())
+	{
+		ConsumableComponent->RestoreConsumableCountsForWorldReset();
+	}
 }
 
 void UMVFieldTransitionSubsystem::ResetUIToDefaultAfterTransition()

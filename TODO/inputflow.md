@@ -10,7 +10,7 @@
 
 \- 입력 수집: 입력 매니저는 이동 입력을 컨트롤러 공간으로 변환해 캐시하고, 액션 버튼 입력을 짧은 프레임 기반 버퍼에 저장합니다.
 
-\- 입력 소비: 도지 컴포넌트는 액션 입력 이벤트를 구독해 즉시 실행을 시도하거나, recovery window가 열릴 때 버퍼를 소비해 전환(또는 시작)합니다.
+\- 입력 소비: 도지 컴포넌트는 InputManager handler로 등록되어 즉시 실행을 시도하거나, recovery window가 열릴 때 라우터를 통해 버퍼를 소비해 전환(또는 시작)합니다.
 
 \- 액션 재생: 액션 컴포넌트는 데이터테이블에서 액션 row를 찾아 몽타주를 재생하고, 몽타주 종료 시 상태를 정리합니다.
 
@@ -26,17 +26,17 @@
 
 1\. 입력 발생 및 버퍼링
 
-&#x20;  - 액션 버튼 입력 시 입력 매니저의 `SubmitActionInput` / `SubmitActionInputById`가 호출되어 현재(또는 최근)의 컨트롤러-공간 이동 입력 스냅샷을 버퍼(`BufferedAction\*`)에 기록합니다.
+&#x20;  - 액션 버튼 입력 시 입력 매니저의 `SubmitActionInput(FGameplayTag)`가 호출되어 현재(또는 최근)의 컨트롤러-공간 이동 입력 스냅샷을 버퍼(`BufferedAction\*`)에 기록합니다.
 
 &#x20;  - 버퍼는 프레임 기준으로 만료되며, 확인은 `TryGetBufferedActionInput`에서 수행합니다.
 
 
 
-2\. 도지 컴포넌트의 이벤트 수신
+2\. 도지 컴포넌트의 handler 수신
 
-&#x20;  - `BeginPlay`에서 도지 컴포넌트는 입력 매니저의 `OnActionInputSubmitted`와 `OnRecoveryEscapeWindowChanged`를 바인딩합니다.
+&#x20;  - `BeginPlay`에서 도지 컴포넌트는 입력 매니저에 action input handler로 등록합니다.
 
-&#x20;  - 입력 이벤트 수신 시 `HandleActionInputSubmitted`가 실행됩니다.
+&#x20;  - 입력 라우팅 시 `TryHandleActionInput`가 실행됩니다.
 
 &#x20;    - 이벤트가 도지라면 `CacheControllerSpaceMovementInput`로 이동 입력을 캐시하고 `TryStartDodgeAction`를 즉시 시도합니다.
 
@@ -68,11 +68,11 @@
 
 4\. Recovery Escape Window 처리(전환 허용)
 
-&#x20;  - 몽타주 내 `NotifyState`가 열리면 입력 매니저의 `BeginRecoveryEscapeWindow`가 호출되어 `OnRecoveryEscapeWindowChanged(true)`를 브로드캐스트합니다.
+&#x20;  - 몽타주 내 `NotifyState`가 열리면 입력 매니저의 `BeginRecoveryEscapeWindow`가 호출되어 버퍼 입력을 등록된 handler 순서로 다시 라우팅합니다.
 
-&#x20;  - 도지 컴포넌트의 `HandleRecoveryEscapeWindowChanged(true)`는 `TryConsumeBufferedDodgeInput`를 호출합니다.
+&#x20;  - 도지 컴포넌트의 `TryHandleRecoveryWindowOpened`는 도지 입력 처리 가능 여부를 판단합니다.
 
-&#x20;    - `TryConsumeBufferedDodgeInput`는 `TryGetBufferedActionInput`으로 버퍼를 검증하고, `ActionId`가 도지면 `CacheControllerSpaceMovementInput`을 갱신한 뒤 `TryStartDodgeAction`를 시도합니다.
+&#x20;    - InputManager는 `TryGetBufferedActionInput`으로 버퍼를 검증하고, 도지 handler는 `ActionInputTag`가 도지면 `CacheControllerSpaceMovementInput`을 갱신한 뒤 `TryStartDodgeAction`를 시도합니다.
 
 &#x20;    - 성공하면 `ClearBufferedActionInput`를 호출해 소비를 확정합니다.
 
@@ -122,7 +122,7 @@
 
 \- `TryStartDodgeAction`가 실패할 때 반환 원인(전환 거부, row 미해결, 스태미나 부족 등)을 로그로 확인.
 
-\- recovery window 발생 시 `HandleRecoveryEscapeWindowChanged(true)`에서 `TryConsumeBufferedDodgeInput`가 호출되는지 확인.
+\- recovery window 발생 시 InputManager가 buffered action input을 handler 순서로 다시 라우팅하는지 확인.
 
 \- 액션 종료 시 `FinishActiveAction`가 `ResetNotifyState`를 호출해 `IsMovementInputBlocked`/`IsRecoveryEscapeWindowOpen`이 false가 되는지 검증.
 

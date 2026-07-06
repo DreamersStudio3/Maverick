@@ -8,6 +8,7 @@
 #include "Components/MVHitReactionComponent.h"
 #include "Components/MVInputManagerComponent.h"
 #include "Components/MVStatComponent.h"
+#include "Components/MVWeaponComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "KismetAnimationLibrary.h"
@@ -74,6 +75,7 @@ AMVCharacterBase::AMVCharacterBase()
 	DeathComponent = CreateDefaultSubobject<UMVDeathComponent>(TEXT("DeathComponent"));
 	HitReactionComponent = CreateDefaultSubobject<UMVHitReactionComponent>(TEXT("HitReactionComponent"));
 	InputManagerComponent = CreateDefaultSubobject<UMVInputManagerComponent>(TEXT("InputManagerComponent"));
+	WeaponComponent = CreateDefaultSubobject<UMVWeaponComponent>(TEXT("WeaponComponent"));
 	CharacterIndexCode = MVGameplayTags::Character_Player_P1;
 	ApplyCharacterIndexCodeToComponents();
 	bHasDodgeMovementInput = false;
@@ -477,7 +479,7 @@ EGait AMVCharacterBase::DesiredGait()
 	}
 	else
 	{
-		if (CharacterInputState.WantsToWalk)
+		if (CharacterInputState.WantsToWalk || ShouldForceWalkGait())
 		{
 			return EGait::Walking;
 		}
@@ -501,6 +503,11 @@ bool AMVCharacterBase::CanSprint() const
 bool AMVCharacterBase::CanUseSprint() const
 {
 	return true;
+}
+
+bool AMVCharacterBase::ShouldForceWalkGait() const
+{
+	return false;
 }
 
 float AMVCharacterBase::CalculateCharacterMovementSpeed(float WalkSpeed, float RunSpeed, float SprintSpeed)
