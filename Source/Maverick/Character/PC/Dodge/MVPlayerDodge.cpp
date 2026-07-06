@@ -577,10 +577,7 @@ bool UMVPlayerDodge::TryStartDodgeAction()
 		? DodgeActionRow->DefaultStartSection
 		: ActionRowHandle.StartSection;
 	const bool bStarted = bCanTransitionActiveDodge
-		? ActionComponent->TryTransitionActionFromRowHandle(
-			ActionRowHandle.ActionRow,
-			StartSection,
-			RecoveryDodgeTransitionBlendOutTime)
+		? ActionComponent->TryTransitionActionFromRowHandle(ActionRowHandle.ActionRow, StartSection, RecoveryDodgeTransitionBlendOutTime)
 		: ActionComponent->TryStartActionFromRowHandle(ActionRowHandle.ActionRow, StartSection);
 	if (!bStarted)
 	{

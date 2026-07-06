@@ -253,6 +253,7 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
+	// Public API
 public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
@@ -310,6 +311,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Infomation")
 	float ResetBasicAttackTime = 2.0f;
 
+	UPROPERTY(Transient)
+	TObjectPtr<UMVAbilityBase> PreviousAbilityInstance;
+	UPROPERTY(BlueprintReadOnly)
+	TObjectPtr<UMVAbilityBase> CurrentAbilityInstance;
+
 private:
 	double LastBasicAttackedTime;
 	TSet<int32> ValidActionIds = {
@@ -320,4 +326,5 @@ private:
 	};
 
 	TObjectPtr<UMVStatComponent> StatComponent;
+
 };
