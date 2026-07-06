@@ -312,6 +312,17 @@ void UMVStatComponent::SetCurrentHP(float InCurrentHP)
 	}
 }
 
+void UMVStatComponent::RecoverHP(const float Amount)
+{
+	const float RecoveryAmount = MVStatNonNegative(Amount);
+	if (RecoveryAmount <= 0.0f || bIsDead)
+	{
+		return;
+	}
+
+	SetCurrentHP(CurrentHP + RecoveryAmount);
+}
+
 void UMVStatComponent::SetMaxStamina(float InMaxStamina)
 {
 	const float PreviousMaxStamina = MaxStamina;

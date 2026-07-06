@@ -33,7 +33,7 @@
 - [x] `MVActionComponent`는 선택/비용 소모를 하지 않고, 전달받은 `ActionTableName + ActionRowName` 실행만 담당한다.
 - [x] Dodge 입력은 `InputManagerComponent.SubmitActionInput(Dodge)` 이벤트를 통해 `PlayerCharacter.Dodge` 서브모듈이 처리한다.
 - [x] Dodge는 `CHT_Dodge`가 출력한 `FMVDodgeActionRowHandle` 또는 `Dodge_{Character}` 명명 규칙 fallback으로 `FMVDodgeActionRow`를 찾고 비용/launch를 직접 처리한다.
-- [x] 입력 의도 ID를 `MVActionIds`/`ACTIONID_*` 상수와 BP용 `EMVActionId` enum으로 중앙화한다.
+- [x] 입력 의도는 GameplayTag 기반 `SubmitActionInput(FGameplayTag)` 단일 경로로 전달한다.
 - [x] BP 회피 입력은 `InputManagerComponent.SubmitActionInput(Dodge)`를 통해 도메인 컴포넌트에 전달한다.
 - [x] Dodge Chooser가 직접 조건을 관리하도록 C++ 방향 variant 결정을 제거하고 `bHasDodgeMovementInput`/`CharacterInputState.WantsToStrafe` 원천 조건을 사용한다.
 - [x] Dodge Chooser가 락온 회피를 8방향으로 나눌 때 `LocomotionDirection`을 방향 조건으로 사용하도록 정리한다.

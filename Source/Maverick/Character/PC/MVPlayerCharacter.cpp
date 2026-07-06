@@ -2,6 +2,7 @@
 
 
 #include "MVPlayerCharacter.h"
+#include "Character/PC/Consumable/MVPlayerConsumableComponent.h"
 #include "Character/PC/Dodge/MVPlayerDodge.h"
 #include "Character/PC/InteractionDetector/MVPlayerInteractionDetector.h"
 #include "Components/MVHitReactionComponent.h"
@@ -37,6 +38,7 @@ AMVPlayerCharacter::AMVPlayerCharacter()
 
 	Dodge = CreateDefaultSubobject<UMVPlayerDodge>(TEXT("Dodge"));
 	InteractionDetector = CreateDefaultSubobject<UMVPlayerInteractionDetector>(TEXT("InteractionDetector"));
+	PlayerConsumableComponent = CreateDefaultSubobject<UMVPlayerConsumableComponent>(TEXT("PlayerConsumableComponent"));
 	bIsSprintBlockedByStamina = false;
 }
 
@@ -55,6 +57,11 @@ void AMVPlayerCharacter::BeginPlay()
 	if (InteractionDetector)
 	{
 		InteractionDetector->Initialize(*this);
+	}
+
+	if (PlayerConsumableComponent)
+	{
+		PlayerConsumableComponent->Initialize(this);
 	}
 }
 
@@ -117,6 +124,11 @@ void AMVPlayerCharacter::UpdateRecoverableStats(const float DeltaTime)
 
 bool AMVPlayerCharacter::CanUseSprint() const
 {
+	if (PlayerConsumableComponent && PlayerConsumableComponent->IsHealingPotionUseActionRunning())
+	{
+		return false;
+	}
+
 	if (!StatComponent)
 	{
 		return true;
@@ -130,6 +142,11 @@ bool AMVPlayerCharacter::CanUseSprint() const
 	const float SprintStaminaCostPerSecond = ResolveSprintStaminaCostPerSecond();
 	return StatComponent->CurrentStamina >= ResolveSprintMinRequiredStamina()
 		&& (SprintStaminaCostPerSecond <= 0.0f || StatComponent->CurrentStamina > KINDA_SMALL_NUMBER);
+}
+
+bool AMVPlayerCharacter::ShouldForceWalkGait() const
+{
+	return PlayerConsumableComponent && PlayerConsumableComponent->IsHealingPotionUseActionRunning();
 }
 
 void AMVPlayerCharacter::CacheSprintActionData()

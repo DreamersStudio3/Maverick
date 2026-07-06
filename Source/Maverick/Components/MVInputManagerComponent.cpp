@@ -1,7 +1,9 @@
 #include "Components/MVInputManagerComponent.h"
 
 #include "Character/MVCharacterBase.h"
+#include "Components/MVActionComponent.h"
 #include "Components/MVStatComponent.h"
+#include "Interface/MVActionInputHandlerInterface.h"
 
 UMVInputManagerComponent::UMVInputManagerComponent()
 {
@@ -21,14 +23,9 @@ void UMVInputManagerComponent::BeginPlay()
 	}
 }
 
-bool UMVInputManagerComponent::SubmitActionInput(const EMVActionId ActionId)
+bool UMVInputManagerComponent::SubmitActionInput(const FGameplayTag ActionInputTag)
 {
-	return SubmitActionInputById(MVActionIds::ToRawActionId(ActionId));
-}
-
-bool UMVInputManagerComponent::SubmitActionInputById(const int32 ActionId)
-{
-	if (ActionId <= MVActionIds::None)
+	if (!ActionInputTag.IsValid())
 	{
 		return false;
 	}
@@ -60,11 +57,16 @@ bool UMVInputManagerComponent::SubmitActionInputById(const int32 ActionId)
 
 	const bool bHasMovementInput = bHasCurrentMovementInput
 		&& ResolveActionInputDirection(ControllerSpaceInput) != EMVActionInputDirection::None;
-	BufferedActionId = ActionId;
+	BufferedActionInputTag = ActionInputTag;
 	BufferedActionControllerSpaceInput = ControllerSpaceInput;
 	BufferedActionInputFrame = GFrameCounter;
 	bBufferedActionHasMovementInput = bHasMovementInput;
-	OnActionInputSubmitted.Broadcast(ActionId, ControllerSpaceInput, bHasMovementInput);
+	const bool bHandled = TryRouteActionInput(ActionInputTag, ControllerSpaceInput, bHasMovementInput);
+	if (bHandled)
+	{
+		ClearBufferedActionInput();
+	}
+	OnActionInputSubmitted.Broadcast(ActionInputTag, ControllerSpaceInput, bHasMovementInput);
 	return true;
 }
 
@@ -87,18 +89,23 @@ void UMVInputManagerComponent::UpdateActionMovementInput(const FVector WorldMove
 	}
 	CachedActionControllerSpaceInputFrame = GFrameCounter;
 	OnActionMovementInputUpdated.Broadcast(CachedActionControllerSpaceInput, true);
+
+	if (IsRecoveryEscapeWindowOpen())
+	{
+		TryConsumeRecoveryEscapeInput();
+	}
 }
 
 bool UMVInputManagerComponent::TryGetBufferedActionInput(
-	int32& OutActionId,
+	FGameplayTag& OutActionInputTag,
 	FVector2D& OutControllerSpaceInput,
 	bool& bOutHasMovementInput) const
 {
-	OutActionId = INDEX_NONE;
+	OutActionInputTag = FGameplayTag();
 	OutControllerSpaceInput = FVector2D::ZeroVector;
 	bOutHasMovementInput = false;
 
-	if (BufferedActionId <= MVActionIds::None)
+	if (!BufferedActionInputTag.IsValid())
 	{
 		return false;
 	}
@@ -116,7 +123,7 @@ bool UMVInputManagerComponent::TryGetBufferedActionInput(
 		return false;
 	}
 
-	OutActionId = BufferedActionId;
+	OutActionInputTag = BufferedActionInputTag;
 	OutControllerSpaceInput = BufferedActionControllerSpaceInput;
 	bOutHasMovementInput = bBufferedActionHasMovementInput;
 	return true;
@@ -124,10 +131,45 @@ bool UMVInputManagerComponent::TryGetBufferedActionInput(
 
 void UMVInputManagerComponent::ClearBufferedActionInput()
 {
-	BufferedActionId = INDEX_NONE;
+	BufferedActionInputTag = FGameplayTag();
 	BufferedActionControllerSpaceInput = FVector2D::ZeroVector;
 	BufferedActionInputFrame = 0;
 	bBufferedActionHasMovementInput = false;
+}
+
+void UMVInputManagerComponent::RegisterActionInputHandler(UObject* HandlerObject, const int32 Priority)
+{
+	if (!HandlerObject || !Cast<IMVActionInputHandlerInterface>(HandlerObject))
+	{
+		return;
+	}
+
+	ActionInputHandlers.RemoveAll(
+		[HandlerObject](const FMVActionInputHandlerEntry& Entry)
+		{
+			return !Entry.HandlerObject.IsValid() || Entry.HandlerObject.Get() == HandlerObject;
+		});
+
+	FMVActionInputHandlerEntry Entry;
+	Entry.HandlerObject = HandlerObject;
+	Entry.Priority = Priority;
+	Entry.RegistrationOrder = NextActionInputHandlerOrder++;
+	ActionInputHandlers.Add(Entry);
+	SortActionInputHandlers();
+}
+
+void UMVInputManagerComponent::UnregisterActionInputHandler(const UObject* HandlerObject)
+{
+	if (!HandlerObject)
+	{
+		return;
+	}
+
+	ActionInputHandlers.RemoveAll(
+		[HandlerObject](const FMVActionInputHandlerEntry& Entry)
+		{
+			return !Entry.HandlerObject.IsValid() || Entry.HandlerObject.Get() == HandlerObject;
+		});
 }
 
 bool UMVInputManagerComponent::TryGetRecentActionMovementInput(FVector2D& OutControllerSpaceInput) const
@@ -203,6 +245,7 @@ void UMVInputManagerComponent::BeginRecoveryEscapeWindow()
 	if (!bWasOpen)
 	{
 		OnRecoveryEscapeWindowChanged.Broadcast(true);
+		TryConsumeRecoveryEscapeInput();
 	}
 }
 
@@ -220,6 +263,177 @@ void UMVInputManagerComponent::EndRecoveryEscapeWindow()
 	{
 		OnRecoveryEscapeWindowChanged.Broadcast(false);
 	}
+}
+
+bool UMVInputManagerComponent::TryRouteActionInput(
+	const FGameplayTag ActionInputTag,
+	const FVector2D ControllerSpaceInput,
+	const bool bHasMovementInput)
+{
+	if (!ActionInputTag.IsValid())
+	{
+		return false;
+	}
+
+	CompactActionInputHandlers();
+	for (const FMVActionInputHandlerEntry& Entry : ActionInputHandlers)
+	{
+		UObject* HandlerObject = Entry.HandlerObject.Get();
+		IMVActionInputHandlerInterface* Handler = Cast<IMVActionInputHandlerInterface>(HandlerObject);
+		if (!Handler)
+		{
+			continue;
+		}
+
+		if (Handler->TryHandleActionInput(ActionInputTag, ControllerSpaceInput, bHasMovementInput))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool UMVInputManagerComponent::TryRouteBufferedActionInput()
+{
+	FGameplayTag ActionInputTag;
+	FVector2D ControllerSpaceInput = FVector2D::ZeroVector;
+	bool bHasMovementInput = false;
+	if (!TryGetBufferedActionInput(ActionInputTag, ControllerSpaceInput, bHasMovementInput))
+	{
+		return false;
+	}
+
+	if (!TryRouteActionInput(ActionInputTag, ControllerSpaceInput, bHasMovementInput))
+	{
+		return false;
+	}
+
+	ClearBufferedActionInput();
+	return true;
+}
+
+bool UMVInputManagerComponent::TryRouteRecoveryWindowOpened()
+{
+	CompactActionInputHandlers();
+	for (const FMVActionInputHandlerEntry& Entry : ActionInputHandlers)
+	{
+		UObject* HandlerObject = Entry.HandlerObject.Get();
+		IMVActionInputHandlerInterface* Handler = Cast<IMVActionInputHandlerInterface>(HandlerObject);
+		if (!Handler)
+		{
+			continue;
+		}
+
+		if (Handler->TryHandleRecoveryWindowOpened())
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool UMVInputManagerComponent::TryConsumeRecoveryEscapeInput()
+{
+	if (!IsRecoveryEscapeWindowOpen())
+	{
+		return false;
+	}
+
+	if (TryRouteBufferedActionInput())
+	{
+		return true;
+	}
+
+	if (TryRouteRecoveryWindowOpened())
+	{
+		return true;
+	}
+
+	return TryCancelActiveActionForRecoveryEscape(EMVRecoveryEscapeCancelTrigger::MovementInput);
+}
+
+bool UMVInputManagerComponent::TryCancelActiveActionForRecoveryEscape(
+	const EMVRecoveryEscapeCancelTrigger CancelTrigger)
+{
+	switch (CancelTrigger)
+	{
+	case EMVRecoveryEscapeCancelTrigger::MovementInput:
+		return TryCancelActiveActionToLocomotionForRecoveryEscape();
+	default:
+		return false;
+	}
+}
+
+bool UMVInputManagerComponent::TryCancelActiveActionToLocomotionForRecoveryEscape()
+{
+	if (!IsRecoveryEscapeWindowOpen()
+		|| !CanUseRecoveryEscapeCancelTrigger(EMVRecoveryEscapeCancelTrigger::MovementInput))
+	{
+		return false;
+	}
+
+	AMVCharacterBase* Character = OwnerCharacter.Get();
+	if (!Character)
+	{
+		Character = Cast<AMVCharacterBase>(GetOwner());
+	}
+
+	UMVActionComponent* ActionComponent = Character ? Character->ActionComponent : nullptr;
+	if (!ActionComponent
+		|| !ActionComponent->IsActionRunning()
+		|| !ActionComponent->CanInterruptActiveAction())
+	{
+		return false;
+	}
+
+	ClearBufferedActionInput();
+	ActionComponent->CancelActiveAction(RecoveryLocomotionCancelBlendOutTime);
+	return true;
+}
+
+bool UMVInputManagerComponent::CanUseRecoveryEscapeCancelTrigger(
+	const EMVRecoveryEscapeCancelTrigger CancelTrigger) const
+{
+	switch (CancelTrigger)
+	{
+	case EMVRecoveryEscapeCancelTrigger::MovementInput:
+		return bAllowMovementInputRecoveryCancel && HasRecentRecoveryMovementInput();
+	default:
+		return false;
+	}
+}
+
+bool UMVInputManagerComponent::HasRecentRecoveryMovementInput() const
+{
+	FVector2D ControllerSpaceInput = FVector2D::ZeroVector;
+	return TryGetRecentActionMovementInput(ControllerSpaceInput)
+		&& ResolveActionInputDirection(ControllerSpaceInput) != EMVActionInputDirection::None;
+}
+
+void UMVInputManagerComponent::SortActionInputHandlers()
+{
+	ActionInputHandlers.Sort(
+		[](const FMVActionInputHandlerEntry& Left, const FMVActionInputHandlerEntry& Right)
+		{
+			if (Left.Priority != Right.Priority)
+			{
+				return Left.Priority > Right.Priority;
+			}
+
+			return Left.RegistrationOrder < Right.RegistrationOrder;
+		});
+}
+
+void UMVInputManagerComponent::CompactActionInputHandlers()
+{
+	ActionInputHandlers.RemoveAll(
+		[](const FMVActionInputHandlerEntry& Entry)
+		{
+			return !Entry.HandlerObject.IsValid()
+				|| !Cast<IMVActionInputHandlerInterface>(Entry.HandlerObject.Get());
+		});
 }
 
 bool UMVInputManagerComponent::IsRecoveryEscapeWindowOpen() const

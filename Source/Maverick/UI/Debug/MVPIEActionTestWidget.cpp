@@ -232,7 +232,9 @@ void UMVPIEActionTestWidget::ExecuteTestByIndex(const int32 TestIndex)
 	Request.DamageMultiplier = 1.0f;
 	Request.HitReactionType = Spec.HitReactionType;
 	Request.WeaponAttackPower = Spec.HPDamage;
-	Request.GroggyDamage = Spec.GroggyDamage;
+	Request.GroggyDamageMultiplier = Spec.HPDamage > 0.0f
+		? Spec.GroggyDamage / Spec.HPDamage
+		: 0.0f;
 	Request.HitLocation = Target->GetActorLocation();
 	Request.HitDirection = Target->GetActorLocation() - Attacker->GetActorLocation();
 

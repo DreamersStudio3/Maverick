@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "Enum/CharacterLocomotionEnums.h"
 #include "GameplayTagContainer.h"
+#include "Interface/MVActionInputHandlerInterface.h"
 #include "Tables/MVMovementActionTableTypes.h"
 #include "UObject/Object.h"
 #include "UObject/SoftObjectPath.h"
@@ -14,6 +15,7 @@ class UDataTable;
 class UWorld;
 class UMVActionComponent;
 class UMVInputManagerComponent;
+enum class EMVActionInputDirection : uint8;
 
 /**
  * PlayerCharacter 전용 회피 런타임 서브모듈.
@@ -29,11 +31,11 @@ class UMVInputManagerComponent;
  * 라이프사이클:
  *   1) PlayerCharacter BeginPlay -> Initialize로 이동 입력 이벤트와 InputManager 액션 입력을 바인딩한다.
  *   2) Dodge 입력 -> 입력 스냅샷과 chooser 문맥을 준비하고, Chooser/DataTable row를 확정해 ActionComponent에 전달한다.
- *   3) 현재 Dodge의 RecoveryEscapeWindow 안에서 Dodge 입력이 들어오면 다음 Dodge row로 전환한다.
+ *   3) RecoveryEscapeWindow 안에서 Dodge 입력이 라우팅되면 현재 액션 도메인과 무관하게 Dodge row로 전환한다.
  *   4) PlayerCharacter EndPlay -> Deinitialize로 입력 이벤트 바인딩을 해제한다.
  */
 UCLASS(BlueprintType, DefaultToInstanced, EditInlineNew)
-class MAVERICK_API UMVPlayerDodge : public UObject
+class MAVERICK_API UMVPlayerDodge : public UObject, public IMVActionInputHandlerInterface
 {
 	GENERATED_BODY()
 
@@ -45,6 +47,7 @@ public:
 	void Initialize(AMVPlayerCharacter& InOwnerCharacter);
 	void Deinitialize();
 	void PrepareDodgeAction();
+	virtual bool TryHandleActionInput(FGameplayTag ActionInputTag, FVector2D ControllerSpaceInput, bool bHasMovementInput) override;
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Action|Dodge")
 	void UpdateBufferedDodgeMovementInput(const FVector& MovementInputDirection);
@@ -72,14 +75,13 @@ private:
 	void EndLockOnPawnRotationSuppressionForDodge();
 	FVector2D CaptureControllerSpaceMovementInput(const AMVCharacterBase& OwnerCharacter) const;
 	bool TryStartDodgeAction();
-	bool TryConsumeBufferedDodgeInput();
 	bool ResolveDodgeActionRowHandle(FMVDodgeActionRowHandle& OutActionRowHandle);
 	bool EvaluateDodgeChooserActionRowHandle(FMVDodgeActionRowHandle& OutActionRowHandle);
 	FName MakeDodgeActionTableName(FGameplayTag CharacterIndexCode) const;
 	FName MakeDodgeActionTableName(const UDataTable* ActionDataTable) const;
 	FName MakeDodgeActionRowName(FGameplayTag CharacterIndexCode, int32 Index) const;
 	FGameplayTag ResolveCharacterIndexCode() const;
-	bool CanTransitionActiveDodgeAction(const UMVInputManagerComponent& InputManager, const UMVActionComponent& ActionComponent) const;
+	bool CanTransitionCurrentAction(const UMVInputManagerComponent& InputManager, const UMVActionComponent& ActionComponent) const;
 	const FMVDodgeActionRow* FindDodgeActionRow(FDataTableRowHandle ActionRowHandle) const;
 	bool CanConsumeDodgeCost(const FMVDodgeActionRow& DodgeActionRow) const;
 	bool ConsumeDodgeCost(const FMVDodgeActionRow& DodgeActionRow);
@@ -90,11 +92,7 @@ private:
 		const FVector& MovementDirection) const;
 
 	UFUNCTION()
-	void HandleActionInputSubmitted(int32 ActionId, FVector2D ControllerSpaceInput, bool bHasMovementInput);
-	UFUNCTION()
 	void HandleActionEnded(FName ActionTableName, FName ActionRowName, bool bInterrupted);
-	UFUNCTION()
-	void HandleRecoveryEscapeWindowChanged(bool bOpen);
 
 	FName ActiveDodgeActionTableName = NAME_None;
 	FName ActiveDodgeActionRowName = NAME_None;
