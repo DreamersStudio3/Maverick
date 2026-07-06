@@ -9,7 +9,7 @@
  * 전투 프로토타입용 회복약 row.
  *
  * 이번 범위는 HP 회복약 한 종류의 vertical slice에 한정한다. 넓은 Consumable 공통 row가 아니라,
- * 회복량과 기본 보유량, 사용 액션만 가진 좁은 테이블로 시작한다.
+ * 회복량과 기본 보유량, 성공/실패 액션만 가진 좁은 테이블로 시작한다.
  */
 USTRUCT(BlueprintType)
 struct MAVERICK_API FMVHealingPotionTableRow : public FMVItemTableRow
@@ -35,4 +35,10 @@ struct MAVERICK_API FMVHealingPotionTableRow : public FMVItemTableRow
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Item|HealingPotion|Action")
 	FName UseActionStartSection = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Item|HealingPotion|Action")
+	FDataTableRowHandle FailedActionRow;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Item|HealingPotion|Action")
+	FName FailedActionStartSection = NAME_None;
 };

@@ -2,7 +2,7 @@
 
 
 #include "MVPlayerCharacter.h"
-#include "Character/PC/Consumable/MVPlayerConsumableComponent.h"
+#include "Character/PC/Consumable/MVPlayerConsumable.h"
 #include "Character/PC/Dodge/MVPlayerDodge.h"
 #include "Character/PC/InteractionDetector/MVPlayerInteractionDetector.h"
 #include "Components/MVHitReactionComponent.h"
@@ -38,7 +38,7 @@ AMVPlayerCharacter::AMVPlayerCharacter()
 
 	Dodge = CreateDefaultSubobject<UMVPlayerDodge>(TEXT("Dodge"));
 	InteractionDetector = CreateDefaultSubobject<UMVPlayerInteractionDetector>(TEXT("InteractionDetector"));
-	PlayerConsumableComponent = CreateDefaultSubobject<UMVPlayerConsumableComponent>(TEXT("PlayerConsumableComponent"));
+	PlayerConsumable = CreateDefaultSubobject<UMVPlayerConsumable>(TEXT("PlayerConsumable"));
 	bIsSprintBlockedByStamina = false;
 }
 
@@ -59,14 +59,19 @@ void AMVPlayerCharacter::BeginPlay()
 		InteractionDetector->Initialize(*this);
 	}
 
-	if (PlayerConsumableComponent)
+	if (PlayerConsumable)
 	{
-		PlayerConsumableComponent->Initialize(this);
+		PlayerConsumable->Initialize(this);
 	}
 }
 
 void AMVPlayerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	if (PlayerConsumable)
+	{
+		PlayerConsumable->Deinitialize();
+	}
+
 	if (InteractionDetector)
 	{
 		InteractionDetector->Deinitialize();
@@ -124,7 +129,7 @@ void AMVPlayerCharacter::UpdateRecoverableStats(const float DeltaTime)
 
 bool AMVPlayerCharacter::CanUseSprint() const
 {
-	if (PlayerConsumableComponent && PlayerConsumableComponent->IsHealingPotionUseActionRunning())
+	if (PlayerConsumable && PlayerConsumable->IsHealingPotionUseActionRunning())
 	{
 		return false;
 	}
@@ -146,7 +151,7 @@ bool AMVPlayerCharacter::CanUseSprint() const
 
 bool AMVPlayerCharacter::ShouldForceWalkGait() const
 {
-	return PlayerConsumableComponent && PlayerConsumableComponent->IsHealingPotionUseActionRunning();
+	return PlayerConsumable && PlayerConsumable->IsHealingPotionUseActionRunning();
 }
 
 void AMVPlayerCharacter::CacheSprintActionData()
@@ -302,15 +307,14 @@ void AMVPlayerCharacter::Tick(float DeltaTime)
 	RefreshLockOnPawnRotationExtension();
 }
 
-// Called to bind functionality to input
-void AMVPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-}
-
 bool AMVPlayerCharacter::TryInteract()
 {
 	return InteractionDetector ? InteractionDetector->TryInteract() : false;
+}
+
+bool AMVPlayerCharacter::TryUseConsumable()
+{
+	return PlayerConsumable ? PlayerConsumable->TryUseHealingPotion() : false;
 }
 
 bool AMVPlayerCharacter::SelectNextInteractable()

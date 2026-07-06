@@ -1,10 +1,11 @@
 #include "UI/HUD/MVMainHUDWidget.h"
 
 #include "Blueprint/WidgetTree.h"
+#include "Character/PC/MVPlayerCharacter.h"
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
 #include "GameFramework/Pawn.h"
-#include "Character/PC/Consumable/MVPlayerConsumableComponent.h"
+#include "Character/PC/Consumable/MVPlayerConsumable.h"
 #include "Components/MVStatComponent.h"
 #include "UI/HUD/MVBossHPBarWidget.h"
 #include "UI/HUD/MVPlayerStatusWidget.h"
@@ -25,8 +26,8 @@ void UMVMainHUDWidget::RefreshHUD()
 		PlayerStatus->BindToStatComponent(OwningPawn ? OwningPawn->FindComponentByClass<UMVStatComponent>() : nullptr);
 	}
 
-	BindPlayerConsumableComponent(
-		OwningPawn ? OwningPawn->FindComponentByClass<UMVPlayerConsumableComponent>() : nullptr);
+	AMVPlayerCharacter* PlayerCharacter = Cast<AMVPlayerCharacter>(OwningPawn);
+	BindPlayerConsumable(PlayerCharacter ? PlayerCharacter->PlayerConsumable : nullptr);
 }
 
 void UMVMainHUDWidget::InitBossStatus(FText BossName, float MaxHP)
@@ -95,26 +96,26 @@ void UMVMainHUDWidget::BuildNativeWidgetTree()
 	}
 }
 
-void UMVMainHUDWidget::BindPlayerConsumableComponent(UMVPlayerConsumableComponent* ConsumableComponent)
+void UMVMainHUDWidget::BindPlayerConsumable(UMVPlayerConsumable* Consumable)
 {
-	if (BoundPlayerConsumableComponent == ConsumableComponent)
+	if (BoundPlayerConsumable == Consumable)
 	{
 		ApplyHealingPotionQuickSlotView();
 		return;
 	}
 
-	if (BoundPlayerConsumableComponent)
+	if (BoundPlayerConsumable)
 	{
-		BoundPlayerConsumableComponent->OnHealingPotionStateChanged.RemoveDynamic(
+		BoundPlayerConsumable->OnHealingPotionStateChanged.RemoveDynamic(
 			this,
 			&UMVMainHUDWidget::HandleHealingPotionStateChanged);
 	}
 
-	BoundPlayerConsumableComponent = ConsumableComponent;
+	BoundPlayerConsumable = Consumable;
 
-	if (BoundPlayerConsumableComponent)
+	if (BoundPlayerConsumable)
 	{
-		BoundPlayerConsumableComponent->OnHealingPotionStateChanged.AddUniqueDynamic(
+		BoundPlayerConsumable->OnHealingPotionStateChanged.AddUniqueDynamic(
 			this,
 			&UMVMainHUDWidget::HandleHealingPotionStateChanged);
 	}
@@ -129,7 +130,7 @@ void UMVMainHUDWidget::ApplyHealingPotionQuickSlotView()
 		return;
 	}
 
-	if (!BoundPlayerConsumableComponent)
+	if (!BoundPlayerConsumable)
 	{
 		FMVQuickSlotViewData EmptyViewData;
 		EmptyViewData.bLocked = true;
@@ -137,7 +138,7 @@ void UMVMainHUDWidget::ApplyHealingPotionQuickSlotView()
 		return;
 	}
 
-	HPSlot->SetViewData(BoundPlayerConsumableComponent->BuildHealingPotionQuickSlotViewData());
+	HPSlot->SetViewData(BoundPlayerConsumable->BuildHealingPotionQuickSlotViewData());
 }
 
 void UMVMainHUDWidget::HandleHealingPotionStateChanged(

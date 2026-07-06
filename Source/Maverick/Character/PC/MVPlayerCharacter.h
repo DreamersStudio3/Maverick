@@ -9,7 +9,7 @@
 
 class UMVPlayerDodge;
 class UMVPlayerInteractionDetector;
-class UMVPlayerConsumableComponent;
+class UMVPlayerConsumable;
 
 /**
  * 로컬 플레이어 캐릭터 런타임 본체.
@@ -19,7 +19,7 @@ class UMVPlayerConsumableComponent;
  * UObject 서브모듈에 위임해 NPC 재사용 가능 컴포넌트와 구분한다.
  *
  * 책임:
- *   - Dodge와 InteractionDetector 서브모듈, 회복약 컴포넌트를 생성하고 BeginPlay/Tick/EndPlay 수명주기를 전달한다.
+ *   - Dodge, 회복약, InteractionDetector 서브모듈을 생성하고 BeginPlay/Tick/EndPlay 수명주기를 전달한다.
  *   - 전력질주 스태미너 비용과 고갈 후 재개 조건을 플레이어 액션 데이터 기준으로 관리한다.
  *   - 플레이어 피격 리액션 핸들러를 공통 피격 이벤트에 연결한다.
  *   - 락온 대상이 있을 때 질주/회피 구간의 pawn rotation extension tick 억제를 관리한다.
@@ -37,10 +37,12 @@ class MAVERICK_API AMVPlayerCharacter : public AMVCharacterBase
 public:
 	AMVPlayerCharacter();
 	virtual void Tick(float DeltaTime) override;
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Interaction")
 	bool TryInteract();
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Consumable")
+	bool TryUseConsumable();
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Interaction")
 	bool SelectNextInteractable();
@@ -78,8 +80,8 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Instanced, Category = "PlayerCharacter")
 	TObjectPtr<UMVPlayerInteractionDetector> InteractionDetector;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "PlayerCharacter")
-	TObjectPtr<UMVPlayerConsumableComponent> PlayerConsumableComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Instanced, Category = "PlayerCharacter")
+	TObjectPtr<UMVPlayerConsumable> PlayerConsumable;
 
 	UPROPERTY(BlueprintReadOnly, Category = "LocomotionData|Stamina")
 	uint8 bIsSprintBlockedByStamina : 1;

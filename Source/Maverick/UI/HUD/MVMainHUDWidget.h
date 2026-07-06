@@ -7,7 +7,7 @@
 
 class UMVBossHPBarWidget;
 class UMVCurrencyStatusWidget;
-class UMVPlayerConsumableComponent;
+class UMVPlayerConsumable;
 class UMVPlayerStatusWidget;
 class UMVQuickSlotWidget;
 class UMVStatComponent;
@@ -52,7 +52,7 @@ protected:
 
 private:
 	void BuildNativeWidgetTree();
-	void BindPlayerConsumableComponent(UMVPlayerConsumableComponent* ConsumableComponent);
+	void BindPlayerConsumable(UMVPlayerConsumable* Consumable);
 	void ApplyHealingPotionQuickSlotView();
 
 	UFUNCTION()
@@ -61,5 +61,5 @@ private:
 	FText CachedBossName;
 
 	UPROPERTY(Transient)
-	TObjectPtr<UMVPlayerConsumableComponent> BoundPlayerConsumableComponent;
+	TObjectPtr<UMVPlayerConsumable> BoundPlayerConsumable;
 };
