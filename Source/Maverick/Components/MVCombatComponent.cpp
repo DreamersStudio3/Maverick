@@ -9,7 +9,8 @@
 #include "Components/MVActionComponent.h"
 #include "Character/MVCharacterBase.h"
 #include "Components/MVStatComponent.h"
-
+#include "Public/Interface/MVAbilityInterface.h"
+#include "Tags/MVGameplayTags.h"
 
 // Sets default values for this component's properties
 UMVCombatComponent::UMVCombatComponent()
@@ -46,18 +47,7 @@ void UMVCombatComponent::BeginPlay()
 
 	if (UMVInputManagerComponent* InputManager = OwnerCharacter->InputManagerComponent)
 	{
-		InputManager->OnActionInputSubmitted.RemoveDynamic(
-			this,
-			&UMVCombatComponent::HandleActionInputSubmitted);
-		InputManager->OnActionInputSubmitted.AddUniqueDynamic(
-			this,
-			&UMVCombatComponent::HandleActionInputSubmitted);
-		InputManager->OnRecoveryEscapeWindowChanged.RemoveDynamic(
-			this,
-			&UMVCombatComponent::HandleRecoveryEscapeWindowChanged);
-		InputManager->OnRecoveryEscapeWindowChanged.AddUniqueDynamic(
-			this,
-			&UMVCombatComponent::HandleRecoveryEscapeWindowChanged);
+		InputManager->RegisterActionInputHandler(this, MVActionInputHandlerPriorities::Combat);
 	}
 
 	StatComponent = OwnerCharacter->FindComponentByClass<UMVStatComponent>();
@@ -66,6 +56,19 @@ void UMVCombatComponent::BeginPlay()
 		return;
 	}
 	
+}
+
+void UMVCombatComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	if (const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner()))
+	{
+		if (UMVInputManagerComponent* InputManager = OwnerCharacter->InputManagerComponent)
+		{
+			InputManager->UnregisterActionInputHandler(this);
+		}
+	}
+
+	Super::EndPlay(EndPlayReason);
 }
 
 
@@ -105,9 +108,11 @@ bool UMVCombatComponent::TryCombatAction(EMVCombatActionTypes InActionType, int3
 		bIsRevoveryEscapeWindowOpen =InputManager->IsRecoveryEscapeWindowOpen();
 	}
 	
-	bool CanInterrupt = ActionComponent->CanInterruptActiveAction();
+	const bool bActionRunning = ActionComponent->IsActionRunning();
+	const bool bCanStartAction = !bActionRunning
+		|| (bIsRevoveryEscapeWindowOpen && ActionComponent->CanInterruptActiveAction());
 
-	if (bIsRevoveryEscapeWindowOpen || CanInterrupt)
+	if (bCanStartAction)
 	{
 		if (InActionType == EMVCombatActionTypes::LightAttack ||
 			InActionType == EMVCombatActionTypes::HeavyAttack ||
@@ -126,90 +131,51 @@ bool UMVCombatComponent::TryCombatAction(EMVCombatActionTypes InActionType, int3
 	return false;
 }
 
-void UMVCombatComponent::HandleActionInputSubmitted(
-	const int32 ActionId,
-	const FVector2D ControllerSpaceInput,
-	const bool bHasMovementInput)
+bool UMVCombatComponent::TryHandleActionInput(
+	const FGameplayTag ActionInputTag,
+	const FVector2D /*ControllerSpaceInput*/,
+	const bool /*bHasMovementInput*/)
 {
-	if (!ValidActionIds.Contains(ActionId))
+	if (!IsCombatActionInputTag(ActionInputTag))
 	{
-		return;
+		return false;
 	}
 
-	bool result = ChooseTryCombatAction(ActionId);
-
-	if (result)
-	{
-		if (const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner()))
-		{
-			if (UMVInputManagerComponent* InputManager = OwnerCharacter->InputManagerComponent)
-			{
-				InputManager->ClearBufferedActionInput();
-			}
-		}
-	}
-
+	return ChooseTryCombatAction(ActionInputTag);
 }
 
-void UMVCombatComponent::HandleRecoveryEscapeWindowChanged(const bool bOpen)
+bool UMVCombatComponent::ChooseTryCombatAction(const FGameplayTag ActionInputTag)
 {
-	if (!bOpen)
+	if (ActionInputTag.MatchesTag(MVGameplayTags::Action_Input_Skill))
 	{
-		return;
-	}
-
-	const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
-	UMVInputManagerComponent* InputManager = OwnerCharacter	? OwnerCharacter->InputManagerComponent	: nullptr;
-	if (!InputManager)
-	{
-		return;
-	}
-
-	int32 ActionId = INDEX_NONE;
-	FVector2D ControllerSpaceInput = FVector2D::ZeroVector;
-	bool bHasMovementInput = false;
-	if (!InputManager->TryGetBufferedActionInput(ActionId, ControllerSpaceInput, bHasMovementInput)
-		|| !ValidActionIds.Contains(ActionId))
-	{
-		return;
-	}
-
-	bool result = ChooseTryCombatAction(ActionId);
-
-	if (result)
-	{
-		InputManager->ClearBufferedActionInput();
-	}
-
-
-}
-
-bool UMVCombatComponent::ChooseTryCombatAction(const int32 ActionId)
-{
-	if (ActionId == MVActionIds::Skill)
-	{
-		// Todo: SkillIndex should be passed from InputManagerComponent
-		TryCombatAction(EMVCombatActionTypes::Skill, 0);
-		return true;
+		const int32 SkillIndex = ActionInputTag.MatchesTagExact(MVGameplayTags::Action_Input_Skill_R)
+			? 1
+			: 0;
+		return TryCombatAction(EMVCombatActionTypes::Skill, SkillIndex);
 	}
 	// Basic attack - Light attack, Heavy Attack, Charge Attack
-	else if(ActionId == MVActionIds::LightAttack)
+	else if(ActionInputTag.MatchesTagExact(MVGameplayTags::Action_Input_LightAttack))
 	{
-		TryCombatAction(EMVCombatActionTypes::LightAttack);
-		return true;
+		return TryCombatAction(EMVCombatActionTypes::LightAttack);
 	}
-	else if (ActionId == MVActionIds::HeavyAttack)
+	else if (ActionInputTag.MatchesTagExact(MVGameplayTags::Action_Input_HeavyAttack))
 	{
-		TryCombatAction(EMVCombatActionTypes::HeavyAttack);
-		return true;
+		return TryCombatAction(EMVCombatActionTypes::HeavyAttack);
 	}
-	else if (ActionId == MVActionIds::ChargeAttack)
+	else if (ActionInputTag.MatchesTagExact(MVGameplayTags::Action_Input_ChargeAttack))
 	{
-		TryCombatAction(EMVCombatActionTypes::ChargeAttack);
-		return true;
+		return TryCombatAction(EMVCombatActionTypes::ChargeAttack);
 	}
 
 	return false;
+}
+
+bool UMVCombatComponent::IsCombatActionInputTag(const FGameplayTag ActionInputTag) const
+{
+	return ActionInputTag.MatchesTagExact(MVGameplayTags::Action_Input_LightAttack)
+		|| ActionInputTag.MatchesTagExact(MVGameplayTags::Action_Input_HeavyAttack)
+		|| ActionInputTag.MatchesTagExact(MVGameplayTags::Action_Input_ChargeAttack)
+		|| ActionInputTag.MatchesTag(MVGameplayTags::Action_Input_Skill);
 }
 
 
@@ -249,6 +215,12 @@ bool UMVCombatComponent::TryBasicAttack(EMVCombatActionTypes InActionType)
 		if (SendDataToActionComp(InActionType, ActionEntry->GetCurrentRowName()))
 		{
 			ConsumeActionCost(ActionEntry->GetCurrentSkillData());
+			PreviousAbilityInstance = CurrentAbilityInstance;
+			if (PreviousAbilityInstance && PreviousAbilityInstance->Implements<UMVAbilityInterface>())
+			{
+				IMVAbilityInterface::Execute_EndAbility(PreviousAbilityInstance);
+			}
+			CurrentAbilityInstance = ActionEntry->GetCurrentAbility();
 			ActionEntry->ActivateChain(CurrentTime);
 			ActionEntry->TryAdvanceChainStage(CurrentTime);
 			LastBasicAttackedTime = CurrentTime;
@@ -256,6 +228,7 @@ bool UMVCombatComponent::TryBasicAttack(EMVCombatActionTypes InActionType)
 		}
 		else
 		{
+			UE_LOG(LogTemp, Warning, TEXT("MVCombatComponent::TryBasicAttack - Failed to send data to ActionComponent for action '%s'"), *RowName.ToString());
 			return false;
 		}
 
@@ -266,7 +239,18 @@ bool UMVCombatComponent::TryBasicAttack(EMVCombatActionTypes InActionType)
 		if (SendDataToActionComp(InActionType, ActionEntry->GetCurrentRowName()))
 		{
 			ConsumeActionCost(ActionEntry->GetCurrentSkillData());
+			PreviousAbilityInstance = CurrentAbilityInstance;
+			if (PreviousAbilityInstance && PreviousAbilityInstance->Implements<UMVAbilityInterface>())
+			{
+				IMVAbilityInterface::Execute_EndAbility(PreviousAbilityInstance);
+			}
+			CurrentAbilityInstance = ActionEntry->GetCurrentAbility();
 			ActionEntry->TryAdvanceChainStage(CurrentTime);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("MVCombatComponent::TryBasicAttack - Failed to send data to ActionComponent for action '%s'"), *RowName.ToString());
+			return false;
 		}
 		
 	}
@@ -275,8 +259,19 @@ bool UMVCombatComponent::TryBasicAttack(EMVCombatActionTypes InActionType)
 		if (SendDataToActionComp(InActionType, ActionEntry->GetCurrentRowName()))
 		{
 			ConsumeActionCost(ActionEntry->GetCurrentSkillData());
+			PreviousAbilityInstance = CurrentAbilityInstance;
+			if (PreviousAbilityInstance && PreviousAbilityInstance->Implements<UMVAbilityInterface>())
+			{
+				IMVAbilityInterface::Execute_EndAbility(PreviousAbilityInstance);
+			}
+			CurrentAbilityInstance = ActionEntry->GetCurrentAbility();
 			ActionEntry->ActivateChain(CurrentTime);
 			ActionEntry->TryAdvanceChainStage(CurrentTime);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("MVCombatComponent::TryBasicAttack - Failed to send data to ActionComponent for action '%s'"), *RowName.ToString());
+			return false;
 		}
 	}
 		LastBasicAttackedTime = CurrentTime;
@@ -323,6 +318,12 @@ bool UMVCombatComponent::TrySkill(EMVCombatActionTypes InActionType, int32 Skill
 			if (SendDataToActionComp(InActionType, ActionEntry->GetCurrentRowName()))
 			{
 				ConsumeActionCost(ActionEntry->GetCurrentSkillData());
+				PreviousAbilityInstance = CurrentAbilityInstance;
+				if (PreviousAbilityInstance && PreviousAbilityInstance->Implements<UMVAbilityInterface>())
+				{
+					IMVAbilityInterface::Execute_EndAbility(PreviousAbilityInstance);
+				}
+				CurrentAbilityInstance = ActionEntry->GetCurrentAbility();
 				ActionEntry->ActivateChain(CurrentTime);
 				ActionEntry->TryAdvanceChainStage(CurrentTime);
 				return true;
@@ -345,6 +346,12 @@ bool UMVCombatComponent::TrySkill(EMVCombatActionTypes InActionType, int32 Skill
 			if (SendDataToActionComp(InActionType, ActionEntry->GetCurrentRowName()))
 			{
 				ConsumeActionCost(ActionEntry->GetCurrentSkillData());
+				PreviousAbilityInstance = CurrentAbilityInstance;
+				if (PreviousAbilityInstance && PreviousAbilityInstance->Implements<UMVAbilityInterface>())
+				{
+					IMVAbilityInterface::Execute_EndAbility(PreviousAbilityInstance);
+				}
+				CurrentAbilityInstance = ActionEntry->GetCurrentAbility();
 				ActionEntry->TryAdvanceChainStage(CurrentTime);
 				return true;
 			}
@@ -365,6 +372,12 @@ bool UMVCombatComponent::TrySkill(EMVCombatActionTypes InActionType, int32 Skill
 		if (SendDataToActionComp(InActionType, ActionEntry->GetCurrentRowName()))
 		{
 			ConsumeActionCost(ActionEntry->GetCurrentSkillData());
+			PreviousAbilityInstance = CurrentAbilityInstance;
+			if (PreviousAbilityInstance && PreviousAbilityInstance->Implements<UMVAbilityInterface>())
+			{
+				IMVAbilityInterface::Execute_EndAbility(PreviousAbilityInstance);
+			}
+			CurrentAbilityInstance = ActionEntry->GetCurrentAbility();
 			ActionEntry->ActivateChain(CurrentTime);
 			ActionEntry->TryAdvanceChainStage(CurrentTime);
 			return true;
@@ -653,12 +666,38 @@ bool UMVCombatComponent::SendDataToActionComp(EMVCombatActionTypes InActionType,
 	{
 		return false;
 	}
-	//if (Owner->ActionComponent->TryStartActionFromRowHandle(RowHandle))
-	if (Owner->ActionComponent->TryTransitionActionFromRowHandle(RowHandle))
+	
+	UMVActionComponent* ActionComponent = Owner->ActionComponent;
+	if (!ActionComponent)
 	{
-		return true;
+		return false;
 	}
-	return false;
+
+	UMVInputManagerComponent* InputManager = Owner->InputManagerComponent;
+	const bool bRecoveryOpen = InputManager ? InputManager->IsRecoveryEscapeWindowOpen() : true;
+	const bool bIsActionRunning = ActionComponent->IsActionRunning();
+	const bool bCanInterrupt = ActionComponent->CanInterruptActiveAction();
+
+	// If an action is running, only allow transition when recovery is open or action is interruptible.
+	if (bIsActionRunning)
+	{
+		if (bRecoveryOpen && bCanInterrupt)
+		{
+			Result = ActionComponent->TryTransitionActionFromRowHandle(RowHandle);
+		}
+		else
+		{
+			// Cannot transition now -> keep buffered input (return false)
+			return false;
+		}
+	}
+	else
+	{
+		// No active action -> start normally
+		Result = ActionComponent->TryStartActionFromRowHandle(RowHandle);
+	}
+
+	return Result;
 }
 
 bool UMVCombatComponent::CanConsumeActionCost(const FMVSkillDataTableColumn* SkillData) const

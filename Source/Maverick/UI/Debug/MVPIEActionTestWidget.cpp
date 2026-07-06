@@ -7,6 +7,7 @@
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
 #include "Components/MVStatComponent.h"
+#include "Components/MVWeaponComponent.h"
 #include "Components/TextBlock.h"
 #include "Components/VerticalBox.h"
 #include "Components/VerticalBoxSlot.h"
@@ -81,6 +82,29 @@ PRAGMA_ENABLE_DEPRECATION_WARNINGS
 		}
 	}
 	return Button;
+}
+
+float PIEActionTestResolveAttackPower(
+	const AMVCharacterBase& Attacker,
+	const UMVHitResolverSubsystem& HitResolver)
+{
+	if (const UMVWeaponComponent* WeaponComponent = Attacker.FindComponentByClass<UMVWeaponComponent>())
+	{
+		const FMVWeaponHitSnapshot WeaponSnapshot = WeaponComponent->CaptureWeaponHitSnapshot();
+		if (WeaponSnapshot.bValid && WeaponSnapshot.AttackPower > 0.0f)
+		{
+			return WeaponSnapshot.AttackPower;
+		}
+	}
+
+	return FMath::Max(0.0f, HitResolver.FallbackAttackPower);
+}
+
+float PIEActionTestMakeDamageMultiplier(const float DesiredDamage, const float AttackPower)
+{
+	return AttackPower > 0.0f
+		? FMath::Max(0.0f, DesiredDamage) / AttackPower
+		: 0.0f;
 }
 }
 
@@ -224,15 +248,14 @@ void UMVPIEActionTestWidget::ExecuteTestByIndex(const int32 TestIndex)
 
 	const FMVPIEActionTestSpec& Spec = GetPIEActionTestSpec(TestIndex);
 	HideDialogueWindow();
+	const float TestAttackPower = PIEActionTestResolveAttackPower(*Attacker, *HitResolver);
 
 	FMVHitResolveRequest Request;
 	Request.Attacker = Attacker;
 	Request.Victim = Target;
-	Request.ActionRowName = TEXT("PIE_HitReactionTest");
-	Request.DamageMultiplier = 1.0f;
+	Request.DamageMultiplier = PIEActionTestMakeDamageMultiplier(Spec.HPDamage, TestAttackPower);
 	Request.HitReactionType = Spec.HitReactionType;
-	Request.WeaponAttackPower = Spec.HPDamage;
-	Request.GroggyDamage = Spec.GroggyDamage;
+	Request.GroggyDamageMultiplier = PIEActionTestMakeDamageMultiplier(Spec.GroggyDamage, TestAttackPower);
 	Request.HitLocation = Target->GetActorLocation();
 	Request.HitDirection = Target->GetActorLocation() - Attacker->GetActorLocation();
 

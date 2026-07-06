@@ -4,7 +4,7 @@
 #include "Combat/MVAbilityBase.h"
 
 #include "Components/MVCombatComponent.h"
-#include "GameFramework/Character.h"
+#include "Character/MVCharacterBase.h"
 
 void UMVAbilityBase::SetOwner(UMVCombatComponent* Owner)
 {
@@ -19,29 +19,45 @@ UMVCombatComponent* UMVAbilityBase::GetOwner()
 	return OwnerComponent;
 }
 
-ACharacter* UMVAbilityBase::GetComponentOwner()
+AMVCharacterBase* UMVAbilityBase::GetOwnerCharacter()
 {
 	if (OwnerComponent)
 	{
-		ACharacter* OwnerCharacter = Cast<ACharacter>(OwnerComponent->GetOwner());
+		AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(OwnerComponent->GetOwner());
+		if (OwnerCharacter)
+		{
+			return OwnerCharacter;
+		}
+		else
+		{
+			return nullptr;
+		}
 		
-		return OwnerCharacter;
 	}
 
 	return nullptr;
 }
 
-void UMVAbilityBase::InitAbility(FMVSkillDataTableColumn Data)
+void UMVAbilityBase::InitAbility(const FMVSkillDataTableColumn& Data)
 {
 	AbilityData = Data;
 }
 
 void UMVAbilityBase::StartAbility_Implementation()
 {
-	
+	if (bAbilityActive)
+	{
+		return;
+	}
+	bAbilityActive = true;
 }
 
 void UMVAbilityBase::EndAbility_Implementation()
 {
+	if (bAbilityActive)
+	{
+		return;
+	}
+	bAbilityActive = false;
 }
 

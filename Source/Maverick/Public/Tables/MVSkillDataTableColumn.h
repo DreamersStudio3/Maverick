@@ -20,7 +20,7 @@ struct FMVSkillDataTableColumn : public FMVActionRow
 
 public:
 	FMVSkillDataTableColumn()
-		: Damage(0.0f), CooldownDuration(0.0f), bIsChained(false), NextChainName(NAME_None), InterStageCooldown(0.0f), InputWindowDuration(0.0f)
+		: DamageMultiplier(1.0f), GroggyDamageMultiplier(1.0f), CooldownDuration(0.0f), bIsChained(false), NextChainName(NAME_None), InterStageCooldown(0.0f), InputWindowDuration(0.0f)
 		
 	{
 
@@ -29,8 +29,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Common")
 	TSubclassOf<UMVAbilityBase> AbilityReference;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Common")
-	float Damage;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Common", meta = (ClampMin = "0.0"))
+	float DamageMultiplier;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Common")
 	float StaminaCost;
@@ -39,7 +39,7 @@ public:
 	float MpCost;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Common", meta = (ClampMin = "0.0"))
-	float GroggyDamage = 0.0f;
+	float GroggyDamageMultiplier;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Skill")
 	float CooldownDuration;

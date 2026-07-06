@@ -7,6 +7,7 @@
 #include "Public/Tables/MVSkillDataTableColumn.h"
 #include "Public/Struct/MVCombatActionTableInput.h"
 #include "Components/MVInputManagerComponent.h"
+#include "Interface/MVActionInputHandlerInterface.h"
 
 #include "MVCombatComponent.generated.h"
 
@@ -241,7 +242,7 @@ class UChooserTable;
 class UMVStatComponent;
 
 UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class MAVERICK_API UMVCombatComponent : public UActorComponent
+class MAVERICK_API UMVCombatComponent : public UActorComponent, public IMVActionInputHandlerInterface
 {
 	GENERATED_BODY()
 
@@ -252,7 +253,9 @@ public:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
+	// Public API
 public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
@@ -260,12 +263,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Action")
 	bool TryCombatAction(EMVCombatActionTypes InActionType, int32 SkillIndex = 0);
 
+	// Call When Character Change Weapon --> have to receive Event from Character
+	UFUNCTION(BlueprintCallable, Category = "Combat|Weapon")
+	void ChangeWeapon(EMVEquippedStyle NewStyle);
+
 protected:
-	UFUNCTION()
-	void HandleActionInputSubmitted(int32 ActionId, FVector2D ControllerSpaceInput, bool bHasMovementInput);
-	UFUNCTION()
-	void HandleRecoveryEscapeWindowChanged(bool bOpen);
-	bool ChooseTryCombatAction(const int32 ActionId);
+	virtual bool TryHandleActionInput(FGameplayTag ActionInputTag, FVector2D ControllerSpaceInput, bool bHasMovementInput) override;
+	bool ChooseTryCombatAction(FGameplayTag ActionInputTag);
+	bool IsCombatActionInputTag(FGameplayTag ActionInputTag) const;
 
 	bool TryBasicAttack(EMVCombatActionTypes InActionType);
 	bool TrySkill(EMVCombatActionTypes InActionType, int32 SkillIndex = 0);
@@ -275,9 +280,6 @@ protected:
 	
 	void ResetBasicAttackMap();
 	void ResetSkillMap();
-	
-	// Call When Character Change Weapon --> have to receive Event from Character
-	void ChangeWeapon(EMVEquippedStyle NewStyle);
 	
 protected:
 	// Should Return DataTable using ChooserTable In Blueprint
@@ -310,14 +312,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Infomation")
 	float ResetBasicAttackTime = 2.0f;
 
+	UPROPERTY(Transient)
+	TObjectPtr<UMVAbilityBase> PreviousAbilityInstance;
+	UPROPERTY(BlueprintReadOnly)
+	TObjectPtr<UMVAbilityBase> CurrentAbilityInstance;
+
 private:
 	double LastBasicAttackedTime;
-	TSet<int32> ValidActionIds = {
-		MVActionIds::LightAttack,
-		MVActionIds::HeavyAttack,
-		MVActionIds::ChargeAttack,
-		MVActionIds::Skill
-	};
-
 	TObjectPtr<UMVStatComponent> StatComponent;
+
 };

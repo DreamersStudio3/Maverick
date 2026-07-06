@@ -38,6 +38,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|QuickSlot")
 	void UpdateCount(int32 NewCount);
 
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|QuickSlot")
+	void UpdateCountAndLocked(int32 NewCount, bool bLocked);
+
 protected:
 	virtual void NativePreConstruct() override;
 

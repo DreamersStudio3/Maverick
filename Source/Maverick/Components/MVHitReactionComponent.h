@@ -7,6 +7,7 @@
 #include "Engine/EngineTypes.h"
 #include "Enum/MVEquipmentEnums.h"
 #include "GameplayTagContainer.h"
+#include "Interface/MVActionInputHandlerInterface.h"
 #include "Struct/MVHitTypes.h"
 #include "Tables/MVActionRowTableTypes.h"
 #include "Tables/MVHitReactionActionTableTypes.h"
@@ -49,7 +50,7 @@ struct FMVHitReactionActionData
  *   5) Getup/EscapeDodge recovery 액션도 active HR row로 추적해 후딜 window의 이동 취소와 Dodge 전환을 허용한다.
  */
 UCLASS(ClassGroup = (Maverick), meta = (BlueprintSpawnableComponent))
-class MAVERICK_API UMVHitReactionComponent : public UActorComponent
+class MAVERICK_API UMVHitReactionComponent : public UActorComponent, public IMVActionInputHandlerInterface
 {
 	GENERATED_BODY()
 
@@ -58,6 +59,7 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Maverick|HitReaction")
@@ -139,11 +141,12 @@ private:
 	void CacheOwnerReferences();
 	void BindInputManagerHandlers();
 	void BindActionComponentHandlers();
+	virtual bool TryHandleActionInput(FGameplayTag ActionInputTag, FVector2D ControllerSpaceInput, bool bHasMovementInput) override;
+	virtual bool TryHandleRecoveryWindowOpened() override;
 	bool GetActionData(const FMVResolvedHitData& HitData, FMVHitReactionActionData& OutActionData);
 	void ApplyHitReactionLaunch(const FMVResolvedHitData& HitData, const FMVHitReactionActionRow& ActionRow);
-	bool TryConsumeBufferedRecoveryInput();
 	bool TryConsumeBufferedRecoveryMovementInput();
-	bool TryConsumeRecoveryInput(int32 ActionId, FVector2D ControllerSpaceInput, bool bHasMovementInput);
+	bool TryConsumeRecoveryInput(FGameplayTag ActionInputTag, FVector2D ControllerSpaceInput, bool bHasMovementInput);
 	bool TryConsumeRecoveryMovementInput(FVector2D ControllerSpaceInput, bool bHasMovementInput);
 	bool TryStartDefaultRecoveryAction(bool bRequireRecoveryWindow = true);
 	bool TryStartEscapeDodgeRecoveryAction(EMVActionInputDirection Direction);
@@ -167,7 +170,6 @@ private:
 		EMVHitReactionDirection Direction,
 		FMVHitReactionActionRowHandle& OutActionRowHandle);
 	bool CanTriggerGroggyByHitReactionType(EMVActionHitReactionType HitReactionType) const;
-	bool CanTriggerGroggyByActionTag(FName ActionTag) const;
 	FName ResolveHitReactionActionTableName() const;
 	EMVHitReactionDirection ResolveSupportedHitReactionDirection(
 		EMVActionHitReactionType HitReactionType,
@@ -195,13 +197,7 @@ private:
 	static FString ActionInputDirectionToTableToken(EMVActionInputDirection Direction);
 
 	UFUNCTION()
-	void HandleActionInputSubmitted(int32 ActionId, FVector2D ControllerSpaceInput, bool bHasMovementInput);
-
-	UFUNCTION()
 	void HandleActionEnded(FName ActionTableName, FName ActionRowName, bool bInterrupted);
-
-	UFUNCTION()
-	void HandleRecoveryEscapeWindowChanged(bool bOpen);
 
 	UFUNCTION()
 	void HandleOwnerMovementModeChanged(ACharacter* Character, EMovementMode PrevMovementMode, uint8 PreviousCustomMode);

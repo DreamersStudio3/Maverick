@@ -1,11 +1,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Struct/MVHealingPotionTypes.h"
 #include "UI/Base/MVHUDWidgetBase.h"
 #include "MVMainHUDWidget.generated.h"
 
 class UMVBossHPBarWidget;
 class UMVCurrencyStatusWidget;
+class UMVPlayerConsumable;
 class UMVPlayerStatusWidget;
 class UMVQuickSlotWidget;
 class UMVStatComponent;
@@ -50,6 +52,14 @@ protected:
 
 private:
 	void BuildNativeWidgetTree();
+	void BindPlayerConsumable(UMVPlayerConsumable* Consumable);
+	void ApplyHealingPotionQuickSlotView();
+
+	UFUNCTION()
+	void HandleHealingPotionStateChanged(const FMVHealingPotionRuntimeState& HealingPotionState);
 
 	FText CachedBossName;
+
+	UPROPERTY(Transient)
+	TObjectPtr<UMVPlayerConsumable> BoundPlayerConsumable;
 };

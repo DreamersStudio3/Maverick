@@ -3,6 +3,7 @@
 #include "Character/MVCharacterBase.h"
 #include "Components/MVHitReactionComponent.h"
 #include "Components/MVStatComponent.h"
+#include "Components/MVWeaponComponent.h"
 #include "Engine/World.h"
 
 UMVHitResolverSubsystem* UMVHitResolverSubsystem::Get(const UObject* WorldContextObject)
@@ -54,25 +55,25 @@ bool UMVHitResolverSubsystem::BuildResolvedHitData(
 	const float BaseAttackPower = AttackerAttackPower > 0.0f
 		? AttackerAttackPower
 		: ResolveNonNegativeStat(FallbackAttackPower);
-	const float WeaponAttackPower = ResolveEquippedWeaponAttackPower(*Attacker, Request);
+	const FMVWeaponHitSnapshot WeaponSnapshot = ResolveWeaponHitSnapshot(*Attacker);
+	const float WeaponAttackPower = ResolveNonNegativeStat(WeaponSnapshot.AttackPower);
 	const float DamageMultiplier = ResolveNonNegativeStat(Request.DamageMultiplier);
-	const float GroggyDamage = ResolveNonNegativeStat(Request.GroggyDamage);
+	const float GroggyDamageMultiplier = ResolveNonNegativeStat(Request.GroggyDamageMultiplier);
 	const float VictimDefence = ResolveNonNegativeStat(VictimStat->Defence);
-	const float RawDamage = (BaseAttackPower + WeaponAttackPower) * DamageMultiplier;
+	const float RawDamage = WeaponAttackPower * DamageMultiplier;
 	const float FinalDamage = FMath::Max(0.0f, RawDamage - VictimDefence);
+	const float GroggyDamage = WeaponAttackPower * GroggyDamageMultiplier;
 
 	OutHitData.Attacker = Attacker;
 	OutHitData.Victim = Victim;
 	OutHitData.AttackerCharacterIndexCode = Attacker->GetCharacterIndexCode();
 	OutHitData.VictimCharacterIndexCode = Victim->GetCharacterIndexCode();
-	OutHitData.ActionRowName = Request.ActionRowName;
-	OutHitData.ActionTag = Request.ActionTag.IsNone()
-		? Request.ActionRowName
-		: Request.ActionTag;
 	OutHitData.CharacterAttackPower = BaseAttackPower;
+	OutHitData.WeaponSnapshot = WeaponSnapshot;
 	OutHitData.WeaponAttackPower = WeaponAttackPower;
 	OutHitData.VictimDefence = VictimDefence;
 	OutHitData.DamageMultiplier = DamageMultiplier;
+	OutHitData.GroggyDamageMultiplier = GroggyDamageMultiplier;
 	OutHitData.FinalDamage = FinalDamage;
 	OutHitData.GroggyDamage = GroggyDamage;
 	OutHitData.HitReactionType = Request.HitReactionType;
@@ -90,13 +91,21 @@ bool UMVHitResolverSubsystem::BuildResolvedHitData(
 	return true;
 }
 
-float UMVHitResolverSubsystem::ResolveEquippedWeaponAttackPower(
-	const AMVCharacterBase& /*Attacker*/,
-	const FMVHitResolveRequest& Request) const
+FMVWeaponHitSnapshot UMVHitResolverSubsystem::ResolveWeaponHitSnapshot(const AMVCharacterBase& Attacker) const
 {
-	// WeaponComponent가 편입되면 Attacker의 현재 무기 스탯을 여기서 조회한다.
-	// 무기 아이템이 없는 캐릭터도 맨손 무기를 기본 장착한 것으로 취급한다.
-	return ResolveNonNegativeStat(Request.WeaponAttackPower);
+	if (const UMVWeaponComponent* WeaponComponent = Attacker.FindComponentByClass<UMVWeaponComponent>())
+	{
+		const FMVWeaponHitSnapshot WeaponSnapshot = WeaponComponent->CaptureWeaponHitSnapshot();
+		if (WeaponSnapshot.bValid)
+		{
+			return WeaponSnapshot;
+		}
+	}
+
+	FMVWeaponHitSnapshot FallbackSnapshot;
+	FallbackSnapshot.AttackPower = ResolveNonNegativeStat(FallbackAttackPower);
+	FallbackSnapshot.bValid = FallbackSnapshot.AttackPower > 0.0f;
+	return FallbackSnapshot;
 }
 
 float UMVHitResolverSubsystem::ResolveNonNegativeStat(const float Value)
