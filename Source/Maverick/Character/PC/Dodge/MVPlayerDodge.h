@@ -46,7 +46,6 @@ public:
 
 	void Initialize(AMVPlayerCharacter& InOwnerCharacter);
 	void Deinitialize();
-	void PrepareDodgeAction();
 	virtual bool TryHandleActionInput(FGameplayTag ActionInputTag, FVector2D ControllerSpaceInput, bool bHasMovementInput) override;
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Action|Dodge")
@@ -68,18 +67,30 @@ public:
 	FMVDodgeActionRowHandle ChooserDodgeActionRowHandle;
 
 private:
+	struct FMVDodgeInputContext
+	{
+		FVector2D ControllerSpaceInput = FVector2D::ZeroVector;
+		FVector MovementDirection = FVector::ZeroVector;
+		FVector FacingDirection = FVector::ZeroVector;
+		ELocomotionDirection InputDirection = ELocomotionDirection::B;
+		ELocomotionDirection RowDirection = ELocomotionDirection::B;
+		bool bHasMovementInput = false;
+		bool bUsesStep = false;
+	};
+
 	AMVPlayerCharacter* GetPlayerCharacter() const;
 	void CacheControllerSpaceMovementInput(const FVector2D& ControllerSpaceMovementInput);
 	void HandleOwnerMovementInput(const FVector& MovementInputDirection);
 	void BeginLockOnPawnRotationSuppressionForDodge(AMVCharacterBase& OwnerCharacter);
 	void EndLockOnPawnRotationSuppressionForDodge();
-	FVector2D CaptureControllerSpaceMovementInput(const AMVCharacterBase& OwnerCharacter) const;
-	bool TryStartDodgeAction();
-	bool ResolveDodgeActionRowHandle(FMVDodgeActionRowHandle& OutActionRowHandle);
-	bool EvaluateDodgeChooserActionRowHandle(FMVDodgeActionRowHandle& OutActionRowHandle);
+	FMVDodgeInputContext MakeDodgeInputContext(FVector2D ControllerSpaceInput, bool bHasMovementInput) const;
+	void ApplyDodgeInputContext(AMVCharacterBase& OwnerCharacter, const FMVDodgeInputContext& DodgeInput);
+	bool TryStartDodgeAction(const FMVDodgeInputContext& DodgeInput);
+	bool ResolveDodgeActionRowHandle(const FMVDodgeInputContext& DodgeInput, FMVDodgeActionRowHandle& OutActionRowHandle);
+	bool EvaluateDodgeChooserActionRowHandle(const FMVDodgeInputContext& DodgeInput, FMVDodgeActionRowHandle& OutActionRowHandle);
 	FName MakeDodgeActionTableName(FGameplayTag CharacterIndexCode) const;
 	FName MakeDodgeActionTableName(const UDataTable* ActionDataTable) const;
-	FName MakeDodgeActionRowName(FGameplayTag CharacterIndexCode, int32 Index) const;
+	FName MakeDodgeActionRowName(const AMVCharacterBase& OwnerCharacter, const FMVDodgeInputContext& DodgeInput, int32 Index) const;
 	FGameplayTag ResolveCharacterIndexCode() const;
 	bool CanTransitionCurrentAction(const UMVInputManagerComponent& InputManager, const UMVActionComponent& ActionComponent) const;
 	const FMVDodgeActionRow* FindDodgeActionRow(FDataTableRowHandle ActionRowHandle) const;

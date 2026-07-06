@@ -16,8 +16,8 @@ class UMVStatComponent;
  * 계산이 끝난 데이터는 피격자 CharacterBase.OnHitResolved로 전달해 캐릭터별 OnDamaged 흐름을 시작한다.
  *
  * 라이프사이클:
- *   1) ResolveAttackHit -> 필터링 완료된 공격자/피격자/공격 row 요청을 받는다.
- *   2) 무기 공격력과 요청에 포함된 공격 배율을 읽어 FMVResolvedHitData를 채운다.
+ *   1) ResolveAttackHit -> 필터링 완료된 공격자/피격자와 공격 배율 요청을 받는다.
+ *   2) 공격자의 현재 무기 스냅샷과 요청에 포함된 공격 배율을 읽어 FMVResolvedHitData를 채운다.
  *   3) OnHitResolved를 브로드캐스트하고 피격자 CharacterBase.OnHitResolved로 결과를 전달한다.
  */
 UCLASS()
@@ -39,7 +39,7 @@ public:
 
 private:
 	bool BuildResolvedHitData(const FMVHitResolveRequest& Request, FMVResolvedHitData& OutHitData) const;
-	FMVWeaponHitSnapshot ResolveWeaponHitSnapshot(const AMVCharacterBase& Attacker, const FMVHitResolveRequest& Request) const;
+	FMVWeaponHitSnapshot ResolveWeaponHitSnapshot(const AMVCharacterBase& Attacker) const;
 	static float ResolveNonNegativeStat(float Value);
 	static FVector ResolveHitDirection(const AMVCharacterBase& Attacker, const AMVCharacterBase& Victim);
 };

@@ -207,11 +207,6 @@ bool UMVHitReactionComponent::CanTriggerGroggy(const FMVResolvedHitData& HitData
 		return false;
 	}
 
-	if (!CanTriggerGroggyByActionTag(HitData.ActionTag))
-	{
-		return false;
-	}
-
 	const float PredictedGroggy = StatComponent->CurrentGroggy + FMath::Max(0.0f, HitData.GroggyDamage);
 	return PredictedGroggy >= StatComponent->MaxGroggy;
 }
@@ -907,13 +902,6 @@ bool UMVHitReactionComponent::CanTriggerGroggyByHitReactionType(
 	const EMVActionHitReactionType HitReactionType) const
 {
 	return GroggyTriggerHitReactionTypes.Contains(HitReactionType);
-}
-
-bool UMVHitReactionComponent::CanTriggerGroggyByActionTag(const FName ActionTag) const
-{
-	static_cast<void>(ActionTag);
-	// Todo: Add ActionTag-based groggy trigger filtering when attack tags are finalized.
-	return true;
 }
 
 FName UMVHitReactionComponent::ResolveHitReactionActionTableName() const

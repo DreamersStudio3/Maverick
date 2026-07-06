@@ -170,7 +170,6 @@ private:
 		EMVHitReactionDirection Direction,
 		FMVHitReactionActionRowHandle& OutActionRowHandle);
 	bool CanTriggerGroggyByHitReactionType(EMVActionHitReactionType HitReactionType) const;
-	bool CanTriggerGroggyByActionTag(FName ActionTag) const;
 	FName ResolveHitReactionActionTableName() const;
 	EMVHitReactionDirection ResolveSupportedHitReactionDirection(
 		EMVActionHitReactionType HitReactionType,

@@ -55,7 +55,7 @@ bool UMVHitResolverSubsystem::BuildResolvedHitData(
 	const float BaseAttackPower = AttackerAttackPower > 0.0f
 		? AttackerAttackPower
 		: ResolveNonNegativeStat(FallbackAttackPower);
-	const FMVWeaponHitSnapshot WeaponSnapshot = ResolveWeaponHitSnapshot(*Attacker, Request);
+	const FMVWeaponHitSnapshot WeaponSnapshot = ResolveWeaponHitSnapshot(*Attacker);
 	const float WeaponAttackPower = ResolveNonNegativeStat(WeaponSnapshot.AttackPower);
 	const float DamageMultiplier = ResolveNonNegativeStat(Request.DamageMultiplier);
 	const float GroggyDamageMultiplier = ResolveNonNegativeStat(Request.GroggyDamageMultiplier);
@@ -68,10 +68,6 @@ bool UMVHitResolverSubsystem::BuildResolvedHitData(
 	OutHitData.Victim = Victim;
 	OutHitData.AttackerCharacterIndexCode = Attacker->GetCharacterIndexCode();
 	OutHitData.VictimCharacterIndexCode = Victim->GetCharacterIndexCode();
-	OutHitData.ActionRowName = Request.ActionRowName;
-	OutHitData.ActionTag = Request.ActionTag.IsNone()
-		? Request.ActionRowName
-		: Request.ActionTag;
 	OutHitData.CharacterAttackPower = BaseAttackPower;
 	OutHitData.WeaponSnapshot = WeaponSnapshot;
 	OutHitData.WeaponAttackPower = WeaponAttackPower;
@@ -95,9 +91,7 @@ bool UMVHitResolverSubsystem::BuildResolvedHitData(
 	return true;
 }
 
-FMVWeaponHitSnapshot UMVHitResolverSubsystem::ResolveWeaponHitSnapshot(
-	const AMVCharacterBase& Attacker,
-	const FMVHitResolveRequest& Request) const
+FMVWeaponHitSnapshot UMVHitResolverSubsystem::ResolveWeaponHitSnapshot(const AMVCharacterBase& Attacker) const
 {
 	if (const UMVWeaponComponent* WeaponComponent = Attacker.FindComponentByClass<UMVWeaponComponent>())
 	{
@@ -109,9 +103,7 @@ FMVWeaponHitSnapshot UMVHitResolverSubsystem::ResolveWeaponHitSnapshot(
 	}
 
 	FMVWeaponHitSnapshot FallbackSnapshot;
-	FallbackSnapshot.AttackPower = Request.WeaponAttackPower > 0.0f
-		? ResolveNonNegativeStat(Request.WeaponAttackPower)
-		: ResolveNonNegativeStat(FallbackAttackPower);
+	FallbackSnapshot.AttackPower = ResolveNonNegativeStat(FallbackAttackPower);
 	FallbackSnapshot.bValid = FallbackSnapshot.AttackPower > 0.0f;
 	return FallbackSnapshot;
 }

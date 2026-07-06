@@ -1,15 +1,17 @@
 #include "Animation/Notifies/MVAnimNotify_ApplyHealingPotion.h"
 
-#include "Character/PC/Consumable/MVPlayerConsumableComponent.h"
+#include "Character/PC/Consumable/MVPlayerConsumable.h"
+#include "Character/PC/MVPlayerCharacter.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/Actor.h"
 
 namespace
 {
-UMVPlayerConsumableComponent* FindApplyHealingPotionComponent(const USkeletalMeshComponent* MeshComp)
+UMVPlayerConsumable* FindApplyHealingPotionSubmodule(const USkeletalMeshComponent* MeshComp)
 {
 	AActor* Owner = MeshComp ? MeshComp->GetOwner() : nullptr;
-	return Owner ? Owner->FindComponentByClass<UMVPlayerConsumableComponent>() : nullptr;
+	AMVPlayerCharacter* PlayerCharacter = Owner ? Cast<AMVPlayerCharacter>(Owner) : nullptr;
+	return PlayerCharacter ? PlayerCharacter->PlayerConsumable : nullptr;
 }
 }
 
@@ -20,9 +22,9 @@ void UMVAnimNotify_ApplyHealingPotion::Notify(
 {
 	Super::Notify(MeshComp, Animation, EventReference);
 
-	if (UMVPlayerConsumableComponent* ConsumableComponent = FindApplyHealingPotionComponent(MeshComp))
+	if (UMVPlayerConsumable* Consumable = FindApplyHealingPotionSubmodule(MeshComp))
 	{
-		ConsumableComponent->ApplyHealingPotionEffect();
+		Consumable->ApplyHealingPotionEffect();
 	}
 }
 

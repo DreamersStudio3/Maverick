@@ -1,7 +1,8 @@
 #include "System/MVFieldTransitionSubsystem.h"
 
 #include "Character/MVCharacterBase.h"
-#include "Character/PC/Consumable/MVPlayerConsumableComponent.h"
+#include "Character/PC/Consumable/MVPlayerConsumable.h"
+#include "Character/PC/MVPlayerCharacter.h"
 #include "Components/MVActionComponent.h"
 #include "Components/MVDeathComponent.h"
 #include "Components/MVStatComponent.h"
@@ -564,10 +565,11 @@ void UMVFieldTransitionSubsystem::ResetPlayerStatsForTransition(AMVCharacterBase
 	StatComponent->SetCurrentMP(StatComponent->MaxMP);
 	StatComponent->SetCurrentGroggy(0.0f);
 
-	if (UMVPlayerConsumableComponent* ConsumableComponent =
-		Character.FindComponentByClass<UMVPlayerConsumableComponent>())
+	AMVPlayerCharacter* PlayerCharacter = Cast<AMVPlayerCharacter>(&Character);
+	if (UMVPlayerConsumable* Consumable =
+		PlayerCharacter ? PlayerCharacter->PlayerConsumable : nullptr)
 	{
-		ConsumableComponent->RestoreConsumableCountsForWorldReset();
+		Consumable->RestoreConsumableCountsForWorldReset();
 	}
 }
 
