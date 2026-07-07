@@ -390,10 +390,10 @@ public:
 	float SprintAttackMinSpeedRatio = 0.9f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Chooser")
-	FSoftObjectPath AttackChooserTable = TEXT("/Game/Characters/Components/CHT_PlayerAttack.CHT_PlayerAttack");
+	FSoftObjectPath AttackChooserTable = TEXT("/Game/Table/Weapons/ActionTables/CHT_PlayerAttack.CHT_PlayerAttack");
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Chooser")
-	FSoftObjectPath FallbackAttackActionTable = TEXT("/Game/Characters/Components/Yone_Attack.Yone_Attack");
+	FSoftObjectPath FallbackAttackActionTable = TEXT("/Game/Table/Weapons/ActionTables/Yone_Attack.Yone_Attack");
 
 	UPROPERTY(Transient)
 	TObjectPtr<UMVAbilityBase> PreviousAbilityInstance;
