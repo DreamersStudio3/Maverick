@@ -1,4 +1,0 @@
-- [x] Move enemy character C++ files from `AI` to `Character/Npc/Enemy`.
-- [x] Update include paths after the move.
-- [x] Verify no stale `AI/MVEnemy*` includes remain.
-- [x] Check git status and compile-facing references.

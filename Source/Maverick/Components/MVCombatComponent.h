@@ -306,7 +306,7 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UFUNCTION(BlueprintCallable, Category = "Action")
-	bool TryCombatAction(EMVCombatActionTypes InActionType, int32 SkillIndex = 0);
+	bool TryCombatAction(EMVCombatActionTypes InActionType, int32 ActionIndex = 0, FName StartSection = NAME_None);
 
 	void HandleAbilityEnded(const UMVAbilityBase* EndedAbility);
 
@@ -319,8 +319,8 @@ protected:
 	bool ChooseTryCombatAction(FGameplayTag ActionInputTag);
 	bool IsCombatActionInputTag(FGameplayTag ActionInputTag) const;
 
-	bool TryBasicAttack(EMVCombatActionTypes InActionType);
-	bool TrySkill(EMVCombatActionTypes InActionType, int32 SkillIndex = 0);
+	bool TryBasicAttack(EMVCombatActionTypes InActionType, int32 ActionIndex = 0, FName StartSection = NAME_None);
+	bool TrySkill(EMVCombatActionTypes InActionType, int32 SkillIndex = 0, FName StartSection = NAME_None);
 
 	// Call when Beginplay or Change Weapon Style
 	void RefreshActionMaps();
@@ -355,8 +355,9 @@ private:
 	bool IsValidSkillActionRowHandle(const FDataTableRowHandle& RowHandle, const TCHAR* Context) const;
 	bool IsCurrentAbilityAction(FName ActionTableName, FName ActionRowName) const;
 	FName MakeActionTypeMapKey(EMVCombatActionTypes ActionType) const;
+	FName MakeIndexedActionRowName(EMVCombatActionTypes ActionType, int32 ActionIndex) const;
 	FGameplayTag MakeActionTypeGameplayTag(EMVCombatActionTypes ActionType) const;
-	bool TryStartActionWithAbility(FMVSkillEntry& ActionEntry, const FDataTableRowHandle& RowHandle);
+	bool TryStartActionWithAbility(FMVSkillEntry& ActionEntry, const FDataTableRowHandle& RowHandle, FName StartSection = NAME_None);
 	bool CanConsumeActionCost(const FMVSkillDataTableColumn* SkillData) const;
 	bool IsBasicAttackActionType(EMVCombatActionTypes ActionType) const;
 	EMVCombatActionTypes ResolveContextualBasicAttackActionType(EMVCombatActionTypes RequestedActionType);

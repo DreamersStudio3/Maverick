@@ -99,7 +99,7 @@ public:
 	float RecoveryEscapeCancelBlendOutTime = 0.05f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|HitReaction|Recovery", meta = (ClampMin = "0.0"))
-	float RecoveryActionTransitionBlendOutTime = 0.05f;
+	float RecoveryActionTransitionBlendOutTime = 0.2f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|HitReaction|Recovery", meta = (ClampMin = "1"))
 	int32 DefaultRecoveryRowIndex = 1;
@@ -148,6 +148,7 @@ private:
 	bool TryConsumeBufferedRecoveryMovementInput();
 	bool TryConsumeRecoveryInput(FGameplayTag ActionInputTag, FVector2D ControllerSpaceInput, bool bHasMovementInput);
 	bool TryConsumeRecoveryMovementInput(FVector2D ControllerSpaceInput, bool bHasMovementInput);
+	bool TryStartProviderRecoveryAction();
 	bool TryStartDefaultRecoveryAction(bool bRequireRecoveryWindow = true);
 	bool TryStartEscapeDodgeRecoveryAction(EMVActionInputDirection Direction);
 	void AlignOwnerToControllerForEscapeDodge() const;

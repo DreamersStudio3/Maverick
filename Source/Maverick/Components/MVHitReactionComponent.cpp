@@ -5,6 +5,7 @@
 #include "Components/MVActionComponent.h"
 #include "Engine/DataTable.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Interface/MVHitReactionRecoveryDecisionProvider.h"
 #include "Tables/MVCharacterTableTypes.h"
 #include "Tables/MVTableManager.h"
 #include "Tags/MVGameplayTags.h"
@@ -557,6 +558,51 @@ bool UMVHitReactionComponent::TryStartDefaultRecoveryAction(const bool bRequireR
 		RecoveryActionRowHandle,
 		bRequireRecoveryWindow ? TEXT("DefaultRecoveryGetup") : TEXT("DefaultRecoveryNotify"),
 		bRequireRecoveryWindow);
+}
+
+bool UMVHitReactionComponent::TryStartProviderRecoveryAction()
+{
+	if (!CachedActionComponent || !CachedInputManager)
+	{
+		CacheOwnerReferences();
+		BindActionComponentHandlers();
+	}
+
+	AActor* Owner = GetOwner();
+	IMVHitReactionRecoveryDecisionProvider* DecisionProvider = Cast<IMVHitReactionRecoveryDecisionProvider>(Owner);
+	if (!Owner
+		|| !DecisionProvider
+		|| !CachedActionComponent
+		|| !CachedInputManager
+		|| ActiveHitReactionActionRowName.IsNone()
+		|| CachedActionComponent->GetActiveActionRowName() != ActiveHitReactionActionRowName
+		|| !CachedInputManager->IsRecoveryEscapeWindowOpen()
+		|| bActiveHitReactionActionIsRecoveryAction)
+	{
+		return false;
+	}
+
+	FMVHitReactionRecoveryDecisionContext Context;
+	Context.Owner = Owner;
+	Context.HitReactionType = ActiveHitReactionType;
+	Context.HitReactionDirection = ActiveHitReactionDirection;
+
+	FMVHitReactionRecoveryDecision Decision;
+	if (!DecisionProvider->TryChooseHitReactionRecovery(Context, Decision))
+	{
+		return false;
+	}
+
+	switch (Decision.Type)
+	{
+	case EMVHitReactionRecoveryDecisionType::Getup:
+		return TryStartDefaultRecoveryAction(true);
+	case EMVHitReactionRecoveryDecisionType::EscapeDodge:
+		return TryStartEscapeDodgeRecoveryAction(Decision.EscapeDirection);
+	case EMVHitReactionRecoveryDecisionType::None:
+	default:
+		return false;
+	}
 }
 
 bool UMVHitReactionComponent::TryStartEscapeDodgeRecoveryAction(const EMVActionInputDirection Direction)
@@ -1315,7 +1361,12 @@ bool UMVHitReactionComponent::TryHandleRecoveryWindowOpened()
 	}
 
 	// window는 기본 Getup 시작점이 아니라, 이전에 저장된 이동 의도를 KD/AB 탈출로 소비할 수 있는 구간이다.
-	return TryConsumeBufferedRecoveryMovementInput();
+	if (TryConsumeBufferedRecoveryMovementInput())
+	{
+		return true;
+	}
+
+	return TryStartProviderRecoveryAction();
 }
 
 void UMVHitReactionComponent::HandleOwnerMovementModeChanged(

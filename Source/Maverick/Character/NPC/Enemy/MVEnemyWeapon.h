@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "MVEnemyWeapon.generated.h"
 
+class USkeletalMeshComponent;
+
 UCLASS()
 class MAVERICK_API AMVEnemyWeapon : public AActor
 {
@@ -31,10 +33,11 @@ private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USkeletalMeshComponent> CombineWeapon;
 	
-	UPROPERTY(EditAnywhere)
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<USkeletalMeshComponent> LeftWeapon;
 	
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<USkeletalMeshComponent> RightWeapon;
 	
 

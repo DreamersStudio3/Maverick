@@ -227,8 +227,13 @@ void UMVCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 	UpdateContextualBasicAttackResets();
 }
 
-bool UMVCombatComponent::TryCombatAction(EMVCombatActionTypes InActionType, int32 SkillIndex)
+bool UMVCombatComponent::TryCombatAction(
+	EMVCombatActionTypes InActionType,
+	int32 ActionIndex,
+	FName StartSection)
 {
+	const int32 ResolvedActionIndex = FMath::Max(0, ActionIndex);
+
 	// Check Input State
 	AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
 	if (!OwnerCharacter)
@@ -271,7 +276,7 @@ bool UMVCombatComponent::TryCombatAction(EMVCombatActionTypes InActionType, int3
 
 		if (IsBasicAttackActionType(ResolvedActionType))
 		{
-			const bool bStarted = TryBasicAttack(ResolvedActionType);
+			const bool bStarted = TryBasicAttack(ResolvedActionType, ResolvedActionIndex, StartSection);
 			if (bStarted)
 			{
 				MarkContextualBasicAttackStarted(ResolvedActionType);
@@ -280,7 +285,7 @@ bool UMVCombatComponent::TryCombatAction(EMVCombatActionTypes InActionType, int3
 		}
 		else if (ResolvedActionType == EMVCombatActionTypes::Skill)
 		{
-			return TrySkill(ResolvedActionType, SkillIndex);
+			return TrySkill(ResolvedActionType, ResolvedActionIndex, StartSection);
 		}
 
 		// Other Actions --> If Other action should concern, add logic
@@ -360,7 +365,10 @@ bool UMVCombatComponent::IsCombatActionInputTag(const FGameplayTag ActionInputTa
 
 
 
-bool UMVCombatComponent::TryBasicAttack(EMVCombatActionTypes InActionType)
+bool UMVCombatComponent::TryBasicAttack(
+	EMVCombatActionTypes InActionType,
+	int32 ActionIndex,
+	FName StartSection)
 {
 	const FName ActionMapKey = MakeActionTypeMapKey(InActionType);
 	FMVSkillEntry* ActionEntry = BasicAttackMap.Find(ActionMapKey);
@@ -369,6 +377,25 @@ bool UMVCombatComponent::TryBasicAttack(EMVCombatActionTypes InActionType)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("MVCombatComponent::TryBasicAttack - Action '%s' not found"), *ActionMapKey.ToString());
 		return false;
+	}
+
+	if (ActionIndex > 0)
+	{
+		const FName IndexedRowName = MakeIndexedActionRowName(InActionType, ActionIndex);
+		FDataTableRowHandle IndexedRowHandle;
+		IndexedRowHandle.DataTable = ActionEntry->DataTable.Get();
+		IndexedRowHandle.RowName = IndexedRowName;
+
+		if (IndexedRowHandle.DataTable
+			&& IndexedRowHandle.DataTable->FindRow<FMVSkillDataTableColumn>(IndexedRowName, TEXT("TryBasicAttack"), false))
+		{
+			FMVSkillEntry IndexedEntry;
+			if (BuildSkillEntryFromRowHandle(IndexedRowHandle, IndexedEntry)
+				&& CanConsumeActionCost(IndexedEntry.GetCurrentSkillData()))
+			{
+				return TryStartActionWithAbility(IndexedEntry, IndexedRowHandle, StartSection);
+			}
+		}
 	}
 
 	if(!CanConsumeActionCost(ActionEntry->GetCurrentSkillData()))
@@ -418,7 +445,7 @@ bool UMVCombatComponent::TryBasicAttack(EMVCombatActionTypes InActionType)
 
 	if (ActionEntry && ActionEntry->bChainActive)
 	{
-		if (TryStartActionWithAbility(*ActionEntry, CurrentRowHandle))
+		if (TryStartActionWithAbility(*ActionEntry, CurrentRowHandle, StartSection))
 		{
 			ActionEntry->TryAdvanceChainStage(CurrentTime);
 			LastBasicAttackedTime = CurrentTime;
@@ -434,7 +461,7 @@ bool UMVCombatComponent::TryBasicAttack(EMVCombatActionTypes InActionType)
 	}
 	else
 	{
-		if (TryStartActionWithAbility(*ActionEntry, CurrentRowHandle))
+		if (TryStartActionWithAbility(*ActionEntry, CurrentRowHandle, StartSection))
 		{
 			ActionEntry->ActivateChain(CurrentTime);
 			ActionEntry->TryAdvanceChainStage(CurrentTime);
@@ -452,15 +479,12 @@ bool UMVCombatComponent::TryBasicAttack(EMVCombatActionTypes InActionType)
 
 }
 
-bool UMVCombatComponent::TrySkill(EMVCombatActionTypes InActionType, int32 SkillIndex)
+bool UMVCombatComponent::TrySkill(
+	EMVCombatActionTypes InActionType,
+	int32 SkillIndex,
+	FName StartSection)
 {
-	FName RowName;
-
-	const UEnum* EnumPtr = StaticEnum<EMVCombatActionTypes>();
-	FName TypeName = FName(*EnumPtr->GetNameStringByValue((int64)InActionType));
-
-	FString TypeString = TypeName.ToString() + FString::FromInt(SkillIndex);
-	RowName = FName(*TypeString);
+	const FName RowName = MakeIndexedActionRowName(InActionType, SkillIndex);
 
 	FMVSkillEntry* ActionEntry = SkillMap.Find(RowName);
 	if (!ActionEntry)
@@ -488,7 +512,7 @@ bool UMVCombatComponent::TrySkill(EMVCombatActionTypes InActionType, int32 Skill
 				return false;
 			}
 
-			if (TryStartActionWithAbility(*ActionEntry, ActionEntry->GetCurrentActionRowHandle()))
+			if (TryStartActionWithAbility(*ActionEntry, ActionEntry->GetCurrentActionRowHandle(), StartSection))
 			{
 				ActionEntry->ActivateChain(CurrentTime);
 				ActionEntry->TryAdvanceChainStage(CurrentTime);
@@ -509,7 +533,7 @@ bool UMVCombatComponent::TrySkill(EMVCombatActionTypes InActionType, int32 Skill
 		if (ActionEntry->CurrentChainStageIndex < ActionEntry->AbilityInstances.Num())
 		{
 
-			if (TryStartActionWithAbility(*ActionEntry, ActionEntry->GetCurrentActionRowHandle()))
+			if (TryStartActionWithAbility(*ActionEntry, ActionEntry->GetCurrentActionRowHandle(), StartSection))
 			{
 				ActionEntry->TryAdvanceChainStage(CurrentTime);
 				return true;
@@ -528,7 +552,7 @@ bool UMVCombatComponent::TrySkill(EMVCombatActionTypes InActionType, int32 Skill
 			return false;
 		}
 
-		if (TryStartActionWithAbility(*ActionEntry, ActionEntry->GetCurrentActionRowHandle()))
+		if (TryStartActionWithAbility(*ActionEntry, ActionEntry->GetCurrentActionRowHandle(), StartSection))
 		{
 			ActionEntry->ActivateChain(CurrentTime);
 			ActionEntry->TryAdvanceChainStage(CurrentTime);
@@ -1068,6 +1092,16 @@ FName UMVCombatComponent::MakeActionTypeMapKey(const EMVCombatActionTypes Action
 		: NAME_None;
 }
 
+FName UMVCombatComponent::MakeIndexedActionRowName(
+	const EMVCombatActionTypes ActionType,
+	const int32 ActionIndex) const
+{
+	const FName TypeName = MakeActionTypeMapKey(ActionType);
+	return TypeName.IsNone()
+		? NAME_None
+		: FName(*FString::Printf(TEXT("%s%d"), *TypeName.ToString(), ActionIndex));
+}
+
 FGameplayTag UMVCombatComponent::MakeActionTypeGameplayTag(const EMVCombatActionTypes ActionType) const
 {
 	switch (ActionType)
@@ -1093,7 +1127,10 @@ FGameplayTag UMVCombatComponent::MakeActionTypeGameplayTag(const EMVCombatAction
 	}
 }
 
-bool UMVCombatComponent::TryStartActionWithAbility(FMVSkillEntry& ActionEntry, const FDataTableRowHandle& RowHandle)
+bool UMVCombatComponent::TryStartActionWithAbility(
+	FMVSkillEntry& ActionEntry,
+	const FDataTableRowHandle& RowHandle,
+	FName StartSection)
 {
 	if (!IsValidSkillActionRowHandle(RowHandle, TEXT("TryStartActionWithAbility")))
 	{
@@ -1155,7 +1192,7 @@ bool UMVCombatComponent::TryStartActionWithAbility(FMVSkillEntry& ActionEntry, c
 		if (bRecoveryOpen && bCanInterrupt)
 		{
 			const UMVAbilityBase* PreparedAbility = PrepareCurrentAbility();
-			const bool bStarted = ActionComponent->TryTransitionActionFromRowHandle(RowHandle, NAME_None, 0.25f);
+			const bool bStarted = ActionComponent->TryTransitionActionFromRowHandle(RowHandle, StartSection, 0.25f);
 			if (!bStarted)
 			{
 				ClearPreparedAbilityOnFailure(PreparedAbility);
@@ -1172,7 +1209,7 @@ bool UMVCombatComponent::TryStartActionWithAbility(FMVSkillEntry& ActionEntry, c
 	{
 		// No active action -> start normally
 		const UMVAbilityBase* PreparedAbility = PrepareCurrentAbility();
-		const bool bStarted = ActionComponent->TryStartActionFromRowHandle(RowHandle);
+		const bool bStarted = ActionComponent->TryStartActionFromRowHandle(RowHandle, StartSection);
 		if (!bStarted)
 		{
 			ClearPreparedAbilityOnFailure(PreparedAbility);
