@@ -9,15 +9,10 @@
 
 class UAnimInstance;
 class UAnimMontage;
-class UMVStatComponent;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnRecoverableStatRecoveryPauseChanged, bool, bPaused);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FMVOnActionPreparing, FName, ActionTableName, FName, ActionRowName);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FMVOnActionStarted, FName, ActionTableName, FName, ActionRowName);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FMVOnActionEnded, FName, ActionTableName, FName, ActionRowName, bool, bInterrupted);
-
-DECLARE_DELEGATE(FMVOnStatPauseStart);
-DECLARE_DELEGATE(FMVOnStatPauseEnd);
 
 /**
  * 공용 Action 실행 컴포넌트.
@@ -26,8 +21,8 @@ DECLARE_DELEGATE(FMVOnStatPauseEnd);
  *
  * 책임:
  *   - `ActionTableName + ActionRowName`으로 DataTable row를 찾아 몽타주를 재생한다.
- *   - 현재 액션, 스탯 회복 정지, 몽타주 종료 콜백, 입력/이동/탈출 window 상태를 관리한다.
- *   - 이동 입력 차단은 액션 시작을 막고, recovery window는 도메인 컴포넌트가 후딜 전환을 판단할 수 있게 알린다.
+ *   - 현재 액션, 몽타주 종료 콜백, 입력 NotifyState 정리 이벤트를 관리한다.
+ *   - 이동 입력 차단, recovery window, 스탯 회복 pause 같은 도메인 정책은 전용 컴포넌트/NotifyState가 제어한다.
  *   - 이후 커스텀 몽타주 priority가 도입되면 더 높은 priority의 재생 요청이 낮은 priority 액션을 끊는
  *     정책도 이 컴포넌트의 현재 액션 전환 규칙에 포함된다.
  *
@@ -55,10 +50,15 @@ public:
 	FGameplayTag GetCharacterIndexCode() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Action")
-	bool TryStartActionFromTable(FName ActionTableName, FName ActionRowName, FName StartSection = NAME_None);
+	bool TryStartActionFromTable(
+		FName ActionTableName,
+		FName ActionRowName,
+		FName StartSection = NAME_None);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Action")
-	bool TryStartActionFromRowHandle(FDataTableRowHandle ActionRowHandle, FName StartSection = NAME_None);
+	bool TryStartActionFromRowHandle(
+		FDataTableRowHandle ActionRowHandle,
+		FName StartSection = NAME_None);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Action")
 	bool PauseActiveAction();
@@ -101,6 +101,9 @@ public:
 	FName GetActiveActionRowName() const;
 
 	UFUNCTION(BlueprintPure, Category = "Maverick|Action")
+	int32 GetActiveActionInstanceId() const;
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|Action")
 	UAnimMontage* GetActiveActionMontage() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Action|Recovery")
@@ -111,9 +114,6 @@ public:
 	const FMVActionRow* FindActionRow(FDataTableRowHandle ActionRowHandle, FName& OutActionTableName, FName& OutActionRowName) const;
 
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|Action|Event")
-	FMVOnRecoverableStatRecoveryPauseChanged OnRecoverableStatRecoveryPauseChanged;
-
-	UPROPERTY(BlueprintAssignable, Category = "Maverick|Action|Event")
 	FMVOnActionPreparing OnActionPreparing;
 
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|Action|Event")
@@ -121,10 +121,6 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|Action|Event")
 	FMVOnActionEnded OnActionEnded;
-
-	// For StatComponent to pause stat recovery while an action is running.
-	FMVOnStatPauseStart OnStatPauseStart;
-	FMVOnStatPauseEnd OnStatPauseEnd;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Action|Character", meta = (Categories = "Character"))
 	FGameplayTag CharacterIndexCode;
@@ -148,9 +144,5 @@ private:
 	FName ActiveActionRowName = NAME_None;
 	int32 ActiveActionInstanceId = INDEX_NONE;
 	int32 NextActionInstanceId = 0;
-	int32 RecoverableStatRecoveryPauseCount = 0;
-	int32 InputBufferWindowCount = 0;
-	int32 MovementInputBlockCount = 0;
-	int32 RecoveryEscapeWindowCount = 0;
 	bool bActiveActionCanBeInterrupted = true;
 };

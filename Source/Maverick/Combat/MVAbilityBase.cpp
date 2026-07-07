@@ -44,6 +44,13 @@ AMVCharacterBase* UMVAbilityBase::GetOwnerCharacter()
 void UMVAbilityBase::InitAbility(const FMVSkillDataTableColumn& Data)
 {
 	AbilityData = Data;
+	PrepareAbilityExecution();
+}
+
+void UMVAbilityBase::PrepareAbilityExecution()
+{
+	bAbilityActive = false;
+	bAbilityCostConsumed = false;
 }
 
 void UMVAbilityBase::StartAbility_Implementation()
@@ -53,11 +60,12 @@ void UMVAbilityBase::StartAbility_Implementation()
 		return;
 	}
 
-	if (!TryConsumeAbilityCost())
+	if (!bAbilityCostConsumed && !TryConsumeAbilityCost())
 	{
 		return;
 	}
 
+	bAbilityCostConsumed = true;
 	bAbilityActive = true;
 }
 
@@ -69,6 +77,11 @@ void UMVAbilityBase::EndAbility_Implementation()
 	}
 
 	bAbilityActive = false;
+
+	if (OwnerComponent)
+	{
+		OwnerComponent->HandleAbilityEnded(this);
+	}
 }
 
 bool UMVAbilityBase::TryConsumeAbilityCost()
@@ -98,7 +111,7 @@ bool UMVAbilityBase::TryConsumeAbilityCost()
 		return false;
 	}
 
-	if (!StatComponent->HasStamina(StaminaCost) || !StatComponent->HasMP(MPCost))
+	if ((StaminaCost > 0.0f && !StatComponent->HasAnyStamina()) || !StatComponent->HasMP(MPCost))
 	{
 		UE_LOG(
 			LogMVAbilityBase,
@@ -110,7 +123,7 @@ bool UMVAbilityBase::TryConsumeAbilityCost()
 		return false;
 	}
 
-	const bool bConsumedStamina = StatComponent->ConsumeStamina(StaminaCost);
+	const bool bConsumedStamina = StatComponent->ConsumeStaminaAllowPartial(StaminaCost);
 	const bool bConsumedMP = StatComponent->ConsumeMP(MPCost);
 	return bConsumedStamina && bConsumedMP;
 }

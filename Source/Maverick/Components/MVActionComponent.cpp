@@ -2,7 +2,6 @@
 
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimMontage.h"
-#include "Components/MVStatComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Engine/DataTable.h"
 #include "GameFramework/Character.h"
@@ -184,11 +183,6 @@ bool UMVActionComponent::TryStartResolvedAction(
 
 	OnActionStarted.Broadcast(ActionTableName, ActionRowName);
 	
-	if (OnStatPauseStart.IsBound())
-	{
-		OnStatPauseStart.Execute();
-	}
-	
 	return true;
 }
 
@@ -264,10 +258,6 @@ void UMVActionComponent::FinishActiveAction(bool bInterrupted)
 	}
 
 	OnActionEnded.Broadcast(FinishedActionTableName, FinishedActionRowName, bInterrupted);
-	if (OnStatPauseEnd.IsBound())
-	{
-		OnStatPauseEnd.Execute();
-	}
 }
 
 void UMVActionComponent::CompleteActiveAction()
@@ -306,6 +296,11 @@ FName UMVActionComponent::GetActiveActionTableName() const
 FName UMVActionComponent::GetActiveActionRowName() const
 {
 	return ActiveActionRowName;
+}
+
+int32 UMVActionComponent::GetActiveActionInstanceId() const
+{
+	return ActiveActionInstanceId;
 }
 
 UAnimMontage* UMVActionComponent::GetActiveActionMontage() const

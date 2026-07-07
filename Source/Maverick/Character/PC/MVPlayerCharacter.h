@@ -14,7 +14,7 @@ class UMVPlayerConsumable;
 /**
  * 로컬 플레이어 캐릭터 런타임 본체.
  *
- * CharacterBase의 공통 이동/스탯/액션 연결 위에 플레이어 입력에 묶인 회피, 회복약, 상호작용 감지,
+ * CharacterBase의 공통 이동/스탯/액션/전투 연결 위에 플레이어 입력에 묶인 회피, 회복약, 상호작용 감지,
  * 락온 회전 억제 정책을 얹는다. 플레이어 전용 정책은 컴포넌트로 공개하지 않고 이 클래스가 소유한
  * UObject 서브모듈에 위임해 NPC 재사용 가능 컴포넌트와 구분한다.
  *
@@ -72,6 +72,8 @@ private:
 	FName ResolveSprintActionRowName() const;
 	void RefreshLockOnPawnRotationExtension();
 	bool ShouldSuppressLockOnPawnRotation() const;
+	bool ShouldPauseSprintStaminaDrain() const;
+	bool IsSprintPivoting() const;
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Instanced, Category = "PlayerCharacter")

@@ -51,17 +51,15 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnDeathStarted, const FMVDeathCon
  *
  * 명시적으로 설정된 CharacterIndexCode와 동일한 CharacterStat row에서 기본 스탯을
  * 로드하고 HP, 스태미너, MP, groggy, 이동/전투 수치의 현재값과 변경 이벤트를 소유한다.
- * `OnDamaged` 구독을 통해 확정된 피해의 HP 차감도 처리한다. 스태미너/MP 소비는 회복 쿨다운을 시작하며,
- * 액션 중 회복 일시정지와 최근 감소 UI 홀드 이벤트도 이 컴포넌트의 상태로 관리한다.
+ * `OnDamaged` 구독을 통해 확정된 피해의 HP 차감도 처리한다.
+ * NotifyState가 요청한 회복 일시정지와 최근 감소 UI 홀드 이벤트도 이 컴포넌트의 상태로 관리한다.
  * 다른 도메인 컴포넌트의 캐릭터 선택 상태는 참조하지 않는다.
  *
  * 라이프사이클:
  *   1) BeginPlay -> 설정된 스탯 테이블 행을 읽어 현재 스탯 값을 초기화한다.
- *   2) ConsumeStamina/ConsumeMP -> 값을 감소시키고 회복 쿨다운을 다시 시작한다.
+ *   2) ConsumeStamina/ConsumeMP -> 값을 감소시킨다.
  *   3) TickRecoverableStats -> 외부 이동/액션 정책이 회복 가능한 프레임에 호출해 스태미너와 MP를 회복한다.
  */
-
-class UMVActionComponent;
 
 UCLASS(ClassGroup = (Maverick), meta = (BlueprintSpawnableComponent))
 class MAVERICK_API UMVStatComponent : public UActorComponent
@@ -70,9 +68,6 @@ class MAVERICK_API UMVStatComponent : public UActorComponent
 
 public:
 	UMVStatComponent();
-
-	UPROPERTY(Transient)
-	TObjectPtr<UMVActionComponent> ActionCompRef;
 	
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|Stat|Event")
 	FMVOnStatValueChanged OnHPChanged;
@@ -138,9 +133,6 @@ public:
 	void TickRecoverableStats(float DeltaTime);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Recovery")
-	void RestartRecoverableStatCooldown();
-
-	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Recovery")
 	void BeginRecoverableStatRecoveryPause();
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Recovery")
@@ -167,14 +159,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Stamina")
 	void SetStaminaRecoveryPerSecond(float InStaminaRecoveryPerSecond);
 
-	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Stamina")
-	void SetStaminaRecoveryDelay(float InStaminaRecoveryDelay);
-
 	UFUNCTION(BlueprintPure, Category = "Maverick|Stat|Stamina")
 	bool HasStamina(float RequiredAmount) const;
 
+	UFUNCTION(BlueprintPure, Category = "Maverick|Stat|Stamina")
+	bool HasAnyStamina() const;
+
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Stamina")
 	bool ConsumeStamina(float Amount);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Stamina")
+	bool ConsumeStaminaAllowPartial(float Amount);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Stamina")
 	void RecoverStamina(float Amount);
@@ -264,12 +259,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Stamina")
 	float StaminaRecoveryPerSecond = 35.0f;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Stamina")
-	float StaminaRecoveryDelay = 0.0f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Stat|Recovery")
-	bool bUseRecoverableStatRecoveryDelay = false;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|MP")
 	float MaxMP = 100.0f;
 
@@ -310,7 +299,6 @@ public:
 	float GroggyRecoveryDelay = 2.0f;
 
 private:
-	float StaminaCooldownRemaining = 0.0f;
 	float GroggyRecoveryCooldownRemaining = 0.0f;
 	int32 RecoverableStatRecoveryPauseCount = 0;
 	FMVResolvedHitData PendingDeathHitData;

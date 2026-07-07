@@ -19,6 +19,16 @@ namespace MVGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Action_Input_Sprint, "Action.Input.Sprint");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Input_Dodge, "Action.Input.Dodge");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Input_UseConsumable, "Action.Input.UseConsumable");
+	UE_DEFINE_GAMEPLAY_TAG(Action_Combat_LightAttack, "Action.Combat.LightAttack");
+	UE_DEFINE_GAMEPLAY_TAG(Action_Combat_HeavyAttack, "Action.Combat.HeavyAttack");
+	UE_DEFINE_GAMEPLAY_TAG(Action_Combat_ChargeAttack, "Action.Combat.ChargeAttack");
+	UE_DEFINE_GAMEPLAY_TAG(Action_Combat_Skill, "Action.Combat.Skill");
+	UE_DEFINE_GAMEPLAY_TAG(Action_Combat_Skill_Q, "Action.Combat.Skill.Q");
+	UE_DEFINE_GAMEPLAY_TAG(Action_Combat_Skill_R, "Action.Combat.Skill.R");
+	UE_DEFINE_GAMEPLAY_TAG(Action_Combat_SprintLightAttack, "Action.Combat.SprintLightAttack");
+	UE_DEFINE_GAMEPLAY_TAG(Action_Combat_SprintHeavyAttack, "Action.Combat.SprintHeavyAttack");
+	UE_DEFINE_GAMEPLAY_TAG(Action_Combat_DodgeLightAttack, "Action.Combat.DodgeLightAttack");
+	UE_DEFINE_GAMEPLAY_TAG(Action_Combat_DodgeHeavyAttack, "Action.Combat.DodgeHeavyAttack");
 	UE_DEFINE_GAMEPLAY_TAG(StateTreeEvent_Enemy_Hit, "StateTreeEvent.Enemy.Hit");
 	UE_DEFINE_GAMEPLAY_TAG(StateTreeEvent_Enemy_Groggy, "StateTreeEvent.Enemy.Groggy");
 	UE_DEFINE_GAMEPLAY_TAG(StateTreeEvent_Enemy_GroggyEnd, "StateTreeEvent.Enemy.GroggyEnd");
