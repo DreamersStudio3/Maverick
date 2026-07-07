@@ -295,7 +295,6 @@ private:
 	void BuildChainedEntry(const FName& StartingName, const UDataTable& CurrentDT, FMVSkillEntry& OutEntry);
 	bool SendDataToActionComp(EMVCombatActionTypes InActionType, FName RowName);
 	bool CanConsumeActionCost(const FMVSkillDataTableColumn* SkillData) const;
-	void ConsumeActionCost(const FMVSkillDataTableColumn* SkillData) const;
 
 public:
 

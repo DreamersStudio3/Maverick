@@ -5,6 +5,9 @@
 
 #include "Components/MVCombatComponent.h"
 #include "Character/MVCharacterBase.h"
+#include "Components/MVStatComponent.h"
+
+DEFINE_LOG_CATEGORY_STATIC(LogMVAbilityBase, Log, All);
 
 void UMVAbilityBase::SetOwner(UMVCombatComponent* Owner)
 {
@@ -49,15 +52,66 @@ void UMVAbilityBase::StartAbility_Implementation()
 	{
 		return;
 	}
+
+	if (!TryConsumeAbilityCost())
+	{
+		return;
+	}
+
 	bAbilityActive = true;
 }
 
 void UMVAbilityBase::EndAbility_Implementation()
 {
-	if (bAbilityActive)
+	if (!bAbilityActive)
 	{
 		return;
 	}
+
 	bAbilityActive = false;
+}
+
+bool UMVAbilityBase::TryConsumeAbilityCost()
+{
+	const float StaminaCost = FMath::Max(0.0f, AbilityData.StaminaCost);
+	const float MPCost = FMath::Max(0.0f, AbilityData.MpCost);
+	if (StaminaCost <= 0.0f && MPCost <= 0.0f)
+	{
+		return true;
+	}
+
+	AMVCharacterBase* OwnerCharacter = GetOwnerCharacter();
+	if (!OwnerCharacter)
+	{
+		UE_LOG(LogMVAbilityBase, Warning, TEXT("Cannot consume ability cost without an owner character."));
+		return false;
+	}
+
+	UMVStatComponent* StatComponent = OwnerCharacter->FindComponentByClass<UMVStatComponent>();
+	if (!StatComponent)
+	{
+		UE_LOG(
+			LogMVAbilityBase,
+			Warning,
+			TEXT("Cannot consume ability cost because %s has no MVStatComponent."),
+			*GetNameSafe(OwnerCharacter));
+		return false;
+	}
+
+	if (!StatComponent->HasStamina(StaminaCost) || !StatComponent->HasMP(MPCost))
+	{
+		UE_LOG(
+			LogMVAbilityBase,
+			Verbose,
+			TEXT("Not enough resources to start ability. Owner=%s, StaminaCost=%.2f, MPCost=%.2f."),
+			*GetNameSafe(OwnerCharacter),
+			StaminaCost,
+			MPCost);
+		return false;
+	}
+
+	const bool bConsumedStamina = StatComponent->ConsumeStamina(StaminaCost);
+	const bool bConsumedMP = StatComponent->ConsumeMP(MPCost);
+	return bConsumedStamina && bConsumedMP;
 }
 

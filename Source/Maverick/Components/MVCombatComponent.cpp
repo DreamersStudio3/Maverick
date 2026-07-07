@@ -214,7 +214,6 @@ bool UMVCombatComponent::TryBasicAttack(EMVCombatActionTypes InActionType)
 
 		if (SendDataToActionComp(InActionType, ActionEntry->GetCurrentRowName()))
 		{
-			ConsumeActionCost(ActionEntry->GetCurrentSkillData());
 			PreviousAbilityInstance = CurrentAbilityInstance;
 			if (PreviousAbilityInstance && PreviousAbilityInstance->Implements<UMVAbilityInterface>())
 			{
@@ -238,7 +237,6 @@ bool UMVCombatComponent::TryBasicAttack(EMVCombatActionTypes InActionType)
 	{
 		if (SendDataToActionComp(InActionType, ActionEntry->GetCurrentRowName()))
 		{
-			ConsumeActionCost(ActionEntry->GetCurrentSkillData());
 			PreviousAbilityInstance = CurrentAbilityInstance;
 			if (PreviousAbilityInstance && PreviousAbilityInstance->Implements<UMVAbilityInterface>())
 			{
@@ -258,7 +256,6 @@ bool UMVCombatComponent::TryBasicAttack(EMVCombatActionTypes InActionType)
 	{
 		if (SendDataToActionComp(InActionType, ActionEntry->GetCurrentRowName()))
 		{
-			ConsumeActionCost(ActionEntry->GetCurrentSkillData());
 			PreviousAbilityInstance = CurrentAbilityInstance;
 			if (PreviousAbilityInstance && PreviousAbilityInstance->Implements<UMVAbilityInterface>())
 			{
@@ -317,7 +314,6 @@ bool UMVCombatComponent::TrySkill(EMVCombatActionTypes InActionType, int32 Skill
 
 			if (SendDataToActionComp(InActionType, ActionEntry->GetCurrentRowName()))
 			{
-				ConsumeActionCost(ActionEntry->GetCurrentSkillData());
 				PreviousAbilityInstance = CurrentAbilityInstance;
 				if (PreviousAbilityInstance && PreviousAbilityInstance->Implements<UMVAbilityInterface>())
 				{
@@ -345,7 +341,6 @@ bool UMVCombatComponent::TrySkill(EMVCombatActionTypes InActionType, int32 Skill
 
 			if (SendDataToActionComp(InActionType, ActionEntry->GetCurrentRowName()))
 			{
-				ConsumeActionCost(ActionEntry->GetCurrentSkillData());
 				PreviousAbilityInstance = CurrentAbilityInstance;
 				if (PreviousAbilityInstance && PreviousAbilityInstance->Implements<UMVAbilityInterface>())
 				{
@@ -371,7 +366,6 @@ bool UMVCombatComponent::TrySkill(EMVCombatActionTypes InActionType, int32 Skill
 
 		if (SendDataToActionComp(InActionType, ActionEntry->GetCurrentRowName()))
 		{
-			ConsumeActionCost(ActionEntry->GetCurrentSkillData());
 			PreviousAbilityInstance = CurrentAbilityInstance;
 			if (PreviousAbilityInstance && PreviousAbilityInstance->Implements<UMVAbilityInterface>())
 			{
@@ -702,6 +696,11 @@ bool UMVCombatComponent::SendDataToActionComp(EMVCombatActionTypes InActionType,
 
 bool UMVCombatComponent::CanConsumeActionCost(const FMVSkillDataTableColumn* SkillData) const
 {
+	if (!SkillData)
+	{
+		return false;
+	}
+
 	if (!StatComponent)
 	{
 		return false;
@@ -718,15 +717,5 @@ bool UMVCombatComponent::CanConsumeActionCost(const FMVSkillDataTableColumn* Ski
 	}
 
 	return true;
-}
-
-void UMVCombatComponent::ConsumeActionCost(const FMVSkillDataTableColumn* SkillData) const
-{
-	if(!StatComponent)
-	{
-		return;
-	}
-	StatComponent->ConsumeStamina(SkillData->StaminaCost);
-	StatComponent->ConsumeMP(SkillData->MpCost);
 }
 
