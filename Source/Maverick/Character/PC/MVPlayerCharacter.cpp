@@ -5,8 +5,10 @@
 #include "Character/PC/Consumable/MVPlayerConsumable.h"
 #include "Character/PC/Dodge/MVPlayerDodge.h"
 #include "Character/PC/InteractionDetector/MVPlayerInteractionDetector.h"
+#include "Components/MVActionComponent.h"
 #include "Components/MVHitReactionComponent.h"
 #include "Components/MVStatComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "LockOnTargetComponent.h"
 #include "LockOnTargetExtensions/PawnRotationExtension.h"
 #include "Tables/MVTableManager.h"
@@ -105,7 +107,8 @@ void AMVPlayerCharacter::UpdateRecoverableStats(const float DeltaTime)
 
 	const bool bShouldConsumeStamina = SprintStaminaCostPerSecond > 0.0f
 		&& Gait == EGait::Sprinting
-		&& bHasMovementInput;
+		&& bHasMovementInput
+		&& !ShouldPauseSprintStaminaDrain();
 	if (bShouldConsumeStamina)
 	{
 		StatComponent->ConsumeStamina(CalculateSprintStaminaDrain(DeltaTime));
@@ -359,4 +362,37 @@ bool AMVPlayerCharacter::ShouldSuppressLockOnPawnRotation() const
 {
 	return LockOnPawnRotationSuppressionCount > 0
 		|| Gait == EGait::Sprinting;
+}
+
+bool AMVPlayerCharacter::ShouldPauseSprintStaminaDrain() const
+{
+	if (ActionComponent && ActionComponent->IsActionRunning())
+	{
+		return true;
+	}
+
+	return IsSprintPivoting();
+}
+
+bool AMVPlayerCharacter::IsSprintPivoting() const
+{
+	if (Gait != EGait::Sprinting)
+	{
+		return false;
+	}
+
+	const UCharacterMovementComponent* MovementComponent = GetCharacterMovement();
+	if (!MovementComponent)
+	{
+		return false;
+	}
+
+	const FVector Acceleration2D = MovementComponent->GetCurrentAcceleration().GetSafeNormal2D();
+	const FVector Velocity2D = MovementComponent->Velocity.GetSafeNormal2D();
+	if (Acceleration2D.IsNearlyZero() || Velocity2D.IsNearlyZero())
+	{
+		return false;
+	}
+
+	return FVector::DotProduct(Acceleration2D, Velocity2D) < -0.5f;
 }

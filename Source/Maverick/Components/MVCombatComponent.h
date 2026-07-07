@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "Public/Tables/MVSkillDataTableColumn.h"
 #include "Public/Struct/MVCombatActionTableInput.h"
+#include "Public/Enum/MVCombatActionTypes.h"
 #include "Components/MVInputManagerComponent.h"
 #include "Interface/MVActionInputHandlerInterface.h"
 
@@ -39,7 +40,7 @@ struct FMVSkillEntry
 public:
 	// Indicates if this is a chained skill
 	UPROPERTY(BlueprintReadOnly, Category = "Skill")
-	bool bIsChained;
+	bool bIsChained = false;
 
 	// For simple skills: single ability instance
 	// For chained skills: multiple ability instances (one per stage)
@@ -53,31 +54,31 @@ public:
 
 	// DataTable reference
 	UPROPERTY(BlueprintReadOnly, Category = "Skill")
-	TObjectPtr<UDataTable> DataTable;
+	TObjectPtr<UDataTable> DataTable = nullptr;
 
 	// Main cooldown duration (applies to entire skill or chain)
 	UPROPERTY(BlueprintReadOnly, Category = "Skill")
-	float MainCooldownDuration;
+	float MainCooldownDuration = 0.0f;
 
 	// Last time this skill was used (for cooldown tracking)
 	UPROPERTY(BlueprintReadOnly, Category = "Skill")
-	float LastUsedTime;
+	float LastUsedTime = 0.0f;
 
 	// For chained skills: current stage index
 	UPROPERTY(BlueprintReadOnly, Category = "Skill")
-	int32 CurrentChainStageIndex;
+	int32 CurrentChainStageIndex = 0;
 
 	// For chained skills: whether chain is currently active
 	UPROPERTY(BlueprintReadOnly, Category = "Skill")
-	bool bChainActive;
+	bool bChainActive = false;
 
 	// For chained skills: time when current stage started
 	UPROPERTY(BlueprintReadOnly, Category = "Skill")
-	float LastStageActivationTime;
+	float LastStageActivationTime = 0.0f;
 
 	// For chained skills: when input window closes for current stage
 	UPROPERTY(BlueprintReadOnly, Category = "Skill")
-	float InputWindowCloseTime;
+	float InputWindowCloseTime = 0.0f;
 
 public:
 	// Get current ability (for simple skills or current chain stage)
@@ -93,7 +94,7 @@ public:
 	// Get current skill data (for simple skills or current chain stage)
 	const FMVSkillDataTableColumn* GetCurrentSkillData() const
 	{
-		if (!DataTable)
+		if (!DataTable || !SkillRowNames.IsValidIndex(CurrentChainStageIndex))
 		{
 			return nullptr;
 		}
@@ -105,6 +106,24 @@ public:
 		return nullptr;
 	}
 
+	bool ContainsAbility(const UMVAbilityBase* Ability) const
+	{
+		if (!Ability)
+		{
+			return false;
+		}
+
+		for (const TObjectPtr<UMVAbilityBase>& AbilityInstance : AbilityInstances)
+		{
+			if (AbilityInstance.Get() == Ability)
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	// Get current row name (for simple skills or current chain stage)
 	FName GetCurrentRowName() const
 	{
@@ -113,6 +132,14 @@ public:
 			return SkillRowNames[CurrentChainStageIndex];
 		}
 		return NAME_None;
+	}
+
+	FDataTableRowHandle GetCurrentActionRowHandle() const
+	{
+		FDataTableRowHandle RowHandle;
+		RowHandle.DataTable = DataTable.Get();
+		RowHandle.RowName = GetCurrentRowName();
+		return RowHandle;
 	}
 
 	// Check if main cooldown is ready
@@ -195,6 +222,23 @@ public:
 		}
 	}
 
+	void StartPostAbilityResetWindow(float CurrentTime)
+	{
+		if (bChainActive)
+		{
+			LastStageActivationTime = CurrentTime;
+
+			const FMVSkillDataTableColumn* CurrentData = GetCurrentSkillData();
+			if (CurrentData)
+			{
+				InputWindowCloseTime = CurrentTime + CurrentData->InputWindowDuration;
+			}
+			return;
+		}
+
+		LastUsedTime = CurrentTime;
+	}
+
 	// Advance to next stage in chain
 	bool TryAdvanceChainStage(float CurrentTime)
 	{
@@ -227,10 +271,11 @@ public:
 
 /*
 CombatComponent
-Fetch Data from DataTable through ChooserTable.
+Fetch action RowHandle from ChooserTable and run chained action rows.
+Sprint/Dodge contextual basic attacks are consumed once per source context so single-row contextual attacks do not replay from held or repeated input.
 
-Note:	Getting DataTable through ChooserTable should be implemented in blueprint.
-		Getting Row Data comes from Getting DataTable through ChooserTable
+Note:	Getting action RowHandle through ChooserTable should be implemented in blueprint.
+		DataTable-only lookup remains as a compatibility fallback.
 
 		DataTable's Row struct is from "Public/Tables/MVSkillDataTableColumn.h"
 		if want to modify Struct, Go to the pulic/Tables/MVSkillDataTableColumn.h
@@ -263,6 +308,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Action")
 	bool TryCombatAction(EMVCombatActionTypes InActionType, int32 ActionIndex = 0, FName StartSection = NAME_None);
 
+	void HandleAbilityEnded(const UMVAbilityBase* EndedAbility);
+
 	// Call When Character Change Weapon --> have to receive Event from Character
 	UFUNCTION(BlueprintCallable, Category = "Combat|Weapon")
 	void ChangeWeapon(EMVEquippedStyle NewStyle);
@@ -273,7 +320,7 @@ protected:
 	bool IsCombatActionInputTag(FGameplayTag ActionInputTag) const;
 
 	bool TryBasicAttack(EMVCombatActionTypes InActionType, int32 ActionIndex = 0, FName StartSection = NAME_None);
-	bool TrySkill(EMVCombatActionTypes InActionType, int32 ActionIndex = 0, FName StartSection = NAME_None);
+	bool TrySkill(EMVCombatActionTypes InActionType, int32 SkillIndex = 0, FName StartSection = NAME_None);
 
 	// Call when Beginplay or Change Weapon Style
 	void RefreshActionMaps();
@@ -282,7 +329,7 @@ protected:
 	void ResetSkillMap();
 	
 protected:
-	// Should Return DataTable using ChooserTable In Blueprint
+	// Legacy fallback: should return DataTable using ChooserTable in Blueprint.
 	// Because Using ChooserTable in C++ is So Fucking Shit
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable,Category = "Data")
 	UDataTable* GetDataTableFromChooserTable(const FMVCombatActionTableInput& ChooserInput, bool& OutResult);
@@ -292,14 +339,42 @@ protected:
 	virtual FMVSkillDataTableColumn GetDataTableRowFromChooserTable_Implementation(const FMVCombatActionTableInput& ChooserInput, const FName& RowName, bool& OutResult);
 
 private:
-	void BuildChainedEntry(const FName& StartingName, const UDataTable& CurrentDT, FMVSkillEntry& OutEntry);
-	bool SendDataToActionComp(EMVCombatActionTypes InActionType, FName RowName, FName StartSection = NAME_None);
+	bool BuildSkillEntryFromRowHandle(const FDataTableRowHandle& StartingRowHandle, FMVSkillEntry& OutEntry);
+	bool GetActionRowHandleFromChooserTable(
+		const FMVCombatActionTableInput& ChooserInput,
+		FName FallbackRowName,
+		FDataTableRowHandle& OutRowHandle) const;
+	bool ResolveActionRowHandleFromChooserTable(
+		const FMVCombatActionTableInput& ChooserInput,
+		FName FallbackRowName,
+		FDataTableRowHandle& OutRowHandle);
+	UDataTable* LoadFallbackAttackActionTable() const;
+	bool TryMakeFallbackAttackActionRowHandle(
+		EMVCombatActionTypes ActionType,
+		FDataTableRowHandle& OutRowHandle) const;
+	bool IsValidSkillActionRowHandle(const FDataTableRowHandle& RowHandle, const TCHAR* Context) const;
+	bool IsCurrentAbilityAction(FName ActionTableName, FName ActionRowName) const;
+	FName MakeActionTypeMapKey(EMVCombatActionTypes ActionType) const;
+	FName MakeIndexedActionRowName(EMVCombatActionTypes ActionType, int32 ActionIndex) const;
+	FGameplayTag MakeActionTypeGameplayTag(EMVCombatActionTypes ActionType) const;
+	bool TryStartActionWithAbility(FMVSkillEntry& ActionEntry, const FDataTableRowHandle& RowHandle, FName StartSection = NAME_None);
 	bool CanConsumeActionCost(const FMVSkillDataTableColumn* SkillData) const;
-	void ConsumeActionCost(const FMVSkillDataTableColumn* SkillData) const;
+	bool IsBasicAttackActionType(EMVCombatActionTypes ActionType) const;
+	EMVCombatActionTypes ResolveContextualBasicAttackActionType(EMVCombatActionTypes RequestedActionType);
+	void MarkContextualBasicAttackStarted(EMVCombatActionTypes StartedActionType);
+	void UpdateContextualBasicAttackResets();
+	int32 GetDodgeAttackContextInstanceId() const;
+	bool IsDodgeAttackContext() const;
+	bool IsSprintAttackContext() const;
+	bool ShouldSuppressChargeAttackInputForSprint() const;
+	bool HasReachedSprintAttackSpeed() const;
+
+	UFUNCTION()
+	void HandleActionEnded(FName ActionTableName, FName ActionRowName, bool bInterrupted);
 
 public:
 
-	// LightAttack, HeavyAttack, ChargeAttack
+	// LightAttack, HeavyAttack, ChargeAttack, and contextual sprint/dodge attacks
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Logic")
 	TMap<FName, FMVSkillEntry>BasicAttackMap;
 
@@ -312,13 +387,29 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Infomation")
 	float ResetBasicAttackTime = 2.0f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Sprint", meta = (ClampMin = "0.0", ClampMax = "1.0"))
+	float SprintAttackMinSpeedRatio = 0.9f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Chooser")
+	FSoftObjectPath AttackChooserTable = TEXT("/Game/Table/Weapons/ActionTables/CHT_PlayerAttack.CHT_PlayerAttack");
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Chooser")
+	FSoftObjectPath FallbackAttackActionTable = TEXT("/Game/Table/Weapons/ActionTables/Yone_Attack.Yone_Attack");
+
 	UPROPERTY(Transient)
 	TObjectPtr<UMVAbilityBase> PreviousAbilityInstance;
 	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<UMVAbilityBase> CurrentAbilityInstance;
+	FName CurrentAbilityActionTableName = NAME_None;
+	FName CurrentAbilityActionRowName = NAME_None;
 
 private:
-	double LastBasicAttackedTime;
+	double LastBasicAttackedTime = 0.0;
+	FName ActiveBasicAttackMapKey = NAME_None;
 	TObjectPtr<UMVStatComponent> StatComponent;
+	bool bSprintContextualBasicAttackConsumed = false;
+	bool bWasSprintAttackContextActive = false;
+	int32 ConsumedDodgeContextActionInstanceId = INDEX_NONE;
+	int32 PendingDodgeContextActionInstanceId = INDEX_NONE;
 
 };

@@ -85,16 +85,16 @@ bool AMVEnemy::Attack(const EMVAttackDirection AttackDirection, int32& OutAttack
 
 bool AMVEnemy::TryHeavyAttack_Implementation(const int32 ActionIndex, const FName StartSection)
 {
-	UMVCombatComponent* CombatComponent = FindComponentByClass<UMVCombatComponent>();
-	return CombatComponent
-		&& CombatComponent->TryCombatAction(EMVCombatActionTypes::HeavyAttack, ActionIndex, StartSection);
+	UMVCombatComponent* EnemyCombatComponent = FindComponentByClass<UMVCombatComponent>();
+	return EnemyCombatComponent
+		&& EnemyCombatComponent->TryCombatAction(EMVCombatActionTypes::HeavyAttack, ActionIndex, StartSection);
 }
 
 bool AMVEnemy::TrySkillAttack_Implementation(const int32 SkillIndex, const FName StartSection)
 {
-	UMVCombatComponent* CombatComponent = FindComponentByClass<UMVCombatComponent>();
-	return CombatComponent
-		&& CombatComponent->TryCombatAction(EMVCombatActionTypes::Skill, SkillIndex, StartSection);
+	UMVCombatComponent* EnemyCombatComponent = FindComponentByClass<UMVCombatComponent>();
+	return EnemyCombatComponent
+		&& EnemyCombatComponent->TryCombatAction(EMVCombatActionTypes::Skill, SkillIndex, StartSection);
 }
 
 AMVEnemyWeapon* AMVEnemy::GetWeaponActor() const

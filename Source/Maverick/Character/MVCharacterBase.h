@@ -15,6 +15,7 @@
 
 class UMVStatComponent;
 class UMVActionComponent;
+class UMVCombatComponent;
 class UMVDeathComponent;
 class UMVHitReactionComponent;
 class UMVInputManagerComponent;
@@ -27,17 +28,18 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FMVOnMovementInputReceived, const FVector&);
  * 공통 캐릭터 런타임 본체.
  *
  * 플레이어와 NPC가 공유할 수 있는 캐릭터 데이터 태그, 이동 상태, 공용 컴포넌트 연결, 무적 상태,
- * 피격 이벤트 브리지를 관리한다. 피격 리액션, 사망 표현, 액션 버퍼 같은 공통 도메인 정책은
+ * 피격 이벤트 브리지를 관리한다. 전투 실행, 피격 리액션, 사망 표현, 액션 버퍼 같은 공통 도메인 정책은
  * 전용 컴포넌트가 처리하고, 회피/상호작용처럼 플레이어에 고정된 정책은 PlayerCharacter 하위 서브모듈이 담당한다.
  *
  * 책임:
  *   - CharacterIndexCode를 액션/스탯 컴포넌트에 주입하고 CharacterMovement 기준 locomotion 값과 gait,
  *     장비 스타일을 갱신한다.
+ *   - CombatComponent를 통해 공통 캐릭터 전투 액션 실행 경로를 제공한다.
  *   - WeaponComponent를 통해 맨손 포함 현재 장착 무기 상태를 공통 캐릭터 런타임에 연결한다.
  *   - HitResolver가 전달한 결과의 CharacterIndexCode를 확인한 뒤 OnDamaged를 브로드캐스트한다.
  *   - ACharacter의 BeginPlay, Tick, AddMovementInput 진입점에서 초기 데이터 로드,
  *     매 프레임 locomotion/gait 갱신, 이동 입력 캐싱과 OnMovementInputReceived 브로드캐스트를 담당한다.
- *   - StatComponent의 회복 Tick을 호출하되, 회복 쿨다운과 일시정지 정책은 StatComponent가 소유한다.
+ *   - StatComponent의 회복 Tick을 호출하되, 회복 일시정지 정책은 StatComponent가 소유한다.
  *   - 이동 입력은 항상 controller yaw 기준 raw 2D로 계산해 게임을 플레이하는 유저의 의도와 일치시킨다.
  *   - ActionComponent의 이동 입력 잠금은 CharacterMovement의 MaxAcceleration에 반영한다.
  *   - InputManagerComponent가 액션 입력 이벤트에 최근 이동 입력 문맥을 함께 제공할 수 있도록 이동 입력 이벤트를 제공한다.
@@ -120,6 +122,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UMVActionComponent> ActionComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<UMVCombatComponent> CombatComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UMVDeathComponent> DeathComponent;

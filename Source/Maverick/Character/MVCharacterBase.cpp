@@ -4,6 +4,7 @@
 #include "Character/MVCharacterBase.h"
 
 #include "Components/MVActionComponent.h"
+#include "Components/MVCombatComponent.h"
 #include "Components/MVDeathComponent.h"
 #include "Components/MVHitReactionComponent.h"
 #include "Components/MVInputManagerComponent.h"
@@ -72,6 +73,7 @@ AMVCharacterBase::AMVCharacterBase()
 
 	StatComponent = CreateDefaultSubobject<UMVStatComponent>(TEXT("StatComponent"));
 	ActionComponent = CreateDefaultSubobject<UMVActionComponent>(TEXT("ActionComponent"));
+	CombatComponent = CreateDefaultSubobject<UMVCombatComponent>(TEXT("CombatComponent"));
 	DeathComponent = CreateDefaultSubobject<UMVDeathComponent>(TEXT("DeathComponent"));
 	HitReactionComponent = CreateDefaultSubobject<UMVHitReactionComponent>(TEXT("HitReactionComponent"));
 	InputManagerComponent = CreateDefaultSubobject<UMVInputManagerComponent>(TEXT("InputManagerComponent"));

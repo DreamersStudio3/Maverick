@@ -21,6 +21,16 @@ namespace MVGameplayTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_Sprint);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_Dodge);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_UseConsumable);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Combat_LightAttack);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Combat_HeavyAttack);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Combat_ChargeAttack);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Combat_Skill);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Combat_Skill_Q);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Combat_Skill_R);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Combat_SprintLightAttack);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Combat_SprintHeavyAttack);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Combat_DodgeLightAttack);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Combat_DodgeHeavyAttack);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StateTreeEvent_Enemy_Hit);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StateTreeEvent_Enemy_Groggy);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StateTreeEvent_Enemy_GroggyEnd);
