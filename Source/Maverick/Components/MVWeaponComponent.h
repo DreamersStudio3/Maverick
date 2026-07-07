@@ -84,7 +84,17 @@ private:
 	void RefreshOwnerCombatComponent() const;
 	void ApplyWeaponVisual();
 	void ClearWeaponVisual();
-	UMeshComponent* EnsureWeaponMeshComponent(const UObject& WeaponMesh);
+	void ApplyWeaponMeshVisual(
+		UObject* LoadedWeaponMesh,
+		TObjectPtr<UMeshComponent>& MeshComponentStorage,
+		FName AttachSocketName,
+		const FTransform& RelativeTransform,
+		const TCHAR* ComponentNameBase);
+	void ClearWeaponMeshVisual(TObjectPtr<UMeshComponent>& MeshComponentStorage);
+	UMeshComponent* EnsureWeaponMeshComponent(
+		TObjectPtr<UMeshComponent>& MeshComponentStorage,
+		const UObject& WeaponMesh,
+		const TCHAR* ComponentNameBase);
 	USceneComponent* ResolveWeaponAttachParent() const;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Weapon", meta = (AllowPrivateAccess = "true"))
@@ -92,4 +102,7 @@ private:
 
 	UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Weapon|Visual", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UMeshComponent> WeaponMeshComponent;
+
+	UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Weapon|Visual", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UMeshComponent> SecondaryWeaponMeshComponent;
 };

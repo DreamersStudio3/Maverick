@@ -261,7 +261,7 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UFUNCTION(BlueprintCallable, Category = "Action")
-	bool TryCombatAction(EMVCombatActionTypes InActionType, int32 SkillIndex = 0);
+	bool TryCombatAction(EMVCombatActionTypes InActionType, int32 ActionIndex = 0, FName StartSection = NAME_None);
 
 	// Call When Character Change Weapon --> have to receive Event from Character
 	UFUNCTION(BlueprintCallable, Category = "Combat|Weapon")
@@ -272,8 +272,8 @@ protected:
 	bool ChooseTryCombatAction(FGameplayTag ActionInputTag);
 	bool IsCombatActionInputTag(FGameplayTag ActionInputTag) const;
 
-	bool TryBasicAttack(EMVCombatActionTypes InActionType);
-	bool TrySkill(EMVCombatActionTypes InActionType, int32 SkillIndex = 0);
+	bool TryBasicAttack(EMVCombatActionTypes InActionType, int32 ActionIndex = 0, FName StartSection = NAME_None);
+	bool TrySkill(EMVCombatActionTypes InActionType, int32 ActionIndex = 0, FName StartSection = NAME_None);
 
 	// Call when Beginplay or Change Weapon Style
 	void RefreshActionMaps();
@@ -293,7 +293,7 @@ protected:
 
 private:
 	void BuildChainedEntry(const FName& StartingName, const UDataTable& CurrentDT, FMVSkillEntry& OutEntry);
-	bool SendDataToActionComp(EMVCombatActionTypes InActionType, FName RowName);
+	bool SendDataToActionComp(EMVCombatActionTypes InActionType, FName RowName, FName StartSection = NAME_None);
 	bool CanConsumeActionCost(const FMVSkillDataTableColumn* SkillData) const;
 	void ConsumeActionCost(const FMVSkillDataTableColumn* SkillData) const;
 

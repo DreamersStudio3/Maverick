@@ -35,7 +35,7 @@ const FMVPIEActionTestSpec& GetPIEActionTestSpec(const int32 Index)
 		{ TEXT("SmallHit F / HP -5 / Groggy +25"), EMVActionHitReactionType::SmallHit, 5.0f, 25.0f },
 		{ TEXT("LargeHit F / HP -10 / Groggy +50"), EMVActionHitReactionType::LargeHit, 10.0f, 50.0f },
 		{ TEXT("KnockDown F / HP -15 / Groggy +75"), EMVActionHitReactionType::KnockDown, 15.0f, 75.0f },
-		{ TEXT("Airborne F / HP -20 / Groggy +100"), EMVActionHitReactionType::Airborne, 20.0f, 100.0f },
+		{ TEXT("Airborne F / HP -20 / Groggy +0"), EMVActionHitReactionType::Airborne, 20.0f, 0.0f },
 	};
 
 	return Specs[FMath::Clamp(Index, 0, UE_ARRAY_COUNT(Specs) - 1)];

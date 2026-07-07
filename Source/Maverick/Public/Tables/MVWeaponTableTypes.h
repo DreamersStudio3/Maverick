@@ -41,4 +41,16 @@ struct MAVERICK_API FMVWeaponTableRow : public FMVItemTableRow
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Item|Weapon|Visual")
 	FTransform AttachTransform = FTransform::Identity;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Item|Weapon|Dual Visual", meta = (AllowedClasses = "/Script/Engine.SkeletalMesh,/Script/Engine.StaticMesh"))
+	TSoftObjectPtr<UObject> SecondaryWeaponMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Item|Weapon|Dual Visual")
+	FName SecondaryAttachSocketName = TEXT("hand_l_socket");
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Item|Weapon|Dual Visual")
+	FTransform SecondaryAttachTransform = FTransform::Identity;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Item|Weapon|Trace", meta = (ClampMin = "0.0", Units = "cm"))
+	float TraceRadius = 20.0f;
 };

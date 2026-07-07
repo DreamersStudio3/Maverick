@@ -12,6 +12,25 @@
 #include "Public/Interface/MVAbilityInterface.h"
 #include "Tags/MVGameplayTags.h"
 
+namespace
+{
+FName MVCombatComponentGetActionTypeName(const EMVCombatActionTypes ActionType)
+{
+	const UEnum* EnumPtr = StaticEnum<EMVCombatActionTypes>();
+	return EnumPtr
+		? FName(*EnumPtr->GetNameStringByValue(static_cast<int64>(ActionType)))
+		: NAME_None;
+}
+
+FName MVCombatComponentMakeIndexedActionRowName(const EMVCombatActionTypes ActionType, const int32 ActionIndex)
+{
+	const FName TypeName = MVCombatComponentGetActionTypeName(ActionType);
+	return TypeName.IsNone()
+		? NAME_None
+		: FName(*FString::Printf(TEXT("%s%d"), *TypeName.ToString(), ActionIndex));
+}
+}
+
 // Sets default values for this component's properties
 UMVCombatComponent::UMVCombatComponent()
 {
@@ -80,8 +99,13 @@ void UMVCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 	// ...
 }
 
-bool UMVCombatComponent::TryCombatAction(EMVCombatActionTypes InActionType, int32 SkillIndex)
+bool UMVCombatComponent::TryCombatAction(
+	EMVCombatActionTypes InActionType,
+	int32 ActionIndex,
+	FName StartSection)
 {
+	const int32 ResolvedActionIndex = FMath::Max(0, ActionIndex);
+
 	// Check Input State
 	AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
 	if (!OwnerCharacter)
@@ -118,11 +142,11 @@ bool UMVCombatComponent::TryCombatAction(EMVCombatActionTypes InActionType, int3
 			InActionType == EMVCombatActionTypes::HeavyAttack ||
 			InActionType == EMVCombatActionTypes::ChargeAttack)
 		{
-			return TryBasicAttack(InActionType);
+			return TryBasicAttack(InActionType, ResolvedActionIndex, StartSection);
 		}
 		else if (InActionType == EMVCombatActionTypes::Skill)
 		{
-			return TrySkill(InActionType, SkillIndex);
+			return TrySkill(InActionType, ResolvedActionIndex, StartSection);
 		}
 
 		// Other Actions --> If Other action should concern, add logic
@@ -181,18 +205,30 @@ bool UMVCombatComponent::IsCombatActionInputTag(const FGameplayTag ActionInputTa
 
 
 
-bool UMVCombatComponent::TryBasicAttack(EMVCombatActionTypes InActionType)
+bool UMVCombatComponent::TryBasicAttack(
+	EMVCombatActionTypes InActionType,
+	int32 ActionIndex,
+	FName StartSection)
 {
-	FName RowName;
-	const UEnum* EnumPtr = StaticEnum<EMVCombatActionTypes>();
-	FName TypeName = FName(*EnumPtr->GetNameStringByValue((int64)InActionType));
-
-	RowName = TypeName;
+	FName RowName = MVCombatComponentMakeIndexedActionRowName(InActionType, ActionIndex);
+	const FName RequestedRowName = RowName;
 	FMVSkillEntry* ActionEntry = BasicAttackMap.Find(RowName);
+
+	if (!ActionEntry && ActionIndex == 0)
+	{
+		RowName = MVCombatComponentGetActionTypeName(InActionType);
+		ActionEntry = BasicAttackMap.Find(RowName);
+	}
 
 	if (!ActionEntry)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("MVCombatComponent::TryBasicAttack - Action '%s' not found"), *RowName.ToString());
+		UE_LOG(
+			LogTemp,
+			Warning,
+			TEXT("MVCombatComponent::TryBasicAttack - Action '%s' not found. Fallback row '%s', BasicAttackMap entries: %d"),
+			*RequestedRowName.ToString(),
+			*RowName.ToString(),
+			BasicAttackMap.Num());
 		return false;
 	}
 
@@ -212,7 +248,7 @@ bool UMVCombatComponent::TryBasicAttack(EMVCombatActionTypes InActionType)
 			CurrentEntry.ResetChain();
 		}
 
-		if (SendDataToActionComp(InActionType, ActionEntry->GetCurrentRowName()))
+		if (SendDataToActionComp(InActionType, ActionEntry->GetCurrentRowName(), StartSection))
 		{
 			ConsumeActionCost(ActionEntry->GetCurrentSkillData());
 			PreviousAbilityInstance = CurrentAbilityInstance;
@@ -236,7 +272,7 @@ bool UMVCombatComponent::TryBasicAttack(EMVCombatActionTypes InActionType)
 
 	if (ActionEntry && ActionEntry->bChainActive)
 	{
-		if (SendDataToActionComp(InActionType, ActionEntry->GetCurrentRowName()))
+		if (SendDataToActionComp(InActionType, ActionEntry->GetCurrentRowName(), StartSection))
 		{
 			ConsumeActionCost(ActionEntry->GetCurrentSkillData());
 			PreviousAbilityInstance = CurrentAbilityInstance;
@@ -256,7 +292,7 @@ bool UMVCombatComponent::TryBasicAttack(EMVCombatActionTypes InActionType)
 	}
 	else
 	{
-		if (SendDataToActionComp(InActionType, ActionEntry->GetCurrentRowName()))
+		if (SendDataToActionComp(InActionType, ActionEntry->GetCurrentRowName(), StartSection))
 		{
 			ConsumeActionCost(ActionEntry->GetCurrentSkillData());
 			PreviousAbilityInstance = CurrentAbilityInstance;
@@ -279,16 +315,12 @@ bool UMVCombatComponent::TryBasicAttack(EMVCombatActionTypes InActionType)
 
 }
 
-bool UMVCombatComponent::TrySkill(EMVCombatActionTypes InActionType, int32 SkillIndex)
+bool UMVCombatComponent::TrySkill(
+	EMVCombatActionTypes InActionType,
+	int32 ActionIndex,
+	FName StartSection)
 {
-	FName RowName;
-
-	const UEnum* EnumPtr = StaticEnum<EMVCombatActionTypes>();
-	FName TypeName = FName(*EnumPtr->GetNameStringByValue((int64)InActionType));
-
-	FString TypeString = TypeName.ToString() + FString::FromInt(SkillIndex);
-	RowName = FName(*TypeString);
-
+	FName RowName = MVCombatComponentMakeIndexedActionRowName(InActionType, ActionIndex);
 	FMVSkillEntry* ActionEntry = SkillMap.Find(RowName);
 	if (!ActionEntry)
 	{
@@ -315,7 +347,7 @@ bool UMVCombatComponent::TrySkill(EMVCombatActionTypes InActionType, int32 Skill
 				return false;
 			}
 
-			if (SendDataToActionComp(InActionType, ActionEntry->GetCurrentRowName()))
+			if (SendDataToActionComp(InActionType, ActionEntry->GetCurrentRowName(), StartSection))
 			{
 				ConsumeActionCost(ActionEntry->GetCurrentSkillData());
 				PreviousAbilityInstance = CurrentAbilityInstance;
@@ -343,7 +375,7 @@ bool UMVCombatComponent::TrySkill(EMVCombatActionTypes InActionType, int32 Skill
 		if (ActionEntry->CurrentChainStageIndex < ActionEntry->AbilityInstances.Num())
 		{
 
-			if (SendDataToActionComp(InActionType, ActionEntry->GetCurrentRowName()))
+			if (SendDataToActionComp(InActionType, ActionEntry->GetCurrentRowName(), StartSection))
 			{
 				ConsumeActionCost(ActionEntry->GetCurrentSkillData());
 				PreviousAbilityInstance = CurrentAbilityInstance;
@@ -369,7 +401,7 @@ bool UMVCombatComponent::TrySkill(EMVCombatActionTypes InActionType, int32 Skill
 			return false;
 		}
 
-		if (SendDataToActionComp(InActionType, ActionEntry->GetCurrentRowName()))
+		if (SendDataToActionComp(InActionType, ActionEntry->GetCurrentRowName(), StartSection))
 		{
 			ConsumeActionCost(ActionEntry->GetCurrentSkillData());
 			PreviousAbilityInstance = CurrentAbilityInstance;
@@ -405,7 +437,6 @@ void UMVCombatComponent::ResetBasicAttackMap()
 		BasicAttackMap.Reset();
 	}
 	
-	bool DataTableSearchResult = false;
 	FMVCombatActionTableInput ChooserInput;
 	ChooserInput.CurrentWeaponStyle = CurrentWeaponStyle;
 
@@ -417,14 +448,19 @@ void UMVCombatComponent::ResetBasicAttackMap()
 	for (EMVCombatActionTypes Types : TypeArray)
 	{
 		ChooserInput.ActionType = Types;
+		bool DataTableSearchResult = false;
 
 		// Find DataTable using ChooserTable input
 		UDataTable* CurrentDT = GetDataTableFromChooserTable(ChooserInput, DataTableSearchResult);
 
-		if (!DataTableSearchResult)
+		if (!DataTableSearchResult || !CurrentDT)
 		{
-			UE_LOG(LogTemp, Log, TEXT("MVCombatComponent(Reset Skill Map): Cannot Get DataTable"));
-			return;
+			UE_LOG(
+				LogTemp,
+				Log,
+				TEXT("MVCombatComponent::ResetBasicAttackMap - Cannot get DataTable for '%s'"),
+				*MVCombatComponentGetActionTypeName(Types).ToString());
+			continue;
 		}
 		
 		TSet<FName> ProcessedRowNames;
@@ -434,7 +470,7 @@ void UMVCombatComponent::ResetBasicAttackMap()
 			FMVSkillDataTableColumn* RowData = reinterpret_cast<FMVSkillDataTableColumn*>(It.Value);
 			if (!RowData || !RowData->AbilityReference)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("MVCombatComponent(Reset Skill Map): Invalid row data or ability reference for '%s'"), *It.Key.ToString());
+				UE_LOG(LogTemp, Warning, TEXT("MVCombatComponent::ResetBasicAttackMap - Invalid row data or ability reference for '%s'"), *It.Key.ToString());
 				continue;
 			}
 
@@ -644,7 +680,10 @@ void UMVCombatComponent::BuildChainedEntry(const FName& StartingName, const UDat
 	OutEntry.bIsChained = OutEntry.AbilityInstances.Num() > 1;
 }
 
-bool UMVCombatComponent::SendDataToActionComp(EMVCombatActionTypes InActionType, FName RowName)
+bool UMVCombatComponent::SendDataToActionComp(
+	EMVCombatActionTypes InActionType,
+	FName RowName,
+	FName StartSection)
 {
 	FMVCombatActionTableInput ChooserInput;
 	ChooserInput.ActionType = InActionType;
@@ -683,7 +722,7 @@ bool UMVCombatComponent::SendDataToActionComp(EMVCombatActionTypes InActionType,
 	{
 		if (bRecoveryOpen && bCanInterrupt)
 		{
-			Result = ActionComponent->TryTransitionActionFromRowHandle(RowHandle);
+			Result = ActionComponent->TryTransitionActionFromRowHandle(RowHandle, StartSection);
 		}
 		else
 		{
@@ -694,7 +733,7 @@ bool UMVCombatComponent::SendDataToActionComp(EMVCombatActionTypes InActionType,
 	else
 	{
 		// No active action -> start normally
-		Result = ActionComponent->TryStartActionFromRowHandle(RowHandle);
+		Result = ActionComponent->TryStartActionFromRowHandle(RowHandle, StartSection);
 	}
 
 	return Result;

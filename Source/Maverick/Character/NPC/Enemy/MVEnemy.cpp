@@ -3,6 +3,7 @@
 
 #include "Character/NPC/Enemy/MVEnemy.h"
 
+#include "AI/Controller/MVAIController.h"
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimMontage.h"
 #include "Character/NPC/Enemy/MVEnemyWeapon.h"
@@ -10,6 +11,7 @@
 #include "Components/MVHitReactionComponent.h"
 #include "Components/MVStatComponent.h"
 #include "Enum/MVCombatActionTypes.h"
+#include "Kismet/GameplayStatics.h"
 #include "TimerManager.h"
 #include "UI/HUD/MVMainHUDWidget.h"
 #include "UI/System/MVUISubsystem.h"
@@ -24,34 +26,6 @@ void AMVEnemy::BeginPlay()
 
 	BossHUDBindAttemptsRemaining = 20;
 	ScheduleBossHUDBindRetry(0.0f);
-
-	if (!WeaponClass || !GetWorld() || !GetMesh())
-	{
-		return;
-	}
-
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.Owner = this;
-	SpawnParams.Instigator = this;
-
-	WeaponActor = GetWorld()->SpawnActor<AMVEnemyWeapon>(
-		WeaponClass,
-		GetActorTransform(),
-		SpawnParams);
-
-	if (!WeaponActor)
-	{
-		return;
-	}
-
-	if (bUseDualWeapon)
-	{
-		WeaponActor->AttachDualToHands(GetMesh());
-	}
-	else
-	{
-		WeaponActor->AttachCombinedToHand(GetMesh());
-	}
 }
 
 bool AMVEnemy::Attack(const EMVAttackDirection AttackDirection)
@@ -109,18 +83,23 @@ bool AMVEnemy::Attack(const EMVAttackDirection AttackDirection, int32& OutAttack
 	return false;
 }
 
-bool AMVEnemy::TryHeavyAttack_Implementation()
+bool AMVEnemy::TryHeavyAttack_Implementation(const int32 ActionIndex, const FName StartSection)
 {
 	UMVCombatComponent* CombatComponent = FindComponentByClass<UMVCombatComponent>();
 	return CombatComponent
-		&& CombatComponent->TryCombatAction(EMVCombatActionTypes::HeavyAttack);
+		&& CombatComponent->TryCombatAction(EMVCombatActionTypes::HeavyAttack, ActionIndex, StartSection);
 }
 
-bool AMVEnemy::TrySkillAttack_Implementation(const int32 SkillIndex)
+bool AMVEnemy::TrySkillAttack_Implementation(const int32 SkillIndex, const FName StartSection)
 {
 	UMVCombatComponent* CombatComponent = FindComponentByClass<UMVCombatComponent>();
 	return CombatComponent
-		&& CombatComponent->TryCombatAction(EMVCombatActionTypes::Skill, SkillIndex);
+		&& CombatComponent->TryCombatAction(EMVCombatActionTypes::Skill, SkillIndex, StartSection);
+}
+
+AMVEnemyWeapon* AMVEnemy::GetWeaponActor() const
+{
+	return WeaponActor;
 }
 
 void AMVEnemy::DestroyWeaponActor()
@@ -132,14 +111,44 @@ void AMVEnemy::DestroyWeaponActor()
 	}
 }
 
+bool AMVEnemy::TryChooseHitReactionRecovery(
+	const FMVHitReactionRecoveryDecisionContext& Context,
+	FMVHitReactionRecoveryDecision& OutDecision)
+{
+	OutDecision = FMVHitReactionRecoveryDecision();
+
+	if (!bUseAirborneRecoveryDecision
+		|| Context.Owner != this
+		|| Context.HitReactionType != EMVActionHitReactionType::Airborne)
+	{
+		return false;
+	}
+
+	const AActor* Target = ResolveHitReactionRecoveryTarget();
+	if (!Target)
+	{
+		OutDecision.Type = EMVHitReactionRecoveryDecisionType::Getup;
+		return true;
+	}
+
+	const float DistanceSquared = FVector::DistSquared2D(GetActorLocation(), Target->GetActorLocation());
+	if (DistanceSquared > FMath::Square(AirborneEscapeDodgeDistance))
+	{
+		OutDecision.Type = EMVHitReactionRecoveryDecisionType::Getup;
+		return true;
+	}
+
+	OutDecision.Type = EMVHitReactionRecoveryDecisionType::EscapeDodge;
+	OutDecision.EscapeDirection = ResolveEscapeDirectionAwayFromTarget(*Target);
+	return true;
+}
+
 void AMVEnemy::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	if (UWorld* World = GetWorld())
 	{
 		World->GetTimerManager().ClearTimer(BossHUDBindRetryTimerHandle);
 	}
-
-	DestroyWeaponActor();
 
 	Super::EndPlay(EndPlayReason);
 }
@@ -232,4 +241,47 @@ void AMVEnemy::HandleEnemyGroggyStarted()
 void AMVEnemy::HandleEnemyGroggyEnded()
 {
 	OnEnemyGroggyEnded.Broadcast();
+}
+
+AActor* AMVEnemy::ResolveHitReactionRecoveryTarget() const
+{
+	if (const AMVAIController* AIController = Cast<AMVAIController>(GetController()))
+	{
+		if (IsValid(AIController->TargetActor))
+		{
+			return AIController->TargetActor;
+		}
+	}
+
+	APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(this, 0);
+	return IsValid(PlayerPawn) ? PlayerPawn : nullptr;
+}
+
+EMVActionInputDirection AMVEnemy::ResolveEscapeDirectionAwayFromTarget(const AActor& Target) const
+{
+	const FVector ToTarget = FVector(
+		Target.GetActorLocation().X - GetActorLocation().X,
+		Target.GetActorLocation().Y - GetActorLocation().Y,
+		0.0f);
+	if (ToTarget.IsNearlyZero())
+	{
+		return EMVActionInputDirection::Back;
+	}
+
+	const FVector TargetDirection = ToTarget.GetSafeNormal2D();
+	const FVector Forward = GetActorForwardVector().GetSafeNormal2D();
+	const FVector Right = GetActorRightVector().GetSafeNormal2D();
+	const float ForwardDot = FVector::DotProduct(TargetDirection, Forward);
+	const float RightDot = FVector::DotProduct(TargetDirection, Right);
+
+	if (FMath::Abs(ForwardDot) >= FMath::Abs(RightDot))
+	{
+		return ForwardDot >= 0.0f
+			? EMVActionInputDirection::Back
+			: EMVActionInputDirection::Forward;
+	}
+
+	return RightDot >= 0.0f
+		? EMVActionInputDirection::Left
+		: EMVActionInputDirection::Right;
 }

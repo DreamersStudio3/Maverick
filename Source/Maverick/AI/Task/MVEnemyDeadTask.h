@@ -58,6 +58,7 @@ struct FMVEnemyDeadTaskInstanceData
 
 	bool bEntered = false;
 	bool bCleanupDelayStarted = false;
+	bool bCleanupApplied = false;
 	float CleanupDelayElapsedSeconds = 0.0f;
 };
 
@@ -67,6 +68,7 @@ struct FMVEnemyDeadTaskInstanceData
  * The task does not start death animation. StatComponent and DeathComponent own
  * death detection and presentation; this task only stops AI movement and waits
  * until DeathComponent reports presentation completion before optional cleanup.
+ * Actor destruction is deferred out of the StateTree execution frame.
  */
 USTRUCT(meta = (DisplayName = "Enemy Dead Task"))
 struct FMVEnemyDeadTask : public FStateTreeTaskCommonBase

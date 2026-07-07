@@ -104,6 +104,7 @@ void UMVWeaponComponent::ApplyEquippedWeaponState(const FMVEquippedWeaponState& 
 {
 	CurrentWeaponState = NewState;
 	CurrentWeaponState.AttackPower = FMath::Max(0.0f, CurrentWeaponState.AttackPower);
+	CurrentWeaponState.TraceRadius = FMath::Max(0.0f, CurrentWeaponState.TraceRadius);
 	CurrentWeaponState.bValid = true;
 
 	SyncOwnerEquippedStyle();
@@ -122,6 +123,10 @@ FMVEquippedWeaponState UMVWeaponComponent::MakeStateFromWeaponRow(const FMVWeapo
 	State.WeaponMesh = WeaponRow.WeaponMesh;
 	State.AttachSocketName = WeaponRow.AttachSocketName;
 	State.AttachTransform = WeaponRow.AttachTransform;
+	State.SecondaryWeaponMesh = WeaponRow.SecondaryWeaponMesh;
+	State.SecondaryAttachSocketName = WeaponRow.SecondaryAttachSocketName;
+	State.SecondaryAttachTransform = WeaponRow.SecondaryAttachTransform;
+	State.TraceRadius = FMath::Max(0.0f, WeaponRow.TraceRadius);
 	State.bValid = WeaponRow.ItemTag.IsValid();
 	return State;
 }
@@ -166,7 +171,32 @@ bool UMVWeaponComponent::CanEquipWeaponState(const FMVEquippedWeaponState& Weapo
 		return false;
 	}
 
-	return ValidateWeaponMesh(*LoadedWeaponMesh, WeaponState.ItemTag);
+	if (!ValidateWeaponMesh(*LoadedWeaponMesh, WeaponState.ItemTag))
+	{
+		return false;
+	}
+
+	if (!WeaponState.SecondaryWeaponMesh.IsNull())
+	{
+		UObject* LoadedSecondaryWeaponMesh = WeaponState.SecondaryWeaponMesh.LoadSynchronous();
+		if (!LoadedSecondaryWeaponMesh)
+		{
+			UE_LOG(
+				LogTemp,
+				Error,
+				TEXT("Cannot equip weapon because secondary mesh failed to load. ItemTag=%s Mesh=%s."),
+				*WeaponState.ItemTag.ToString(),
+				*WeaponState.SecondaryWeaponMesh.ToString());
+			return false;
+		}
+
+		if (!ValidateWeaponMesh(*LoadedSecondaryWeaponMesh, WeaponState.ItemTag))
+		{
+			return false;
+		}
+	}
+
+	return true;
 }
 
 bool UMVWeaponComponent::TryEquipDefaultWeapon()
@@ -310,7 +340,61 @@ void UMVWeaponComponent::ApplyWeaponVisual()
 		return;
 	}
 
-	UMeshComponent* MeshComponent = EnsureWeaponMeshComponent(*LoadedWeaponMesh);
+	ApplyWeaponMeshVisual(
+		LoadedWeaponMesh,
+		WeaponMeshComponent,
+		CurrentWeaponState.AttachSocketName,
+		CurrentWeaponState.AttachTransform,
+		TEXT("EquippedWeaponMeshComponent"));
+
+	if (CurrentWeaponState.SecondaryWeaponMesh.IsNull())
+	{
+		ClearWeaponMeshVisual(SecondaryWeaponMeshComponent);
+		return;
+	}
+
+	UObject* LoadedSecondaryWeaponMesh = CurrentWeaponState.SecondaryWeaponMesh.LoadSynchronous();
+	if (!LoadedSecondaryWeaponMesh)
+	{
+		UE_LOG(
+			LogTemp,
+			Warning,
+			TEXT("Failed to load secondary weapon mesh. ItemTag=%s Mesh=%s."),
+			*CurrentWeaponState.ItemTag.ToString(),
+			*CurrentWeaponState.SecondaryWeaponMesh.ToString());
+		ClearWeaponMeshVisual(SecondaryWeaponMeshComponent);
+		return;
+	}
+	if (!ValidateWeaponMesh(*LoadedSecondaryWeaponMesh, CurrentWeaponState.ItemTag))
+	{
+		ClearWeaponMeshVisual(SecondaryWeaponMeshComponent);
+		return;
+	}
+
+	ApplyWeaponMeshVisual(
+		LoadedSecondaryWeaponMesh,
+		SecondaryWeaponMeshComponent,
+		CurrentWeaponState.SecondaryAttachSocketName,
+		CurrentWeaponState.SecondaryAttachTransform,
+		TEXT("SecondaryEquippedWeaponMeshComponent"));
+}
+
+void UMVWeaponComponent::ApplyWeaponMeshVisual(
+	UObject* LoadedWeaponMesh,
+	TObjectPtr<UMeshComponent>& MeshComponentStorage,
+	const FName AttachSocketName,
+	const FTransform& RelativeTransform,
+	const TCHAR* ComponentNameBase)
+{
+	if (!LoadedWeaponMesh)
+	{
+		return;
+	}
+
+	UMeshComponent* MeshComponent = EnsureWeaponMeshComponent(
+		MeshComponentStorage,
+		*LoadedWeaponMesh,
+		ComponentNameBase);
 	if (!MeshComponent)
 	{
 		return;
@@ -319,22 +403,22 @@ void UMVWeaponComponent::ApplyWeaponVisual()
 	if (USceneComponent* AttachParent = ResolveWeaponAttachParent())
 	{
 		if (const USkeletalMeshComponent* CharacterMesh = Cast<USkeletalMeshComponent>(AttachParent);
-			CharacterMesh && !CurrentWeaponState.AttachSocketName.IsNone()
-			&& !CharacterMesh->DoesSocketExist(CurrentWeaponState.AttachSocketName))
+			CharacterMesh && !AttachSocketName.IsNone()
+			&& !CharacterMesh->DoesSocketExist(AttachSocketName))
 		{
 			UE_LOG(
 				LogTemp,
 				Warning,
 				TEXT("Weapon attach socket does not exist. ItemTag=%s Socket=%s CharacterMesh=%s."),
 				*CurrentWeaponState.ItemTag.ToString(),
-				*CurrentWeaponState.AttachSocketName.ToString(),
+				*AttachSocketName.ToString(),
 				*GetNameSafe(CharacterMesh));
 		}
 
 		MeshComponent->AttachToComponent(
 			AttachParent,
 			FAttachmentTransformRules::SnapToTargetNotIncludingScale,
-			CurrentWeaponState.AttachSocketName);
+			AttachSocketName);
 	}
 
 	if (USkeletalMeshComponent* SkeletalMeshComponent = Cast<USkeletalMeshComponent>(MeshComponent))
@@ -345,37 +429,46 @@ void UMVWeaponComponent::ApplyWeaponVisual()
 	{
 		StaticMeshComponent->SetStaticMesh(CastChecked<UStaticMesh>(LoadedWeaponMesh));
 	}
-	MeshComponent->SetRelativeTransform(CurrentWeaponState.AttachTransform);
+	MeshComponent->SetRelativeTransform(RelativeTransform);
 	MeshComponent->SetVisibility(true, true);
 }
 
 void UMVWeaponComponent::ClearWeaponVisual()
 {
-	if (!WeaponMeshComponent)
+	ClearWeaponMeshVisual(WeaponMeshComponent);
+	ClearWeaponMeshVisual(SecondaryWeaponMeshComponent);
+}
+
+void UMVWeaponComponent::ClearWeaponMeshVisual(TObjectPtr<UMeshComponent>& MeshComponentStorage)
+{
+	if (!MeshComponentStorage)
 	{
 		return;
 	}
 
-	if (USkeletalMeshComponent* SkeletalMeshComponent = Cast<USkeletalMeshComponent>(WeaponMeshComponent))
+	if (USkeletalMeshComponent* SkeletalMeshComponent = Cast<USkeletalMeshComponent>(MeshComponentStorage))
 	{
 		SkeletalMeshComponent->SetSkeletalMesh(nullptr);
 	}
-	else if (UStaticMeshComponent* StaticMeshComponent = Cast<UStaticMeshComponent>(WeaponMeshComponent))
+	else if (UStaticMeshComponent* StaticMeshComponent = Cast<UStaticMeshComponent>(MeshComponentStorage))
 	{
 		StaticMeshComponent->SetStaticMesh(nullptr);
 	}
-	WeaponMeshComponent->SetVisibility(false, true);
+	MeshComponentStorage->SetVisibility(false, true);
 }
 
-UMeshComponent* UMVWeaponComponent::EnsureWeaponMeshComponent(const UObject& WeaponMesh)
+UMeshComponent* UMVWeaponComponent::EnsureWeaponMeshComponent(
+	TObjectPtr<UMeshComponent>& MeshComponentStorage,
+	const UObject& WeaponMesh,
+	const TCHAR* ComponentNameBase)
 {
 	const bool bNeedsSkeletalMeshComponent = WeaponMesh.IsA<USkeletalMesh>();
 	const bool bHasCompatibleComponent =
-		(bNeedsSkeletalMeshComponent && Cast<USkeletalMeshComponent>(WeaponMeshComponent))
-		|| (!bNeedsSkeletalMeshComponent && Cast<UStaticMeshComponent>(WeaponMeshComponent));
+		(bNeedsSkeletalMeshComponent && Cast<USkeletalMeshComponent>(MeshComponentStorage))
+		|| (!bNeedsSkeletalMeshComponent && Cast<UStaticMeshComponent>(MeshComponentStorage));
 	if (bHasCompatibleComponent)
 	{
-		return WeaponMeshComponent;
+		return MeshComponentStorage;
 	}
 
 	AActor* Owner = GetOwner();
@@ -384,28 +477,28 @@ UMeshComponent* UMVWeaponComponent::EnsureWeaponMeshComponent(const UObject& Wea
 		return nullptr;
 	}
 
-	if (WeaponMeshComponent)
+	if (MeshComponentStorage)
 	{
-		WeaponMeshComponent->DestroyComponent();
-		WeaponMeshComponent = nullptr;
+		MeshComponentStorage->DestroyComponent();
+		MeshComponentStorage = nullptr;
 	}
 
 	const FName WeaponMeshComponentName = MakeUniqueObjectName(
 		Owner,
 		bNeedsSkeletalMeshComponent ? USkeletalMeshComponent::StaticClass() : UStaticMeshComponent::StaticClass(),
-		TEXT("EquippedWeaponMeshComponent"));
-	WeaponMeshComponent = bNeedsSkeletalMeshComponent
+		ComponentNameBase);
+	MeshComponentStorage = bNeedsSkeletalMeshComponent
 		? Cast<UMeshComponent>(NewObject<USkeletalMeshComponent>(Owner, WeaponMeshComponentName))
 		: Cast<UMeshComponent>(NewObject<UStaticMeshComponent>(Owner, WeaponMeshComponentName));
-	if (!WeaponMeshComponent)
+	if (!MeshComponentStorage)
 	{
 		return nullptr;
 	}
 
-	WeaponMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	WeaponMeshComponent->SetVisibility(false, true);
-	WeaponMeshComponent->RegisterComponent();
-	return WeaponMeshComponent;
+	MeshComponentStorage->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	MeshComponentStorage->SetVisibility(false, true);
+	MeshComponentStorage->RegisterComponent();
+	return MeshComponentStorage;
 }
 
 USceneComponent* UMVWeaponComponent::ResolveWeaponAttachParent() const

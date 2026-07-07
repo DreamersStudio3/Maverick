@@ -33,10 +33,11 @@ private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USkeletalMeshComponent> CombineWeapon;
 	
-	UPROPERTY(EditAnywhere)
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<USkeletalMeshComponent> LeftWeapon;
 	
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<USkeletalMeshComponent> RightWeapon;
 	
 

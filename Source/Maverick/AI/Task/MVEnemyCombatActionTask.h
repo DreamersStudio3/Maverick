@@ -26,8 +26,11 @@ struct FMVEnemyCombatActionTaskInstanceData
 	UPROPERTY(EditAnywhere, Category = "Input|Combat")
 	EMVEnemyCombatActionKind ActionKind = EMVEnemyCombatActionKind::HeavyAttack;
 
-	UPROPERTY(EditAnywhere, Category = "Input|Combat", meta = (ClampMin = "0"))
+	UPROPERTY(EditAnywhere, Category = "Input|Combat", meta = (ClampMin = "0", DisplayName = "Action Index"))
 	int32 SkillIndex = 0;
+
+	UPROPERTY(EditAnywhere, Category = "Input|Combat")
+	FName StartSection = NAME_None;
 
 	UPROPERTY(EditAnywhere, Category = "Input|Cooldown")
 	FName CooldownActionId = NAME_None;
@@ -55,11 +58,9 @@ struct FMVEnemyCombatActionTaskInstanceData
 };
 
 /**
- * Runs an enemy combat action through AMVEnemy's Blueprint-overridable bridge.
- *
- * The task only chooses between HeavyAttack and SkillIndex. Actual DataTable
- * selection stays in CombatComponent/Blueprint chooser logic, so StateTree does
- * not need to know concrete row names such as Counter, Sprint, or Airborne.
+ * Runs a HeavyAttack or Skill row by index through CombatComponent, keeping
+ * ability and trace setup in the combat domain while letting StateTree own
+ * attack-state selection and follow-up transitions.
  */
 USTRUCT(meta = (DisplayName = "Enemy Combat Action Task"))
 struct FMVEnemyCombatActionTask : public FStateTreeTaskCommonBase

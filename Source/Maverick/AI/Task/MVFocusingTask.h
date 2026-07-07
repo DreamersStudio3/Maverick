@@ -5,6 +5,8 @@
 #include "StateTreeTaskBase.h"
 #include "MVFocusingTask.generated.h"
 
+class AAIController;
+
 USTRUCT()
 struct FMVFocusingTaskInstanceData
 {
@@ -16,11 +18,14 @@ struct FMVFocusingTaskInstanceData
 	UPROPERTY(EditAnywhere, Category = "Input|Owner")
 	TObjectPtr<APawn> Owner = nullptr;
 
-	UPROPERTY(EditAnywhere, Category = "Parameter|TurnSpeed")
-	float TurnSpeed = 5.0f;
-
 	UPROPERTY(EditAnywhere, Category = "Input|bCanFocus")
 	bool bCanFocus = true;
+
+	UPROPERTY(Transient)
+	TObjectPtr<AAIController> FocusController = nullptr;
+
+	UPROPERTY(Transient)
+	bool bFocusApplied = false;
 };
 
 USTRUCT(meta = (DisplayName = "Focusing Task"))

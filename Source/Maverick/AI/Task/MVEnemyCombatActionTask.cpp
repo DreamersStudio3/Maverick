@@ -33,15 +33,15 @@ bool EnemyCombatActionTaskIsStartedActionRunning(const FMVEnemyCombatActionTaskI
 			|| InstanceData.ActionComponent->GetActiveActionRowName() == InstanceData.StartedActionRowName);
 }
 
-FName EnemyCombatActionTaskMakeActionTag(const EMVEnemyCombatActionKind ActionKind, const int32 SkillIndex)
+FName EnemyCombatActionTaskMakeActionTag(const EMVEnemyCombatActionKind ActionKind, const int32 ActionIndex)
 {
 	switch (ActionKind)
 	{
 	case EMVEnemyCombatActionKind::HeavyAttack:
-		return TEXT("HeavyAttack");
+		return FName(*FString::Printf(TEXT("HeavyAttack%d"), ActionIndex));
 
 	case EMVEnemyCombatActionKind::Skill:
-		return FName(*FString::Printf(TEXT("Skill%d"), SkillIndex));
+		return FName(*FString::Printf(TEXT("Skill%d"), ActionIndex));
 
 	default:
 		return NAME_None;
@@ -58,10 +58,14 @@ bool EnemyCombatActionTaskTryStartAction(FMVEnemyCombatActionTaskInstanceData& I
 	switch (InstanceData.ActionKind)
 	{
 	case EMVEnemyCombatActionKind::HeavyAttack:
-		return InstanceData.Enemy->TryHeavyAttack();
+		return InstanceData.Enemy->TryHeavyAttack(
+			InstanceData.SkillIndex,
+			InstanceData.StartSection);
 
 	case EMVEnemyCombatActionKind::Skill:
-		return InstanceData.Enemy->TrySkillAttack(InstanceData.SkillIndex);
+		return InstanceData.Enemy->TrySkillAttack(
+			InstanceData.SkillIndex,
+			InstanceData.StartSection);
 
 	default:
 		return false;

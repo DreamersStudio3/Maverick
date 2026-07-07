@@ -6,6 +6,7 @@
 #include "AI/Enum/MVAttackDirection.h"
 #include "Character/MVCharacterBase.h"
 #include "Character/NPC/Enemy/MVEnemyWeapon.h"
+#include "Interface/MVHitReactionRecoveryDecisionProvider.h"
 #include "TimerManager.h"
 #include "MVEnemy.generated.h"
 
@@ -15,15 +16,14 @@ class UMVMainHUDWidget;
 /**
  * Enemy character bridge for AI-driven combat.
  *
- * Spawns and attaches the configured weapon actor during BeginPlay, and owns
- * attack montage playback notifications so AI tasks can react to animation
- * completion without reaching into animation state directly. Damage
- * notifications are routed to enemy-specific events so StateTree tasks can
- * decide when to run combat state presentation instead of reaching into
- * lower-level components directly.
+ * Owns attack montage playback notifications so AI tasks can react to
+ * animation completion without reaching into animation state directly. Weapon
+ * visuals and weapon state are expected to be handled by the shared weapon
+ * component path, while damage notifications are routed to enemy-specific
+ * events so StateTree tasks can decide when to run combat state presentation.
  */
 UCLASS()
-class MAVERICK_API AMVEnemy : public AMVCharacterBase
+class MAVERICK_API AMVEnemy : public AMVCharacterBase, public IMVHitReactionRecoveryDecisionProvider
 {
 	GENERATED_BODY()
 	
@@ -42,14 +42,21 @@ public:
 	bool Attack(EMVAttackDirection AttackDirection, int32& OutAttackInstanceId);
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Maverick|Enemy|Combat")
-	bool TryHeavyAttack();
-	virtual bool TryHeavyAttack_Implementation();
+	bool TryHeavyAttack(int32 ActionIndex = 0, FName StartSection = NAME_None);
+	virtual bool TryHeavyAttack_Implementation(int32 ActionIndex, FName StartSection);
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Maverick|Enemy|Combat")
-	bool TrySkillAttack(int32 SkillIndex);
-	virtual bool TrySkillAttack_Implementation(int32 SkillIndex);
+	bool TrySkillAttack(int32 SkillIndex, FName StartSection = NAME_None);
+	virtual bool TrySkillAttack_Implementation(int32 SkillIndex, FName StartSection);
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|Enemy|Weapon")
+	AMVEnemyWeapon* GetWeaponActor() const;
 
 	void DestroyWeaponActor();
+
+	virtual bool TryChooseHitReactionRecovery(
+		const FMVHitReactionRecoveryDecisionContext& Context,
+		FMVHitReactionRecoveryDecision& OutDecision) override;
 
 	FMVEnemyAttackMontageEndedSignature OnAttackMontageEnded;
 
@@ -81,6 +88,9 @@ protected:
 	UFUNCTION()
 	void HandleEnemyGroggyEnded();
 
+	AActor* ResolveHitReactionRecoveryTarget() const;
+	EMVActionInputDirection ResolveEscapeDirectionAwayFromTarget(const AActor& Target) const;
+
 	UPROPERTY(EditAnywhere, Category = "Animation")
 	TObjectPtr<UAnimMontage> AttackMontage;
 
@@ -95,6 +105,12 @@ protected:
 	
 	UPROPERTY(EditAnywhere, Category = "Weapon")
 	bool bUseDualWeapon = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Enemy|HitReaction|Recovery")
+	bool bUseAirborneRecoveryDecision = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Enemy|HitReaction|Recovery", meta = (ClampMin = "0.0", Units = "cm"))
+	float AirborneEscapeDodgeDistance = 500.0f;
 
 	FTimerHandle BossHUDBindRetryTimerHandle;
 	TWeakObjectPtr<UMVMainHUDWidget> BoundBossHUD;

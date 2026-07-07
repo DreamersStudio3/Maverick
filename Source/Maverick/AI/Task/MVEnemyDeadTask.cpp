@@ -6,9 +6,16 @@
 #include "Components/MVDeathComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "StateTreeExecutionContext.h"
+#include "TimerManager.h"
 
 namespace
 {
+enum class EMVEnemyDeadTaskCleanupResult : uint8
+{
+	Finished,
+	Waiting
+};
+
 APawn* EnemyDeadTaskResolveOwner(FStateTreeExecutionContext& Context, const TObjectPtr<APawn>& BoundOwner)
 {
 	if (BoundOwner)
@@ -39,21 +46,57 @@ bool EnemyDeadTaskIsDeathPresentationFinished(const FMVEnemyDeadTaskInstanceData
 	return InstanceData.DeathComponent->GetDeathPresentationPhase() == EMVDeathPresentationPhase::Finished;
 }
 
-void EnemyDeadTaskApplyCleanup(FMVEnemyDeadTaskInstanceData& InstanceData)
+void EnemyDeadTaskScheduleDestroy(AActor& Owner)
+{
+	if (Owner.IsActorBeingDestroyed())
+	{
+		return;
+	}
+
+	if (UWorld* World = Owner.GetWorld())
+	{
+		TWeakObjectPtr<AActor> WeakOwner = &Owner;
+		World->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateWeakLambda(
+			&Owner,
+			[WeakOwner]()
+			{
+				AActor* DeferredOwner = WeakOwner.Get();
+				if (IsValid(DeferredOwner) && !DeferredOwner->IsActorBeingDestroyed())
+				{
+					DeferredOwner->Destroy();
+				}
+			}));
+		return;
+	}
+
+	Owner.SetLifeSpan(0.001f);
+}
+
+EMVEnemyDeadTaskCleanupResult EnemyDeadTaskApplyCleanup(FMVEnemyDeadTaskInstanceData& InstanceData)
 {
 	AActor* Owner = InstanceData.Owner.Get();
 	if (!Owner)
 	{
-		return;
+		return EMVEnemyDeadTaskCleanupResult::Finished;
 	}
 
 	switch (InstanceData.CleanupMode)
 	{
 	case EMVEnemyDeadCleanupMode::DestroyActor:
-		Owner->Destroy();
-		return;
+		if (!InstanceData.bCleanupApplied)
+		{
+			InstanceData.bCleanupApplied = true;
+			EnemyDeadTaskScheduleDestroy(*Owner);
+		}
+		return EMVEnemyDeadTaskCleanupResult::Waiting;
 
 	case EMVEnemyDeadCleanupMode::DeactivateActor:
+		if (InstanceData.bCleanupApplied)
+		{
+			return EMVEnemyDeadTaskCleanupResult::Finished;
+		}
+
+		InstanceData.bCleanupApplied = true;
 		if (AMVEnemy* Enemy = Cast<AMVEnemy>(Owner))
 		{
 			Enemy->DestroyWeaponActor();
@@ -61,11 +104,11 @@ void EnemyDeadTaskApplyCleanup(FMVEnemyDeadTaskInstanceData& InstanceData)
 		Owner->SetActorEnableCollision(false);
 		Owner->SetActorHiddenInGame(true);
 		Owner->SetActorTickEnabled(false);
-		return;
+		return EMVEnemyDeadTaskCleanupResult::Finished;
 
 	case EMVEnemyDeadCleanupMode::None:
 	default:
-		return;
+		return EMVEnemyDeadTaskCleanupResult::Waiting;
 	}
 }
 
@@ -86,6 +129,7 @@ EStateTreeRunStatus FMVEnemyDeadTask::EnterState(
 	InstanceData.AIController = nullptr;
 	InstanceData.bEntered = false;
 	InstanceData.bCleanupDelayStarted = false;
+	InstanceData.bCleanupApplied = false;
 	InstanceData.CleanupDelayElapsedSeconds = 0.0f;
 
 	APawn* Owner = EnemyDeadTaskResolveOwner(Context, InstanceData.Owner);
@@ -166,6 +210,7 @@ EStateTreeRunStatus FMVEnemyDeadTask::Tick(FStateTreeExecutionContext& Context, 
 		return EStateTreeRunStatus::Running;
 	}
 
-	EnemyDeadTaskApplyCleanup(InstanceData);
-	return EStateTreeRunStatus::Succeeded;
+	return EnemyDeadTaskApplyCleanup(InstanceData) == EMVEnemyDeadTaskCleanupResult::Finished
+		? EStateTreeRunStatus::Succeeded
+		: EStateTreeRunStatus::Running;
 }

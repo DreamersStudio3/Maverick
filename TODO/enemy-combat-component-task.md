@@ -14,11 +14,11 @@ trace behavior.
   - Functions that can fail while trying to start gameplay behavior use `Try*`.
   - Enemy combat bridge functions were named `TryHeavyAttack` and `TrySkillAttack`.
 - [x] Added Blueprint-overridable functions to `AMVEnemy`.
-  - `TryHeavyAttack()`
-  - `TrySkillAttack(int32 SkillIndex)`
+  - `TryHeavyAttack(int32 ActionIndex, FName StartSection)`
+  - `TrySkillAttack(int32 SkillIndex, FName StartSection)`
 - [x] Added default C++ implementation for both functions.
-  - `TryHeavyAttack()` calls `UMVCombatComponent::TryCombatAction(HeavyAttack)`.
-  - `TrySkillAttack(SkillIndex)` calls `UMVCombatComponent::TryCombatAction(Skill, SkillIndex)`.
+  - `TryHeavyAttack(ActionIndex, StartSection)` calls `UMVCombatComponent::TryCombatAction(HeavyAttack, ActionIndex, StartSection)`.
+  - `TrySkillAttack(SkillIndex, StartSection)` calls `UMVCombatComponent::TryCombatAction(Skill, SkillIndex, StartSection)`.
 - [x] Added fixed execution StateTree task.
   - File: `Source/Maverick/AI/Task/MVEnemyCombatActionTask.h`
   - File: `Source/Maverick/AI/Task/MVEnemyCombatActionTask.cpp`
@@ -29,6 +29,27 @@ trace behavior.
   - Can start an optional `CooldownActionId`.
 - [x] Verified build.
   - `MaverickEditor Win64 Development` build succeeded.
+- [x] Changed enemy attack execution to support per-action StateTree states.
+  - HeavyAttack and Skill both execute indexed rows through CombatComponent.
+  - `Enemy Combat Action Task` shows its serialized `SkillIndex` property as `Action Index` for StateTree setup.
+  - `MaverickEditor Win64 Development` build succeeded.
+- [x] Added StartSection override to `Enemy Combat Action Task`.
+  - The task can now pass `StartSection` through enemy bridge and CombatComponent to ActionComponent.
+  - Leave `StartSection` empty to use the action row's `DefaultStartSection`.
+  - Set `StartSection` on a transition-specific state when reusing an existing action row from a later montage section.
+- [x] Added test AnimNotify for cooldown-gated action cuts.
+  - File: `Source/Maverick/Animation/Notifies/MVAnimNotify_CooldownReadyActionCut.h`
+  - File: `Source/Maverick/Animation/Notifies/MVAnimNotify_CooldownReadyActionCut.cpp`
+  - Display name: `MV Cooldown Ready Action Cut`
+  - If `CooldownActionId` is ready, the notify cancels the current action with the configured blend out time.
+  - It does not choose or start the follow-up state; StateTree remains responsible for the next transition.
+- [x] Added unified CombatContext-based StateTree enter condition.
+  - File: `Source/Maverick/AI/Condition/MVCombatActionEnterCondition.h`
+  - File: `Source/Maverick/AI/Condition/MVCombatActionEnterCondition.cpp`
+  - Display name: `Combat Context Enter Condition`
+  - Supports `Dead`, `Action`, `MoveToTarget`, `Strafe`, and `Idle` modes.
+  - Uses `FMVAICombatContext` and `ReadyActionIds` instead of CombatComponent cooldown state.
+  - Keeps exposed inputs minimal: mode, action type, cooldown action id, distance range, and optional combat area.
 
 ## Important Decision
 
@@ -60,38 +81,34 @@ For E1, this should return:
 
 ### HeavyAttack
 
-HeavyAttack must keep the old SkillAttack state behavior:
+HeavyAttack uses one StateTree state per indexed attack row. Each state owns its
+enter condition and follow-up transitions, while `Enemy Combat Action Task`
+executes the configured index through CombatComponent.
 
-- Enter one `SkillAttack` state.
-- Inside that state, evaluate candidate conditions.
-- Select one HeavyAttack candidate automatically.
-- Execute the selected HeavyAttack through CombatComponent.
+## Current Task: Attack State Per Action
 
-This is different from the fixed `Enemy Combat Action Task`.
-
-The old `Select And Execute Attack Task` already has useful selection logic, but
-it starts actions by passing a selected row handle directly to `ActionComponent`.
-That bypasses CombatComponent, so it should not be used as-is for HeavyAttack.
-
-## Tomorrow Task: HeavyAttack Select Through CombatComponent
-
-Create a HeavyAttack select path that keeps the old selection behavior but
-executes through CombatComponent.
+HeavyAttack selection will not stay hidden inside one shared select task.
+StateTree should own each attack state and follow-up transition explicitly.
 
 Required behavior:
 
-1. StateTree enters the existing `SkillAttack` state.
-2. New select task evaluates HeavyAttack candidates using conditions similar to
-   the old `Select And Execute Attack Task`.
-3. The selected candidate resolves to a HeavyAttack row or HeavyAttack selection
-   key.
-4. Execution must go through CombatComponent, not direct ActionComponent row
-   execution.
-5. Ability/trace setup must still happen through CombatComponent.
+1. StateTree enters a concrete attack state such as `HeavyAttack0` or `Skill1`.
+2. `Enemy Combat Action Task` receives `ActionKind` and an index.
+3. HeavyAttack and Skill execution both go through CombatComponent.
+4. Ability/trace setup must still happen through CombatComponent.
+5. Follow-up attacks, retreat, reposition, Dead/Hit/Groggy interrupts are modeled as StateTree transitions.
+
+Use `Combat Context Enter Condition` on each concrete attack state:
+
+- `Mode`: Action.
+- `ActionType`: HeavyAttack or Skill.
+- `CooldownActionId`: action cooldown id such as `HeavyAttack0`.
+- `MinDistance` and `MaxDistance`: valid attack range.
+- Optional combat area gate.
 
 ## Main Design Problem To Solve
 
-Current `UMVCombatComponent::TryCombatAction(HeavyAttack)` searches for row name:
+Previous `UMVCombatComponent::TryCombatAction(HeavyAttack)` searched for row name:
 
 ```text
 HeavyAttack
@@ -107,55 +124,24 @@ HeavyAttack2
 HeavyAttack3
 ```
 
-then the current CombatComponent API cannot execute a selected HeavyAttack row
-by name.
-
-Tomorrow's implementation must decide how selected HeavyAttack rows are passed
-into CombatComponent.
+then the old CombatComponent API could not execute a specific HeavyAttack row.
 
 ## Recommended Implementation Direction
 
-Prefer adding a CombatComponent API that can execute a selected row name through
-the existing CombatComponent data/ability path.
+Use indexed row names consistently:
 
-Possible function shape:
+- `HeavyAttack0`, `HeavyAttack1`, ...
+- `Skill0`, `Skill1`, ...
 
-```cpp
-bool UMVCombatComponent::TryCombatActionByRowName(
-    EMVCombatActionTypes InActionType,
-    FName RowName);
-```
+`Enemy Combat Action Task` keeps the serialized `SkillIndex` property for asset
+compatibility, but displays and uses it as `Action Index`.
 
-Expected behavior:
+Implementation result:
 
-- Uses the same chooser table path as current CombatComponent.
-- Gets the DataTable for `InActionType`.
-- Finds the selected row in the already built map, or resolves it from the table.
-- Runs cost checks.
-- Sends the selected row to ActionComponent through CombatComponent.
-- Keeps ability instance/trace setup valid.
-
-Then add an Enemy bridge:
-
-```cpp
-UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Maverick|Enemy|Combat")
-bool TryHeavyAttackByRowName(FName RowName);
-```
-
-Default implementation:
-
-```cpp
-return CombatComponent
-    && CombatComponent->TryCombatActionByRowName(
-        EMVCombatActionTypes::HeavyAttack,
-        RowName);
-```
-
-The new HeavyAttack select task can then:
-
-```text
-select candidate -> selected row name -> Enemy.TryHeavyAttackByRowName(RowName)
-```
+- `AMVEnemy::TryHeavyAttack(int32 ActionIndex, FName StartSection)` executes indexed HeavyAttack rows.
+- `AMVEnemy::TrySkillAttack(int32 SkillIndex, FName StartSection)` executes indexed Skill rows.
+- `UMVCombatComponent::TryCombatAction(ActionType, ActionIndex)` uses the index for HeavyAttack/LightAttack/ChargeAttack and Skill.
+- Basic attack lookup tries indexed names first and falls back to legacy unindexed row names only for index 0.
 
 ## Alternative Implementation
 
@@ -170,18 +156,22 @@ This is faster but less clean:
 
 Use this only if C++ CombatComponent changes are too risky.
 
-## StateTree Setup After Tomorrow Task
+## StateTree Setup
 
 Expected usage:
 
 - Skill states:
   - Use `Enemy Combat Action Task`.
   - Set `ActionKind = Skill`.
-  - Set `SkillIndex`.
-- HeavyAttack/old SkillAttack state:
-  - Use new HeavyAttack select task.
-  - Candidate list chooses which HeavyAttack row to execute.
-  - Selected HeavyAttack must execute through CombatComponent.
+  - Set `Action Index`.
+- HeavyAttack states:
+  - Use `Combat Context Enter Condition` to decide whether this concrete attack can start.
+  - Set `Mode = Action`.
+  - Set `CooldownActionId` to the row/cooldown id, such as `HeavyAttack0`.
+  - Use `Enemy Combat Action Task`.
+  - Set `ActionKind = HeavyAttack`.
+  - Set `Action Index`.
+  - Set `CooldownActionId` on the task if the action should start a cooldown when execution succeeds.
 
 ## E1 Data Setup Checklist
 
@@ -191,8 +181,8 @@ Expected usage:
       `ActionType = Skill`.
 - [ ] `DT_E1_Skill` row names match CombatComponent SkillIndex rule:
       `Skill0`, `Skill1`, ...
-- [ ] `DT_E1_HeavyAttack` row names are documented before implementing select.
-- [ ] HeavyAttack candidate conditions define which row to choose.
+- [x] `DT_E1_HeavyAttack` row names use indexed names such as `HeavyAttack0`.
+- [ ] HeavyAttack state enter conditions define which row/state can run.
 - [ ] Dead/Hit/Groggy transitions have higher priority than attack transitions.
 
 ## Files Already Touched

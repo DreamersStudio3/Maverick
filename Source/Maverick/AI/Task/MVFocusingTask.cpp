@@ -4,12 +4,29 @@
 #include "StateTreeExecutionContext.h"
 #include "Kismet/GameplayStatics.h"
 
+namespace
+{
+AAIController* MVFocusingTaskResolveAIController(
+	FStateTreeExecutionContext& Context,
+	const APawn* Owner)
+{
+	if (AAIController* AIController = Cast<AAIController>(Context.GetOwner()))
+	{
+		return AIController;
+	}
+
+	return Owner ? Cast<AAIController>(Owner->GetController()) : nullptr;
+}
+}
+
 EStateTreeRunStatus FMVFocusingTask::EnterState(
 	FStateTreeExecutionContext& Context,
 	const FStateTreeTransitionResult& Transition
 	) const
 {
 	FInstanceDataType& InstanceData = Context.GetInstanceData(*this);
+	InstanceData.FocusController = nullptr;
+	InstanceData.bFocusApplied = false;
 
 	if (!InstanceData.bCanFocus)
 	{
@@ -41,42 +58,26 @@ EStateTreeRunStatus FMVFocusingTask::EnterState(
 		}
 	}
 
-	return InstanceData.Target ? EStateTreeRunStatus::Running : EStateTreeRunStatus::Failed;
+	AAIController* AIController = MVFocusingTaskResolveAIController(Context, InstanceData.Owner);
+	if (!InstanceData.Target || !AIController)
+	{
+		return EStateTreeRunStatus::Failed;
+	}
+
+	AIController->SetFocus(InstanceData.Target, EAIFocusPriority::Gameplay);
+	InstanceData.FocusController = AIController;
+	InstanceData.bFocusApplied = true;
+	return EStateTreeRunStatus::Running;
 }
 
 EStateTreeRunStatus FMVFocusingTask::Tick(FStateTreeExecutionContext& Context, const float DeltaTime) const
 {
 	FInstanceDataType& InstanceData = Context.GetInstanceData(*this);
 	
-	if (!InstanceData.bCanFocus || !InstanceData.Target || !InstanceData.Owner)
+	if (!InstanceData.bCanFocus || !InstanceData.Target || !InstanceData.Owner || !InstanceData.FocusController)
 	{
 		return EStateTreeRunStatus::Failed;
 	}
-	
-	FVector TargetDirection = InstanceData.Target->GetActorLocation() - InstanceData.Owner->GetActorLocation();
-	TargetDirection.Z = 0.0f;
-	
-	if (TargetDirection.IsNearlyZero())
-	{
-		return EStateTreeRunStatus::Failed;
-	}
-	
-	FRotator TargetRotation = TargetDirection.Rotation();
-	TargetRotation.Pitch = 0.0f;
-	TargetRotation.Roll = 0.0f;
-	
-	if (TargetDirection.IsNearlyZero())
-	{
-		return EStateTreeRunStatus::Succeeded;
-	}
-	
-	const FRotator NewRotation = FMath::RInterpTo(
-		InstanceData.Owner->GetActorRotation(),
-		TargetRotation,
-		DeltaTime,
-		InstanceData.TurnSpeed);
-	
-	InstanceData.Owner->SetActorRotation(NewRotation);
 
 	return EStateTreeRunStatus::Running;
 }
@@ -86,7 +87,17 @@ void FMVFocusingTask::ExitState(
 	const FStateTreeTransitionResult& Transition
 	) const
 {
-	
-	
+	FInstanceDataType& InstanceData = Context.GetInstanceData(*this);
+	if (InstanceData.bFocusApplied)
+	{
+		if (AAIController* AIController = InstanceData.FocusController.Get())
+		{
+			AIController->ClearFocus(EAIFocusPriority::Gameplay);
+		}
+	}
+
+	InstanceData.FocusController = nullptr;
+	InstanceData.bFocusApplied = false;
+
 	FStateTreeTaskCommonBase::ExitState(Context, Transition);
 }
