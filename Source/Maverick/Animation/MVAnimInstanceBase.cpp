@@ -4,6 +4,7 @@
 #include "Animation/MVAnimInstanceBase.h"
 
 #include "Character/MVCharacterBase.h"
+#include "Components/MVActionComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "KismetAnimationLibrary.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -176,6 +177,12 @@ void UMVAnimInstanceBase::GetCharacterStateData()
 
 void UMVAnimInstanceBase::CalculatePivotState()
 {
+	if (Character && Character->ActionComponent && Character->ActionComponent->IsActionRunning())
+	{
+		IsPivot = false;
+		return;
+	}
+
 	FVector Acceleration2D = CurrentAcceleration.GetSafeNormal2D();
 	FVector Velocity2D = Velocity.GetSafeNormal2D();
 
