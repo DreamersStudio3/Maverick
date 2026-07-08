@@ -3,6 +3,8 @@
 #include "Tables/MVTableManager.h"
 #include "Tables/MVStatTableTypes.h"
 #include "Tags/MVGameplayTags.h"
+#include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogMVStatComponent, Log, All);
 
@@ -455,6 +457,22 @@ void UMVStatComponent::SetRunSpeed(float InRunSpeed)
 void UMVStatComponent::SetSprintSpeed(float InSprintSpeed)
 {
 	SprintSpeed = MVStatNonNegative(InSprintSpeed);
+}
+
+bool UMVStatComponent::HasReachedSprintSpeedRatio(const float RequiredRatio) const
+{
+	const ACharacter* OwnerCharacter = Cast<ACharacter>(GetOwner());
+	const UCharacterMovementComponent* MovementComponent = OwnerCharacter
+		? OwnerCharacter->GetCharacterMovement()
+		: nullptr;
+	if (!MovementComponent || SprintSpeed <= KINDA_SMALL_NUMBER)
+	{
+		return false;
+	}
+
+	const float CurrentSpeed = MovementComponent->Velocity.Size2D();
+	const float RequiredSpeed = SprintSpeed * FMath::Clamp(RequiredRatio, 0.0f, 1.0f);
+	return CurrentSpeed >= RequiredSpeed;
 }
 
 void UMVStatComponent::SetDefence(float InDefence)

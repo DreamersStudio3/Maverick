@@ -11,7 +11,6 @@
 #include "Character/MVCharacterBase.h"
 #include "Components/MVStatComponent.h"
 #include "Engine/DataTable.h"
-#include "GameFramework/CharacterMovementComponent.h"
 #include "Public/Interface/MVAbilityInterface.h"
 #include "Tags/MVGameplayTags.h"
 
@@ -1908,22 +1907,10 @@ bool UMVCombatComponent::ShouldSuppressChargeAttackInputForSprint() const
 
 bool UMVCombatComponent::HasReachedSprintAttackSpeed() const
 {
-	const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
-	const UCharacterMovementComponent* MovementComponent = OwnerCharacter ? OwnerCharacter->GetCharacterMovement() : nullptr;
-	if (!MovementComponent)
+	if (!StatComponent)
 	{
 		return false;
 	}
 
-	const float SprintSpeed = StatComponent
-		? StatComponent->SprintSpeed
-		: MovementComponent->MaxWalkSpeed;
-	if (SprintSpeed <= KINDA_SMALL_NUMBER)
-	{
-		return false;
-	}
-
-	const float CurrentSpeed = MovementComponent->Velocity.Size2D();
-	const float RequiredSpeed = SprintSpeed * FMath::Clamp(SprintAttackMinSpeedRatio, 0.0f, 1.0f);
-	return CurrentSpeed >= RequiredSpeed;
+	return StatComponent->HasReachedSprintSpeedRatio(SprintAttackMinSpeedRatio);
 }

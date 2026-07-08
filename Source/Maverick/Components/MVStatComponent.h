@@ -207,6 +207,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|MoveSpeed")
 	void SetSprintSpeed(float InSprintSpeed);
 
+	UFUNCTION(BlueprintPure, Category = "Maverick|Stat|MoveSpeed")
+	bool HasReachedSprintSpeedRatio(float RequiredRatio) const;
+
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Defence")
 	void SetDefence(float InDefence);
 
