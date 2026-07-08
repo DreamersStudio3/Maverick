@@ -4,6 +4,8 @@
 #include "AIController.h"
 #include "Character/NPC/Enemy/MVEnemy.h"
 #include "Components/MVActionComponent.h"
+#include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "StateTreeExecutionContext.h"
 
 namespace
@@ -83,6 +85,44 @@ bool EnemyCombatActionTaskTryStartCooldown(APawn& Owner, const FName CooldownAct
 	return CooldownComponent && CooldownComponent->StartCooldown(CooldownActionId);
 }
 
+bool EnemyCombatActionTaskCanJumpToRangeSection(const FMVEnemyCombatActionTaskInstanceData& InstanceData)
+{
+	return InstanceData.bJumpToSectionWhenInRange
+		&& !InstanceData.bSectionJumpRequested
+		&& InstanceData.CombatContext.bHasTarget
+		&& InstanceData.JumpDistance > 0.0f
+		&& !InstanceData.JumpSectionName.IsNone()
+		&& EnemyCombatActionTaskIsStartedActionRunning(InstanceData)
+		&& InstanceData.CombatContext.DistanceToTarget <= InstanceData.JumpDistance;
+}
+
+bool EnemyCombatActionTaskTryJumpToRangeSection(FMVEnemyCombatActionTaskInstanceData& InstanceData)
+{
+	if (!EnemyCombatActionTaskCanJumpToRangeSection(InstanceData))
+	{
+		return false;
+	}
+
+	if (!InstanceData.ActionComponent->TryJumpActiveActionSection(InstanceData.JumpSectionName))
+	{
+		return false;
+	}
+
+	if (InstanceData.bStopMovementOnSectionJump)
+	{
+		if (ACharacter* OwnerCharacter = Cast<ACharacter>(InstanceData.Owner))
+		{
+			if (UCharacterMovementComponent* MovementComponent = OwnerCharacter->GetCharacterMovement())
+			{
+				MovementComponent->StopMovementImmediately();
+			}
+		}
+	}
+
+	InstanceData.bSectionJumpRequested = true;
+	return true;
+}
+
 }
 
 FMVEnemyCombatActionTask::FMVEnemyCombatActionTask()
@@ -100,6 +140,7 @@ EStateTreeRunStatus FMVEnemyCombatActionTask::EnterState(
 	InstanceData.StartedActionTableName = NAME_None;
 	InstanceData.StartedActionRowName = NAME_None;
 	InstanceData.LastAttackTag = NAME_None;
+	InstanceData.bSectionJumpRequested = InstanceData.StartSection == InstanceData.JumpSectionName;
 
 	APawn* Owner = EnemyCombatActionTaskResolveOwner(Context, InstanceData.Owner);
 	if (!Owner)
@@ -132,16 +173,20 @@ EStateTreeRunStatus FMVEnemyCombatActionTask::EnterState(
 		return EStateTreeRunStatus::Failed;
 	}
 
+	EnemyCombatActionTaskTryJumpToRangeSection(InstanceData);
+
 	return InstanceData.bWaitForActionEnd ? EStateTreeRunStatus::Running : EStateTreeRunStatus::Succeeded;
 }
 
 EStateTreeRunStatus FMVEnemyCombatActionTask::Tick(FStateTreeExecutionContext& Context, const float DeltaTime) const
 {
-	const FInstanceDataType& InstanceData = Context.GetInstanceData<FInstanceDataType>(*this);
+	FInstanceDataType& InstanceData = Context.GetInstanceData<FInstanceDataType>(*this);
 	if (!InstanceData.bWaitForActionEnd)
 	{
 		return EStateTreeRunStatus::Succeeded;
 	}
+
+	EnemyCombatActionTaskTryJumpToRangeSection(InstanceData);
 
 	return EnemyCombatActionTaskIsStartedActionRunning(InstanceData)
 		? EStateTreeRunStatus::Running
