@@ -3,13 +3,13 @@
 
 #include "Combat/MVAbilityBase.h"
 
-#include "Components/MVCombatComponent.h"
 #include "Character/MVCharacterBase.h"
 #include "Components/MVStatComponent.h"
+#include "Components/MVCombatComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogMVAbilityBase, Log, All);
 
-void UMVAbilityBase::SetOwner(UMVCombatComponent* Owner)
+void UMVAbilityBase::SetOwner(UActorComponent* Owner)
 {
 	if (Owner)
 	{
@@ -17,7 +17,7 @@ void UMVAbilityBase::SetOwner(UMVCombatComponent* Owner)
 	}
 }
 
-UMVCombatComponent* UMVAbilityBase::GetOwner()
+UActorComponent* UMVAbilityBase::GetOwner()
 {
 	return OwnerComponent;
 }
@@ -78,9 +78,10 @@ void UMVAbilityBase::EndAbility_Implementation()
 
 	bAbilityActive = false;
 
-	if (OwnerComponent)
+	UMVCombatComponent* OwnerCombatComponent = Cast<UMVCombatComponent>(OwnerComponent);
+	if (OwnerCombatComponent)
 	{
-		OwnerComponent->HandleAbilityEnded(this);
+		OwnerCombatComponent->HandleAbilityEnded(this);
 	}
 }
 

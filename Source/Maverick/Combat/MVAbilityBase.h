@@ -25,7 +25,7 @@
  *   4) Ability NotifyState End에서 EndAbility가 호출되어 활성 상태를 정리한다.
  */
 
-class UMVCombatComponent;
+class UActorComponent;
 class AMVCharacterBase;
 
 UCLASS(Blueprintable, meta = (ShowWorldContextPin))
@@ -36,10 +36,10 @@ class MAVERICK_API UMVAbilityBase : public UObject, public IMVAbilityInterface
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void SetOwner(UMVCombatComponent* Owner);
+	void SetOwner(UActorComponent* Owner);
 	
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	UMVCombatComponent* GetOwner();
+	UActorComponent* GetOwner();
 	
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	AMVCharacterBase* GetOwnerCharacter();
@@ -54,7 +54,7 @@ public:
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings", meta = (ExposeOnSpawn = "true"))
-	TObjectPtr<UMVCombatComponent> OwnerComponent;
+	TObjectPtr<UActorComponent> OwnerComponent;
 	
 	UPROPERTY(BlueprintReadOnly)
 	FMVSkillDataTableColumn AbilityData;
