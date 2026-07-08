@@ -11,7 +11,6 @@
 #include "Character/MVCharacterBase.h"
 #include "Components/MVStatComponent.h"
 #include "Engine/DataTable.h"
-#include "GameFramework/CharacterMovementComponent.h"
 #include "Public/Interface/MVAbilityInterface.h"
 #include "Tags/MVGameplayTags.h"
 
@@ -146,6 +145,20 @@ FName MVCombatActionTableNameFromDataTable(const UDataTable* DataTable)
 	TableName.RemoveFromStart(TEXT("DT_"));
 	return FName(*TableName);
 }
+
+EMVAttackSwingDirection MVCombatGetOppositeSwingDirection(const EMVAttackSwingDirection Direction)
+{
+	switch (Direction)
+	{
+	case EMVAttackSwingDirection::RightToLeft:
+		return EMVAttackSwingDirection::LeftToRight;
+	case EMVAttackSwingDirection::LeftToRight:
+		return EMVAttackSwingDirection::RightToLeft;
+	default:
+		return EMVAttackSwingDirection::None;
+	}
+}
+
 }
 
 // Sets default values for this component's properties
@@ -162,9 +175,6 @@ UMVCombatComponent::UMVCombatComponent()
 // Called when the game starts
 void UMVCombatComponent::BeginPlay()
 {
-	CurrentWeaponStyle = EMVEquippedStyle::BareHand; // Test
-
-
 	RefreshActionMaps();
 
 
@@ -225,6 +235,7 @@ void UMVCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	
 	UpdateContextualBasicAttackResets();
+	TryUpdateHeavyChargeAttack(0.0f);
 }
 
 bool UMVCombatComponent::TryCombatAction(
@@ -307,6 +318,33 @@ bool UMVCombatComponent::TryHandleActionInput(
 	return ChooseTryCombatAction(ActionInputTag);
 }
 
+bool UMVCombatComponent::TryHandleHoldActionInput(
+	const FGameplayTag ActionInputTag,
+	const EMVActionInputPhase Phase,
+	const float HeldSeconds,
+	const FVector2D /*ControllerSpaceInput*/,
+	const bool /*bHasMovementInput*/)
+{
+	if (!IsHeavyChargeActionInputTag(ActionInputTag))
+	{
+		return false;
+	}
+
+	switch (Phase)
+	{
+	case EMVActionInputPhase::Started:
+		return TryBeginHeavyChargeAttack(HeldSeconds);
+	case EMVActionInputPhase::Triggered:
+		return TryUpdateHeavyChargeAttack(HeldSeconds);
+	case EMVActionInputPhase::Completed:
+		return TryReleaseHeavyChargeAttack(HeldSeconds, false);
+	case EMVActionInputPhase::Canceled:
+		return TryReleaseHeavyChargeAttack(HeldSeconds, true);
+	default:
+		return false;
+	}
+}
+
 bool UMVCombatComponent::ChooseTryCombatAction(const FGameplayTag ActionInputTag)
 {
 	UE_LOG(
@@ -330,6 +368,10 @@ bool UMVCombatComponent::ChooseTryCombatAction(const FGameplayTag ActionInputTag
 		return TryCombatAction(EMVCombatActionTypes::LightAttack);
 	}
 	else if (ActionInputTag.MatchesTagExact(MVGameplayTags::Action_Input_HeavyAttack))
+	{
+		return TryCombatAction(EMVCombatActionTypes::HeavyAttack);
+	}
+	else if (ActionInputTag.MatchesTagExact(MVGameplayTags::Action_Input_HeavyChargeAttack))
 	{
 		return TryCombatAction(EMVCombatActionTypes::HeavyAttack);
 	}
@@ -358,8 +400,15 @@ bool UMVCombatComponent::IsCombatActionInputTag(const FGameplayTag ActionInputTa
 {
 	return ActionInputTag.MatchesTagExact(MVGameplayTags::Action_Input_LightAttack)
 		|| ActionInputTag.MatchesTagExact(MVGameplayTags::Action_Input_HeavyAttack)
+		|| ActionInputTag.MatchesTagExact(MVGameplayTags::Action_Input_HeavyChargeAttack)
 		|| ActionInputTag.MatchesTagExact(MVGameplayTags::Action_Input_ChargeAttack)
 		|| ActionInputTag.MatchesTag(MVGameplayTags::Action_Input_Skill);
+}
+
+bool UMVCombatComponent::IsHeavyChargeActionInputTag(const FGameplayTag ActionInputTag) const
+{
+	return ActionInputTag.MatchesTagExact(MVGameplayTags::Action_Input_HeavyChargeAttack)
+		|| ActionInputTag.MatchesTagExact(MVGameplayTags::Action_Input_HeavyAttack);
 }
 
 
@@ -393,28 +442,17 @@ bool UMVCombatComponent::TryBasicAttack(
 			if (BuildSkillEntryFromRowHandle(IndexedRowHandle, IndexedEntry)
 				&& CanConsumeActionCost(IndexedEntry.GetCurrentSkillData()))
 			{
-				return TryStartActionWithAbility(IndexedEntry, IndexedRowHandle, StartSection);
+				const bool bStarted = TryStartActionWithAbility(IndexedEntry, IndexedRowHandle, StartSection);
+				if (bStarted)
+				{
+					UpdateLastBasicAttackSwingDirection(IndexedRowHandle);
+				}
+				return bStarted;
 			}
 		}
 	}
 
-	if(!CanConsumeActionCost(ActionEntry->GetCurrentSkillData()))
-	{
-		return false;
-	}
-
 	float CurrentTime = GetWorld()->GetTimeSeconds();
-	const auto ResetOtherBasicAttackChains =
-		[this, ActionMapKey]()
-		{
-			for (TPair<FName, FMVSkillEntry>& Pair : BasicAttackMap)
-			{
-				if (Pair.Key != ActionMapKey)
-				{
-					Pair.Value.ResetChain();
-				}
-			}
-		};
 
 	// Reset Basic Attack's Index and Start Attack
 	if (CurrentTime - LastBasicAttackedTime > ResetBasicAttackTime)
@@ -425,15 +463,26 @@ bool UMVCombatComponent::TryBasicAttack(
 			CurrentEntry.ResetChain();
 		}
 		ActiveBasicAttackMapKey = NAME_None;
+		ClearLastBasicAttackSwingDirection();
 	}
 
 	if (!ActiveBasicAttackMapKey.IsNone() && ActiveBasicAttackMapKey != ActionMapKey)
 	{
-		ResetOtherBasicAttackChains();
+		ResetOtherBasicAttackChains(ActionMapKey);
 		ActionEntry->ResetChain();
 	}
 
+	const int32 OriginalChainStageIndex = ActionEntry->CurrentChainStageIndex;
+	const int32 SelectedChainStageIndex = SelectBasicAttackChainStageForSwing(*ActionEntry);
+	ActionEntry->CurrentChainStageIndex = SelectedChainStageIndex;
 	const FDataTableRowHandle CurrentRowHandle = ActionEntry->GetCurrentActionRowHandle();
+
+	if (!CanConsumeActionCost(ActionEntry->GetCurrentSkillData()))
+	{
+		ActionEntry->CurrentChainStageIndex = OriginalChainStageIndex;
+		return false;
+	}
+
 	UE_LOG(
 		LogMVCombatComponent,
 		Log,
@@ -443,10 +492,11 @@ bool UMVCombatComponent::TryBasicAttack(
 		ActionEntry->CurrentChainStageIndex,
 		ActionEntry->bChainActive ? TEXT("true") : TEXT("false"));
 
-	if (ActionEntry && ActionEntry->bChainActive)
+	if (ActionEntry->bChainActive)
 	{
 		if (TryStartActionWithAbility(*ActionEntry, CurrentRowHandle, StartSection))
 		{
+			UpdateLastBasicAttackSwingDirection(CurrentRowHandle);
 			ActionEntry->TryAdvanceChainStage(CurrentTime);
 			LastBasicAttackedTime = CurrentTime;
 			ActiveBasicAttackMapKey = ActionMapKey;
@@ -454,6 +504,7 @@ bool UMVCombatComponent::TryBasicAttack(
 		}
 		else
 		{
+			ActionEntry->CurrentChainStageIndex = OriginalChainStageIndex;
 			UE_LOG(LogTemp, Warning, TEXT("MVCombatComponent::TryBasicAttack - Failed to send data to ActionComponent for action '%s'"), *ActionMapKey.ToString());
 			return false;
 		}
@@ -463,13 +514,16 @@ bool UMVCombatComponent::TryBasicAttack(
 	{
 		if (TryStartActionWithAbility(*ActionEntry, CurrentRowHandle, StartSection))
 		{
+			UpdateLastBasicAttackSwingDirection(CurrentRowHandle);
 			ActionEntry->ActivateChain(CurrentTime);
+			ActionEntry->CurrentChainStageIndex = SelectedChainStageIndex;
 			ActionEntry->TryAdvanceChainStage(CurrentTime);
-			ResetOtherBasicAttackChains();
+			ResetOtherBasicAttackChains(ActionMapKey);
 			ActiveBasicAttackMapKey = ActionMapKey;
 		}
 		else
 		{
+			ActionEntry->CurrentChainStageIndex = OriginalChainStageIndex;
 			UE_LOG(LogTemp, Warning, TEXT("MVCombatComponent::TryBasicAttack - Failed to send data to ActionComponent for action '%s'"), *ActionMapKey.ToString());
 			return false;
 		}
@@ -514,6 +568,7 @@ bool UMVCombatComponent::TrySkill(
 
 			if (TryStartActionWithAbility(*ActionEntry, ActionEntry->GetCurrentActionRowHandle(), StartSection))
 			{
+				ClearLastBasicAttackSwingDirection();
 				ActionEntry->ActivateChain(CurrentTime);
 				ActionEntry->TryAdvanceChainStage(CurrentTime);
 				return true;
@@ -535,6 +590,7 @@ bool UMVCombatComponent::TrySkill(
 
 			if (TryStartActionWithAbility(*ActionEntry, ActionEntry->GetCurrentActionRowHandle(), StartSection))
 			{
+				ClearLastBasicAttackSwingDirection();
 				ActionEntry->TryAdvanceChainStage(CurrentTime);
 				return true;
 			}
@@ -554,6 +610,7 @@ bool UMVCombatComponent::TrySkill(
 
 		if (TryStartActionWithAbility(*ActionEntry, ActionEntry->GetCurrentActionRowHandle(), StartSection))
 		{
+			ClearLastBasicAttackSwingDirection();
 			ActionEntry->ActivateChain(CurrentTime);
 			ActionEntry->TryAdvanceChainStage(CurrentTime);
 			return true;
@@ -608,6 +665,13 @@ void UMVCombatComponent::HandleActionEnded(
 	const FName ActionRowName,
 	const bool /*bInterrupted*/)
 {
+	if (HeavyChargeAttackState.bActive
+		&& ActionTableName == HeavyChargeAttackState.ChargeActionTableName
+		&& ActionRowName == HeavyChargeAttackState.ChargeRowHandle.RowName)
+	{
+		ResetHeavyChargeAttackState();
+	}
+
 	if (!IsCurrentAbilityAction(ActionTableName, ActionRowName))
 	{
 		return;
@@ -642,6 +706,8 @@ void UMVCombatComponent::ResetBasicAttackMap()
 	bWasSprintAttackContextActive = false;
 	ConsumedDodgeContextActionInstanceId = INDEX_NONE;
 	PendingDodgeContextActionInstanceId = INDEX_NONE;
+	ClearLastBasicAttackSwingDirection();
+	ResetHeavyChargeAttackState();
 	
 	FMVCombatActionTableInput ChooserInput;
 	ChooserInput.CurrentWeaponStyle = CurrentWeaponStyle;
@@ -1130,7 +1196,9 @@ FGameplayTag UMVCombatComponent::MakeActionTypeGameplayTag(const EMVCombatAction
 bool UMVCombatComponent::TryStartActionWithAbility(
 	FMVSkillEntry& ActionEntry,
 	const FDataTableRowHandle& RowHandle,
-	FName StartSection)
+	FName StartSection,
+	const bool bForceTransition,
+	const float TransitionBlendOutTime)
 {
 	if (!IsValidSkillActionRowHandle(RowHandle, TEXT("TryStartActionWithAbility")))
 	{
@@ -1189,10 +1257,13 @@ bool UMVCombatComponent::TryStartActionWithAbility(
 	// If an action is running, only allow transition when recovery is open or action is interruptible.
 	if (bIsActionRunning)
 	{
-		if (bRecoveryOpen && bCanInterrupt)
+		if (bForceTransition || (bRecoveryOpen && bCanInterrupt))
 		{
 			const UMVAbilityBase* PreparedAbility = PrepareCurrentAbility();
-			const bool bStarted = ActionComponent->TryTransitionActionFromRowHandle(RowHandle, StartSection, 0.25f);
+			const bool bStarted = ActionComponent->TryTransitionActionFromRowHandle(
+				RowHandle,
+				StartSection,
+				FMath::Max(0.0f, TransitionBlendOutTime));
 			if (!bStarted)
 			{
 				ClearPreparedAbilityOnFailure(PreparedAbility);
@@ -1254,6 +1325,473 @@ bool UMVCombatComponent::IsBasicAttackActionType(const EMVCombatActionTypes Acti
 		|| ActionType == EMVCombatActionTypes::DodgeHeavyAttack;
 }
 
+int32 UMVCombatComponent::SelectBasicAttackChainStageForSwing(const FMVSkillEntry& ActionEntry) const
+{
+	const int32 CurrentStageIndex = ActionEntry.SkillRowNames.IsValidIndex(ActionEntry.CurrentChainStageIndex)
+		? ActionEntry.CurrentChainStageIndex
+		: 0;
+	const EMVAttackSwingDirection DesiredSwingDirection =
+		MVCombatGetOppositeSwingDirection(LastBasicAttackSwingDirection);
+	if (DesiredSwingDirection == EMVAttackSwingDirection::None || !ActionEntry.DataTable)
+	{
+		return CurrentStageIndex;
+	}
+
+	for (int32 StageIndex = CurrentStageIndex; StageIndex < ActionEntry.SkillRowNames.Num(); ++StageIndex)
+	{
+		const FMVSkillDataTableColumn* SkillData = GetBasicAttackSkillDataAtStage(ActionEntry, StageIndex);
+		if (SkillData && SkillData->SwingDirection == DesiredSwingDirection)
+		{
+			return StageIndex;
+		}
+	}
+
+	return CurrentStageIndex;
+}
+
+const FMVSkillDataTableColumn* UMVCombatComponent::GetBasicAttackSkillDataAtStage(
+	const FMVSkillEntry& ActionEntry,
+	const int32 ChainStageIndex) const
+{
+	if (!ActionEntry.DataTable || !ActionEntry.SkillRowNames.IsValidIndex(ChainStageIndex))
+	{
+		return nullptr;
+	}
+
+	return ActionEntry.DataTable->FindRow<FMVSkillDataTableColumn>(
+		ActionEntry.SkillRowNames[ChainStageIndex],
+		TEXT("GetBasicAttackSkillDataAtStage"),
+		false);
+}
+
+void UMVCombatComponent::UpdateLastBasicAttackSwingDirection(const FDataTableRowHandle& RowHandle)
+{
+	LastBasicAttackSwingDirection = EMVAttackSwingDirection::None;
+	if (!RowHandle.DataTable || RowHandle.RowName.IsNone())
+	{
+		return;
+	}
+
+	const FMVSkillDataTableColumn* SkillData = RowHandle.DataTable->FindRow<FMVSkillDataTableColumn>(
+		RowHandle.RowName,
+		TEXT("UpdateLastBasicAttackSwingDirection"),
+		false);
+	if (SkillData)
+	{
+		LastBasicAttackSwingDirection = SkillData->SwingDirection;
+	}
+}
+
+void UMVCombatComponent::ClearLastBasicAttackSwingDirection()
+{
+	LastBasicAttackSwingDirection = EMVAttackSwingDirection::None;
+}
+
+void UMVCombatComponent::ResetOtherBasicAttackChains(const FName ExceptActionMapKey)
+{
+	for (TPair<FName, FMVSkillEntry>& Pair : BasicAttackMap)
+	{
+		if (Pair.Key != ExceptActionMapKey)
+		{
+			Pair.Value.ResetChain();
+		}
+	}
+}
+
+void UMVCombatComponent::MarkBasicAttackChainStarted(
+	FMVSkillEntry& ActionEntry,
+	const FName ActionMapKey,
+	const int32 StartedChainStageIndex,
+	const float CurrentTime)
+{
+	const int32 ValidStartedChainStageIndex = ActionEntry.SkillRowNames.IsValidIndex(StartedChainStageIndex)
+		? StartedChainStageIndex
+		: 0;
+
+	ActionEntry.CurrentChainStageIndex = ValidStartedChainStageIndex;
+	if (!ActionEntry.bChainActive)
+	{
+		ActionEntry.ActivateChain(CurrentTime);
+		ActionEntry.CurrentChainStageIndex = ValidStartedChainStageIndex;
+	}
+
+	ActionEntry.TryAdvanceChainStage(CurrentTime);
+	ResetOtherBasicAttackChains(ActionMapKey);
+	LastBasicAttackedTime = CurrentTime;
+	ActiveBasicAttackMapKey = ActionMapKey;
+}
+
+bool UMVCombatComponent::IsHeavyChargeBasicAttackMapKey(const FName ActionMapKey) const
+{
+	return ActionMapKey == MakeActionTypeMapKey(EMVCombatActionTypes::HeavyAttack)
+		|| ActionMapKey == MakeActionTypeMapKey(EMVCombatActionTypes::ChargeAttack);
+}
+
+int32 UMVCombatComponent::ResolveHeavyChargeStartChainStageIndex(const FMVSkillEntry& ChargeEntry) const
+{
+	int32 ChainStageIndex = ChargeEntry.SkillRowNames.IsValidIndex(ChargeEntry.CurrentChainStageIndex)
+		? ChargeEntry.CurrentChainStageIndex
+		: 0;
+
+	if (!IsHeavyChargeBasicAttackMapKey(ActiveBasicAttackMapKey))
+	{
+		return ChainStageIndex;
+	}
+
+	const FMVSkillEntry* ActiveEntry = BasicAttackMap.Find(ActiveBasicAttackMapKey);
+	if (ActiveEntry && ActiveEntry->SkillRowNames.IsValidIndex(ActiveEntry->CurrentChainStageIndex))
+	{
+		ChainStageIndex = ActiveEntry->CurrentChainStageIndex;
+	}
+
+	return ChainStageIndex;
+}
+
+int32 UMVCombatComponent::ResolveHeavyChargeEarlyReleaseChainStageIndex(const FMVSkillEntry& HeavyEntry) const
+{
+	const FName HeavyActionMapKey = MakeActionTypeMapKey(EMVCombatActionTypes::HeavyAttack);
+	const bool bContinueHeavyChain = ActiveBasicAttackMapKey == HeavyActionMapKey
+		&& HeavyEntry.bChainActive;
+	const bool bUseChargeChainStage = !bContinueHeavyChain
+		&& HeavyEntry.SkillRowNames.IsValidIndex(HeavyChargeAttackState.ChargeChainStageIndex);
+	int32 CurrentStageIndex = 0;
+	if (bContinueHeavyChain && HeavyEntry.SkillRowNames.IsValidIndex(HeavyEntry.CurrentChainStageIndex))
+	{
+		CurrentStageIndex = HeavyEntry.CurrentChainStageIndex;
+	}
+	else if (bUseChargeChainStage)
+	{
+		CurrentStageIndex = HeavyChargeAttackState.ChargeChainStageIndex;
+	}
+
+	const EMVAttackSwingDirection DesiredSwingDirection =
+		MVCombatGetOppositeSwingDirection(LastBasicAttackSwingDirection);
+	if (DesiredSwingDirection == EMVAttackSwingDirection::None || !HeavyEntry.DataTable)
+	{
+		return CurrentStageIndex;
+	}
+
+	for (int32 StageIndex = CurrentStageIndex; StageIndex < HeavyEntry.SkillRowNames.Num(); ++StageIndex)
+	{
+		const FMVSkillDataTableColumn* SkillData = GetBasicAttackSkillDataAtStage(HeavyEntry, StageIndex);
+		if (SkillData && SkillData->SwingDirection == DesiredSwingDirection)
+		{
+			return StageIndex;
+		}
+	}
+
+	if (!bContinueHeavyChain && !bUseChargeChainStage)
+	{
+		for (int32 StageIndex = 0; StageIndex < CurrentStageIndex; ++StageIndex)
+		{
+			const FMVSkillDataTableColumn* SkillData = GetBasicAttackSkillDataAtStage(HeavyEntry, StageIndex);
+			if (SkillData && SkillData->SwingDirection == DesiredSwingDirection)
+			{
+				return StageIndex;
+			}
+		}
+	}
+
+	return CurrentStageIndex;
+}
+
+bool UMVCombatComponent::TryBeginHeavyChargeAttack(const float /*HeldSeconds*/)
+{
+	if (HeavyChargeAttackState.bActive)
+	{
+		return true;
+	}
+
+	UpdateContextualBasicAttackResets();
+
+	if (IsDodgeAttackContext())
+	{
+		return TryCombatAction(EMVCombatActionTypes::HeavyAttack);
+	}
+
+	if (ShouldSuppressChargeAttackInputForSprint())
+	{
+		const bool bCanStartSprintHeavyAttack = IsSprintAttackContext()
+			&& !bSprintContextualBasicAttackConsumed;
+		return bCanStartSprintHeavyAttack
+			? TryCombatAction(EMVCombatActionTypes::HeavyAttack)
+			: true;
+	}
+
+	UWorld* World = GetWorld();
+	if (!World)
+	{
+		return false;
+	}
+
+	FMVSkillEntry* ChargeEntry = BasicAttackMap.Find(MakeActionTypeMapKey(EMVCombatActionTypes::ChargeAttack));
+	if (!ChargeEntry)
+	{
+		return false;
+	}
+	FMVSkillEntry* HeavyEntry = BasicAttackMap.Find(MakeActionTypeMapKey(EMVCombatActionTypes::HeavyAttack));
+
+	const float CurrentTime = World->GetTimeSeconds();
+	if (CurrentTime - LastBasicAttackedTime > ResetBasicAttackTime)
+	{
+		for (TPair<FName, FMVSkillEntry>& Pair : BasicAttackMap)
+		{
+			Pair.Value.ResetChain();
+		}
+		ActiveBasicAttackMapKey = NAME_None;
+		ClearLastBasicAttackSwingDirection();
+	}
+
+	const FName ChargeActionMapKey = MakeActionTypeMapKey(EMVCombatActionTypes::ChargeAttack);
+	const bool bContinueHeavyChargeChain = IsHeavyChargeBasicAttackMapKey(ActiveBasicAttackMapKey);
+	if (!ActiveBasicAttackMapKey.IsNone() && !bContinueHeavyChargeChain)
+	{
+		ResetOtherBasicAttackChains(ChargeActionMapKey);
+		ChargeEntry->ResetChain();
+		if (HeavyEntry)
+		{
+			HeavyEntry->ResetChain();
+		}
+	}
+
+	const int32 OriginalChainStageIndex = ChargeEntry->CurrentChainStageIndex;
+	ChargeEntry->CurrentChainStageIndex = ResolveHeavyChargeStartChainStageIndex(*ChargeEntry);
+	const int32 SelectedChainStageIndex = SelectBasicAttackChainStageForSwing(*ChargeEntry);
+	ChargeEntry->CurrentChainStageIndex = SelectedChainStageIndex;
+	const FDataTableRowHandle ChargeRowHandle = ChargeEntry->GetCurrentActionRowHandle();
+	const FMVSkillDataTableColumn* ChargeSkillData = ChargeEntry->GetCurrentSkillData();
+	if (!CanConsumeActionCost(ChargeSkillData))
+	{
+		ChargeEntry->CurrentChainStageIndex = OriginalChainStageIndex;
+		return false;
+	}
+
+	const bool bStarted = TryStartActionWithAbility(*ChargeEntry, ChargeRowHandle, HeavyChargeStartSection);
+	if (!bStarted)
+	{
+		ChargeEntry->CurrentChainStageIndex = OriginalChainStageIndex;
+		return false;
+	}
+
+	HeavyChargeAttackState = FMVCombatHeavyChargeAttackRuntimeState();
+	HeavyChargeAttackState.bActive = true;
+	HeavyChargeAttackState.StartedWorldTime = CurrentTime;
+	HeavyChargeAttackState.CommitTime = ResolveHeavyChargeCommitTime(ChargeSkillData);
+	HeavyChargeAttackState.ChargeActionTableName = MVCombatActionTableNameFromDataTable(ChargeRowHandle.DataTable);
+	HeavyChargeAttackState.ChargeActionMapKey = ChargeActionMapKey;
+	HeavyChargeAttackState.ChargeChainStageIndex = SelectedChainStageIndex;
+	HeavyChargeAttackState.ChargeRowHandle = ChargeRowHandle;
+	return true;
+}
+
+bool UMVCombatComponent::TryUpdateHeavyChargeAttack(const float HeldSeconds)
+{
+	if (!HeavyChargeAttackState.bActive)
+	{
+		return false;
+	}
+
+	if (!IsHeavyChargeActionRunning())
+	{
+		ResetHeavyChargeAttackState();
+		return false;
+	}
+
+	TryCommitHeavyChargeAttack(HeldSeconds);
+	return true;
+}
+
+bool UMVCombatComponent::TryReleaseHeavyChargeAttack(const float HeldSeconds, const bool bCanceled)
+{
+	if (!HeavyChargeAttackState.bActive)
+	{
+		return false;
+	}
+
+	const float EffectiveHeldSeconds = GetWorld()
+		? FMath::Max(0.0f, GetWorld()->GetTimeSeconds() - HeavyChargeAttackState.StartedWorldTime)
+		: FMath::Max(0.0f, HeldSeconds);
+	const bool bShouldCommitCharge = HeavyChargeAttackState.bCommitted
+		|| (!bCanceled && EffectiveHeldSeconds >= HeavyChargeAttackState.CommitTime);
+
+	if (bShouldCommitCharge)
+	{
+		TryCommitHeavyChargeAttack(EffectiveHeldSeconds);
+		ResetHeavyChargeAttackState();
+		return true;
+	}
+
+	return TryEarlyReleaseHeavyChargeAttack(EffectiveHeldSeconds);
+}
+
+bool UMVCombatComponent::TryCommitHeavyChargeAttack(const float /*HeldSeconds*/)
+{
+	if (!HeavyChargeAttackState.bActive)
+	{
+		return false;
+	}
+
+	if (HeavyChargeAttackState.bCommitted)
+	{
+		return true;
+	}
+
+	UWorld* World = GetWorld();
+	if (!World)
+	{
+		return false;
+	}
+
+	const float EffectiveHeldSeconds =
+		FMath::Max(0.0f, World->GetTimeSeconds() - HeavyChargeAttackState.StartedWorldTime);
+	if (EffectiveHeldSeconds < HeavyChargeAttackState.CommitTime)
+	{
+		return false;
+	}
+
+	FMVSkillEntry* ChargeEntry = BasicAttackMap.Find(HeavyChargeAttackState.ChargeActionMapKey);
+	if (!ChargeEntry || !IsHeavyChargeActionRunning())
+	{
+		ResetHeavyChargeAttackState();
+		return false;
+	}
+
+	MarkBasicAttackChainStarted(
+		*ChargeEntry,
+		HeavyChargeAttackState.ChargeActionMapKey,
+		HeavyChargeAttackState.ChargeChainStageIndex,
+		World->GetTimeSeconds());
+	UpdateLastBasicAttackSwingDirection(HeavyChargeAttackState.ChargeRowHandle);
+	HeavyChargeAttackState.bCommitted = true;
+	return true;
+}
+
+bool UMVCombatComponent::TryEarlyReleaseHeavyChargeAttack(const float /*HeldSeconds*/)
+{
+	if (!HeavyChargeAttackState.bActive || !IsHeavyChargeActionRunning())
+	{
+		ResetHeavyChargeAttackState();
+		return false;
+	}
+
+	FMVSkillEntry* HeavyEntry = nullptr;
+	FDataTableRowHandle HeavyRowHandle;
+	int32 HeavyChainStageIndex = INDEX_NONE;
+	if (!ResolveHeavyChargeEarlyReleaseRow(HeavyEntry, HeavyRowHandle, HeavyChainStageIndex)
+		|| !HeavyEntry)
+	{
+		ResetHeavyChargeAttackState();
+		return false;
+	}
+
+	const FMVSkillDataTableColumn* ChargeSkillData = HeavyChargeAttackState.ChargeRowHandle.DataTable
+		? HeavyChargeAttackState.ChargeRowHandle.DataTable->FindRow<FMVSkillDataTableColumn>(
+			HeavyChargeAttackState.ChargeRowHandle.RowName,
+			TEXT("TryEarlyReleaseHeavyChargeAttack"),
+			false)
+		: nullptr;
+	const FName EarlyReleaseStartSection = ChargeSkillData && !ChargeSkillData->EarlyReleaseStartSection.IsNone()
+		? ChargeSkillData->EarlyReleaseStartSection
+		: FName(TEXT("Attack"));
+	const float EarlyReleaseBlendOutTime = ChargeSkillData
+		? FMath::Max(0.0f, ChargeSkillData->EarlyReleaseBlendOutTime)
+		: 0.1f;
+
+	const int32 OriginalChainStageIndex = HeavyEntry->CurrentChainStageIndex;
+	HeavyEntry->CurrentChainStageIndex = HeavyChainStageIndex;
+	if (!CanConsumeActionCost(HeavyEntry->GetCurrentSkillData()))
+	{
+		HeavyEntry->CurrentChainStageIndex = OriginalChainStageIndex;
+		ResetHeavyChargeAttackState();
+		return false;
+	}
+
+	const bool bStarted = TryStartActionWithAbility(
+		*HeavyEntry,
+		HeavyRowHandle,
+		EarlyReleaseStartSection,
+		true,
+		EarlyReleaseBlendOutTime);
+	if (!bStarted)
+	{
+		HeavyEntry->CurrentChainStageIndex = OriginalChainStageIndex;
+		ResetHeavyChargeAttackState();
+		return false;
+	}
+
+	if (UWorld* World = GetWorld())
+	{
+		const FName HeavyActionMapKey = MakeActionTypeMapKey(EMVCombatActionTypes::HeavyAttack);
+		MarkBasicAttackChainStarted(
+			*HeavyEntry,
+			HeavyActionMapKey,
+			HeavyChainStageIndex,
+			World->GetTimeSeconds());
+	}
+	UpdateLastBasicAttackSwingDirection(HeavyRowHandle);
+	ResetHeavyChargeAttackState();
+	return true;
+}
+
+bool UMVCombatComponent::IsHeavyChargeActionRunning() const
+{
+	const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
+	const UMVActionComponent* ActionComponent = OwnerCharacter ? OwnerCharacter->ActionComponent : nullptr;
+	return HeavyChargeAttackState.bActive
+		&& ActionComponent
+		&& ActionComponent->IsActionRunning()
+		&& ActionComponent->GetActiveActionTableName() == HeavyChargeAttackState.ChargeActionTableName
+		&& ActionComponent->GetActiveActionRowName() == HeavyChargeAttackState.ChargeRowHandle.RowName;
+}
+
+float UMVCombatComponent::ResolveHeavyChargeCommitTime(const FMVSkillDataTableColumn* ChargeSkillData) const
+{
+	if (ChargeSkillData && ChargeSkillData->ChargeCommitTime > 0.0f)
+	{
+		return ChargeSkillData->ChargeCommitTime;
+	}
+
+	return FMath::Max(0.0f, DefaultHeavyChargeCommitTime);
+}
+
+bool UMVCombatComponent::ResolveHeavyChargeEarlyReleaseRow(
+	FMVSkillEntry*& OutHeavyEntry,
+	FDataTableRowHandle& OutHeavyRowHandle,
+	int32& OutHeavyChainStageIndex)
+{
+	OutHeavyEntry = nullptr;
+	OutHeavyRowHandle = FDataTableRowHandle();
+	OutHeavyChainStageIndex = INDEX_NONE;
+
+	const FName HeavyActionMapKey = MakeActionTypeMapKey(EMVCombatActionTypes::HeavyAttack);
+	OutHeavyEntry = BasicAttackMap.Find(HeavyActionMapKey);
+	if (!OutHeavyEntry || !OutHeavyEntry->DataTable)
+	{
+		return false;
+	}
+
+	int32 ChainStageIndex = ResolveHeavyChargeEarlyReleaseChainStageIndex(*OutHeavyEntry);
+	if (!OutHeavyEntry->SkillRowNames.IsValidIndex(ChainStageIndex))
+	{
+		ChainStageIndex = OutHeavyEntry->SkillRowNames.IsValidIndex(0) ? 0 : INDEX_NONE;
+	}
+
+	if (ChainStageIndex == INDEX_NONE)
+	{
+		return false;
+	}
+
+	OutHeavyChainStageIndex = ChainStageIndex;
+	OutHeavyRowHandle.DataTable = OutHeavyEntry->DataTable.Get();
+	OutHeavyRowHandle.RowName = OutHeavyEntry->SkillRowNames[ChainStageIndex];
+	return !OutHeavyRowHandle.RowName.IsNone();
+}
+
+void UMVCombatComponent::ResetHeavyChargeAttackState()
+{
+	HeavyChargeAttackState = FMVCombatHeavyChargeAttackRuntimeState();
+}
+
 EMVCombatActionTypes UMVCombatComponent::ResolveContextualBasicAttackActionType(
 	const EMVCombatActionTypes RequestedActionType)
 {
@@ -1267,6 +1805,7 @@ EMVCombatActionTypes UMVCombatComponent::ResolveContextualBasicAttackActionType(
 	}
 
 	const int32 DodgeContextActionInstanceId = GetDodgeAttackContextInstanceId();
+	const bool bSprintAttackContext = IsSprintAttackContext();
 	if (DodgeContextActionInstanceId != INDEX_NONE
 		&& DodgeContextActionInstanceId != ConsumedDodgeContextActionInstanceId)
 	{
@@ -1276,7 +1815,7 @@ EMVCombatActionTypes UMVCombatComponent::ResolveContextualBasicAttackActionType(
 			: EMVCombatActionTypes::DodgeHeavyAttack;
 	}
 
-	if (IsSprintAttackContext() && !bSprintContextualBasicAttackConsumed)
+	if (bSprintAttackContext && !bSprintContextualBasicAttackConsumed)
 	{
 		return bRequestedLightAttack
 			? EMVCombatActionTypes::SprintLightAttack
@@ -1376,22 +1915,10 @@ bool UMVCombatComponent::ShouldSuppressChargeAttackInputForSprint() const
 
 bool UMVCombatComponent::HasReachedSprintAttackSpeed() const
 {
-	const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
-	const UCharacterMovementComponent* MovementComponent = OwnerCharacter ? OwnerCharacter->GetCharacterMovement() : nullptr;
-	if (!MovementComponent)
+	if (!StatComponent)
 	{
 		return false;
 	}
 
-	const float SprintSpeed = StatComponent
-		? StatComponent->SprintSpeed
-		: MovementComponent->MaxWalkSpeed;
-	if (SprintSpeed <= KINDA_SMALL_NUMBER)
-	{
-		return false;
-	}
-
-	const float CurrentSpeed = MovementComponent->Velocity.Size2D();
-	const float RequiredSpeed = SprintSpeed * FMath::Clamp(SprintAttackMinSpeedRatio, 0.0f, 1.0f);
-	return CurrentSpeed >= RequiredSpeed;
+	return StatComponent->HasReachedSprintSpeedRatio(SprintAttackMinSpeedRatio);
 }

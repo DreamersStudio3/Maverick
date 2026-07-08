@@ -286,6 +286,18 @@ Note:	Getting action RowHandle through ChooserTable should be implemented in blu
 class UChooserTable;
 class UMVStatComponent;
 
+struct FMVCombatHeavyChargeAttackRuntimeState
+{
+	bool bActive = false;
+	bool bCommitted = false;
+	float StartedWorldTime = 0.0f;
+	float CommitTime = 0.0f;
+	FName ChargeActionTableName = NAME_None;
+	FName ChargeActionMapKey = NAME_None;
+	int32 ChargeChainStageIndex = INDEX_NONE;
+	FDataTableRowHandle ChargeRowHandle;
+};
+
 UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class MAVERICK_API UMVCombatComponent : public UActorComponent, public IMVActionInputHandlerInterface
 {
@@ -316,8 +328,15 @@ public:
 
 protected:
 	virtual bool TryHandleActionInput(FGameplayTag ActionInputTag, FVector2D ControllerSpaceInput, bool bHasMovementInput) override;
+	virtual bool TryHandleHoldActionInput(
+		FGameplayTag ActionInputTag,
+		EMVActionInputPhase Phase,
+		float HeldSeconds,
+		FVector2D ControllerSpaceInput,
+		bool bHasMovementInput) override;
 	bool ChooseTryCombatAction(FGameplayTag ActionInputTag);
 	bool IsCombatActionInputTag(FGameplayTag ActionInputTag) const;
+	bool IsHeavyChargeActionInputTag(FGameplayTag ActionInputTag) const;
 
 	bool TryBasicAttack(EMVCombatActionTypes InActionType, int32 ActionIndex = 0, FName StartSection = NAME_None);
 	bool TrySkill(EMVCombatActionTypes InActionType, int32 SkillIndex = 0, FName StartSection = NAME_None);
@@ -357,9 +376,39 @@ private:
 	FName MakeActionTypeMapKey(EMVCombatActionTypes ActionType) const;
 	FName MakeIndexedActionRowName(EMVCombatActionTypes ActionType, int32 ActionIndex) const;
 	FGameplayTag MakeActionTypeGameplayTag(EMVCombatActionTypes ActionType) const;
-	bool TryStartActionWithAbility(FMVSkillEntry& ActionEntry, const FDataTableRowHandle& RowHandle, FName StartSection = NAME_None);
+	bool TryStartActionWithAbility(
+		FMVSkillEntry& ActionEntry,
+		const FDataTableRowHandle& RowHandle,
+		FName StartSection = NAME_None,
+		bool bForceTransition = false,
+		float TransitionBlendOutTime = 0.25f);
 	bool CanConsumeActionCost(const FMVSkillDataTableColumn* SkillData) const;
 	bool IsBasicAttackActionType(EMVCombatActionTypes ActionType) const;
+	int32 SelectBasicAttackChainStageForSwing(const FMVSkillEntry& ActionEntry) const;
+	const FMVSkillDataTableColumn* GetBasicAttackSkillDataAtStage(const FMVSkillEntry& ActionEntry, int32 ChainStageIndex) const;
+	void UpdateLastBasicAttackSwingDirection(const FDataTableRowHandle& RowHandle);
+	void ClearLastBasicAttackSwingDirection();
+	void ResetOtherBasicAttackChains(FName ExceptActionMapKey);
+	void MarkBasicAttackChainStarted(
+		FMVSkillEntry& ActionEntry,
+		FName ActionMapKey,
+		int32 StartedChainStageIndex,
+		float CurrentTime);
+	bool IsHeavyChargeBasicAttackMapKey(FName ActionMapKey) const;
+	int32 ResolveHeavyChargeStartChainStageIndex(const FMVSkillEntry& ChargeEntry) const;
+	int32 ResolveHeavyChargeEarlyReleaseChainStageIndex(const FMVSkillEntry& HeavyEntry) const;
+	bool TryBeginHeavyChargeAttack(float HeldSeconds);
+	bool TryUpdateHeavyChargeAttack(float HeldSeconds);
+	bool TryReleaseHeavyChargeAttack(float HeldSeconds, bool bCanceled);
+	bool TryCommitHeavyChargeAttack(float HeldSeconds);
+	bool TryEarlyReleaseHeavyChargeAttack(float HeldSeconds);
+	bool IsHeavyChargeActionRunning() const;
+	float ResolveHeavyChargeCommitTime(const FMVSkillDataTableColumn* ChargeSkillData) const;
+	bool ResolveHeavyChargeEarlyReleaseRow(
+		FMVSkillEntry*& OutHeavyEntry,
+		FDataTableRowHandle& OutHeavyRowHandle,
+		int32& OutHeavyChainStageIndex);
+	void ResetHeavyChargeAttackState();
 	EMVCombatActionTypes ResolveContextualBasicAttackActionType(EMVCombatActionTypes RequestedActionType);
 	void MarkContextualBasicAttackStarted(EMVCombatActionTypes StartedActionType);
 	void UpdateContextualBasicAttackResets();
@@ -390,6 +439,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Sprint", meta = (ClampMin = "0.0", ClampMax = "1.0"))
 	float SprintAttackMinSpeedRatio = 0.9f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|HeavyCharge", meta = (ClampMin = "0.0", Units = "s"))
+	float DefaultHeavyChargeCommitTime = 0.5f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|HeavyCharge")
+	FName HeavyChargeStartSection = TEXT("LeadIn");
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Chooser")
 	FSoftObjectPath AttackChooserTable = TEXT("/Game/Table/Weapons/ActionTables/CHT_PlayerAttack.CHT_PlayerAttack");
 
@@ -411,5 +466,7 @@ private:
 	bool bWasSprintAttackContextActive = false;
 	int32 ConsumedDodgeContextActionInstanceId = INDEX_NONE;
 	int32 PendingDodgeContextActionInstanceId = INDEX_NONE;
+	EMVAttackSwingDirection LastBasicAttackSwingDirection = EMVAttackSwingDirection::None;
+	FMVCombatHeavyChargeAttackRuntimeState HeavyChargeAttackState;
 
 };

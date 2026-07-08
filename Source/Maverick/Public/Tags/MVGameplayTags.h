@@ -13,6 +13,7 @@ namespace MVGameplayTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Item_HealingPotion_Basic);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_LightAttack);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_HeavyAttack);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_HeavyChargeAttack);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_ChargeAttack);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_Skill);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_Skill_Q);
