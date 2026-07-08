@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Enum/MVActionInputPhase.h"
 #include "GameplayTagContainer.h"
 #include "MVInputManagerComponent.generated.h"
 
@@ -46,7 +47,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnActionRecoveryEscapeWindowChang
  * 라이프사이클:
  *   1) BeginPlay -> OwnerCharacter를 캐시하고 이동 입력 이벤트를 구독한다.
  *   2) 이동 입력 -> 최근 controller-space 입력을 저장하고 브로드캐스트한다.
- *   3) SubmitActionInput -> ActionInputTag, 이동 입력 스냅샷, 이동 입력 존재 여부를 버퍼에 저장하고 handler 라우팅을 시도한다.
+ *   3) SubmitActionInput/SubmitHoldActionInput -> 입력 태그와 phase, 이동 입력 스냅샷을 버퍼에 저장하고 handler 라우팅을 시도한다.
  *   4) RecoveryEscapeWindow 입력 소비 -> 버퍼 입력, handler별 recovery 처리, active action cancel trigger를 같은 흐름에서 평가한다.
  */
 UCLASS(ClassGroup = (Maverick), meta = (BlueprintSpawnableComponent))
@@ -63,6 +64,12 @@ protected:
 public:
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Input|Action")
 	bool SubmitActionInput(UPARAM(meta = (Categories = "Action.Input")) FGameplayTag ActionInputTag);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Input|Action")
+	bool SubmitHoldActionInput(
+		UPARAM(meta = (Categories = "Action.Input")) FGameplayTag ActionInputTag,
+		EMVActionInputPhase Phase,
+		float HeldSeconds);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Input|Action")
 	void UpdateActionMovementInput(FVector WorldMovementInput);
@@ -146,11 +153,55 @@ private:
 		MovementInput
 	};
 
+	enum class EMVBufferedActionInputKind : uint8
+	{
+		None,
+		Instant,
+		Hold
+	};
+
+	struct FMVBufferedActionInput
+	{
+		EMVBufferedActionInputKind Kind = EMVBufferedActionInputKind::None;
+		FGameplayTag ActionInputTag;
+		FVector2D ControllerSpaceInput = FVector2D::ZeroVector;
+		uint64 Frame = 0;
+		bool bHasMovementInput = false;
+		bool bHoldReleased = false;
+		bool bHoldCanceled = false;
+
+		void Reset()
+		{
+			Kind = EMVBufferedActionInputKind::None;
+			ActionInputTag = FGameplayTag();
+			ControllerSpaceInput = FVector2D::ZeroVector;
+			Frame = 0;
+			bHasMovementInput = false;
+			bHoldReleased = false;
+			bHoldCanceled = false;
+		}
+	};
+
 	void CacheOwnerReferences();
 	void HandleOwnerMovementInput(const FVector& MovementInputDirection);
 	FVector2D ResolveControllerSpaceInputFromWorldDirection(const FVector& WorldMovementInput) const;
+	void BuildActionInputSnapshot(FVector2D& OutControllerSpaceInput, bool& bOutHasMovementInput) const;
+	void BufferInstantActionInput(FGameplayTag ActionInputTag, FVector2D ControllerSpaceInput, bool bHasMovementInput);
 	bool TryRouteActionInput(FGameplayTag ActionInputTag, FVector2D ControllerSpaceInput, bool bHasMovementInput);
+	bool TryRouteHoldActionInput(
+		FGameplayTag ActionInputTag,
+		EMVActionInputPhase Phase,
+		float HeldSeconds,
+		FVector2D ControllerSpaceInput,
+		bool bHasMovementInput);
+	void BufferHoldActionInput(
+		FGameplayTag ActionInputTag,
+		EMVActionInputPhase Phase,
+		float HeldSeconds,
+		FVector2D ControllerSpaceInput,
+		bool bHasMovementInput);
 	bool TryRouteBufferedActionInput();
+	bool TryRouteBufferedHoldActionInput();
 	bool TryRouteRecoveryWindowOpened();
 	bool TryConsumeRecoveryEscapeInput();
 	bool TryCancelActiveActionForRecoveryEscape(EMVRecoveryEscapeCancelTrigger CancelTrigger);
@@ -164,10 +215,7 @@ private:
 	UPROPERTY(Transient)
 	TObjectPtr<AMVCharacterBase> OwnerCharacter;
 
-	FGameplayTag BufferedActionInputTag;
-	FVector2D BufferedActionControllerSpaceInput = FVector2D::ZeroVector;
-	uint64 BufferedActionInputFrame = 0;
-	bool bBufferedActionHasMovementInput = false;
+	FMVBufferedActionInput BufferedActionInput;
 
 	FVector2D CachedActionControllerSpaceInput = FVector2D::ZeroVector;
 	uint64 CachedActionControllerSpaceInputFrame = 0;

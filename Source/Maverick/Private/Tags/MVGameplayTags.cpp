@@ -11,6 +11,7 @@ namespace MVGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Item_HealingPotion_Basic, "Item.HealingPotion.Basic");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Input_LightAttack, "Action.Input.LightAttack");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Input_HeavyAttack, "Action.Input.HeavyAttack");
+	UE_DEFINE_GAMEPLAY_TAG(Action_Input_HeavyChargeAttack, "Action.Input.HeavyChargeAttack");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Input_ChargeAttack, "Action.Input.ChargeAttack");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Input_Skill, "Action.Input.Skill");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Input_Skill_Q, "Action.Input.Skill.Q");

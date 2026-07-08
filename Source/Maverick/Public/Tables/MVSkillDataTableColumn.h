@@ -28,8 +28,16 @@ struct FMVSkillDataTableColumn : public FMVActionRow
 
 public:
 	FMVSkillDataTableColumn()
-		: DamageMultiplier(1.0f), GroggyDamageMultiplier(1.0f), CooldownDuration(0.0f), bIsChained(false), NextChainName(NAME_None), InterStageCooldown(0.0f), InputWindowDuration(0.0f)
-		
+		: DamageMultiplier(1.0f)
+		, GroggyDamageMultiplier(1.0f)
+		, ChargeCommitTime(0.0f)
+		, EarlyReleaseStartSection(TEXT("Attack"))
+		, EarlyReleaseBlendOutTime(0.25f)
+		, CooldownDuration(0.0f)
+		, bIsChained(false)
+		, NextChainName(NAME_None)
+		, InterStageCooldown(0.0f)
+		, InputWindowDuration(0.0f)
 	{
 
 	}
@@ -51,6 +59,15 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Basic")
 	EMVAttackSwingDirection SwingDirection = EMVAttackSwingDirection::None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Charge", meta = (ClampMin = "0.0", Units = "s"))
+	float ChargeCommitTime;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Charge")
+	FName EarlyReleaseStartSection;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Charge", meta = (ClampMin = "0.0", Units = "s"))
+	float EarlyReleaseBlendOutTime;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Skill")
 	float CooldownDuration;

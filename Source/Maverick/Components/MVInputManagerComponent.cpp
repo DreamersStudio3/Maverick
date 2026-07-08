@@ -40,33 +40,67 @@ bool UMVInputManagerComponent::SubmitActionInput(const FGameplayTag ActionInputT
 	}
 
 	FVector2D ControllerSpaceInput = FVector2D::ZeroVector;
-	bool bHasCurrentMovementInput = false;
-	if (const AMVCharacterBase* Character = OwnerCharacter.Get())
-	{
-		bHasCurrentMovementInput = Character->TryGetControllerSpaceMovementInput(ControllerSpaceInput, 0);
-	}
+	bool bHasMovementInput = false;
+	BuildActionInputSnapshot(ControllerSpaceInput, bHasMovementInput);
 
-	const uint64 CurrentFrame = GFrameCounter;
-	if (!bHasCurrentMovementInput
-		&& CachedActionControllerSpaceInputFrame == CurrentFrame
-		&& !CachedActionControllerSpaceInput.IsNearlyZero())
-	{
-		ControllerSpaceInput = CachedActionControllerSpaceInput;
-		bHasCurrentMovementInput = true;
-	}
-
-	const bool bHasMovementInput = bHasCurrentMovementInput
-		&& ResolveActionInputDirection(ControllerSpaceInput) != EMVActionInputDirection::None;
-	BufferedActionInputTag = ActionInputTag;
-	BufferedActionControllerSpaceInput = ControllerSpaceInput;
-	BufferedActionInputFrame = GFrameCounter;
-	bBufferedActionHasMovementInput = bHasMovementInput;
+	BufferInstantActionInput(ActionInputTag, ControllerSpaceInput, bHasMovementInput);
 	const bool bHandled = TryRouteActionInput(ActionInputTag, ControllerSpaceInput, bHasMovementInput);
 	if (bHandled)
 	{
 		ClearBufferedActionInput();
 	}
 	OnActionInputSubmitted.Broadcast(ActionInputTag, ControllerSpaceInput, bHasMovementInput);
+	return true;
+}
+
+bool UMVInputManagerComponent::SubmitHoldActionInput(
+	const FGameplayTag ActionInputTag,
+	const EMVActionInputPhase Phase,
+	const float HeldSeconds)
+{
+	if (!ActionInputTag.IsValid())
+	{
+		return false;
+	}
+
+	if (const AMVCharacterBase* Character = OwnerCharacter.Get())
+	{
+		if (Character->StatComponent && Character->StatComponent->IsDead())
+		{
+			return false;
+		}
+	}
+
+	FVector2D ControllerSpaceInput = FVector2D::ZeroVector;
+	bool bHasMovementInput = false;
+	BuildActionInputSnapshot(ControllerSpaceInput, bHasMovementInput);
+
+	const bool bHandled = TryRouteHoldActionInput(
+		ActionInputTag,
+		Phase,
+		FMath::Max(0.0f, HeldSeconds),
+		ControllerSpaceInput,
+		bHasMovementInput);
+	if (bHandled)
+	{
+		if (BufferedActionInput.Kind == EMVBufferedActionInputKind::Hold
+			&& BufferedActionInput.ActionInputTag.MatchesTagExact(ActionInputTag))
+		{
+			ClearBufferedActionInput();
+		}
+	}
+	else if (Phase == EMVActionInputPhase::Started
+		|| (BufferedActionInput.Kind == EMVBufferedActionInputKind::Hold
+			&& BufferedActionInput.ActionInputTag.MatchesTagExact(ActionInputTag)))
+	{
+		BufferHoldActionInput(
+			ActionInputTag,
+			Phase,
+			FMath::Max(0.0f, HeldSeconds),
+			ControllerSpaceInput,
+			bHasMovementInput);
+	}
+
 	return true;
 }
 
@@ -105,36 +139,34 @@ bool UMVInputManagerComponent::TryGetBufferedActionInput(
 	OutControllerSpaceInput = FVector2D::ZeroVector;
 	bOutHasMovementInput = false;
 
-	if (!BufferedActionInputTag.IsValid())
+	if (BufferedActionInput.Kind != EMVBufferedActionInputKind::Instant
+		|| !BufferedActionInput.ActionInputTag.IsValid())
 	{
 		return false;
 	}
 
 	const uint64 CurrentFrame = GFrameCounter;
-	if (BufferedActionInputFrame > CurrentFrame)
+	if (BufferedActionInput.Frame > CurrentFrame)
 	{
 		return false;
 	}
 
 	// 입력 후 너무 오래 지난 버퍼는 현재 조작 의도로 보기 어려워 recovery window에서 소비하지 않는다.
-	const uint64 FrameAge = CurrentFrame - BufferedActionInputFrame;
+	const uint64 FrameAge = CurrentFrame - BufferedActionInput.Frame;
 	if (FrameAge > static_cast<uint64>(FMath::Max(0, ActionInputBufferMaxFrameAge)))
 	{
 		return false;
 	}
 
-	OutActionInputTag = BufferedActionInputTag;
-	OutControllerSpaceInput = BufferedActionControllerSpaceInput;
-	bOutHasMovementInput = bBufferedActionHasMovementInput;
+	OutActionInputTag = BufferedActionInput.ActionInputTag;
+	OutControllerSpaceInput = BufferedActionInput.ControllerSpaceInput;
+	bOutHasMovementInput = BufferedActionInput.bHasMovementInput;
 	return true;
 }
 
 void UMVInputManagerComponent::ClearBufferedActionInput()
 {
-	BufferedActionInputTag = FGameplayTag();
-	BufferedActionControllerSpaceInput = FVector2D::ZeroVector;
-	BufferedActionInputFrame = 0;
-	bBufferedActionHasMovementInput = false;
+	BufferedActionInput.Reset();
 }
 
 void UMVInputManagerComponent::RegisterActionInputHandler(UObject* HandlerObject, const int32 Priority)
@@ -294,6 +326,107 @@ bool UMVInputManagerComponent::TryRouteActionInput(
 	return false;
 }
 
+void UMVInputManagerComponent::BufferInstantActionInput(
+	const FGameplayTag ActionInputTag,
+	const FVector2D ControllerSpaceInput,
+	const bool bHasMovementInput)
+{
+	BufferedActionInput.Reset();
+	BufferedActionInput.Kind = EMVBufferedActionInputKind::Instant;
+	BufferedActionInput.ActionInputTag = ActionInputTag;
+	BufferedActionInput.ControllerSpaceInput = ControllerSpaceInput;
+	BufferedActionInput.Frame = GFrameCounter;
+	BufferedActionInput.bHasMovementInput = bHasMovementInput;
+}
+
+bool UMVInputManagerComponent::TryRouteHoldActionInput(
+	const FGameplayTag ActionInputTag,
+	const EMVActionInputPhase Phase,
+	const float HeldSeconds,
+	const FVector2D ControllerSpaceInput,
+	const bool bHasMovementInput)
+{
+	if (!ActionInputTag.IsValid())
+	{
+		return false;
+	}
+
+	CompactActionInputHandlers();
+	for (const FMVActionInputHandlerEntry& Entry : ActionInputHandlers)
+	{
+		UObject* HandlerObject = Entry.HandlerObject.Get();
+		IMVActionInputHandlerInterface* Handler = Cast<IMVActionInputHandlerInterface>(HandlerObject);
+		if (!Handler)
+		{
+			continue;
+		}
+
+		if (Handler->TryHandleHoldActionInput(
+			ActionInputTag,
+			Phase,
+			HeldSeconds,
+			ControllerSpaceInput,
+			bHasMovementInput))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void UMVInputManagerComponent::BufferHoldActionInput(
+	const FGameplayTag ActionInputTag,
+	const EMVActionInputPhase Phase,
+	const float /*HeldSeconds*/,
+	const FVector2D ControllerSpaceInput,
+	const bool bHasMovementInput)
+{
+	if (!ActionInputTag.IsValid())
+	{
+		return;
+	}
+
+	const bool bSameBufferedInput = BufferedActionInput.Kind == EMVBufferedActionInputKind::Hold
+		&& BufferedActionInput.ActionInputTag.MatchesTagExact(ActionInputTag);
+	if (!bSameBufferedInput && Phase != EMVActionInputPhase::Started)
+	{
+		return;
+	}
+
+	if (Phase == EMVActionInputPhase::Started)
+	{
+		BufferedActionInput.Reset();
+		BufferedActionInput.Kind = EMVBufferedActionInputKind::Hold;
+		BufferedActionInput.ActionInputTag = ActionInputTag;
+		BufferedActionInput.ControllerSpaceInput = ControllerSpaceInput;
+		BufferedActionInput.Frame = GFrameCounter;
+		BufferedActionInput.bHasMovementInput = bHasMovementInput;
+	}
+
+	if (BufferedActionInput.Kind != EMVBufferedActionInputKind::Hold
+		|| !BufferedActionInput.ActionInputTag.MatchesTagExact(ActionInputTag))
+	{
+		return;
+	}
+
+	BufferedActionInput.ControllerSpaceInput = ControllerSpaceInput;
+	BufferedActionInput.Frame = GFrameCounter;
+	BufferedActionInput.bHasMovementInput = bHasMovementInput;
+
+	if (Phase == EMVActionInputPhase::Started)
+	{
+		BufferedActionInput.bHoldReleased = false;
+		BufferedActionInput.bHoldCanceled = false;
+	}
+
+	if (Phase == EMVActionInputPhase::Completed || Phase == EMVActionInputPhase::Canceled)
+	{
+		BufferedActionInput.bHoldReleased = true;
+		BufferedActionInput.bHoldCanceled = Phase == EMVActionInputPhase::Canceled;
+	}
+}
+
 bool UMVInputManagerComponent::TryRouteBufferedActionInput()
 {
 	FGameplayTag ActionInputTag;
@@ -305,6 +438,57 @@ bool UMVInputManagerComponent::TryRouteBufferedActionInput()
 	}
 
 	if (!TryRouteActionInput(ActionInputTag, ControllerSpaceInput, bHasMovementInput))
+	{
+		return false;
+	}
+
+	ClearBufferedActionInput();
+	return true;
+}
+
+bool UMVInputManagerComponent::TryRouteBufferedHoldActionInput()
+{
+	if (BufferedActionInput.Kind != EMVBufferedActionInputKind::Hold
+		|| !BufferedActionInput.ActionInputTag.IsValid())
+	{
+		return false;
+	}
+
+	const uint64 CurrentFrame = GFrameCounter;
+	if (BufferedActionInput.Frame > CurrentFrame)
+	{
+		return false;
+	}
+
+	const uint64 FrameAge = CurrentFrame - BufferedActionInput.Frame;
+	if (FrameAge > static_cast<uint64>(FMath::Max(0, ActionInputBufferMaxFrameAge)))
+	{
+		ClearBufferedActionInput();
+		return false;
+	}
+
+	const FGameplayTag ActionInputTag = BufferedActionInput.ActionInputTag;
+	const FVector2D ControllerSpaceInput = BufferedActionInput.ControllerSpaceInput;
+	const bool bHasMovementInput = BufferedActionInput.bHasMovementInput;
+	const bool bWasReleased = BufferedActionInput.bHoldReleased;
+
+	if (bWasReleased)
+	{
+		if (!TryRouteActionInput(ActionInputTag, ControllerSpaceInput, bHasMovementInput))
+		{
+			return false;
+		}
+
+		ClearBufferedActionInput();
+		return true;
+	}
+
+	if (!TryRouteHoldActionInput(
+		ActionInputTag,
+		EMVActionInputPhase::Started,
+		0.0f,
+		ControllerSpaceInput,
+		bHasMovementInput))
 	{
 		return false;
 	}
@@ -339,6 +523,11 @@ bool UMVInputManagerComponent::TryConsumeRecoveryEscapeInput()
 	if (!IsRecoveryEscapeWindowOpen())
 	{
 		return false;
+	}
+
+	if (TryRouteBufferedHoldActionInput())
+	{
+		return true;
 	}
 
 	if (TryRouteBufferedActionInput())
@@ -484,6 +673,30 @@ FVector2D UMVInputManagerComponent::ResolveControllerSpaceInputFromWorldDirectio
 	return ClampActionControllerSpaceInput(FVector2D(
 		FVector::DotProduct(NormalizedWorldInput, ForwardVector),
 		FVector::DotProduct(NormalizedWorldInput, RightVector)));
+}
+
+void UMVInputManagerComponent::BuildActionInputSnapshot(
+	FVector2D& OutControllerSpaceInput,
+	bool& bOutHasMovementInput) const
+{
+	OutControllerSpaceInput = FVector2D::ZeroVector;
+	bool bHasCurrentMovementInput = false;
+	if (const AMVCharacterBase* Character = OwnerCharacter.Get())
+	{
+		bHasCurrentMovementInput = Character->TryGetControllerSpaceMovementInput(OutControllerSpaceInput, 0);
+	}
+
+	const uint64 CurrentFrame = GFrameCounter;
+	if (!bHasCurrentMovementInput
+		&& CachedActionControllerSpaceInputFrame == CurrentFrame
+		&& !CachedActionControllerSpaceInput.IsNearlyZero())
+	{
+		OutControllerSpaceInput = CachedActionControllerSpaceInput;
+		bHasCurrentMovementInput = true;
+	}
+
+	bOutHasMovementInput = bHasCurrentMovementInput
+		&& ResolveActionInputDirection(OutControllerSpaceInput) != EMVActionInputDirection::None;
 }
 
 FVector2D UMVInputManagerComponent::ClampActionControllerSpaceInput(FVector2D Input)
