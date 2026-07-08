@@ -1452,10 +1452,18 @@ int32 UMVCombatComponent::ResolveHeavyChargeEarlyReleaseChainStageIndex(const FM
 	const FName HeavyActionMapKey = MakeActionTypeMapKey(EMVCombatActionTypes::HeavyAttack);
 	const bool bContinueHeavyChain = ActiveBasicAttackMapKey == HeavyActionMapKey
 		&& HeavyEntry.bChainActive;
-	const int32 CurrentStageIndex = bContinueHeavyChain
-		&& HeavyEntry.SkillRowNames.IsValidIndex(HeavyEntry.CurrentChainStageIndex)
-		? HeavyEntry.CurrentChainStageIndex
-		: 0;
+	const bool bUseChargeChainStage = !bContinueHeavyChain
+		&& HeavyEntry.SkillRowNames.IsValidIndex(HeavyChargeAttackState.ChargeChainStageIndex);
+	int32 CurrentStageIndex = 0;
+	if (bContinueHeavyChain && HeavyEntry.SkillRowNames.IsValidIndex(HeavyEntry.CurrentChainStageIndex))
+	{
+		CurrentStageIndex = HeavyEntry.CurrentChainStageIndex;
+	}
+	else if (bUseChargeChainStage)
+	{
+		CurrentStageIndex = HeavyChargeAttackState.ChargeChainStageIndex;
+	}
+
 	const EMVAttackSwingDirection DesiredSwingDirection =
 		MVCombatGetOppositeSwingDirection(LastBasicAttackSwingDirection);
 	if (DesiredSwingDirection == EMVAttackSwingDirection::None || !HeavyEntry.DataTable)
@@ -1472,7 +1480,7 @@ int32 UMVCombatComponent::ResolveHeavyChargeEarlyReleaseChainStageIndex(const FM
 		}
 	}
 
-	if (!bContinueHeavyChain)
+	if (!bContinueHeavyChain && !bUseChargeChainStage)
 	{
 		for (int32 StageIndex = 0; StageIndex < CurrentStageIndex; ++StageIndex)
 		{
