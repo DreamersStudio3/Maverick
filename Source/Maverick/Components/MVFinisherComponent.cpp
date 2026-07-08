@@ -5,6 +5,13 @@
 
 #include "Kismet/kismetSystemLibrary.h"
 #include "Components/MVStatComponent.h"
+#include "Public/Tables/MVSkillDataTableColumn.h"
+#include "Chooser.h"
+#include "ChooserFunctionLibrary.h"
+#include "Character/MVCharacterBase.h"
+#include "Components/MVWeaponComponent.h"
+#include "MotionWarpingComponent.h"
+#include "Components/MVActionComponent.h"
 
 // Sets default values for this component's properties
 UMVFinisherComponent::UMVFinisherComponent()
@@ -39,22 +46,36 @@ bool UMVFinisherComponent::TryFinisherMove()
 {
 	AActor* HitActor = nullptr;
 
+	// Detect HitActor and Judge that Attacker's location is valid for Finisher action
 	if(!CanFinisherMove(HitActor))
 	{
 		return false;
 	}
 
 	// Find Animation
+	FDataTableRowHandle AttackerRowHandle;
+	FDataTableRowHandle VictimRowHandle;
+	if (!FindFinisherAnimation(HitActor, FName("FallBack"), AttackerRowHandle, VictimRowHandle))
+	{
+		return false;
+	}
 
 	// Set Warp Target
+	if(!SetWarpTarget(HitActor))
+	{
+		return false;
+	}
 
 	// Play Animation
-
+	if (!SendAnimation(HitActor,AttackerRowHandle,VictimRowHandle))
+	{
+		return false;
+	}
 
 	return true;
 }
 
-bool UMVFinisherComponent::CanFinisherMove(AActor* OutHitActor) const
+bool UMVFinisherComponent::CanFinisherMove(AActor*& OutHitActor) const
 {
 	if (!MakeSphereTrace(OutHitActor))
 	{
@@ -62,10 +83,10 @@ bool UMVFinisherComponent::CanFinisherMove(AActor* OutHitActor) const
 	}
 	
 	// Check if the actor is groggy
-	if(!CheckThisActorGroggy(OutHitActor))
-	{
-		return false;
-	}
+	//if(!CheckThisActorGroggy(OutHitActor))
+	//{
+	//	return false;
+	//}
 	
 	// Check if the actor is within distance and direction
 	
@@ -77,7 +98,7 @@ bool UMVFinisherComponent::CanFinisherMove(AActor* OutHitActor) const
 	return true;
 }
 
-bool UMVFinisherComponent::MakeSphereTrace(AActor* OutHitActor) const
+bool UMVFinisherComponent::MakeSphereTrace(AActor*& OutHitActor) const
 {
 	FVector StartLocation = GetOwner()->GetActorLocation();
 	FVector EndLocation = StartLocation + GetOwner()->GetActorForwardVector() * 200.0f; // Check 100 units ahead
@@ -91,7 +112,7 @@ bool UMVFinisherComponent::MakeSphereTrace(AActor* OutHitActor) const
 		StartLocation,
 		EndLocation,
 		50.0f,													// Sphere radius
-		UEngineTypes::ConvertToTraceType(ECC_Visibility),		// Todo: Trace channel -> Currenytly using Visibility channel, should be changed to a custom channel
+		UEngineTypes::ConvertToTraceType(ECC_Camera),		// Todo: Trace channel -> Currenytly using Visibility channel, should be changed to a custom channel
 		false,
 		ActorsToIgnore,
 		EDrawDebugTrace::ForDuration,
@@ -118,7 +139,7 @@ bool UMVFinisherComponent::JudgeDistanceAndDirection(const AActor* HitActor) con
 		return false;
 	}
 	
-	float TargetDistance = 100.0f;
+	float TargetDistance = 200.0f;
 	float TargetDistanceSquared = TargetDistance * TargetDistance;
 	float TargetMaxAngle = 35.0f;
 
@@ -160,6 +181,194 @@ bool UMVFinisherComponent::CheckThisActorGroggy(const AActor* HitActor) const
 	{
 		return false;
 	}
+
+	return true;
+}
+
+bool UMVFinisherComponent::FindFinisherAnimation(
+	AActor* HitActor, 
+	FName FallBackRowName, 
+	FDataTableRowHandle& OutAttacker, 
+	FDataTableRowHandle& OutVictim)
+{
+	OutAttacker = FDataTableRowHandle();
+	OutVictim = FDataTableRowHandle();
+
+	// Check if the Attacker and Victim ChooserTable is valid
+	if (!AttackerChooserTable.IsValid() || !VictimChooserTable.IsValid())
+	{
+		return false;
+	}
+	UChooserTable* AttackerChooser = Cast<UChooserTable>(AttackerChooserTable.TryLoad());
+	if (!AttackerChooser)
+	{
+		return false;
+	}
+	UChooserTable* VictimChooser = Cast<UChooserTable>(VictimChooserTable.TryLoad());
+	if (!VictimChooser)
+	{
+		return false;
+	}
+
+	// If Owner and Target are not CharacterBase, return false
+	AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
+	AMVCharacterBase* TargetCharacter = Cast<AMVCharacterBase>(HitActor);
+	if (!OwnerCharacter || !TargetCharacter)
+	{
+		return false;
+	}
+
+	//====================== Evaluate Attacker Chooser ======================//
+
+	// Input for the AttackerChooser 
+	FMVFinisherChooserInput Input;
+	Input.WeaponTag.AddTag(OwnerCharacter->WeaponComponent->GetEquippedWeaponState().ItemTag);
+	Input.AttackerTag.AddTag(OwnerCharacter->CharacterIndexCode);
+	Input.VictimTag.AddTag(TargetCharacter->CharacterIndexCode);
+
+	// Output for the chooser
+	FMVFinisherChooserOutput Output;
+	Output.Reset();
+
+	// Adding Context for the Chooser
+	FChooserEvaluationContext ChooserContext;
+	ChooserContext.AddStructParam(Input);
+	ChooserContext.AddStructParam(Output);
+
+	TSoftObjectPtr<UObject> SelectedObject;
+	UChooserTable::EvaluateChooser(
+		ChooserContext,
+		AttackerChooser,
+		FObjectChooserBase::FObjectChooserSoftObjectIteratorCallback::CreateLambda(
+			[&SelectedObject](const TSoftObjectPtr<UObject>& InResult)
+			{
+				SelectedObject = InResult;
+				return FObjectChooserBase::EIteratorStatus::Stop;
+			}));
+	// If Succeeded to find Attacker Row
+	if (Output.ActionRow.DataTable)
+	{
+		OutAttacker = Output.ActionRow;
+		if (OutAttacker.RowName.IsNone())
+		{
+			OutAttacker.RowName = FallBackRowName;
+		}
+	}
+	// If Failed to find Attacker Row
+	else
+	{
+		UObject* ResolvedObject = SelectedObject.IsValid()
+			? SelectedObject.Get()
+			: SelectedObject.LoadSynchronous();
+		UDataTable* SelectedDataTable = Cast<UDataTable>(ResolvedObject);
+		if (!SelectedDataTable)
+		{
+			return false;
+		}
+
+		OutAttacker.DataTable = SelectedDataTable;
+		OutAttacker.RowName = FallBackRowName;
+	}
+
+	//====================== Evaluate Victim Chooser ======================//
+
+	// Input for the VictimChooser --> Same as AttackerChooser
+
+	// Output for the Chooser
+	Output.Reset();
+
+	// Adding Context for the Victim Chooser
+	ChooserContext = FChooserEvaluationContext();
+	ChooserContext.AddStructParam(Input);
+	ChooserContext.AddStructParam(Output);
+
+	SelectedObject.Reset();
+	UChooserTable::EvaluateChooser(
+		ChooserContext,
+		VictimChooser,
+		FObjectChooserBase::FObjectChooserSoftObjectIteratorCallback::CreateLambda(
+			[&SelectedObject](const TSoftObjectPtr<UObject>& InResult)
+			{
+				SelectedObject = InResult;
+				return FObjectChooserBase::EIteratorStatus::Stop;
+			}));
+	// If Succeeded to find Attacker Row
+	if (Output.ActionRow.DataTable)
+	{
+		OutVictim = Output.ActionRow;
+		if (OutVictim.RowName.IsNone())
+		{
+			OutVictim.RowName = FallBackRowName;
+		}
+	}
+	// If Failed to find Attacker Row
+	else
+	{
+		UObject* ResolvedObject = SelectedObject.IsValid()
+			? SelectedObject.Get()
+			: SelectedObject.LoadSynchronous();
+		UDataTable* SelectedDataTable = Cast<UDataTable>(ResolvedObject);
+		if (!SelectedDataTable)
+		{
+			return false;
+		}
+
+		OutVictim.DataTable = SelectedDataTable;
+		OutVictim.RowName = FallBackRowName;
+	}
+
+	return true;
+
+}
+
+bool UMVFinisherComponent::SetWarpTarget(const AActor* HitActor)
+{
+	if (!HitActor)
+	{
+		return false;
+	}
+	
+	AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
+	if (!OwnerCharacter)
+	{
+		return false;
+	}
+
+	FVector TargetLocation;
+	FRotator TargetRotation;
+	float Distance = 130.0f;
+
+	TargetLocation = HitActor->GetActorLocation() + (HitActor->GetActorForwardVector() * Distance);
+	TargetRotation = HitActor->GetActorRotation();
+	TargetRotation.Yaw = FRotator::NormalizeAxis(TargetRotation.Yaw + 180.0f);
+
+	OwnerCharacter->MotionWarpingComponent->AddOrUpdateWarpTargetFromLocationAndRotation(
+		FName(TEXT("Attacker")), 
+		TargetLocation, 
+		TargetRotation
+	);
+
+	return true;
+}
+
+bool UMVFinisherComponent::SendAnimation(AActor* HitActor, const FDataTableRowHandle& AttackerRowHandle, const FDataTableRowHandle& VictimRowHandle)
+{
+	// Attacker Action Play
+	UMVActionComponent* ActionComp = GetOwner()->FindComponentByClass<UMVActionComponent>();
+	if (!ActionComp)
+	{
+		return false;
+	}
+	// Attacker's Action Can Play even if HitActor doesn't have ActionComponent(But returns false)
+	ActionComp->TryTransitionActionFromRowHandle(AttackerRowHandle);
+
+	// Victim Action Play
+	ActionComp = HitActor->FindComponentByClass<UMVActionComponent>();
+	if (!ActionComp)
+	{
+		return false;
+	}
+	ActionComp->TryTransitionActionFromRowHandle(VictimRowHandle);
 
 	return true;
 }

@@ -11,6 +11,7 @@
 #include "Struct/MVHitTypes.h"
 #include "Tables/MVCharacterTableTypes.h"
 
+
 #include "MVCharacterBase.generated.h"
 
 class UMVStatComponent;
@@ -21,6 +22,7 @@ class UMVHitReactionComponent;
 class UMVInputManagerComponent;
 class UMVWeaponComponent;
 class UCurveFloat;
+class UMotionWarpingComponent;
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FMVOnMovementInputReceived, const FVector&);
 
@@ -137,6 +139,11 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UMVWeaponComponent> WeaponComponent;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<UMotionWarpingComponent> MotionWarpingComponent;
+
+
 
 private:
 	void ApplyCharacterIndexCodeToComponents();

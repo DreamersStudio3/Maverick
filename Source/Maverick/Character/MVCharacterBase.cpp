@@ -16,6 +16,7 @@
 #include "Math/Vector.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Tags/MVGameplayTags.h"
+#include "MotionWarpingComponent.h"
 
 namespace
 {
@@ -78,6 +79,7 @@ AMVCharacterBase::AMVCharacterBase()
 	HitReactionComponent = CreateDefaultSubobject<UMVHitReactionComponent>(TEXT("HitReactionComponent"));
 	InputManagerComponent = CreateDefaultSubobject<UMVInputManagerComponent>(TEXT("InputManagerComponent"));
 	WeaponComponent = CreateDefaultSubobject<UMVWeaponComponent>(TEXT("WeaponComponent"));
+	MotionWarpingComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarpingComponent"));
 	CharacterIndexCode = MVGameplayTags::Character_Player_P1;
 	ApplyCharacterIndexCodeToComponents();
 	bHasDodgeMovementInput = false;
