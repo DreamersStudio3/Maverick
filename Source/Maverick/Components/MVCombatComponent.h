@@ -360,6 +360,7 @@ private:
 	bool TryStartActionWithAbility(FMVSkillEntry& ActionEntry, const FDataTableRowHandle& RowHandle, FName StartSection = NAME_None);
 	bool CanConsumeActionCost(const FMVSkillDataTableColumn* SkillData) const;
 	bool IsBasicAttackActionType(EMVCombatActionTypes ActionType) const;
+	bool ShouldConsumeBasicAttackInputDuringContextualAction(FGameplayTag ActionInputTag) const;
 	EMVCombatActionTypes ResolveContextualBasicAttackActionType(EMVCombatActionTypes RequestedActionType);
 	void MarkContextualBasicAttackStarted(EMVCombatActionTypes StartedActionType);
 	void UpdateContextualBasicAttackResets();

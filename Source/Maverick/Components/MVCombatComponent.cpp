@@ -118,6 +118,20 @@ bool MVCombatIsDodgeContextualAttackRowName(const FString& RowName)
 		|| RowName.StartsWith(TEXT("DodgeHeavyAttack"));
 }
 
+bool MVCombatIsSprintContextualAttackRowName(const FString& RowName)
+{
+	return RowName.StartsWith(TEXT("Sprint_LightAttack"))
+		|| RowName.StartsWith(TEXT("Sprint_HeavyAttack"))
+		|| RowName.StartsWith(TEXT("SprintLightAttack"))
+		|| RowName.StartsWith(TEXT("SprintHeavyAttack"));
+}
+
+bool MVCombatIsContextualBasicAttackRowName(const FString& RowName)
+{
+	return MVCombatIsDodgeContextualAttackRowName(RowName)
+		|| MVCombatIsSprintContextualAttackRowName(RowName);
+}
+
 bool MVCombatIsSprintContextualBasicAttackActionType(const EMVCombatActionTypes ActionType)
 {
 	return ActionType == EMVCombatActionTypes::SprintLightAttack
@@ -146,6 +160,7 @@ FName MVCombatActionTableNameFromDataTable(const UDataTable* DataTable)
 	TableName.RemoveFromStart(TEXT("DT_"));
 	return FName(*TableName);
 }
+
 }
 
 // Sets default values for this component's properties
@@ -162,9 +177,6 @@ UMVCombatComponent::UMVCombatComponent()
 // Called when the game starts
 void UMVCombatComponent::BeginPlay()
 {
-	CurrentWeaponStyle = EMVEquippedStyle::BareHand; // Test
-
-
 	RefreshActionMaps();
 
 
@@ -302,6 +314,11 @@ bool UMVCombatComponent::TryHandleActionInput(
 	if (!IsCombatActionInputTag(ActionInputTag))
 	{
 		return false;
+	}
+
+	if (ShouldConsumeBasicAttackInputDuringContextualAction(ActionInputTag))
+	{
+		return true;
 	}
 
 	return ChooseTryCombatAction(ActionInputTag);
@@ -1254,6 +1271,27 @@ bool UMVCombatComponent::IsBasicAttackActionType(const EMVCombatActionTypes Acti
 		|| ActionType == EMVCombatActionTypes::DodgeHeavyAttack;
 }
 
+bool UMVCombatComponent::ShouldConsumeBasicAttackInputDuringContextualAction(const FGameplayTag ActionInputTag) const
+{
+	const bool bBasicAttackInput = ActionInputTag.MatchesTagExact(MVGameplayTags::Action_Input_LightAttack)
+		|| ActionInputTag.MatchesTagExact(MVGameplayTags::Action_Input_HeavyAttack)
+		|| ActionInputTag.MatchesTagExact(MVGameplayTags::Action_Input_ChargeAttack);
+	if (!bBasicAttackInput)
+	{
+		return false;
+	}
+
+	const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
+	const UMVActionComponent* ActionComponent = OwnerCharacter ? OwnerCharacter->ActionComponent : nullptr;
+	if (!ActionComponent || !ActionComponent->IsActionRunning())
+	{
+		return false;
+	}
+
+	const FString ActiveActionRowNameString = ActionComponent->GetActiveActionRowName().ToString();
+	return MVCombatIsContextualBasicAttackRowName(ActiveActionRowNameString);
+}
+
 EMVCombatActionTypes UMVCombatComponent::ResolveContextualBasicAttackActionType(
 	const EMVCombatActionTypes RequestedActionType)
 {
@@ -1267,6 +1305,7 @@ EMVCombatActionTypes UMVCombatComponent::ResolveContextualBasicAttackActionType(
 	}
 
 	const int32 DodgeContextActionInstanceId = GetDodgeAttackContextInstanceId();
+	const bool bSprintAttackContext = IsSprintAttackContext();
 	if (DodgeContextActionInstanceId != INDEX_NONE
 		&& DodgeContextActionInstanceId != ConsumedDodgeContextActionInstanceId)
 	{
@@ -1276,7 +1315,7 @@ EMVCombatActionTypes UMVCombatComponent::ResolveContextualBasicAttackActionType(
 			: EMVCombatActionTypes::DodgeHeavyAttack;
 	}
 
-	if (IsSprintAttackContext() && !bSprintContextualBasicAttackConsumed)
+	if (bSprintAttackContext && !bSprintContextualBasicAttackConsumed)
 	{
 		return bRequestedLightAttack
 			? EMVCombatActionTypes::SprintLightAttack

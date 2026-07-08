@@ -361,7 +361,8 @@ void AMVPlayerCharacter::RefreshLockOnPawnRotationExtension()
 bool AMVPlayerCharacter::ShouldSuppressLockOnPawnRotation() const
 {
 	return LockOnPawnRotationSuppressionCount > 0
-		|| Gait == EGait::Sprinting;
+		|| Gait == EGait::Sprinting
+		|| (ActionComponent && ActionComponent->IsActionRunning());
 }
 
 bool AMVPlayerCharacter::ShouldPauseSprintStaminaDrain() const
