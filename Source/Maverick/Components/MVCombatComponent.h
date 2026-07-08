@@ -360,7 +360,10 @@ private:
 	bool TryStartActionWithAbility(FMVSkillEntry& ActionEntry, const FDataTableRowHandle& RowHandle, FName StartSection = NAME_None);
 	bool CanConsumeActionCost(const FMVSkillDataTableColumn* SkillData) const;
 	bool IsBasicAttackActionType(EMVCombatActionTypes ActionType) const;
-	bool ShouldConsumeBasicAttackInputDuringContextualAction(FGameplayTag ActionInputTag) const;
+	int32 SelectBasicAttackChainStageForSwing(const FMVSkillEntry& ActionEntry) const;
+	const FMVSkillDataTableColumn* GetBasicAttackSkillDataAtStage(const FMVSkillEntry& ActionEntry, int32 ChainStageIndex) const;
+	void UpdateLastBasicAttackSwingDirection(const FDataTableRowHandle& RowHandle);
+	void ClearLastBasicAttackSwingDirection();
 	EMVCombatActionTypes ResolveContextualBasicAttackActionType(EMVCombatActionTypes RequestedActionType);
 	void MarkContextualBasicAttackStarted(EMVCombatActionTypes StartedActionType);
 	void UpdateContextualBasicAttackResets();
@@ -412,5 +415,6 @@ private:
 	bool bWasSprintAttackContextActive = false;
 	int32 ConsumedDodgeContextActionInstanceId = INDEX_NONE;
 	int32 PendingDodgeContextActionInstanceId = INDEX_NONE;
+	EMVAttackSwingDirection LastBasicAttackSwingDirection = EMVAttackSwingDirection::None;
 
 };

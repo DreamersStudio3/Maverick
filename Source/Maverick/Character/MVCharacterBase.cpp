@@ -439,7 +439,7 @@ void AMVCharacterBase::UpdateMovement(float DeltaTime)
 	}
 
 	// Ground Friction
-	GetCharacterMovement()->GroundFriction = 5.0f;
+	GetCharacterMovement()->GroundFriction = 10.0f;
 
 }
 
@@ -469,7 +469,7 @@ void AMVCharacterBase::SetStrafeMode(bool StrafeModeOn)
 	}
 	else
 	{
-		GetCharacterMovement()->RotationRate = FRotator(0.0f, 360.0f, 0.0f);
+		GetCharacterMovement()->RotationRate = FRotator(0.0f, 720.0f, 0.0f);
 	}
 }
 

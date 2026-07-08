@@ -13,6 +13,14 @@
  */
 class UMVAbilityBase;
 
+UENUM(BlueprintType)
+enum class EMVAttackSwingDirection : uint8
+{
+	None UMETA(DisplayName = "None"),
+	RightToLeft UMETA(DisplayName = "Right To Left"),
+	LeftToRight UMETA(DisplayName = "Left To Right")
+};
+
 USTRUCT(BlueprintType)
 struct FMVSkillDataTableColumn : public FMVActionRow
 {
@@ -40,6 +48,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Common", meta = (ClampMin = "0.0"))
 	float GroggyDamageMultiplier;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Basic")
+	EMVAttackSwingDirection SwingDirection = EMVAttackSwingDirection::None;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Skill")
 	float CooldownDuration;
