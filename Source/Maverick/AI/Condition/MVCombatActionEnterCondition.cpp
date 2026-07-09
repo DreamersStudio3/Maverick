@@ -4,6 +4,48 @@
 
 namespace
 {
+bool CombatContextEnterPassesCooldownGroupCheck(const FMVCombatActionEnterConditionInstanceData& InstanceData)
+{
+	if (InstanceData.CooldownCheckMode == EMVCombatCooldownCheckMode::None)
+	{
+		return true;
+	}
+
+	int32 ValidActionIdCount = 0;
+	int32 ReadyActionIdCount = 0;
+	for (const FName ActionId : InstanceData.CooldownActionIds)
+	{
+		if (ActionId.IsNone())
+		{
+			continue;
+		}
+
+		++ValidActionIdCount;
+		if (MVAICombat::IsActionReady(InstanceData.CombatContext, ActionId))
+		{
+			++ReadyActionIdCount;
+		}
+	}
+
+	if (ValidActionIdCount <= 0)
+	{
+		return false;
+	}
+
+	switch (InstanceData.CooldownCheckMode)
+	{
+	case EMVCombatCooldownCheckMode::AnyReady:
+		return ReadyActionIdCount > 0;
+	case EMVCombatCooldownCheckMode::AllReady:
+		return ReadyActionIdCount == ValidActionIdCount;
+	case EMVCombatCooldownCheckMode::NoneReady:
+		return ReadyActionIdCount == 0;
+	case EMVCombatCooldownCheckMode::None:
+	default:
+		return true;
+	}
+}
+
 bool CombatContextEnterPassesCommonGate(const FMVCombatActionEnterConditionInstanceData& InstanceData)
 {
 	const FMVAICombatContext& CombatContext = InstanceData.CombatContext;
@@ -18,6 +60,11 @@ bool CombatContextEnterPassesCommonGate(const FMVCombatActionEnterConditionInsta
 	}
 
 	if (InstanceData.bRequireCombatArea && CombatContext.CurrentArea != InstanceData.RequiredCombatArea)
+	{
+		return false;
+	}
+
+	if (!CombatContextEnterPassesCooldownGroupCheck(InstanceData))
 	{
 		return false;
 	}

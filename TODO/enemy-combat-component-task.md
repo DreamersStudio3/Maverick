@@ -10,6 +10,10 @@ trace behavior.
 
 ## Done
 
+- [x] Added distance-based active montage section jump support to `Enemy Combat Action Task`.
+  - The task can read `FMVAICombatContext.DistanceToTarget` while an action is running.
+  - When the target enters `JumpDistance`, it can call `UMVActionComponent::TryJumpActiveActionSection`.
+  - The jump is guarded so it runs only once per action execution.
 - [x] Checked project naming style.
   - Functions that can fail while trying to start gameplay behavior use `Try*`.
   - Enemy combat bridge functions were named `TryHeavyAttack` and `TrySkillAttack`.

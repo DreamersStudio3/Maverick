@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AI/MVAICombatTypes.h"
 #include "GameFramework/Pawn.h"
 #include "StateTreeTaskBase.h"
 #include "MVEnemyCombatActionTask.generated.h"
@@ -23,6 +24,9 @@ struct FMVEnemyCombatActionTaskInstanceData
 	UPROPERTY(EditAnywhere, Category = "Input|Owner")
 	TObjectPtr<APawn> Owner = nullptr;
 
+	UPROPERTY(EditAnywhere, Category = "Input|Context")
+	FMVAICombatContext CombatContext;
+
 	UPROPERTY(EditAnywhere, Category = "Input|Combat")
 	EMVEnemyCombatActionKind ActionKind = EMVEnemyCombatActionKind::HeavyAttack;
 
@@ -44,6 +48,18 @@ struct FMVEnemyCombatActionTaskInstanceData
 	UPROPERTY(EditAnywhere, Category = "Input|Task", meta = (ClampMin = "0.0"))
 	float ExitCancelBlendOutTime = 0.1f;
 
+	UPROPERTY(EditAnywhere, Category = "Input|Section Jump")
+	bool bJumpToSectionWhenInRange = false;
+
+	UPROPERTY(EditAnywhere, Category = "Input|Section Jump", meta = (EditCondition = "bJumpToSectionWhenInRange"))
+	FName JumpSectionName = NAME_None;
+
+	UPROPERTY(EditAnywhere, Category = "Input|Section Jump", meta = (ClampMin = "0.0", EditCondition = "bJumpToSectionWhenInRange"))
+	float JumpDistance = 0.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Input|Section Jump", meta = (EditCondition = "bJumpToSectionWhenInRange"))
+	bool bStopMovementOnSectionJump = true;
+
 	UPROPERTY(EditAnywhere, Category = "Output")
 	FName LastAttackTag = NAME_None;
 
@@ -55,6 +71,7 @@ struct FMVEnemyCombatActionTaskInstanceData
 
 	FName StartedActionTableName = NAME_None;
 	FName StartedActionRowName = NAME_None;
+	bool bSectionJumpRequested = false;
 };
 
 /**
