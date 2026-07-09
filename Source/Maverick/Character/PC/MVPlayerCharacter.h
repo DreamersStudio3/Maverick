@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Character/MVCharacterBase.h"
-#include "Interface/MVAttackAbilityDataInterface.h"
 #include "Tables/MVMovementActionTableTypes.h"
 #include "MVPlayerCharacter.generated.h"
 
@@ -24,7 +23,6 @@ class UMVPlayerConsumable;
  *   - 전력질주 스태미너 비용과 고갈 후 재개 조건을 플레이어 액션 데이터 기준으로 관리한다.
  *   - 플레이어 피격 리액션 핸들러를 공통 피격 이벤트에 연결한다.
  *   - 락온 대상이 있을 때 질주/회피 구간의 pawn rotation extension tick 억제를 관리한다.
- *   - 공격 Ability가 필요한 락온 대상을 제공한다.
  *
  * 라이프사이클:
  *   1) 생성자 -> 플레이어 전용 서브모듈 기본 서브오브젝트를 생성한다.
@@ -32,14 +30,13 @@ class UMVPlayerConsumable;
  *   3) Tick -> 공통 캐릭터 갱신 뒤 상호작용 감지와 락온 회전 억제 상태를 갱신한다.
  */
 UCLASS()
-class MAVERICK_API AMVPlayerCharacter : public AMVCharacterBase, public IMVAttackAbilityDataInterface
+class MAVERICK_API AMVPlayerCharacter : public AMVCharacterBase
 {
 	GENERATED_BODY()
 
 public:
 	AMVPlayerCharacter();
 	virtual void Tick(float DeltaTime) override;
-	virtual AActor* GetTargetActor_Implementation() const override;
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Interaction")
 	bool TryInteract();

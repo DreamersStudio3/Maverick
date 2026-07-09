@@ -94,7 +94,6 @@ void UMVAnimNotifyState_Ability::NotifyEnd(
 	}
 
 	IMVAbilityInterface::Execute_EndAbility(CurrentAbility);
-	CurrentAbility->EnsureAbilityEnded();
 }
 
 FString UMVAnimNotifyState_Ability::GetNotifyName_Implementation() const

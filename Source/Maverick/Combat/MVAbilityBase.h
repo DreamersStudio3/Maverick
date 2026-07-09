@@ -52,8 +52,6 @@ public:
 	virtual void StartAbility_Implementation() override;
 	virtual void EndAbility_Implementation() override;
 
-	void EnsureAbilityEnded();
-
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings", meta = (ExposeOnSpawn = "true"))
 	TObjectPtr<UActorComponent> OwnerComponent;

@@ -7,26 +7,23 @@
 #include "Components/StaticMeshComponent.h"
 #include "Engine/SkeletalMesh.h"
 #include "Engine/StaticMesh.h"
-#include "UObject/ConstructorHelpers.h"
+#include "Tags/MVGameplayTags.h"
 
 namespace
 {
-constexpr const TCHAR* MVWeaponEquipTracePrefix = TEXT("WeaponEquipTrace");
-constexpr const TCHAR* MVWeaponBuiltInDefaultWeaponTablePath =
-	TEXT("/Game/Table/Weapons/Player/DT_Weapons_Player.DT_Weapons_Player");
-const FName MVWeaponBuiltInDefaultWeaponRowName(TEXT("OneHand_TestSword"));
+constexpr const TCHAR* MVWeaponTraceStartSocketName = TEXT("Trace_Start");
+constexpr const TCHAR* MVWeaponTraceEndSocketName = TEXT("Trace_End");
+constexpr const TCHAR* MVWeaponTraceLeftSocketName = TEXT("Trace_Left");
+constexpr const TCHAR* MVWeaponTraceRightSocketName = TEXT("Trace_Right");
 
-bool MVWeaponIsWeaponRowHandleSet(const FDataTableRowHandle& RowHandle)
+TArray<FName> MVWeaponMakeRequiredTraceSocketNames()
 {
-	return RowHandle.DataTable && !RowHandle.RowName.IsNone();
-}
-
-FDataTableRowHandle MVWeaponMakeBuiltInDefaultWeaponRowHandle()
-{
-	FDataTableRowHandle RowHandle;
-	RowHandle.DataTable = LoadObject<UDataTable>(nullptr, MVWeaponBuiltInDefaultWeaponTablePath);
-	RowHandle.RowName = MVWeaponBuiltInDefaultWeaponRowName;
-	return RowHandle;
+	return {
+		FName(MVWeaponTraceStartSocketName),
+		FName(MVWeaponTraceEndSocketName),
+		FName(MVWeaponTraceLeftSocketName),
+		FName(MVWeaponTraceRightSocketName)
+	};
 }
 }
 
@@ -34,14 +31,12 @@ UMVWeaponComponent::UMVWeaponComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 
-	DefaultWeaponRow.RowName = MVWeaponBuiltInDefaultWeaponRowName;
-
-	static ConstructorHelpers::FObjectFinder<UDataTable> DefaultWeaponTableFinder(MVWeaponBuiltInDefaultWeaponTablePath);
-	if (DefaultWeaponTableFinder.Succeeded())
-	{
-		DefaultWeaponRow.DataTable = DefaultWeaponTableFinder.Object;
-		DefaultWeaponRow.RowName = MVWeaponBuiltInDefaultWeaponRowName;
-	}
+	BareHandWeapon.ItemTag = MVGameplayTags::Item_Weapon_BareHand;
+	BareHandWeapon.DisplayName = NSLOCTEXT("MaverickWeapon", "BareHandDisplayName", "Bare Hand");
+	BareHandWeapon.EquippedStyle = EMVEquippedStyle::BareHand;
+	BareHandWeapon.AttackPower = 0.0f;
+	BareHandWeapon.RangeType = EMVWeaponRangeType::Melee;
+	BareHandWeapon.AttachSocketName = TEXT("hand_r_socket");
 }
 
 void UMVWeaponComponent::BeginPlay()
@@ -50,7 +45,10 @@ void UMVWeaponComponent::BeginPlay()
 
 	if (!CurrentWeaponState.bValid)
 	{
-		EquipDefaultWeapon();
+		if (!TryEquipDefaultWeapon())
+		{
+			EquipBareHand();
+		}
 	}
 }
 
@@ -68,6 +66,13 @@ bool UMVWeaponComponent::EquipWeaponFromRow(const FMVWeaponTableRow& WeaponRow)
 
 	ApplyEquippedWeaponState(NewState);
 	return true;
+}
+
+void UMVWeaponComponent::EquipBareHand()
+{
+	FMVEquippedWeaponState NewState = MakeStateFromWeaponRow(BareHandWeapon);
+	NewState.bValid = true;
+	ApplyEquippedWeaponState(NewState);
 }
 
 FMVEquippedWeaponState UMVWeaponComponent::GetEquippedWeaponState() const
@@ -93,50 +98,6 @@ EMVEquippedStyle UMVWeaponComponent::GetEquippedStyle() const
 EMVWeaponRangeType UMVWeaponComponent::GetWeaponRangeType() const
 {
 	return CurrentWeaponState.RangeType;
-}
-
-bool UMVWeaponComponent::GetMeleeWeaponData_Implementation(
-	const FName StartSocketName,
-	const FName EndSocketName,
-	TArray<FMVMeleeWeaponData>& OutMeleeWeaponData) const
-{
-	OutMeleeWeaponData.Reset();
-	if (StartSocketName.IsNone() || EndSocketName.IsNone())
-	{
-		return false;
-	}
-
-	FMVMeleeWeaponData PrimaryData;
-	if (TryBuildMeleeWeaponData(
-		WeaponMeshComponent.Get(),
-		StartSocketName,
-		EndSocketName,
-		false,
-		PrimaryData))
-	{
-		OutMeleeWeaponData.Add(PrimaryData);
-	}
-
-	FMVMeleeWeaponData SecondaryData;
-	if (TryBuildMeleeWeaponData(
-		SecondaryWeaponMeshComponent.Get(),
-		StartSocketName,
-		EndSocketName,
-		true,
-		SecondaryData))
-	{
-		OutMeleeWeaponData.Add(SecondaryData);
-	}
-
-	return !OutMeleeWeaponData.IsEmpty();
-}
-
-bool UMVWeaponComponent::GetMeleeDualWeaponData_Implementation(
-	const FName StartSocketName,
-	const FName EndSocketName,
-	TArray<FMVMeleeWeaponData>& OutMeleeWeaponData) const
-{
-	return GetMeleeWeaponData_Implementation(StartSocketName, EndSocketName, OutMeleeWeaponData);
 }
 
 void UMVWeaponComponent::ApplyEquippedWeaponState(const FMVEquippedWeaponState& NewState)
@@ -183,6 +144,11 @@ FMVWeaponHitSnapshot UMVWeaponComponent::MakeHitSnapshotFromState(const FMVEquip
 
 bool UMVWeaponComponent::CanEquipWeaponState(const FMVEquippedWeaponState& WeaponState) const
 {
+	if (WeaponState.EquippedStyle == EMVEquippedStyle::BareHand)
+	{
+		return true;
+	}
+
 	if (WeaponState.WeaponMesh.IsNull())
 	{
 		UE_LOG(
@@ -233,49 +199,22 @@ bool UMVWeaponComponent::CanEquipWeaponState(const FMVEquippedWeaponState& Weapo
 	return true;
 }
 
-bool UMVWeaponComponent::EquipDefaultWeapon()
+bool UMVWeaponComponent::TryEquipDefaultWeapon()
 {
-	FDataTableRowHandle WeaponRowHandle = DefaultWeaponRow;
-	bool bUsingBuiltInFallback = false;
-	if (!MVWeaponIsWeaponRowHandleSet(WeaponRowHandle))
+	if (!DefaultWeaponRow.DataTable || DefaultWeaponRow.RowName.IsNone())
 	{
-		WeaponRowHandle = MVWeaponMakeBuiltInDefaultWeaponRowHandle();
-		bUsingBuiltInFallback = true;
-		UE_LOG(
-			LogTemp,
-			Warning,
-			TEXT("%s: DefaultWeaponRow is not configured. Owner=%s Component=%s. Falling back to TestSword."),
-			MVWeaponEquipTracePrefix,
-			*GetNameSafe(GetOwner()),
-			*GetNameSafe(this));
+		return false;
 	}
 
-	const FMVWeaponTableRow* WeaponRow = WeaponRowHandle.GetRow<FMVWeaponTableRow>(TEXT("MVWeaponComponent DefaultWeaponRow"));
-	if (!WeaponRow && !bUsingBuiltInFallback)
-	{
-		UE_LOG(
-			LogTemp,
-			Warning,
-			TEXT("%s: Default weapon row was not resolved. Owner=%s DataTable=%s Row=%s. Falling back to TestSword."),
-			MVWeaponEquipTracePrefix,
-			*GetNameSafe(GetOwner()),
-			*GetNameSafe(WeaponRowHandle.DataTable),
-			*WeaponRowHandle.RowName.ToString());
-		WeaponRowHandle = MVWeaponMakeBuiltInDefaultWeaponRowHandle();
-		bUsingBuiltInFallback = true;
-		WeaponRow = WeaponRowHandle.GetRow<FMVWeaponTableRow>(TEXT("MVWeaponComponent BuiltInDefaultWeaponRow"));
-	}
-
+	const FMVWeaponTableRow* WeaponRow = DefaultWeaponRow.GetRow<FMVWeaponTableRow>(TEXT("MVWeaponComponent DefaultWeaponRow"));
 	if (!WeaponRow)
 	{
 		UE_LOG(
 			LogTemp,
-			Error,
-			TEXT("%s: TestSword fallback row was not resolved. Owner=%s DataTable=%s Row=%s."),
-			MVWeaponEquipTracePrefix,
-			*GetNameSafe(GetOwner()),
-			*GetNameSafe(WeaponRowHandle.DataTable),
-			*WeaponRowHandle.RowName.ToString());
+			Warning,
+			TEXT("Default weapon row was not resolved. DataTable=%s Row=%s."),
+			*GetNameSafe(DefaultWeaponRow.DataTable),
+			*DefaultWeaponRow.RowName.ToString());
 		return false;
 	}
 
@@ -296,40 +235,51 @@ bool UMVWeaponComponent::ValidateWeaponMesh(const UObject& WeaponMesh, const FGa
 		return false;
 	}
 
-	return true;
+	return ValidateWeaponTraceSockets(WeaponMesh, ItemTag);
 }
 
-bool UMVWeaponComponent::TryBuildMeleeWeaponData(
-	UMeshComponent* MeshComponent,
-	const FName StartSocketName,
-	const FName EndSocketName,
-	const bool bSecondaryWeapon,
-	FMVMeleeWeaponData& OutData) const
+bool UMVWeaponComponent::ValidateWeaponTraceSockets(
+	const UObject& WeaponMesh,
+	const FGameplayTag& ItemTag) const
 {
-	OutData = FMVMeleeWeaponData();
-	if (!MeshComponent || !MeshComponent->IsVisible())
+	TArray<FName> MissingSocketNames;
+	for (const FName SocketName : MVWeaponMakeRequiredTraceSocketNames())
 	{
-		return false;
+		bool bHasSocket = false;
+		if (const USkeletalMesh* SkeletalMesh = Cast<USkeletalMesh>(&WeaponMesh))
+		{
+			bHasSocket = SkeletalMesh->FindSocket(SocketName) != nullptr;
+		}
+		else if (const UStaticMesh* StaticMesh = Cast<UStaticMesh>(&WeaponMesh))
+		{
+			bHasSocket = StaticMesh->FindSocket(SocketName) != nullptr;
+		}
+
+		if (!bHasSocket)
+		{
+			MissingSocketNames.Add(SocketName);
+		}
 	}
 
-	if (!MeshComponent->DoesSocketExist(StartSocketName) || !MeshComponent->DoesSocketExist(EndSocketName))
+	if (MissingSocketNames.IsEmpty())
 	{
-		UE_LOG(
-			LogTemp,
-			Verbose,
-			TEXT("Melee weapon sockets are not available on mesh component. ItemTag=%s Component=%s Start=%s End=%s."),
-			*CurrentWeaponState.ItemTag.ToString(),
-			*GetNameSafe(MeshComponent),
-			*StartSocketName.ToString(),
-			*EndSocketName.ToString());
-		return false;
+		return true;
 	}
 
-	OutData.WeaponMesh = MeshComponent;
-	OutData.StartLocation = MeshComponent->GetSocketLocation(StartSocketName);
-	OutData.EndLocation = MeshComponent->GetSocketLocation(EndSocketName);
-	OutData.bSecondaryWeapon = bSecondaryWeapon;
-	return true;
+	TArray<FString> MissingSocketStrings;
+	for (const FName SocketName : MissingSocketNames)
+	{
+		MissingSocketStrings.Add(SocketName.ToString());
+	}
+
+	UE_LOG(
+		LogTemp,
+		Error,
+		TEXT("Weapon mesh is missing required trace sockets. ItemTag=%s Mesh=%s Missing=%s."),
+		*ItemTag.ToString(),
+		*WeaponMesh.GetName(),
+		*FString::Join(MissingSocketStrings, TEXT(", ")));
+	return false;
 }
 
 void UMVWeaponComponent::SyncOwnerEquippedStyle() const
@@ -360,7 +310,7 @@ void UMVWeaponComponent::ApplyWeaponVisual()
 
 	if (CurrentWeaponState.WeaponMesh.IsNull())
 	{
-		if (CurrentWeaponState.ItemTag.IsValid())
+		if (CurrentWeaponState.ItemTag.IsValid() && CurrentWeaponState.EquippedStyle != EMVEquippedStyle::BareHand)
 		{
 			UE_LOG(
 				LogTemp,
