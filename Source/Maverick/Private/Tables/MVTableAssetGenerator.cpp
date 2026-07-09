@@ -36,19 +36,25 @@ namespace
 	const TCHAR* GeneratedTableHashMetadataKey = TEXT("MVTableAssetGenerator.SourceHash");
 	const TCHAR* DirectManagedTablePackageRoots[] =
 	{
-		TEXT("/Game/Table/HitReaction"),
-		TEXT("/Game/Table/Combat"),
+		TEXT("/Game/Table/Attack"),
+		TEXT("/Game/Table/Death"),
 		TEXT("/Game/Table/Dodge"),
+		TEXT("/Game/Table/Groggy"),
+		TEXT("/Game/Table/HitReaction"),
+		TEXT("/Game/Table/Props"),
 		TEXT("/Game/Table/Sprint"),
-		TEXT("/Game/Table/Death")
+		TEXT("/Game/Table/Weapons")
 	};
 	const TCHAR* DirectManagedDesignRoots[] =
 	{
-		TEXT("HitReaction"),
-		TEXT("Combat"),
+		TEXT("Attack"),
+		TEXT("Death"),
 		TEXT("Dodge"),
+		TEXT("Groggy"),
+		TEXT("HitReaction"),
+		TEXT("Props"),
 		TEXT("Sprint"),
-		TEXT("Death")
+		TEXT("Weapons")
 	};
 
 #if WITH_EDITOR
@@ -104,7 +110,17 @@ namespace
 
 	FString ToTablePackagePath(const FString& TableName)
 	{
-		return FString::Printf(TEXT("%s/%s"), GeneratedTablesPackageRoot, *ToTableAssetName(TableName));
+		const FString TableAssetName = ToTableAssetName(TableName);
+		if (TableName.Equals(TEXT("CharacterStat"), ESearchCase::IgnoreCase))
+		{
+			return FString::Printf(TEXT("%s/Stat/%s"), GeneratedTablesPackageRoot, *TableAssetName);
+		}
+		if (TableName.Equals(TEXT("GameGuide"), ESearchCase::IgnoreCase))
+		{
+			return FString::Printf(TEXT("%s/UI/%s"), GeneratedTablesPackageRoot, *TableAssetName);
+		}
+
+		return FString::Printf(TEXT("%s/%s"), GeneratedTablesPackageRoot, *TableAssetName);
 	}
 
 	bool TableAssetGeneratorIsUnderPackageRoot(const FString& PackagePath, const FString& RootPath)

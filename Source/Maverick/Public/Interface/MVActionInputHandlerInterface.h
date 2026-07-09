@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Enum/MVActionInputPhase.h"
 #include "GameplayTagContainer.h"
 #include "UObject/Interface.h"
 #include "MVActionInputHandlerInterface.generated.h"
@@ -32,6 +33,16 @@ class MAVERICK_API IMVActionInputHandlerInterface
 public:
 	virtual bool TryHandleActionInput(
 		FGameplayTag ActionInputTag,
+		FVector2D ControllerSpaceInput,
+		bool bHasMovementInput)
+	{
+		return false;
+	}
+
+	virtual bool TryHandleHoldActionInput(
+		FGameplayTag ActionInputTag,
+		EMVActionInputPhase Phase,
+		float HeldSeconds,
 		FVector2D ControllerSpaceInput,
 		bool bHasMovementInput)
 	{

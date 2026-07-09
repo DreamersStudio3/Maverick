@@ -31,7 +31,8 @@ public class Maverick : ModuleRules
 			"DeveloperSettings",
 			"Chooser",
 			"LockOnTarget",
-		});
+			"MotionWarping",
+        });
 
 		if (Target.Type == TargetRules.TargetType.Editor)
 		{

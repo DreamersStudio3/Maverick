@@ -39,12 +39,12 @@ struct FMVHitReactionActionData
  * 피격 리액션 액션 선택을 담당하는 컴포넌트.
  *
  * CharacterBase.OnDamaged에 바인딩되어 HitResolver가 확정한 HitReactionType과 충격 방향을
- * CHT_HitReaction의 선택 문맥으로 제공한다. Chooser가 반환한 상황별 액션 row handle과
+ * CHT_HR_Player의 선택 문맥으로 제공한다. Chooser가 반환한 상황별 액션 row handle과
  * 섹션을 확정한 뒤 ActionComponent의 실행 전용 API로 전달한다.
  *
  * 라이프사이클:
  *   1) BeginPlay -> 소유 캐릭터와 ActionComponent를 캐시한다.
- *   2) HandleDamaged -> CHT_HitReaction 또는 명명 규칙으로 상황별 액션 row를 고른다.
+ *   2) HandleDamaged -> CHT_HR_Player 또는 명명 규칙으로 상황별 액션 row를 고른다.
  *   3) 무적/interrupt 가능 여부를 확인하고 ActionComponent.TryStartActionFromRowHandle로 재생한다.
  *   4) KD/AB recovery window -> 저장된 Dodge/이동 입력은 별도 EscapeDodge 액션으로 끊고, 입력이 없으면 default recovery Notify가 Getup 액션으로 전환한다.
  *   5) Getup/EscapeDodge recovery 액션도 active HR row로 추적해 후딜 window의 이동 취소와 Dodge 전환을 허용한다.
@@ -81,7 +81,7 @@ public:
 	bool RequestDefaultRecoveryAction();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|HitReaction|Chooser")
-	FSoftObjectPath HitReactionChooserTable = TEXT("/Game/Table/HitReaction/CHT_HitReaction.CHT_HitReaction");
+	FSoftObjectPath HitReactionChooserTable = TEXT("/Game/Table/HitReaction/Player/CHT_HR_Player.CHT_HR_Player");
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|HitReaction|Chooser")
 	bool bUseNamingConventionWhenChooserUnavailable = true;

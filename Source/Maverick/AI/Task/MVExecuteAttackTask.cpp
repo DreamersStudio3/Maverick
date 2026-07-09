@@ -1,13 +1,16 @@
 #include "AI/Task/MVExecuteAttackTask.h"
 
 #include "AI/MVActionCooldownComponent.h"
+#include "Character/MVCharacterBase.h"
 #include "Character/NPC/Enemy/MVEnemy.h"
 #include "AIController.h"
 #include "Chooser.h"
 #include "Components/MVActionComponent.h"
 #include "Engine/DataTable.h"
+#include "Struct/MVCombatActionTableInput.h"
 #include "StateTreeAsyncExecutionContext.h"
 #include "StateTreeExecutionContext.h"
+#include "Tags/MVGameplayTags.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogMVExecuteAttackTask, Log, All);
 
@@ -40,6 +43,54 @@ FName ExecuteAttackActionTableNameFromDataTable(const UDataTable* DataTable)
 	return FName(*TableName);
 }
 
+FGameplayTag ExecuteAttackResolveActionTypeTag(const FMVActionRequest& ActionRequest)
+{
+	const FString RowNameString = ActionRequest.RowName.ToString();
+	if (RowNameString.StartsWith(TEXT("Skill"), ESearchCase::IgnoreCase))
+	{
+		return MVGameplayTags::Action_Combat_Skill;
+	}
+	if (RowNameString.Contains(TEXT("Dodge"), ESearchCase::IgnoreCase))
+	{
+		return RowNameString.Contains(TEXT("Light"), ESearchCase::IgnoreCase)
+			? MVGameplayTags::Action_Combat_DodgeLightAttack
+			: MVGameplayTags::Action_Combat_DodgeHeavyAttack;
+	}
+	if (RowNameString.Contains(TEXT("Sprint"), ESearchCase::IgnoreCase))
+	{
+		return RowNameString.Contains(TEXT("Light"), ESearchCase::IgnoreCase)
+			? MVGameplayTags::Action_Combat_SprintLightAttack
+			: MVGameplayTags::Action_Combat_SprintHeavyAttack;
+	}
+	if (RowNameString.Contains(TEXT("Charge"), ESearchCase::IgnoreCase))
+	{
+		return MVGameplayTags::Action_Combat_ChargeAttack;
+	}
+	if (RowNameString.Contains(TEXT("Heavy"), ESearchCase::IgnoreCase))
+	{
+		return MVGameplayTags::Action_Combat_HeavyAttack;
+	}
+	if (RowNameString.Contains(TEXT("Light"), ESearchCase::IgnoreCase))
+	{
+		return MVGameplayTags::Action_Combat_LightAttack;
+	}
+
+	return FGameplayTag();
+}
+
+FMVCombatActionTableInput ExecuteAttackMakeCombatChooserInput(
+	const UObject& OwnerObject,
+	const FMVActionRequest& ActionRequest)
+{
+	FMVCombatActionTableInput ChooserInput;
+	if (const AMVCharacterBase* Character = Cast<AMVCharacterBase>(&OwnerObject))
+	{
+		ChooserInput.CurrentWeaponStyle = Character->GetEquippedStyle();
+	}
+	ChooserInput.SetActionType(ExecuteAttackResolveActionTypeTag(ActionRequest));
+	return ChooserInput;
+}
+
 bool ExecuteAttackEvaluateChooserActionRowHandle(
 	UObject& OwnerObject,
 	const FSoftObjectPath& AttackChooserTable,
@@ -67,10 +118,17 @@ bool ExecuteAttackEvaluateChooserActionRowHandle(
 		return false;
 	}
 
+	FMVCombatActionTableInput CombatChooserInput = ExecuteAttackMakeCombatChooserInput(OwnerObject, ActionRequest);
+	FGameplayTag ActionTypeTag = CombatChooserInput.ActionType;
+	FGameplayTagContainer ActionTypeTags = CombatChooserInput.ActionTypeTags;
+
 	FChooserEvaluationContext ChooserContext;
 	ChooserContext.AddObjectParam(&OwnerObject);
 	ChooserContext.AddStructParam(ActionRequest);
+	ChooserContext.AddStructParam(CombatChooserInput);
 	ChooserContext.AddStructParam(ChooserAttackActionRowHandle);
+	ChooserContext.AddStructParam(ActionTypeTag);
+	ChooserContext.AddStructParam(ActionTypeTags);
 
 	TSoftObjectPtr<UObject> SelectedObject;
 	UChooserTable::EvaluateChooser(
