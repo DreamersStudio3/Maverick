@@ -17,6 +17,15 @@ enum class EMVCombatContextEnterMode : uint8
 	Idle UMETA(DisplayName = "Idle")
 };
 
+UENUM()
+enum class EMVCombatCooldownCheckMode : uint8
+{
+	None UMETA(DisplayName = "None"),
+	AnyReady UMETA(DisplayName = "Any Ready"),
+	AllReady UMETA(DisplayName = "All Ready"),
+	NoneReady UMETA(DisplayName = "None Ready")
+};
+
 USTRUCT()
 struct FMVCombatActionEnterConditionInstanceData
 {
@@ -33,6 +42,12 @@ struct FMVCombatActionEnterConditionInstanceData
 
 	UPROPERTY(EditAnywhere, Category = "Input|Action")
 	FName CooldownActionId = NAME_None;
+
+	UPROPERTY(EditAnywhere, Category = "Input|Cooldown")
+	EMVCombatCooldownCheckMode CooldownCheckMode = EMVCombatCooldownCheckMode::None;
+
+	UPROPERTY(EditAnywhere, Category = "Input|Cooldown", meta = (EditCondition = "CooldownCheckMode != EMVCombatCooldownCheckMode::None"))
+	TArray<FName> CooldownActionIds;
 
 	UPROPERTY(EditAnywhere, Category = "Input|Range")
 	float MinDistance = 0.0f;
@@ -53,6 +68,8 @@ struct FMVCombatActionEnterConditionInstanceData
 /**
  * Checks whether a combat StateTree state may enter using the current AI combat
  * context. Attack cooldowns are read from CombatContext.ReadyActionIds.
+ * `CooldownActionId` keeps the legacy single-action check for Action mode,
+ * while `CooldownActionIds` can gate any combat mode as a group.
  */
 USTRUCT(meta = (DisplayName = "Combat Context Enter Condition"))
 struct FMVCombatActionEnterCondition : public FStateTreeConditionCommonBase
