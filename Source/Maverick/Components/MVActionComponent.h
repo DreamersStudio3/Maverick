@@ -56,9 +56,7 @@ public:
 		FName StartSection = NAME_None);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Action")
-	bool TryStartActionFromRowHandle(
-		FDataTableRowHandle ActionRowHandle,
-		FName StartSection = NAME_None);
+	bool TryStartActionFromRowHandle(FDataTableRowHandle ActionRowHandle, FName StartSection = NAME_None, const float BlendoutTime = 0.1f);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Action")
 	bool PauseActiveAction();
