@@ -77,9 +77,7 @@ bool UMVActionComponent::TryStartActionFromTable(
 	return TryStartResolvedAction(ActionTableName, ActionRowName, *ActionRow, StartSection);
 }
 
-bool UMVActionComponent::TryStartActionFromRowHandle(
-	const FDataTableRowHandle ActionRowHandle,
-	FName StartSection)
+bool UMVActionComponent::TryStartActionFromRowHandle(const FDataTableRowHandle ActionRowHandle,	FName StartSection, const float BlendoutTime)
 {
 	FName ActionTableName = NAME_None;
 	FName ActionRowName = NAME_None;
@@ -93,6 +91,10 @@ bool UMVActionComponent::TryStartActionFromRowHandle(
 			*GetNameSafe(ActionRowHandle.DataTable),
 			*ActionRowHandle.RowName.ToString());
 		return false;
+	}
+	if (CanInterruptActiveAction())
+	{
+		CancelActiveAction(BlendoutTime);
 	}
 
 	return TryStartResolvedAction(ActionTableName, ActionRowName, *ActionRow, StartSection);
@@ -135,8 +137,8 @@ bool UMVActionComponent::TryStartResolvedAction(
 		return false;
 	}
 
-	//if (IsActionRunning())
-	if(!CanInterruptActiveAction())
+	//if(!CanInterruptActiveAction())
+	if (IsActionRunning())
 	{
 		return false;
 	}
