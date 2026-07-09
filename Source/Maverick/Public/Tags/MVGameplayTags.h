@@ -8,8 +8,8 @@ namespace MVGameplayTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Character_NPC_Enemy_E1);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Character_NPC_Enemy_NamelessPuppet);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Character_NPC_Neutral_N1);
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Item_Weapon_BareHand);
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Item_Weapon_OneHand_TestSword);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Item_Weapon_Fist);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Item_Weapon_TestSword);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Item_HealingPotion_Basic);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_LightAttack);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_HeavyAttack);
