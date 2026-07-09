@@ -310,12 +310,6 @@ void AMVPlayerCharacter::Tick(float DeltaTime)
 	RefreshLockOnPawnRotationExtension();
 }
 
-AActor* AMVPlayerCharacter::GetTargetActor_Implementation() const
-{
-	const ULockOnTargetComponent* LockOnTargetComponent = FindComponentByClass<ULockOnTargetComponent>();
-	return LockOnTargetComponent ? LockOnTargetComponent->GetTargetActor() : nullptr;
-}
-
 bool AMVPlayerCharacter::TryInteract()
 {
 	return InteractionDetector ? InteractionDetector->TryInteract() : false;

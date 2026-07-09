@@ -680,7 +680,6 @@ void UMVCombatComponent::HandleActionEnded(
 	if (CurrentAbilityInstance && CurrentAbilityInstance->bAbilityActive)
 	{
 		IMVAbilityInterface::Execute_EndAbility(CurrentAbilityInstance);
-		CurrentAbilityInstance->EnsureAbilityEnded();
 	}
 
 	CurrentAbilityInstance = nullptr;
@@ -1234,7 +1233,6 @@ bool UMVCombatComponent::TryStartActionWithAbility(
 			if (PreviousAbilityInstance && PreviousAbilityInstance->Implements<UMVAbilityInterface>())
 			{
 				IMVAbilityInterface::Execute_EndAbility(PreviousAbilityInstance);
-				PreviousAbilityInstance->EnsureAbilityEnded();
 			}
 
 			CurrentAbilityInstance = NextAbility;
