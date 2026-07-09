@@ -167,7 +167,7 @@ bool UMVFinisherComponent::MakeSphereTrace(AActor*& OutHitActor) const
 		StartLocation,
 		EndLocation,
 		50.0f,													// Sphere radius
-		UEngineTypes::ConvertToTraceType(ECC_Camera),		// Todo: Trace channel -> Currenytly using Visibility channel, should be changed to a custom channel
+		UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel1),		// Todo: Trace channel -> Currenytly using Visibility channel, should be changed to a custom channel
 		false,
 		ActorsToIgnore,
 		EDrawDebugTrace::ForDuration,
