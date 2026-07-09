@@ -16,10 +16,11 @@
 
 ## Decisions
 
-- `Config/DefaultEngine.ini`: 로컬 `MVAttackTarget` 채널 보존을 위해 ours 선택.
-- `BP_ThirdPersonCharacter.uasset`: 로컬 변경 보존을 위해 ours 선택.
+- `Config/DefaultEngine.ini`: 최초 병합에서는 로컬 `MVAttackTarget` 채널을 보존했지만, 후속 요청에 따라 develop rollback 버전으로 되돌려 채널 삭제를 반영.
+- `BP_ThirdPersonCharacter.uasset`: 최초 병합에서는 로컬 변경을 보존했지만, 후속 요청에 따라 develop rollback 버전으로 되돌림.
 - `BP_MeleeAttack.uasset`, `BP_NameLessPuppet.uasset`: 로컬 변경이 없던 rollback 대상이라 develop(theirs) 선택.
 - `Yone_Attack.uasset` 등 나머지 develop rollback 변경은 병합 결과 그대로 반영.
+- 애니메이션, 신규 어빌리티 BP, NamelessPuppet StateTree 변경은 로컬 작업으로 유지.
 
 ## Result
 
