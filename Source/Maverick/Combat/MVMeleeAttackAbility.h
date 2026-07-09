@@ -62,6 +62,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Ability|Melee|Trace", meta = (ClampMin = "1.0", Units = "cm"))
 	float TraceCapsuleRadius = 20.0f;
 
+	// BP에 저장된 이전 값이 있더라도 MVAttackTarget 채널은 쿼리 생성 시 항상 포함된다.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Ability|Melee|Trace")
 	TArray<TEnumAsByte<ECollisionChannel>> TargetObjectChannels;
 

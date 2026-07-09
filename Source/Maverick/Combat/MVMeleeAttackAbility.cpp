@@ -1,6 +1,7 @@
 #include "Combat/MVMeleeAttackAbility.h"
 
 #include "Character/MVCharacterBase.h"
+#include "Collision/MVCollisionChannels.h"
 #include "Combat/MVHitResolverSubsystem.h"
 #include "Components/ActorComponent.h"
 #include "Components/MeshComponent.h"
@@ -15,6 +16,7 @@ DEFINE_LOG_CATEGORY_STATIC(LogMVMeleeAttackAbility, Log, All);
 UMVMeleeAttackAbility::UMVMeleeAttackAbility()
 {
 	TargetObjectChannels.Add(ECC_Pawn);
+	TargetObjectChannels.Add(MVCollisionChannels::AttackTarget);
 }
 
 void UMVMeleeAttackAbility::SetWeaponTraceSockets(
@@ -396,15 +398,32 @@ void UMVMeleeAttackAbility::BuildObjectQueryParams(
 	FCollisionObjectQueryParams& OutObjectQueryParams) const
 {
 	OutObjectQueryParams = FCollisionObjectQueryParams();
+	bool bIncludesAttackTargetChannel = false;
+	auto AddMeleeAttackObjectChannel = [&OutObjectQueryParams, &bIncludesAttackTargetChannel](
+		const ECollisionChannel Channel)
+	{
+		OutObjectQueryParams.AddObjectTypesToQuery(Channel);
+		if (Channel == MVCollisionChannels::AttackTarget)
+		{
+			bIncludesAttackTargetChannel = true;
+		}
+	};
+
 	if (TargetObjectChannels.IsEmpty())
 	{
-		OutObjectQueryParams.AddObjectTypesToQuery(ECC_Pawn);
+		AddMeleeAttackObjectChannel(ECC_Pawn);
+		AddMeleeAttackObjectChannel(MVCollisionChannels::AttackTarget);
 		return;
 	}
 
 	for (const TEnumAsByte<ECollisionChannel> Channel : TargetObjectChannels)
 	{
-		OutObjectQueryParams.AddObjectTypesToQuery(Channel.GetValue());
+		AddMeleeAttackObjectChannel(Channel.GetValue());
+	}
+
+	if (!bIncludesAttackTargetChannel)
+	{
+		AddMeleeAttackObjectChannel(MVCollisionChannels::AttackTarget);
 	}
 }
 
