@@ -52,7 +52,7 @@ public:
 	void UpdateBufferedDodgeMovementInput(const FVector& MovementInputDirection);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Action|Dodge|Chooser")
-	FSoftObjectPath DodgeChooserTable = TEXT("/Game/Table/Dodge/CHT_Dodge.CHT_Dodge");
+	FSoftObjectPath DodgeChooserTable = TEXT("/Game/Table/Dodge/Player/CHT_Dodge_Player.CHT_Dodge_Player");
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Action|Dodge|Chooser")
 	bool bUseNamingConventionWhenChooserUnavailable = true;

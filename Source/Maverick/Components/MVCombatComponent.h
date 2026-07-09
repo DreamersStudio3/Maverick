@@ -446,10 +446,10 @@ public:
 	FName HeavyChargeStartSection = TEXT("LeadIn");
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Chooser")
-	FSoftObjectPath AttackChooserTable = TEXT("/Game/Table/Weapons/ActionTables/CHT_PlayerAttack.CHT_PlayerAttack");
+	FSoftObjectPath AttackChooserTable = TEXT("/Game/Table/Attack/Player/CHT_Attack_Player.CHT_Attack_Player");
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Chooser")
-	FSoftObjectPath FallbackAttackActionTable = TEXT("/Game/Table/Weapons/ActionTables/Yone_Attack.Yone_Attack");
+	FSoftObjectPath FallbackAttackActionTable = TEXT("/Game/Table/Weapons/Player/Yone_Attack.Yone_Attack");
 
 	UPROPERTY(Transient)
 	TObjectPtr<UMVAbilityBase> PreviousAbilityInstance;
