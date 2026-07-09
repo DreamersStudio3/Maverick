@@ -85,6 +85,23 @@ void UMVAbilityBase::EndAbility_Implementation()
 	}
 }
 
+void UMVAbilityBase::EnsureAbilityEnded()
+{
+	if (!bAbilityActive)
+	{
+		return;
+	}
+
+	UE_LOG(
+		LogMVAbilityBase,
+		Warning,
+		TEXT("AbilityLifecycleTrace: EndAbility dispatch left ability active. Ability=%s Owner=%s. Forcing native end cleanup."),
+		*GetNameSafe(this),
+		*GetNameSafe(GetOwnerCharacter()));
+
+	EndAbility_Implementation();
+}
+
 bool UMVAbilityBase::TryConsumeAbilityCost()
 {
 	const float StaminaCost = FMath::Max(0.0f, AbilityData.StaminaCost);
