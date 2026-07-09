@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "GameplayTagContainer.h"
+#include "Interface/MVFinisherTargetDataInterface.h"
+#include "Interface/MVActionInputHandlerInterface.h"
 
 #include "MVFinisherComponent.generated.h"
 
@@ -37,6 +39,8 @@ public:
 	}
 };
 
+
+
 USTRUCT(BlueprintType)
 struct FMVFinisherChooserOutput
 {
@@ -58,10 +62,10 @@ public:
 	}
 };
 
-
+class UMVAbilityBase;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class MAVERICK_API UMVFinisherComponent : public UActorComponent
+class MAVERICK_API UMVFinisherComponent : public UActorComponent, public IMVFinisherTargetDataInterface, public IMVActionInputHandlerInterface
 {
 	GENERATED_BODY()
 
@@ -72,15 +76,23 @@ public:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	// Handle Input
+	virtual bool TryHandleActionInput(FGameplayTag ActionInputTag, FVector2D ControllerSpaceInput, bool bHasMovementInput) override;
+
 	// Public API
 public:
 	UFUNCTION(BlueprintCallable, Category = "Public API")
 	bool TryFinisherMove();
+
+	// Interface Implementation
+public:
+	virtual AActor* GetTargetActor_Implementation() override;
 
 	// Public Properties
 public:
@@ -93,6 +105,9 @@ public:
 	// Victim's DataTable Column Struct is FMVActionRow
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	FSoftObjectPath VictimChooserTable = TEXT("");
+
+	UPROPERTY(BlueprintReadOnly, Category = "Data")
+	TObjectPtr<UMVAbilityBase> AbilityInstance;
 
 private:
 	bool CanFinisherMove(AActor*& OutHitActor) const;
@@ -111,6 +126,18 @@ private:
 	// Send Animation Data To Attacker and Victim
 	bool SendAnimation(AActor* HitActor, const FDataTableRowHandle& AttackerRowHandle, const FDataTableRowHandle& VictimRowHandle);
 
+
+	void SetAttackData(const FDataTableRowHandle& AttackDataRowHandle);
+	void ClearAttackData();
+
+	void ResetTargetGroggy();
+
+private:
+	UPROPERTY()
+	FDataTableRowHandle AttackData;
+
+	UPROPERTY()
+	TWeakObjectPtr<AActor> TargetActor;
 };
 
 

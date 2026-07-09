@@ -12,13 +12,16 @@
 #include "Components/MVWeaponComponent.h"
 #include "MotionWarpingComponent.h"
 #include "Components/MVActionComponent.h"
+#include "Combat/MVAbilityBase.h"
+#include "Tags/MVGameplayTags.h"
+#include "Components/MVInputManagerComponent.h"
 
 // Sets default values for this component's properties
 UMVFinisherComponent::UMVFinisherComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 
 	// ...
 }
@@ -31,6 +34,30 @@ void UMVFinisherComponent::BeginPlay()
 
 	// ...
 	
+	AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
+	if (!OwnerCharacter)
+	{
+		return;
+	}
+
+	if (UMVInputManagerComponent* InputManager = OwnerCharacter->InputManagerComponent)
+	{
+		InputManager->RegisterActionInputHandler(this, MVActionInputHandlerPriorities::Finisher);
+	}
+
+}
+
+void UMVFinisherComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	if (const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner()))
+	{
+		if (UMVInputManagerComponent* InputManager = OwnerCharacter->InputManagerComponent)
+		{
+			InputManager->UnregisterActionInputHandler(this);
+		}
+	}
+
+	Super::EndPlay(EndPlayReason);
 }
 
 
@@ -42,6 +69,16 @@ void UMVFinisherComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 	// ...
 }
 
+bool UMVFinisherComponent::TryHandleActionInput(FGameplayTag ActionInputTag, FVector2D ControllerSpaceInput, bool bHasMovementInput)
+{
+	if (ActionInputTag.MatchesTagExact(MVGameplayTags::Action_Input_LightAttack))
+	{
+		return TryFinisherMove();
+	}
+
+	return false;
+}
+
 bool UMVFinisherComponent::TryFinisherMove()
 {
 	AActor* HitActor = nullptr;
@@ -51,6 +88,8 @@ bool UMVFinisherComponent::TryFinisherMove()
 	{
 		return false;
 	}
+
+	ClearAttackData();
 
 	// Find Animation
 	FDataTableRowHandle AttackerRowHandle;
@@ -72,7 +111,23 @@ bool UMVFinisherComponent::TryFinisherMove()
 		return false;
 	}
 
+	SetAttackData(AttackerRowHandle);
+
+	// Store Target Actor
+	TargetActor = HitActor;
+
+	ResetTargetGroggy();
+
 	return true;
+}
+
+AActor* UMVFinisherComponent::GetTargetActor_Implementation()
+{
+	if (TargetActor.IsValid())
+	{
+		return TargetActor.Get();
+	}
+	return nullptr;
 }
 
 bool UMVFinisherComponent::CanFinisherMove(AActor*& OutHitActor) const
@@ -83,10 +138,10 @@ bool UMVFinisherComponent::CanFinisherMove(AActor*& OutHitActor) const
 	}
 	
 	// Check if the actor is groggy
-	//if(!CheckThisActorGroggy(OutHitActor))
-	//{
-	//	return false;
-	//}
+	if(!CheckThisActorGroggy(OutHitActor))
+	{
+		return false;
+	}
 	
 	// Check if the actor is within distance and direction
 	
@@ -371,5 +426,70 @@ bool UMVFinisherComponent::SendAnimation(AActor* HitActor, const FDataTableRowHa
 	ActionComp->TryTransitionActionFromRowHandle(VictimRowHandle);
 
 	return true;
+}
+
+void UMVFinisherComponent::SetAttackData(const FDataTableRowHandle& AttackDataRowHandle)
+{
+	AttackData = AttackDataRowHandle;
+
+	const UDataTable* DataTable = AttackData.DataTable;
+	const FName RowName = AttackData.RowName;
+
+	FMVSkillDataTableColumn* RowData =
+		AttackDataRowHandle.DataTable->FindRow<FMVSkillDataTableColumn>(RowName, TEXT("BuildFinisherAttackData"));
+	if (!RowData || !RowData->AbilityReference)
+	{
+		return;
+	}
+
+	// Create ability instance
+	AbilityInstance = NewObject<UMVAbilityBase>(this, RowData->AbilityReference);
+	if (AbilityInstance)
+	{
+		AbilityInstance->SetOwner(this);
+		AbilityInstance->InitAbility(*RowData);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("MVFinisherComponent::SetAttackData - Failed to create ability '%s'"), *RowName.ToString());
+		return;
+	}
+
+
+	return;
+}
+
+void UMVFinisherComponent::ClearAttackData()
+{
+	AttackData = FDataTableRowHandle();
+	if (AbilityInstance)
+	{
+		AbilityInstance->MarkAsGarbage();
+	}
+	AbilityInstance = nullptr;
+	TargetActor = nullptr;
+}
+
+void UMVFinisherComponent::ResetTargetGroggy()
+{
+	if (!TargetActor.Get())
+	{
+		return;
+	}
+	
+	AMVCharacterBase* TargetCharacter = Cast<AMVCharacterBase>(TargetActor);
+	if (!TargetCharacter)
+	{
+		return;
+	}
+
+	UMVStatComponent* TargetStatComp = TargetCharacter->FindComponentByClass<UMVStatComponent>();
+	if (!TargetStatComp)
+	{
+		return;
+	}
+
+	TargetStatComp->SetCurrentGroggy(0);
+
 }
 
