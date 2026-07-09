@@ -135,7 +135,8 @@ bool UMVActionComponent::TryStartResolvedAction(
 		return false;
 	}
 
-	if (IsActionRunning())
+	//if (IsActionRunning())
+	if(!CanInterruptActiveAction())
 	{
 		return false;
 	}
