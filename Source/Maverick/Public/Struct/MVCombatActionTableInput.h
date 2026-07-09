@@ -21,10 +21,34 @@ struct FMVCombatActionTableInput
 
 	}
 
+	void SetActionType(const FGameplayTag NewActionType)
+	{
+		ActionType = NewActionType;
+		ActionTypeTags.Reset();
+		if (ActionType.IsValid())
+		{
+			ActionTypeTags.AddTag(ActionType);
+		}
+	}
+
+	void RefreshActionTypeTags()
+	{
+		if (!ActionType.IsValid())
+		{
+			return;
+		}
+
+		ActionTypeTags.Reset();
+		ActionTypeTags.AddTag(ActionType);
+	}
+
 	UPROPERTY(BlueprintReadWrite)
 	EMVEquippedStyle CurrentWeaponStyle;
 
 	UPROPERTY(BlueprintReadWrite, meta = (Categories = "Action.Combat"))
 	FGameplayTag ActionType;
+
+	UPROPERTY(BlueprintReadWrite, meta = (Categories = "Action.Combat"))
+	FGameplayTagContainer ActionTypeTags;
 
 };

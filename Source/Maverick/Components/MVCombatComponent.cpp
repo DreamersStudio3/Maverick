@@ -723,7 +723,7 @@ void UMVCombatComponent::ResetBasicAttackMap()
 
 	for (EMVCombatActionTypes Types : TypeArray)
 	{
-		ChooserInput.ActionType = MakeActionTypeGameplayTag(Types);
+		ChooserInput.SetActionType(MakeActionTypeGameplayTag(Types));
 		const FName ActionMapKey = MakeActionTypeMapKey(Types);
 
 		FDataTableRowHandle StartingRowHandle;
@@ -781,7 +781,7 @@ void UMVCombatComponent::ResetSkillMap()
 	bool DataTableSearchResult = false;
 	FMVCombatActionTableInput ChooserInput;
 	ChooserInput.CurrentWeaponStyle = CurrentWeaponStyle;
-	ChooserInput.ActionType = MakeActionTypeGameplayTag(EMVCombatActionTypes::Skill);
+	ChooserInput.SetActionType(MakeActionTypeGameplayTag(EMVCombatActionTypes::Skill));
 
 	// Find DataTable using ChooserTable input
 	UDataTable* CurrentDT = GetDataTableFromChooserTable(ChooserInput, DataTableSearchResult);
@@ -994,7 +994,9 @@ bool UMVCombatComponent::GetActionRowHandleFromChooserTable(
 	}
 
 	FMVCombatActionTableInput MutableChooserInput = ChooserInput;
-	FGameplayTag ActionTypeTag = ChooserInput.ActionType;
+	MutableChooserInput.RefreshActionTypeTags();
+	FGameplayTag ActionTypeTag = MutableChooserInput.ActionType;
+	FGameplayTagContainer ActionTypeTags = MutableChooserInput.ActionTypeTags;
 	FMVAttackActionRowHandle ChooserAttackActionRowHandle;
 	ChooserAttackActionRowHandle.Reset();
 
@@ -1002,6 +1004,7 @@ bool UMVCombatComponent::GetActionRowHandleFromChooserTable(
 	ChooserContext.AddStructParam(MutableChooserInput);
 	ChooserContext.AddStructParam(ChooserAttackActionRowHandle);
 	ChooserContext.AddStructParam(ActionTypeTag);
+	ChooserContext.AddStructParam(ActionTypeTags);
 
 	TSoftObjectPtr<UObject> SelectedObject;
 	UChooserTable::EvaluateChooser(
