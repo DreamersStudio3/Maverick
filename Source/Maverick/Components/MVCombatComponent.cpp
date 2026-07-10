@@ -291,12 +291,18 @@ bool UMVCombatComponent::TryCombatAction(
 			if (bStarted)
 			{
 				MarkContextualBasicAttackStarted(ResolvedActionType);
+				BroadcastCombatActionStarted(ResolvedActionType, ResolvedActionIndex);
 			}
 			return bStarted;
 		}
 		else if (ResolvedActionType == EMVCombatActionTypes::Skill)
 		{
-			return TrySkill(ResolvedActionType, ResolvedActionIndex, StartSection);
+			const bool bStarted = TrySkill(ResolvedActionType, ResolvedActionIndex, StartSection);
+			if (bStarted)
+			{
+				BroadcastCombatActionStarted(ResolvedActionType, ResolvedActionIndex);
+			}
+			return bStarted;
 		}
 
 		// Other Actions --> If Other action should concern, add logic
@@ -1842,6 +1848,26 @@ void UMVCombatComponent::MarkContextualBasicAttackStarted(const EMVCombatActionT
 		ConsumedDodgeContextActionInstanceId = PendingDodgeContextActionInstanceId;
 		PendingDodgeContextActionInstanceId = INDEX_NONE;
 	}
+}
+
+void UMVCombatComponent::BroadcastCombatActionStarted(
+	const EMVCombatActionTypes ActionType,
+	const int32 ActionIndex)
+{
+	FMVCombatActionEvent Event;
+	Event.Instigator = GetOwner();
+	Event.ActionType = ActionType;
+	Event.ActionIndex = ActionIndex;
+
+	const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
+	const UMVActionComponent* ActionComponent = OwnerCharacter ? OwnerCharacter->ActionComponent : nullptr;
+	if (ActionComponent)
+	{
+		Event.ActionTableName = ActionComponent->GetActiveActionTableName();
+		Event.ActionRowName = ActionComponent->GetActiveActionRowName();
+	}
+
+	OnCombatActionStarted.Broadcast(Event);
 }
 
 void UMVCombatComponent::UpdateContextualBasicAttackResets()

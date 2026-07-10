@@ -14,7 +14,6 @@
 
 class UMVAbilityBase;
 
-
 USTRUCT(BlueprintType)
 struct FMVSkillActionStruct
 {
@@ -31,6 +30,29 @@ public:
 	FName RowName;
 
 };
+
+USTRUCT(BlueprintType)
+struct FMVCombatActionEvent
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Combat|Event")
+	TObjectPtr<AActor> Instigator = nullptr;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Combat|Event")
+	EMVCombatActionTypes ActionType = EMVCombatActionTypes::None;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Combat|Event")
+	int32 ActionIndex = 0;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Combat|Event")
+	FName ActionTableName = NAME_None;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Combat|Event")
+	FName ActionRowName = NAME_None;
+};
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnCombatActionEvent, const FMVCombatActionEvent&, Event);
 
 USTRUCT(BlueprintType)
 struct FMVSkillEntry
@@ -326,6 +348,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Combat|Weapon")
 	void ChangeWeapon(EMVEquippedStyle NewStyle);
 
+	UPROPERTY(BlueprintAssignable, Category = "Maverick|Combat|Event")
+	FMVOnCombatActionEvent OnCombatActionStarted;
+
 protected:
 	virtual bool TryHandleActionInput(FGameplayTag ActionInputTag, FVector2D ControllerSpaceInput, bool bHasMovementInput) override;
 	virtual bool TryHandleHoldActionInput(
@@ -411,6 +436,7 @@ private:
 	void ResetHeavyChargeAttackState();
 	EMVCombatActionTypes ResolveContextualBasicAttackActionType(EMVCombatActionTypes RequestedActionType);
 	void MarkContextualBasicAttackStarted(EMVCombatActionTypes StartedActionType);
+	void BroadcastCombatActionStarted(EMVCombatActionTypes ActionType, int32 ActionIndex);
 	void UpdateContextualBasicAttackResets();
 	int32 GetDodgeAttackContextInstanceId() const;
 	bool IsDodgeAttackContext() const;
