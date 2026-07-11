@@ -113,6 +113,8 @@ public:
 	EGait PreviousGait;
 	UPROPERTY(BlueprintReadOnly, Category = "AnimBPData_CharacterState")
 	uint8 bGaitChanged : 1;
+	UPROPERTY(BlueprintReadOnly, Category = "AnimBPData_CharacterState")
+	uint8 bActionRunning : 1;
 
 	// Pivot Data
 public:
