@@ -1,5 +1,4 @@
 {
     "CharacterIndex": "CharacterIndexCode",
-    "CharacterStat": "CharacterIndexCode",
-    "GameGuide": "GuideId"
+    "CharacterStat": "CharacterIndexCode"
 }
