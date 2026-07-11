@@ -53,6 +53,7 @@ public:
 	FMVHitLaunchData GetHitLaunchData() const;
 	virtual FMVHitLaunchData GetHitLaunchData_Implementation() const;
 
+	// Ability에 설정한 Launch 값을 HitRequest에 복사한다. HitReaction row에서 bUseLaunch를 켜면 이 값으로 밀림이 걸린다.
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Ability|Hit")
 	void ApplyHitLaunchDataToResolveRequest(UPARAM(ref) FMVHitResolveRequest& Request) const;
 
@@ -68,6 +69,7 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	FMVSkillDataTableColumn AbilityData;
 
+	// Ability별 기본 Launch 값. Distance는 총 목표거리라 500, Duration 3을 넣으면 초당 약 166.7cm씩 밀리고, VerticalSpeed가 있으면 위로도 뜬다.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Launch")
 	FMVHitLaunchData HitLaunchData;
 

@@ -262,7 +262,7 @@ void UMVPIEActionTestWidget::ExecuteTestByIndex(const int32 TestIndex)
 	Request.HitReactionType = Spec.HitReactionType;
 	Request.GroggyDamageMultiplier = PIEActionTestMakeDamageMultiplier(Spec.GroggyDamage, TestAttackPower);
 	Request.HitLocation = Target->GetActorLocation();
-	Request.HitDirection = Target->GetActorLocation() - Attacker->GetActorLocation();
+	Request.ImpactNormal = Attacker->GetActorLocation() - Target->GetActorLocation();
 
 	FMVResolvedHitData HitData;
 	const bool bHandled = HitResolver->ResolveAttackHit(Request, HitData);

@@ -9,32 +9,35 @@
 class AMVCharacterBase;
 
 /**
- * 공격 Ability가 HitResolver에 넘길 피격 Launch 수치 묶음.
+ * 공격 Ability마다 정하는 피격 밀림 값.
  *
- * HitReaction row는 Launch 적용 여부만 결정하고, 실제 밀림 세기와 수직 속도는 공격별 Ability 데이터가 제공한다.
+ * HitReaction row에서 Launch 사용을 켜두면 이 값으로 실제 밀림이 걸린다.
+ * Distance는 초당 거리가 아니라 총 목표거리다. Distance를 Duration으로 나누면 가로 속도가 나오고,
+ * VerticalSpeed를 넣으면 위로 뜨는 힘도 같이 들어간다.
  */
 USTRUCT(BlueprintType)
 struct MAVERICK_API FMVHitLaunchData
 {
 	GENERATED_BODY()
 
+	// 가로로 밀어낼 총 목표거리. Distance 500, Duration 3이면 500/3이라 초당 약 166.7cm씩 밀린다.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Hit|Launch", meta = (ClampMin = "0.0", Units = "cm", ForceUnits = "cm"))
 	float LaunchDistance = 0.0f;
 
+	// 가로 밀림을 유지할 시간. 0으로 두면 Distance를 넣어도 가로 Launch는 거의 걸리지 않는다.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Hit|Launch", meta = (ClampMin = "0.0", Units = "s"))
 	float LaunchDuration = 0.0f;
 
-	// LaunchCharacter에 그대로 들어가는 Unreal 속도값이다. Details 패널에서도 cm/s로 고정해 m/s 자동 변환을 피한다.
+	// 위로 띄우는 속도. cm/s 값 그대로 LaunchCharacter에 들어가고, Duration이 끝나면 상승 속도를 끊어 낙하로 넘긴다.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Hit|Launch", meta = (Units = "cm/s", ForceUnits = "cm/s"))
 	float LaunchVerticalSpeed = 0.0f;
 };
 
 /**
- * 충돌 필터링 이후 HitResolver에 전달되는 원본 타격 요청.
+ * 충돌 필터링 이후 HitResolver에 넘기는 원본 타격 요청.
  *
- * 충돌 컴포넌트는 이미 자기 자신 제외, 액션 1회당 중복 타격 제한 같은 후보 필터링을 끝낸 뒤
- * 공격자/피격자와 AbilityData에서 확정된 피해 배율을 넘긴다. HitResolver는 공격자의
- * WeaponComponent에서 타격 순간의 무기 스냅샷을 캡처한다.
+ * 공격자, 피격자, 대미지 계수, 피격 타입을 채운 뒤 HitResult의 ImpactPoint/ImpactNormal을 같이 넘긴다.
+ * 방향은 HitResolver가 공격자 위치에서 피격자 위치로 계산한다. Ability마다 HitDirection을 따로 만들지 않아도 된다.
  */
 USTRUCT(BlueprintType)
 struct MAVERICK_API FMVHitResolveRequest
@@ -59,20 +62,20 @@ struct MAVERICK_API FMVHitResolveRequest
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Hit|Launch")
 	FMVHitLaunchData HitLaunchData;
 
-	// 피격 VFX/문맥용 위치다. HitReaction Launch의 시작점으로는 사용하지 않는다.
+	// HitResult.ImpactPoint에 해당하는 실제 충돌 지점. 방향 계산에는 끼지 않고, VFX나 디버그에서 어디를 맞았는지 보려고 남겨둔다.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Hit|Context", meta = (Units = "cm", ForceUnits = "cm"))
 	FVector HitLocation = FVector::ZeroVector;
 
-	// 피격자를 밀어낼 월드 방향이다. HitReactionComponent는 피격자의 현재 위치에서 이 방향으로 Launch한다.
+	// HitResult.ImpactNormal에 해당하는 표면 노멀. Launch 방향을 흔들지는 않고, 충돌 표면 문맥이 필요할 때 참고한다.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Hit|Context")
-	FVector HitDirection = FVector::ZeroVector;
+	FVector ImpactNormal = FVector::ZeroVector;
 };
 
 /**
- * 충돌 후보 필터링 이후 HitResolver가 계산해 피격자에게 전달하는 피해 결과.
+ * HitResolver가 계산해 피격자에게 넘기는 최종 타격 결과.
  *
- * 충돌 컴포넌트는 공격자, 피격자와 확정된 공격 계수를 넘기고, 이 구조체는 HitResolver가 공격자/피격자
- * 스탯, 계수, 무기 스냅샷을 조합해 만든 HP 피해량, 피격 반응 유형, 후속 컴포넌트가 참고할 문맥을 담는다.
+ * 무기 스냅샷, 스탯, 대미지 계수, 충돌 정보를 조합해 채운다.
+ * HitReactionComponent는 여기 들어있는 HitDirection을 그대로 Launch와 방향 선택에 사용한다.
  */
 USTRUCT(BlueprintType)
 struct MAVERICK_API FMVResolvedHitData
@@ -97,7 +100,7 @@ struct MAVERICK_API FMVResolvedHitData
 	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Hit|Weapon")
 	FMVWeaponHitSnapshot WeaponSnapshot;
 
-	// 기존 BP/디버그 경로 호환용으로 보관하는 스냅샷 공격력의 평탄화 값이다.
+	// 기존 BP/디버그 경로 호환용으로 남겨둔 스냅샷 공격력의 평탄화 값.
 	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Hit|Damage")
 	float WeaponAttackPower = 0.0f;
 
@@ -122,17 +125,21 @@ struct MAVERICK_API FMVResolvedHitData
 	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Hit|Launch")
 	FMVHitLaunchData HitLaunchData;
 
-	// 피격 VFX/문맥용 위치다. HitReaction Launch의 시작점으로는 사용하지 않는다.
+	// 요청에서 넘어온 충돌 지점. 후속 연출이나 로그에서 다시 확인할 수 있게 남겨둔다.
 	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Hit|Context", meta = (Units = "cm", ForceUnits = "cm"))
 	FVector HitLocation = FVector::ZeroVector;
 
-	// 피격자를 밀어낼 월드 방향이다. HitReactionComponent는 피격자의 현재 위치에서 이 방향으로 Launch한다.
+	// 요청에서 넘어온 표면 노멀. 디버그와 후속 연출 문맥에서 다시 참고할 수 있게 남겨둔다.
+	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Hit|Context")
+	FVector ImpactNormal = FVector::ZeroVector;
+
+	// HitResolver가 확정한 월드 밀림 방향. 피격자 위치에서 공격자 위치를 뺀 값이라 Actor forward와 상관없이 같은 방향을 쓴다.
 	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Hit|Context")
 	FVector HitDirection = FVector::ZeroVector;
 };
 
 /**
- * 충돌 컴포넌트가 HitResolver에 추가로 넘길 수 있는 선택 문맥.
+ * 충돌 컴포넌트가 HitResolver에 덧붙일 수 있는 충돌 문맥.
  */
 USTRUCT(BlueprintType)
 struct MAVERICK_API FMVHitResolveContext
@@ -143,7 +150,7 @@ struct MAVERICK_API FMVHitResolveContext
 	FVector HitLocation = FVector::ZeroVector;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Hit|Context")
-	FVector HitDirection = FVector::ZeroVector;
+	FVector ImpactNormal = FVector::ZeroVector;
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnHitResolvedSignature, const FMVResolvedHitData&, HitData);

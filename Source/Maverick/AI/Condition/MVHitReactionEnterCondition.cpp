@@ -26,6 +26,7 @@ bool HitReactionEnterIsStateTreeHandledType(const EMVActionHitReactionType HitRe
 {
 	switch (HitReactionType)
 	{
+	case EMVActionHitReactionType::Flinch:
 	case EMVActionHitReactionType::Stagger:
 	case EMVActionHitReactionType::Knockback:
 	case EMVActionHitReactionType::KnockDown:
@@ -33,7 +34,6 @@ bool HitReactionEnterIsStateTreeHandledType(const EMVActionHitReactionType HitRe
 	case EMVActionHitReactionType::Groggy:
 		return true;
 	case EMVActionHitReactionType::None:
-	case EMVActionHitReactionType::Flinch:
 	default:
 		return false;
 	}

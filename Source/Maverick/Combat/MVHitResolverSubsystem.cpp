@@ -8,6 +8,26 @@
 
 namespace
 {
+bool MVHitResolverTryNormalize2D(const FVector& Direction, FVector& OutDirection)
+{
+	const FVector Direction2D(Direction.X, Direction.Y, 0.0f);
+	if (Direction2D.IsNearlyZero())
+	{
+		return false;
+	}
+
+	OutDirection = Direction2D.GetSafeNormal2D();
+	return true;
+}
+
+bool MVHitResolverTryResolveAttackerToVictimDirection(
+	const AMVCharacterBase& Attacker,
+	const AMVCharacterBase& Victim,
+	FVector& OutDirection)
+{
+	return MVHitResolverTryNormalize2D(Victim.GetActorLocation() - Attacker.GetActorLocation(), OutDirection);
+}
+
 void MVHitResolverLogHitLaunchTrace(
 	const TCHAR* Stage,
 	const FMVHitResolveRequest& Request,
@@ -16,10 +36,13 @@ void MVHitResolverLogHitLaunchTrace(
 	const FMVHitLaunchData& LaunchData = ResolvedHitData
 		? ResolvedHitData->HitLaunchData
 		: Request.HitLaunchData;
+	const FString HitDirectionText = ResolvedHitData
+		? ResolvedHitData->HitDirection.ToString()
+		: TEXT("<pending>");
 	UE_LOG(
 		LogTemp,
 		Log,
-		TEXT("HitLaunchTrace Frame=%llu Stage=%s Attacker=%s Victim=%s HitReactionType=%d Distance=%.2f Duration=%.3f VerticalSpeed=%.2f HitDirection=%s"),
+		TEXT("HitLaunchTrace Frame=%llu Stage=%s Attacker=%s Victim=%s HitReactionType=%d Distance=%.2f Duration=%.3f VerticalSpeed=%.2f HitLocation=%s ImpactNormal=%s HitDirection=%s"),
 		static_cast<unsigned long long>(GFrameCounter),
 		Stage,
 		*GetNameSafe(Request.Attacker.Get()),
@@ -28,7 +51,9 @@ void MVHitResolverLogHitLaunchTrace(
 		LaunchData.LaunchDistance,
 		LaunchData.LaunchDuration,
 		LaunchData.LaunchVerticalSpeed,
-		*(ResolvedHitData ? ResolvedHitData->HitDirection.ToString() : Request.HitDirection.ToString()));
+		*(ResolvedHitData ? ResolvedHitData->HitLocation.ToString() : Request.HitLocation.ToString()),
+		*(ResolvedHitData ? ResolvedHitData->ImpactNormal.ToString() : Request.ImpactNormal.ToString()),
+		*HitDirectionText);
 }
 
 bool MVHitResolverShouldLogAirborneTrace(
@@ -54,14 +79,20 @@ void MVHitResolverLogAirborneTrace(
 		: Request.HitLaunchData;
 	const AMVCharacterBase* Attacker = Request.Attacker.Get();
 	const AMVCharacterBase* Victim = Request.Victim.Get();
-	const FVector& HitDirection = ResolvedHitData
-		? ResolvedHitData->HitDirection
-		: Request.HitDirection;
+	const FString HitDirectionText = ResolvedHitData
+		? ResolvedHitData->HitDirection.ToString()
+		: TEXT("<pending>");
+	const FVector& HitLocation = ResolvedHitData
+		? ResolvedHitData->HitLocation
+		: Request.HitLocation;
+	const FVector& ImpactNormal = ResolvedHitData
+		? ResolvedHitData->ImpactNormal
+		: Request.ImpactNormal;
 
 	UE_LOG(
 		LogTemp,
 		Warning,
-		TEXT("AirborneTrace Frame=%llu Stage=%s Attacker=%s Victim=%s bAttackerValid=%s bVictimValid=%s bSelfHit=%s RequestType=%d ResolvedType=%d Distance=%.2f Duration=%.3f VerticalSpeed=%.2f HitDirection=%s"),
+		TEXT("AirborneTrace Frame=%llu Stage=%s Attacker=%s Victim=%s bAttackerValid=%s bVictimValid=%s bSelfHit=%s RequestType=%d ResolvedType=%d Distance=%.2f Duration=%.3f VerticalSpeed=%.2f HitLocation=%s ImpactNormal=%s HitDirection=%s"),
 		static_cast<unsigned long long>(GFrameCounter),
 		Stage,
 		*GetNameSafe(Attacker),
@@ -74,7 +105,9 @@ void MVHitResolverLogAirborneTrace(
 		LaunchData.LaunchDistance,
 		LaunchData.LaunchDuration,
 		LaunchData.LaunchVerticalSpeed,
-		*HitDirection.ToString());
+		*HitLocation.ToString(),
+		*ImpactNormal.ToString(),
+		*HitDirectionText);
 }
 }
 
@@ -161,9 +194,10 @@ bool UMVHitResolverSubsystem::BuildResolvedHitData(
 	OutHitData.HitReactionType = Request.HitReactionType;
 	OutHitData.HitLaunchData = Request.HitLaunchData;
 	OutHitData.HitLocation = Request.HitLocation;
-	OutHitData.HitDirection = Request.HitDirection.IsNearlyZero()
-		? ResolveHitDirection(*Attacker, *Victim)
-		: Request.HitDirection.GetSafeNormal();
+	OutHitData.ImpactNormal = Request.ImpactNormal.IsNearlyZero()
+		? FVector::ZeroVector
+		: Request.ImpactNormal.GetSafeNormal();
+	OutHitData.HitDirection = ResolveHitDirection(Request, *Attacker, *Victim);
 
 	if (const UMVHitReactionComponent* HitReactionComponent = Victim->FindComponentByClass<UMVHitReactionComponent>();
 		HitReactionComponent && HitReactionComponent->CanTriggerGroggy(OutHitData))
@@ -198,9 +232,25 @@ float UMVHitResolverSubsystem::ResolveNonNegativeStat(const float Value)
 }
 
 FVector UMVHitResolverSubsystem::ResolveHitDirection(
+	const FMVHitResolveRequest& Request,
 	const AMVCharacterBase& Attacker,
 	const AMVCharacterBase& Victim)
 {
-	const FVector Direction = Victim.GetActorLocation() - Attacker.GetActorLocation();
-	return Direction.IsNearlyZero() ? FVector::ZeroVector : Direction.GetSafeNormal();
+	FVector Direction = FVector::ZeroVector;
+	const bool bHasAttackerToVictimDirection = MVHitResolverTryResolveAttackerToVictimDirection(Attacker, Victim, Direction);
+
+	UE_LOG(
+		LogTemp,
+		Log,
+		TEXT("HitDirectionTrace Frame=%llu Stage=ResolverResolveDirection Source=%s Attacker=%s Victim=%s AttackerLocation=%s VictimLocation=%s HitLocation=%s ImpactNormal=%s Result=%s"),
+		static_cast<unsigned long long>(GFrameCounter),
+		bHasAttackerToVictimDirection ? TEXT("AttackerToVictim") : TEXT("None"),
+		*GetNameSafe(&Attacker),
+		*GetNameSafe(&Victim),
+		*Attacker.GetActorLocation().ToString(),
+		*Victim.GetActorLocation().ToString(),
+		*Request.HitLocation.ToString(),
+		*Request.ImpactNormal.ToString(),
+		*Direction.ToString());
+	return Direction;
 }
