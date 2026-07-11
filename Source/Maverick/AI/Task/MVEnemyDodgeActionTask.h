@@ -4,6 +4,8 @@
 #include "Engine/DataTable.h"
 #include "StateTreeTaskBase.h"
 #include "Struct/MVAIDodgeTypes.h"
+#include "Tables/MVMovementActionTableTypes.h"
+#include "UObject/SoftObjectPath.h"
 #include "MVEnemyDodgeActionTask.generated.h"
 
 class APawn;
@@ -22,6 +24,12 @@ struct FMVEnemyDodgeActionTaskInstanceData
 
 	UPROPERTY(EditAnywhere, Category = "Input|Dodge")
 	EMVActionInputDirection DefaultDirection = EMVActionInputDirection::Back;
+
+	UPROPERTY(EditAnywhere, Category = "Input|Chooser")
+	FSoftObjectPath DodgeChooserTable = TEXT("/Game/Table/Dodge/NPC/E1/CHT_Dodge_E1.CHT_Dodge_E1");
+
+	UPROPERTY(EditAnywhere, Category = "Input|Chooser")
+	FMVDodgeActionRowHandle FallbackDodgeActionRow;
 
 	UPROPERTY(EditAnywhere, Category = "Input|Dodge")
 	FDataTableRowHandle ForwardDodgeActionRow;
@@ -59,6 +67,12 @@ struct FMVEnemyDodgeActionTaskInstanceData
 	UPROPERTY(VisibleAnywhere, Category = "Output")
 	EMVActionInputDirection ResolvedDirection = EMVActionInputDirection::Back;
 
+	UPROPERTY(VisibleAnywhere, Category = "Output")
+	FMVDodgeActionRowHandle ResolvedDodgeActionRow;
+
+	UPROPERTY(VisibleAnywhere, Category = "Output")
+	FMVDodgeActionRowHandle ChooserDodgeActionRow;
+
 	UPROPERTY(Transient)
 	TObjectPtr<UMVActionComponent> ActionComponent = nullptr;
 
@@ -70,8 +84,9 @@ struct FMVEnemyDodgeActionTaskInstanceData
  * Executes an enemy dodge action selected from a StateTree dodge payload.
  *
  * The task does not decide whether dodging is tactically appropriate. It only
- * receives a requested direction, resolves the matching dodge action row, and
- * asks ActionComponent to run that row.
+ * receives a dodge request, lets the configured ChooserTable select the dodge
+ * action row, and asks ActionComponent to run that row. Direct direction row
+ * inputs remain as fallback for in-progress StateTree assets.
  */
 USTRUCT(meta = (DisplayName = "Enemy Dodge Action Task"))
 struct FMVEnemyDodgeActionTask : public FStateTreeTaskCommonBase

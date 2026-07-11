@@ -31,6 +31,7 @@ namespace MVGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Action_Combat_DodgeLightAttack, "Action.Combat.DodgeLightAttack");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Combat_DodgeHeavyAttack, "Action.Combat.DodgeHeavyAttack");
 	UE_DEFINE_GAMEPLAY_TAG(StateTreeEvent_Enemy_Hit, "StateTreeEvent.Enemy.Hit");
+	UE_DEFINE_GAMEPLAY_TAG(StateTreeEvent_Enemy_DodgeThreatDetected, "StateTreeEvent.Enemy.DodgeThreatDetected");
 	UE_DEFINE_GAMEPLAY_TAG(StateTreeEvent_Enemy_Groggy, "StateTreeEvent.Enemy.Groggy");
 	UE_DEFINE_GAMEPLAY_TAG(StateTreeEvent_Enemy_GroggyEnd, "StateTreeEvent.Enemy.GroggyEnd");
 }

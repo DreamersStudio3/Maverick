@@ -288,6 +288,14 @@ bool UMVCombatComponent::TryCombatAction(
 		if (IsBasicAttackActionType(ResolvedActionType))
 		{
 			const bool bStarted = TryBasicAttack(ResolvedActionType, ResolvedActionIndex, StartSection);
+			UE_LOG(
+				LogMVCombatComponent,
+				Warning,
+				TEXT("[CombatActionEventDebug] TryBasicAttack returned %s. Owner=%s ActionType=%s ActionIndex=%d"),
+				bStarted ? TEXT("true") : TEXT("false"),
+				*GetNameSafe(GetOwner()),
+				*MVCombatActionTypeToString(ResolvedActionType),
+				ResolvedActionIndex);
 			if (bStarted)
 			{
 				MarkContextualBasicAttackStarted(ResolvedActionType);
@@ -298,6 +306,14 @@ bool UMVCombatComponent::TryCombatAction(
 		else if (ResolvedActionType == EMVCombatActionTypes::Skill)
 		{
 			const bool bStarted = TrySkill(ResolvedActionType, ResolvedActionIndex, StartSection);
+			UE_LOG(
+				LogMVCombatComponent,
+				Warning,
+				TEXT("[CombatActionEventDebug] TrySkill returned %s. Owner=%s ActionType=%s ActionIndex=%d"),
+				bStarted ? TEXT("true") : TEXT("false"),
+				*GetNameSafe(GetOwner()),
+				*MVCombatActionTypeToString(ResolvedActionType),
+				ResolvedActionIndex);
 			if (bStarted)
 			{
 				BroadcastCombatActionStarted(ResolvedActionType, ResolvedActionIndex);
@@ -1866,6 +1882,17 @@ void UMVCombatComponent::BroadcastCombatActionStarted(
 		Event.ActionTableName = ActionComponent->GetActiveActionTableName();
 		Event.ActionRowName = ActionComponent->GetActiveActionRowName();
 	}
+
+	UE_LOG(
+		LogMVCombatComponent,
+		Warning,
+		TEXT("BroadcastCombatActionStarted: Owner=%s ActionType=%s ActionIndex=%d Table=%s Row=%s HasListeners=%s"),
+		*GetNameSafe(GetOwner()),
+		*MVCombatActionTypeToString(ActionType),
+		ActionIndex,
+		*Event.ActionTableName.ToString(),
+		*Event.ActionRowName.ToString(),
+		OnCombatActionStarted.IsBound() ? TEXT("true") : TEXT("false"));
 
 	OnCombatActionStarted.Broadcast(Event);
 }
