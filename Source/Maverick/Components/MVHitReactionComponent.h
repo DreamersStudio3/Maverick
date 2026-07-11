@@ -11,12 +11,14 @@
 #include "Struct/MVHitTypes.h"
 #include "Tables/MVActionRowTableTypes.h"
 #include "Tables/MVHitReactionActionTableTypes.h"
+#include "TimerManager.h"
 #include "UObject/SoftObjectPath.h"
 #include "MVHitReactionComponent.generated.h"
 
 class AMVCharacterBase;
 class ACharacter;
 class UMVActionComponent;
+class UDataTable;
 
 UENUM(BlueprintType)
 enum class EMVHitReactionDirection : uint8
@@ -86,9 +88,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|HitReaction|Chooser")
 	bool bUseNamingConventionWhenChooserUnavailable = true;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|HitReaction|Table", meta = (ClampMin = "1"))
-	int32 DefaultHitReactionRowIndex = 1;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|HitReaction|Action")
 	bool bCancelActiveActionBeforeReaction = true;
 
@@ -100,9 +99,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|HitReaction|Recovery", meta = (ClampMin = "0.0"))
 	float RecoveryActionTransitionBlendOutTime = 0.2f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|HitReaction|Recovery", meta = (ClampMin = "1"))
-	int32 DefaultRecoveryRowIndex = 1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|HitReaction|Recovery")
 	EMVActionInputDirection DefaultEscapeDodgeDirection = EMVActionInputDirection::Back;
@@ -142,9 +138,19 @@ private:
 	void BindInputManagerHandlers();
 	void BindActionComponentHandlers();
 	virtual bool TryHandleActionInput(FGameplayTag ActionInputTag, FVector2D ControllerSpaceInput, bool bHasMovementInput) override;
+	virtual bool TryHandleHoldActionInput(
+		FGameplayTag ActionInputTag,
+		EMVActionInputPhase Phase,
+		float HeldSeconds,
+		FVector2D ControllerSpaceInput,
+		bool bHasMovementInput) override;
 	virtual bool TryHandleRecoveryWindowOpened() override;
 	bool GetActionData(const FMVResolvedHitData& HitData, FMVHitReactionActionData& OutActionData);
-	void ApplyHitReactionLaunch(const FMVResolvedHitData& HitData, const FMVHitReactionActionRow& ActionRow);
+	void SnapOwnerYawToHitDirectionForLaunch(const FMVResolvedHitData& HitData, bool bUseLaunch, EMVHitReactionDirection Direction, FName ActionRowName);
+	void ApplyHitReactionLaunch(const FMVResolvedHitData& HitData, bool bUseLaunch);
+	void ClearHitReactionLaunchWindow();
+	void FinishHitReactionLaunch(int32 LaunchSerial, bool bStopVerticalVelocity);
+	bool ShouldConsumeActionInputForActiveHitReaction() const;
 	bool TryConsumeBufferedRecoveryMovementInput();
 	bool TryConsumeRecoveryInput(FGameplayTag ActionInputTag, FVector2D ControllerSpaceInput, bool bHasMovementInput);
 	bool TryConsumeRecoveryMovementInput(FVector2D ControllerSpaceInput, bool bHasMovementInput);
@@ -177,16 +183,12 @@ private:
 		EMVHitReactionDirection Direction) const;
 	FName MakeHitReactionActionTableName(FGameplayTag CharacterIndexCode) const;
 	FName MakeHitReactionActionRowName(
-		FGameplayTag CharacterIndexCode,
 		EMVActionHitReactionType HitReactionType,
-		EMVHitReactionDirection Direction,
-		int32 Index) const;
-	FName MakeGetupRecoveryActionRowName(FGameplayTag CharacterIndexCode, EMVHitReactionDirection Direction, int32 Index) const;
+		EMVHitReactionDirection Direction) const;
+	FName MakeGetupRecoveryActionRowName(EMVHitReactionDirection Direction) const;
 	FName MakeEscapeDodgeRecoveryActionRowName(
-		FGameplayTag CharacterIndexCode,
 		EMVHitReactionDirection FallDirection,
-		EMVActionInputDirection EscapeDirection,
-		int32 Index) const;
+		EMVActionInputDirection EscapeDirection) const;
 	FGameplayTag ResolveCharacterIndexCode() const;
 	bool EvaluateHitReactionChooserActionRowHandle(FMVHitReactionActionRowHandle& OutActionRowHandle);
 	bool MakeHitReactionActionRowHandleFromNames(FName ActionTableName, FName ActionRowName, FMVHitReactionActionRowHandle& OutActionRowHandle) const;
@@ -215,10 +217,16 @@ private:
 	UPROPERTY(Transient)
 	TObjectPtr<UMVStatComponent> CachedStatComponent;
 
+	UPROPERTY(Transient)
+	TObjectPtr<const UDataTable> ActiveHitReactionActionTable;
+
 	FName ActiveHitReactionActionRowName = NAME_None;
 	EMVActionHitReactionType ActiveHitReactionType = EMVActionHitReactionType::None;
 	EMVHitReactionDirection ActiveHitReactionDirection = EMVHitReactionDirection::Front;
 	bool bActiveHitReactionActionIsRecoveryAction = false;
+	FTimerHandle HitReactionLaunchWindowTimerHandle;
+	int32 HitReactionLaunchSerial = 0;
+	bool bHitReactionLaunchInputLockActive = false;
 	int32 AirborneLandDetectorCount = 0;
 	bool bAirborneMovementModeDelegateBound = false;
 	bool bAirborneLandDetectorSawFalling = false;

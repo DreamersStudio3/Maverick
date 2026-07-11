@@ -134,6 +134,32 @@ FName MVCombatMakeSkillMapKey(const int32 SkillIndex)
 	return FName(*FString::Printf(TEXT("Skill%d"), SkillIndex));
 }
 
+FGameplayTag MVCombatMakeSkillActionTypeGameplayTag(const int32 SkillIndex)
+{
+	switch (SkillIndex)
+	{
+	case 0:
+		return MVGameplayTags::Action_Combat_Skill_Q;
+	case 1:
+		return MVGameplayTags::Action_Combat_Skill_R;
+	default:
+		return FGameplayTag();
+	}
+}
+
+FName MVCombatMakeSkillFallbackRowName(const int32 SkillIndex)
+{
+	switch (SkillIndex)
+	{
+	case 0:
+		return TEXT("SkillQ");
+	case 1:
+		return TEXT("SkillR");
+	default:
+		return NAME_None;
+	}
+}
+
 FName MVCombatActionTableNameFromDataTable(const UDataTable* DataTable)
 {
 	if (!DataTable)
@@ -777,6 +803,81 @@ void UMVCombatComponent::ResetSkillMap()
 		SkillMap.Reset();
 	}
 
+	TSet<FName> ProcessedRowNames;
+	const auto TryRegisterSkillEntry =
+		[this, &ProcessedRowNames](
+			const int32 SkillIndex,
+			const FDataTableRowHandle& StartingRowHandle,
+			const TCHAR* Source) -> bool
+		{
+			if (!StartingRowHandle.DataTable || StartingRowHandle.RowName.IsNone())
+			{
+				return false;
+			}
+
+			if (ProcessedRowNames.Contains(StartingRowHandle.RowName))
+			{
+				return false;
+			}
+
+			FMVSkillEntry SkillEntry;
+			if (!BuildSkillEntryFromRowHandle(StartingRowHandle, SkillEntry))
+			{
+				UE_LOG(
+					LogMVCombatComponent,
+					Warning,
+					TEXT("ResetSkillMap: Failed to build skill entry. Source=%s Index=%d Start=%s"),
+					Source,
+					SkillIndex,
+					*MVCombatRowHandleToString(StartingRowHandle));
+				return false;
+			}
+
+			for (const FName& SkillRowName : SkillEntry.SkillRowNames)
+			{
+				ProcessedRowNames.Add(SkillRowName);
+			}
+
+			const FName SkillMapKey = MVCombatMakeSkillMapKey(SkillIndex);
+			SkillMap.Add(SkillMapKey, SkillEntry);
+			UE_LOG(
+				LogMVCombatComponent,
+				Log,
+				TEXT("ResetSkillMap: Registered Action=%s Source=%s Start=%s Chain=%s"),
+				*SkillMapKey.ToString(),
+				Source,
+				*MVCombatRowHandleToString(StartingRowHandle),
+				*MVCombatSkillRowNamesToString(SkillEntry.SkillRowNames));
+			return true;
+		};
+
+	for (int32 SkillIndex = 0; SkillIndex < 2; ++SkillIndex)
+	{
+		const FGameplayTag SkillActionType = MVCombatMakeSkillActionTypeGameplayTag(SkillIndex);
+		if (!SkillActionType.IsValid())
+		{
+			continue;
+		}
+
+		FMVCombatActionTableInput SkillChooserInput;
+		SkillChooserInput.CurrentWeaponStyle = CurrentWeaponStyle;
+		SkillChooserInput.SetActionType(SkillActionType);
+
+		FDataTableRowHandle SkillRowHandle;
+		if (ResolveActionRowHandleFromChooserTable(
+			SkillChooserInput,
+			MVCombatMakeSkillFallbackRowName(SkillIndex),
+			SkillRowHandle))
+		{
+			TryRegisterSkillEntry(SkillIndex, SkillRowHandle, TEXT("ExactSkillChooser"));
+		}
+	}
+
+	if (SkillMap.Num() > 0)
+	{
+		return;
+	}
+
 	// Make ChooserTable function input 
 	bool DataTableSearchResult = false;
 	FMVCombatActionTableInput ChooserInput;
@@ -808,8 +909,6 @@ void UMVCombatComponent::ResetSkillMap()
 			CurrentDT->GetRowStruct() ? *CurrentDT->GetRowStruct()->GetName() : TEXT("None"));
 		return;
 	}
-
-	TSet<FName> ProcessedRowNames;
 
 	TArray<FName> RowNames = CurrentDT->GetRowNames();
 	RowNames.Sort(
@@ -851,19 +950,10 @@ void UMVCombatComponent::ResetSkillMap()
 		StartingRowHandle.DataTable = CurrentDT;
 		StartingRowHandle.RowName = RowName;
 
-		FMVSkillEntry SkillEntry;
-		if (!BuildSkillEntryFromRowHandle(StartingRowHandle, SkillEntry))
+		if (TryRegisterSkillEntry(SkillIndex, StartingRowHandle, TEXT("LegacySkillTable")))
 		{
-			continue;
+			++SkillIndex;
 		}
-
-		for(const FName& SkillRowName : SkillEntry.SkillRowNames)
-		{
-			ProcessedRowNames.Add(SkillRowName);
-		}
-
-		SkillMap.Add(MVCombatMakeSkillMapKey(SkillIndex), SkillEntry);
-		++SkillIndex;
 	}
 
 }

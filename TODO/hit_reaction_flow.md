@@ -31,15 +31,16 @@ HitReaction 테이블은 CSV 생성 체인에서 빼고 `Content/Table/HitReacti
 
 ## HitReactionComponent
 
-- [x] `HitReactionType`은 `SmallHit`, `LargeHit`, `KnockDown`, `Airborne` 4종 기준으로 유지한다.
+- [x] `HitReactionType`은 `Flinch`, `Stagger`, `Knockback`, `KnockDown`, `Airborne` 기준으로 유지한다.
 - [x] `HitReactionComponent`를 `CharacterBase`에 부착하고 `CharacterBase.OnDamaged`에 `HandleDamaged`를 바인딩한다.
 - [x] `HandleDamaged`는 `GetActionData` 성격의 함수에서 `CHT_HitReaction`을 평가한다.
 - [x] Chooser 입력 필터는 최소한 캐릭터 인덱스 GameplayTag, 장비 스타일, `HitReactionType`, 피격 방향을 사용한다.
 - [x] `CharacterIndex`와 `CharacterStat`은 `CharacterIndexCode` GameplayTag를 row key로 공유한다.
 - [x] Chooser 결과로 `DT_HR_P1`의 최종 `FDataTableRowHandle`을 얻는다.
 - [x] P1 HitReaction 테이블은 본 리액션과 recovery row를 함께 관리한다.
-  - SmallHit: F/L/R/B
-  - LargeHit: F
+  - Flinch: F/L/R/B
+  - Stagger: F/L/R/B
+  - Knockback: F
   - KnockDown: F/B
   - Airborne: F/B
 - [x] Chooser Output Struct Column에서 실행할 `FDataTableRowHandle`, `SectionName`, 몽타주/HitReaction 전용 row 정보를 확정한다.
@@ -49,8 +50,8 @@ HitReaction 테이블은 CSV 생성 체인에서 빼고 `Content/Table/HitReacti
 - [x] 리커버리/팔로쓰루 window 입력은 `InputManagerComponent`가 입력 의도와 이동 입력 스냅샷으로 버퍼링/브로드캐스트한다.
 - [x] PlayerCharacter.Dodge 서브모듈은 `InputManagerComponent.SubmitActionInput(Dodge)` 이벤트를 구독해 기존 Dodge 액션 실행을 담당한다.
 - [x] `HitReactionComponent`는 액션 입력 이벤트를 구독하고, Dodge 입력은 별도 `EscapeDodge` recovery 액션, Dodge 외 액션 입력은 별도 `Getup` recovery 액션으로 소비한다.
-- [x] 이동 입력은 HitReactionComponent가 이벤트로 직접 소비하지 않고, Recovery window가 열리는 순간 InputManager에 저장된 최근 이동 입력을 조회해 SH/LH는 현재 HitReaction 취소, KD/AB는 별도 `EscapeDodge` recovery 액션으로 소비한다.
-- [x] SmallHit/LargeHit은 넘어지는 리액션이 아니므로 Getup/EscapeDodge 섹션을 찾지 않고, Recovery window 안에서 이동 또는 Dodge 입력이 있으면 현재 피격 몽타주를 직접 cancel한다.
+- [x] 이동 입력은 HitReactionComponent가 이벤트로 직접 소비하지 않고, Recovery window가 열리는 순간 InputManager에 저장된 최근 이동 입력을 조회해 Flinch/Stagger/Knockback은 현재 HitReaction 취소, KnockDown/Airborne은 별도 `EscapeDodge` recovery 액션으로 소비한다.
+- [x] Flinch/Stagger/Knockback은 넘어지는 리액션이 아니므로 Getup/EscapeDodge 섹션을 찾지 않고, Recovery window 안에서 이동 또는 Dodge 입력이 있으면 현재 피격 몽타주를 직접 cancel한다.
 - [x] KnockDown/Airborne은 Recovery window 안에 저장된 입력이 있으면 별도 `EscapeDodge` recovery 액션으로 전환한다.
 - [x] KD/AB 본 리액션은 상태 표현까지만 담당하고, Recovery window 안에서 입력이 없으면 별도 `MV HitReaction Start Getup` Notify가 Getup row로 전환한다.
 - [x] Getup/EscapeDodge recovery 액션도 active HR recovery row로 추적해, 해당 몽타주의 Recovery window에서 이동 입력은 직접 cancel하고 Dodge 입력은 PlayerCharacter.Dodge 전환으로 넘긴다.

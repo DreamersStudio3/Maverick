@@ -550,8 +550,10 @@ DamageMultiplier        = AbilityData.DamageMultiplier
 GroggyDamageMultiplier  = AbilityData.GroggyDamageMultiplier
 HitReactionType         = AbilityData 또는 공격별 설정값
 HitLocation             = Hit Result.ImpactPoint 또는 충돌 위치
-HitDirection            = Victim 위치 - Attacker 위치
+ImpactNormal            = Hit Result.ImpactNormal
 ```
+
+`HitDirection`은 여기서 직접 채우지 않는다. HitResolver가 `HitLocation`, `ImpactNormal`, 공격자/피격자 위치를 보고 최종 방향을 잡는다.
 
 그 다음:
 

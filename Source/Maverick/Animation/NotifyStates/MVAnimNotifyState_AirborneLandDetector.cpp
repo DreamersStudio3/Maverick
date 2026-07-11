@@ -42,5 +42,5 @@ void UMVAnimNotifyState_AirborneLandDetector::NotifyEnd(
 
 FString UMVAnimNotifyState_AirborneLandDetector::GetNotifyName_Implementation() const
 {
-	return TEXT("Airborne Land Detector");
+	return TEXT("HitReaction Land Detector");
 }

@@ -54,10 +54,11 @@ UENUM(BlueprintType)
 enum class EMVActionHitReactionType : uint8
 {
 	None,
-	SmallHit,
-	LargeHit,
-	KnockDown,
-	Airborne,
+	Flinch, // 짧은 약피격. HitReaction row에서 bUseLaunch를 켜면 Ability Launch 값으로 밀린다.
+	Stagger, // 서서 크게 휘청이는 중간 경직. Launch를 쓰려면 row에서 bUseLaunch를 켠다.
+	Knockback, // 크게 밀려나지만 넘어지지는 않는 피격. Root Motion만 쓸지 Launch를 섞을지는 row가 정한다.
+	KnockDown, // 넘어지는 피격. Intro/Fall/Land 흐름에서 Launch를 쓸지는 row의 bUseLaunch가 정한다.
+	Airborne, // 공중에 뜨는 피격. VerticalSpeed와 Duration을 넣으면 위로 뜬 뒤 낙하한다.
 	Groggy
 };
 
