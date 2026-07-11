@@ -35,13 +35,13 @@ struct FMVBackOffLaunchMontageTaskInstanceData
 	UPROPERTY(EditAnywhere, Category = "Input|Launch")
 	bool bStopMovementBeforeLaunch = true;
 
-	UPROPERTY(EditAnywhere, Category = "Input|Launch", meta = (ClampMin = "0.0", Units = "cm"))
+	UPROPERTY(EditAnywhere, Category = "Input|Launch", meta = (ClampMin = "0.0", Units = "cm", ForceUnits = "cm"))
 	float LaunchDistance = 600.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Input|Launch", meta = (ClampMin = "0.0", Units = "s"))
 	float LaunchDuration = 0.35f;
 
-	UPROPERTY(EditAnywhere, Category = "Input|Launch", meta = (Units = "cm/s"))
+	UPROPERTY(EditAnywhere, Category = "Input|Launch", meta = (Units = "cm/s", ForceUnits = "cm/s"))
 	float LaunchVerticalSpeed = 0.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Input|Launch")

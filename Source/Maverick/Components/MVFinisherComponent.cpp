@@ -170,7 +170,7 @@ bool UMVFinisherComponent::MakeSphereTrace(AActor*& OutHitActor) const
 		UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel1),		// Todo: Trace channel -> Currenytly using Visibility channel, should be changed to a custom channel
 		false,
 		ActorsToIgnore,
-		EDrawDebugTrace::ForDuration,
+		EDrawDebugTrace::None,
 		HitResult,
 		true,
 		FLinearColor::Red,

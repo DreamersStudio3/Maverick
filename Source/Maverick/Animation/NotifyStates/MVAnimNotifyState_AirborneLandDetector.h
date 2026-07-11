@@ -5,12 +5,11 @@
 #include "MVAnimNotifyState_AirborneLandDetector.generated.h"
 
 /**
- * Airborne 피격 리액션의 착지 감지 구간을 표시한다.
+ * HitReaction의 Land 전환을 감지하는 구간 표시.
  *
- * NotifyState가 열린 동안 HitReactionComponent는 캐릭터 movement mode를 감시하고,
- * 착지 조건이 만족되면 현재 몽타주를 Land 섹션으로 점프시킨다.
+ * Airborne은 movement mode로 착지를 보고, KnockDown은 LaunchDuration이 끝나면 Land 섹션으로 점프한다.
  */
-UCLASS(meta = (DisplayName = "MV Airborne Land Detector"))
+UCLASS(meta = (DisplayName = "MV HitReaction Land Detector"))
 class MAVERICK_API UMVAnimNotifyState_AirborneLandDetector : public UAnimNotifyState
 {
 	GENERATED_BODY()

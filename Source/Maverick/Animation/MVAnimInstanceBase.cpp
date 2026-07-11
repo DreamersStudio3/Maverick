@@ -60,6 +60,7 @@ void UMVAnimInstanceBase::ReceiveCharacterData()
 	LocomotionDirection = Character->LocomotionDirection;
 	LocomotionDirectionFromAcceleration = Character->LocomotionDirectionFromAcceleration;
 	bIsFalling = CharcterMovementComponent->IsFalling();
+	bActionRunning = Character->ActionComponent && Character->ActionComponent->IsActionRunning();
 
 }
 
@@ -177,7 +178,7 @@ void UMVAnimInstanceBase::GetCharacterStateData()
 
 void UMVAnimInstanceBase::CalculatePivotState()
 {
-	if (Character && Character->ActionComponent && Character->ActionComponent->IsActionRunning())
+	if (bActionRunning)
 	{
 		IsPivot = false;
 		return;
