@@ -6,6 +6,7 @@
 #include "UObject/NoExportTypes.h"
 #include "../Public/Interface/MVAbilityInterface.h"
 #include "../Public/Tables/MVSkillDataTableColumn.h"
+#include "Struct/MVHitTypes.h"
 
 #include "MVAbilityBase.generated.h"
 
@@ -14,6 +15,7 @@
  *
  * 책임:
  *   - 스킬 row 데이터와 소유 CombatComponent를 보관한다.
+ *   - 공격별 HitReaction Launch 값을 Ability 기본값 또는 Blueprint override로 제공한다.
  *   - 액션 실행 중 첫 StartAbility 시점에 Ability 비용을 한 번 소모하고 활성 상태로 전환한다.
  *   - EndAbility 시점에 현재 Notify 구간의 활성 상태를 닫고 체인/쿨다운 타이밍 갱신을 알린다.
  *   - 스탯 회복 pause 구간은 별도 AnimNotifyState가 애니메이션 구간에 맞춰 제어한다.
@@ -47,6 +49,13 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void InitAbility(const FMVSkillDataTableColumn& Data);
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, BlueprintPure, Category = "Maverick|Ability|Launch")
+	FMVHitLaunchData GetHitLaunchData() const;
+	virtual FMVHitLaunchData GetHitLaunchData_Implementation() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Ability|Hit")
+	void ApplyHitLaunchDataToResolveRequest(UPARAM(ref) FMVHitResolveRequest& Request) const;
+
 	void PrepareAbilityExecution();
 	
 	virtual void StartAbility_Implementation() override;
@@ -58,6 +67,9 @@ public:
 	
 	UPROPERTY(BlueprintReadOnly)
 	FMVSkillDataTableColumn AbilityData;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Launch")
+	FMVHitLaunchData HitLaunchData;
 
 	UPROPERTY(Transient)
 	bool bAbilityActive = false;

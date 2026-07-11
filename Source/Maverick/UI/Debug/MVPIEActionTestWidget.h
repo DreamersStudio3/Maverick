@@ -36,10 +36,13 @@ private:
 	void CloseSideWindow();
 
 	UFUNCTION()
-	void HandleSmallHitClicked();
+	void HandleFlinchClicked();
 
 	UFUNCTION()
-	void HandleLargeHitClicked();
+	void HandleStaggerClicked();
+
+	UFUNCTION()
+	void HandleKnockbackClicked();
 
 	UFUNCTION()
 	void HandleKnockDownClicked();

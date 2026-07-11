@@ -6,6 +6,78 @@
 #include "Components/MVWeaponComponent.h"
 #include "Engine/World.h"
 
+namespace
+{
+void MVHitResolverLogHitLaunchTrace(
+	const TCHAR* Stage,
+	const FMVHitResolveRequest& Request,
+	const FMVResolvedHitData* ResolvedHitData = nullptr)
+{
+	const FMVHitLaunchData& LaunchData = ResolvedHitData
+		? ResolvedHitData->HitLaunchData
+		: Request.HitLaunchData;
+	UE_LOG(
+		LogTemp,
+		Log,
+		TEXT("HitLaunchTrace Frame=%llu Stage=%s Attacker=%s Victim=%s HitReactionType=%d Distance=%.2f Duration=%.3f VerticalSpeed=%.2f HitDirection=%s"),
+		static_cast<unsigned long long>(GFrameCounter),
+		Stage,
+		*GetNameSafe(Request.Attacker.Get()),
+		*GetNameSafe(Request.Victim.Get()),
+		static_cast<int32>(ResolvedHitData ? ResolvedHitData->HitReactionType : Request.HitReactionType),
+		LaunchData.LaunchDistance,
+		LaunchData.LaunchDuration,
+		LaunchData.LaunchVerticalSpeed,
+		*(ResolvedHitData ? ResolvedHitData->HitDirection.ToString() : Request.HitDirection.ToString()));
+}
+
+bool MVHitResolverShouldLogAirborneTrace(
+	const FMVHitResolveRequest& Request,
+	const FMVResolvedHitData* ResolvedHitData = nullptr)
+{
+	return Request.HitReactionType == EMVActionHitReactionType::Airborne
+		|| (ResolvedHitData && ResolvedHitData->HitReactionType == EMVActionHitReactionType::Airborne);
+}
+
+void MVHitResolverLogAirborneTrace(
+	const TCHAR* Stage,
+	const FMVHitResolveRequest& Request,
+	const FMVResolvedHitData* ResolvedHitData = nullptr)
+{
+	if (!MVHitResolverShouldLogAirborneTrace(Request, ResolvedHitData))
+	{
+		return;
+	}
+
+	const FMVHitLaunchData& LaunchData = ResolvedHitData
+		? ResolvedHitData->HitLaunchData
+		: Request.HitLaunchData;
+	const AMVCharacterBase* Attacker = Request.Attacker.Get();
+	const AMVCharacterBase* Victim = Request.Victim.Get();
+	const FVector& HitDirection = ResolvedHitData
+		? ResolvedHitData->HitDirection
+		: Request.HitDirection;
+
+	UE_LOG(
+		LogTemp,
+		Warning,
+		TEXT("AirborneTrace Frame=%llu Stage=%s Attacker=%s Victim=%s bAttackerValid=%s bVictimValid=%s bSelfHit=%s RequestType=%d ResolvedType=%d Distance=%.2f Duration=%.3f VerticalSpeed=%.2f HitDirection=%s"),
+		static_cast<unsigned long long>(GFrameCounter),
+		Stage,
+		*GetNameSafe(Attacker),
+		*GetNameSafe(Victim),
+		Attacker ? TEXT("true") : TEXT("false"),
+		Victim ? TEXT("true") : TEXT("false"),
+		(Attacker && Victim && Attacker == Victim) ? TEXT("true") : TEXT("false"),
+		static_cast<int32>(Request.HitReactionType),
+		static_cast<int32>(ResolvedHitData ? ResolvedHitData->HitReactionType : EMVActionHitReactionType::None),
+		LaunchData.LaunchDistance,
+		LaunchData.LaunchDuration,
+		LaunchData.LaunchVerticalSpeed,
+		*HitDirection.ToString());
+}
+}
+
 UMVHitResolverSubsystem* UMVHitResolverSubsystem::Get(const UObject* WorldContextObject)
 {
 	const UWorld* World = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
@@ -16,15 +88,23 @@ bool UMVHitResolverSubsystem::ResolveAttackHit(
 	const FMVHitResolveRequest& Request,
 	FMVResolvedHitData& OutHitData)
 {
+	MVHitResolverLogHitLaunchTrace(TEXT("ResolverRequest"), Request);
+	MVHitResolverLogAirborneTrace(TEXT("ResolverRequest"), Request);
+
 	if (!BuildResolvedHitData(Request, OutHitData))
 	{
+		MVHitResolverLogAirborneTrace(TEXT("ResolverRejected"), Request);
 		return false;
 	}
+
+	MVHitResolverLogHitLaunchTrace(TEXT("ResolverResolved"), Request, &OutHitData);
+	MVHitResolverLogAirborneTrace(TEXT("ResolverResolved"), Request, &OutHitData);
 
 	OnHitResolved.Broadcast(OutHitData); // VFX, UI 등 후속 처리용 이벤트 브로드캐스트
 
 	if (AMVCharacterBase* Victim = OutHitData.Victim.Get())
 	{
+		MVHitResolverLogAirborneTrace(TEXT("ResolverDispatchVictim"), Request, &OutHitData);
 		Victim->OnHitResolved(OutHitData); // 피격자에게 피해 처리를 명령하는 곳
 	}
 
@@ -41,6 +121,7 @@ bool UMVHitResolverSubsystem::BuildResolvedHitData(
 	AMVCharacterBase* Victim = Request.Victim.Get();
 	if (!Attacker || !Victim || Attacker == Victim)
 	{
+		MVHitResolverLogAirborneTrace(TEXT("BuildRejected_InvalidParticipants"), Request);
 		return false;
 	}
 
@@ -48,6 +129,7 @@ bool UMVHitResolverSubsystem::BuildResolvedHitData(
 	const UMVStatComponent* VictimStat = Victim->FindComponentByClass<UMVStatComponent>();
 	if (!AttackerStat || !VictimStat)
 	{
+		MVHitResolverLogAirborneTrace(TEXT("BuildRejected_MissingStat"), Request);
 		return false;
 	}
 
@@ -77,6 +159,7 @@ bool UMVHitResolverSubsystem::BuildResolvedHitData(
 	OutHitData.FinalDamage = FinalDamage;
 	OutHitData.GroggyDamage = GroggyDamage;
 	OutHitData.HitReactionType = Request.HitReactionType;
+	OutHitData.HitLaunchData = Request.HitLaunchData;
 	OutHitData.HitLocation = Request.HitLocation;
 	OutHitData.HitDirection = Request.HitDirection.IsNearlyZero()
 		? ResolveHitDirection(*Attacker, *Victim)
@@ -86,6 +169,7 @@ bool UMVHitResolverSubsystem::BuildResolvedHitData(
 		HitReactionComponent && HitReactionComponent->CanTriggerGroggy(OutHitData))
 	{
 		OutHitData.HitReactionType = EMVActionHitReactionType::Groggy;
+		MVHitResolverLogAirborneTrace(TEXT("BuildConvertedToGroggy"), Request, &OutHitData);
 	}
 
 	return true;

@@ -9,6 +9,26 @@
 
 DEFINE_LOG_CATEGORY_STATIC(LogMVAbilityBase, Log, All);
 
+namespace
+{
+void MVAbilityLogHitLaunchTrace(
+	const UObject* Source,
+	const TCHAR* Stage,
+	const FMVHitLaunchData& LaunchData)
+{
+	UE_LOG(
+		LogMVAbilityBase,
+		Log,
+		TEXT("HitLaunchTrace Frame=%llu Stage=%s Source=%s Distance=%.2f Duration=%.3f VerticalSpeed=%.2f"),
+		static_cast<unsigned long long>(GFrameCounter),
+		Stage,
+		*GetNameSafe(Source),
+		LaunchData.LaunchDistance,
+		LaunchData.LaunchDuration,
+		LaunchData.LaunchVerticalSpeed);
+}
+}
+
 void UMVAbilityBase::SetOwner(UActorComponent* Owner)
 {
 	if (Owner)
@@ -45,6 +65,18 @@ void UMVAbilityBase::InitAbility(const FMVSkillDataTableColumn& Data)
 {
 	AbilityData = Data;
 	PrepareAbilityExecution();
+}
+
+FMVHitLaunchData UMVAbilityBase::GetHitLaunchData_Implementation() const
+{
+	MVAbilityLogHitLaunchTrace(this, TEXT("AbilityDefault"), HitLaunchData);
+	return HitLaunchData;
+}
+
+void UMVAbilityBase::ApplyHitLaunchDataToResolveRequest(FMVHitResolveRequest& Request) const
+{
+	Request.HitLaunchData = GetHitLaunchData();
+	MVAbilityLogHitLaunchTrace(this, TEXT("AbilityApplyToRequest"), Request.HitLaunchData);
 }
 
 void UMVAbilityBase::PrepareAbilityExecution()

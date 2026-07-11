@@ -9,6 +9,27 @@
 class AMVCharacterBase;
 
 /**
+ * 공격 Ability가 HitResolver에 넘길 피격 Launch 수치 묶음.
+ *
+ * HitReaction row는 Launch 적용 여부만 결정하고, 실제 밀림 세기와 수직 속도는 공격별 Ability 데이터가 제공한다.
+ */
+USTRUCT(BlueprintType)
+struct MAVERICK_API FMVHitLaunchData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Hit|Launch", meta = (ClampMin = "0.0", Units = "cm", ForceUnits = "cm"))
+	float LaunchDistance = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Hit|Launch", meta = (ClampMin = "0.0", Units = "s"))
+	float LaunchDuration = 0.0f;
+
+	// LaunchCharacter에 그대로 들어가는 Unreal 속도값이다. Details 패널에서도 cm/s로 고정해 m/s 자동 변환을 피한다.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Hit|Launch", meta = (Units = "cm/s", ForceUnits = "cm/s"))
+	float LaunchVerticalSpeed = 0.0f;
+};
+
+/**
  * 충돌 필터링 이후 HitResolver에 전달되는 원본 타격 요청.
  *
  * 충돌 컴포넌트는 이미 자기 자신 제외, 액션 1회당 중복 타격 제한 같은 후보 필터링을 끝낸 뒤
@@ -35,9 +56,14 @@ struct MAVERICK_API FMVHitResolveRequest
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Hit|Reaction")
 	EMVActionHitReactionType HitReactionType = EMVActionHitReactionType::None;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Hit|Context")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Hit|Launch")
+	FMVHitLaunchData HitLaunchData;
+
+	// 피격 VFX/문맥용 위치다. HitReaction Launch의 시작점으로는 사용하지 않는다.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Hit|Context", meta = (Units = "cm", ForceUnits = "cm"))
 	FVector HitLocation = FVector::ZeroVector;
 
+	// 피격자를 밀어낼 월드 방향이다. HitReactionComponent는 피격자의 현재 위치에서 이 방향으로 Launch한다.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Hit|Context")
 	FVector HitDirection = FVector::ZeroVector;
 };
@@ -93,9 +119,14 @@ struct MAVERICK_API FMVResolvedHitData
 	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Hit|Reaction")
 	EMVActionHitReactionType HitReactionType = EMVActionHitReactionType::None;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Hit|Context")
+	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Hit|Launch")
+	FMVHitLaunchData HitLaunchData;
+
+	// 피격 VFX/문맥용 위치다. HitReaction Launch의 시작점으로는 사용하지 않는다.
+	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Hit|Context", meta = (Units = "cm", ForceUnits = "cm"))
 	FVector HitLocation = FVector::ZeroVector;
 
+	// 피격자를 밀어낼 월드 방향이다. HitReactionComponent는 피격자의 현재 위치에서 이 방향으로 Launch한다.
 	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Hit|Context")
 	FVector HitDirection = FVector::ZeroVector;
 };
@@ -108,7 +139,7 @@ struct MAVERICK_API FMVHitResolveContext
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Hit|Context")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Hit|Context", meta = (Units = "cm", ForceUnits = "cm"))
 	FVector HitLocation = FVector::ZeroVector;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Hit|Context")

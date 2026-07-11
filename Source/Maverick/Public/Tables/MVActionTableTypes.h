@@ -54,10 +54,11 @@ UENUM(BlueprintType)
 enum class EMVActionHitReactionType : uint8
 {
 	None,
-	SmallHit,
-	LargeHit,
-	KnockDown,
-	Airborne,
+	Flinch, // 짧은 약피격, Launch값 설정 필요
+	Stagger, // 서서 크게 휘청임 / 중간 경직, Launch값 설정 필요
+	Knockback, // 크게 밀려남, 넘어지지는 않음, Launch 적용안됨(Root Motion)
+	KnockDown, // 넘어짐, Launch 적용안됨(Root Motion)
+	Airborne, // 공중에 뜸, Launch값 설정 필요
 	Groggy
 };
 
