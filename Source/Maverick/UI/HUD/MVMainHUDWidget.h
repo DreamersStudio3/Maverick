@@ -6,8 +6,10 @@
 #include "MVMainHUDWidget.generated.h"
 
 class UMVBossHPBarWidget;
+class UMVCombatComponent;
 class UMVCurrencyStatusWidget;
 class UMVPlayerConsumable;
+class UMVPlayerSkillHUDWidget;
 class UMVPlayerStatusWidget;
 class UMVQuickSlotWidget;
 class UMVStatComponent;
@@ -50,8 +52,15 @@ protected:
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional), Category = "Maverick|UI|HUD")
 	TObjectPtr<UMVBossHPBarWidget> BossHPBar;
 
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional), Category = "Maverick|UI|HUD")
+	TObjectPtr<UMVPlayerSkillHUDWidget> PlayerSkillHUD;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|UI|HUD|Skill")
+	FVector2D PlayerSkillHUDCanvasOffset = FVector2D(0.0f, -36.0f);
+
 private:
 	void BuildNativeWidgetTree();
+	void EnsurePlayerSkillHUD();
 	void BindPlayerConsumable(UMVPlayerConsumable* Consumable);
 	void ApplyHealingPotionQuickSlotView();
 
