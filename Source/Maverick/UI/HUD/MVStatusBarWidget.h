@@ -1,13 +1,21 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/ProgressBar.h"
 #include "UI/Base/MVWidgetBase.h"
 #include "MVStatusBarWidget.generated.h"
 
-class UProgressBar;
 class USizeBox;
 class UTextBlock;
 
+/**
+ * Reusable labeled status gauge with configurable size, color, and fill direction.
+ *
+ * Owning widgets update the normalized value through SetProgress and may configure
+ * individual instances without changing the shared WBP_StatusBar asset defaults.
+ * Blueprint widgets own their brushes and layer composition; native fallback
+ * widgets receive a minimal flat style when their tree is built in C++.
+ */
 UCLASS(Blueprintable)
 class MAVERICK_API UMVStatusBarWidget : public UMVWidgetBase
 {
@@ -19,6 +27,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Status")
 	void SetFillColor(FLinearColor InFillColor);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Status")
+	void SetBarFillType(EProgressBarFillType::Type InBarFillType);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Status")
 	void SetBarSize(float InWidth, float InHeight);
@@ -67,6 +78,12 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|UI|Status")
 	FLinearColor RecentLossColor = FLinearColor(0.95f, 0.75f, 0.16f, 1.0f);
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|UI|Status")
+	FLinearColor BackgroundColor = FLinearColor(0.025f, 0.025f, 0.025f, 0.8f);
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|UI|Status")
+	TEnumAsByte<EProgressBarFillType::Type> BarFillType = EProgressBarFillType::LeftToRight;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|UI|Status", meta = (ClampMin = "0.0"))
 	float DesiredBarWidth = 220.0f;
 
@@ -86,7 +103,8 @@ protected:
 	float RecentLossMinAmount = 2.0f;
 
 private:
-	void BuildNativeWidgetTree();
+	bool BuildNativeWidgetTree();
+	void ApplyNativeBarStyle();
 	void UpdateBarStyle();
 	void UpdateBarSize();
 	void UpdateTextBlocks();

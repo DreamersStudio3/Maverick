@@ -37,6 +37,7 @@ public:
 	void ResetBossBar();
 
 protected:
+	virtual void NativeOnInitialized() override;
 	virtual void NativeDestruct() override;
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional), Category = "Maverick|UI|Boss")
