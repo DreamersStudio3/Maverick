@@ -16,6 +16,7 @@
 #include "Math/Vector.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "MotionWarpingComponent.h"
+#include "TimerManager.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogMVCharacterBase, Log, All);
 
@@ -572,5 +573,23 @@ float AMVCharacterBase::CalculateCharacterMovementSpeed(float WalkSpeed, float R
 	return UKismetMathLibrary::MapRangeClamped(StrafeMapValue, 0, 1, 0, OutSpeed);
 }
 
+void AMVCharacterBase::ActiveHitstop(float Duration, float DilationAmount)
+{
+	CustomTimeDilation = DilationAmount;
 
+	GetWorldTimerManager().SetTimer(
+		HitStopTimerHandle,
+		this,
+		&AMVCharacterBase::ResetHitStop,
+		Duration,
+		false
+	);
+
+}
+
+void AMVCharacterBase::ResetHitStop()
+{
+	CustomTimeDilation = 1.0f;
+	GetWorldTimerManager().ClearTimer(HitStopTimerHandle);
+}
 

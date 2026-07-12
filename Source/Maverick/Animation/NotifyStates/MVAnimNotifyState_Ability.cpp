@@ -76,7 +76,7 @@ void UMVAnimNotifyState_Ability::NotifyBegin(
 		return;
 	}
 
-	IMVAbilityInterface::Execute_StartAbility(CurrentAbility);
+	IMVAbilityInterface::Execute_StartAbility(CurrentAbility, AbilityIndex);
 }
 
 void UMVAnimNotifyState_Ability::NotifyEnd(

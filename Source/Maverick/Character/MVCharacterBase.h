@@ -74,6 +74,8 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void AddMovementInput(FVector WorldDirection, float ScaleValue = 1.0f, bool bForce = false) override;
 
+
+
 public:
 	UFUNCTION(BlueprintCallable)
 	void AttemptCrouch();
@@ -208,4 +210,15 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LocomotionData")
 	TObjectPtr<UCurveFloat> SpeedDirectionCurve;
+
+	// Utility Function (HitStop)
+public:
+	void ActiveHitstop(float Duration, float DilationAmount);
+
+private:
+	void ResetHitStop();
+
+private:
+	FTimerHandle HitStopTimerHandle;
+
 };

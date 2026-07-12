@@ -85,7 +85,7 @@ void UMVAbilityBase::PrepareAbilityExecution()
 	bAbilityCostConsumed = false;
 }
 
-void UMVAbilityBase::StartAbility_Implementation()
+void UMVAbilityBase::StartAbility_Implementation(int32 AbilityIndex)
 {
 	if (bAbilityActive)
 	{
@@ -115,6 +115,22 @@ void UMVAbilityBase::EndAbility_Implementation()
 	{
 		OwnerCombatComponent->HandleAbilityEnded(this);
 	}
+}
+
+void UMVAbilityBase::ActiveHitStopToCharacters(AMVCharacterBase* Owner, AMVCharacterBase* Target, float Duration, float DilationAmount)
+{
+	// Even If One of the actor's are not valid, HitStop still can activate to the valid one.
+	
+	if (Owner)
+	{
+		Owner->ActiveHitstop(Duration, DilationAmount);
+	}
+
+	if (Target)
+	{
+		Target->ActiveHitstop(Duration, DilationAmount);
+	}
+
 }
 
 bool UMVAbilityBase::TryConsumeAbilityCost()

@@ -40,4 +40,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Ability")
 	TSubclassOf<UMVAbilityBase> AbilityClass;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Ability")
+	int32 AbilityIndex;
+	
 };
