@@ -335,6 +335,7 @@ struct FMVSkillSlotRuntimeState
 CombatComponent
 Fetch action RowHandle from ChooserTable and run chained action rows.
 Sprint/Dodge contextual basic attacks are consumed once per source context so single-row contextual attacks do not replay from held or repeated input.
+Concrete character classes or Blueprints own chooser/fallback path configuration; the shared component has no player-specific defaults.
 
 Note:	Getting action RowHandle through ChooserTable should be implemented in blueprint.
 		DataTable-only lookup remains as a compatibility fallback.
@@ -438,6 +439,7 @@ private:
 	UDataTable* LoadFallbackAttackActionTable() const;
 	bool TryMakeFallbackAttackActionRowHandle(
 		EMVCombatActionTypes ActionType,
+		UDataTable* DataTable,
 		FDataTableRowHandle& OutRowHandle) const;
 	bool IsValidSkillActionRowHandle(const FDataTableRowHandle& RowHandle, const TCHAR* Context) const;
 	bool IsCurrentAbilityAction(FName ActionTableName, FName ActionRowName) const;
@@ -515,10 +517,10 @@ public:
 	FName HeavyChargeStartSection = TEXT("LeadIn");
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Chooser")
-	FSoftObjectPath AttackChooserTable = TEXT("/Game/Table/Attack/Player/CHT_Attack_Player.CHT_Attack_Player");
+	FSoftObjectPath AttackChooserTable;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Chooser")
-	FSoftObjectPath FallbackAttackActionTable = TEXT("/Game/Table/Weapons/Player/Yone_Attack.Yone_Attack");
+	FSoftObjectPath FallbackAttackActionTable;
 
 	UPROPERTY(Transient)
 	TObjectPtr<UMVAbilityBase> PreviousAbilityInstance;

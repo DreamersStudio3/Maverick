@@ -13,6 +13,7 @@
 #include "Components/MVStatComponent.h"
 #include "Enum/MVCombatActionTypes.h"
 #include "Kismet/GameplayStatics.h"
+#include "Tags/MVGameplayTags.h"
 #include "TimerManager.h"
 #include "UI/HUD/MVMainHUDWidget.h"
 #include "UI/System/MVUISubsystem.h"
@@ -20,6 +21,7 @@
 AMVEnemy::AMVEnemy()
 {
 	EnemyDodgeTokenComponent = CreateDefaultSubobject<UMVEnemyDodgeTokenComponent>(TEXT("EnemyDodgeTokenComponent"));
+	CharacterIndexCode = MVGameplayTags::Character_NPC_Enemy_E1;
 }
 
 void AMVEnemy::BeginPlay()

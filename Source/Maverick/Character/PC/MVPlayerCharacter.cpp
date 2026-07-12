@@ -6,12 +6,14 @@
 #include "Character/PC/Dodge/MVPlayerDodge.h"
 #include "Character/PC/InteractionDetector/MVPlayerInteractionDetector.h"
 #include "Components/MVActionComponent.h"
+#include "Components/MVCombatComponent.h"
 #include "Components/MVHitReactionComponent.h"
 #include "Components/MVStatComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "LockOnTargetComponent.h"
 #include "LockOnTargetExtensions/PawnRotationExtension.h"
 #include "Tables/MVTableManager.h"
+#include "Tags/MVGameplayTags.h"
 
 namespace
 {
@@ -41,6 +43,12 @@ AMVPlayerCharacter::AMVPlayerCharacter()
 	Dodge = CreateDefaultSubobject<UMVPlayerDodge>(TEXT("Dodge"));
 	InteractionDetector = CreateDefaultSubobject<UMVPlayerInteractionDetector>(TEXT("InteractionDetector"));
 	PlayerConsumable = CreateDefaultSubobject<UMVPlayerConsumable>(TEXT("PlayerConsumable"));
+	CharacterIndexCode = MVGameplayTags::Character_Player_P1;
+	if (CombatComponent)
+	{
+		CombatComponent->AttackChooserTable = TEXT("/Game/Table/Attack/Player/CHT_Attack_Player.CHT_Attack_Player");
+		CombatComponent->FallbackAttackActionTable = TEXT("/Game/Table/Attack/Player/Yone_Attack.Yone_Attack");
+	}
 	bIsSprintBlockedByStamina = false;
 }
 

@@ -22,6 +22,8 @@ class UMVEnemyDodgeTokenComponent;
  * visuals and weapon state are expected to be handled by the shared weapon
  * component path, while damage notifications are routed to enemy-specific
  * events so StateTree tasks can decide when to run combat state presentation.
+ * Enemy identity defaults here, while concrete enemy Blueprints configure their
+ * own CombatComponent chooser and fallback tables.
  */
 UCLASS()
 class MAVERICK_API AMVEnemy : public AMVCharacterBase, public IMVHitReactionRecoveryDecisionProvider

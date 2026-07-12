@@ -19,6 +19,7 @@ class UMVPlayerConsumable;
  * UObject 서브모듈에 위임해 NPC 재사용 가능 컴포넌트와 구분한다.
  *
  * 책임:
+ *   - 플레이어 CharacterIndex와 공격 Chooser/fallback 기본 경로를 설정한다.
  *   - Dodge, 회복약, InteractionDetector 서브모듈을 생성하고 BeginPlay/Tick/EndPlay 수명주기를 전달한다.
  *   - 전력질주 스태미너 비용과 고갈 후 재개 조건을 플레이어 액션 데이터 기준으로 관리한다.
  *   - 플레이어 피격 리액션 핸들러를 공통 피격 이벤트에 연결한다.
