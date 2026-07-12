@@ -4,6 +4,7 @@
 #include "Components/MVFinisherComponent.h"
 
 #include "Kismet/kismetSystemLibrary.h"
+#include "Components/MVEnemyDodgeTokenComponent.h"
 #include "Components/MVStatComponent.h"
 #include "Public/Tables/MVSkillDataTableColumn.h"
 #include "Chooser.h"
@@ -487,6 +488,11 @@ void UMVFinisherComponent::ResetTargetGroggy()
 	if (!TargetStatComp)
 	{
 		return;
+	}
+
+	if (UMVEnemyDodgeTokenComponent* DodgeTokenComponent = TargetCharacter->FindComponentByClass<UMVEnemyDodgeTokenComponent>())
+	{
+		DodgeTokenComponent->NotifyGroggyEndedByFinisher();
 	}
 
 	TargetStatComp->SetCurrentGroggy(0);

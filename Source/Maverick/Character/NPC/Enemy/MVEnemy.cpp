@@ -8,6 +8,7 @@
 #include "Animation/AnimMontage.h"
 #include "Character/NPC/Enemy/MVEnemyWeapon.h"
 #include "Components/MVCombatComponent.h"
+#include "Components/MVEnemyDodgeTokenComponent.h"
 #include "Components/MVHitReactionComponent.h"
 #include "Components/MVStatComponent.h"
 #include "Enum/MVCombatActionTypes.h"
@@ -18,6 +19,7 @@
 
 AMVEnemy::AMVEnemy()
 {
+	EnemyDodgeTokenComponent = CreateDefaultSubobject<UMVEnemyDodgeTokenComponent>(TEXT("EnemyDodgeTokenComponent"));
 }
 
 void AMVEnemy::BeginPlay()
@@ -150,6 +152,12 @@ void AMVEnemy::EndPlay(const EEndPlayReason::Type EndPlayReason)
 		World->GetTimerManager().ClearTimer(BossHUDBindRetryTimerHandle);
 	}
 
+	if (StatComponent)
+	{
+		StatComponent->OnGroggyStarted.RemoveDynamic(this, &AMVEnemy::HandleEnemyGroggyStarted);
+		StatComponent->OnGroggyEnded.RemoveDynamic(this, &AMVEnemy::HandleEnemyGroggyEnded);
+	}
+
 	Super::EndPlay(EndPlayReason);
 }
 
@@ -207,6 +215,11 @@ void AMVEnemy::BindDamageHandlers()
 	{
 		OnDamaged.RemoveDynamic(StatComponent, &UMVStatComponent::HandleDamaged);
 		OnDamaged.AddUniqueDynamic(StatComponent, &UMVStatComponent::HandleDamaged);
+
+		StatComponent->OnGroggyStarted.RemoveDynamic(this, &AMVEnemy::HandleEnemyGroggyStarted);
+		StatComponent->OnGroggyStarted.AddUniqueDynamic(this, &AMVEnemy::HandleEnemyGroggyStarted);
+		StatComponent->OnGroggyEnded.RemoveDynamic(this, &AMVEnemy::HandleEnemyGroggyEnded);
+		StatComponent->OnGroggyEnded.AddUniqueDynamic(this, &AMVEnemy::HandleEnemyGroggyEnded);
 	}
 
 	if (HitReactionComponent)

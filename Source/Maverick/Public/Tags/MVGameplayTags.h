@@ -22,6 +22,7 @@ namespace MVGameplayTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_Sprint);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_Dodge);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_UseConsumable);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Combat);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Combat_LightAttack);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Combat_HeavyAttack);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Combat_ChargeAttack);

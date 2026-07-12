@@ -20,6 +20,7 @@ namespace MVGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Action_Input_Sprint, "Action.Input.Sprint");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Input_Dodge, "Action.Input.Dodge");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Input_UseConsumable, "Action.Input.UseConsumable");
+	UE_DEFINE_GAMEPLAY_TAG(Action_Combat, "Action.Combat");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Combat_LightAttack, "Action.Combat.LightAttack");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Combat_HeavyAttack, "Action.Combat.HeavyAttack");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Combat_ChargeAttack, "Action.Combat.ChargeAttack");
