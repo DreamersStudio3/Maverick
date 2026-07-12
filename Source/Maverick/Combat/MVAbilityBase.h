@@ -29,6 +29,7 @@
 
 class UActorComponent;
 class AMVCharacterBase;
+class UCameraShakeBase;
 
 UCLASS(Blueprintable, meta = (ShowWorldContextPin))
 class MAVERICK_API UMVAbilityBase : public UObject, public IMVAbilityInterface
@@ -65,6 +66,9 @@ public:
 	// Ability Utility Function
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Ability Utility")
 	void ActiveHitStopToCharacters(AMVCharacterBase* Owner, AMVCharacterBase* Target, float Duration = 0.2f, float DilationAmount = 0.2f);
+	
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Ability Utility")
+	void ActiveCameraShake(AMVCharacterBase* Owner, TSubclassOf<UCameraShakeBase> Shake, float Scale = 1.0f);
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings", meta = (ExposeOnSpawn = "true"))

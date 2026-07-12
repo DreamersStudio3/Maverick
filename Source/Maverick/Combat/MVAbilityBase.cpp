@@ -133,6 +133,18 @@ void UMVAbilityBase::ActiveHitStopToCharacters(AMVCharacterBase* Owner, AMVChara
 
 }
 
+void UMVAbilityBase::ActiveCameraShake(AMVCharacterBase* Owner, TSubclassOf<UCameraShakeBase> Shake, float Scale)
+{
+	APlayerController* PlayerController = Cast<APlayerController>(Owner->GetController());
+
+	if (!PlayerController)
+	{
+		return;
+	}
+
+	PlayerController->ClientStartCameraShake(Shake, Scale, ECameraShakePlaySpace::World);
+}
+
 bool UMVAbilityBase::TryConsumeAbilityCost()
 {
 	const float StaminaCost = FMath::Max(0.0f, AbilityData.StaminaCost);

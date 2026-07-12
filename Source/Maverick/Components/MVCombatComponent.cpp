@@ -1001,10 +1001,7 @@ void UMVCombatComponent::ResetSkillMap()
 		SkillChooserInput.SetActionType(SkillActionType);
 
 		FDataTableRowHandle SkillRowHandle;
-		if (ResolveActionRowHandleFromChooserTable(
-			SkillChooserInput,
-			MVCombatMakeSkillFallbackRowName(SkillIndex),
-			SkillRowHandle))
+		if (ResolveActionRowHandleFromChooserTable(SkillChooserInput, MVCombatMakeSkillFallbackRowName(SkillIndex), SkillRowHandle))
 		{
 			if (MVCombatIsSkillStartRowName(SkillRowHandle.RowName))
 			{

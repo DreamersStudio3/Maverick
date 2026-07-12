@@ -211,7 +211,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LocomotionData")
 	TObjectPtr<UCurveFloat> SpeedDirectionCurve;
 
-	// Utility Function (HitStop)
+	// Utility Function
 public:
 	void ActiveHitstop(float Duration, float DilationAmount);
 

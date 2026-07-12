@@ -14,6 +14,7 @@
 #include "LockOnTargetExtensions/PawnRotationExtension.h"
 #include "Tables/MVTableManager.h"
 #include "Tags/MVGameplayTags.h"
+#include "Camera/CameraShakeBase.h"
 
 namespace
 {
