@@ -2,27 +2,8 @@
 
 #include "Character/MVCharacterBase.h"
 #include "Character/NPC/Enemy/MVEnemy.h"
-#include "Engine/Engine.h"
 #include "GameFramework/Pawn.h"
 #include "Kismet/GameplayStatics.h"
-
-namespace
-{
-const TCHAR* EnemyDodgeTokenGrantReasonToText(const EMVEnemyDodgeTokenGrantReason Reason)
-{
-	switch (Reason)
-	{
-	case EMVEnemyDodgeTokenGrantReason::GroggyRecovered:
-		return TEXT("GroggyRecovered");
-	case EMVEnemyDodgeTokenGrantReason::ReceivedHitThreshold:
-		return TEXT("ReceivedHitThreshold");
-	case EMVEnemyDodgeTokenGrantReason::LandedHitThreshold:
-		return TEXT("LandedHitThreshold");
-	default:
-		return TEXT("None");
-	}
-}
-}
 
 UMVEnemyDodgeTokenComponent::UMVEnemyDodgeTokenComponent()
 {
@@ -87,23 +68,8 @@ void UMVEnemyDodgeTokenComponent::GrantDodgeToken(const EMVEnemyDodgeTokenGrantR
 		return;
 	}
 
-	const int32 PreviousTokenCount = DodgeTokenCount;
 	DodgeTokenCount = FMath::Clamp(DodgeTokenCount + 1, 0, MaxDodgeTokens);
 	LastGrantReason = Reason;
-
-	if (bShowTokenGrantScreenMessage && GEngine && DodgeTokenCount > PreviousTokenCount)
-	{
-		GEngine->AddOnScreenDebugMessage(
-			-1,
-			1.5f,
-			FColor::Cyan,
-			FString::Printf(
-				TEXT("Enemy Dodge Token +1 [%s] %s (%d/%d)"),
-				EnemyDodgeTokenGrantReasonToText(Reason),
-				*GetNameSafe(GetOwner()),
-				DodgeTokenCount,
-				MaxDodgeTokens));
-	}
 }
 
 bool UMVEnemyDodgeTokenComponent::CanSpendDodgeToken() const

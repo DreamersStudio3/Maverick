@@ -6,6 +6,7 @@
 #include "Components/Button.h"
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
+#include "Components/MVHitReactionComponent.h"
 #include "Components/MVStatComponent.h"
 #include "Components/MVWeaponComponent.h"
 #include "Components/TextBlock.h"
@@ -106,6 +107,65 @@ float PIEActionTestMakeDamageMultiplier(const float DesiredDamage, const float A
 	return AttackPower > 0.0f
 		? FMath::Max(0.0f, DesiredDamage) / AttackPower
 		: 0.0f;
+}
+
+EMVHitReactionDirection PIEActionTestDirectionFromIndex(const int32 DirectionIndex)
+{
+	switch (DirectionIndex)
+	{
+	case 1:
+		return EMVHitReactionDirection::Back;
+	case 2:
+		return EMVHitReactionDirection::Left;
+	case 3:
+		return EMVHitReactionDirection::Right;
+	case 0:
+	default:
+		return EMVHitReactionDirection::Front;
+	}
+}
+
+FString PIEActionTestDirectionToken(const EMVHitReactionDirection Direction)
+{
+	switch (Direction)
+	{
+	case EMVHitReactionDirection::Back:
+		return TEXT("B");
+	case EMVHitReactionDirection::Left:
+		return TEXT("L");
+	case EMVHitReactionDirection::Right:
+		return TEXT("R");
+	case EMVHitReactionDirection::Front:
+	default:
+		return TEXT("F");
+	}
+}
+
+FVector PIEActionTestResolveHitDirectionForFlinch(
+	const AMVCharacterBase& Target,
+	const EMVHitReactionDirection Direction)
+{
+	FVector HitSourceDirection = Target.GetActorForwardVector().GetSafeNormal2D();
+	switch (Direction)
+	{
+	case EMVHitReactionDirection::Back:
+		HitSourceDirection = -Target.GetActorForwardVector().GetSafeNormal2D();
+		break;
+	case EMVHitReactionDirection::Left:
+		HitSourceDirection = -Target.GetActorRightVector().GetSafeNormal2D();
+		break;
+	case EMVHitReactionDirection::Right:
+		HitSourceDirection = Target.GetActorRightVector().GetSafeNormal2D();
+		break;
+	case EMVHitReactionDirection::Front:
+	default:
+		HitSourceDirection = Target.GetActorForwardVector().GetSafeNormal2D();
+		break;
+	}
+
+	return HitSourceDirection.IsNearlyZero()
+		? FVector::ZeroVector
+		: -HitSourceDirection;
 }
 }
 
@@ -208,6 +268,35 @@ void UMVPIEActionTestWidget::BuildNativeWidgetTree()
 		Button->OnClicked.AddDynamic(this, &UMVPIEActionTestWidget::HandleResetStatsClicked);
 	}
 
+	if (UTextBlock* DirectionTitleText = PIEActionTestMakeText(
+		*WidgetTree,
+		TEXT("PIEActionTestFlinchDirectionTitle"),
+		TEXT("Flinch Direction"),
+		16.0f,
+		FLinearColor(0.86f, 0.82f, 0.72f, 1.0f)))
+	{
+		if (UVerticalBoxSlot* DirectionTitleSlot = ButtonBox->AddChildToVerticalBox(DirectionTitleText))
+		{
+			DirectionTitleSlot->SetPadding(FMargin(0.0f, 24.0f, 0.0f, 6.0f));
+		}
+	}
+	if (UButton* Button = PIEActionTestAddButton(*WidgetTree, *ButtonBox, TEXT("PIEActionTestFlinchFront"), TEXT("Flinch F")))
+	{
+		Button->OnClicked.AddDynamic(this, &UMVPIEActionTestWidget::HandleFlinchFrontClicked);
+	}
+	if (UButton* Button = PIEActionTestAddButton(*WidgetTree, *ButtonBox, TEXT("PIEActionTestFlinchBack"), TEXT("Flinch B")))
+	{
+		Button->OnClicked.AddDynamic(this, &UMVPIEActionTestWidget::HandleFlinchBackClicked);
+	}
+	if (UButton* Button = PIEActionTestAddButton(*WidgetTree, *ButtonBox, TEXT("PIEActionTestFlinchLeft"), TEXT("Flinch L")))
+	{
+		Button->OnClicked.AddDynamic(this, &UMVPIEActionTestWidget::HandleFlinchLeftClicked);
+	}
+	if (UButton* Button = PIEActionTestAddButton(*WidgetTree, *ButtonBox, TEXT("PIEActionTestFlinchRight"), TEXT("Flinch R")))
+	{
+		Button->OnClicked.AddDynamic(this, &UMVPIEActionTestWidget::HandleFlinchRightClicked);
+	}
+
 	if (UTextBlock* CloseHintText = PIEActionTestMakeText(
 		*WidgetTree,
 		TEXT("PIEActionTestCloseHint"),
@@ -283,6 +372,49 @@ void UMVPIEActionTestWidget::ExecuteTestByIndex(const int32 TestIndex)
 	}
 
 	SetStatusText(FString::Printf(TEXT("%s | No StatComponent"), Spec.Label));
+}
+
+void UMVPIEActionTestWidget::ExecuteDirectionalFlinchTest(const int32 DirectionIndex)
+{
+	AMVCharacterBase* Target = ResolveTargetCharacter();
+	if (!Target)
+	{
+		SetStatusText(TEXT("No target character."));
+		return;
+	}
+
+	AMVCharacterBase* Attacker = ResolveAttackerCharacter();
+	if (!Attacker)
+	{
+		SetStatusText(TEXT("No attacker character."));
+		return;
+	}
+
+	const EMVHitReactionDirection Direction = PIEActionTestDirectionFromIndex(DirectionIndex);
+	const FVector HitDirection = PIEActionTestResolveHitDirectionForFlinch(*Target, Direction);
+	if (HitDirection.IsNearlyZero())
+	{
+		SetStatusText(TEXT("No valid flinch direction."));
+		return;
+	}
+
+	HideDialogueWindow();
+
+	FMVResolvedHitData HitData;
+	HitData.Attacker = Attacker;
+	HitData.Victim = Target;
+	HitData.AttackerCharacterIndexCode = Attacker->GetCharacterIndexCode();
+	HitData.VictimCharacterIndexCode = Target->GetCharacterIndexCode();
+	HitData.HitReactionType = EMVActionHitReactionType::Flinch;
+	HitData.HitLocation = Target->GetActorLocation();
+	HitData.ImpactNormal = -HitDirection;
+	HitData.HitDirection = HitDirection;
+
+	const bool bHandled = Target->OnHitResolved(HitData);
+	SetStatusText(FString::Printf(
+		TEXT("Flinch %s | %s"),
+		*PIEActionTestDirectionToken(Direction),
+		bHandled ? TEXT("Started") : TEXT("Ignored")));
 }
 
 void UMVPIEActionTestWidget::SetStatusText(const FString& Message)
@@ -386,4 +518,24 @@ void UMVPIEActionTestWidget::HandleResetStatsClicked()
 	StatComponent->SetCurrentMP(StatComponent->MaxMP);
 	StatComponent->ResetGroggyState();
 	SetStatusText(TEXT("Stats reset. Groggy reset."));
+}
+
+void UMVPIEActionTestWidget::HandleFlinchFrontClicked()
+{
+	ExecuteDirectionalFlinchTest(0);
+}
+
+void UMVPIEActionTestWidget::HandleFlinchBackClicked()
+{
+	ExecuteDirectionalFlinchTest(1);
+}
+
+void UMVPIEActionTestWidget::HandleFlinchLeftClicked()
+{
+	ExecuteDirectionalFlinchTest(2);
+}
+
+void UMVPIEActionTestWidget::HandleFlinchRightClicked()
+{
+	ExecuteDirectionalFlinchTest(3);
 }

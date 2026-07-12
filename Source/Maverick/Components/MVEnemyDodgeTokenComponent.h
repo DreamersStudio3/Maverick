@@ -99,9 +99,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|AI|Dodge")
 	bool bAutoBindPlayerDamage = true;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|AI|Dodge|Debug")
-	bool bShowTokenGrantScreenMessage = true;
-
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Maverick|AI|Dodge")
 	EMVEnemyDodgeTokenGrantReason LastGrantReason = EMVEnemyDodgeTokenGrantReason::None;
 

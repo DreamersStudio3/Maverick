@@ -29,6 +29,7 @@ protected:
 private:
 	void BuildNativeWidgetTree();
 	void ExecuteTestByIndex(int32 TestIndex);
+	void ExecuteDirectionalFlinchTest(int32 DirectionIndex);
 	void SetStatusText(const FString& Message);
 	AMVCharacterBase* ResolveTargetCharacter() const;
 	AMVCharacterBase* ResolveAttackerCharacter() const;
@@ -52,6 +53,18 @@ private:
 
 	UFUNCTION()
 	void HandleResetStatsClicked();
+
+	UFUNCTION()
+	void HandleFlinchFrontClicked();
+
+	UFUNCTION()
+	void HandleFlinchBackClicked();
+
+	UFUNCTION()
+	void HandleFlinchLeftClicked();
+
+	UFUNCTION()
+	void HandleFlinchRightClicked();
 
 	UPROPERTY(Transient)
 	TObjectPtr<AMVCharacterBase> TargetCharacter;

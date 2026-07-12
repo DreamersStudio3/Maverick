@@ -3,6 +3,7 @@
 #include "Character/MVCharacterBase.h"
 #include "Chooser.h"
 #include "Components/MVActionComponent.h"
+#include "Engine/Engine.h"
 #include "Engine/DataTable.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Interface/MVHitReactionRecoveryDecisionProvider.h"
@@ -172,6 +173,24 @@ FVector MVHitReactionResolveHitDirection(
 	}
 
 	return FVector::ZeroVector;
+}
+
+FVector MVHitReactionResolveHitSourceDirection(
+	const FMVResolvedHitData& HitData,
+	FString* OutDirectionSource = nullptr)
+{
+	FString HitDirectionSource;
+	const FVector HitDirection = MVHitReactionResolveHitDirection(HitData, &HitDirectionSource);
+	if (OutDirectionSource)
+	{
+		*OutDirectionSource = HitDirection.IsNearlyZero()
+			? HitDirectionSource
+			: FString::Printf(TEXT("%s_InvertedToHitSource"), *HitDirectionSource);
+	}
+
+	return HitDirection.IsNearlyZero()
+		? FVector::ZeroVector
+		: -HitDirection;
 }
 
 bool MVHitReactionShouldLogDirectionTrace(const EMVActionHitReactionType HitReactionType)
@@ -494,6 +513,17 @@ void UMVHitReactionComponent::HandleDamaged(const FMVResolvedHitData& HitData)
 		ActiveHitReactionType = HitData.HitReactionType;
 		ActiveHitReactionDirection = ActionData.Direction;
 		bActiveHitReactionActionIsRecoveryAction = false;
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(
+				-1,
+				2.0f,
+				FColor::Yellow,
+				FString::Printf(
+					TEXT("HitReaction Row=%s Direction=%s"),
+					*ActionData.ActionRowHandle.RowName.ToString(),
+					*HitReactionDirectionToTableToken(ActionData.Direction)));
+		}
 		ApplyHitReactionLaunch(HitData, ActionData.ActionRow.bUseLaunch);
 	}
 }
@@ -543,8 +573,8 @@ EMVHitReactionDirection UMVHitReactionComponent::ResolveHitReactionDirection(con
 	}
 
 	FString DirectionSource;
-	const FVector HitDirection = MVHitReactionResolveHitDirection(HitData, &DirectionSource);
-	if (HitDirection.IsNearlyZero())
+	const FVector HitSourceDirection = MVHitReactionResolveHitSourceDirection(HitData, &DirectionSource);
+	if (HitSourceDirection.IsNearlyZero())
 	{
 		return EMVHitReactionDirection::Front;
 	}
@@ -552,8 +582,8 @@ EMVHitReactionDirection UMVHitReactionComponent::ResolveHitReactionDirection(con
 	const FVector Forward = Character->GetActorForwardVector().GetSafeNormal2D();
 	const FVector Right = Character->GetActorRightVector().GetSafeNormal2D();
 
-	const float ForwardDot = FVector::DotProduct(HitDirection, Forward);
-	const float RightDot = FVector::DotProduct(HitDirection, Right);
+	const float ForwardDot = FVector::DotProduct(HitSourceDirection, Forward);
+	const float RightDot = FVector::DotProduct(HitSourceDirection, Right);
 
 	EMVHitReactionDirection ResolvedDirection = EMVHitReactionDirection::Front;
 	if (FMath::Abs(RightDot) > FMath::Abs(ForwardDot))
@@ -574,14 +604,14 @@ EMVHitReactionDirection UMVHitReactionComponent::ResolveHitReactionDirection(con
 		UE_LOG(
 			LogMVHitReactionComponent,
 			Warning,
-			TEXT("HitDirectionTrace Frame=%llu Stage=ResolveDirection Owner=%s HitReactionType=%d Source=%s HitLocation=%s ImpactNormal=%s HitDirection=%s Forward=%s Right=%s ForwardDot=%.3f RightDot=%.3f Result=%s(%d)"),
+			TEXT("HitDirectionTrace Frame=%llu Stage=ResolveDirection Owner=%s HitReactionType=%d Source=%s HitLocation=%s ImpactNormal=%s HitSourceDirection=%s Forward=%s Right=%s ForwardDot=%.3f RightDot=%.3f Result=%s(%d)"),
 			static_cast<unsigned long long>(GFrameCounter),
 			*GetNameSafe(Character),
 			static_cast<int32>(HitData.HitReactionType),
 			*DirectionSource,
 			*HitData.HitLocation.ToString(),
 			*HitData.ImpactNormal.ToString(),
-			*HitData.HitDirection.ToString(),
+			*HitSourceDirection.ToString(),
 			*Forward.ToString(),
 			*Right.ToString(),
 			ForwardDot,
@@ -728,15 +758,15 @@ void UMVHitReactionComponent::SnapOwnerYawToHitDirectionForLaunch(
 	}
 
 	FString DirectionSource;
-	const FVector HitDirection = MVHitReactionResolveHitDirection(HitData, &DirectionSource);
-	if (HitDirection.IsNearlyZero())
+	const FVector HitSourceDirection = MVHitReactionResolveHitSourceDirection(HitData, &DirectionSource);
+	if (HitSourceDirection.IsNearlyZero())
 	{
 		return;
 	}
 
 	const FRotator PreviousRotation = OwnerCharacter->GetActorRotation();
 	const FVector PreviousForward = OwnerCharacter->GetActorForwardVector().GetSafeNormal2D();
-	const FRotator TargetRotation = MVHitReactionMakeYawSnapRotation(HitDirection, Direction);
+	const FRotator TargetRotation = MVHitReactionMakeYawSnapRotation(HitSourceDirection, Direction);
 	OwnerCharacter->SetActorRotation(TargetRotation);
 
 	if (MVHitReactionShouldLogDirectionTrace(HitData.HitReactionType))
@@ -744,14 +774,14 @@ void UMVHitReactionComponent::SnapOwnerYawToHitDirectionForLaunch(
 		UE_LOG(
 			LogMVHitReactionComponent,
 			Warning,
-			TEXT("HitDirectionTrace Frame=%llu Stage=LaunchYawSnap Owner=%s HitReactionType=%d Row=%s Direction=%s Source=%s HitDirection=%s PreviousForward=%s PreviousRotation=%s TargetRotation=%s NewForward=%s"),
+			TEXT("HitDirectionTrace Frame=%llu Stage=LaunchYawSnap Owner=%s HitReactionType=%d Row=%s Direction=%s Source=%s HitSourceDirection=%s PreviousForward=%s PreviousRotation=%s TargetRotation=%s NewForward=%s"),
 			static_cast<unsigned long long>(GFrameCounter),
 			*GetNameSafe(OwnerCharacter.Get()),
 			static_cast<int32>(HitData.HitReactionType),
 			*ActionRowName.ToString(),
 			*HitReactionDirectionToTableToken(Direction),
 			*DirectionSource,
-			*HitDirection.ToString(),
+			*HitSourceDirection.ToString(),
 			*PreviousForward.ToString(),
 			*PreviousRotation.ToString(),
 			*TargetRotation.ToString(),
