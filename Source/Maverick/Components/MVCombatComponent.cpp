@@ -264,6 +264,92 @@ void UMVCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 	TryUpdateHeavyChargeAttack(0.0f);
 }
 
+bool UMVCombatComponent::GetSkillSlotRuntimeState(
+	const int32 SkillIndex,
+	FMVSkillSlotRuntimeState& OutState) const
+{
+	OutState = FMVSkillSlotRuntimeState();
+
+	const FMVSkillEntry* SkillEntry = SkillMap.Find(MVCombatMakeSkillMapKey(FMath::Max(0, SkillIndex)));
+	const UWorld* World = GetWorld();
+	if (!SkillEntry || !World)
+	{
+		return false;
+	}
+
+	const float CurrentTime = World->GetTimeSeconds();
+	const bool bInputWindowActive = SkillEntry->bChainActive
+		&& SkillEntry->IsInputWindowValid(CurrentTime);
+
+	OutState.bAvailable = SkillEntry->SkillRowNames.Num() > 0;
+	OutState.bChainActive = bInputWindowActive;
+	OutState.StackSize = SkillEntry->SkillRowNames.Num();
+	OutState.ActiveStackIndex = bInputWindowActive
+		? FMath::Clamp(SkillEntry->CurrentChainStageIndex, 0, FMath::Max(0, OutState.StackSize - 1))
+		: 0;
+
+	const bool bSlotAbilityRunning = bCurrentAbilityAwaitingCompletion
+		&& CurrentAbilityInstance
+		&& SkillEntry->ContainsAbility(CurrentAbilityInstance);
+	if (bSlotAbilityRunning)
+	{
+		for (int32 AbilityIndex = 0; AbilityIndex < SkillEntry->AbilityInstances.Num(); ++AbilityIndex)
+		{
+			if (SkillEntry->AbilityInstances[AbilityIndex].Get() == CurrentAbilityInstance.Get())
+			{
+				OutState.ActiveStackIndex = AbilityIndex;
+				break;
+			}
+		}
+	}
+
+	if (bInputWindowActive)
+	{
+		const FMVSkillDataTableColumn* CurrentStageData = SkillEntry->GetCurrentSkillData();
+		OutState.CooldownDuration = CurrentStageData
+			? FMath::Max(0.0f, CurrentStageData->InterStageCooldown)
+			: 0.0f;
+		if (OutState.CooldownDuration > 0.0f)
+		{
+			const float StageElapsedTime = FMath::Max(0.0f, CurrentTime - SkillEntry->LastStageActivationTime);
+			OutState.CooldownRemaining = FMath::Clamp(
+				OutState.CooldownDuration - StageElapsedTime,
+				0.0f,
+				OutState.CooldownDuration);
+		}
+
+		const float ChainWindowStartTime = SkillEntry->LastStageActivationTime + OutState.CooldownDuration;
+		if (!bSlotAbilityRunning && CurrentStageData && CurrentTime >= ChainWindowStartTime)
+		{
+			OutState.ChainWindowDuration = FMath::Max(0.0f, CurrentStageData->InputWindowDuration);
+			OutState.ChainWindowRemaining = FMath::Clamp(
+				SkillEntry->GetRemainingInputWindowTime(CurrentTime),
+				0.0f,
+				OutState.ChainWindowDuration);
+		}
+	}
+	else
+	{
+		OutState.CooldownDuration = FMath::Max(0.0f, SkillEntry->MainCooldownDuration);
+		if (OutState.CooldownDuration > 0.0f && SkillEntry->LastUsedTime > 0.0f)
+		{
+			const float ElapsedTime = FMath::Max(0.0f, CurrentTime - SkillEntry->LastUsedTime);
+			OutState.CooldownRemaining = FMath::Clamp(
+				OutState.CooldownDuration - ElapsedTime,
+				0.0f,
+				OutState.CooldownDuration);
+		}
+	}
+
+	if (bSlotAbilityRunning)
+	{
+		OutState.CooldownRemaining = OutState.CooldownDuration;
+	}
+
+	OutState.bOnCooldown = OutState.CooldownRemaining > KINDA_SMALL_NUMBER;
+	return OutState.bAvailable;
+}
+
 bool UMVCombatComponent::TryCombatAction(
 	EMVCombatActionTypes InActionType,
 	int32 ActionIndex,
@@ -706,6 +792,11 @@ void UMVCombatComponent::HandleAbilityEnded(const UMVAbilityBase* EndedAbility)
 		}
 	}
 
+	if (bHandledAbility && CurrentAbilityInstance.Get() == EndedAbility)
+	{
+		bCurrentAbilityAwaitingCompletion = false;
+	}
+
 }
 
 void UMVCombatComponent::HandleActionEnded(
@@ -725,14 +816,21 @@ void UMVCombatComponent::HandleActionEnded(
 		return;
 	}
 
-	if (CurrentAbilityInstance && CurrentAbilityInstance->bAbilityActive)
+	UMVAbilityBase* EndedAbility = CurrentAbilityInstance.Get();
+	if (EndedAbility && EndedAbility->bAbilityActive)
 	{
-		IMVAbilityInterface::Execute_EndAbility(CurrentAbilityInstance);
+		IMVAbilityInterface::Execute_EndAbility(EndedAbility);
+	}
+
+	if (bCurrentAbilityAwaitingCompletion && CurrentAbilityInstance.Get() == EndedAbility)
+	{
+		HandleAbilityEnded(EndedAbility);
 	}
 
 	CurrentAbilityInstance = nullptr;
 	CurrentAbilityActionTableName = NAME_None;
 	CurrentAbilityActionRowName = NAME_None;
+	bCurrentAbilityAwaitingCompletion = false;
 }
 
 void UMVCombatComponent::RefreshActionMaps()
@@ -1348,6 +1446,7 @@ bool UMVCombatComponent::TryStartActionWithAbility(
 			}
 
 			CurrentAbilityInstance = NextAbility;
+			bCurrentAbilityAwaitingCompletion = CurrentAbilityInstance != nullptr;
 			CurrentAbilityActionTableName = MVCombatActionTableNameFromDataTable(RowHandle.DataTable);
 			CurrentAbilityActionRowName = RowHandle.RowName;
 			if (CurrentAbilityInstance)
@@ -1366,6 +1465,7 @@ bool UMVCombatComponent::TryStartActionWithAbility(
 				CurrentAbilityInstance = nullptr;
 				CurrentAbilityActionTableName = NAME_None;
 				CurrentAbilityActionRowName = NAME_None;
+				bCurrentAbilityAwaitingCompletion = false;
 			}
 		};
 

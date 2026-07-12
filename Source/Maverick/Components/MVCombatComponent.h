@@ -232,7 +232,9 @@ public:
 			const FMVSkillDataTableColumn* CurrentData = GetCurrentSkillData();
 			if (CurrentData)
 			{
-				InputWindowCloseTime = CurrentTime + CurrentData->InputWindowDuration;
+				InputWindowCloseTime = CurrentTime
+					+ FMath::Max(0.0f, CurrentData->InterStageCooldown)
+					+ FMath::Max(0.0f, CurrentData->InputWindowDuration);
 			}
 		}
 		// if Simple Skill or invalid Skill
@@ -253,7 +255,9 @@ public:
 			const FMVSkillDataTableColumn* CurrentData = GetCurrentSkillData();
 			if (CurrentData)
 			{
-				InputWindowCloseTime = CurrentTime + CurrentData->InputWindowDuration;
+				InputWindowCloseTime = CurrentTime
+					+ FMath::Max(0.0f, CurrentData->InterStageCooldown)
+					+ FMath::Max(0.0f, CurrentData->InputWindowDuration);
 			}
 			return;
 		}
@@ -284,11 +288,47 @@ public:
 		const FMVSkillDataTableColumn* CurrentData = GetCurrentSkillData();
 		if (CurrentData)
 		{
-			InputWindowCloseTime = CurrentTime + CurrentData->InputWindowDuration;
+			InputWindowCloseTime = CurrentTime
+				+ FMath::Max(0.0f, CurrentData->InterStageCooldown)
+				+ FMath::Max(0.0f, CurrentData->InputWindowDuration);
 		}
 
 		return true;
 	}
+};
+
+/** Read-only UI projection of one player skill slot. */
+USTRUCT(BlueprintType)
+struct FMVSkillSlotRuntimeState
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Combat|Skill UI")
+	bool bAvailable = false;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Combat|Skill UI")
+	bool bChainActive = false;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Combat|Skill UI")
+	bool bOnCooldown = false;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Combat|Skill UI")
+	int32 ActiveStackIndex = 0;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Combat|Skill UI")
+	int32 StackSize = 0;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Combat|Skill UI")
+	float CooldownRemaining = 0.0f;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Combat|Skill UI")
+	float CooldownDuration = 0.0f;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Combat|Skill UI")
+	float ChainWindowRemaining = 0.0f;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Combat|Skill UI")
+	float ChainWindowDuration = 0.0f;
 };
 
 /*
@@ -341,6 +381,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Action")
 	bool TryCombatAction(EMVCombatActionTypes InActionType, int32 ActionIndex = 0, FName StartSection = NAME_None);
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|Combat|Skill UI")
+	bool GetSkillSlotRuntimeState(int32 SkillIndex, FMVSkillSlotRuntimeState& OutState) const;
 
 	void HandleAbilityEnded(const UMVAbilityBase* EndedAbility);
 
@@ -483,6 +526,7 @@ public:
 	TObjectPtr<UMVAbilityBase> CurrentAbilityInstance;
 	FName CurrentAbilityActionTableName = NAME_None;
 	FName CurrentAbilityActionRowName = NAME_None;
+	bool bCurrentAbilityAwaitingCompletion = false;
 
 private:
 	double LastBasicAttackedTime = 0.0;

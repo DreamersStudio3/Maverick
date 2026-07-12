@@ -4,6 +4,16 @@
 #include "Components/TextBlock.h"
 #include "UI/HUD/MVStatusBarWidget.h"
 
+void UMVBossHPBarWidget::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
+
+	if (GroggyBar)
+	{
+		GroggyBar->SetBarFillType(EProgressBarFillType::FillFromCenterHorizontal);
+	}
+}
+
 void UMVBossHPBarWidget::BindToStatComponent(UMVStatComponent* InStatComponent, FText BossName)
 {
 	if (BoundStatComponent == InStatComponent)
