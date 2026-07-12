@@ -314,15 +314,37 @@ bool UMVCombatComponent::TryCombatAction(
 		if (IsBasicAttackActionType(ResolvedActionType))
 		{
 			const bool bStarted = TryBasicAttack(ResolvedActionType, ResolvedActionIndex, StartSection);
+			UE_LOG(
+				LogMVCombatComponent,
+				Warning,
+				TEXT("[CombatActionEventDebug] TryBasicAttack returned %s. Owner=%s ActionType=%s ActionIndex=%d"),
+				bStarted ? TEXT("true") : TEXT("false"),
+				*GetNameSafe(GetOwner()),
+				*MVCombatActionTypeToString(ResolvedActionType),
+				ResolvedActionIndex);
 			if (bStarted)
 			{
 				MarkContextualBasicAttackStarted(ResolvedActionType);
+				BroadcastCombatActionStarted(ResolvedActionType, ResolvedActionIndex);
 			}
 			return bStarted;
 		}
 		else if (ResolvedActionType == EMVCombatActionTypes::Skill)
 		{
-			return TrySkill(ResolvedActionType, ResolvedActionIndex, StartSection);
+			const bool bStarted = TrySkill(ResolvedActionType, ResolvedActionIndex, StartSection);
+			UE_LOG(
+				LogMVCombatComponent,
+				Warning,
+				TEXT("[CombatActionEventDebug] TrySkill returned %s. Owner=%s ActionType=%s ActionIndex=%d"),
+				bStarted ? TEXT("true") : TEXT("false"),
+				*GetNameSafe(GetOwner()),
+				*MVCombatActionTypeToString(ResolvedActionType),
+				ResolvedActionIndex);
+			if (bStarted)
+			{
+				BroadcastCombatActionStarted(ResolvedActionType, ResolvedActionIndex);
+			}
+			return bStarted;
 		}
 
 		// Other Actions --> If Other action should concern, add logic
@@ -1932,6 +1954,37 @@ void UMVCombatComponent::MarkContextualBasicAttackStarted(const EMVCombatActionT
 		ConsumedDodgeContextActionInstanceId = PendingDodgeContextActionInstanceId;
 		PendingDodgeContextActionInstanceId = INDEX_NONE;
 	}
+}
+
+void UMVCombatComponent::BroadcastCombatActionStarted(
+	const EMVCombatActionTypes ActionType,
+	const int32 ActionIndex)
+{
+	FMVCombatActionEvent Event;
+	Event.Instigator = GetOwner();
+	Event.ActionType = ActionType;
+	Event.ActionIndex = ActionIndex;
+
+	const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
+	const UMVActionComponent* ActionComponent = OwnerCharacter ? OwnerCharacter->ActionComponent : nullptr;
+	if (ActionComponent)
+	{
+		Event.ActionTableName = ActionComponent->GetActiveActionTableName();
+		Event.ActionRowName = ActionComponent->GetActiveActionRowName();
+	}
+
+	UE_LOG(
+		LogMVCombatComponent,
+		Warning,
+		TEXT("BroadcastCombatActionStarted: Owner=%s ActionType=%s ActionIndex=%d Table=%s Row=%s HasListeners=%s"),
+		*GetNameSafe(GetOwner()),
+		*MVCombatActionTypeToString(ActionType),
+		ActionIndex,
+		*Event.ActionTableName.ToString(),
+		*Event.ActionRowName.ToString(),
+		OnCombatActionStarted.IsBound() ? TEXT("true") : TEXT("false"));
+
+	OnCombatActionStarted.Broadcast(Event);
 }
 
 void UMVCombatComponent::UpdateContextualBasicAttackResets()

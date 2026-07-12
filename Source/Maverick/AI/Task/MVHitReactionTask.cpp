@@ -39,8 +39,8 @@ void HitReactionTaskLogTrace(
 	const bool bActionRunning = ActionComponent && ActionComponent->IsActionRunning();
 	UE_LOG(
 		LogMVHitReactionTask,
-		Warning,
-		TEXT("EnemyHitReactionTrace Frame=%llu Stage=%s Owner=%s Victim=%s HitReactionType=%d bWaitForActionEnd=%s bActionRunning=%s ActiveTable=%s ActiveRow=%s StartedTable=%s StartedRow=%s bCanInterrupt=%s"),
+		Verbose,
+		TEXT("EnemyHitReactTrace Frame=%llu Stage=%s Owner=%s Victim=%s HitReactionType=%d bWaitForActionEnd=%s bActionRunning=%s ActiveTable=%s ActiveRow=%s StartedTable=%s StartedRow=%s bCanInterrupt=%s"),
 		static_cast<unsigned long long>(GFrameCounter),
 		Stage,
 		*GetNameSafe(Owner),

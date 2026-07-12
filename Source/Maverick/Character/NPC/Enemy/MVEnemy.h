@@ -12,6 +12,7 @@
 
 class UAnimMontage;
 class UMVMainHUDWidget;
+class UMVEnemyDodgeTokenComponent;
 
 /**
  * Enemy character bridge for AI-driven combat.
@@ -68,6 +69,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|Enemy|Event")
 	FMVEnemyGroggyEndedSignature OnEnemyGroggyEnded;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<UMVEnemyDodgeTokenComponent> EnemyDodgeTokenComponent;
 	
 	
 protected:
