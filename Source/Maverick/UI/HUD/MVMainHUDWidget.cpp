@@ -6,8 +6,10 @@
 #include "Components/CanvasPanelSlot.h"
 #include "GameFramework/Pawn.h"
 #include "Character/PC/Consumable/MVPlayerConsumable.h"
+#include "Components/MVCombatComponent.h"
 #include "Components/MVStatComponent.h"
 #include "UI/HUD/MVBossHPBarWidget.h"
+#include "UI/HUD/MVPlayerSkillHUDWidget.h"
 #include "UI/HUD/MVPlayerStatusWidget.h"
 #include "UI/HUD/MVQuickSlotWidget.h"
 
@@ -16,6 +18,7 @@ void UMVMainHUDWidget::NativeOnInitialized()
 	Super::NativeOnInitialized();
 
 	BuildNativeWidgetTree();
+	EnsurePlayerSkillHUD();
 }
 
 void UMVMainHUDWidget::RefreshHUD()
@@ -24,6 +27,11 @@ void UMVMainHUDWidget::RefreshHUD()
 	if (PlayerStatus)
 	{
 		PlayerStatus->BindToStatComponent(OwningPawn ? OwningPawn->FindComponentByClass<UMVStatComponent>() : nullptr);
+	}
+	if (PlayerSkillHUD)
+	{
+		PlayerSkillHUD->BindToCombatComponent(
+			OwningPawn ? OwningPawn->FindComponentByClass<UMVCombatComponent>() : nullptr);
 	}
 
 	AMVPlayerCharacter* PlayerCharacter = Cast<AMVPlayerCharacter>(OwningPawn);
@@ -76,6 +84,9 @@ void UMVMainHUDWidget::BuildNativeWidgetTree()
 	UCanvasPanel* RootCanvas = WidgetTree->ConstructWidget<UCanvasPanel>(UCanvasPanel::StaticClass(), TEXT("HUDRoot"));
 	PlayerStatus = WidgetTree->ConstructWidget<UMVPlayerStatusWidget>(UMVPlayerStatusWidget::StaticClass(), TEXT("PlayerStatus"));
 	HPSlot = WidgetTree->ConstructWidget<UMVQuickSlotWidget>(UMVQuickSlotWidget::StaticClass(), TEXT("HPSlot"));
+	PlayerSkillHUD = WidgetTree->ConstructWidget<UMVPlayerSkillHUDWidget>(
+		UMVPlayerSkillHUDWidget::StaticClass(),
+		TEXT("PlayerSkillHUD"));
 
 	WidgetTree->RootWidget = RootCanvas;
 
@@ -93,6 +104,39 @@ void UMVMainHUDWidget::BuildNativeWidgetTree()
 		HPSlotCanvasSlot->SetAlignment(FVector2D(0.0f, 1.0f));
 		HPSlotCanvasSlot->SetAutoSize(true);
 		HPSlotCanvasSlot->SetPosition(FVector2D(32.0f, -32.0f));
+	}
+
+	if (UCanvasPanelSlot* SkillHUDSlot = RootCanvas->AddChildToCanvas(PlayerSkillHUD))
+	{
+		SkillHUDSlot->SetAnchors(FAnchors(0.5f, 1.0f));
+		SkillHUDSlot->SetAlignment(FVector2D(0.5f, 1.0f));
+		SkillHUDSlot->SetAutoSize(true);
+		SkillHUDSlot->SetPosition(PlayerSkillHUDCanvasOffset);
+	}
+}
+
+void UMVMainHUDWidget::EnsurePlayerSkillHUD()
+{
+	if (PlayerSkillHUD || !WidgetTree)
+	{
+		return;
+	}
+
+	UCanvasPanel* RootCanvas = Cast<UCanvasPanel>(WidgetTree->RootWidget);
+	if (!RootCanvas)
+	{
+		return;
+	}
+
+	PlayerSkillHUD = WidgetTree->ConstructWidget<UMVPlayerSkillHUDWidget>(
+		UMVPlayerSkillHUDWidget::StaticClass(),
+		TEXT("PlayerSkillHUD"));
+	if (UCanvasPanelSlot* SkillHUDSlot = RootCanvas->AddChildToCanvas(PlayerSkillHUD))
+	{
+		SkillHUDSlot->SetAnchors(FAnchors(0.5f, 1.0f));
+		SkillHUDSlot->SetAlignment(FVector2D(0.5f, 1.0f));
+		SkillHUDSlot->SetAutoSize(true);
+		SkillHUDSlot->SetPosition(PlayerSkillHUDCanvasOffset);
 	}
 }
 

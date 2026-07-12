@@ -8,6 +8,7 @@
 #include "Components/ProgressBar.h"
 #include "Components/SizeBox.h"
 #include "Components/TextBlock.h"
+#include "Brushes/SlateColorBrush.h"
 
 namespace
 {
@@ -24,6 +25,12 @@ void UMVStatusBarWidget::SetLabel(FText InLabel)
 void UMVStatusBarWidget::SetFillColor(FLinearColor InFillColor)
 {
 	FillColor = InFillColor;
+	UpdateBarStyle();
+}
+
+void UMVStatusBarWidget::SetBarFillType(EProgressBarFillType::Type InBarFillType)
+{
+	BarFillType = InBarFillType;
 	UpdateBarStyle();
 }
 
@@ -123,7 +130,10 @@ void UMVStatusBarWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
-	BuildNativeWidgetTree();
+	if (BuildNativeWidgetTree())
+	{
+		ApplyNativeBarStyle();
+	}
 	UpdateBarStyle();
 	UpdateBarSize();
 	UpdateTextBlocks();
@@ -183,11 +193,11 @@ void UMVStatusBarWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTi
 	RecentLossBar->SetPercent(FMath::Max(RecentLossDisplayPercent, CurrentDisplayPercent));
 }
 
-void UMVStatusBarWidget::BuildNativeWidgetTree()
+bool UMVStatusBarWidget::BuildNativeWidgetTree()
 {
 	if (!WidgetTree || WidgetTree->RootWidget)
 	{
-		return;
+		return false;
 	}
 
 	UHorizontalBox* RootBox = WidgetTree->ConstructWidget<UHorizontalBox>(UHorizontalBox::StaticClass(), TEXT("StatusBarRoot"));
@@ -254,17 +264,40 @@ void UMVStatusBarWidget::BuildNativeWidgetTree()
 		ValueSlot->SetVerticalAlignment(VAlign_Center);
 		ValueSlot->SetPadding(FMargin(10.0f, 0.0f, 0.0f, 0.0f));
 	}
+
+	return true;
+}
+
+void UMVStatusBarWidget::ApplyNativeBarStyle()
+{
+	if (Bar)
+	{
+		FProgressBarStyle FlatBarStyle = Bar->GetWidgetStyle();
+		FlatBarStyle.SetBackgroundImage(FSlateColorBrush(FLinearColor::Transparent));
+		FlatBarStyle.SetFillImage(FSlateColorBrush(FLinearColor::White));
+		Bar->SetWidgetStyle(FlatBarStyle);
+	}
+
+	if (RecentLossBar)
+	{
+		FProgressBarStyle FlatRecentLossStyle = RecentLossBar->GetWidgetStyle();
+		FlatRecentLossStyle.SetBackgroundImage(FSlateColorBrush(BackgroundColor));
+		FlatRecentLossStyle.SetFillImage(FSlateColorBrush(FLinearColor::White));
+		RecentLossBar->SetWidgetStyle(FlatRecentLossStyle);
+	}
 }
 
 void UMVStatusBarWidget::UpdateBarStyle()
 {
 	if (Bar)
 	{
+		Bar->SetBarFillType(BarFillType);
 		Bar->SetFillColorAndOpacity(FillColor);
 	}
 
 	if (RecentLossBar)
 	{
+		RecentLossBar->SetBarFillType(BarFillType);
 		RecentLossBar->SetFillColorAndOpacity(RecentLossColor);
 	}
 }
