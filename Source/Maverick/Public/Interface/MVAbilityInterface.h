@@ -24,8 +24,8 @@ class MAVERICK_API IMVAbilityInterface
 public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void StartAbility();
-	virtual void StartAbility_Implementation();
+	void StartAbility(int32 AbilityIndex);
+	virtual void StartAbility_Implementation(int32 AbilityIndex);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void EndAbility();

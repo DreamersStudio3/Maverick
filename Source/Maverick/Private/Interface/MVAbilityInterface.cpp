@@ -5,7 +5,7 @@
 
 // Add default functionality here for any IMVAbilityInterface functions that are not pure virtual.
 
-void IMVAbilityInterface::StartAbility_Implementation()
+void IMVAbilityInterface::StartAbility_Implementation(int32 AbilityIndex)
 {
 
 }

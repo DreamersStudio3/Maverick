@@ -197,7 +197,7 @@ bool UMVFinisherComponent::JudgeDistanceAndDirection(const AActor* HitActor) con
 	
 	float TargetDistance = 200.0f;
 	float TargetDistanceSquared = TargetDistance * TargetDistance;
-	float TargetMaxAngle = 35.0f;
+	float TargetMaxAngle = 45.0f;
 
 	float Distance = FVector::DistSquared2D(GetOwner()->GetActorLocation(), HitActor->GetActorLocation());
 	if(Distance> TargetDistanceSquared)

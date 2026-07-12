@@ -10,6 +10,7 @@
 class UMVPlayerDodge;
 class UMVPlayerInteractionDetector;
 class UMVPlayerConsumable;
+class UCameraShakeBase;
 
 /**
  * 로컬 플레이어 캐릭터 런타임 본체.
