@@ -4,8 +4,12 @@
 #include "Character/MVCharacterBase.h"
 #include "Character/NPC/Enemy/MVEnemy.h"
 #include "Components/MVDeathComponent.h"
+#include "Engine/World.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/PlayerController.h"
+#include "LockOnTargetComponent.h"
 #include "StateTreeExecutionContext.h"
+#include "TargetComponent.h"
 #include "TimerManager.h"
 
 namespace
@@ -44,6 +48,45 @@ bool EnemyDeadTaskIsDeathPresentationFinished(const FMVEnemyDeadTaskInstanceData
 	}
 
 	return InstanceData.DeathComponent->GetDeathPresentationPhase() == EMVDeathPresentationPhase::Finished;
+}
+
+void EnemyDeadTaskClearPlayerLockOnTargetingOwner(APawn& DeadOwner)
+{
+	UWorld* World = DeadOwner.GetWorld();
+	if (!World)
+	{
+		return;
+	}
+
+	for (FConstPlayerControllerIterator It = World->GetPlayerControllerIterator(); It; ++It)
+	{
+		const APlayerController* PlayerController = It->Get();
+		APawn* PlayerPawn = PlayerController ? PlayerController->GetPawn() : nullptr;
+		ULockOnTargetComponent* LockOnTargetComponent = PlayerPawn
+			? PlayerPawn->FindComponentByClass<ULockOnTargetComponent>()
+			: nullptr;
+
+		if (LockOnTargetComponent
+			&& LockOnTargetComponent->IsTargetLocked()
+			&& LockOnTargetComponent->GetTargetActor() == &DeadOwner)
+		{
+			LockOnTargetComponent->ClearTargetManual();
+		}
+	}
+}
+
+void EnemyDeadTaskDisableOwnerTargetCapture(APawn& DeadOwner)
+{
+	if (UTargetComponent* TargetComponent = DeadOwner.FindComponentByClass<UTargetComponent>())
+	{
+		TargetComponent->SetCanBeCaptured(false);
+	}
+}
+
+void EnemyDeadTaskReleaseLockOnForOwner(APawn& DeadOwner)
+{
+	EnemyDeadTaskClearPlayerLockOnTargetingOwner(DeadOwner);
+	EnemyDeadTaskDisableOwnerTargetCapture(DeadOwner);
 }
 
 void EnemyDeadTaskScheduleDestroy(AActor& Owner)
@@ -112,6 +155,18 @@ EMVEnemyDeadTaskCleanupResult EnemyDeadTaskApplyCleanup(FMVEnemyDeadTaskInstance
 	}
 }
 
+float EnemyDeadTaskGetEffectiveCleanupDelaySeconds(const FMVEnemyDeadTaskInstanceData& InstanceData)
+{
+	if (InstanceData.CleanupMode == EMVEnemyDeadCleanupMode::None)
+	{
+		return 0.0f;
+	}
+
+	return FMath::Max(
+		FMath::Max(0.0f, InstanceData.CleanupDelaySeconds),
+		FMath::Max(0.0f, InstanceData.MinimumCleanupDelaySeconds));
+}
+
 }
 
 FMVEnemyDeadTask::FMVEnemyDeadTask()
@@ -150,6 +205,16 @@ EStateTreeRunStatus FMVEnemyDeadTask::EnterState(
 	if (InstanceData.bStopAIMovement && InstanceData.AIController)
 	{
 		InstanceData.AIController->StopMovement();
+	}
+
+	if (InstanceData.bClearLockOnTargetOnEnter)
+	{
+		EnemyDeadTaskReleaseLockOnForOwner(*Owner);
+	}
+
+	if (AMVEnemy* Enemy = Cast<AMVEnemy>(Owner))
+	{
+		Enemy->HideBoundBossHUD();
 	}
 
 	if (InstanceData.Character)
@@ -205,7 +270,7 @@ EStateTreeRunStatus FMVEnemyDeadTask::Tick(FStateTreeExecutionContext& Context, 
 		InstanceData.CleanupDelayElapsedSeconds += FMath::Max(0.0f, DeltaTime);
 	}
 
-	if (InstanceData.CleanupDelayElapsedSeconds < InstanceData.CleanupDelaySeconds)
+	if (InstanceData.CleanupDelayElapsedSeconds < EnemyDeadTaskGetEffectiveCleanupDelaySeconds(InstanceData))
 	{
 		return EStateTreeRunStatus::Running;
 	}

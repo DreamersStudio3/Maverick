@@ -7,6 +7,7 @@
 #include "Character/MVCharacterBase.h"
 #include "Character/NPC/Enemy/MVEnemyWeapon.h"
 #include "Interface/MVHitReactionRecoveryDecisionProvider.h"
+#include "System/MVFieldTransitionResettableInterface.h"
 #include "TimerManager.h"
 #include "MVEnemy.generated.h"
 
@@ -22,11 +23,17 @@ class UMVEnemyDodgeTokenComponent;
  * visuals and weapon state are expected to be handled by the shared weapon
  * component path, while damage notifications are routed to enemy-specific
  * events so StateTree tasks can decide when to run combat state presentation.
- * Enemy identity defaults here, while concrete enemy Blueprints configure their
- * own CombatComponent chooser and fallback tables.
+ * Boss HUD binding is owned here as part of the enemy presentation lifecycle.
+ * Field transition reset restores reusable enemy runtime state after player
+ * death respawn without moving the actor back to its initial spawn transform.
+ * Enemy identity defaults here, while concrete enemy Blueprints configure
+ * their own CombatComponent chooser and fallback tables.
  */
 UCLASS()
-class MAVERICK_API AMVEnemy : public AMVCharacterBase, public IMVHitReactionRecoveryDecisionProvider
+class MAVERICK_API AMVEnemy
+	: public AMVCharacterBase
+	, public IMVHitReactionRecoveryDecisionProvider
+	, public IMVFieldTransitionResettableInterface
 {
 	GENERATED_BODY()
 	
@@ -56,10 +63,17 @@ public:
 	AMVEnemyWeapon* GetWeaponActor() const;
 
 	void DestroyWeaponActor();
+	void HideBoundBossHUD();
 
 	virtual bool TryChooseHitReactionRecovery(
 		const FMVHitReactionRecoveryDecisionContext& Context,
 		FMVHitReactionRecoveryDecision& OutDecision) override;
+
+	virtual EMVFieldTransitionResetPolicy GetFieldTransitionResetPolicy_Implementation() const override;
+	virtual FName GetFieldTransitionResetFieldId_Implementation() const override;
+	virtual FName GetFieldTransitionResetObjectId_Implementation() const override;
+	virtual void HandleFieldTransitionReset_Implementation(
+		const FMVFieldTransitionResetContext& ResetContext) override;
 
 	FMVEnemyAttackMontageEndedSignature OnAttackMontageEnded;
 
@@ -82,6 +96,9 @@ protected:
 
 	void ScheduleBossHUDBindRetry(float DelaySeconds);
 	void BindBossHUDToMainHUD();
+	void ResetEnemyForFieldTransition();
+	void RestoreWeaponActor();
+	void RestartStateTreeLogicForFieldTransition();
 
 	void HandleAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted, int32 AttackInstanceId);
 

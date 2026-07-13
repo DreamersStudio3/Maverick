@@ -3,6 +3,7 @@
 #include "Character/MVCharacterBase.h"
 #include "Chooser.h"
 #include "Components/MVActionComponent.h"
+#include "Components/MVStatComponent.h"
 #include "Engine/Engine.h"
 #include "Engine/DataTable.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -84,6 +85,20 @@ void MVHitReactionLogAirborneTrace(
 const TCHAR* MVHitReactionDebugBoolText(const bool bValue)
 {
 	return bValue ? TEXT("true") : TEXT("false");
+}
+
+void MVHitReactionCopyBaseActionRow(
+	const FMVActionRow& SourceActionRow,
+	FMVHitReactionActionRow& TargetActionRow)
+{
+	TargetActionRow.RowId = SourceActionRow.RowId;
+	TargetActionRow.Montage = SourceActionRow.Montage;
+	TargetActionRow.DefaultStartSection = SourceActionRow.DefaultStartSection;
+	TargetActionRow.PlayRate = SourceActionRow.PlayRate;
+	TargetActionRow.bLocksMovement = SourceActionRow.bLocksMovement;
+	TargetActionRow.bCanBeInterrupted = SourceActionRow.bCanBeInterrupted;
+	TargetActionRow.bEnabled = SourceActionRow.bEnabled;
+	TargetActionRow.bUseLaunch = false;
 }
 
 FString MVHitReactionRecoveryDirectionToken(const EMVHitReactionDirection Direction)
@@ -302,6 +317,8 @@ void UMVHitReactionComponent::HandleDamaged(const FMVResolvedHitData& HitData)
 		return;
 	}
 
+	const bool bGroggyHitReaction = HitData.HitReactionType == EMVActionHitReactionType::Groggy;
+
 	MVHitReactionLogAirborneTrace(
 		this,
 		TEXT("ReactionHandleEnter"),
@@ -353,7 +370,12 @@ void UMVHitReactionComponent::HandleDamaged(const FMVResolvedHitData& HitData)
 		return;
 	}
 
-	if (OwnerCharacter->IsInvincible())
+	if (CachedStatComponent && CachedStatComponent->IsGroggy() && !bGroggyHitReaction)
+	{
+		return;
+	}
+
+	if (OwnerCharacter->IsInvincible() && !bGroggyHitReaction)
 	{
 		MVHitReactionLogAirborneTrace(
 			this,
@@ -708,30 +730,52 @@ bool UMVHitReactionComponent::GetActionData(const FMVResolvedHitData& HitData, F
 		return false;
 	}
 
-	const FMVHitReactionActionRow* ActionRow = FindHitReactionActionRow(ActionRowHandle.ActionRow);
-	if (!ActionRow)
+	FMVHitReactionActionRow ResolvedActionRow;
+	if (HitData.HitReactionType == EMVActionHitReactionType::Groggy)
 	{
-		UE_LOG(
-			LogMVHitReactionComponent,
-			Warning,
-			TEXT("HitReaction row was not resolved. DataTable=%s, RowName=%s."),
-			*GetNameSafe(ActionRowHandle.ActionRow.DataTable),
-			*ActionRowHandle.ActionRow.RowName.ToString());
-		return false;
+		const FMVActionRow* BaseActionRow = FindBaseActionRow(ActionRowHandle.ActionRow);
+		if (!BaseActionRow)
+		{
+			UE_LOG(
+				LogMVHitReactionComponent,
+				Warning,
+				TEXT("Groggy action row was not resolved. DataTable=%s, RowName=%s."),
+				*GetNameSafe(ActionRowHandle.ActionRow.DataTable),
+				*ActionRowHandle.ActionRow.RowName.ToString());
+			return false;
+		}
+
+		MVHitReactionCopyBaseActionRow(*BaseActionRow, ResolvedActionRow);
+	}
+	else
+	{
+		const FMVHitReactionActionRow* ActionRow = FindHitReactionActionRow(ActionRowHandle.ActionRow);
+		if (!ActionRow)
+		{
+			UE_LOG(
+				LogMVHitReactionComponent,
+				Warning,
+				TEXT("HitReaction row was not resolved. DataTable=%s, RowName=%s."),
+				*GetNameSafe(ActionRowHandle.ActionRow.DataTable),
+				*ActionRowHandle.ActionRow.RowName.ToString());
+			return false;
+		}
+
+		ResolvedActionRow = *ActionRow;
 	}
 
 	OutActionData.ActionRowHandle = ActionRowHandle.ActionRow;
 	OutActionData.StartSection = ActionRowHandle.StartSection.IsNone()
-		? ActionRow->DefaultStartSection
+		? ResolvedActionRow.DefaultStartSection
 		: ActionRowHandle.StartSection;
 	OutActionData.Direction = Direction;
-	OutActionData.ActionRow = *ActionRow;
+	OutActionData.ActionRow = ResolvedActionRow;
 
 	MVHitReactionLogHitLaunchTrace(
 		this,
 		TEXT("ReactionRowResolved"),
 		HitData,
-		ActionRow->bUseLaunch,
+		ResolvedActionRow.bUseLaunch,
 		ActionRowHandle.ActionRow.RowName);
 	return true;
 }
@@ -1575,6 +1619,16 @@ bool UMVHitReactionComponent::ResolveHitReactionActionRowHandle(
 	FMVHitReactionActionRowHandle& OutActionRowHandle)
 {
 	OutActionRowHandle.Reset();
+	const FGameplayTag CharacterIndexCode = ResolveCharacterIndexCode();
+	if (HitReactionType == EMVActionHitReactionType::Groggy
+		&& MakeHitReactionActionRowHandleFromNames(
+			MakeGroggyActionTableName(CharacterIndexCode),
+			MakeGroggyActionRowName(CharacterIndexCode),
+			OutActionRowHandle))
+	{
+		return true;
+	}
+
 	if (EvaluateHitReactionChooserActionRowHandle(OutActionRowHandle))
 	{
 		return true;
@@ -1761,6 +1815,32 @@ FName UMVHitReactionComponent::MakeHitReactionActionRowName(
 		*HitReactionDirectionToTableToken(Direction)));
 }
 
+FName UMVHitReactionComponent::MakeGroggyActionTableName(const FGameplayTag CharacterIndexCode) const
+{
+	const FString CharacterIndexCodeToken = CharacterIndexCodeToTableToken(CharacterIndexCode);
+	if (CharacterIndexCodeToken.IsEmpty())
+	{
+		return NAME_None;
+	}
+
+	return FName(*FString::Printf(
+		TEXT("Groggy_%s"),
+		*CharacterIndexCodeToken));
+}
+
+FName UMVHitReactionComponent::MakeGroggyActionRowName(const FGameplayTag CharacterIndexCode) const
+{
+	const FString CharacterIndexCodeToken = CharacterIndexCodeToTableToken(CharacterIndexCode);
+	if (CharacterIndexCodeToken.IsEmpty())
+	{
+		return NAME_None;
+	}
+
+	return FName(*FString::Printf(
+		TEXT("Groggy_%s_Start_Loop"),
+		*CharacterIndexCodeToken));
+}
+
 FName UMVHitReactionComponent::MakeGetupRecoveryActionRowName(
 	const EMVHitReactionDirection Direction) const
 {
@@ -1869,6 +1949,45 @@ const FMVHitReactionActionRow* UMVHitReactionComponent::FindHitReactionActionRow
 			LogMVHitReactionComponent,
 			Warning,
 			TEXT("HitReaction row '%s' was not found in table '%s'. AvailableRows=%s."),
+			*ActionRowHandle.RowName.ToString(),
+			*GetNameSafe(ActionRowHandle.DataTable),
+			*MVHitReactionBuildAvailableRowNameLog(*ActionRowHandle.DataTable));
+	}
+
+	return Row;
+}
+
+const FMVActionRow* UMVHitReactionComponent::FindBaseActionRow(const FDataTableRowHandle ActionRowHandle) const
+{
+	if (!ActionRowHandle.DataTable || ActionRowHandle.RowName.IsNone())
+	{
+		return nullptr;
+	}
+
+	if (!ActionRowHandle.DataTable->GetRowStruct()
+		|| !ActionRowHandle.DataTable->GetRowStruct()->IsChildOf(FMVActionRow::StaticStruct()))
+	{
+		UE_LOG(
+			LogMVHitReactionComponent,
+			Warning,
+			TEXT("Action row handle has invalid row struct. DataTable=%s RowStruct=%s Expected=MVActionRow or child."),
+			*GetNameSafe(ActionRowHandle.DataTable),
+			ActionRowHandle.DataTable->GetRowStruct()
+				? *ActionRowHandle.DataTable->GetRowStruct()->GetName()
+				: TEXT("None"));
+		return nullptr;
+	}
+
+	const FMVActionRow* Row = ActionRowHandle.DataTable->FindRow<FMVActionRow>(
+		ActionRowHandle.RowName,
+		TEXT("MVHitReactionComponent"),
+		false);
+	if (!Row)
+	{
+		UE_LOG(
+			LogMVHitReactionComponent,
+			Warning,
+			TEXT("Action row '%s' was not found in table '%s'. AvailableRows=%s."),
 			*ActionRowHandle.RowName.ToString(),
 			*GetNameSafe(ActionRowHandle.DataTable),
 			*MVHitReactionBuildAvailableRowNameLog(*ActionRowHandle.DataTable));

@@ -97,6 +97,16 @@ bool UMVEnemyDodgeTokenComponent::TrySpendDodgeToken()
 	return true;
 }
 
+void UMVEnemyDodgeTokenComponent::ResetForFieldTransition()
+{
+	DodgeTokenCount = 0;
+	LastGrantReason = EMVEnemyDodgeTokenGrantReason::None;
+	NextSpendAllowedTime = 0.0f;
+	bGroggyActive = false;
+	bGroggyEndedByFinisher = false;
+	ResetCombatFlowCounters();
+}
+
 bool UMVEnemyDodgeTokenComponent::TryConsumeDodgeTokenForThreat(
 	AActor* Target,
 	const FMVCombatActionEvent& CombatActionEvent,

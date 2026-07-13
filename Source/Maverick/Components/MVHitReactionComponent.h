@@ -43,6 +43,9 @@ struct FMVHitReactionActionData
  * CharacterBase.OnDamaged에 바인딩되어 HitResolver가 확정한 HitReactionType과 충격 방향을
  * CHT_HR_Player의 선택 문맥으로 제공한다. Chooser가 반환한 상황별 액션 row handle과
  * 섹션을 확정한 뒤 ActionComponent의 실행 전용 API로 전달한다.
+ * 그로기 상태에서는 일반 피격 리액션이 그로기 액션을 가로채지 못하게 막고,
+ * 그로기 진입 리액션은 이전 피격 액션의 무적 구간에도 시작될 수 있게 처리한다.
+ * Finisher처럼 별도 도메인 컴포넌트가 직접 실행하는 액션은 이 컴포넌트의 일반 피격 차단 대상이 아니다.
  *
  * 라이프사이클:
  *   1) BeginPlay -> 소유 캐릭터와 ActionComponent를 캐시한다.
@@ -185,6 +188,8 @@ private:
 	FName MakeHitReactionActionRowName(
 		EMVActionHitReactionType HitReactionType,
 		EMVHitReactionDirection Direction) const;
+	FName MakeGroggyActionTableName(FGameplayTag CharacterIndexCode) const;
+	FName MakeGroggyActionRowName(FGameplayTag CharacterIndexCode) const;
 	FName MakeGetupRecoveryActionRowName(EMVHitReactionDirection Direction) const;
 	FName MakeEscapeDodgeRecoveryActionRowName(
 		EMVHitReactionDirection FallDirection,
@@ -193,6 +198,7 @@ private:
 	bool EvaluateHitReactionChooserActionRowHandle(FMVHitReactionActionRowHandle& OutActionRowHandle);
 	bool MakeHitReactionActionRowHandleFromNames(FName ActionTableName, FName ActionRowName, FMVHitReactionActionRowHandle& OutActionRowHandle) const;
 	const FMVHitReactionActionRow* FindHitReactionActionRow(FDataTableRowHandle ActionRowHandle) const;
+	const FMVActionRow* FindBaseActionRow(FDataTableRowHandle ActionRowHandle) const;
 	const FMVActionRow* FindRecoveryActionRow(FDataTableRowHandle ActionRowHandle) const;
 	static FString CharacterIndexCodeToTableToken(FGameplayTag CharacterIndexCode);
 	static FString HitReactionTypeToTableToken(EMVActionHitReactionType HitReactionType);

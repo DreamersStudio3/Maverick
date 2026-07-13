@@ -25,9 +25,18 @@ APawn* HitReactionTaskResolveOwner(FStateTreeExecutionContext& Context, const TO
 	return Cast<APawn>(Context.GetOwner());
 }
 
-bool HitReactionTaskIsHitReactionActionTableName(const FName ActionTableName)
+bool HitReactionTaskIsHitReactionActionTableName(
+	const EMVActionHitReactionType HitReactionType,
+	const FName ActionTableName)
 {
-	return ActionTableName.ToString().StartsWith(TEXT("HR_"));
+	const FString TableName = ActionTableName.ToString();
+	if (TableName.StartsWith(TEXT("HR_")))
+	{
+		return true;
+	}
+
+	return HitReactionType == EMVActionHitReactionType::Groggy
+		&& TableName.StartsWith(TEXT("Groggy_"));
 }
 
 void HitReactionTaskLogTrace(
@@ -62,9 +71,9 @@ bool HitReactionTaskIsStartedActionRunning(const FMVHitReactionTaskInstanceData&
 		return false;
 	}
 
-	if (InstanceData.StartedActionRowName.IsNone())
+	if (InstanceData.StartedActionTableName.IsNone() || InstanceData.StartedActionRowName.IsNone())
 	{
-		return true;
+		return false;
 	}
 
 	return InstanceData.ActionComponent->GetActiveActionTableName() == InstanceData.StartedActionTableName
@@ -142,7 +151,7 @@ EStateTreeRunStatus FMVHitReactionTask::EnterState(
 	if (InstanceData.ActionComponent && InstanceData.ActionComponent->IsActionRunning())
 	{
 		const FName ActiveActionTableName = InstanceData.ActionComponent->GetActiveActionTableName();
-		if (HitReactionTaskIsHitReactionActionTableName(ActiveActionTableName))
+		if (HitReactionTaskIsHitReactionActionTableName(InstanceData.HitData.HitReactionType, ActiveActionTableName))
 		{
 			InstanceData.StartedActionTableName = ActiveActionTableName;
 			InstanceData.StartedActionRowName = InstanceData.ActionComponent->GetActiveActionRowName();

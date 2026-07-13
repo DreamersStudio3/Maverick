@@ -42,6 +42,8 @@ void UMVBossHPBarWidget::BindToStatComponent(UMVStatComponent* InStatComponent, 
 	}
 
 	BoundStatComponent->OnHPChanged.AddUniqueDynamic(this, &UMVBossHPBarWidget::HandleHPChanged);
+	BoundStatComponent->OnDamageAccumulated.AddUniqueDynamic(this, &UMVBossHPBarWidget::HandleDamageAccumulated);
+	BoundStatComponent->OnDamageAccumulationReset.AddUniqueDynamic(this, &UMVBossHPBarWidget::HandleDamageAccumulationReset);
 	BoundStatComponent->OnGroggyChanged.AddUniqueDynamic(this, &UMVBossHPBarWidget::HandleGroggyChanged);
 	BoundStatComponent->OnGroggyStarted.AddUniqueDynamic(this, &UMVBossHPBarWidget::HandleGroggyStarted);
 	BoundStatComponent->OnGroggyEnded.AddUniqueDynamic(this, &UMVBossHPBarWidget::HandleGroggyEnded);
@@ -71,6 +73,8 @@ void UMVBossHPBarWidget::UnbindStatComponent()
 	}
 
 	BoundStatComponent->OnHPChanged.RemoveDynamic(this, &UMVBossHPBarWidget::HandleHPChanged);
+	BoundStatComponent->OnDamageAccumulated.RemoveDynamic(this, &UMVBossHPBarWidget::HandleDamageAccumulated);
+	BoundStatComponent->OnDamageAccumulationReset.RemoveDynamic(this, &UMVBossHPBarWidget::HandleDamageAccumulationReset);
 	BoundStatComponent->OnGroggyChanged.RemoveDynamic(this, &UMVBossHPBarWidget::HandleGroggyChanged);
 	BoundStatComponent->OnGroggyStarted.RemoveDynamic(this, &UMVBossHPBarWidget::HandleGroggyStarted);
 	BoundStatComponent->OnGroggyEnded.RemoveDynamic(this, &UMVBossHPBarWidget::HandleGroggyEnded);
@@ -136,6 +140,22 @@ void UMVBossHPBarWidget::NativeDestruct()
 void UMVBossHPBarWidget::HandleHPChanged(float CurrentHP, float MaxHP)
 {
 	UpdateBossHP(CurrentHP, MaxHP);
+}
+
+void UMVBossHPBarWidget::HandleDamageAccumulated(
+	const float AccumulatedDamage,
+	const float AppliedDamage,
+	const float PreviousHP,
+	const float CurrentHP,
+	const FMVResolvedHitData& HitData)
+{
+	BP_OnBossDamageApplied(AccumulatedDamage, PreviousHP, CurrentHP, HitData);
+	BP_OnBossDamageAccumulated(AccumulatedDamage, AppliedDamage, PreviousHP, CurrentHP, HitData);
+}
+
+void UMVBossHPBarWidget::HandleDamageAccumulationReset()
+{
+	BP_OnBossDamageAccumulationReset();
 }
 
 void UMVBossHPBarWidget::HandleGroggyChanged(float CurrentGroggy, float MaxGroggy)

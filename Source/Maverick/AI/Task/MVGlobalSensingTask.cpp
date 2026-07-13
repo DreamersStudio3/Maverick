@@ -1,5 +1,6 @@
 #include "MVGlobalSensingTask.h"
 
+#include "AI/Controller/MVAIController.h"
 #include "AIController.h"
 #include "Components/MVActionComponent.h"
 #include "Components/MVStatComponent.h"
@@ -111,6 +112,37 @@ UMVActionCooldownComponent* GlobalSensingEnsureCooldownComponent(APawn& Owner)
 	Owner.AddInstanceComponent(NewComponent);
 	NewComponent->RegisterComponent();
 	return NewComponent;
+}
+
+bool GlobalSensingIsActorDead(const AActor& Actor)
+{
+	const UMVStatComponent* StatComponent = Actor.FindComponentByClass<UMVStatComponent>();
+	return StatComponent && StatComponent->IsDead();
+}
+
+void GlobalSensingClearControllerTarget(const APawn& Owner)
+{
+	if (AMVAIController* AIController = Cast<AMVAIController>(Owner.GetController()))
+	{
+		AIController->TargetActor = nullptr;
+	}
+}
+
+void GlobalSensingClearTargetSnapshot(FMVGlobalSensingTaskInstanceData& InstanceData)
+{
+	InstanceData.Target = nullptr;
+	InstanceData.bHasTarget = false;
+	InstanceData.DistanceToTarget = 0.0f;
+	InstanceData.AngleToTarget = 0.0f;
+	InstanceData.AttackDirection = EMVAttackDirection::Forward;
+	InstanceData.CurrentArea = EMVBossCombatArea::OutsideArea;
+	InstanceData.bHasLineOfSight = false;
+	InstanceData.bActionRunning = false;
+	InstanceData.bSprintPathClear = false;
+	InstanceData.bAirborneChargePathClear = false;
+	InstanceData.bNeedAttackAngle = false;
+	InstanceData.bNeedClearAttackPath = false;
+	InstanceData.bStrafePathClear = false;
 }
 
 void UpdateGlobalSensingCooldownContext(FMVGlobalSensingTaskInstanceData& InstanceData, const float DeltaTime)
@@ -238,20 +270,17 @@ EStateTreeRunStatus UpdateGlobalSensingSnapshot(
 
 	UpdateGlobalSensingCooldownContext(InstanceData, DeltaTime);
 
+	if (InstanceData.Target && GlobalSensingIsActorDead(*InstanceData.Target))
+	{
+		GlobalSensingClearControllerTarget(*InstanceData.Owner);
+		GlobalSensingClearTargetSnapshot(InstanceData);
+		UpdateGlobalSensingCombatContext(InstanceData);
+		return EStateTreeRunStatus::Running;
+	}
+
 	if (!InstanceData.Target)
 	{
-		InstanceData.bHasTarget = false;
-		InstanceData.DistanceToTarget = 0.0f;
-		InstanceData.AngleToTarget = 0.0f;
-		InstanceData.AttackDirection = EMVAttackDirection::Forward;
-		InstanceData.CurrentArea = EMVBossCombatArea::OutsideArea;
-		InstanceData.bHasLineOfSight = false;
-		InstanceData.bActionRunning = false;
-		InstanceData.bSprintPathClear = false;
-		InstanceData.bAirborneChargePathClear = false;
-		InstanceData.bNeedAttackAngle = false;
-		InstanceData.bNeedClearAttackPath = false;
-		InstanceData.bStrafePathClear = false;
+		GlobalSensingClearTargetSnapshot(InstanceData);
 		UpdateGlobalSensingCombatContext(InstanceData);
 		return EStateTreeRunStatus::Running;
 	}

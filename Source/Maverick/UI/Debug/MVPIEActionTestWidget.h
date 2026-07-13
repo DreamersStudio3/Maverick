@@ -55,6 +55,9 @@ private:
 	void HandleResetStatsClicked();
 
 	UFUNCTION()
+	void HandleGrantEnemyDodgeTokenClicked();
+
+	UFUNCTION()
 	void HandleFlinchFrontClicked();
 
 	UFUNCTION()

@@ -45,6 +45,20 @@ struct MAVERICK_API FMVDeathContext
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnDeathStarted, const FMVDeathContext&, DeathContext);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(
+	FMVOnDamageApplied,
+	float, AppliedDamage,
+	float, PreviousHP,
+	float, CurrentHP,
+	const FMVResolvedHitData&, HitData);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FiveParams(
+	FMVOnDamageAccumulated,
+	float, AccumulatedDamage,
+	float, AppliedDamage,
+	float, PreviousHP,
+	float, CurrentHP,
+	const FMVResolvedHitData&, HitData);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMVOnDamageAccumulationReset);
 
 /**
  * 캐릭터 스탯 값과 회복 정책을 관리하는 컴포넌트.
@@ -52,7 +66,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnDeathStarted, const FMVDeathCon
  * 명시적으로 설정된 CharacterIndexCode와 동일한 CharacterStat row에서 기본 스탯을
  * 로드하고 HP, 스태미너, MP, groggy, 이동/전투 수치의 현재값과 변경 이벤트를 소유한다.
  * `OnDamaged` 구독을 통해 확정된 피해의 HP 차감도 처리한다.
- * NotifyState가 요청한 회복 일시정지와 최근 감소 UI 홀드 이벤트도 이 컴포넌트의 상태로 관리한다.
+ * NotifyState가 요청한 회복 일시정지, 최근 감소 UI 홀드, 그로기 누적 게이지 감소도 이 컴포넌트의 상태로 관리한다.
  * 다른 도메인 컴포넌트의 캐릭터 선택 상태는 참조하지 않는다.
  *
  * 라이프사이클:
@@ -71,6 +85,15 @@ public:
 	
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|Stat|Event")
 	FMVOnStatValueChanged OnHPChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Maverick|Stat|Event")
+	FMVOnDamageApplied OnDamageApplied;
+
+	UPROPERTY(BlueprintAssignable, Category = "Maverick|Stat|Event")
+	FMVOnDamageAccumulated OnDamageAccumulated;
+
+	UPROPERTY(BlueprintAssignable, Category = "Maverick|Stat|Event")
+	FMVOnDamageAccumulationReset OnDamageAccumulationReset;
 
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|Stat|Event")
 	FMVOnStatValueChanged OnStaminaChanged;
@@ -225,15 +248,20 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Groggy")
 	void SetGroggyRecoveryPerSecond(float InGroggyRecoveryPerSecond);
 
-	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Groggy")
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Damage")
+	void SetRecentDamageResetDelay(float InRecentDamageResetDelay);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Groggy", meta = (DeprecatedFunction, DeprecationMessage = "Use SetRecentDamageResetDelay."))
 	void SetGroggyRecoveryDelay(float InGroggyRecoveryDelay);
 
 private:
 	FString MakeStatRowKey() const;
+	void TickRecentDamageCooldown(float DeltaTime);
 	void TickGroggyRecovery(float DeltaTime);
 	void TickRecoverableResourceRecovery(float DeltaTime);
 	void BroadcastDeathStarted(EMVDeathReason Reason);
-	void RestartGroggyRecoveryCooldown();
+	void RestartRecentDamageCooldown();
+	void ResetDamageAccumulation();
 	bool TryStartGroggy();
 	void BroadcastGroggyEnded();
 
@@ -298,14 +326,18 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Groggy")
 	float GroggyRecoveryPerSecond = 10.0f;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Groggy")
-	float GroggyRecoveryDelay = 2.0f;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Damage")
+	float RecentDamageResetDelay = 2.0f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Damage")
+	float AccumulatedRecentDamage = 0.0f;
 
 private:
-	float GroggyRecoveryCooldownRemaining = 0.0f;
+	float RecentDamageCooldownRemaining = 0.0f;
 	int32 RecoverableStatRecoveryPauseCount = 0;
 	FMVResolvedHitData PendingDeathHitData;
 	bool bHasPendingDeathHitData = false;
+	bool bHasRecentDamageAccumulation = false;
 	bool bIsDead = false;
 	bool bIsGroggy = false;
 };

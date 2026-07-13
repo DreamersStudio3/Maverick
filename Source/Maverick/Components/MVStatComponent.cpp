@@ -6,8 +6,6 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
-DEFINE_LOG_CATEGORY_STATIC(LogMVStatComponent, Log, All);
-
 namespace
 {
 	constexpr float MVStatMinimumMaxHP = 1.0f;
@@ -105,7 +103,7 @@ bool UMVStatComponent::LoadStatsFromTable()
 	SetMaxGroggy(StatRow->MaxGroggy);
 	SetCurrentGroggy(StatRow->CurrentGroggy);
 	SetGroggyRecoveryPerSecond(StatRow->GroggyRecoveryPerSecond);
-	SetGroggyRecoveryDelay(StatRow->GroggyRecoveryDelay);
+	SetRecentDamageResetDelay(StatRow->GetRecentDamageResetDelay());
 
 	return true;
 }
@@ -125,13 +123,33 @@ void UMVStatComponent::HandleDamaged(const FMVResolvedHitData& HitData)
 	const float HPDamage = MVStatNonNegative(HitData.FinalDamage);
 	if (HPDamage > 0.0f)
 	{
+		const float PreviousHP = CurrentHP;
 		PendingDeathHitData = HitData;
 		bHasPendingDeathHitData = true;
 		SetCurrentHP(CurrentHP - HPDamage);
 		bHasPendingDeathHitData = false;
+
+		const float AppliedDamage = FMath::Max(0.0f, PreviousHP - CurrentHP);
+		if (AppliedDamage > 0.0f)
+		{
+			AccumulatedRecentDamage += AppliedDamage;
+			bHasRecentDamageAccumulation = true;
+			RestartRecentDamageCooldown();
+			OnDamageApplied.Broadcast(AppliedDamage, PreviousHP, CurrentHP, HitData);
+			OnDamageAccumulated.Broadcast(AccumulatedRecentDamage, AppliedDamage, PreviousHP, CurrentHP, HitData);
+			if (RecentDamageResetDelay <= 0.0f)
+			{
+				ResetDamageAccumulation();
+			}
+		}
 	}
 
 	if (bIsDead)
+	{
+		return;
+	}
+
+	if (bIsGroggy)
 	{
 		return;
 	}
@@ -140,6 +158,7 @@ void UMVStatComponent::HandleDamaged(const FMVResolvedHitData& HitData)
 	if (GroggyDamage > 0.0f)
 	{
 		SetCurrentGroggy(CurrentGroggy + GroggyDamage);
+		RestartRecentDamageCooldown();
 		if (HitData.HitReactionType == EMVActionHitReactionType::Groggy)
 		{
 			TryStartGroggy();
@@ -172,6 +191,7 @@ void UMVStatComponent::TickRecoverableStats(float DeltaTime)
 
 	// MP recovers regardless of whether an action pauses stamina recovery.
 	RecoverMP(MPRecoveryPerSecond * DeltaTime);
+	TickRecentDamageCooldown(DeltaTime);
 	TickGroggyRecovery(DeltaTime);
 
 	if (!IsRecoverableStatRecoveryPaused())
@@ -180,19 +200,39 @@ void UMVStatComponent::TickRecoverableStats(float DeltaTime)
 	}
 }
 
-void UMVStatComponent::TickGroggyRecovery(float DeltaTime)
+void UMVStatComponent::TickRecentDamageCooldown(float DeltaTime)
 {
-	if (!bIsGroggy)
+	if (RecentDamageCooldownRemaining <= 0.0f)
 	{
 		return;
 	}
 
-	if (GroggyRecoveryCooldownRemaining > 0.0f)
+	RecentDamageCooldownRemaining = FMath::Max(0.0f, RecentDamageCooldownRemaining - DeltaTime);
+	if (RecentDamageCooldownRemaining <= 0.0f && bHasRecentDamageAccumulation)
 	{
-		GroggyRecoveryCooldownRemaining = FMath::Max(0.0f, GroggyRecoveryCooldownRemaining - DeltaTime);
+		ResetDamageAccumulation();
+	}
+}
+
+void UMVStatComponent::TickGroggyRecovery(float DeltaTime)
+{
+	if (CurrentGroggy <= 0.0f)
+	{
+		return;
 	}
 
-	if (GroggyRecoveryCooldownRemaining <= 0.0f)
+	if (bIsGroggy)
+	{
+		RecoverGroggy(GroggyRecoveryPerSecond * DeltaTime);
+		return;
+	}
+
+	if (MaxGroggy > 0.0f && CurrentGroggy >= MaxGroggy)
+	{
+		return;
+	}
+
+	if (RecentDamageCooldownRemaining <= 0.0f)
 	{
 		RecoverGroggy(GroggyRecoveryPerSecond * DeltaTime);
 	}
@@ -244,7 +284,7 @@ void UMVStatComponent::ResetDeathState()
 void UMVStatComponent::ResetGroggyState()
 {
 	bIsGroggy = false;
-	GroggyRecoveryCooldownRemaining = 0.0f;
+	RecentDamageCooldownRemaining = 0.0f;
 	SetCurrentGroggy(0.0f);
 }
 
@@ -529,14 +569,31 @@ void UMVStatComponent::SetGroggyRecoveryPerSecond(float InGroggyRecoveryPerSecon
 	GroggyRecoveryPerSecond = MVStatNonNegative(InGroggyRecoveryPerSecond);
 }
 
-void UMVStatComponent::SetGroggyRecoveryDelay(float InGroggyRecoveryDelay)
+void UMVStatComponent::SetRecentDamageResetDelay(float InRecentDamageResetDelay)
 {
-	GroggyRecoveryDelay = MVStatNonNegative(InGroggyRecoveryDelay);
+	RecentDamageResetDelay = MVStatNonNegative(InRecentDamageResetDelay);
 }
 
-void UMVStatComponent::RestartGroggyRecoveryCooldown()
+void UMVStatComponent::SetGroggyRecoveryDelay(float InGroggyRecoveryDelay)
 {
-	GroggyRecoveryCooldownRemaining = GroggyRecoveryDelay;
+	SetRecentDamageResetDelay(InGroggyRecoveryDelay);
+}
+
+void UMVStatComponent::RestartRecentDamageCooldown()
+{
+	RecentDamageCooldownRemaining = RecentDamageResetDelay;
+}
+
+void UMVStatComponent::ResetDamageAccumulation()
+{
+	if (!bHasRecentDamageAccumulation && AccumulatedRecentDamage <= 0.0f)
+	{
+		return;
+	}
+
+	AccumulatedRecentDamage = 0.0f;
+	bHasRecentDamageAccumulation = false;
+	OnDamageAccumulationReset.Broadcast();
 }
 
 bool UMVStatComponent::TryStartGroggy()
@@ -547,7 +604,7 @@ bool UMVStatComponent::TryStartGroggy()
 	}
 
 	bIsGroggy = true;
-	RestartGroggyRecoveryCooldown();
+	RestartRecentDamageCooldown();
 	OnGroggyStarted.Broadcast();
 	return true;
 }
@@ -587,6 +644,6 @@ void UMVStatComponent::BroadcastGroggyEnded()
 	}
 
 	bIsGroggy = false;
-	GroggyRecoveryCooldownRemaining = 0.0f;
+	RecentDamageCooldownRemaining = 0.0f;
 	OnGroggyEnded.Broadcast();
 }

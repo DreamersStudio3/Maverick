@@ -38,6 +38,9 @@ struct FMVEnemyDeadTaskInstanceData
 	UPROPERTY(EditAnywhere, Category = "Input|Collision")
 	bool bDisableActorCollisionOnEnter = false;
 
+	UPROPERTY(EditAnywhere, Category = "Input|LockOn")
+	bool bClearLockOnTargetOnEnter = true;
+
 	UPROPERTY(EditAnywhere, Category = "Input|Death")
 	bool bWaitForDeathPresentationFinished = true;
 
@@ -46,6 +49,9 @@ struct FMVEnemyDeadTaskInstanceData
 
 	UPROPERTY(EditAnywhere, Category = "Input|Cleanup", meta = (ClampMin = "0.0"))
 	float CleanupDelaySeconds = 0.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Input|Cleanup", meta = (ClampMin = "0.0"))
+	float MinimumCleanupDelaySeconds = 3.0f;
 
 	UPROPERTY(Transient)
 	TObjectPtr<AMVCharacterBase> Character = nullptr;
@@ -66,9 +72,10 @@ struct FMVEnemyDeadTaskInstanceData
  * Enemy Dead State task.
  *
  * The task does not start death animation. StatComponent and DeathComponent own
- * death detection and presentation; this task only stops AI movement and waits
- * until DeathComponent reports presentation completion before optional cleanup.
- * Actor destruction is deferred out of the StateTree execution frame.
+ * death detection and presentation; this task clears lock-on targeting the dead
+ * enemy, stops AI movement, and waits until DeathComponent reports presentation
+ * completion before optional cleanup. Actor destruction is deferred out of the
+ * StateTree execution frame.
  */
 USTRUCT(meta = (DisplayName = "Enemy Dead Task"))
 struct FMVEnemyDeadTask : public FStateTreeTaskCommonBase
