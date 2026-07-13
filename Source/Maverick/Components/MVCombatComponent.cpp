@@ -835,7 +835,6 @@ void UMVCombatComponent::HandleActionEnded(
 
 void UMVCombatComponent::RefreshActionMaps()
 {
-
 	ResetBasicAttackMap();
 	ResetSkillMap();
 }
@@ -854,9 +853,16 @@ void UMVCombatComponent::ResetBasicAttackMap()
 	PendingDodgeContextActionInstanceId = INDEX_NONE;
 	ClearLastBasicAttackSwingDirection();
 	ResetHeavyChargeAttackState();
+
+	if (!AttackChooserTable.IsValid() && !FallbackAttackActionTable.IsValid())
+	{
+		return;
+	}
 	
 	FMVCombatActionTableInput ChooserInput;
 	ChooserInput.CurrentWeaponStyle = CurrentWeaponStyle;
+	UDataTable* FallbackDataTable = nullptr;
+	bool bFallbackLoadAttempted = false;
 
 	TArray<EMVCombatActionTypes> TypeArray;
 	TypeArray.Add(EMVCombatActionTypes::LightAttack);
@@ -887,9 +893,15 @@ void UMVCombatComponent::ResetBasicAttackMap()
 
 		if (StartingRowHandle.RowName.IsNone() || !StartingRowHandle.DataTable)
 		{
-			if (!TryMakeFallbackAttackActionRowHandle(Types, StartingRowHandle))
+			if (!bFallbackLoadAttempted)
 			{
-				UE_LOG(LogMVCombatComponent, Log, TEXT("ResetBasicAttackMap: Cannot get row handle for action '%s'"), *ActionMapKey.ToString());
+				FallbackDataTable = LoadFallbackAttackActionTable();
+				bFallbackLoadAttempted = true;
+			}
+
+			if (!TryMakeFallbackAttackActionRowHandle(Types, FallbackDataTable, StartingRowHandle))
+			{
+				UE_LOG(LogMVCombatComponent, Verbose, TEXT("ResetBasicAttackMap: Cannot get row handle for action '%s'"), *ActionMapKey.ToString());
 				continue;
 			}
 		}
@@ -921,6 +933,11 @@ void UMVCombatComponent::ResetSkillMap()
 	if (SkillMap.Num() != 0)
 	{
 		SkillMap.Reset();
+	}
+
+	if (!AttackChooserTable.IsValid() && !FallbackAttackActionTable.IsValid())
+	{
+		return;
 	}
 
 	TSet<FName> ProcessedRowNames;
@@ -984,12 +1001,21 @@ void UMVCombatComponent::ResetSkillMap()
 		SkillChooserInput.SetActionType(SkillActionType);
 
 		FDataTableRowHandle SkillRowHandle;
-		if (ResolveActionRowHandleFromChooserTable(
-			SkillChooserInput,
-			MVCombatMakeSkillFallbackRowName(SkillIndex),
-			SkillRowHandle))
+		if (ResolveActionRowHandleFromChooserTable(SkillChooserInput, MVCombatMakeSkillFallbackRowName(SkillIndex), SkillRowHandle))
 		{
-			TryRegisterSkillEntry(SkillIndex, SkillRowHandle, TEXT("ExactSkillChooser"));
+			if (MVCombatIsSkillStartRowName(SkillRowHandle.RowName))
+			{
+				TryRegisterSkillEntry(SkillIndex, SkillRowHandle, TEXT("ExactSkillChooser"));
+			}
+			else
+			{
+				UE_LOG(
+					LogMVCombatComponent,
+					Warning,
+					TEXT("ResetSkillMap: Chooser returned a non-skill row. Index=%d Returned=%s."),
+					SkillIndex,
+					*MVCombatRowHandleToString(SkillRowHandle));
+			}
 		}
 	}
 
@@ -1298,11 +1324,11 @@ UDataTable* UMVCombatComponent::LoadFallbackAttackActionTable() const
 
 bool UMVCombatComponent::TryMakeFallbackAttackActionRowHandle(
 	const EMVCombatActionTypes ActionType,
+	UDataTable* DataTable,
 	FDataTableRowHandle& OutRowHandle) const
 {
 	OutRowHandle = FDataTableRowHandle();
 
-	UDataTable* DataTable = LoadFallbackAttackActionTable();
 	if (!DataTable)
 	{
 		return false;

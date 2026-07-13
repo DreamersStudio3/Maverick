@@ -15,8 +15,8 @@
 #include "KismetAnimationLibrary.h"
 #include "Math/Vector.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "Tags/MVGameplayTags.h"
 #include "MotionWarpingComponent.h"
+#include "TimerManager.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogMVCharacterBase, Log, All);
 
@@ -107,7 +107,6 @@ AMVCharacterBase::AMVCharacterBase()
 	InputManagerComponent = CreateDefaultSubobject<UMVInputManagerComponent>(TEXT("InputManagerComponent"));
 	WeaponComponent = CreateDefaultSubobject<UMVWeaponComponent>(TEXT("WeaponComponent"));
 	MotionWarpingComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarpingComponent"));
-	CharacterIndexCode = MVGameplayTags::Character_Player_P1;
 	ApplyCharacterIndexCodeToComponents();
 	bHasDodgeMovementInput = false;
 	LocomotionDirection = ELocomotionDirection::F;
@@ -574,5 +573,23 @@ float AMVCharacterBase::CalculateCharacterMovementSpeed(float WalkSpeed, float R
 	return UKismetMathLibrary::MapRangeClamped(StrafeMapValue, 0, 1, 0, OutSpeed);
 }
 
+void AMVCharacterBase::ActiveHitstop(float Duration, float DilationAmount)
+{
+	CustomTimeDilation = DilationAmount;
 
+	GetWorldTimerManager().SetTimer(
+		HitStopTimerHandle,
+		this,
+		&AMVCharacterBase::ResetHitStop,
+		Duration,
+		false
+	);
+
+}
+
+void AMVCharacterBase::ResetHitStop()
+{
+	CustomTimeDilation = 1.0f;
+	GetWorldTimerManager().ClearTimer(HitStopTimerHandle);
+}
 
