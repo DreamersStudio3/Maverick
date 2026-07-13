@@ -52,6 +52,12 @@ void UMVMainHUDWidget::BindBossStatus(UMVStatComponent* BossStatComponent, FText
 {
 	CachedBossName = BossName;
 
+	const APawn* OwningPawn = GetOwningPlayerPawn();
+	if (BossStatComponent && BossStatComponent->GetOwner() == OwningPawn)
+	{
+		return;
+	}
+
 	if (BossHPBar)
 	{
 		BossHPBar->BindToStatComponent(BossStatComponent, BossName);
@@ -60,6 +66,11 @@ void UMVMainHUDWidget::BindBossStatus(UMVStatComponent* BossStatComponent, FText
 
 void UMVMainHUDWidget::UpdateBossStatus(float CurrentHP, float MaxHP)
 {
+	if (BossHPBar && BossHPBar->IsBoundToStatComponent())
+	{
+		return;
+	}
+
 	if (BossHPBar)
 	{
 		BossHPBar->UpdateBossHP(CurrentHP, MaxHP);

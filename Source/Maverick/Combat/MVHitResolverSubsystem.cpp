@@ -109,6 +109,7 @@ void MVHitResolverLogAirborneTrace(
 		*ImpactNormal.ToString(),
 		*HitDirectionText);
 }
+
 }
 
 UMVHitResolverSubsystem* UMVHitResolverSubsystem::Get(const UObject* WorldContextObject)
@@ -199,8 +200,9 @@ bool UMVHitResolverSubsystem::BuildResolvedHitData(
 		: Request.ImpactNormal.GetSafeNormal();
 	OutHitData.HitDirection = ResolveHitDirection(Request, *Attacker, *Victim);
 
-	if (const UMVHitReactionComponent* HitReactionComponent = Victim->FindComponentByClass<UMVHitReactionComponent>();
-		HitReactionComponent && HitReactionComponent->CanTriggerGroggy(OutHitData))
+	const UMVHitReactionComponent* HitReactionComponent = Victim->FindComponentByClass<UMVHitReactionComponent>();
+	const bool bCanTriggerGroggy = HitReactionComponent && HitReactionComponent->CanTriggerGroggy(OutHitData);
+	if (bCanTriggerGroggy)
 	{
 		OutHitData.HitReactionType = EMVActionHitReactionType::Groggy;
 		MVHitResolverLogAirborneTrace(TEXT("BuildConvertedToGroggy"), Request, &OutHitData);

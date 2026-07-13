@@ -73,8 +73,16 @@ struct MAVERICK_API FMVCharacterStatRow : public FMVTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Table|Stat|Groggy")
 	float GroggyRecoveryPerSecond = 0.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Table|Stat|Groggy")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Table|Stat|Damage")
+	float RecentDamageResetDelay = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Table|Stat|Groggy", meta = (DeprecatedProperty, DeprecationMessage = "Use RecentDamageResetDelay."))
 	float GroggyRecoveryDelay = 0.0f;
+
+	float GetRecentDamageResetDelay() const
+	{
+		return RecentDamageResetDelay > 0.0f ? RecentDamageResetDelay : GroggyRecoveryDelay;
+	}
 
 	virtual void PostRead() override
 	{

@@ -6,6 +6,7 @@
 #include "Components/Button.h"
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
+#include "Components/MVEnemyDodgeTokenComponent.h"
 #include "Components/MVHitReactionComponent.h"
 #include "Components/MVStatComponent.h"
 #include "Components/MVWeaponComponent.h"
@@ -267,6 +268,10 @@ void UMVPIEActionTestWidget::BuildNativeWidgetTree()
 	{
 		Button->OnClicked.AddDynamic(this, &UMVPIEActionTestWidget::HandleResetStatsClicked);
 	}
+	if (UButton* Button = PIEActionTestAddButton(*WidgetTree, *ButtonBox, TEXT("PIEActionTestGrantDodgeToken"), TEXT("Grant Enemy Dodge Token")))
+	{
+		Button->OnClicked.AddDynamic(this, &UMVPIEActionTestWidget::HandleGrantEnemyDodgeTokenClicked);
+	}
 
 	if (UTextBlock* DirectionTitleText = PIEActionTestMakeText(
 		*WidgetTree,
@@ -518,6 +523,27 @@ void UMVPIEActionTestWidget::HandleResetStatsClicked()
 	StatComponent->SetCurrentMP(StatComponent->MaxMP);
 	StatComponent->ResetGroggyState();
 	SetStatusText(TEXT("Stats reset. Groggy reset."));
+}
+
+void UMVPIEActionTestWidget::HandleGrantEnemyDodgeTokenClicked()
+{
+	AMVCharacterBase* Character = ResolveTargetCharacter();
+	UMVEnemyDodgeTokenComponent* DodgeTokenComponent = Character
+		? Character->FindComponentByClass<UMVEnemyDodgeTokenComponent>()
+		: nullptr;
+	if (!DodgeTokenComponent)
+	{
+		SetStatusText(TEXT("No EnemyDodgeTokenComponent on target."));
+		return;
+	}
+
+	const int32 PreviousTokenCount = DodgeTokenComponent->GetDodgeTokenCount();
+	DodgeTokenComponent->GrantDodgeToken(EMVEnemyDodgeTokenGrantReason::ReceivedHitThreshold);
+	SetStatusText(FString::Printf(
+		TEXT("Enemy dodge token %d -> %d / %d"),
+		PreviousTokenCount,
+		DodgeTokenComponent->GetDodgeTokenCount(),
+		DodgeTokenComponent->MaxDodgeTokens));
 }
 
 void UMVPIEActionTestWidget::HandleFlinchFrontClicked()

@@ -390,24 +390,10 @@ bool UMVCombatComponent::TryCombatAction(
 	if (bCanStartAction)
 	{
 		const EMVCombatActionTypes ResolvedActionType = ResolveContextualBasicAttackActionType(InActionType);
-		UE_LOG(
-			LogMVCombatComponent,
-			Log,
-			TEXT("TryCombatAction: Requested=%s Resolved=%s"),
-			*MVCombatActionTypeToString(InActionType),
-			*MVCombatActionTypeToString(ResolvedActionType));
 
 		if (IsBasicAttackActionType(ResolvedActionType))
 		{
 			const bool bStarted = TryBasicAttack(ResolvedActionType, ResolvedActionIndex, StartSection);
-			UE_LOG(
-				LogMVCombatComponent,
-				Warning,
-				TEXT("[CombatActionEventDebug] TryBasicAttack returned %s. Owner=%s ActionType=%s ActionIndex=%d"),
-				bStarted ? TEXT("true") : TEXT("false"),
-				*GetNameSafe(GetOwner()),
-				*MVCombatActionTypeToString(ResolvedActionType),
-				ResolvedActionIndex);
 			if (bStarted)
 			{
 				MarkContextualBasicAttackStarted(ResolvedActionType);
@@ -418,14 +404,6 @@ bool UMVCombatComponent::TryCombatAction(
 		else if (ResolvedActionType == EMVCombatActionTypes::Skill)
 		{
 			const bool bStarted = TrySkill(ResolvedActionType, ResolvedActionIndex, StartSection);
-			UE_LOG(
-				LogMVCombatComponent,
-				Warning,
-				TEXT("[CombatActionEventDebug] TrySkill returned %s. Owner=%s ActionType=%s ActionIndex=%d"),
-				bStarted ? TEXT("true") : TEXT("false"),
-				*GetNameSafe(GetOwner()),
-				*MVCombatActionTypeToString(ResolvedActionType),
-				ResolvedActionIndex);
 			if (bStarted)
 			{
 				BroadcastCombatActionStarted(ResolvedActionType, ResolvedActionIndex);
@@ -481,12 +459,6 @@ bool UMVCombatComponent::TryHandleHoldActionInput(
 
 bool UMVCombatComponent::ChooseTryCombatAction(const FGameplayTag ActionInputTag)
 {
-	UE_LOG(
-		LogMVCombatComponent,
-		Log,
-		TEXT("ChooseTryCombatAction: InputTag=%s"),
-		*ActionInputTag.ToString());
-
 	UpdateContextualBasicAttackResets();
 
 	if (ActionInputTag.MatchesTag(MVGameplayTags::Action_Input_Skill))
@@ -520,7 +492,6 @@ bool UMVCombatComponent::ChooseTryCombatAction(const FGameplayTag ActionInputTag
 				return TryCombatAction(EMVCombatActionTypes::HeavyAttack);
 			}
 
-			UE_LOG(LogMVCombatComponent, Log, TEXT("ChargeAttack input suppressed during sprint attack context."));
 			return true;
 		}
 
@@ -2098,17 +2069,6 @@ void UMVCombatComponent::BroadcastCombatActionStarted(
 		Event.ActionTableName = ActionComponent->GetActiveActionTableName();
 		Event.ActionRowName = ActionComponent->GetActiveActionRowName();
 	}
-
-	UE_LOG(
-		LogMVCombatComponent,
-		Warning,
-		TEXT("BroadcastCombatActionStarted: Owner=%s ActionType=%s ActionIndex=%d Table=%s Row=%s HasListeners=%s"),
-		*GetNameSafe(GetOwner()),
-		*MVCombatActionTypeToString(ActionType),
-		ActionIndex,
-		*Event.ActionTableName.ToString(),
-		*Event.ActionRowName.ToString(),
-		OnCombatActionStarted.IsBound() ? TEXT("true") : TEXT("false"));
 
 	OnCombatActionStarted.Broadcast(Event);
 }

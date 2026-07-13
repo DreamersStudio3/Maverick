@@ -58,6 +58,9 @@ public:
 	bool TrySpendDodgeToken();
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|AI|Dodge")
+	void ResetForFieldTransition();
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|AI|Dodge")
 	bool TryConsumeDodgeTokenForThreat(
 		AActor* Target,
 		const FMVCombatActionEvent& CombatActionEvent,

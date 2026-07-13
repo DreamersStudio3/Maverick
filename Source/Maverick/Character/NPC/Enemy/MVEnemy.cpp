@@ -6,14 +6,21 @@
 #include "AI/Controller/MVAIController.h"
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimMontage.h"
+#include "Components/CapsuleComponent.h"
 #include "Character/NPC/Enemy/MVEnemyWeapon.h"
+#include "Components/MVActionComponent.h"
 #include "Components/MVCombatComponent.h"
+#include "Components/MVDeathComponent.h"
 #include "Components/MVEnemyDodgeTokenComponent.h"
 #include "Components/MVHitReactionComponent.h"
 #include "Components/MVStatComponent.h"
+#include "Engine/World.h"
 #include "Enum/MVCombatActionTypes.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Components/StateTreeComponent.h"
 #include "Tags/MVGameplayTags.h"
+#include "TargetComponent.h"
 #include "TimerManager.h"
 #include "UI/HUD/MVMainHUDWidget.h"
 #include "UI/System/MVUISubsystem.h"
@@ -115,6 +122,30 @@ void AMVEnemy::DestroyWeaponActor()
 	}
 }
 
+void AMVEnemy::HideBoundBossHUD()
+{
+	BossHUDBindAttemptsRemaining = 0;
+
+	UWorld* World = GetWorld();
+	if (World)
+	{
+		World->GetTimerManager().ClearTimer(BossHUDBindRetryTimerHandle);
+	}
+
+	if (World && World->bIsTearingDown)
+	{
+		BoundBossHUD.Reset();
+		return;
+	}
+
+	if (UMVMainHUDWidget* MainHUD = BoundBossHUD.Get())
+	{
+		MainHUD->HideBossHPBar();
+	}
+
+	BoundBossHUD.Reset();
+}
+
 bool AMVEnemy::TryChooseHitReactionRecovery(
 	const FMVHitReactionRecoveryDecisionContext& Context,
 	FMVHitReactionRecoveryDecision& OutDecision)
@@ -147,12 +178,35 @@ bool AMVEnemy::TryChooseHitReactionRecovery(
 	return true;
 }
 
+EMVFieldTransitionResetPolicy AMVEnemy::GetFieldTransitionResetPolicy_Implementation() const
+{
+	return EMVFieldTransitionResetPolicy::ResetEveryTransition;
+}
+
+FName AMVEnemy::GetFieldTransitionResetFieldId_Implementation() const
+{
+	return NAME_None;
+}
+
+FName AMVEnemy::GetFieldTransitionResetObjectId_Implementation() const
+{
+	return NAME_None;
+}
+
+void AMVEnemy::HandleFieldTransitionReset_Implementation(
+	const FMVFieldTransitionResetContext& ResetContext)
+{
+	if (ResetContext.bIsConsumed)
+	{
+		return;
+	}
+
+	ResetEnemyForFieldTransition();
+}
+
 void AMVEnemy::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	if (UWorld* World = GetWorld())
-	{
-		World->GetTimerManager().ClearTimer(BossHUDBindRetryTimerHandle);
-	}
+	HideBoundBossHUD();
 
 	if (StatComponent)
 	{
@@ -208,6 +262,150 @@ void AMVEnemy::BindBossHUDToMainHUD()
 	if (BossHUDBindAttemptsRemaining > 0)
 	{
 		ScheduleBossHUDBindRetry(0.1f);
+	}
+}
+
+void AMVEnemy::ResetEnemyForFieldTransition()
+{
+	if (UMVActionComponent* EnemyActionComponent = FindComponentByClass<UMVActionComponent>())
+	{
+		EnemyActionComponent->CancelActiveAction(0.0f);
+	}
+
+	if (DeathComponent)
+	{
+		DeathComponent->ResetDeathPresentationForRespawn();
+	}
+
+	if (StatComponent)
+	{
+		StatComponent->ResetDeathState();
+		StatComponent->ResetGroggyState();
+		StatComponent->SetCurrentHP(StatComponent->MaxHP);
+		StatComponent->SetCurrentStamina(StatComponent->MaxStamina);
+		StatComponent->SetCurrentMP(StatComponent->MaxMP);
+	}
+
+	if (EnemyDodgeTokenComponent)
+	{
+		EnemyDodgeTokenComponent->ResetForFieldTransition();
+	}
+
+	if (UTargetComponent* TargetComponent = FindComponentByClass<UTargetComponent>())
+	{
+		TargetComponent->SetCanBeCaptured(true);
+	}
+
+	SetActorHiddenInGame(false);
+	SetActorEnableCollision(true);
+	SetActorTickEnabled(true);
+
+	if (UCapsuleComponent* Capsule = GetCapsuleComponent())
+	{
+		Capsule->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	}
+
+	if (USkeletalMeshComponent* MeshComponent = GetMesh())
+	{
+		MeshComponent->SetHiddenInGame(false);
+		MeshComponent->SetVisibility(true, true);
+	}
+
+	if (UCharacterMovementComponent* MovementComponent = GetCharacterMovement())
+	{
+		MovementComponent->StopMovementImmediately();
+		MovementComponent->SetMovementMode(MOVE_Walking);
+	}
+
+	BindDamageHandlers();
+	RestoreWeaponActor();
+	RestartStateTreeLogicForFieldTransition();
+	BossHUDBindAttemptsRemaining = 20;
+	ScheduleBossHUDBindRetry(0.0f);
+}
+
+void AMVEnemy::RestoreWeaponActor()
+{
+	if (IsValid(WeaponActor) || !WeaponClass)
+	{
+		return;
+	}
+
+	UWorld* World = GetWorld();
+	USkeletalMeshComponent* MeshComponent = GetMesh();
+	if (!World || !MeshComponent)
+	{
+		return;
+	}
+
+	FActorSpawnParameters SpawnParameters;
+	SpawnParameters.Owner = this;
+	SpawnParameters.Instigator = this;
+	WeaponActor = World->SpawnActor<AMVEnemyWeapon>(
+		WeaponClass,
+		GetActorTransform(),
+		SpawnParameters);
+	if (!WeaponActor)
+	{
+		return;
+	}
+
+	if (bUseDualWeapon)
+	{
+		WeaponActor->AttachDualToHands(MeshComponent);
+	}
+	else
+	{
+		WeaponActor->AttachCombinedToHand(MeshComponent);
+	}
+}
+
+void AMVEnemy::RestartStateTreeLogicForFieldTransition()
+{
+	TSet<UStateTreeComponent*> RestartedComponents;
+	auto RestartStateTreeComponent = [&RestartedComponents](UStateTreeComponent* StateTreeComponent)
+	{
+		if (!StateTreeComponent || RestartedComponents.Contains(StateTreeComponent))
+		{
+			return;
+		}
+
+		RestartedComponents.Add(StateTreeComponent);
+		StateTreeComponent->StopLogic(TEXT("Enemy field transition reset"));
+		StateTreeComponent->RestartLogic();
+	};
+
+	if (AController* OwningController = GetController())
+	{
+		if (AMVAIController* AIController = Cast<AMVAIController>(OwningController))
+		{
+			AIController->TargetActor = nullptr;
+		}
+
+		if (AAIController* AIController = Cast<AAIController>(OwningController))
+		{
+			AIController->StopMovement();
+			AIController->ClearFocus(EAIFocusPriority::Gameplay);
+
+			if (UStateTreeComponent* StateTreeComponent = Cast<UStateTreeComponent>(AIController->GetBrainComponent()))
+			{
+				RestartStateTreeComponent(StateTreeComponent);
+			}
+		}
+
+		TArray<UStateTreeComponent*> ControllerStateTreeComponents;
+		OwningController->GetComponents<UStateTreeComponent>(ControllerStateTreeComponents);
+		for (UStateTreeComponent* StateTreeComponent : ControllerStateTreeComponents)
+		{
+			RestartStateTreeComponent(StateTreeComponent);
+		}
+	}
+
+	TArray<UStateTreeComponent*> PawnStateTreeComponents;
+	GetComponents<UStateTreeComponent>(PawnStateTreeComponents);
+	for (UStateTreeComponent* StateTreeComponent : PawnStateTreeComponents)
+	{
+		RestartStateTreeComponent(StateTreeComponent);
 	}
 }
 

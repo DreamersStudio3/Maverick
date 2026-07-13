@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Struct/MVHitTypes.h"
 #include "UI/Base/MVWidgetBase.h"
 #include "MVBossHPBarWidget.generated.h"
 
@@ -33,10 +34,22 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Boss")
 	void UpdateBossHP(float CurrentHP, float MaxHP);
 
+	UFUNCTION(BlueprintPure, Category = "Maverick|UI|Boss")
+	bool IsBoundToStatComponent() const { return BoundStatComponent != nullptr; }
+
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Boss")
 	void ResetBossBar();
 
 protected:
+	UFUNCTION(BlueprintImplementableEvent, Category = "Maverick|UI|Boss")
+	void BP_OnBossDamageApplied(float AppliedDamage, float PreviousHP, float CurrentHP, const FMVResolvedHitData& HitData);
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Maverick|UI|Boss")
+	void BP_OnBossDamageAccumulated(float AccumulatedDamage, float AppliedDamage, float PreviousHP, float CurrentHP, const FMVResolvedHitData& HitData);
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Maverick|UI|Boss")
+	void BP_OnBossDamageAccumulationReset();
+
 	virtual void NativeOnInitialized() override;
 	virtual void NativeDestruct() override;
 
@@ -52,6 +65,12 @@ protected:
 private:
 	UFUNCTION()
 	void HandleHPChanged(float CurrentHP, float MaxHP);
+
+	UFUNCTION()
+	void HandleDamageAccumulated(float AccumulatedDamage, float AppliedDamage, float PreviousHP, float CurrentHP, const FMVResolvedHitData& HitData);
+
+	UFUNCTION()
+	void HandleDamageAccumulationReset();
 
 	UFUNCTION()
 	void HandleGroggyChanged(float CurrentGroggy, float MaxGroggy);

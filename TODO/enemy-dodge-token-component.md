@@ -14,6 +14,7 @@
 - [x] Remove temporary ActionTrace logs added during diagnosis.
 - [x] Show token grants with an on-screen debug message.
 - [x] Bind enemy StatComponent groggy events into enemy dodge token flow.
+- [x] Add a PIE action test button that grants one enemy dodge token to the current target.
 
 ## Notes
 
