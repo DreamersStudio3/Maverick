@@ -109,6 +109,12 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Data")
 	TObjectPtr<UMVAbilityBase> AbilityInstance;
 
+	// Finisher Modifiable value
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+	float DetectDistance = 200.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+	float DetectAngle = 45.0f;
+
 private:
 	bool CanFinisherMove(AActor*& OutHitActor) const;
 
@@ -140,9 +146,3 @@ private:
 	TWeakObjectPtr<AActor> TargetActor;
 };
 
-
-/*
-	Todo:	Should Store Attack Data 
-			To Active Ability
-
-*/
