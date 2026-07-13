@@ -195,12 +195,10 @@ bool UMVFinisherComponent::JudgeDistanceAndDirection(const AActor* HitActor) con
 		return false;
 	}
 	
-	float TargetDistance = 200.0f;
-	float TargetDistanceSquared = TargetDistance * TargetDistance;
-	float TargetMaxAngle = 45.0f;
-
+	float TargetDistanceSquared = DetectDistance * DetectDistance;
 	float Distance = FVector::DistSquared2D(GetOwner()->GetActorLocation(), HitActor->GetActorLocation());
-	if(Distance> TargetDistanceSquared)
+
+	if (Distance > TargetDistanceSquared)
 	{
 		return false;
 	}
@@ -211,7 +209,7 @@ bool UMVFinisherComponent::JudgeDistanceAndDirection(const AActor* HitActor) con
 	float DotProduct = FMath::Clamp(FVector::DotProduct(DirToOwner, TargetForward), -1.0, 1.0);
 	float Angle = FMath::Acos(DotProduct) * (180.0f / PI);
 
-	if(FMath::Abs(Angle) > TargetMaxAngle)
+	if(FMath::Abs(Angle) > DetectAngle)
 	{
 		return false;
 	}
