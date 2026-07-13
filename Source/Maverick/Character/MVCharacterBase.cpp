@@ -575,6 +575,12 @@ float AMVCharacterBase::CalculateCharacterMovementSpeed(float WalkSpeed, float R
 
 void AMVCharacterBase::ActiveHitstop(float Duration, float DilationAmount)
 {
+	if (Duration <= 0.f)
+	{
+		ResetHitStop();
+		return;
+	}
+
 	CustomTimeDilation = DilationAmount;
 
 	GetWorldTimerManager().SetTimer(
