@@ -165,20 +165,26 @@ Xbox 기준으로 Bottom/Right/Left/Top은 각각 A/B/X/Y이며, PlayStation 표
 
 `Make CharacterInputState`를 새로 만들어 대입하면 `WantsToStrafe`, `WantsToAim`, `WantsToSprint`가 기본값으로 덮일 수 있으므로 사용하지 않는다.
 
-`IA_Move.Triggered`에는 기존 이동 처리와 보행 판정을 `Sequence`로 나란히 연결한다.
+`IA_Move.Triggered`에서 기존 `Add Movement Input`을 먼저 실행하지 않는다. 보행 판정과 Dead Zone 처리가 끝난 뒤 `ResolvedMoveInput`으로 기존 이동 로직을 호출한다.
 
-- `Then 0`: 기존 `Add Movement Input` 로직을 그대로 실행한다.
-- `Then 1`: `Action Value -> Get 2D Axis Value -> Vector Length -> Clamp(0, 1)`로 `StickMagnitude`를 만든다.
+- `Action Value -> Get 2D Axis Value` 결과를 `RawMoveInput`으로 둔다.
+- `RawMoveInput -> Vector Length -> Clamp(0, 1)`로 `StickMagnitude`를 만든다.
 - `Get Controller -> Cast To PlayerController -> Get Local Player Subsystem(CommonInputSubsystem) -> Get Current Input Type`으로 입력 타입을 얻는다.
 - `Switch on ECommonInputType` 또는 `Equal(Gamepad) -> Branch`로 분기한다.
 
-Gamepad 분기에서는 다시 `bGamepadAnalogWalk`로 Branch한다.
+Gamepad 분기에서는 먼저 `StickMagnitude > 0.2`로 실제 이동 입력인지 판정한다.
 
-- False: `(StickMagnitude > 0.2) AND (StickMagnitude < 0.5)` 결과를 `bGamepadAnalogWalk`에 저장한다.
-- True: `(StickMagnitude > 0.2) AND (StickMagnitude < 0.65)` 결과를 `bGamepadAnalogWalk`에 저장한다.
+- False: `bGamepadAnalogWalk=false`, `SetWantsToWalk(false)`를 적용하고 `Add Movement Input`을 호출하지 않는다.
+- True: `RawMoveInput -> Normalize 2D Vector` 결과를 `ResolvedMoveInput`으로 사용하고 보행 판정을 계속한다.
+
+이동 가능한 Gamepad 분기에서는 `bGamepadAnalogWalk`로 다시 Branch한다.
+
+- False: `StickMagnitude < 0.5` 결과를 `bGamepadAnalogWalk`에 저장한다.
+- True: `StickMagnitude < 0.65` 결과를 `bGamepadAnalogWalk`에 저장한다.
 - 저장 후 `SetWantsToWalk(bGamepadAnalogWalk)`을 호출한다.
+- `ResolvedMoveInput`의 X/Y를 기존 `Add Movement Input` 로직에 전달한다.
 
-MouseAndKeyboard 분기에서는 `SetWantsToWalk(bKeyboardWalkToggled)`만 호출한다.
+MouseAndKeyboard 분기에서는 `ResolvedMoveInput=RawMoveInput`, `SetWantsToWalk(bKeyboardWalkToggled)`을 적용한 뒤 기존 이동 로직을 호출한다.
 
 `IA_Move.Completed`와 `IA_Move.Canceled`는 둘 다 `ResetGamepadWalk` Custom Event로 연결한다.
 
@@ -192,7 +198,7 @@ MouseAndKeyboard 분기에서는 `SetWantsToWalk(bKeyboardWalkToggled)`만 호�
 2. 현재 Common Input Type이 MouseAndKeyboard인지 확인한다.
 3. 맞으면 `SetWantsToWalk(bKeyboardWalkToggled)`를 호출한다.
 
-`IA_Move`의 Axis2D는 Vector Length 계산 전에 정규화하지 않는다. 기존 이동 로직에도 원래 X/Y 값을 전달해 스틱 기울기가 보존되게 한다.
+Vector Length는 반드시 정규화 전 `RawMoveInput`으로 계산한다. Gamepad 이동에 전달하는 벡터만 Dead Zone 통과 후 정규화한다. 이 프로젝트는 Gait별 `WalkSpeed/RunSpeed`를 이미 별도로 적용하므로, 원래 스틱 크기까지 `Add Movement Input`에 전달하면 속도가 다시 축소되어 발 미끄러짐이 발생한다.
 
 ### Sprint / Dodge 분리
 
@@ -209,6 +215,10 @@ MouseAndKeyboard 분기에서는 `SetWantsToWalk(bKeyboardWalkToggled)`만 호�
 8. `IA_Sprint.Triggered`에서 `CharacterInputState.WantsToSprint=true`로 설정한다.
 9. `IA_Sprint.Completed`와 `Canceled`에서 `WantsToSprint=false`로 설정한다.
 10. 기존 `IA_SprintDodge` 이벤트 그래프는 연결을 제거한다.
+
+`IA_Sprint`의 Hold는 IA 에셋에만 둔다. 현재 확인된 SpaceBar 매핑 행에는 이전 `Hold`와 `Released`가 남아 있으므로 두 Mapping Trigger를 모두 제거한다. Gamepad B와 키보드 키 행 모두 Mapping Trigger는 비워 둔다.
+
+현재 `BP_ThirdPersonCharacter`에는 `IA_Dodge` 이벤트 참조가 없으므로 새로 추가해야 한다. `SetWantsToWalk`과 같은 방식으로 `SetWantsToSprint(NewWantsToSprint)` 함수를 만들고 `Set Members in CharacterInputState`에서 `WantsToSprint` 핀만 수정한다.
 
 게임패드 B를 길게 눌러도 `IA_Dodge.Started`는 누르는 순간 먼저 발생한다. 따라서 장기 입력의 결과는 즉시 Dodge 후 0.5초가 지나면 Sprint 의도가 활성화되는 흐름이다. 탭 Dodge와 Hold Sprint를 상호 배타적으로 만들려면 Dodge를 Started에서 실행할 수 없고 버튼을 놓을 때 판정해야 하므로 현재 요구와 다르다.
 
