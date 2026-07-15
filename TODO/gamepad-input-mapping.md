@@ -49,9 +49,9 @@
 
 - 게임플레이 IA 이벤트는 `BP_ThirdPersonCharacter`가 소유하고 있으므로 C++ 런타임 매핑을 추가하지 않는다.
 - `IMC_DefaultLocomotion`에 게임패드 키를 추가하면 기존 IA 이벤트 그래프가 그대로 실행된다.
-- 통합 `IA_SprintDodge`는 사용하지 않고 기존 `IA_Dodge`와 새 `IA_Sprint`로 분리한다.
-- 게임패드 B는 두 액션에 함께 매핑한다. Dodge는 Started에서 즉시 실행되고, 같은 입력을 계속 누르면 Sprint가 Hold 임계점 이후 활성화된다.
-- 키보드 Dodge와 Sprint는 서로 다른 기본 키를 줄 수 있으며, 별도 Player Mappable 이름을 사용해 이후 개별 리매핑할 수 있게 한다.
+- Tap Dodge와 Hold Sprint가 상호 배타적인 동일 키 제스처일 때는 기존 `IA_SprintDodge`를 유지한다. Dodge를 별도 `IA_Dodge.Started`로 동시에 보내면 먼저 Dodge 액션이 시작되어 Sprint가 차단되고, 같은 프레임의 이동 스냅샷도 놓칠 수 있다.
+- 게임패드 B처럼 반드시 한 버튼을 공유하는 입력은 `IA_SprintDodge`로 처리하고, 키보드에서 별도 리매핑이 필요한 경우에만 `IA_Dodge`와 `IA_Sprint`를 서로 다른 키에 매핑하는 하이브리드 구성을 사용한다.
+- 키보드에서 Dodge와 Sprint를 같은 키로 지정할 수 있게 하려면 단순 중복 매핑이 아니라 Tap/Hold 분류 또는 통합 액션으로 전환하는 충돌 정책이 추가로 필요하다.
 - R 스킬의 LB+Y는 별도 `IA_SkillModifier`와 `Chorded Action` 트리거로 구성한다.
 - 상호작용 후보 전환은 이미 공개된 `SelectPreviousInteractable` / `SelectNextInteractable`을 새 IA 이벤트에서 호출한다.
 - CommonUI Accept/Back과 방향 내비게이션은 현재 C++ 및 프로젝트 설정으로 이미 활성화되어 있다.
@@ -200,29 +200,34 @@ MouseAndKeyboard 분기에서는 `ResolvedMoveInput=RawMoveInput`, `SetWantsToWa
 
 Vector Length는 반드시 정규화 전 `RawMoveInput`으로 계산한다. Gamepad 이동에 전달하는 벡터만 Dead Zone 통과 후 정규화한다. 이 프로젝트는 Gait별 `WalkSpeed/RunSpeed`를 이미 별도로 적용하므로, 원래 스틱 크기까지 `Add Movement Input`에 전달하면 속도가 다시 축소되어 발 미끄러짐이 발생한다.
 
-### Sprint / Dodge 분리
+### Sprint / Dodge 입력 복구와 하이브리드 구성
 
-1. 기존 Digital 타입 `IA_Dodge`를 사용한다. Trigger는 추가하지 않는다.
-2. Digital 타입 `IA_Sprint`를 새로 만든다.
-3. `IA_Sprint` 에셋의 Action Triggers에 `Hold`를 추가한다.
-   - Hold Time Threshold `0.5`
-   - Actuation Threshold `0.5`
-   - Is One Shot `false`
-4. `IMC_DefaultLocomotion`에서 `IA_SprintDodge` 매핑을 제거한다.
-5. 게임패드 `Gamepad Face Button Right`를 `IA_Dodge`와 `IA_Sprint` 양쪽에 매핑한다.
-6. 키보드는 기본값으로 `IA_Dodge=SpaceBar`, `IA_Sprint=Left Shift`를 권장한다. 같은 키를 원하면 두 액션에 같은 키를 매핑해도 된다.
-7. `BP_ThirdPersonCharacter`의 `IA_Dodge.Started`에서 `InputManagerComponent.SubmitActionInput(Action.Input.Dodge)`를 호출한다.
-8. `IA_Sprint.Triggered`에서 `CharacterInputState.WantsToSprint=true`로 설정한다.
-9. `IA_Sprint.Completed`와 `Canceled`에서 `WantsToSprint=false`로 설정한다.
-10. 기존 `IA_SprintDodge` 이벤트 그래프는 연결을 제거한다.
+현재 저장된 에셋 진단 결과:
 
-`IA_Sprint`의 Hold는 IA 에셋에만 둔다. 현재 확인된 SpaceBar 매핑 행에는 이전 `Hold`와 `Released`가 남아 있으므로 두 Mapping Trigger를 모두 제거한다. Gamepad B와 키보드 키 행 모두 Mapping Trigger는 비워 둔다.
+- `IA_Sprint`의 Action Hold는 `0.25`초이며, 기존 `IA_SprintDodge` BP 그래프에는 `0.025` 비교값이 남아 있다.
+- `IA_Dodge`에는 Trigger가 없어 Space/B를 누르는 즉시 `Started`가 발생한다.
+- Space와 B가 `IA_Sprint`, `IA_Dodge` 양쪽에 동시에 매핑돼 있다.
+- 저장된 `BP_ThirdPersonCharacter`에는 `IA_Dodge`와 기존 `IA_SprintDodge` 이벤트가 있지만 `IA_Sprint` 이벤트 참조는 없다.
 
-현재 `BP_ThirdPersonCharacter`에는 `IA_Dodge` 이벤트 참조가 없으므로 새로 추가해야 한다. `SetWantsToWalk`과 같은 방식으로 `SetWantsToSprint(NewWantsToSprint)` 함수를 만들고 `Set Members in CharacterInputState`에서 `WantsToSprint` 핀만 수정한다.
+통합 입력 복구 후 확인한 `IA_SprintDodge`의 Space/B Hold 설정은 `Actuation Threshold=0.25`, `Hold Time Threshold=1.0`이다. Actuation Threshold는 시간값이 아니며 Digital 버튼의 0/1 입력 활성화 기준이다. 목표 Hold 시간이 0.25초라면 `Hold Time Threshold=0.25`로 맞추고, BP에서 `Triggered Seconds>=0.25`를 다시 기다리지 않는다. 회피 판정에 필요한 전체 누름 시간은 `Elapsed Seconds`와 0.25를 비교한다.
 
-게임패드 B를 길게 눌러도 `IA_Dodge.Started`는 누르는 순간 먼저 발생한다. 따라서 장기 입력의 결과는 즉시 Dodge 후 0.5초가 지나면 Sprint 의도가 활성화되는 흐름이다. 탭 Dodge와 Hold Sprint를 상호 배타적으로 만들려면 Dodge를 Started에서 실행할 수 없고 버튼을 놓을 때 판정해야 하므로 현재 요구와 다르다.
+따라서 현재 구성은 `IA_Dodge.Started`가 먼저 Backstep을 시작하고 Sprint 이벤트는 BP에 전달되지 않는 상태다. 같은 키의 Tap/Hold를 상호 배타적으로 처리하려면 즉시 Dodge 방식을 사용하지 않는다.
 
-키 리매핑을 실제 옵션 UI로 노출할 계획이라면 `IA_Dodge`와 `IA_Sprint`에 서로 다른 Player Mappable Key Settings 이름(`Dodge`, `Sprint`)을 부여한다. UE 5.6에서는 구형 Player Mappable Input Config보다 Enhanced Input User Settings 경로를 사용한다.
+권장 복구 순서:
+
+1. `BP_ThirdPersonCharacter`의 새 `IA_Dodge.Started -> SubmitActionInput(Action.Input.Dodge)` 연결을 제거한다.
+2. 기존 `IA_SprintDodge` 이벤트 그래프는 삭제하지 않고 원래 연결을 유지한다.
+3. `IMC_DefaultLocomotion`에서 게임패드 B를 `IA_Dodge`와 `IA_Sprint`에서 제거하고 `IA_SprintDodge`에만 매핑한다.
+4. 키보드 Space도 기존 Tap/Hold 동작을 그대로 쓸 경우 `IA_SprintDodge`에만 매핑한다.
+5. 기존 BP의 `0.025`가 실제 의도인지 확인한다. 현재 `IA_Sprint` Hold `0.25`와 10배 차이가 있으므로 두 값을 혼용하지 않는다.
+
+키보드 개별 리매핑이 필요하면 게임패드만 위 통합 경로를 쓰고 키보드는 하이브리드로 분리한다.
+
+- `IA_Dodge`: 키보드 Dodge 전용 키. `Started -> SubmitActionInput(Action.Input.Dodge)`.
+- `IA_Sprint`: 키보드 Sprint 전용 키. Hold 임계점 이후 `WantsToSprint=true`, `Completed/Canceled`에서 false.
+- 두 키를 같은 키로 다시 지정하려면 Tap/Hold 분류가 필요하므로, 중복을 그대로 허용하지 말고 리바인딩 충돌로 처리하거나 통합 액션 경로를 사용한다.
+
+별도 Dodge 입력에서도 방향 스냅샷을 확실히 전달해야 한다면 `SubmitActionInput` 직전에 캐시한 `ResolvedMoveInput`을 controller yaw 기준 월드 방향으로 변환해 `InputManagerComponent.UpdateActionMovementInput`에 먼저 전달한다. 이 프로젝트의 Dodge는 제출 시점의 controller-space 입력이 비어 있으면 Backstep을 선택한다.
 
 ### Crouch
 
