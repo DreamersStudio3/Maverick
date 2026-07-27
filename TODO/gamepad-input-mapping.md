@@ -1,5 +1,31 @@
 # 게임패드 입력 매핑
 
+## v0.3 MDA 입력 계약 드리프트
+
+이 문서의 아래 Q/R 중심 배치는 이전 입력 구현 기록이다. 다음 전투 마일스톤의 기준은 `MaverickDesign/MDAFrameworkAnalysis.md`의 `입력·회피 계약 v0.3`이다.
+
+v0.3 우선안:
+
+| 기능 | Xbox 게임패드 |
+| --- | --- |
+| 약공격/차지공격 | RB Tap / Hold |
+| S1 Tempo | LB |
+| S2 Area | RT |
+| S3 Defensive | LT |
+| S4 Ultimate | Y |
+| 대상 고정 | R3 |
+| 회피/전력질주 | B Tap / Hold |
+| 걷기 | Left Stick 기울기 |
+| 웅크리기 | L3 |
+| 아이템 슬롯 선택 | D-Pad Up/Down |
+| 아이템 사용 | X |
+| 무기 변경 | D-Pad Left/Right |
+| 상호작용 | A |
+
+따라서 아래 기존 계획의 `RT 강/차지`, `Y Q`, `LB+Y R`, `D-Pad Left/Right 상호작용 후보 전환`은 v0.3 구현 전에 폐기 또는 재배치한다. 특히 LB를 Tempo의 즉시 입력과 Area/Ultimate chord modifier로 동시에 사용하지 않는다.
+
+이 섹션은 설계 드리프트 표시이며 현재 Input Action/IMC/BP 에셋을 변경했다는 뜻이 아니다.
+
 ## 목표
 
 - ProjectBA에서 사용한 게임패드 조작 체계를 Maverick의 현재 Enhanced Input 구조에 맞춰 연결한다.
