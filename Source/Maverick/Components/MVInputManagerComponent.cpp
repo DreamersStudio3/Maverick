@@ -331,7 +331,7 @@ void UMVInputManagerComponent::BufferInstantActionInput(
 	const FVector2D ControllerSpaceInput,
 	const bool bHasMovementInput)
 {
-	BufferedActionInput.Reset();
+	BufferedActionInput.Reset(); 
 	BufferedActionInput.Kind = EMVBufferedActionInputKind::Instant;
 	BufferedActionInput.ActionInputTag = ActionInputTag;
 	BufferedActionInput.ControllerSpaceInput = ControllerSpaceInput;
