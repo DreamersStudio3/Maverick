@@ -1,0 +1,71 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://maverick.local/schemas/TableData.schema.json",
+    "title": "Maverick Table Data",
+    "type": "object",
+    "required": [
+        "version",
+        "tables"
+    ],
+    "properties": {
+        "version": {
+            "type": "integer",
+            "const": 1
+        },
+        "source": {
+            "type": "object",
+            "additionalProperties": {
+                "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "null"
+                ]
+            }
+        },
+        "tables": {
+            "type": "object",
+            "minProperties": 1,
+            "additionalProperties": {
+                "$ref": "#/$defs/table"
+            }
+        }
+    },
+    "additionalProperties": false,
+    "$defs": {
+        "table": {
+            "type": "object",
+            "required": [
+                "key",
+                "rows"
+            ],
+            "properties": {
+                "key": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "rows": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/row"
+                    }
+                }
+            },
+            "additionalProperties": false
+        },
+        "row": {
+            "type": "object",
+            "additionalProperties": {
+                "type": [
+                    "string",
+                    "number",
+                    "integer",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                ]
+            }
+        }
+    }
+}

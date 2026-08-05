@@ -1,0 +1,29 @@
+{
+    "version": 1,
+    "source": {
+        "converter": "CsvToJsonConverter",
+        "file": "CharacterIndex.csv"
+    },
+    "tables": {
+        "CharacterIndex": {
+            "key": "CharacterIndexCode",
+            "rows": [
+                {
+                    "CharacterIndexCode": "Character.Player.P1",
+                    "CharacterName": "PlayerCharacter",
+                    "bEnabled": true
+                },
+                {
+                    "CharacterIndexCode": "Character.NPC.Enemy.E1",
+                    "CharacterName": "BulkupCarcass",
+                    "bEnabled": true
+                },
+                {
+                    "CharacterIndexCode": "Character.NPC.Enemy.NamelessPuppet",
+                    "CharacterName": "NamelessPuppet",
+                    "bEnabled": true
+                }
+            ]
+        }
+    }
+}

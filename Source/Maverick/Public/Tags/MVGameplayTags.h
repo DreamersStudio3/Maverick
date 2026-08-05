@@ -1,0 +1,40 @@
+#pragma once
+
+#include "NativeGameplayTags.h"
+
+namespace MVGameplayTags
+{
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Character_Player_P1);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Character_NPC_Enemy_E1);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Character_NPC_Enemy_NamelessPuppet);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Character_NPC_Neutral_N1);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Item_Weapon_BareHand);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Item_Weapon_OneHand_TestSword);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Item_HealingPotion_Basic);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_LightAttack);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_HeavyAttack);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_HeavyChargeAttack);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_ChargeAttack);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_Skill);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_Skill_Q);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_Skill_R);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_Guard);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_Sprint);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_Dodge);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_UseConsumable);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Combat);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Combat_LightAttack);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Combat_HeavyAttack);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Combat_ChargeAttack);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Combat_Skill);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Combat_Skill_Q);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Combat_Skill_R);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Combat_SprintLightAttack);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Combat_SprintHeavyAttack);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Combat_DodgeLightAttack);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Combat_DodgeHeavyAttack);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StateTreeEvent_Enemy_Hit);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StateTreeEvent_Enemy_DodgeThreatDetected);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StateTreeEvent_Enemy_Groggy);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StateTreeEvent_Enemy_GroggyEnd);
+}
