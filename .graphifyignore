@@ -20,4 +20,4 @@ Plugins/LockOnTarget/Resources/
 *.umap
 
 # Task-local operational memory is intentionally not part of the knowledge graph.
-TODO/
+docs/todo/

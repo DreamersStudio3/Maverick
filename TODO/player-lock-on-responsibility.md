@@ -1,5 +1,0 @@
-- [x] Check `POLICY.md` before starting work.
-- [x] Move lock-on pawn rotation suppression from `MVCharacterBase` to `MVPlayerCharacter`.
-- [x] Move Dodge into `PlayerCharacter.Dodge` so lock-on suppression is owned by the player-only flow.
-- [x] Verify `MVCharacterBase` no longer depends on `LockOnTarget`.
-- [x] Build-check the refactor.

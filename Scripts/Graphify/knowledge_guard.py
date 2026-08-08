@@ -24,7 +24,7 @@ EXPORT_PROVENANCE_PATH = "graphify-out/export-provenance.json"
 ZERO_OID = re.compile(r"^0+$")
 
 SOURCE_EXCLUDED_PREFIXES = (
-    "TODO/",
+    "docs/todo/",
     "graphify-out/",
 )
 

@@ -17,7 +17,7 @@ Graphify는 관련 파일과 심볼을 찾는 지도이며 호출 순서의 최�
 - `설계 목표`: `docs/wiki/`에 기록했지만 현재 텍스트 코드만으로 완전한 적용을 확인할 수 없는 내용이다.
 - `에셋 확인 필요`: Blueprint/WBP/StateTree/Chooser/Montage/DataTable 내부 연결이 필요한 내용이다.
 
-초기 Graphify 코퍼스는 `Content/`와 Unreal 생성 디렉터리, 작업용 `TODO/`를 제외한다. 따라서 그래프에 노드가 없다는 사실만으로 에셋이나 연결이 없다고 결론 내리지 않는다.
+Graphify 코퍼스는 `Content/`와 Unreal 생성 디렉터리, 작업용 `docs/todo/`를 제외한다. 따라서 그래프에 노드가 없다는 사실만으로 에셋이나 연결이 없다고 결론 내리지 않는다.
 
 ## 빌드와 모듈 경계
 

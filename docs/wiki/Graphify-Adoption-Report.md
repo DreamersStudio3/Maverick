@@ -8,7 +8,7 @@
 
 - Graphify는 코드와 문서의 현재 관계를 좁히는 검색 지도다. 책임, lifecycle, 바이너리 에셋 경계를 설명하는 `Architecture.md`는 계속 필요하다.
 - C++의 `/** ... */`는 JSDoc이 아니라 Doxygen 형식 문서 주석으로 보고 유지한다. 모든 헤더의 형식적 보유율보다 비자명한 주요 타입의 로컬 계약을 우선한다.
-- `TODO/`는 작업 중 실행 맥락, `docs/wiki/`는 장기 위키, `MaverickDesign/`은 테이블 원본·도구·schema 공간, `graphify-out/`은 재생성 가능한 읽기 모델이다.
+- `docs/todo/`는 작업 중 실행 맥락, `docs/wiki/`는 장기 위키, `MaverickDesign/`은 테이블 원본·도구·schema 공간, `graphify-out/`은 재생성 가능한 읽기 모델이다.
 - 각 소스 디렉터리에 `README.md`를 자동 생성하지 않는다. 파일 목록과 심볼 관계는 Graphify에 맡기고, 여러 타입·에셋 경계를 가로지르는 설계 근거만 위키 문서로 만든다.
 
 도입과 검증은 로컬 `graphifyy 0.9.36`, [Graphify 공식 저장소](https://github.com/Graphify-Labs/graphify), [공식 PyPI 패키지](https://pypi.org/project/graphifyy/)를 기준으로 수행했다.
@@ -17,7 +17,7 @@
 
 | 시점 | 필수 행동 | 이 시점에 하지 않는 일 |
 | --- | --- | --- |
-| 프롬프트 수신 | `POLICY.md` 확인, `TODO/<task>.md` 생성·갱신, 기존 graph를 `query`/`path`/`explain`으로 조회 | Graphify 재생성 |
+| 프롬프트 수신 | `POLICY.md` 확인, `docs/todo/<task>.md` 생성·갱신, 기존 graph를 `query`/`path`/`explain`으로 조회 | Graphify 재생성 |
 | 일반 커밋 | 코드와 위키 문서를 함께 커밋하고 공식 `post-commit` 훅의 비동기 AST 증분 갱신을 로컬 질의 안전망으로 사용 | 중간 `graphify-out/`만 별도 커밋, 문서 의미 추출 완료로 간주 |
 | switch/checkout으로 브랜치·커밋 전환 | 조건을 만족하면 공식 `post-checkout` 훅으로 새 snapshot의 전체 코드 graph를 비동기 재구축하고, 즉시 질의할 때 현재 전환의 완료 로그 확인 | reset·restore·pull까지 포괄한다고 간주, 문서 의미·wiki·Obsidian 최신성 보장으로 간주 |
 | 원격 push 전 | `$graphify . --update` 전체 의미 갱신, 진단·라벨 검토, wiki·Obsidian·HTML export, stage, stamp, wrap-up 커밋, guard 검증 | 훅 안에서 LLM 추출이나 대규모 export 실행 |
@@ -110,7 +110,7 @@ Graphify는 관련된 정보와 파일을 빠르게 찾고 연결 경로를 좁�
 | 구조 결정 확정 | 완료 상태와 근거 링크 기록 | 장기 가치가 있는 책임·설계·운영 지식 반영 | 아직 재생성하지 않아도 됨 |
 | push 전 | 미해결 항목 확인·종료 정리 | 코드와 일치하는지 최종 검토 | 위키에서 의미 추출하고 읽기 모델 재생성 |
 
-`TODO/`는 `.graphifyignore`에서 제외했다. 미완성 가설과 작업 로그가 지식 그래프를 오염시키지 않게 하기 위해서다. 작업 종료 때 장기 가치가 있는 결정만 `docs/wiki/`로 옮긴 뒤 Graphify가 이를 반영한다. 따라서 TODO 진행 관리 규칙은 유지하되 장기 위키 대용으로 사용하지 않는다.
+`docs/todo/`는 `.graphifyignore`에서 제외했다. 미완성 가설과 작업 로그가 지식 그래프를 오염시키지 않게 하기 위해서다. 작업 종료 때 장기 가치가 있는 결정만 `docs/wiki/`로 옮기고 완료 파일은 삭제한다. 과거 완료 기록 중 다시 찾을 가치가 있는 결과만 `docs/todo/Completed-Work.md`에 짧게 합친다.
 
 ## 추가·변경된 파일
 
@@ -118,7 +118,7 @@ Graphify는 관련된 정보와 파일을 빠르게 찾고 연결 경로를 좁�
 | --- | --- | --- |
 | 상위 행동강령 | `AGENTS.md`, `POLICY.md` | query-first, 문서 책임, 커밋·switch/checkout·pre-push 규칙의 진입점 |
 | 입력·Git 규칙 | `.graphifyignore`, `.gitignore`, `.gitattributes` | corpus 제외, 로컬 cache 제외, LF와 graph merge driver |
-| 단기 작업 기록 | `TODO/README.md`, `TODO/graphify-wiki-pipeline.md` | TODO 생성·갱신·종료 규칙과 이번 도입 상태 |
+| 단기 작업 기록 | `docs/todo/README.md`, `docs/todo/Completed-Work.md` | TODO 생성·갱신·종료 규칙과 압축된 완료 결과 |
 | 사람이 관리하는 위키 | `docs/wiki/Documentation-Workflow.md` | 단일 운영 절차 |
 | 사람이 관리하는 위키 | `docs/wiki/Architecture.md` | 현재 구조, 책임, 주요 흐름, 에셋 검증 공백 |
 | 사람이 관리하는 위키 | `docs/wiki/Header-Documentation.md` | Doxygen 대상·품질·생략 기준 |
@@ -195,7 +195,7 @@ Codex에서 강제 장치로 오인될 수 있던 `.codex/hooks.json`의 `graphi
 ./Scripts/Graphify/Install-Hooks.ps1 -Action Status
 ```
 
-작업을 시작할 때는 TODO를 만들고 기존 graph부터 조회한다.
+작업을 시작할 때는 `docs/todo/`에 짧은 작업 파일을 만들고 기존 graph부터 조회한다.
 
 ```powershell
 python -m graphify query "변경할 기능의 책임과 호출 경로는?"
