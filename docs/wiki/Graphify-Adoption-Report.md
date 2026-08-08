@@ -26,10 +26,6 @@
 
 현재 0.9.36 공식 `post-checkout`은 Git의 세 번째 hook 인자가 `1`인 switch/checkout 계열 전환에서만 실행한다. 변경 파일 목록이 없으므로 새 snapshot의 전체 코드 corpus를 재추출하지만, 백그라운드 작업이며 기존 semantic 문서 노드는 보존될 수 있고 wiki·Obsidian export까지 보장하지 않는다. 경로 단위 checkout은 인자가 `0`이라 건너뛰며, merge·rebase·cherry-pick 중, `graphify-out/`이 없는 브랜치와 linked worktree에서도 실행하지 않는다. 로그에는 대상 ref 표식이 없으므로 현재 전환 뒤 추가된 결과를 확인해야 한다. Maverick의 `pre-push`는 생성 작업을 하지 않고, outgoing commit의 정본·manifest·semantic coverage·생성물·stamp가 같은 Git 스냅샷인지 빠르게 검증한다.
 
-## 왜 `.graphify/`가 아니라 `graphify-out/`인가
-
-현재 공식 문서와 설치된 CLI는 결과 루트로 `graphify-out/`을 사용한다. 기본 결과인 `graph.json`, `GRAPH_REPORT.md`, `graph.html`과 선택 결과인 `wiki/`, `obsidian/`도 이 아래에 생성된다. `.graphifyignore`는 입력 제외 규칙 파일이지 산출물 디렉터리가 아니다. 따라서 별도 `.graphify/`를 만들지 않고 공식 경로를 그대로 채택했다.
-
 Obsidian에서는 `graphify-out/obsidian/`을 vault로 연다. 이 vault는 읽기 모델이므로 사람이 장기 문서를 직접 쓰지 않는다. Graphify가 소유하는 Markdown, `graph.canvas`, `.obsidian/graph.json`은 공유하고, 개인별 `workspace*.json`, `app.json` 같은 UI 상태는 Git과 wrap-up provenance에서 제외한다.
 
 ## `Architecture.md`를 병행하는 이유
