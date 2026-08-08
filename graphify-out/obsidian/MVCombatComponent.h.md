@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVCombatComponent.h"
 type: "code"
-community: "FMVCombatActionEvent"
+community: "FMVSkillEntry"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/FMVCombatActionEvent
+  - community/FMVSkillEntry
 ---
 
 # MVCombatComponent.h
@@ -26,4 +26,4 @@ tags:
 - [[UMVAbilityBase_3]] - `contains` [EXTRACTED]
 - [[UMVStatComponent_2]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/FMVCombatActionEvent
+#graphify/code #graphify/EXTRACTED #community/FMVSkillEntry

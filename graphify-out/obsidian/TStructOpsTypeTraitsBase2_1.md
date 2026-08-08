@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "LockOnTargetTypes.h"
+community: "LockOnTargetComponent.h"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/LockOnTargetTypesh
+  - community/LockOnTargetComponenth
 ---
 
 # TStructOpsTypeTraitsBase2
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[TStructOpsTypeTraitsFTargetInfo]] - `inherits` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/LockOnTargetTypesh
+#graphify/code #graphify/EXTRACTED #community/LockOnTargetComponenth

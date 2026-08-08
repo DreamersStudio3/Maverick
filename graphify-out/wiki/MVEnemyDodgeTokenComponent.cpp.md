@@ -27,9 +27,8 @@
 - [FMVResolvedHitData](FMVResolvedHitData.md) (4 shared connections)
 - [GrantDodgeToken](GrantDodgeToken.md) (3 shared connections)
 - [EMVEnemyDodgeTokenGrantReason](EMVEnemyDodgeTokenGrantReason.md) (3 shared connections)
+- [UMVPlayerConsumable::Initialize](UMVPlayerConsumable--Initialize.md) (2 shared connections)
 - [ResetCombatFlowCounters](ResetCombatFlowCounters.md) (2 shared connections)
-- [UMVPlayerConsumable::Initialize](UMVPlayerConsumable--Initialize.md) (1 shared connections)
-- [Type](Type.md) (1 shared connections)
 - [UMVEnemyDodgeTokenComponent::TryConsumeDodgeTokenForThreat](UMVEnemyDodgeTokenComponent--TryConsumeDodgeTokenForThreat.md) (1 shared connections)
 
 ## Source Files

@@ -1,10 +1,11 @@
 # FMVSkillEntry
 
-> 33 nodes · cohesion 0.08
+> 37 nodes · cohesion 0.07
 
 ## Key Concepts
 
 - **FMVSkillEntry** (38 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **MVCombatComponent.h** (13 connections) — `Source/Maverick/Components/MVCombatComponent.h`
 - **FMVSkillActionStruct** (6 connections) — `Source/Maverick/Components/MVCombatComponent.h`
 - **.GetCurrentSkillData()** (6 connections) — `Source/Maverick/Components/MVCombatComponent.h`
 - **FName** (5 connections)
@@ -12,6 +13,7 @@
 - **.GetCurrentActionRowHandle()** (3 connections) — `Source/Maverick/Components/MVCombatComponent.h`
 - **.GetCurrentRowName()** (3 connections) — `Source/Maverick/Components/MVCombatComponent.h`
 - **TObjectPtr** (3 connections)
+- **MVCombatActionTypes.h** (3 connections) — `Source/Maverick/Public/Enum/MVCombatActionTypes.h`
 - **.ActivateChain()** (2 connections) — `Source/Maverick/Components/MVCombatComponent.h`
 - **.ContainsAbility()** (2 connections) — `Source/Maverick/Components/MVCombatComponent.h`
 - **.GetCurrentAbility()** (2 connections) — `Source/Maverick/Components/MVCombatComponent.h`
@@ -27,24 +29,29 @@
 - **bIsChained** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
 - **CurrentChainStageIndex** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
 - **DataTable** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
-- **.GetRemainingInputWindowTime()** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
-- **InputWindowCloseTime** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
-- *... and 8 more nodes in this community*
+- *... and 12 more nodes in this community*
 
 ## Relationships
 
-- [FMVCombatActionEvent](FMVCombatActionEvent.md) (8 shared connections)
-- [MVCombatComponent.cpp](MVCombatComponent.cpp.md) (5 shared connections)
-- [FDataTableRowHandle](FDataTableRowHandle.md) (3 shared connections)
-- [FMVSkillDataTableColumn](FMVSkillDataTableColumn.md) (1 shared connections)
+- [int32](int32.md) (5 shared connections)
+- [UMVDodgeThreatEvaluatorLibrary::EvaluateDodgeThreat](UMVDodgeThreatEvaluatorLibrary--EvaluateDodgeThreat.md) (4 shared connections)
+- [FMVCombatActionEvent](FMVCombatActionEvent.md) (4 shared connections)
+- [MVCombatComponent.cpp](MVCombatComponent.cpp.md) (3 shared connections)
+- [FMVSkillDataTableColumn](FMVSkillDataTableColumn.md) (2 shared connections)
+- [MVFinisherComponent.cpp](MVFinisherComponent.cpp.md) (1 shared connections)
+- [MVActionInputHandlerInterface.h](MVActionInputHandlerInterface.h.md) (1 shared connections)
+- [MVWeaponComponent.cpp](MVWeaponComponent.cpp.md) (1 shared connections)
+- [MVAICombatTypes.h](MVAICombatTypes.h.md) (1 shared connections)
+- [MVEnemy.cpp](MVEnemy.cpp.md) (1 shared connections)
 
 ## Source Files
 
 - `Source/Maverick/Components/MVCombatComponent.h`
+- `Source/Maverick/Public/Enum/MVCombatActionTypes.h`
 
 ## Audit Trail
 
-- EXTRACTED: 101 (100%)
+- EXTRACTED: 119 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

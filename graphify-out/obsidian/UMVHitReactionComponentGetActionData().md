@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVHitReactionComponent.cpp"
 type: "code"
-community: "MVHitReactionComponent.h"
+community: "FMVResolvedHitData"
 location: "L704"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVHitReactionComponenth
+  - community/FMVResolvedHitData
 ---
 
 # UMVHitReactionComponent::GetActionData()
@@ -18,4 +18,4 @@ tags:
 - [[MVHitReactionCopyBaseActionRow()]] - `calls` [EXTRACTED]
 - [[MVHitReactionLogHitLaunchTrace()]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVHitReactionComponenth
+#graphify/code #graphify/EXTRACTED #community/FMVResolvedHitData

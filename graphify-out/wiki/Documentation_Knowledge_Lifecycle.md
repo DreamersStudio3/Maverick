@@ -1,51 +1,42 @@
 # Documentation Knowledge Lifecycle
 
-> 34 nodes · cohesion 0.06
+> 17 nodes · cohesion 0.12
 
 ## Key Concepts
 
-- **Maverick Architecture** (15 connections) — `docs/wiki/Architecture.md`
-- **핵심 런타임 흐름** (8 connections) — `docs/wiki/Architecture.md`
-- **Completed TODO Deletion** (3 connections) — `docs/wiki/Documentation-Workflow.md`
-- **Documentation and Graphify Workflow** (3 connections) — `docs/wiki/Documentation-Workflow.md`
-- **TODO and Graphify Lifecycle** (3 connections) — `docs/wiki/Graphify-Adoption-Report.md`
-- **Documentation Knowledge Lifecycle** (3 connections) — `POLICY.md`
-- **Graphify Query-First Workflow** (2 connections) — `AGENTS.md`
-- **Maverick Project Context** (2 connections) — `AGENTS.md`
-- **Short-Lived Task Context** (2 connections) — `AGENTS.md`
-- **Architecture Evidence Scope** (2 connections) — `docs/wiki/Architecture.md`
-- **Graphify Update Timing** (2 connections) — `docs/wiki/Documentation-Workflow.md`
-- **Architecture Complements Graphify** (2 connections) — `docs/wiki/Graphify-Adoption-Report.md`
-- **Graphify Internal Wiki Adoption Report** (2 connections) — `docs/wiki/Graphify-Adoption-Report.md`
-- **Maverick Policy** (2 connections) — `POLICY.md`
-- **Pre-Push Freshness Gate** (2 connections) — `POLICY.md`
-- **Architecture.md** (1 connections) — `docs/wiki/Architecture.md`
-- **AI StateTree** (1 connections) — `docs/wiki/Architecture.md`
-- **Binary Asset Verification Boundary** (1 connections) — `docs/wiki/Architecture.md`
-- **Hit, Stat, HitReaction** (1 connections) — `docs/wiki/Architecture.md`
-- **LockOnTarget 경계** (1 connections) — `docs/wiki/Architecture.md`
-- **Runtime Responsibility Boundaries** (1 connections) — `docs/wiki/Architecture.md`
-- **UI와 CommonUI** (1 connections) — `docs/wiki/Architecture.md`
+- **Maverick Architecture** (21 connections) — `docs/wiki/Architecture.md`
+- **Input to Action Execution Flow** (1 connections) — `docs/wiki/Architecture.md`
+- **AI StateTree Flow** (1 connections) — `docs/wiki/Architecture.md`
+- **Death and Field Transition Flow** (1 connections) — `docs/wiki/Architecture.md`
+- **Graphify Evidence Boundary** (1 connections) — `docs/wiki/Architecture.md`
+- **Hit, Stat, and HitReaction Flow** (1 connections) — `docs/wiki/Architecture.md`
+- **Maverick Table Data Pipeline** (1 connections) — `docs/wiki/Architecture.md`
+- **UI and CommonUI Flow** (1 connections) — `docs/wiki/Architecture.md`
 - **갱신 조건** (1 connections) — `docs/wiki/Architecture.md`
 - **관련 문서** (1 connections) — `docs/wiki/Architecture.md`
 - **디렉터리 책임** (1 connections) — `docs/wiki/Architecture.md`
-- *... and 9 more nodes in this community*
+- **빌드와 모듈 경계** (1 connections) — `docs/wiki/Architecture.md`
+- **상위 구조** (1 connections) — `docs/wiki/Architecture.md`
+- **읽는 순서** (1 connections) — `docs/wiki/Architecture.md`
+- **증거 범위** (1 connections) — `docs/wiki/Architecture.md`
+- **책임 규칙 요약** (1 connections) — `docs/wiki/Architecture.md`
+- **캐릭터 조립과 소유권** (1 connections) — `docs/wiki/Architecture.md`
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [Obsidian 사용 안내](Obsidian_%EC%82%AC%EC%9A%A9_%EC%95%88%EB%82%B4.md) (1 shared connections)
+- [Graphify Query-First Workflow](Graphify_Query-First_Workflow.md) (1 shared connections)
+- [핵심 런타임 흐름](%ED%95%B5%EC%8B%AC_%EB%9F%B0%ED%83%80%EC%9E%84_%ED%9D%90%EB%A6%84.md) (1 shared connections)
+- [Graphify Internal Wiki Adoption Report](Graphify_Internal_Wiki_Adoption_Report.md) (1 shared connections)
+- [Obsidian 위키 탐색](Obsidian_%EC%9C%84%ED%82%A4_%ED%83%90%EC%83%89.md) (1 shared connections)
 
 ## Source Files
 
-- `AGENTS.md`
-- `POLICY.md`
 - `docs/wiki/Architecture.md`
-- `docs/wiki/Documentation-Workflow.md`
-- `docs/wiki/Graphify-Adoption-Report.md`
 
 ## Audit Trail
 
-- EXTRACTED: 72 (100%)
+- EXTRACTED: 37 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/System/MVUISubsystem.cpp"
 type: "code"
-community: "MVUISubsystem.cpp"
+community: "AMVCharacterBase"
 location: "L823"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVUISubsystemcpp
+  - community/AMVCharacterBase
 ---
 
 # UMVUISubsystem::ResolvePIEActionTestPlayerController()
@@ -16,4 +16,4 @@ tags:
 - [[APlayerController_6]] - `references` [EXTRACTED]
 - [[MVUISubsystem.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVUISubsystemcpp
+#graphify/code #graphify/EXTRACTED #community/AMVCharacterBase

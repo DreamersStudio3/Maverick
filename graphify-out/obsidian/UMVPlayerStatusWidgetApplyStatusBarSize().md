@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/HUD/MVPlayerStatusWidget.cpp"
 type: "code"
-community: "MVPlayerStatusWidget.cpp"
+community: "MVStatusBarWidget.h"
 location: "L151"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVPlayerStatusWidgetcpp
+  - community/MVStatusBarWidgeth
 ---
 
 # UMVPlayerStatusWidget::ApplyStatusBarSize()
@@ -15,4 +15,4 @@ tags:
 - [[MVPlayerStatusWidget.cpp]] - `contains` [EXTRACTED]
 - [[UMVStatusBarWidget()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVPlayerStatusWidgetcpp
+#graphify/code #graphify/EXTRACTED #community/MVStatusBarWidgeth

@@ -24,7 +24,7 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 1 edge to [[_COMMUNITY_FMVCombatActionEvent]]
+- 1 edge to [[_COMMUNITY_UMVDodgeThreatEvaluatorLibraryEvaluateDodgeThreat]]
 - 1 edge to [[_COMMUNITY_MVEnemyDodgeTokenComponent.cpp]]
 - 1 edge to [[_COMMUNITY_UMVEnemyDodgeTokenComponentTryConsumeDodgeTokenForThreat]]
 - 1 edge to [[_COMMUNITY_EMVEnemyDodgeTokenGrantReason]]

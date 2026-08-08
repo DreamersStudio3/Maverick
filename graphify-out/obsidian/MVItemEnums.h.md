@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Public/Enum/MVItemEnums.h"
 type: "code"
-community: "MVWeaponComponent.cpp"
+community: "MVPlayerConsumable.h"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVWeaponComponentcpp
+  - community/MVPlayerConsumableh
 ---
 
 # MVItemEnums.h
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[MVItemTableTypes.h]] - `imports` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVWeaponComponentcpp
+#graphify/code #graphify/EXTRACTED #community/MVPlayerConsumableh

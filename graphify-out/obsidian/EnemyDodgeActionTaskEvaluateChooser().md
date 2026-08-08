@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/AI/Task/MVEnemyDodgeActionTask.cpp"
 type: "code"
-community: "MVEnemyDodgeActionTask.cpp"
+community: "EnemyDodgeActionTaskEvaluateChooser"
 location: "L56"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVEnemyDodgeActionTaskcpp
+  - community/EnemyDodgeActionTaskEvaluateChooser
 ---
 
 # EnemyDodgeActionTaskEvaluateChooser()
@@ -19,4 +19,4 @@ tags:
 - [[UChooserTable]] - `references` [EXTRACTED]
 - [[UObject_1]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVEnemyDodgeActionTaskcpp
+#graphify/code #graphify/EXTRACTED #community/EnemyDodgeActionTaskEvaluateChooser

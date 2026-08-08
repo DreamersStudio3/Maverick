@@ -44,7 +44,7 @@ SORT file.name ASC
 ## Connections to other communities
 - 3 edges to [[_COMMUNITY_MVPlayerCharacter.cpp_1]]
 - 1 edge to [[_COMMUNITY_Type]]
-- 1 edge to [[_COMMUNITY_Player Dodge Tables]]
+- 1 edge to [[_COMMUNITY_FVector]]
 - 1 edge to [[_COMMUNITY_MVMovementActionTableTypes.h]]
 
 ## Top bridge nodes

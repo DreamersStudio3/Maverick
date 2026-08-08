@@ -21,7 +21,7 @@
 - [MVPIEActionTestWidget.cpp](MVPIEActionTestWidget.cpp.md) (5 shared connections)
 - [MVSkillSlotWidget.h](MVSkillSlotWidget.h.md) (2 shared connections)
 - [UMVLoadingWindow::BuildNativeWidgetTree](UMVLoadingWindow--BuildNativeWidgetTree.md) (2 shared connections)
-- [MVPlayerSkillHUDWidget.h](MVPlayerSkillHUDWidget.h.md) (1 shared connections)
+- [MVPlayerSkillHUDWidget.cpp](MVPlayerSkillHUDWidget.cpp.md) (1 shared connections)
 - [MVStatusBarWidget.cpp](MVStatusBarWidget.cpp.md) (1 shared connections)
 - [UOverlay](UOverlay.md) (1 shared connections)
 

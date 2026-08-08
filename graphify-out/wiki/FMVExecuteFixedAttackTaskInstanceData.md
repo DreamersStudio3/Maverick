@@ -37,7 +37,7 @@
 - [MVExecuteAttackTask.cpp](MVExecuteAttackTask.cpp.md) (2 shared connections)
 - [ExecuteAttackResolveActionCandidate](ExecuteAttackResolveActionCandidate.md) (2 shared connections)
 - [FMVAttackTaskInstanceData](FMVAttackTaskInstanceData.md) (1 shared connections)
-- [Player Dodge Tables](Player_Dodge_Tables.md) (1 shared connections)
+- [피격 리액션 회복 결정](%ED%94%BC%EA%B2%A9_%EB%A6%AC%EC%95%A1%EC%85%98_%ED%9A%8C%EB%B3%B5_%EA%B2%B0%EC%A0%95.md) (1 shared connections)
 - [FMVAICombatActionCondition](FMVAICombatActionCondition.md) (1 shared connections)
 - [FMVAICombatContext](FMVAICombatContext.md) (1 shared connections)
 

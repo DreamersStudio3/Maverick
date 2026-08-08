@@ -13,7 +13,7 @@
 ## Relationships
 
 - [EMVEnemyDodgeTokenGrantReason](EMVEnemyDodgeTokenGrantReason.md) (1 shared connections)
-- [FMVCombatActionEvent](FMVCombatActionEvent.md) (1 shared connections)
+- [UMVDodgeThreatEvaluatorLibrary::EvaluateDodgeThreat](UMVDodgeThreatEvaluatorLibrary--EvaluateDodgeThreat.md) (1 shared connections)
 - [MVEnemyDodgeTokenComponent.cpp](MVEnemyDodgeTokenComponent.cpp.md) (1 shared connections)
 - [UMVEnemyDodgeTokenComponent::TryConsumeDodgeTokenForThreat](UMVEnemyDodgeTokenComponent--TryConsumeDodgeTokenForThreat.md) (1 shared connections)
 

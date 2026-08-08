@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "LockOnTargetComponent.h"
+community: "LockOnTargetComponent.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/LockOnTargetComponenth
+  - community/LockOnTargetComponentcpp
 ---
 
 # TSubclassOf
@@ -16,4 +16,4 @@ tags:
 - [[ULockOnTargetComponentRemoveExtensionByClass()]] - `references` [EXTRACTED]
 - [[ULockOnTargetComponentSetTargetHandlerByClass()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/LockOnTargetComponenth
+#graphify/code #graphify/EXTRACTED #community/LockOnTargetComponentcpp

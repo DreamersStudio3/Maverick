@@ -1,6 +1,6 @@
 # MVWeaponComponent.cpp
 
-> 54 nodes · cohesion 0.05
+> 51 nodes · cohesion 0.06
 
 ## Key Concepts
 
@@ -11,7 +11,6 @@
 - **FMVEquippedWeaponState()** (6 connections) — `Source/Maverick/Public/Struct/MVWeaponTypes.h`
 - **UMVWeaponComponent::EnsureWeaponMeshComponent()** (5 connections) — `Source/Maverick/Components/MVWeaponComponent.cpp`
 - **MVEquipmentEnums.h** (5 connections) — `Source/Maverick/Public/Enum/MVEquipmentEnums.h`
-- **MVItemTableTypes.h** (5 connections) — `Source/Maverick/Public/Tables/MVItemTableTypes.h`
 - **MVWeaponTableTypes.h** (5 connections) — `Source/Maverick/Public/Tables/MVWeaponTableTypes.h`
 - **UObject** (4 connections)
 - **MVWeaponMakeRequiredTraceSocketNames()** (4 connections) — `Source/Maverick/Components/MVWeaponComponent.cpp`
@@ -29,20 +28,20 @@
 - **FGameplayTag** (2 connections)
 - **FName** (2 connections)
 - **TCHAR** (2 connections)
-- *... and 29 more nodes in this community*
+- **UMVWeaponComponent::ApplyEquippedWeaponState()** (2 connections) — `Source/Maverick/Components/MVWeaponComponent.cpp`
+- *... and 26 more nodes in this community*
 
 ## Relationships
 
-- [MVAbilityBase.cpp](MVAbilityBase.cpp.md) (1 shared connections)
+- [AMVCharacterBase](AMVCharacterBase.md) (1 shared connections)
 - [MVHitResolverSubsystem.cpp](MVHitResolverSubsystem.cpp.md) (1 shared connections)
-- [MVCharacterBase.h](MVCharacterBase.h.md) (1 shared connections)
+- [FMVStrafeMoveTaskInstanceData](FMVStrafeMoveTaskInstanceData.md) (1 shared connections)
 - [MVHitReactionComponent.h](MVHitReactionComponent.h.md) (1 shared connections)
 - [MVExecuteAttackTask.cpp](MVExecuteAttackTask.cpp.md) (1 shared connections)
-- [FMVCombatActionEvent](FMVCombatActionEvent.md) (1 shared connections)
+- [FMVSkillEntry](FMVSkillEntry.md) (1 shared connections)
 - [전투 액션 Chooser 입력](%EC%A0%84%ED%88%AC_%EC%95%A1%EC%85%98_Chooser_%EC%9E%85%EB%A0%A5.md) (1 shared connections)
 - [MVHitTypes.h](MVHitTypes.h.md) (1 shared connections)
-- [ApplyMVPlayerConsumableHealingPotionDataRowDefaults](ApplyMVPlayerConsumableHealingPotionDataRowDefaults.md) (1 shared connections)
-- [MVTableTypes.h](MVTableTypes.h.md) (1 shared connections)
+- [MVPlayerConsumable.h](MVPlayerConsumable.h.md) (1 shared connections)
 
 ## Source Files
 
@@ -50,15 +49,13 @@
 - `Source/Maverick/Components/MVWeaponComponent.cpp`
 - `Source/Maverick/Components/MVWeaponComponent.h`
 - `Source/Maverick/Public/Enum/MVEquipmentEnums.h`
-- `Source/Maverick/Public/Enum/MVItemEnums.h`
 - `Source/Maverick/Public/Struct/MVCombatActionTableInput.h`
 - `Source/Maverick/Public/Struct/MVWeaponTypes.h`
-- `Source/Maverick/Public/Tables/MVItemTableTypes.h`
 - `Source/Maverick/Public/Tables/MVWeaponTableTypes.h`
 
 ## Audit Trail
 
-- EXTRACTED: 158 (100%)
+- EXTRACTED: 151 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

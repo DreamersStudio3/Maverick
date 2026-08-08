@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Character/MVCharacterBase.h"
 type: "code"
-community: "MVCharacterBase.h"
+community: "FMVStrafeMoveTaskInstanceData"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVCharacterBaseh
+  - community/FMVStrafeMoveTaskInstanceData
 ---
 
 # MVCharacterBase.h
@@ -28,4 +28,4 @@ tags:
 - [[UMVWeaponComponent]] - `contains` [EXTRACTED]
 - [[UMotionWarpingComponent]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVCharacterBaseh
+#graphify/code #graphify/EXTRACTED #community/FMVStrafeMoveTaskInstanceData

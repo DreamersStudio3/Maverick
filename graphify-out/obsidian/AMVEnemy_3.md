@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVEnemyDodgeTokenComponent.h"
 type: "code"
-community: "MVEnemyDodgeTokenComponent.h"
+community: "EMVEnemyDodgeTokenGrantReason"
 location: "L10"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVEnemyDodgeTokenComponenth
+  - community/EMVEnemyDodgeTokenGrantReason
 ---
 
 # AMVEnemy
@@ -15,4 +15,4 @@ tags:
 - [[EMVEnemyDodgeTokenGrantReason]] - `references` [EXTRACTED]
 - [[MVEnemyDodgeTokenComponent.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVEnemyDodgeTokenComponenth
+#graphify/code #graphify/EXTRACTED #community/EMVEnemyDodgeTokenGrantReason

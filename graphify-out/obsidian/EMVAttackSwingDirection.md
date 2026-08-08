@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "MVCombatComponent.cpp"
+community: "int32"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVCombatComponentcpp
+  - community/int32
 ---
 
 # EMVAttackSwingDirection
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[MVCombatGetOppositeSwingDirection()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVCombatComponentcpp
+#graphify/code #graphify/EXTRACTED #community/int32

@@ -31,10 +31,10 @@
 - [MVStatComponent.cpp](MVStatComponent.cpp.md) (1 shared connections)
 - [MVSheetSpecs.cpp](MVSheetSpecs.cpp.md) (1 shared connections)
 - [MVTableAssetGenerator.cpp](MVTableAssetGenerator.cpp.md) (1 shared connections)
-- [MVActionRowTableTypes.h](MVActionRowTableTypes.h.md) (1 shared connections)
-- [MVCharacterBase.h](MVCharacterBase.h.md) (1 shared connections)
-- [MVWeaponComponent.cpp](MVWeaponComponent.cpp.md) (1 shared connections)
-- [Player Dodge Tables](Player_Dodge_Tables.md) (1 shared connections)
+- [MVHitReactionComponent.h](MVHitReactionComponent.h.md) (1 shared connections)
+- [FMVStrafeMoveTaskInstanceData](FMVStrafeMoveTaskInstanceData.md) (1 shared connections)
+- [MVPlayerConsumable.h](MVPlayerConsumable.h.md) (1 shared connections)
+- [FVector](FVector.md) (1 shared connections)
 
 ## Source Files
 

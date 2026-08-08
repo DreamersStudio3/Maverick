@@ -37,7 +37,7 @@
 - [LockOnTargetComponent.cpp](LockOnTargetComponent.cpp.md) (3 shared connections)
 - [UTargetComponent::DispatchTargetException](UTargetComponent--DispatchTargetException.md) (1 shared connections)
 - [LockOnTargetDefines.h](LockOnTargetDefines.h.md) (1 shared connections)
-- [LockOnTargetTypes.h](LockOnTargetTypes.h.md) (1 shared connections)
+- [LockOnTargetComponent.h](LockOnTargetComponent.h.md) (1 shared connections)
 
 ## Source Files
 

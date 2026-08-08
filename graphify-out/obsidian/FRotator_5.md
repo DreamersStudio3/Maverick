@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "MVHitReactionLogRecoveryTrace"
+community: "FMVResolvedHitData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVHitReactionLogRecoveryTrace
+  - community/FMVResolvedHitData
 ---
 
 # FRotator
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[MVHitReactionMakeYawSnapRotation()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVHitReactionLogRecoveryTrace
+#graphify/code #graphify/EXTRACTED #community/FMVResolvedHitData

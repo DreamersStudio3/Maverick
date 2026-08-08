@@ -22,9 +22,10 @@
 ## Relationships
 
 - [MVHitReactionComponent.cpp](MVHitReactionComponent.cpp.md) (11 shared connections)
-- [MVHitReactionLogRecoveryTrace](MVHitReactionLogRecoveryTrace.md) (8 shared connections)
-- [MVHitReactionComponent.h](MVHitReactionComponent.h.md) (1 shared connections)
+- [MVHitReactionLogRecoveryTrace](MVHitReactionLogRecoveryTrace.md) (7 shared connections)
+- [UMVTableManager](UMVTableManager.md) (1 shared connections)
 - [MVHitReactionBuildAvailableRowNameLog](MVHitReactionBuildAvailableRowNameLog.md) (1 shared connections)
+- [FMVResolvedHitData](FMVResolvedHitData.md) (1 shared connections)
 - [FVector2D](FVector2D.md) (1 shared connections)
 
 ## Source Files

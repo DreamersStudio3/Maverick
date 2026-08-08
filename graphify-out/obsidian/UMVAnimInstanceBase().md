@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Animation/MVAnimInstanceBase.h"
 type: "code"
-community: "MVCharacterBase.h"
+community: "FMVStrafeMoveTaskInstanceData"
 location: "L20"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVCharacterBaseh
+  - community/FMVStrafeMoveTaskInstanceData
 ---
 
 # UMVAnimInstanceBase()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[MVAnimInstanceBase.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVCharacterBaseh
+#graphify/code #graphify/EXTRACTED #community/FMVStrafeMoveTaskInstanceData

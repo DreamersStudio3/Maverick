@@ -27,7 +27,7 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 1 edge to [[_COMMUNITY_MVFieldTransitionSubsystem.cpp_1]]
+- 1 edge to [[_COMMUNITY_MVFieldTransitionSubsystem.cpp]]
 
 ## Top bridge nodes
 - [[MVFieldTransitionSubsystem.h]] - degree 8, connects to 1 community

@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "MVHitReactionComponent.h"
+community: "FMVHitReactionActionData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVHitReactionComponenth
+  - community/FMVHitReactionActionData
 ---
 
 # FName
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[FMVHitReactionActionData]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVHitReactionComponenth
+#graphify/code #graphify/EXTRACTED #community/FMVHitReactionActionData

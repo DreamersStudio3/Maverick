@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/HUD/MVPlayerSkillHUDWidget.h"
 type: "code"
-community: "MVPlayerSkillHUDWidget.h"
+community: "MVPlayerSkillHUDWidget.cpp"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVPlayerSkillHUDWidgeth
+  - community/MVPlayerSkillHUDWidgetcpp
 ---
 
 # MVPlayerSkillHUDWidget.h
@@ -17,4 +17,4 @@ tags:
 - [[UMVSkillSlotWidget]] - `contains` [EXTRACTED]
 - [[UTexture2D]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVPlayerSkillHUDWidgeth
+#graphify/code #graphify/EXTRACTED #community/MVPlayerSkillHUDWidgetcpp

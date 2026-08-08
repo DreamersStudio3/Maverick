@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/System/MVDeathRespawnFlow.h"
 type: "code"
-community: "MVDeathRespawnFlow.h"
+community: "MVDeathRespawnFlow.cpp"
 location: "L10"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVDeathRespawnFlowh
+  - community/MVDeathRespawnFlowcpp
 ---
 
 # UMVDeathComponent
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[MVDeathRespawnFlow.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVDeathRespawnFlowh
+#graphify/code #graphify/EXTRACTED #community/MVDeathRespawnFlowcpp

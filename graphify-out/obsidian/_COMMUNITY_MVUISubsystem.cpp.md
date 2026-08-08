@@ -1,16 +1,15 @@
 ---
 type: community
 cohesion: 0.06
-members: 36
+members: 34
 ---
 
 # MVUISubsystem.cpp
 
 **Cohesion:** 0.06 - loosely connected
-**Members:** 36 nodes
+**Members:** 34 nodes
 
 ## Members
-- [[APlayerController_6]] - code
 - [[FSubsystemCollectionBase_4]] - code
 - [[MVUISubsystem.cpp]] - code - Source/Maverick/UI/System/MVUISubsystem.cpp
 - [[UMVPopupBase_4]] - code
@@ -39,7 +38,6 @@ members: 36
 - [[UMVUISubsystemResetToDefaultUI()]] - code - Source/Maverick/UI/System/MVUISubsystem.cpp
 - [[UMVUISubsystemResetUITrackingState()]] - code - Source/Maverick/UI/System/MVUISubsystem.cpp
 - [[UMVUISubsystemResolveDialogueCameraZoomDuration()]] - code - Source/Maverick/UI/System/MVUISubsystem.cpp
-- [[UMVUISubsystemResolvePIEActionTestPlayerController()]] - code - Source/Maverick/UI/System/MVUISubsystem.cpp
 - [[UMVUISubsystemRestoreDialogueCameraZoom()]] - code - Source/Maverick/UI/System/MVUISubsystem.cpp
 - [[UMVUISubsystemSkipDialogueWindow()]] - code - Source/Maverick/UI/System/MVUISubsystem.cpp
 - [[UMVUISubsystemStartDialogueCameraZoom()]] - code - Source/Maverick/UI/System/MVUISubsystem.cpp
@@ -58,9 +56,9 @@ SORT file.name ASC
 - 9 edges to [[_COMMUNITY_UMVDialogueWindow]]
 - 8 edges to [[_COMMUNITY_UWorld]]
 - 7 edges to [[_COMMUNITY_UMVUISubsystemPushWindowByClass]]
-- 2 edges to [[_COMMUNITY_MVAbilityBase.cpp]]
 - 2 edges to [[_COMMUNITY_MVTableTypes.h]]
 - 2 edges to [[_COMMUNITY_MVUISubsystem.h]]
+- 2 edges to [[_COMMUNITY_AMVCharacterBase]]
 - 2 edges to [[_COMMUNITY_UMVTableManager]]
 - 2 edges to [[_COMMUNITY_FMVInteractionPromptData]]
 - 2 edges to [[_COMMUNITY_FMVPopupMessageData]]
@@ -69,4 +67,3 @@ SORT file.name ASC
 ## Top bridge nodes
 - [[MVUISubsystem.cpp]] - degree 67, connects to 10 communities
 - [[UMVPopupBase_4]] - degree 4, connects to 1 community
-- [[UMVUISubsystemResolvePIEActionTestPlayerController()]] - degree 3, connects to 1 community

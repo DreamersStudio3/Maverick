@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVFinisherComponent.h"
 type: "code"
-community: "MVActionInputHandlerInterface.h"
+community: "FMVFinisherChooserInput"
 location: "L53"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVActionInputHandlerInterfaceh
+  - community/FMVFinisherChooserInput
 ---
 
 # .IsValid()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[FMVFinisherChooserOutput]] - `method` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVActionInputHandlerInterfaceh
+#graphify/code #graphify/EXTRACTED #community/FMVFinisherChooserInput

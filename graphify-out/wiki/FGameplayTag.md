@@ -15,7 +15,8 @@
 
 ## Relationships
 
-- [MVCombatComponent.cpp](MVCombatComponent.cpp.md) (8 shared connections)
+- [MVCombatComponent.cpp](MVCombatComponent.cpp.md) (7 shared connections)
+- [int32](int32.md) (1 shared connections)
 - [FVector2D](FVector2D.md) (1 shared connections)
 
 ## Source Files

@@ -1,28 +1,25 @@
 ---
 type: community
-cohesion: 0.05
-members: 54
+cohesion: 0.06
+members: 51
 ---
 
 # MVWeaponComponent.cpp
 
-**Cohesion:** 0.05 - loosely connected
-**Members:** 54 nodes
+**Cohesion:** 0.06 - loosely connected
+**Members:** 51 nodes
 
 ## Members
 - [[EMVEquippedStyle_3]] - code
 - [[EMVWeaponRangeType]] - code
 - [[FGameplayTag_12]] - code
 - [[FMVEquippedWeaponState()]] - code - Source/Maverick/Public/Struct/MVWeaponTypes.h
-- [[FMVItemTableRow()]] - code - Source/Maverick/Public/Tables/MVItemTableTypes.h
 - [[FMVWeaponHitSnapshot()]] - code - Source/Maverick/Public/Struct/MVWeaponTypes.h
 - [[FMVWeaponTableRow()]] - code - Source/Maverick/Public/Tables/MVWeaponTableTypes.h
 - [[FName_42]] - code
 - [[FTransform]] - code
 - [[MVCombatActionTableInput.h]] - code - Source/Maverick/Public/Struct/MVCombatActionTableInput.h
 - [[MVEquipmentEnums.h]] - code - Source/Maverick/Public/Enum/MVEquipmentEnums.h
-- [[MVItemEnums.h]] - code - Source/Maverick/Public/Enum/MVItemEnums.h
-- [[MVItemTableTypes.h]] - code - Source/Maverick/Public/Tables/MVItemTableTypes.h
 - [[MVWeaponComponent.cpp]] - code - Source/Maverick/Components/MVWeaponComponent.cpp
 - [[MVWeaponComponent.h]] - code - Source/Maverick/Components/MVWeaponComponent.h
 - [[MVWeaponMakeRequiredTraceSocketNames()]] - code - Source/Maverick/Components/MVWeaponComponent.cpp
@@ -74,19 +71,18 @@ SORT file.name ASC
 
 ## Connections to other communities
 - 1 edge to [[_COMMUNITY_MVExecuteAttackTask.cpp]]
-- 1 edge to [[_COMMUNITY_MVCharacterBase.h]]
-- 1 edge to [[_COMMUNITY_MVAbilityBase.cpp]]
+- 1 edge to [[_COMMUNITY_FMVStrafeMoveTaskInstanceData]]
+- 1 edge to [[_COMMUNITY_AMVCharacterBase]]
 - 1 edge to [[_COMMUNITY_MVHitResolverSubsystem.cpp]]
-- 1 edge to [[_COMMUNITY_FMVCombatActionEvent]]
+- 1 edge to [[_COMMUNITY_FMVSkillEntry]]
 - 1 edge to [[_COMMUNITY_MVHitReactionComponent.h]]
 - 1 edge to [[_COMMUNITY_전투 액션 Chooser 입력]]
 - 1 edge to [[_COMMUNITY_MVHitTypes.h]]
-- 1 edge to [[_COMMUNITY_ApplyMVPlayerConsumableHealingPotionDataRowDefaults]]
-- 1 edge to [[_COMMUNITY_MVTableTypes.h]]
+- 1 edge to [[_COMMUNITY_MVPlayerConsumable.h]]
 
 ## Top bridge nodes
 - [[MVCombatActionTableInput.h]] - degree 4, connects to 3 communities
 - [[MVEquipmentEnums.h]] - degree 5, connects to 2 communities
-- [[MVItemTableTypes.h]] - degree 5, connects to 2 communities
 - [[UMVHitResolverSubsystemResolveWeaponHitSnapshot()]] - degree 3, connects to 2 communities
 - [[MVWeaponTypes.h]] - degree 6, connects to 1 community
+- [[MVWeaponTableTypes.h]] - degree 5, connects to 1 community

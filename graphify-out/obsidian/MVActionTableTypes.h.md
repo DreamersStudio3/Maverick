@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Public/Tables/MVActionTableTypes.h"
 type: "code"
-community: "Player Dodge Tables"
+community: "피격 리액션 회복 결정"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Player_Dodge_Tables
+  - community/___
 ---
 
 # MVActionTableTypes.h
@@ -21,4 +21,4 @@ tags:
 - [[MVMovementActionTableTypes.h]] - `imports` [EXTRACTED]
 - [[MVPlayerConsumable.cpp]] - `imports` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Player_Dodge_Tables
+#graphify/code #graphify/EXTRACTED #community/___

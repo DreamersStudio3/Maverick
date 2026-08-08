@@ -26,7 +26,7 @@ SORT file.name ASC
 ## Connections to other communities
 - 2 edges to [[_COMMUNITY_FVector]]
 - 2 edges to [[_COMMUNITY_MVPlayerInteractionDetector.cpp]]
-- 1 edge to [[_COMMUNITY_MVPlayerConsumable.cpp]]
+- 1 edge to [[_COMMUNITY_UMVPlayerConsumableInitialize]]
 - 1 edge to [[_COMMUNITY_MVMovementActionTableTypes.h]]
 
 ## Top bridge nodes

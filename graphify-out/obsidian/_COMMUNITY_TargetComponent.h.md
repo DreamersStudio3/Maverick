@@ -34,7 +34,7 @@ SORT file.name ASC
 ## Connections to other communities
 - 7 edges to [[_COMMUNITY_ETargetFocusPointType]]
 - 1 edge to [[_COMMUNITY_WeightedTargetHandler.cpp]]
-- 1 edge to [[_COMMUNITY_LockOnTargetTypes.h]]
+- 1 edge to [[_COMMUNITY_LockOnTargetComponent.h]]
 
 ## Top bridge nodes
 - [[TargetComponent.h]] - degree 7, connects to 2 communities

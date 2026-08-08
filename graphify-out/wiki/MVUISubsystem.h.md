@@ -23,7 +23,7 @@
 
 ## Relationships
 
-- [MVAbilityBase.cpp](MVAbilityBase.cpp.md) (2 shared connections)
+- [AMVCharacterBase](AMVCharacterBase.md) (2 shared connections)
 - [MVUISubsystem.cpp](MVUISubsystem.cpp.md) (2 shared connections)
 - [FMVPopupMessageData](FMVPopupMessageData.md) (1 shared connections)
 - [FMVInteractionPromptData](FMVInteractionPromptData.md) (1 shared connections)

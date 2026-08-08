@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVHitReactionComponent.cpp"
 type: "code"
-community: "전투 액션 Chooser 입력"
+community: "MVFinisherComponent.cpp"
 location: "L1707"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__Chooser_
+  - community/MVFinisherComponentcpp
 ---
 
 # UMVHitReactionComponent::EvaluateHitReactionChooserActionRowHandle()
@@ -16,4 +16,4 @@ tags:
 - [[MVHitReactionComponent.cpp]] - `contains` [EXTRACTED]
 - [[UChooserTable]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__Chooser_
+#graphify/code #graphify/EXTRACTED #community/MVFinisherComponentcpp

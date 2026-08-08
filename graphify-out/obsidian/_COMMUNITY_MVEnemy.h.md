@@ -31,7 +31,7 @@ SORT file.name ASC
 ## Connections to other communities
 - 1 edge to [[_COMMUNITY_FMVAttackTaskInstanceData]]
 - 1 edge to [[_COMMUNITY_MVEnemy.cpp]]
-- 1 edge to [[_COMMUNITY_MVDeathRespawnFlow.h]]
+- 1 edge to [[_COMMUNITY_MVDeathRespawnFlow.cpp]]
 - 1 edge to [[_COMMUNITY_피격 리액션 회복 결정]]
 - 1 edge to [[_COMMUNITY_MVFieldTransitionSubsystem.cpp]]
 

@@ -1,23 +1,28 @@
 ---
 type: community
-cohesion: 0.15
-members: 21
+cohesion: 0.12
+members: 26
 ---
 
 # MVWorldStateSubsystem.cpp
 
-**Cohesion:** 0.15 - loosely connected
-**Members:** 21 nodes
+**Cohesion:** 0.12 - loosely connected
+**Members:** 26 nodes
 
 ## Members
 - [[FName_47]] - code
+- [[FSubsystemCollectionBase_3]] - code
 - [[FTransform_2]] - code
 - [[MVWorldStateSubsystem.cpp]] - code - Source/Maverick/System/MVWorldStateSubsystem.cpp
 - [[UMVWorldStateSubsystemCompleteQuest()]] - code - Source/Maverick/System/MVWorldStateSubsystem.cpp
 - [[UMVWorldStateSubsystemDeinitialize()]] - code - Source/Maverick/System/MVWorldStateSubsystem.cpp
+- [[UMVWorldStateSubsystemFindFieldObjectRecord()]] - code - Source/Maverick/System/MVWorldStateSubsystem.cpp
+- [[UMVWorldStateSubsystemFindQuestRecord()]] - code - Source/Maverick/System/MVWorldStateSubsystem.cpp
+- [[UMVWorldStateSubsystemFindWorldFlagRecord()]] - code - Source/Maverick/System/MVWorldStateSubsystem.cpp
 - [[UMVWorldStateSubsystemGetQuestObjectiveValue()]] - code - Source/Maverick/System/MVWorldStateSubsystem.cpp
 - [[UMVWorldStateSubsystemGetQuestState()]] - code - Source/Maverick/System/MVWorldStateSubsystem.cpp
 - [[UMVWorldStateSubsystemGetWorldFlag()]] - code - Source/Maverick/System/MVWorldStateSubsystem.cpp
+- [[UMVWorldStateSubsystemInitialize()]] - code - Source/Maverick/System/MVWorldStateSubsystem.cpp
 - [[UMVWorldStateSubsystemIsOneTimeSpawnConsumed()]] - code - Source/Maverick/System/MVWorldStateSubsystem.cpp
 - [[UMVWorldStateSubsystemIsQuestCompleted()]] - code - Source/Maverick/System/MVWorldStateSubsystem.cpp
 - [[UMVWorldStateSubsystemLoadDefaultSlot()]] - code - Source/Maverick/System/MVWorldStateSubsystem.cpp
@@ -40,13 +45,13 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 9 edges to [[_COMMUNITY_MVWorldStateTypes.h]]
 - 8 edges to [[_COMMUNITY_FString]]
+- 6 edges to [[_COMMUNITY_MVWorldStateTypes.h]]
 - 1 edge to [[_COMMUNITY_UMVWorldStateSubsystem]]
-- 1 edge to [[_COMMUNITY_UMVWorldStateSubsystemInitialize]]
 
 ## Top bridge nodes
-- [[MVWorldStateSubsystem.cpp]] - degree 32, connects to 4 communities
-- [[FName_47]] - degree 16, connects to 1 community
+- [[MVWorldStateSubsystem.cpp]] - degree 32, connects to 3 communities
+- [[UMVWorldStateSubsystemFindFieldObjectRecord()]] - degree 3, connects to 1 community
+- [[UMVWorldStateSubsystemFindQuestRecord()]] - degree 3, connects to 1 community
+- [[UMVWorldStateSubsystemFindWorldFlagRecord()]] - degree 3, connects to 1 community
 - [[UMVWorldStateSubsystemGetQuestObjectiveValue()]] - degree 3, connects to 1 community
-- [[UMVWorldStateSubsystemSetQuestObjectiveValue()]] - degree 3, connects to 1 community

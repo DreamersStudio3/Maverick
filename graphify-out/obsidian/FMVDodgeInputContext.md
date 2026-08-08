@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Character/PC/Dodge/MVPlayerDodge.h"
 type: "code"
-community: "FMVDodgeInputContext"
+community: "FVector"
 location: "L70"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/FMVDodgeInputContext
+  - community/FVector
 ---
 
 # FMVDodgeInputContext
@@ -30,4 +30,4 @@ tags:
 - [[bHasMovementInput]] - `defines` [EXTRACTED]
 - [[bUsesStep]] - `defines` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/FMVDodgeInputContext
+#graphify/code #graphify/EXTRACTED #community/FVector

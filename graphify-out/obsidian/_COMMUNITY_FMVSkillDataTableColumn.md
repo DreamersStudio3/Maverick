@@ -45,14 +45,13 @@ SORT file.name ASC
 
 ## Connections to other communities
 - 4 edges to [[_COMMUNITY_MVCombatComponent.cpp]]
-- 2 edges to [[_COMMUNITY_FDataTableRowHandle]]
+- 2 edges to [[_COMMUNITY_int32]]
+- 2 edges to [[_COMMUNITY_FMVSkillEntry]]
 - 1 edge to [[_COMMUNITY_MVAbilityBase.cpp]]
 - 1 edge to [[_COMMUNITY_MVHitTypes.h]]
 - 1 edge to [[_COMMUNITY_전투 액션 Chooser 입력]]
-- 1 edge to [[_COMMUNITY_FMVCombatActionEvent]]
-- 1 edge to [[_COMMUNITY_FMVSkillEntry]]
 - 1 edge to [[_COMMUNITY_MVFinisherComponent.cpp]]
-- 1 edge to [[_COMMUNITY_MVActionRowTableTypes.h]]
+- 1 edge to [[_COMMUNITY_MVHitReactionComponent.h]]
 
 ## Top bridge nodes
 - [[FMVSkillDataTableColumn]] - degree 31, connects to 5 communities

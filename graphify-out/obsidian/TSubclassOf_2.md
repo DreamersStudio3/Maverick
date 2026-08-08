@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "MVAbilityBase.cpp"
+community: "AMVCharacterBase"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVAbilityBasecpp
+  - community/AMVCharacterBase
 ---
 
 # TSubclassOf
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[UMVAbilityBaseActiveCameraShake()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVAbilityBasecpp
+#graphify/code #graphify/EXTRACTED #community/AMVCharacterBase

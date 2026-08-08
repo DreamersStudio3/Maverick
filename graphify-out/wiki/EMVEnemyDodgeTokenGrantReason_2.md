@@ -7,7 +7,7 @@
 ## Connections by Relation
 
 ### contains
-- [MVEnemyDodgeTokenComponent.h](MVEnemyDodgeTokenComponent.h.md) `EXTRACTED`
+- MVEnemyDodgeTokenComponent.h `EXTRACTED`
 
 ### defines
 - [GrantDodgeToken](GrantDodgeToken.md) `EXTRACTED`
@@ -42,7 +42,7 @@
 ### references
 - [int32](int32.md) `EXTRACTED`
 - UMVEnemyDodgeTokenComponent::GrantDodgeToken() `EXTRACTED`
-- AMVCharacterBase `EXTRACTED`
+- [AMVCharacterBase](AMVCharacterBase.md) `EXTRACTED`
 - AMVEnemy `EXTRACTED`
 - TObjectPtr `EXTRACTED`
 - UPROPERTY `EXTRACTED`

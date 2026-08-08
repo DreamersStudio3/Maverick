@@ -1,6 +1,6 @@
 # MVExecuteAttackTask.cpp
 
-> 33 nodes · cohesion 0.13
+> 32 nodes · cohesion 0.14
 
 ## Key Concepts
 
@@ -27,9 +27,9 @@
 - **ExecuteAttackActionTableNameFromDataTable()** (4 connections) — `Source/Maverick/AI/Task/MVExecuteAttackTask.cpp`
 - **APawn** (3 connections)
 - **FName** (3 connections)
-- **UMVPlayerDodge::CanTransitionCurrentAction()** (3 connections) — `Source/Maverick/Character/PC/Dodge/MVPlayerDodge.cpp`
 - **.GetInstanceDataType()** (2 connections) — `Source/Maverick/AI/Task/MVExecuteAttackTask.h`
-- *... and 8 more nodes in this community*
+- **.GetInstanceDataType()** (2 connections) — `Source/Maverick/AI/Task/MVExecuteAttackTask.h`
+- *... and 7 more nodes in this community*
 
 ## Relationships
 
@@ -39,21 +39,19 @@
 - [FMVAICombatContext](FMVAICombatContext.md) (2 shared connections)
 - [FMVExecuteFixedAttackTaskInstanceData](FMVExecuteFixedAttackTaskInstanceData.md) (2 shared connections)
 - [MVWeaponComponent.cpp](MVWeaponComponent.cpp.md) (1 shared connections)
-- [FVector](FVector.md) (1 shared connections)
 - [MVActionInputHandlerInterface.h](MVActionInputHandlerInterface.h.md) (1 shared connections)
-- [MVActionRowTableTypes.h](MVActionRowTableTypes.h.md) (1 shared connections)
+- [MVHitReactionComponent.h](MVHitReactionComponent.h.md) (1 shared connections)
 - [MVHitReactionLogRecoveryTrace](MVHitReactionLogRecoveryTrace.md) (1 shared connections)
 
 ## Source Files
 
 - `Source/Maverick/AI/Task/MVExecuteAttackTask.cpp`
 - `Source/Maverick/AI/Task/MVExecuteAttackTask.h`
-- `Source/Maverick/Character/PC/Dodge/MVPlayerDodge.cpp`
 - `Source/Maverick/Components/MVActionComponent.h`
 
 ## Audit Trail
 
-- EXTRACTED: 162 (100%)
+- EXTRACTED: 159 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

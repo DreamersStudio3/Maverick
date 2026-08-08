@@ -1,17 +1,15 @@
 # Type
 
-> 13 nodes · cohesion 0.15
+> 11 nodes · cohesion 0.18
 
 ## Key Concepts
 
 - **Type** (15 connections) — `Source/Maverick/Public/Interface/MVHitReactionRecoveryDecisionProvider.h`
 - **FLockOnTargetExtensionTickFunction::ExecuteTick()** (4 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetExtensions/LockOnTargetExtensionBase.cpp`
-- **UMVEnemyDodgeTokenComponent::EndPlay()** (4 connections) — `Source/Maverick/Components/MVEnemyDodgeTokenComponent.cpp`
 - **AMVEnemy::EndPlay()** (2 connections) — `Source/Maverick/Character/NPC/Enemy/MVEnemy.cpp`
 - **AMVPlayerCharacter::EndPlay()** (2 connections) — `Source/Maverick/Character/PC/MVPlayerCharacter.cpp`
 - **UMVCombatComponent::EndPlay()** (2 connections) — `Source/Maverick/Components/MVCombatComponent.cpp`
 - **UMVDeathComponent::EndPlay()** (2 connections) — `Source/Maverick/Components/MVDeathComponent.cpp`
-- **UnbindObservedTargetDamage** (2 connections) — `Source/Maverick/Components/MVEnemyDodgeTokenComponent.h`
 - **UMVFinisherComponent::EndPlay()** (2 connections) — `Source/Maverick/Components/MVFinisherComponent.cpp`
 - **UMVHitReactionComponent::EndPlay()** (2 connections) — `Source/Maverick/Components/MVHitReactionComponent.cpp`
 - **UMVStatusBarWidget::SetBarFillType()** (2 connections) — `Source/Maverick/UI/HUD/MVStatusBarWidget.cpp`
@@ -25,13 +23,13 @@
 - [MVPlayerCharacter.cpp](MVPlayerCharacter.cpp.md) (1 shared connections)
 - [MVCombatComponent.cpp](MVCombatComponent.cpp.md) (1 shared connections)
 - [MVDeathComponent.cpp](MVDeathComponent.cpp.md) (1 shared connections)
-- [EMVEnemyDodgeTokenGrantReason](EMVEnemyDodgeTokenGrantReason.md) (1 shared connections)
-- [MVEnemyDodgeTokenComponent.cpp](MVEnemyDodgeTokenComponent.cpp.md) (1 shared connections)
-- [MVPlayerConsumable.cpp](MVPlayerConsumable.cpp.md) (1 shared connections)
 - [MVFinisherComponent.cpp](MVFinisherComponent.cpp.md) (1 shared connections)
 - [MVHitReactionComponent.cpp](MVHitReactionComponent.cpp.md) (1 shared connections)
 - [SSocketSelector](SSocketSelector.md) (1 shared connections)
 - [TargetComponentDetails.cpp](TargetComponentDetails.cpp.md) (1 shared connections)
+- [LockOnTargetComponent.cpp](LockOnTargetComponent.cpp.md) (1 shared connections)
+- [TargetComponent.cpp](TargetComponent.cpp.md) (1 shared connections)
+- [TargetManager.cpp](TargetManager.cpp.md) (1 shared connections)
 
 ## Source Files
 
@@ -40,8 +38,6 @@
 - `Source/Maverick/Character/PC/MVPlayerCharacter.cpp`
 - `Source/Maverick/Components/MVCombatComponent.cpp`
 - `Source/Maverick/Components/MVDeathComponent.cpp`
-- `Source/Maverick/Components/MVEnemyDodgeTokenComponent.cpp`
-- `Source/Maverick/Components/MVEnemyDodgeTokenComponent.h`
 - `Source/Maverick/Components/MVFinisherComponent.cpp`
 - `Source/Maverick/Components/MVHitReactionComponent.cpp`
 - `Source/Maverick/Public/Interface/MVHitReactionRecoveryDecisionProvider.h`
@@ -49,8 +45,8 @@
 
 ## Audit Trail
 
-- EXTRACTED: 38 (93%)
-- INFERRED: 3 (7%)
+- EXTRACTED: 35 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

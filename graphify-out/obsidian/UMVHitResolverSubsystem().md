@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Combat/MVHitResolverSubsystem.h"
 type: "code"
-community: "MVHitTypes.h"
+community: "MVPIEActionTestWidget.cpp"
 location: "L24"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVHitTypesh
+  - community/MVPIEActionTestWidgetcpp
 ---
 
 # UMVHitResolverSubsystem()
@@ -16,4 +16,4 @@ tags:
 - [[PIEActionTestResolveAttackPower()]] - `references` [EXTRACTED]
 - [[UMVHitResolverSubsystemGet()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVHitTypesh
+#graphify/code #graphify/EXTRACTED #community/MVPIEActionTestWidgetcpp

@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h"
 type: "code"
-community: "FMVEnemyDodgeActionTask"
+community: "UMVEnemyDodgeTokenComponent::TryConsumeDodgeTokenForThreat"
 location: "L11"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/FMVEnemyDodgeActionTask
+  - community/UMVEnemyDodgeTokenComponentTryConsumeDodgeTokenForThreat
 ---
 
 # APawn
@@ -15,4 +15,4 @@ tags:
 - [[FMVEnemyDodgeActionTaskInstanceData]] - `references` [EXTRACTED]
 - [[MVEnemyDodgeActionTask.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/FMVEnemyDodgeActionTask
+#graphify/code #graphify/EXTRACTED #community/UMVEnemyDodgeTokenComponentTryConsumeDodgeTokenForThreat

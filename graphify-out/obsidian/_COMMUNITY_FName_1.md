@@ -34,10 +34,10 @@ SORT file.name ASC
 
 ## Connections to other communities
 - 11 edges to [[_COMMUNITY_MVHitReactionComponent.cpp]]
-- 5 edges to [[_COMMUNITY_MVHitReactionLogRecoveryTrace]]
-- 3 edges to [[_COMMUNITY_MVHitReactionLogRecoveryTrace_1]]
-- 1 edge to [[_COMMUNITY_MVHitReactionComponent.h]]
+- 7 edges to [[_COMMUNITY_MVHitReactionLogRecoveryTrace]]
+- 1 edge to [[_COMMUNITY_UMVTableManager]]
 - 1 edge to [[_COMMUNITY_MVHitReactionBuildAvailableRowNameLog]]
+- 1 edge to [[_COMMUNITY_FMVResolvedHitData]]
 - 1 edge to [[_COMMUNITY_FVector2D]]
 
 ## Top bridge nodes

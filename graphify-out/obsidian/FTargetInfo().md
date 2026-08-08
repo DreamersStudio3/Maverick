@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetTypes.h"
 type: "code"
-community: "LockOnTargetTypes.h"
+community: "LockOnTargetComponent.h"
 location: "L15"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/LockOnTargetTypesh
+  - community/LockOnTargetComponenth
 ---
 
 # FTargetInfo()
@@ -16,4 +16,4 @@ tags:
 - [[TStructOpsTypeTraitsFTargetInfo]] - `references` [EXTRACTED]
 - [[operator==()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/LockOnTargetTypesh
+#graphify/code #graphify/EXTRACTED #community/LockOnTargetComponenth

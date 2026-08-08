@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Character/PC/Dodge/MVPlayerDodge.cpp"
 type: "code"
-community: "Player Dodge Tables"
+community: "FVector"
 location: "L820"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Player_Dodge_Tables
+  - community/FVector
 ---
 
 # UMVPlayerDodge::FindDodgeActionRow()
@@ -17,4 +17,4 @@ tags:
 - [[MVDodgeBuildAvailableRowNameLog()]] - `calls` [EXTRACTED]
 - [[MVPlayerDodge.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Player_Dodge_Tables
+#graphify/code #graphify/EXTRACTED #community/FVector

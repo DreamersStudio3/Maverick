@@ -1,12 +1,12 @@
 ---
 source_file: "MaverickDesign/Schema/TableData.schema.json"
 type: "concept"
-community: "table"
+community: "rows"
 location: "L38"
 tags:
   - graphify/concept
   - graphify/EXTRACTED
-  - community/table
+  - community/rows
 ---
 
 # rows
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[required_1]] - `extends` [EXTRACTED]
 
-#graphify/concept #graphify/EXTRACTED #community/table
+#graphify/concept #graphify/EXTRACTED #community/rows

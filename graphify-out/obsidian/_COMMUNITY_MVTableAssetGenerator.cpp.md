@@ -88,7 +88,7 @@ SORT file.name ASC
 - 1 edge to [[_COMMUNITY_properties]]
 - 1 edge to [[_COMMUNITY_type_1]]
 - 1 edge to [[_COMMUNITY_rows]]
-- 1 edge to [[_COMMUNITY_MVActionRowTableTypes.h]]
+- 1 edge to [[_COMMUNITY_MVHitReactionComponent.h]]
 - 1 edge to [[_COMMUNITY_MVTableTypes.h]]
 
 ## Top bridge nodes

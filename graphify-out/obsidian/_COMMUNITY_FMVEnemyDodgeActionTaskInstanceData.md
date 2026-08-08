@@ -48,10 +48,10 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 3 edges to [[_COMMUNITY_MVEnemyDodgeActionTask.cpp]]
-- 3 edges to [[_COMMUNITY_FMVEnemyDodgeActionTask]]
-- 1 edge to [[_COMMUNITY_UMVEnemyDodgeTokenComponentTryConsumeDodgeTokenForThreat]]
-- 1 edge to [[_COMMUNITY_FMVDodgeInputContext]]
+- 4 edges to [[_COMMUNITY_UMVEnemyDodgeTokenComponentTryConsumeDodgeTokenForThreat]]
+- 2 edges to [[_COMMUNITY_EnemyDodgeActionTaskEvaluateChooser]]
+- 1 edge to [[_COMMUNITY_MVEnemyDodgeActionTask.cpp]]
+- 1 edge to [[_COMMUNITY_FVector]]
 
 ## Top bridge nodes
 - [[FMVEnemyDodgeActionTaskInstanceData]] - degree 36, connects to 4 communities

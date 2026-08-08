@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVCombatComponent.h"
 type: "code"
-community: "FMVCombatActionEvent"
+community: "UMVDodgeThreatEvaluatorLibrary::EvaluateDodgeThreat"
 location: "L43"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/FMVCombatActionEvent
+  - community/UMVDodgeThreatEvaluatorLibraryEvaluateDodgeThreat
 ---
 
 # ActionType
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[FMVCombatActionEvent]] - `defines` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/FMVCombatActionEvent
+#graphify/code #graphify/EXTRACTED #community/UMVDodgeThreatEvaluatorLibraryEvaluateDodgeThreat

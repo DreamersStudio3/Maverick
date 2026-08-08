@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "MVActionRowTableTypes.h"
+community: "MVHitReactionComponent.h"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVActionRowTableTypesh
+  - community/MVHitReactionComponenth
 ---
 
 # MAVERICK_API
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[FMVTableRowBase()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVActionRowTableTypesh
+#graphify/code #graphify/EXTRACTED #community/MVHitReactionComponenth

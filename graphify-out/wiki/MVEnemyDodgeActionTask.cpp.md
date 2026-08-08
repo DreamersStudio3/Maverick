@@ -1,13 +1,12 @@
 # MVEnemyDodgeActionTask.cpp
 
-> 17 nodes · cohesion 0.21
+> 16 nodes · cohesion 0.22
 
 ## Key Concepts
 
 - **MVEnemyDodgeActionTask.cpp** (10 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.cpp`
 - **EnterState** (9 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
-- **EnemyDodgeActionTaskEvaluateChooser()** (6 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.cpp`
-- **EnemyDodgeActionTaskResolveActionRowHandle()** (6 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.cpp`
+- **FMVEnemyDodgeActionTask** (6 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
 - **EnemyDodgeActionTaskResolveOwner()** (5 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.cpp`
 - **ExitState** (5 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
 - **Tick** (5 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
@@ -16,20 +15,19 @@
 - **EnemyDodgeActionTaskIsStartedActionRunning()** (4 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.cpp`
 - **EStateTreeRunStatus** (2 connections)
 - **FStateTreeTransitionResult** (2 connections)
-- **UObject** (2 connections)
 - **APawn** (1 connections)
 - **FDataTableRowHandle** (1 connections)
 - **TObjectPtr** (1 connections)
 - **FMVEnemyDodgeActionTask::FMVEnemyDodgeActionTask()** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.cpp`
+- **FStateTreeTaskCommonBase** (1 connections)
 
 ## Relationships
 
-- [FMVEnemyDodgeActionTaskInstanceData](FMVEnemyDodgeActionTaskInstanceData.md) (3 shared connections)
-- [FMVEnemyDodgeActionTask](FMVEnemyDodgeActionTask.md) (3 shared connections)
-- [UMVEnemyDodgeTokenComponent::TryConsumeDodgeTokenForThreat](UMVEnemyDodgeTokenComponent--TryConsumeDodgeTokenForThreat.md) (2 shared connections)
-- [FMVDodgeInputContext](FMVDodgeInputContext.md) (2 shared connections)
-- [전투 액션 Chooser 입력](%EC%A0%84%ED%88%AC_%EC%95%A1%EC%85%98_Chooser_%EC%9E%85%EB%A0%A5.md) (1 shared connections)
-- [Player Dodge Tables](Player_Dodge_Tables.md) (1 shared connections)
+- [EnemyDodgeActionTaskEvaluateChooser](EnemyDodgeActionTaskEvaluateChooser.md) (3 shared connections)
+- [UMVEnemyDodgeTokenComponent::TryConsumeDodgeTokenForThreat](UMVEnemyDodgeTokenComponent--TryConsumeDodgeTokenForThreat.md) (3 shared connections)
+- [FVector](FVector.md) (1 shared connections)
+- [FMVEnemyDodgeActionTaskInstanceData](FMVEnemyDodgeActionTaskInstanceData.md) (1 shared connections)
+- [FMVEnemyDodgeActionTask](FMVEnemyDodgeActionTask.md) (1 shared connections)
 
 ## Source Files
 
@@ -38,7 +36,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 68 (100%)
+- EXTRACTED: 61 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

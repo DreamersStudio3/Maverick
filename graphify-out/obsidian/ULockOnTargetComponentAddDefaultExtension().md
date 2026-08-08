@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetComponent.cpp"
 type: "code"
-community: "LockOnTargetComponent.h"
+community: "LockOnTargetComponent.cpp"
 location: "L547"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/LockOnTargetComponenth
+  - community/LockOnTargetComponentcpp
 ---
 
 # ULockOnTargetComponent::AddDefaultExtension()
@@ -15,4 +15,4 @@ tags:
 - [[LockOnTargetComponent.cpp]] - `contains` [EXTRACTED]
 - [[ULockOnTargetExtensionBase]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/LockOnTargetComponenth
+#graphify/code #graphify/EXTRACTED #community/LockOnTargetComponentcpp

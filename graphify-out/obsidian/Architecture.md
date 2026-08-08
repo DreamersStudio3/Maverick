@@ -1,17 +1,18 @@
 ---
 source_file: "docs/wiki/Architecture.md"
 type: "document"
-community: "Documentation Knowledge Lifecycle"
+community: "Obsidian 사용 안내"
 location: "L1"
 tags:
   - graphify/document
   - graphify/EXTRACTED
-  - community/Documentation_Knowledge_Lifecycle
+  - community/Obsidian__
 ---
 
 # Architecture.md
 
 ## Connections
 - [[Maverick Architecture]] - `contains` [EXTRACTED]
+- [[Obsidian-Usage]] - `references` [EXTRACTED]
 
-#graphify/document #graphify/EXTRACTED #community/Documentation_Knowledge_Lifecycle
+#graphify/document #graphify/EXTRACTED #community/Obsidian__

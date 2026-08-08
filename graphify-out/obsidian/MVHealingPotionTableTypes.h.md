@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Public/Tables/MVHealingPotionTableTypes.h"
 type: "code"
-community: "ApplyMVPlayerConsumableHealingPotionDataRowDefaults"
+community: "MVPlayerConsumable.h"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/ApplyMVPlayerConsumableHealingPotionDataRowDefaults
+  - community/MVPlayerConsumableh
 ---
 
 # MVHealingPotionTableTypes.h
@@ -16,4 +16,4 @@ tags:
 - [[MVItemTableTypes.h]] - `imports` [EXTRACTED]
 - [[MVPlayerConsumable.h]] - `imports` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/ApplyMVPlayerConsumableHealingPotionDataRowDefaults
+#graphify/code #graphify/EXTRACTED #community/MVPlayerConsumableh

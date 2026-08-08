@@ -1,13 +1,10 @@
 # MVWorldStateTypes.h
 
-> 14 nodes · cohesion 0.14
+> 11 nodes · cohesion 0.18
 
 ## Key Concepts
 
 - **MVWorldStateTypes.h** (8 connections) — `Source/Maverick/System/MVWorldStateTypes.h`
-- **UMVWorldStateSubsystem::FindFieldObjectRecord()** (3 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
-- **UMVWorldStateSubsystem::FindQuestRecord()** (3 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
-- **UMVWorldStateSubsystem::FindWorldFlagRecord()** (3 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
 - **FMVWorldSaveData()** (3 connections) — `Source/Maverick/System/MVWorldStateTypes.h`
 - **MVWorldSaveGame.h** (2 connections) — `Source/Maverick/System/MVWorldSaveGame.h`
 - **UMVWorldStateSubsystem::ApplySaveData()** (2 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
@@ -21,7 +18,7 @@
 
 ## Relationships
 
-- [MVWorldStateSubsystem.cpp](MVWorldStateSubsystem.cpp.md) (9 shared connections)
+- [MVWorldStateSubsystem.cpp](MVWorldStateSubsystem.cpp.md) (6 shared connections)
 - [MVFieldTransitionSubsystem.cpp](MVFieldTransitionSubsystem.cpp.md) (1 shared connections)
 - [UMVWorldStateSubsystem](UMVWorldStateSubsystem.md) (1 shared connections)
 
@@ -33,7 +30,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 37 (100%)
+- EXTRACTED: 28 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

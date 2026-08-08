@@ -33,9 +33,10 @@ SORT file.name ASC
 ## Connections to other communities
 - 8 edges to [[_COMMUNITY_MVExecuteAttackTask.cpp]]
 - 4 edges to [[_COMMUNITY_MVAICombatTypes.h]]
-- 2 edges to [[_COMMUNITY_전투 액션 Chooser 입력]]
 - 2 edges to [[_COMMUNITY_FMVExecuteFixedAttackTaskInstanceData]]
-- 1 edge to [[_COMMUNITY_Player Dodge Tables]]
+- 1 edge to [[_COMMUNITY_전투 액션 Chooser 입력]]
+- 1 edge to [[_COMMUNITY_MVFinisherComponent.cpp]]
+- 1 edge to [[_COMMUNITY_피격 리액션 회복 결정]]
 - 1 edge to [[_COMMUNITY_FMVEnemyDeadTaskInstanceData]]
 
 ## Top bridge nodes

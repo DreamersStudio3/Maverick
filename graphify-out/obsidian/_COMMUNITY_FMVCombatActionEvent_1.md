@@ -10,16 +10,16 @@ members: 10
 **Members:** 10 nodes
 
 ## Members
-- [[ChargeActionMapKey]] - code - Source/Maverick/Components/MVCombatComponent.h
-- [[ChargeActionTableName]] - code - Source/Maverick/Components/MVCombatComponent.h
-- [[ChargeChainStageIndex]] - code - Source/Maverick/Components/MVCombatComponent.h
-- [[ChargeRowHandle]] - code - Source/Maverick/Components/MVCombatComponent.h
-- [[CommitTime]] - code - Source/Maverick/Components/MVCombatComponent.h
-- [[FMVCombatHeavyChargeAttackRuntimeState]] - code - Source/Maverick/Components/MVCombatComponent.h
-- [[StartedWorldTime]] - code - Source/Maverick/Components/MVCombatComponent.h
-- [[UMVCombatComponentResetHeavyChargeAttackState()]] - code - Source/Maverick/Components/MVCombatComponent.cpp
-- [[bActive]] - code - Source/Maverick/Components/MVCombatComponent.h
-- [[bCommitted]] - code - Source/Maverick/Components/MVCombatComponent.h
+- [[ActiveStackIndex]] - code - Source/Maverick/Components/MVCombatComponent.h
+- [[ChainWindowDuration]] - code - Source/Maverick/Components/MVCombatComponent.h
+- [[ChainWindowRemaining]] - code - Source/Maverick/Components/MVCombatComponent.h
+- [[CooldownDuration]] - code - Source/Maverick/Components/MVCombatComponent.h
+- [[CooldownRemaining]] - code - Source/Maverick/Components/MVCombatComponent.h
+- [[FMVSkillSlotRuntimeState]] - code - Source/Maverick/Components/MVCombatComponent.h
+- [[StackSize]] - code - Source/Maverick/Components/MVCombatComponent.h
+- [[bAvailable]] - code - Source/Maverick/Components/MVCombatComponent.h
+- [[bChainActive_1]] - code - Source/Maverick/Components/MVCombatComponent.h
+- [[bOnCooldown]] - code - Source/Maverick/Components/MVCombatComponent.h
 
 ## Live Query (requires Dataview plugin)
 
@@ -29,11 +29,9 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 2 edges to [[_COMMUNITY_FMVCombatActionEvent]]
-- 2 edges to [[_COMMUNITY_FMVSkillEntry]]
-- 1 edge to [[_COMMUNITY_MVCombatComponent.cpp]]
-- 1 edge to [[_COMMUNITY_FDataTableRowHandle]]
+- 1 edge to [[_COMMUNITY_int32]]
+- 1 edge to [[_COMMUNITY_FMVSkillEntry]]
+- 1 edge to [[_COMMUNITY_UMVDodgeThreatEvaluatorLibraryEvaluateDodgeThreat]]
 
 ## Top bridge nodes
-- [[FMVCombatHeavyChargeAttackRuntimeState]] - degree 14, connects to 3 communities
-- [[UMVCombatComponentResetHeavyChargeAttackState()]] - degree 2, connects to 1 community
+- [[FMVSkillSlotRuntimeState]] - degree 12, connects to 3 communities

@@ -1,6 +1,6 @@
 # MVHitResolverSubsystem.cpp
 
-> 13 nodes · cohesion 0.33
+> 15 nodes · cohesion 0.27
 
 ## Key Concepts
 
@@ -15,15 +15,19 @@
 - **FVector** (3 connections)
 - **MVHitResolverShouldLogAirborneTrace()** (3 connections) — `Source/Maverick/Combat/MVHitResolverSubsystem.cpp`
 - **MVHitResolverTryNormalize2D()** (3 connections) — `Source/Maverick/Combat/MVHitResolverSubsystem.cpp`
+- **UMVHitResolverSubsystem::Get()** (3 connections) — `Source/Maverick/Combat/MVHitResolverSubsystem.cpp`
 - **TCHAR** (2 connections)
+- **UObject** (1 connections)
 - **UMVHitResolverSubsystem::ResolveNonNegativeStat()** (1 connections) — `Source/Maverick/Combat/MVHitResolverSubsystem.cpp`
 
 ## Relationships
 
-- [MVAbilityBase.cpp](MVAbilityBase.cpp.md) (3 shared connections)
-- [MVHitTypes.h](MVHitTypes.h.md) (2 shared connections)
+- [AMVCharacterBase](AMVCharacterBase.md) (2 shared connections)
 - [FMVResolvedHitData](FMVResolvedHitData.md) (2 shared connections)
 - [MVWeaponComponent.cpp](MVWeaponComponent.cpp.md) (1 shared connections)
+- [MVPIEActionTestWidget.cpp](MVPIEActionTestWidget.cpp.md) (1 shared connections)
+- [MVAbilityBase.cpp](MVAbilityBase.cpp.md) (1 shared connections)
+- [MVHitTypes.h](MVHitTypes.h.md) (1 shared connections)
 
 ## Source Files
 
@@ -32,7 +36,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 60 (100%)
+- EXTRACTED: 64 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

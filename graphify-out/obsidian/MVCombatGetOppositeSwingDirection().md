@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVCombatComponent.cpp"
 type: "code"
-community: "MVCombatComponent.cpp"
+community: "int32"
 location: "L175"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVCombatComponentcpp
+  - community/int32
 ---
 
 # MVCombatGetOppositeSwingDirection()
@@ -17,4 +17,4 @@ tags:
 - [[UMVCombatComponentResolveHeavyChargeEarlyReleaseChainStageIndex()]] - `calls` [EXTRACTED]
 - [[UMVCombatComponentSelectBasicAttackChainStageForSwing()]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVCombatComponentcpp
+#graphify/code #graphify/EXTRACTED #community/int32

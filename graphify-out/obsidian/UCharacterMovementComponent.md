@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Animation/MVAnimInstanceBase.h"
 type: "code"
-community: "MVCharacterBase.h"
+community: "FMVStrafeMoveTaskInstanceData"
 location: "L17"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVCharacterBaseh
+  - community/FMVStrafeMoveTaskInstanceData
 ---
 
 # UCharacterMovementComponent
@@ -15,4 +15,4 @@ tags:
 - [[MVAnimInstanceBase.h]] - `contains` [EXTRACTED]
 - [[MVStrafeMoveTaskGetMovementComponent()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVCharacterBaseh
+#graphify/code #graphify/EXTRACTED #community/FMVStrafeMoveTaskInstanceData

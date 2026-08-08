@@ -27,7 +27,8 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 8 edges to [[_COMMUNITY_MVCombatComponent.cpp]]
+- 7 edges to [[_COMMUNITY_MVCombatComponent.cpp]]
+- 1 edge to [[_COMMUNITY_int32]]
 - 1 edge to [[_COMMUNITY_FVector2D]]
 
 ## Top bridge nodes

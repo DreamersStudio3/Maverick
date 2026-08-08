@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVCombatComponent.cpp"
 type: "code"
-community: "전투 액션 Chooser 입력"
+community: "MVCombatComponent.cpp"
 location: "L1180"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__Chooser_
+  - community/MVCombatComponentcpp
 ---
 
 # UMVCombatComponent::GetActionRowHandleFromChooserTable()
@@ -18,4 +18,4 @@ tags:
 - [[MVCombatComponent.cpp]] - `contains` [EXTRACTED]
 - [[UChooserTable]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__Chooser_
+#graphify/code #graphify/EXTRACTED #community/MVCombatComponentcpp

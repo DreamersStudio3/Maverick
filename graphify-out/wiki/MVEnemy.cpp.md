@@ -38,7 +38,7 @@
 - [FMVResolvedHitData](FMVResolvedHitData.md) (1 shared connections)
 - [MVEnemy.h](MVEnemy.h.md) (1 shared connections)
 - [피격 리액션 회복 결정](%ED%94%BC%EA%B2%A9_%EB%A6%AC%EC%95%A1%EC%85%98_%ED%9A%8C%EB%B3%B5_%EA%B2%B0%EC%A0%95.md) (1 shared connections)
-- [FMVCombatActionEvent](FMVCombatActionEvent.md) (1 shared connections)
+- [FMVSkillEntry](FMVSkillEntry.md) (1 shared connections)
 
 ## Source Files
 

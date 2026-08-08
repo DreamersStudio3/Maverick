@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/System/MVUISubsystem.cpp"
 type: "code"
-community: "MVAbilityBase.cpp"
+community: "AMVCharacterBase"
 location: "L809"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVAbilityBasecpp
+  - community/AMVCharacterBase
 ---
 
 # UMVUISubsystem::ResolvePIEActionTestTargetCharacter()
@@ -15,4 +15,4 @@ tags:
 - [[AMVCharacterBase()]] - `references` [EXTRACTED]
 - [[MVUISubsystem.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVAbilityBasecpp
+#graphify/code #graphify/EXTRACTED #community/AMVCharacterBase

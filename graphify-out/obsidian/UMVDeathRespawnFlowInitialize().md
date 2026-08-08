@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/System/MVDeathRespawnFlow.cpp"
 type: "code"
-community: "MVDeathRespawnFlow.h"
+community: "MVDeathRespawnFlow.cpp"
 location: "L17"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVDeathRespawnFlowh
+  - community/MVDeathRespawnFlowcpp
 ---
 
 # UMVDeathRespawnFlow::Initialize()
@@ -15,4 +15,4 @@ tags:
 - [[MVDeathRespawnFlow.cpp]] - `contains` [EXTRACTED]
 - [[UMVFieldTransitionSubsystem]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVDeathRespawnFlowh
+#graphify/code #graphify/EXTRACTED #community/MVDeathRespawnFlowcpp

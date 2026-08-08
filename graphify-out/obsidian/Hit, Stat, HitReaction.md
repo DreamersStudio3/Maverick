@@ -1,12 +1,12 @@
 ---
 source_file: "docs/wiki/Architecture.md"
 type: "document"
-community: "Documentation Knowledge Lifecycle"
+community: "핵심 런타임 흐름"
 location: "L114"
 tags:
   - graphify/document
   - graphify/EXTRACTED
-  - community/Documentation_Knowledge_Lifecycle
+  - community/__
 ---
 
 # Hit, Stat, HitReaction
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[핵심 런타임 흐름]] - `contains` [EXTRACTED]
 
-#graphify/document #graphify/EXTRACTED #community/Documentation_Knowledge_Lifecycle
+#graphify/document #graphify/EXTRACTED #community/__

@@ -1,19 +1,25 @@
 ---
 type: community
-cohesion: 0.33
-members: 6
+cohesion: 0.17
+members: 12
 ---
 
 # FMVFinisherChooserInput
 
-**Cohesion:** 0.33 - loosely connected
-**Members:** 6 nodes
+**Cohesion:** 0.17 - loosely connected
+**Members:** 12 nodes
 
 ## Members
 - [[dot-IsValid()]] - code - Source/Maverick/Components/MVFinisherComponent.h
+- [[dot-IsValid()_1]] - code - Source/Maverick/Components/MVFinisherComponent.h
 - [[dot-Reset()]] - code - Source/Maverick/Components/MVFinisherComponent.h
+- [[dot-Reset()_1]] - code - Source/Maverick/Components/MVFinisherComponent.h
 - [[FGameplayTagContainer]] - code
 - [[FMVFinisherChooserInput]] - code - Source/Maverick/Components/MVFinisherComponent.h
+- [[FMVFinisherChooserOutput]] - code - Source/Maverick/Components/MVFinisherComponent.h
+- [[MAVERICK_API_5]] - code - Source/Maverick/Components/MVFinisherComponent.h
+- [[MVFinisherComponent.h]] - code - Source/Maverick/Components/MVFinisherComponent.h
+- [[UMVAbilityBase_4]] - code - Source/Maverick/Components/MVFinisherComponent.h
 - [[VictimTag]] - code - Source/Maverick/Components/MVFinisherComponent.h
 - [[WeaponTag]] - code - Source/Maverick/Components/MVFinisherComponent.h
 
@@ -28,4 +34,4 @@ SORT file.name ASC
 - 1 edge to [[_COMMUNITY_MVActionInputHandlerInterface.h]]
 
 ## Top bridge nodes
-- [[FMVFinisherChooserInput]] - degree 6, connects to 1 community
+- [[MVFinisherComponent.h]] - degree 5, connects to 1 community

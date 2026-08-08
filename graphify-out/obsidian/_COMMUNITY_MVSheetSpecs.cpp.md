@@ -29,9 +29,8 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 1 edge to [[_COMMUNITY_MVActionRowTableTypes.h]]
-- 1 edge to [[_COMMUNITY_MVHitReactionComponent.h]]
+- 2 edges to [[_COMMUNITY_MVHitReactionComponent.h]]
 - 1 edge to [[_COMMUNITY_MVTableTypes.h]]
 
 ## Top bridge nodes
-- [[MVSheetSpecs.cpp]] - degree 8, connects to 3 communities
+- [[MVSheetSpecs.cpp]] - degree 8, connects to 2 communities

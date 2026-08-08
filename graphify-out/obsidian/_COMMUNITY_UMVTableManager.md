@@ -1,16 +1,17 @@
 ---
 type: community
-cohesion: 0.40
-members: 6
+cohesion: 0.33
+members: 7
 ---
 
 # UMVTableManager
 
-**Cohesion:** 0.40 - moderately connected
-**Members:** 6 nodes
+**Cohesion:** 0.33 - loosely connected
+**Members:** 7 nodes
 
 ## Members
 - [[FName_50]] - code
+- [[UMVHitReactionComponentMakeHitReactionActionRowHandleFromNames()]] - code - Source/Maverick/Components/MVHitReactionComponent.cpp
 - [[UMVLoadingWindowLoadLoadingGuideCards()]] - code - Source/Maverick/UI/Window/MVLoadingWindow.cpp
 - [[UMVStatComponentLoadStatsFromTable()]] - code - Source/Maverick/Components/MVStatComponent.cpp
 - [[UMVTableManager]] - code - Source/Maverick/Components/MVStatComponent.h
@@ -25,12 +26,13 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
+- 2 edges to [[_COMMUNITY_FVector]]
 - 2 edges to [[_COMMUNITY_MVTableAssetGenerator.cpp]]
 - 2 edges to [[_COMMUNITY_MVUISubsystem.cpp]]
-- 1 edge to [[_COMMUNITY_FMVDodgeInputContext]]
-- 1 edge to [[_COMMUNITY_Player Dodge Tables]]
 - 1 edge to [[_COMMUNITY_MVActionComponent.cpp]]
 - 1 edge to [[_COMMUNITY_FName]]
+- 1 edge to [[_COMMUNITY_MVHitReactionComponent.cpp]]
+- 1 edge to [[_COMMUNITY_FName_1]]
 - 1 edge to [[_COMMUNITY_MVHitReactionComponent.h]]
 - 1 edge to [[_COMMUNITY_MVStatComponent.cpp]]
 - 1 edge to [[_COMMUNITY_MVTableManager.cpp]]
@@ -40,8 +42,8 @@ SORT file.name ASC
 - 1 edge to [[_COMMUNITY_MVStatComponent.h]]
 
 ## Top bridge nodes
-- [[UMVTableManager]] - degree 13, connects to 8 communities
+- [[UMVTableManager]] - degree 13, connects to 6 communities
+- [[UMVHitReactionComponentMakeHitReactionActionRowHandleFromNames()]] - degree 4, connects to 3 communities
 - [[UMVUISubsystemShowDialogueWindowById()]] - degree 4, connects to 2 communities
 - [[UMVUISubsystemShowPopupMessageById()]] - degree 4, connects to 2 communities
 - [[UMVStatComponentLoadStatsFromTable()]] - degree 2, connects to 1 community
-- [[UMVLoadingWindowLoadLoadingGuideCards()]] - degree 2, connects to 1 community

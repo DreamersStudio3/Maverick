@@ -1,11 +1,11 @@
 ---
 source_file: "AGENTS.md"
 type: "document"
-community: "Documentation Knowledge Lifecycle"
+community: "Graphify Query-First Workflow"
 tags:
   - graphify/document
   - graphify/EXTRACTED
-  - community/Documentation_Knowledge_Lifecycle
+  - community/Graphify_Query-First_Workflow
 ---
 
 # Maverick Project Context
@@ -14,4 +14,4 @@ tags:
 - [[Graphify Query-First Workflow]] - `references` [EXTRACTED]
 - [[Short-Lived Task Context]] - `references` [EXTRACTED]
 
-#graphify/document #graphify/EXTRACTED #community/Documentation_Knowledge_Lifecycle
+#graphify/document #graphify/EXTRACTED #community/Graphify_Query-First_Workflow

@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVCombatComponent.h"
 type: "code"
-community: "FMVCombatActionEvent"
+community: "UMVDodgeThreatEvaluatorLibrary::EvaluateDodgeThreat"
 location: "L35"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/FMVCombatActionEvent
+  - community/UMVDodgeThreatEvaluatorLibraryEvaluateDodgeThreat
 ---
 
 # FMVCombatActionEvent
@@ -27,4 +27,4 @@ tags:
 - [[UMVEnemyDodgeTokenComponentTryConsumeDodgeTokenForThreat()]] - `references` [EXTRACTED]
 - [[int32_17]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/FMVCombatActionEvent
+#graphify/code #graphify/EXTRACTED #community/UMVDodgeThreatEvaluatorLibraryEvaluateDodgeThreat

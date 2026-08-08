@@ -14,7 +14,7 @@
 
 - [FVector](FVector.md) (2 shared connections)
 - [MVPlayerInteractionDetector.cpp](MVPlayerInteractionDetector.cpp.md) (2 shared connections)
-- [MVPlayerConsumable.cpp](MVPlayerConsumable.cpp.md) (1 shared connections)
+- [UMVPlayerConsumable::Initialize](UMVPlayerConsumable--Initialize.md) (1 shared connections)
 - [MVMovementActionTableTypes.h](MVMovementActionTableTypes.h.md) (1 shared connections)
 
 ## Source Files

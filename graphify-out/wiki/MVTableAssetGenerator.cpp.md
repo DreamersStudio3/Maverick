@@ -37,7 +37,7 @@
 - [UMVTableManager](UMVTableManager.md) (2 shared connections)
 - [properties](properties.md) (1 shared connections)
 - [type](type_2.md) (1 shared connections)
-- [MVActionRowTableTypes.h](MVActionRowTableTypes.h.md) (1 shared connections)
+- [MVHitReactionComponent.h](MVHitReactionComponent.h.md) (1 shared connections)
 - [MVTableTypes.h](MVTableTypes.h.md) (1 shared connections)
 - [rows](rows.md) (1 shared connections)
 

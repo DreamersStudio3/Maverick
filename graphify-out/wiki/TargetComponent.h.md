@@ -21,7 +21,7 @@
 ## Relationships
 
 - [ETargetFocusPointType](ETargetFocusPointType.md) (7 shared connections)
-- [LockOnTargetTypes.h](LockOnTargetTypes.h.md) (1 shared connections)
+- [LockOnTargetComponent.h](LockOnTargetComponent.h.md) (1 shared connections)
 - [WeightedTargetHandler.cpp](WeightedTargetHandler.cpp.md) (1 shared connections)
 
 ## Source Files

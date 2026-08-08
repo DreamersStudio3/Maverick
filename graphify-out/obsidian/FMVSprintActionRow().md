@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Public/Tables/MVMovementActionTableTypes.h"
 type: "code"
-community: "Player Dodge Tables"
+community: "FVector"
 location: "L57"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Player_Dodge_Tables
+  - community/FVector
 ---
 
 # FMVSprintActionRow()
@@ -15,4 +15,4 @@ tags:
 - [[AMVPlayerCharacterFindSprintActionRow()]] - `references` [EXTRACTED]
 - [[MVMovementActionTableTypes.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Player_Dodge_Tables
+#graphify/code #graphify/EXTRACTED #community/FVector

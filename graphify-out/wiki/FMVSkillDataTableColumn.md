@@ -33,14 +33,13 @@
 ## Relationships
 
 - [MVCombatComponent.cpp](MVCombatComponent.cpp.md) (4 shared connections)
-- [FDataTableRowHandle](FDataTableRowHandle.md) (2 shared connections)
+- [FMVSkillEntry](FMVSkillEntry.md) (2 shared connections)
+- [int32](int32.md) (2 shared connections)
 - [MVHitTypes.h](MVHitTypes.h.md) (1 shared connections)
-- [FMVCombatActionEvent](FMVCombatActionEvent.md) (1 shared connections)
 - [MVFinisherComponent.cpp](MVFinisherComponent.cpp.md) (1 shared connections)
-- [MVActionRowTableTypes.h](MVActionRowTableTypes.h.md) (1 shared connections)
+- [MVHitReactionComponent.h](MVHitReactionComponent.h.md) (1 shared connections)
 - [MVAbilityBase.cpp](MVAbilityBase.cpp.md) (1 shared connections)
 - [전투 액션 Chooser 입력](%EC%A0%84%ED%88%AC_%EC%95%A1%EC%85%98_Chooser_%EC%9E%85%EB%A0%A5.md) (1 shared connections)
-- [FMVSkillEntry](FMVSkillEntry.md) (1 shared connections)
 
 ## Source Files
 

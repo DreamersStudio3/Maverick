@@ -50,7 +50,7 @@ SORT file.name ASC
 - 1 edge to [[_COMMUNITY_FMVResolvedHitData]]
 - 1 edge to [[_COMMUNITY_MVEnemy.h]]
 - 1 edge to [[_COMMUNITY_피격 리액션 회복 결정]]
-- 1 edge to [[_COMMUNITY_FMVCombatActionEvent]]
+- 1 edge to [[_COMMUNITY_FMVSkillEntry]]
 
 ## Top bridge nodes
 - [[MVEnemy.cpp]] - degree 27, connects to 7 communities

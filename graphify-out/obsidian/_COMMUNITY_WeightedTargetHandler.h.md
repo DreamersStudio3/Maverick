@@ -49,7 +49,7 @@ SORT file.name ASC
 - 3 edges to [[_COMMUNITY_LockOnTargetComponent.cpp]]
 - 1 edge to [[_COMMUNITY_UTargetComponentDispatchTargetException]]
 - 1 edge to [[_COMMUNITY_LockOnTargetDefines.h]]
-- 1 edge to [[_COMMUNITY_LockOnTargetTypes.h]]
+- 1 edge to [[_COMMUNITY_LockOnTargetComponent.h]]
 
 ## Top bridge nodes
 - [[ETargetExceptionType]] - degree 9, connects to 3 communities

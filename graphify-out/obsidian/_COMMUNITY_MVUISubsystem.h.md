@@ -35,7 +35,7 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 2 edges to [[_COMMUNITY_MVAbilityBase.cpp]]
+- 2 edges to [[_COMMUNITY_AMVCharacterBase]]
 - 2 edges to [[_COMMUNITY_MVUISubsystem.cpp]]
 - 1 edge to [[_COMMUNITY_FMVPopupMessageData]]
 - 1 edge to [[_COMMUNITY_FMVInteractionPromptData]]

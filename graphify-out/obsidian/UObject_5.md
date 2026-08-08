@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "MVHitTypes.h"
+community: "MVHitResolverSubsystem.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVHitTypesh
+  - community/MVHitResolverSubsystemcpp
 ---
 
 # UObject
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[UMVHitResolverSubsystemGet()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVHitTypesh
+#graphify/code #graphify/EXTRACTED #community/MVHitResolverSubsystemcpp

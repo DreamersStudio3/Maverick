@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "UMVWorldStateSubsystem::Initialize"
+community: "MVWorldStateSubsystem.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/UMVWorldStateSubsystemInitialize
+  - community/MVWorldStateSubsystemcpp
 ---
 
 # FSubsystemCollectionBase
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[UMVWorldStateSubsystemInitialize()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/UMVWorldStateSubsystemInitialize
+#graphify/code #graphify/EXTRACTED #community/MVWorldStateSubsystemcpp

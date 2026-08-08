@@ -16,7 +16,7 @@
 
 ## Relationships
 
-- [MVAbilityBase.cpp](MVAbilityBase.cpp.md) (1 shared connections)
+- [AMVCharacterBase](AMVCharacterBase.md) (1 shared connections)
 
 ## Source Files
 

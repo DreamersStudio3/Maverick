@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVCombatComponent.cpp"
 type: "code"
-community: "MVCombatComponent.cpp"
+community: "int32"
 location: "L107"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVCombatComponentcpp
+  - community/int32
 ---
 
 # MVCombatIsSkillStartRowName()
@@ -16,4 +16,4 @@ tags:
 - [[MVCombatComponent.cpp]] - `contains` [EXTRACTED]
 - [[UMVCombatComponentResetSkillMap()]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVCombatComponentcpp
+#graphify/code #graphify/EXTRACTED #community/int32

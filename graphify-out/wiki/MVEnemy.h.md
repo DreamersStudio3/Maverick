@@ -19,7 +19,7 @@
 
 - [MVEnemy.cpp](MVEnemy.cpp.md) (1 shared connections)
 - [FMVAttackTaskInstanceData](FMVAttackTaskInstanceData.md) (1 shared connections)
-- [MVDeathRespawnFlow.h](MVDeathRespawnFlow.h.md) (1 shared connections)
+- [MVDeathRespawnFlow.cpp](MVDeathRespawnFlow.cpp.md) (1 shared connections)
 - [피격 리액션 회복 결정](%ED%94%BC%EA%B2%A9_%EB%A6%AC%EC%95%A1%EC%85%98_%ED%9A%8C%EB%B3%B5_%EA%B2%B0%EC%A0%95.md) (1 shared connections)
 - [MVFieldTransitionSubsystem.cpp](MVFieldTransitionSubsystem.cpp.md) (1 shared connections)
 

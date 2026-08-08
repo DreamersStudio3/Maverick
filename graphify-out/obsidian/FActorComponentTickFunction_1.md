@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "MVCombatComponent.cpp"
+community: "UMVCombatComponent::TickComponent"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVCombatComponentcpp
+  - community/UMVCombatComponentTickComponent
 ---
 
 # FActorComponentTickFunction
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[UMVCombatComponentTickComponent()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVCombatComponentcpp
+#graphify/code #graphify/EXTRACTED #community/UMVCombatComponentTickComponent

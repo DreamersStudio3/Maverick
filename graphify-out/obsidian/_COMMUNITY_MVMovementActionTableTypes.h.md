@@ -26,7 +26,7 @@ SORT file.name ASC
 ## Connections to other communities
 - 1 edge to [[_COMMUNITY_MVPlayerCharacter.cpp]]
 - 1 edge to [[_COMMUNITY_AMVPlayerCharacter]]
-- 1 edge to [[_COMMUNITY_Player Dodge Tables]]
+- 1 edge to [[_COMMUNITY_FVector]]
 
 ## Top bridge nodes
 - [[MVPlayerCharacter.h]] - degree 7, connects to 3 communities

@@ -28,7 +28,7 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 1 edge to [[_COMMUNITY_MVAbilityBase.cpp]]
+- 1 edge to [[_COMMUNITY_AMVCharacterBase]]
 
 ## Top bridge nodes
 - [[FindInvincibleCharacter()]] - degree 5, connects to 1 community

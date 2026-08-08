@@ -1,13 +1,10 @@
 # MVPlayerStatusWidget.cpp
 
-> 16 nodes · cohesion 0.12
+> 11 nodes · cohesion 0.18
 
 ## Key Concepts
 
 - **MVPlayerStatusWidget.cpp** (12 connections) — `Source/Maverick/UI/HUD/MVPlayerStatusWidget.cpp`
-- **MVStatusBarWidget.h** (3 connections) — `Source/Maverick/UI/HUD/MVStatusBarWidget.h`
-- **UMVPlayerStatusWidget::ApplyStatusBarSize()** (2 connections) — `Source/Maverick/UI/HUD/MVPlayerStatusWidget.cpp`
-- **UMVStatusBarWidget()** (2 connections) — `Source/Maverick/UI/HUD/MVStatusBarWidget.h`
 - **UMVPlayerStatusWidget::BuildNativeWidgetTree()** (1 connections) — `Source/Maverick/UI/HUD/MVPlayerStatusWidget.cpp`
 - **UMVPlayerStatusWidget::ConfigureStatusBars()** (1 connections) — `Source/Maverick/UI/HUD/MVPlayerStatusWidget.cpp`
 - **UMVPlayerStatusWidget::HandleHPChanged()** (1 connections) — `Source/Maverick/UI/HUD/MVPlayerStatusWidget.cpp`
@@ -18,21 +15,19 @@
 - **UMVPlayerStatusWidget::NativeDestruct()** (1 connections) — `Source/Maverick/UI/HUD/MVPlayerStatusWidget.cpp`
 - **UMVPlayerStatusWidget::NativeOnInitialized()** (1 connections) — `Source/Maverick/UI/HUD/MVPlayerStatusWidget.cpp`
 - **UMVPlayerStatusWidget::UnbindStatComponent()** (1 connections) — `Source/Maverick/UI/HUD/MVPlayerStatusWidget.cpp`
-- **USizeBox** (1 connections) — `Source/Maverick/UI/HUD/MVStatusBarWidget.h`
-- **UTextBlock** (1 connections) — `Source/Maverick/UI/HUD/MVStatusBarWidget.h`
 
 ## Relationships
 
+- [MVStatusBarWidget.h](MVStatusBarWidget.h.md) (1 shared connections)
 - [MVStatComponent.h](MVStatComponent.h.md) (1 shared connections)
 
 ## Source Files
 
 - `Source/Maverick/UI/HUD/MVPlayerStatusWidget.cpp`
-- `Source/Maverick/UI/HUD/MVStatusBarWidget.h`
 
 ## Audit Trail
 
-- EXTRACTED: 31 (100%)
+- EXTRACTED: 22 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

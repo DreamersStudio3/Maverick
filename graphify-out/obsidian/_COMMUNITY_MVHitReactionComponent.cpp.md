@@ -45,17 +45,16 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
+- 15 edges to [[_COMMUNITY_MVHitReactionLogRecoveryTrace]]
+- 13 edges to [[_COMMUNITY_FMVResolvedHitData]]
 - 11 edges to [[_COMMUNITY_FName_1]]
-- 10 edges to [[_COMMUNITY_MVHitReactionLogRecoveryTrace]]
-- 8 edges to [[_COMMUNITY_MVHitReactionLogRecoveryTrace_1]]
-- 7 edges to [[_COMMUNITY_FMVResolvedHitData]]
 - 6 edges to [[_COMMUNITY_MVHitReactionBuildAvailableRowNameLog]]
-- 4 edges to [[_COMMUNITY_MVHitReactionComponent.h]]
 - 1 edge to [[_COMMUNITY_Type]]
-- 1 edge to [[_COMMUNITY_전투 액션 Chooser 입력]]
+- 1 edge to [[_COMMUNITY_MVFinisherComponent.cpp]]
 - 1 edge to [[_COMMUNITY_피격 반응 이동 모드]]
+- 1 edge to [[_COMMUNITY_UMVTableManager]]
 - 1 edge to [[_COMMUNITY_피격 리액션 회복 결정]]
-- 1 edge to [[_COMMUNITY_MVCharacterBase.h]]
+- 1 edge to [[_COMMUNITY_FMVStrafeMoveTaskInstanceData]]
 
 ## Top bridge nodes
-- [[MVHitReactionComponent.cpp]] - degree 75, connects to 11 communities
+- [[MVHitReactionComponent.cpp]] - degree 75, connects to 10 communities

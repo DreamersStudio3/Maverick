@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "FDataTableRowHandle"
+community: "MVCombatComponent.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/FDataTableRowHandle
+  - community/MVCombatComponentcpp
 ---
 
 # TCHAR
@@ -14,4 +14,4 @@ tags:
 - [[MVCombatAppendRowCandidate()]] - `references` [EXTRACTED]
 - [[UMVCombatComponentIsValidSkillActionRowHandle()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/FDataTableRowHandle
+#graphify/code #graphify/EXTRACTED #community/MVCombatComponentcpp

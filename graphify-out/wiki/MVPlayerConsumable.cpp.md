@@ -1,14 +1,19 @@
 # MVPlayerConsumable.cpp
 
-> 24 nodes · cohesion 0.09
+> 29 nodes · cohesion 0.08
 
 ## Key Concepts
 
 - **MVPlayerConsumable.cpp** (35 connections) — `Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp`
-- **UMVPlayerConsumable::Initialize()** (4 connections) — `Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp`
-- **UnbindOwnerEvents** (4 connections) — `Source/Maverick/Components/MVEnemyDodgeTokenComponent.h`
-- **UMVPlayerConsumable::Deinitialize()** (2 connections) — `Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp`
+- **FName** (6 connections)
+- **FDataTableRowHandle** (3 connections)
+- **UMVPlayerConsumable::ResolveHealingPotionActionTableName()** (3 connections) — `Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp`
+- **UMVPlayerConsumable::TryStartHealingPotionAction()** (3 connections) — `Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp`
 - **UMVPlayerConsumable::GetWorld()** (2 connections) — `Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp`
+- **UMVPlayerConsumable::HandleActionEnded()** (2 connections) — `Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp`
+- **UMVPlayerConsumable::HandleActionStarted()** (2 connections) — `Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp`
+- **UMVPlayerConsumable::IsHealingPotionFailedAction()** (2 connections) — `Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp`
+- **UMVPlayerConsumable::IsHealingPotionUseAction()** (2 connections) — `Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp`
 - **UMVPlayerConsumable::SetHealingPotionCount()** (2 connections) — `Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp`
 - **int32** (1 connections)
 - **UWorld** (1 connections)
@@ -24,33 +29,25 @@
 - **UMVPlayerConsumable::InitializeHealingPotionState()** (1 connections) — `Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp`
 - **UMVPlayerConsumable::IsHealingPotionUseActionRunning()** (1 connections) — `Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp`
 - **UMVPlayerConsumable::RestoreConsumableCountsForWorldReset()** (1 connections) — `Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp`
-- **UMVPlayerConsumable::RestoreHealingPotionCountToDefault()** (1 connections) — `Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp`
-- **UMVPlayerConsumable::TryPlayHealingPotionFailedAction()** (1 connections) — `Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp`
-- **UMVPlayerConsumable::TryUseHealingPotion()** (1 connections) — `Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp`
-- **UMVPlayerConsumable::UnbindOwnerEvents()** (1 connections) — `Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp`
+- *... and 4 more nodes in this community*
 
 ## Relationships
 
-- [MVPlayerConsumable.cpp](MVPlayerConsumable.cpp.md) (6 shared connections)
-- [ApplyMVPlayerConsumableHealingPotionDataRowDefaults](ApplyMVPlayerConsumableHealingPotionDataRowDefaults.md) (5 shared connections)
+- [ApplyMVPlayerConsumableHealingPotionDataRowDefaults](ApplyMVPlayerConsumableHealingPotionDataRowDefaults.md) (6 shared connections)
+- [UMVPlayerConsumable::Initialize](UMVPlayerConsumable--Initialize.md) (2 shared connections)
 - [FMVQuickSlotViewData](FMVQuickSlotViewData.md) (1 shared connections)
 - [MVPlayerConsumable.h](MVPlayerConsumable.h.md) (1 shared connections)
 - [UMVPlayerConsumable::TryHandleActionInput](UMVPlayerConsumable--TryHandleActionInput.md) (1 shared connections)
-- [Player Dodge Tables](Player_Dodge_Tables.md) (1 shared connections)
-- [AMVPlayerCharacter](AMVPlayerCharacter.md) (1 shared connections)
-- [UMVPlayerConsumable::Initialize](UMVPlayerConsumable--Initialize.md) (1 shared connections)
-- [Type](Type.md) (1 shared connections)
-- [EMVEnemyDodgeTokenGrantReason](EMVEnemyDodgeTokenGrantReason.md) (1 shared connections)
+- [피격 리액션 회복 결정](%ED%94%BC%EA%B2%A9_%EB%A6%AC%EC%95%A1%EC%85%98_%ED%9A%8C%EB%B3%B5_%EA%B2%B0%EC%A0%95.md) (1 shared connections)
 
 ## Source Files
 
 - `Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp`
-- `Source/Maverick/Components/MVEnemyDodgeTokenComponent.h`
 
 ## Audit Trail
 
-- EXTRACTED: 61 (91%)
-- INFERRED: 6 (9%)
+- EXTRACTED: 80 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

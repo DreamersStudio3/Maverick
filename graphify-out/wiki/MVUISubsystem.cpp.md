@@ -1,17 +1,15 @@
 # MVUISubsystem.cpp
 
-> 36 nodes · cohesion 0.06
+> 34 nodes · cohesion 0.06
 
 ## Key Concepts
 
 - **MVUISubsystem.cpp** (67 connections) — `Source/Maverick/UI/System/MVUISubsystem.cpp`
 - **UMVPopupBase** (4 connections)
-- **UMVUISubsystem::ResolvePIEActionTestPlayerController()** (3 connections) — `Source/Maverick/UI/System/MVUISubsystem.cpp`
 - **UMVUISubsystem::HandlePopupClosed()** (2 connections) — `Source/Maverick/UI/System/MVUISubsystem.cpp`
 - **UMVUISubsystem::Initialize()** (2 connections) — `Source/Maverick/UI/System/MVUISubsystem.cpp`
 - **UMVUISubsystem::IsPopupActive()** (2 connections) — `Source/Maverick/UI/System/MVUISubsystem.cpp`
 - **UMVUISubsystem::TrackActivePopup()** (2 connections) — `Source/Maverick/UI/System/MVUISubsystem.cpp`
-- **APlayerController** (1 connections)
 - **FSubsystemCollectionBase** (1 connections)
 - **UMVUISubsystem::AdvanceLoadingGuideCardForTest()** (1 connections) — `Source/Maverick/UI/System/MVUISubsystem.cpp`
 - **UMVUISubsystem::ApplyDialogueCameraZoom()** (1 connections) — `Source/Maverick/UI/System/MVUISubsystem.cpp`
@@ -29,7 +27,9 @@
 - **UMVUISubsystem::HideInteractionPrompt()** (1 connections) — `Source/Maverick/UI/System/MVUISubsystem.cpp`
 - **UMVUISubsystem::HideLoadingWindowForTest()** (1 connections) — `Source/Maverick/UI/System/MVUISubsystem.cpp`
 - **UMVUISubsystem::HidePIEActionTestPanel()** (1 connections) — `Source/Maverick/UI/System/MVUISubsystem.cpp`
-- *... and 11 more nodes in this community*
+- **UMVUISubsystem::IsDialogueWindowBlockingInteraction()** (1 connections) — `Source/Maverick/UI/System/MVUISubsystem.cpp`
+- **UMVUISubsystem::IsPIEActionTestPanelActiveOrPending()** (1 connections) — `Source/Maverick/UI/System/MVUISubsystem.cpp`
+- *... and 9 more nodes in this community*
 
 ## Relationships
 
@@ -38,7 +38,7 @@
 - [UMVUISubsystem::PushWindowByClass](UMVUISubsystem--PushWindowByClass.md) (7 shared connections)
 - [MVTableTypes.h](MVTableTypes.h.md) (2 shared connections)
 - [MVUISubsystem.h](MVUISubsystem.h.md) (2 shared connections)
-- [MVAbilityBase.cpp](MVAbilityBase.cpp.md) (2 shared connections)
+- [AMVCharacterBase](AMVCharacterBase.md) (2 shared connections)
 - [UMVTableManager](UMVTableManager.md) (2 shared connections)
 - [FMVInteractionPromptData](FMVInteractionPromptData.md) (2 shared connections)
 - [FMVPopupMessageData](FMVPopupMessageData.md) (2 shared connections)
@@ -50,7 +50,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 111 (100%)
+- EXTRACTED: 107 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

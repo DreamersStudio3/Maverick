@@ -17,8 +17,9 @@
 ## Relationships
 
 - [MVHitReactionComponent.cpp](MVHitReactionComponent.cpp.md) (6 shared connections)
-- [MVHitReactionComponent.h](MVHitReactionComponent.h.md) (2 shared connections)
 - [MVHitReactionLogRecoveryTrace](MVHitReactionLogRecoveryTrace.md) (2 shared connections)
+- [FMVResolvedHitData](FMVResolvedHitData.md) (1 shared connections)
+- [MVHitReactionComponent.h](MVHitReactionComponent.h.md) (1 shared connections)
 - [FName](FName.md) (1 shared connections)
 
 ## Source Files

@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVFinisherComponent.h"
 type: "code"
-community: "MVActionInputHandlerInterface.h"
+community: "FMVFinisherChooserInput"
 location: "L45"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVActionInputHandlerInterfaceh
+  - community/FMVFinisherChooserInput
 ---
 
 # FMVFinisherChooserOutput
@@ -16,4 +16,4 @@ tags:
 - [[dot-Reset()_1]] - `method` [EXTRACTED]
 - [[MVFinisherComponent.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVActionInputHandlerInterfaceh
+#graphify/code #graphify/EXTRACTED #community/FMVFinisherChooserInput

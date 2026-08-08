@@ -1,13 +1,13 @@
 ---
 type: community
-cohesion: 0.15
-members: 13
+cohesion: 0.18
+members: 11
 ---
 
 # Type
 
-**Cohesion:** 0.15 - loosely connected
-**Members:** 13 nodes
+**Cohesion:** 0.18 - loosely connected
+**Members:** 11 nodes
 
 ## Members
 - [[AMVEnemyEndPlay()]] - code - Source/Maverick/Character/NPC/Enemy/MVEnemy.cpp
@@ -18,11 +18,9 @@ members: 13
 - [[Type_9]] - code - Source/Maverick/Public/Interface/MVHitReactionRecoveryDecisionProvider.h
 - [[UMVCombatComponentEndPlay()]] - code - Source/Maverick/Components/MVCombatComponent.cpp
 - [[UMVDeathComponentEndPlay()]] - code - Source/Maverick/Components/MVDeathComponent.cpp
-- [[UMVEnemyDodgeTokenComponentEndPlay()]] - code - Source/Maverick/Components/MVEnemyDodgeTokenComponent.cpp
 - [[UMVFinisherComponentEndPlay()]] - code - Source/Maverick/Components/MVFinisherComponent.cpp
 - [[UMVHitReactionComponentEndPlay()]] - code - Source/Maverick/Components/MVHitReactionComponent.cpp
 - [[UMVStatusBarWidgetSetBarFillType()]] - code - Source/Maverick/UI/HUD/MVStatusBarWidget.cpp
-- [[UnbindObservedTargetDamage]] - code - Source/Maverick/Components/MVEnemyDodgeTokenComponent.h
 
 ## Live Query (requires Dataview plugin)
 
@@ -42,17 +40,15 @@ SORT file.name ASC
 - 1 edge to [[_COMMUNITY_MVPlayerCharacter.cpp]]
 - 1 edge to [[_COMMUNITY_MVCombatComponent.cpp]]
 - 1 edge to [[_COMMUNITY_MVDeathComponent.cpp]]
-- 1 edge to [[_COMMUNITY_MVEnemyDodgeTokenComponent.cpp]]
-- 1 edge to [[_COMMUNITY_MVPlayerConsumable.cpp]]
-- 1 edge to [[_COMMUNITY_EMVEnemyDodgeTokenGrantReason]]
+- 1 edge to [[_COMMUNITY_UMVPlayerConsumableInitialize]]
 - 1 edge to [[_COMMUNITY_MVFinisherComponent.cpp]]
 - 1 edge to [[_COMMUNITY_MVHitReactionComponent.cpp]]
 - 1 edge to [[_COMMUNITY_피격 리액션 회복 결정]]
 - 1 edge to [[_COMMUNITY_MVStatusBarWidget.cpp]]
 
 ## Top bridge nodes
-- [[Type_9]] - degree 15, connects to 6 communities
-- [[UMVEnemyDodgeTokenComponentEndPlay()]] - degree 4, connects to 2 communities
+- [[Type_9]] - degree 15, connects to 7 communities
 - [[FLockOnTargetExtensionTickFunctionExecuteTick()]] - degree 4, connects to 1 community
 - [[AMVEnemyEndPlay()]] - degree 2, connects to 1 community
 - [[AMVPlayerCharacterEndPlay()]] - degree 2, connects to 1 community
+- [[UMVCombatComponentEndPlay()]] - degree 2, connects to 1 community

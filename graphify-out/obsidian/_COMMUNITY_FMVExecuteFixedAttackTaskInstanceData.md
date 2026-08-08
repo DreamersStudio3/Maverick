@@ -63,7 +63,7 @@ SORT file.name ASC
 - 2 edges to [[_COMMUNITY_ExecuteAttackResolveActionCandidate]]
 - 2 edges to [[_COMMUNITY_MVExecuteAttackTask.cpp]]
 - 1 edge to [[_COMMUNITY_FMVAttackTaskInstanceData]]
-- 1 edge to [[_COMMUNITY_Player Dodge Tables]]
+- 1 edge to [[_COMMUNITY_피격 리액션 회복 결정]]
 - 1 edge to [[_COMMUNITY_FMVAICombatActionCondition]]
 - 1 edge to [[_COMMUNITY_FMVAICombatContext]]
 

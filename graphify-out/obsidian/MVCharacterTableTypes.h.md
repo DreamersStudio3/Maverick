@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Public/Tables/MVCharacterTableTypes.h"
 type: "code"
-community: "MVCharacterBase.h"
+community: "FMVStrafeMoveTaskInstanceData"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVCharacterBaseh
+  - community/FMVStrafeMoveTaskInstanceData
 ---
 
 # MVCharacterTableTypes.h
@@ -17,4 +17,4 @@ tags:
 - [[MVHitReactionComponent.cpp]] - `imports` [EXTRACTED]
 - [[MVTableTypes.h]] - `imports` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVCharacterBaseh
+#graphify/code #graphify/EXTRACTED #community/FMVStrafeMoveTaskInstanceData

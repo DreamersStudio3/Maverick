@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVHitReactionComponent.h"
 type: "code"
-community: "MVHitReactionComponent.h"
+community: "FMVHitReactionActionData"
 location: "L32"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVHitReactionComponenth
+  - community/FMVHitReactionActionData
 ---
 
 # FMVHitReactionActionData
@@ -23,4 +23,4 @@ tags:
 - [[StartSection_3]] - `defines` [EXTRACTED]
 - [[UMVHitReactionComponentGetActionData()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVHitReactionComponenth
+#graphify/code #graphify/EXTRACTED #community/FMVHitReactionActionData

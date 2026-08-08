@@ -1,12 +1,12 @@
 ---
 source_file: "MaverickDesign/Schema/TableData.schema.json"
 type: "code"
-community: "table"
+community: "MVLoadingWindow.cpp"
 location: "L45"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/table
+  - community/MVLoadingWindowcpp
 ---
 
 # minLength
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[key_1]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/table
+#graphify/code #graphify/EXTRACTED #community/MVLoadingWindowcpp

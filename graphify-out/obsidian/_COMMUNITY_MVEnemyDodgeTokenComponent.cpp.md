@@ -39,13 +39,12 @@ SORT file.name ASC
 - 4 edges to [[_COMMUNITY_FMVResolvedHitData]]
 - 3 edges to [[_COMMUNITY_GrantDodgeToken]]
 - 3 edges to [[_COMMUNITY_EMVEnemyDodgeTokenGrantReason]]
+- 2 edges to [[_COMMUNITY_UMVPlayerConsumableInitialize]]
 - 2 edges to [[_COMMUNITY_ResetCombatFlowCounters]]
-- 1 edge to [[_COMMUNITY_UMVPlayerConsumableInitialize]]
-- 1 edge to [[_COMMUNITY_Type]]
 - 1 edge to [[_COMMUNITY_UMVEnemyDodgeTokenComponentTryConsumeDodgeTokenForThreat_1]]
 
 ## Top bridge nodes
-- [[MVEnemyDodgeTokenComponent.cpp]] - degree 22, connects to 5 communities
+- [[MVEnemyDodgeTokenComponent.cpp]] - degree 22, connects to 4 communities
 - [[UMVEnemyDodgeTokenComponentHandleObservedTargetDamaged()]] - degree 3, connects to 1 community
 - [[UMVEnemyDodgeTokenComponentHandleOwnerDamaged()]] - degree 3, connects to 1 community
 - [[NotifyEnemyDamaged]] - degree 2, connects to 1 community

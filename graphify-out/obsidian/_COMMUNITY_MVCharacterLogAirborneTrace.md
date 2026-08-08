@@ -24,7 +24,7 @@ SORT file.name ASC
 ## Connections to other communities
 - 2 edges to [[_COMMUNITY_MVCharacterBase.cpp]]
 - 2 edges to [[_COMMUNITY_FMVResolvedHitData]]
-- 1 edge to [[_COMMUNITY_MVAbilityBase.cpp]]
+- 1 edge to [[_COMMUNITY_AMVCharacterBase]]
 
 ## Top bridge nodes
 - [[MVCharacterLogAirborneTrace()]] - degree 5, connects to 3 communities

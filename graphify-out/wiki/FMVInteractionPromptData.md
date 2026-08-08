@@ -24,7 +24,7 @@
 
 - [FMVPopupMessageData](FMVPopupMessageData.md) (2 shared connections)
 - [MVUISubsystem.cpp](MVUISubsystem.cpp.md) (2 shared connections)
-- [MVDeathRespawnFlow.h](MVDeathRespawnFlow.h.md) (1 shared connections)
+- [MVDeathRespawnFlow.cpp](MVDeathRespawnFlow.cpp.md) (1 shared connections)
 - [MVUISubsystem.h](MVUISubsystem.h.md) (1 shared connections)
 - [UMVDialogueWindow](UMVDialogueWindow.md) (1 shared connections)
 

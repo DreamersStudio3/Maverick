@@ -1,11 +1,11 @@
 ---
 source_file: "POLICY.md"
 type: "document"
-community: "Documentation Knowledge Lifecycle"
+community: "Maverick Policy"
 tags:
   - graphify/document
   - graphify/EXTRACTED
-  - community/Documentation_Knowledge_Lifecycle
+  - community/Maverick_Policy
 ---
 
 # Maverick Policy
@@ -14,4 +14,4 @@ tags:
 - [[Documentation Knowledge Lifecycle]] - `references` [EXTRACTED]
 - [[Pre-Push Freshness Gate]] - `references` [EXTRACTED]
 
-#graphify/document #graphify/EXTRACTED #community/Documentation_Knowledge_Lifecycle
+#graphify/document #graphify/EXTRACTED #community/Maverick_Policy

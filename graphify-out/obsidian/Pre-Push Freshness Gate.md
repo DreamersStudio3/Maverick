@@ -1,17 +1,16 @@
 ---
 source_file: "POLICY.md"
 type: "concept"
-community: "Documentation Knowledge Lifecycle"
+community: "Maverick Policy"
 tags:
   - graphify/concept
   - graphify/EXTRACTED
-  - community/Documentation_Knowledge_Lifecycle
+  - community/Maverick_Policy
 ---
 
 # Pre-Push Freshness Gate
 
 ## Connections
-- [[Graphify Update Timing]] - `references` [EXTRACTED]
 - [[Maverick Policy]] - `references` [EXTRACTED]
 
-#graphify/concept #graphify/EXTRACTED #community/Documentation_Knowledge_Lifecycle
+#graphify/concept #graphify/EXTRACTED #community/Maverick_Policy

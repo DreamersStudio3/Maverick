@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVHitReactionComponent.cpp"
 type: "code"
-community: "MVHitReactionLogRecoveryTrace"
+community: "FMVResolvedHitData"
 location: "L794"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVHitReactionLogRecoveryTrace
+  - community/FMVResolvedHitData
 ---
 
 # UMVHitReactionComponent::SnapOwnerYawToHitDirectionForLaunch()
@@ -20,4 +20,4 @@ tags:
 - [[MVHitReactionResolveHitSourceDirection()]] - `calls` [EXTRACTED]
 - [[MVHitReactionShouldLogDirectionTrace()]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVHitReactionLogRecoveryTrace
+#graphify/code #graphify/EXTRACTED #community/FMVResolvedHitData

@@ -1,15 +1,17 @@
 ---
 type: community
 cohesion: 0.06
-members: 32
+members: 35
 ---
 
 # EMVEnemyDodgeTokenGrantReason
 
 **Cohesion:** 0.06 - loosely connected
-**Members:** 32 nodes
+**Members:** 35 nodes
 
 ## Members
+- [[AMVCharacterBase_5]] - code - Source/Maverick/Components/MVEnemyDodgeTokenComponent.h
+- [[AMVEnemy_3]] - code - Source/Maverick/Components/MVEnemyDodgeTokenComponent.h
 - [[BeginPlay_1]] - code - Source/Maverick/Components/MVEnemyDodgeTokenComponent.h
 - [[DodgeTokenCount]] - code - Source/Maverick/Components/MVEnemyDodgeTokenComponent.h
 - [[EMVEnemyDodgeTokenGrantReason]] - code - Source/Maverick/Components/MVEnemyDodgeTokenComponent.h
@@ -21,6 +23,7 @@ members: 32
 - [[LandedHitCount]] - code - Source/Maverick/Components/MVEnemyDodgeTokenComponent.h
 - [[LandedHitThreshold]] - code - Source/Maverick/Components/MVEnemyDodgeTokenComponent.h
 - [[LastGrantReason]] - code - Source/Maverick/Components/MVEnemyDodgeTokenComponent.h
+- [[MVEnemyDodgeTokenComponent.h]] - code - Source/Maverick/Components/MVEnemyDodgeTokenComponent.h
 - [[MaxDodgeTokens]] - code - Source/Maverick/Components/MVEnemyDodgeTokenComponent.h
 - [[NextSpendAllowedTime]] - code - Source/Maverick/Components/MVEnemyDodgeTokenComponent.h
 - [[NotifyGroggyEndedByFinisher]] - code - Source/Maverick/Components/MVEnemyDodgeTokenComponent.h
@@ -51,15 +54,14 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 4 edges to [[_COMMUNITY_int32]]
+- 4 edges to [[_COMMUNITY_UMVPlayerConsumableInitialize]]
+- 4 edges to [[_COMMUNITY_int32_1]]
 - 3 edges to [[_COMMUNITY_MVEnemyDodgeTokenComponent.cpp]]
-- 3 edges to [[_COMMUNITY_MVEnemyDodgeTokenComponent.h]]
 - 3 edges to [[_COMMUNITY_GrantDodgeToken]]
-- 2 edges to [[_COMMUNITY_UMVPlayerConsumableInitialize]]
 - 2 edges to [[_COMMUNITY_ResetCombatFlowCounters]]
+- 1 edge to [[_COMMUNITY_MVHitTypes.h]]
 - 1 edge to [[_COMMUNITY_UMVEnemyDodgeTokenComponentTryConsumeDodgeTokenForThreat_1]]
-- 1 edge to [[_COMMUNITY_Type]]
-- 1 edge to [[_COMMUNITY_MVPlayerConsumable.cpp]]
 
 ## Top bridge nodes
-- [[EMVEnemyDodgeTokenGrantReason]] - degree 51, connects to 9 communities
+- [[EMVEnemyDodgeTokenGrantReason]] - degree 51, connects to 6 communities
+- [[MVEnemyDodgeTokenComponent.h]] - degree 4, connects to 1 community

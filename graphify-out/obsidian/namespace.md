@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "Player Dodge Tables"
+community: "피격 리액션 회복 결정"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Player_Dodge_Tables
+  - community/___
 ---
 
 # namespace
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[MVActionHitReactions()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Player_Dodge_Tables
+#graphify/code #graphify/EXTRACTED #community/___

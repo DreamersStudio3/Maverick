@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/HUD/MVQuickSlotWidget.cpp"
 type: "code"
-community: "MVQuickSlotWidget.cpp"
+community: "FMVQuickSlotViewData"
 location: "L25"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVQuickSlotWidgetcpp
+  - community/FMVQuickSlotViewData
 ---
 
 # UMVQuickSlotWidget::NativePreConstruct()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[MVQuickSlotWidget.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVQuickSlotWidgetcpp
+#graphify/code #graphify/EXTRACTED #community/FMVQuickSlotViewData

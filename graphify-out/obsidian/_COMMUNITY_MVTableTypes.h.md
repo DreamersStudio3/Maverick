@@ -43,10 +43,10 @@ SORT file.name ASC
 - 1 edge to [[_COMMUNITY_MVStatComponent.cpp]]
 - 1 edge to [[_COMMUNITY_MVSheetSpecs.cpp]]
 - 1 edge to [[_COMMUNITY_MVTableAssetGenerator.cpp]]
-- 1 edge to [[_COMMUNITY_MVActionRowTableTypes.h]]
-- 1 edge to [[_COMMUNITY_MVCharacterBase.h]]
-- 1 edge to [[_COMMUNITY_MVWeaponComponent.cpp]]
-- 1 edge to [[_COMMUNITY_Player Dodge Tables]]
+- 1 edge to [[_COMMUNITY_MVHitReactionComponent.h]]
+- 1 edge to [[_COMMUNITY_FMVStrafeMoveTaskInstanceData]]
+- 1 edge to [[_COMMUNITY_MVPlayerConsumable.h]]
+- 1 edge to [[_COMMUNITY_FVector]]
 
 ## Top bridge nodes
 - [[MVTableTypes.h]] - degree 16, connects to 7 communities

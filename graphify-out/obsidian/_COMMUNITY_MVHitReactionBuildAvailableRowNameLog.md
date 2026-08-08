@@ -30,8 +30,9 @@ SORT file.name ASC
 ## Connections to other communities
 - 6 edges to [[_COMMUNITY_MVHitReactionComponent.cpp]]
 - 2 edges to [[_COMMUNITY_MVHitReactionLogRecoveryTrace]]
-- 2 edges to [[_COMMUNITY_MVHitReactionComponent.h]]
+- 1 edge to [[_COMMUNITY_FMVResolvedHitData]]
 - 1 edge to [[_COMMUNITY_FName_1]]
+- 1 edge to [[_COMMUNITY_MVHitReactionComponent.h]]
 
 ## Top bridge nodes
 - [[MVHitReactionBuildAvailableRowNameLog()]] - degree 7, connects to 2 communities

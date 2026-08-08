@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/AI/Task/MVStrafeMoveTask.h"
 type: "code"
-community: "MVAICombatTypes.h"
+community: "FMVStrafeMoveTaskInstanceData"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVAICombatTypesh
+  - community/FMVStrafeMoveTaskInstanceData
 ---
 
 # MVStrafeMoveTask.h
@@ -16,4 +16,4 @@ tags:
 - [[FMVStrafeMoveTaskInstanceData]] - `contains` [EXTRACTED]
 - [[MVAICombatTypes.h]] - `imports` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVAICombatTypesh
+#graphify/code #graphify/EXTRACTED #community/FMVStrafeMoveTaskInstanceData

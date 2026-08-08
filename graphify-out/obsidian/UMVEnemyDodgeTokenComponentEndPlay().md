@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVEnemyDodgeTokenComponent.cpp"
 type: "code"
-community: "Type"
+community: "UMVPlayerConsumable::Initialize"
 location: "L22"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Type
+  - community/UMVPlayerConsumableInitialize
 ---
 
 # UMVEnemyDodgeTokenComponent::EndPlay()
@@ -17,4 +17,4 @@ tags:
 - [[UnbindObservedTargetDamage]] - `calls` [INFERRED]
 - [[UnbindOwnerEvents]] - `calls` [INFERRED]
 
-#graphify/code #graphify/EXTRACTED #community/Type
+#graphify/code #graphify/EXTRACTED #community/UMVPlayerConsumableInitialize

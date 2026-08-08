@@ -1,13 +1,13 @@
 ---
 type: community
-cohesion: 0.08
-members: 33
+cohesion: 0.07
+members: 37
 ---
 
 # FMVSkillEntry
 
-**Cohesion:** 0.08 - loosely connected
-**Members:** 33 nodes
+**Cohesion:** 0.07 - loosely connected
+**Members:** 37 nodes
 
 ## Members
 - [[dot-ActivateChain()]] - code - Source/Maverick/Components/MVCombatComponent.h
@@ -34,6 +34,9 @@ members: 33
 - [[InputWindowCloseTime]] - code - Source/Maverick/Components/MVCombatComponent.h
 - [[LastStageActivationTime]] - code - Source/Maverick/Components/MVCombatComponent.h
 - [[LastUsedTime]] - code - Source/Maverick/Components/MVCombatComponent.h
+- [[MAVERICK_API_4]] - code - Source/Maverick/Components/MVCombatComponent.h
+- [[MVCombatActionTypes.h]] - code - Source/Maverick/Public/Enum/MVCombatActionTypes.h
+- [[MVCombatComponent.h]] - code - Source/Maverick/Components/MVCombatComponent.h
 - [[MainCooldownDuration]] - code - Source/Maverick/Components/MVCombatComponent.h
 - [[RowName]] - code - Source/Maverick/Components/MVCombatComponent.h
 - [[SkillRowNames]] - code - Source/Maverick/Components/MVCombatComponent.h
@@ -41,6 +44,7 @@ members: 33
 - [[TObjectPtr_26]] - code
 - [[UDataTable_5]] - code
 - [[UMVAbilityBase_3]] - code - Source/Maverick/Components/MVCombatComponent.h
+- [[UMVStatComponent_2]] - code - Source/Maverick/Components/MVCombatComponent.h
 - [[bChainActive]] - code - Source/Maverick/Components/MVCombatComponent.h
 - [[bIsChained]] - code - Source/Maverick/Components/MVCombatComponent.h
 
@@ -52,15 +56,21 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 6 edges to [[_COMMUNITY_FMVCombatActionEvent]]
-- 5 edges to [[_COMMUNITY_MVCombatComponent.cpp]]
-- 3 edges to [[_COMMUNITY_FDataTableRowHandle]]
-- 2 edges to [[_COMMUNITY_FMVCombatActionEvent_1]]
-- 1 edge to [[_COMMUNITY_FMVSkillDataTableColumn]]
+- 5 edges to [[_COMMUNITY_int32]]
+- 4 edges to [[_COMMUNITY_UMVDodgeThreatEvaluatorLibraryEvaluateDodgeThreat]]
+- 3 edges to [[_COMMUNITY_MVCombatComponent.cpp]]
+- 3 edges to [[_COMMUNITY_FMVCombatActionEvent]]
+- 2 edges to [[_COMMUNITY_FMVSkillDataTableColumn]]
+- 1 edge to [[_COMMUNITY_MVAICombatTypes.h]]
+- 1 edge to [[_COMMUNITY_MVEnemy.cpp]]
+- 1 edge to [[_COMMUNITY_FMVCombatActionEvent_1]]
+- 1 edge to [[_COMMUNITY_MVFinisherComponent.cpp]]
+- 1 edge to [[_COMMUNITY_MVActionInputHandlerInterface.h]]
+- 1 edge to [[_COMMUNITY_MVWeaponComponent.cpp]]
 
 ## Top bridge nodes
+- [[MVCombatComponent.h]] - degree 13, connects to 7 communities
 - [[FMVSkillEntry]] - degree 38, connects to 3 communities
 - [[FName_36]] - degree 5, connects to 2 communities
-- [[FMVSkillActionStruct]] - degree 6, connects to 1 community
+- [[MVCombatActionTypes.h]] - degree 3, connects to 2 communities
 - [[dot-GetCurrentSkillData()]] - degree 6, connects to 1 community
-- [[UMVAbilityBase_3]] - degree 4, connects to 1 community

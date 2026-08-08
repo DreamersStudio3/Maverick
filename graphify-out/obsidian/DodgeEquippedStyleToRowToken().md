@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Character/PC/Dodge/MVPlayerDodge.cpp"
 type: "code"
-community: "UMVPlayerDodge::MakeDodgeActionRowName"
+community: "FVector"
 location: "L64"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/UMVPlayerDodgeMakeDodgeActionRowName
+  - community/FVector
 ---
 
 # DodgeEquippedStyleToRowToken()
@@ -17,4 +17,4 @@ tags:
 - [[MVPlayerDodge.cpp]] - `contains` [EXTRACTED]
 - [[UMVPlayerDodgeMakeDodgeActionRowName()]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/UMVPlayerDodgeMakeDodgeActionRowName
+#graphify/code #graphify/EXTRACTED #community/FVector

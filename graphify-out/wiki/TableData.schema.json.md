@@ -16,7 +16,7 @@
 
 ## Relationships
 
-- [table](table.md) (1 shared connections)
+- [rows](rows.md) (1 shared connections)
 - [properties](properties.md) (1 shared connections)
 
 ## Source Files

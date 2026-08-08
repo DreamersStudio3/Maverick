@@ -1,17 +1,16 @@
 ---
 source_file: "AGENTS.md"
 type: "rationale"
-community: "Documentation Knowledge Lifecycle"
+community: "Graphify Query-First Workflow"
 tags:
   - graphify/rationale
   - graphify/EXTRACTED
-  - community/Documentation_Knowledge_Lifecycle
+  - community/Graphify_Query-First_Workflow
 ---
 
 # Short-Lived Task Context
 
 ## Connections
-- [[Completed TODO Deletion]] - `references` [EXTRACTED]
 - [[Maverick Project Context]] - `references` [EXTRACTED]
 
-#graphify/rationale #graphify/EXTRACTED #community/Documentation_Knowledge_Lifecycle
+#graphify/rationale #graphify/EXTRACTED #community/Graphify_Query-First_Workflow

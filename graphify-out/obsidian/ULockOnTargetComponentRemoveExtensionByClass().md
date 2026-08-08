@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetComponent.cpp"
 type: "code"
-community: "LockOnTargetComponent.h"
+community: "LockOnTargetComponent.cpp"
 location: "L565"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/LockOnTargetComponenth
+  - community/LockOnTargetComponentcpp
 ---
 
 # ULockOnTargetComponent::RemoveExtensionByClass()
@@ -16,4 +16,4 @@ tags:
 - [[TSubclassOf]] - `references` [EXTRACTED]
 - [[ULockOnTargetExtensionBase]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/LockOnTargetComponenth
+#graphify/code #graphify/EXTRACTED #community/LockOnTargetComponentcpp

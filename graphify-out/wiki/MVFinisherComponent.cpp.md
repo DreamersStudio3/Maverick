@@ -1,16 +1,18 @@
 # MVFinisherComponent.cpp
 
-> 18 nodes · cohesion 0.19
+> 20 nodes · cohesion 0.16
 
 ## Key Concepts
 
 - **MVFinisherComponent.cpp** (18 connections) — `Source/Maverick/Components/MVFinisherComponent.cpp`
 - **AActor** (8 connections)
+- **UChooserTable** (7 connections) — `Source/Maverick/Components/MVCombatComponent.h`
 - **UMVFinisherComponent::FindFinisherAnimation()** (5 connections) — `Source/Maverick/Components/MVFinisherComponent.cpp`
 - **FDataTableRowHandle** (4 connections)
 - **FName** (3 connections)
 - **UMVFinisherComponent::SendAnimation()** (3 connections) — `Source/Maverick/Components/MVFinisherComponent.cpp`
 - **UMVFinisherComponent::SetWarpTarget()** (3 connections) — `Source/Maverick/Components/MVFinisherComponent.cpp`
+- **UMVHitReactionComponent::EvaluateHitReactionChooserActionRowHandle()** (3 connections) — `Source/Maverick/Components/MVHitReactionComponent.cpp`
 - **UMVFinisherComponent::CanFinisherMove()** (2 connections) — `Source/Maverick/Components/MVFinisherComponent.cpp`
 - **UMVFinisherComponent::CheckThisActorGroggy()** (2 connections) — `Source/Maverick/Components/MVFinisherComponent.cpp`
 - **UMVFinisherComponent::ClearAttackData()** (2 connections) — `Source/Maverick/Components/MVFinisherComponent.cpp`
@@ -25,19 +27,27 @@
 
 ## Relationships
 
+- [EnemyDodgeActionTaskEvaluateChooser](EnemyDodgeActionTaskEvaluateChooser.md) (1 shared connections)
+- [ExecuteAttackResolveActionCandidate](ExecuteAttackResolveActionCandidate.md) (1 shared connections)
+- [FVector](FVector.md) (1 shared connections)
+- [MVCombatComponent.cpp](MVCombatComponent.cpp.md) (1 shared connections)
+- [FMVSkillEntry](FMVSkillEntry.md) (1 shared connections)
 - [Type](Type.md) (1 shared connections)
 - [UMVFinisherComponent::TickComponent](UMVFinisherComponent--TickComponent.md) (1 shared connections)
 - [UMVFinisherComponent::TryHandleActionInput](UMVFinisherComponent--TryHandleActionInput.md) (1 shared connections)
 - [FMVSkillDataTableColumn](FMVSkillDataTableColumn.md) (1 shared connections)
-- [전투 액션 Chooser 입력](%EC%A0%84%ED%88%AC_%EC%95%A1%EC%85%98_Chooser_%EC%9E%85%EB%A0%A5.md) (1 shared connections)
+- [MVHitReactionComponent.cpp](MVHitReactionComponent.cpp.md) (1 shared connections)
+- [MVHitReactionComponent.h](MVHitReactionComponent.h.md) (1 shared connections)
 
 ## Source Files
 
+- `Source/Maverick/Components/MVCombatComponent.h`
 - `Source/Maverick/Components/MVFinisherComponent.cpp`
+- `Source/Maverick/Components/MVHitReactionComponent.cpp`
 
 ## Audit Trail
 
-- EXTRACTED: 63 (100%)
+- EXTRACTED: 73 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

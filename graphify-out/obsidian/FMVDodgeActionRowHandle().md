@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Public/Tables/MVMovementActionTableTypes.h"
 type: "code"
-community: "FMVDodgeInputContext"
+community: "FVector"
 location: "L33"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/FMVDodgeInputContext
+  - community/FVector
 ---
 
 # FMVDodgeActionRowHandle()
@@ -19,4 +19,4 @@ tags:
 - [[UMVPlayerDodgeEvaluateDodgeChooserActionRowHandle()]] - `references` [EXTRACTED]
 - [[UMVPlayerDodgeResolveDodgeActionRowHandle()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/FMVDodgeInputContext
+#graphify/code #graphify/EXTRACTED #community/FVector

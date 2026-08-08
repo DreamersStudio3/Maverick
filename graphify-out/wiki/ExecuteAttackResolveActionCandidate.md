@@ -22,9 +22,10 @@
 - [MVExecuteAttackTask.cpp](MVExecuteAttackTask.cpp.md) (8 shared connections)
 - [MVAICombatTypes.h](MVAICombatTypes.h.md) (4 shared connections)
 - [FMVExecuteFixedAttackTaskInstanceData](FMVExecuteFixedAttackTaskInstanceData.md) (2 shared connections)
-- [전투 액션 Chooser 입력](%EC%A0%84%ED%88%AC_%EC%95%A1%EC%85%98_Chooser_%EC%9E%85%EB%A0%A5.md) (2 shared connections)
 - [FMVEnemyDeadTaskInstanceData](FMVEnemyDeadTaskInstanceData.md) (1 shared connections)
-- [Player Dodge Tables](Player_Dodge_Tables.md) (1 shared connections)
+- [MVFinisherComponent.cpp](MVFinisherComponent.cpp.md) (1 shared connections)
+- [전투 액션 Chooser 입력](%EC%A0%84%ED%88%AC_%EC%95%A1%EC%85%98_Chooser_%EC%9E%85%EB%A0%A5.md) (1 shared connections)
+- [피격 리액션 회복 결정](%ED%94%BC%EA%B2%A9_%EB%A6%AC%EC%95%A1%EC%85%98_%ED%9A%8C%EB%B3%B5_%EA%B2%B0%EC%A0%95.md) (1 shared connections)
 
 ## Source Files
 

@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVActionComponent.h"
 type: "code"
-community: "MVActionRowTableTypes.h"
+community: "MVHitReactionComponent.h"
 location: "L11"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVActionRowTableTypesh
+  - community/MVHitReactionComponenth
 ---
 
 # UAnimMontage
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[MVActionComponent.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVActionRowTableTypesh
+#graphify/code #graphify/EXTRACTED #community/MVHitReactionComponenth

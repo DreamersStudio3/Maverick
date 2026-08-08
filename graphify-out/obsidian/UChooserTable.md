@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVCombatComponent.h"
 type: "code"
-community: "전투 액션 Chooser 입력"
+community: "MVFinisherComponent.cpp"
 location: "L349"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__Chooser_
+  - community/MVFinisherComponentcpp
 ---
 
 # UChooserTable
@@ -20,4 +20,4 @@ tags:
 - [[UMVHitReactionComponentEvaluateHitReactionChooserActionRowHandle()]] - `references` [EXTRACTED]
 - [[UMVPlayerDodgeEvaluateDodgeChooserActionRowHandle()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__Chooser_
+#graphify/code #graphify/EXTRACTED #community/MVFinisherComponentcpp
