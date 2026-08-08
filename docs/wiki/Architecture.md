@@ -223,6 +223,7 @@ Maverick은 플레이어 dodge suppression, sprint, Action 실행 중 rotation e
 ## 관련 문서
 
 - `docs/wiki/Documentation-Workflow.md`: 문서와 Graphify 갱신 절차.
+- `docs/wiki/Obsidian-Usage.md`: Graphify 위키를 Obsidian에서 연결하고 탐색하는 방법.
 - `docs/wiki/Header-Documentation.md`: C++ 헤더 책임 문서화 기준.
 - `docs/wiki/Combat-Design-MDA.md`: 현재 전투와 목표 전투 계약, 구현 우선순위.
 - `MaverickDesign/README.md`, `MaverickDesign/Schema/README.md`: 테이블 생성 및 schema 계약.

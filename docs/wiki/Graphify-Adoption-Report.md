@@ -28,12 +28,7 @@
 
 ## Obsidian에서 Graphify 문서 보기
 
-1. **Obsidian을 설치한다.** [Obsidian 공식 다운로드 페이지](https://obsidian.md/download)에서 운영체제에 맞는 설치 파일을 내려받아 설치한다. Windows에서는 `Download for Windows`를 선택하고 설치 파일을 실행하면 된다.
-2. **Graphify 문서 폴더를 확인한다.** Maverick 저장소를 최신 상태로 받은 뒤 `graphify-out/obsidian/` 폴더와 그 안의 `graph.canvas`가 있는지 확인한다. 이 폴더 전체가 Obsidian에서 열 vault다.
-3. **폴더를 vault로 연결한다.** Obsidian을 처음 실행했다면 `Open folder as vault` 옆의 `Open`을 선택하고 `Maverick/graphify-out/obsidian/` 폴더를 지정한다. 다른 vault가 이미 열려 있다면 왼쪽 아래 `Vault profile` → `Manage Vaults...` → `Open folder as vault` 순서로 같은 폴더를 연다. 화면 위치가 달라졌다면 [Obsidian의 vault 관리 안내](https://obsidian.md/help/manage-vaults)를 참고한다.
-4. **전체 구조를 먼저 살펴본다.** 왼쪽 파일 탐색기에서 `graph.canvas`를 열면 코드와 문서의 연결을 한 화면에서 볼 수 있다. 빈 공간을 드래그해 이동하고 마우스 휠로 확대·축소한다. Canvas 조작법은 [Obsidian Canvas 안내](https://obsidian.md/help/plugins/canvas)에서 확인할 수 있다.
-5. **필요한 문서를 검색한다.** `Ctrl+O`를 눌러 파일명으로 노트를 찾거나 `Ctrl+Shift+F`를 눌러 전체 본문을 검색한다. `_COMMUNITY_`로 시작하는 노트는 관련 코드와 개념을 묶은 요약 문서이며, 일반 노트의 링크를 따라가면 연결된 타입·함수·원본 파일을 확인할 수 있다. 자세한 단축키는 [Quick switcher](https://obsidian.md/help/plugins/quick-switcher)와 [Search](https://obsidian.md/help/Plugins/Search) 안내를 따른다.
-6. **생성 문서는 조회용으로만 사용한다.** `graphify-out/obsidian/` 안의 Markdown과 Canvas를 직접 수정해도 다음 Graphify 갱신에서 덮어써진다. 장기 보존할 설명은 `docs/wiki/`에 작성하고, 생성 vault는 최신 Graphify 결과를 탐색하는 용도로 사용한다.
+설치부터 vault 연결, Canvas·검색 사용법, 갱신 후 확인과 문제 해결까지는 [Obsidian-Usage.md](Obsidian-Usage.md)를 따른다.
 
 ## `Architecture.md`를 함께 관리하는 이유
 
@@ -120,6 +115,7 @@ Graphify는 관련된 정보와 파일을 빠르게 찾고 연결 경로를 좁�
 | 입력·Git 규칙 | `.graphifyignore`, `.gitignore`, `.gitattributes` | corpus 제외, 로컬 cache 제외, LF와 graph merge driver |
 | 단기 작업 기록 | `docs/todo/README.md`, `docs/todo/Completed-Work.md` | TODO 생성·갱신·종료 규칙과 압축된 완료 결과 |
 | 사람이 관리하는 위키 | `docs/wiki/Documentation-Workflow.md` | 단일 운영 절차 |
+| 사람이 관리하는 위키 | `docs/wiki/Obsidian-Usage.md` | 설치, vault 연결, 탐색과 문제 해결 안내 |
 | 사람이 관리하는 위키 | `docs/wiki/Architecture.md` | 현재 구조, 책임, 주요 흐름, 에셋 검증 공백 |
 | 사람이 관리하는 위키 | `docs/wiki/Header-Documentation.md` | Doxygen 대상·품질·생략 기준 |
 | 사람이 관리하는 위키 | `docs/wiki/Graphify-Adoption-Report.md` | 도입 결정, 지표, 근거, 한계 |

@@ -141,7 +141,7 @@ python Scripts/Graphify/knowledge_guard.py check --commit HEAD
 
 ## Obsidian 사용
 
-Obsidian에서 저장소의 `graphify-out/obsidian/` 디렉터리를 vault로 연다. 사람이 작성하는 장기 문서는 `docs/wiki/`에 유지하고, Obsidian 생성 vault는 그래프 탐색용 읽기 모델로 취급한다. 둘을 한 디렉터리에 섞지 않아야 재생성 때 수동 문서가 덮어쓰이지 않는다. Graphify가 생성하는 `.obsidian/graph.json`은 공유하지만, Obsidian이 개인별로 만드는 `workspace*.json`, `app.json` 등의 UI 상태는 wrap-up 검증과 Git 추적에서 제외한다.
+설치, vault 연결, 탐색, 갱신 후 확인과 문제 해결은 [Obsidian-Usage.md](Obsidian-Usage.md)를 따른다. `graphify-out/obsidian/`은 Graphify가 다시 만드는 조회용 문서이며, 사람이 작성하는 장기 문서는 `docs/wiki/`에 둔다.
 
 ## 디렉터리별 문서 원칙
 
