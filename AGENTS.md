@@ -24,9 +24,11 @@ C++ 구현 규칙과 Unreal Engine unity build 호환성 관련 세부 정책도
 
 ## 코드 문서화
 
-ProjectBA에서 사용하던 방식처럼 주요 C++ 헤더에는 파일 상단의 클래스 선언부 앞에 책임과 라이프사이클을 요약하는 문서 블록을 둔다.
+ProjectBA에서 사용하던 방식처럼 주요 C++ 타입의 선언 바로 앞에 책임과 라이프사이클을 요약하는 문서 블록을 둔다.
 
 문서화 이후 변경사항이 생기면 단순히 문장을 누적하지 않는다. 기존 문서와 실제 책임을 함께 검토해 전체 내용을 다시 압축하고, 문서 길이가 무작정 늘어나지 않게 관리한다.
+
+문서 블록의 필수 대상과 작성 기준은 `docs/wiki/Header-Documentation.md`를 따른다. 모든 헤더의 형식적 보유율을 목표로 삼지 않으며, 빈 블록과 Unreal 템플릿 주석은 문서화로 인정하지 않는다.
 
 ## 코드 책임 분리
 
@@ -38,8 +40,9 @@ ProjectBA에서 사용하던 방식처럼 주요 C++ 헤더에는 파일 상단�
 
 이 프로젝트의 지식 그래프와 생성 위키는 `graphify-out/`에 둔다. 세부 행동강령과 명령은 `docs/wiki/Documentation-Workflow.md`를 따른다.
 
-- 코드베이스 질문을 받으면 `graphify-out/graph.json`이 있는지 먼저 확인하고, 있으면 원본 파일을 넓게 읽기 전에 `graphify query "<질문>"`을 실행한다. 관계 추적은 `graphify path`, 단일 개념 조사는 `graphify explain`을 사용한다.
-- 넓은 구조 파악에는 `graphify-out/wiki/index.md`를 우선 사용하고, 전체 구조 검토나 쿼리 결과가 부족할 때만 `graphify-out/GRAPH_REPORT.md`와 원본 코드를 차례로 확인한다.
+- 프로젝트 전체 구조나 책임 경계를 파악할 때는 `docs/wiki/Architecture.md`를 먼저 읽는다.
+- 코드베이스 질문을 받으면 `graphify-out/graph.json`이 있는지 확인하고, 원본 파일을 넓게 읽기 전에 `graphify query "<질문>"`으로 세부 관계를 좁힌다. 관계 추적은 `graphify path`, 단일 개념 조사는 `graphify explain`을 사용한다.
+- 질의 결과가 부족할 때 `graphify-out/wiki/index.md`, `graphify-out/GRAPH_REPORT.md`, 관련 원본 코드 순으로 확인한다.
 - `graphify-out/`은 생성 산출물이므로 직접 편집하지 않는다. 코드와 정본 문서를 수정한 뒤 Graphify로 다시 생성한다.
 - 커밋 전에는 변경 종류에 맞는 증분 갱신을 수행한다. 원격 push 전에는 문서까지 포함한 Graphify wrap-up과 pre-push 최신성 검증을 반드시 통과한다.
 - `graphify` 실행 파일이 PATH에 없고 Python 패키지만 설치된 환경에서는 같은 명령을 `python -m graphify`로 실행한다.

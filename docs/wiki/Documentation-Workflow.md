@@ -10,7 +10,8 @@ Maverick의 문서는 사람이 빠르게 의도를 이해하고, 에이전트�
 | --- | --- | --- |
 | `TODO/<task>.md` | 진행 중인 작업의 목표, 상태, 결정, 검증 | 작업자가 직접 갱신하는 단기 기록 |
 | C++ 헤더의 `/** ... */` | 타입과 가까운 책임, 라이프사이클, 불변조건 | 해당 코드를 바꾼 작업자가 함께 갱신 |
-| `docs/wiki/` | 구조, 설계 의도, 운영 규칙, 장기 결정의 정본 | 사람이 검토해 직접 갱신 |
+| `docs/wiki/Architecture.md` | 현재 구조, 책임 경계, 주요 흐름과 바이너리 에셋 공백 | 구조 변경 시 사람이 검토해 갱신 |
+| `docs/wiki/`의 나머지 문서 | 설계 의도, 운영 규칙, 장기 결정의 정본 | 사람이 검토해 직접 갱신 |
 | `graphify-out/graph.json` | 코드와 문서 관계를 질의하는 지식 그래프 | Graphify로만 생성 |
 | `graphify-out/wiki/` | 커뮤니티 단위의 에이전트 탐색용 위키 | Graphify로만 생성 |
 | `graphify-out/obsidian/` | 노드 단위의 Obsidian 탐색 vault | Graphify로만 생성 |
@@ -36,9 +37,10 @@ Maverick의 문서는 사람이 빠르게 의도를 이해하고, 에이전트�
 커밋은 하나의 일관된 코드 스냅샷이므로 일상적인 Graphify 갱신 시점으로 사용한다.
 
 1. 변경이 코드뿐이면 `graphify update .`를 실행한다. PATH에 명령이 없으면 `python -m graphify update .`를 사용한다.
-2. `docs/wiki/`, 주요 헤더 문서, 설계 문서가 바뀌었으면 Codex에서 `$graphify . --update`를 사용해 의미 추출까지 수행한다.
-3. 기존 `graphify-out/wiki/`와 `graphify-out/obsidian/`이 있으면 둘 다 다시 내보낸다.
-4. 변경한 정본과 생성 산출물을 같은 작업 단위의 커밋에 포함한다.
+2. `docs/wiki/`나 설계 문서가 바뀌었으면 Codex에서 `$graphify . --update`를 사용해 의미 추출까지 수행한다.
+3. C++ `/** ... */`만 바뀐 경우에도 manifest 최신화를 위해 일반 증분 갱신을 실행한다. Graphify 0.9.36은 C++ 주석 내용을 의미 노드로 추출하지 않으므로, 여러 타입에 걸친 중요한 의도는 `docs/wiki/`에도 반영한다.
+4. 기존 `graphify-out/wiki/`와 `graphify-out/obsidian/`이 있으면 둘 다 다시 내보낸다.
+5. 변경한 정본과 생성 산출물을 같은 작업 단위의 커밋에 포함한다.
 
 Graphify의 공식 Git 훅은 커밋 뒤 코드 AST를 저비용으로 갱신하는 안전망이다. 문서의 의미 추출은 처리하지 않으므로 그것만으로 문서 최신성을 보장했다고 판단하지 않는다.
 
@@ -73,6 +75,26 @@ graphify explain "MVActionComponent"
 
 현재 셸처럼 실행 파일이 PATH에 없으면 `graphify`를 `python -m graphify`로 바꾼다.
 
+생성 wiki와 Obsidian vault는 `update`나 공식 Git 훅이 자동으로 다시 만들지 않으므로 wrap-up에서 명시적으로 실행한다.
+
+```powershell
+python -m graphify export wiki
+python -m graphify export obsidian --dir graphify-out/obsidian
+python -m graphify export html
+```
+
 ## Obsidian 사용
 
 Obsidian에서 저장소의 `graphify-out/obsidian/` 디렉터리를 vault로 연다. 사람이 작성하는 장기 문서는 `docs/wiki/`에 유지하고, Obsidian 생성 vault는 그래프 탐색용 읽기 모델로 취급한다. 둘을 한 디렉터리에 섞지 않아야 재생성 때 수동 문서가 덮어쓰이지 않는다.
+
+## 디렉터리별 문서 원칙
+
+`Source/**/README.md` 같은 디렉터리별 목차를 일괄 생성하지 않는다. 파일 목록과 심볼 관계는 Graphify가 더 정확하게 계산하며, 수동 목차는 코드 이동 때 쉽게 낡는다.
+
+다음 조건을 모두 만족할 때만 `docs/wiki/<Domain>.md`를 추가한다.
+
+- 세 개 이상의 타입이나 code/asset 경계를 가로지른다.
+- 책임과 호출 순서만으로는 이유나 운영 계약을 설명하기 어렵다.
+- `Architecture.md` 한 문단으로는 변경 시 검토 기준을 보존할 수 없다.
+
+AI StateTree, 사망·부활, 테이블 파이프라인처럼 이미 독립 설계 문서가 있는 도메인은 새 문서를 중복 생성하지 않고 기존 정본을 갱신한다.

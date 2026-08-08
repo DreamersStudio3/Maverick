@@ -19,7 +19,7 @@
 
 - [x] Graphify 운영 정책과 TODO 역할 정리
 - [x] 전체 코퍼스 초기 그래프, wiki, Obsidian vault 생성
-- [ ] `Architecture.md`와 헤더 문서화 기준 작성
+- [x] `Architecture.md`와 헤더 문서화 기준 작성
 - [ ] 커밋 갱신 및 pre-push 최신성 검증 구현·설치
 - [ ] 최종 Graphify wrap-up, 검증, 작업 보고서 작성
 
@@ -41,3 +41,7 @@
 - 생성 위키는 index 포함 279개 Markdown, Obsidian vault는 4,082개 Markdown과 graph canvas로 생성됐다.
 - Graphify 진단은 1,362개 dangling-endpoint 관계와 147개 undirected same-endpoint collapse를 보고했다. 그래프는 생성됐지만 이 무결성 경고를 최종 보고서에 공개한다.
 - 협업 에이전트의 실제 토큰 usage가 결과 API에 제공되지 않아 Graphify cost tracker에는 0으로 기록됐다. 이는 의미 추출 비용이 실제로 0이었다는 뜻이 아니다.
+- Graphify query로 런타임 허브를 좁힌 뒤 C++·설정·설계 문서를 대조해 `docs/wiki/Architecture.md`를 작성했다.
+- C++ Doxygen 단순 coverage는 71/138이지만 빈 블록과 보조 타입 문서가 포함돼 품질 지표로 사용할 수 없다.
+- 모든 헤더 100% 대신 비자명한 상태·lifecycle·도메인 계약을 가진 주요 타입을 필수 문서화 대상으로 정했다.
+- Graphify 0.9.36은 C++ 주석 의미를 추출하지 않으므로 타입 로컬 계약은 헤더에, 교차 타입 구조와 근거는 `docs/wiki/`에 유지한다.
