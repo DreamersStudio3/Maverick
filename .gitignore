@@ -78,3 +78,9 @@ PluginsIntermediate
 
 # Cache files for the editor to use
 DerivedDataCache
+
+# Graphify local runtime state
+graphify-out/.graphify_python
+graphify-out/.graphify_root
+graphify-out/cost.json
+graphify-out/cache/

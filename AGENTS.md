@@ -16,7 +16,7 @@ C++ 구현 규칙과 Unreal Engine unity build 호환성 관련 세부 정책도
 
 ## 작업 진행 관리
 
-작업을 진행할 때는 루트의 `TODO` 디렉토리에 현재 작업 목록을 정리하고, 그 내용을 기준으로 진행 상태를 관리한다.
+작업을 진행할 때는 루트의 `TODO` 디렉토리에 현재 작업 목록을 정리하고, 그 내용을 기준으로 진행 상태를 관리한다. `TODO/README.md`의 생성·갱신·종료 규칙을 따르며, TODO를 장기 설계 문서나 위키 대신 사용하지 않는다.
 
 ## 디버깅과 버그 수정
 
@@ -34,3 +34,12 @@ ProjectBA에서 사용하던 방식처럼 주요 C++ 헤더에는 파일 상단�
 
 회피, 액션 버퍼, 전투, UI처럼 특정 도메인에 종속적인 정책은 해당 컴포넌트나 도메인 파일로 분리한다. 새 코드를 작성할 때는 확장성을 먼저 검토하고, 파일의 최소 책임을 넘어서는 편의성 코드를 방만하게 추가하지 않는다.
 
+## Graphify와 내부 위키
+
+이 프로젝트의 지식 그래프와 생성 위키는 `graphify-out/`에 둔다. 세부 행동강령과 명령은 `docs/wiki/Documentation-Workflow.md`를 따른다.
+
+- 코드베이스 질문을 받으면 `graphify-out/graph.json`이 있는지 먼저 확인하고, 있으면 원본 파일을 넓게 읽기 전에 `graphify query "<질문>"`을 실행한다. 관계 추적은 `graphify path`, 단일 개념 조사는 `graphify explain`을 사용한다.
+- 넓은 구조 파악에는 `graphify-out/wiki/index.md`를 우선 사용하고, 전체 구조 검토나 쿼리 결과가 부족할 때만 `graphify-out/GRAPH_REPORT.md`와 원본 코드를 차례로 확인한다.
+- `graphify-out/`은 생성 산출물이므로 직접 편집하지 않는다. 코드와 정본 문서를 수정한 뒤 Graphify로 다시 생성한다.
+- 커밋 전에는 변경 종류에 맞는 증분 갱신을 수행한다. 원격 push 전에는 문서까지 포함한 Graphify wrap-up과 pre-push 최신성 검증을 반드시 통과한다.
+- `graphify` 실행 파일이 PATH에 없고 Python 패키지만 설치된 환경에서는 같은 명령을 `python -m graphify`로 실행한다.

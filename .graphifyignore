@@ -1,0 +1,22 @@
+# Generated and local state
+.git/
+.codex/
+.idea/
+.vs/
+graphify-out/
+
+# Unreal generated data and binary assets
+Binaries/
+Build/
+Content/
+DerivedDataCache/
+Intermediate/
+Saved/
+PluginsBinaries/
+PluginsIntermediate/
+*.sln
+*.uasset
+*.umap
+
+# Task-local operational memory is intentionally not part of the knowledge graph.
+TODO/
