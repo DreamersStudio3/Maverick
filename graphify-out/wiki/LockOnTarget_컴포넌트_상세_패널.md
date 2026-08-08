@@ -1,0 +1,38 @@
+# LockOnTarget 컴포넌트 상세 패널
+
+> 10 nodes · cohesion 0.29
+
+## Key Concepts
+
+- **FLockOnComponentDetails** (5 connections) — `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/LockOnComponentDetails.h`
+- **LockOnComponentDetails.cpp** (4 connections) — `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/LockOnComponentDetails.cpp`
+- **MakeInstance** (4 connections) — `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/LockOnComponentDetails.h`
+- **LockOnComponentDetails.h** (4 connections) — `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/LockOnComponentDetails.h`
+- **CustomizeDetails** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/LockOnComponentDetails.h`
+- **IDetailCustomization** (3 connections)
+- **IDetailLayoutBuilder** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/TargetComponentDetails.h`
+- **OnInitialSetupNavigate** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/LockOnComponentDetails.h`
+- **IDetailCustomization** (1 connections)
+- **TSharedRef** (1 connections)
+
+## Relationships
+
+- [타깃 컴포넌트 배열 편집기](%ED%83%80%EA%B9%83_%EC%BB%B4%ED%8F%AC%EB%84%8C%ED%8A%B8_%EB%B0%B0%EC%97%B4_%ED%8E%B8%EC%A7%91%EA%B8%B0.md) (2 shared connections)
+- [LockOnTarget 에디터 모듈](LockOnTarget_%EC%97%90%EB%94%94%ED%84%B0_%EB%AA%A8%EB%93%88.md) (1 shared connections)
+- [대상 컴포넌트 디테일 편집](%EB%8C%80%EC%83%81_%EC%BB%B4%ED%8F%AC%EB%84%8C%ED%8A%B8_%EB%94%94%ED%85%8C%EC%9D%BC_%ED%8E%B8%EC%A7%91.md) (1 shared connections)
+
+## Source Files
+
+- `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/LockOnComponentDetails.cpp`
+- `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/LockOnComponentDetails.h`
+- `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/TargetComponentDetails.h`
+
+## Audit Trail
+
+- EXTRACTED: 30 (100%)
+- INFERRED: 0 (0%)
+- AMBIGUOUS: 0 (0%)
+
+---
+
+*Part of the graphify knowledge wiki. See [index](index.md) to navigate.*

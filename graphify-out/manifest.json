@@ -1,0 +1,1517 @@
+{
+  "MaverickDesign/CsvToJsonConverter/CsvToJsonConverter.py": {
+    "mtime": 1782630951.514134,
+    "ast_hash": "4cfbfc795ab0db58d55896b73a7552d8",
+    "semantic_hash": "4cfbfc795ab0db58d55896b73a7552d8"
+  },
+  "MaverickDesign/Json/CharacterIndex.json": {
+    "mtime": 1783821962.0798326,
+    "ast_hash": "8d16d3ec4f7a12a93beadb275ab5fc65",
+    "semantic_hash": "8d16d3ec4f7a12a93beadb275ab5fc65"
+  },
+  "MaverickDesign/Json/CharacterStat.json": {
+    "mtime": 1783821962.080343,
+    "ast_hash": "67b926591b58f7a5e354c912a6717f7a",
+    "semantic_hash": "67b926591b58f7a5e354c912a6717f7a"
+  },
+  "MaverickDesign/Json/GameGuide.json": {
+    "mtime": 1783127801.7373478,
+    "ast_hash": "3c16a7b98f736d050321107b9fc19b41",
+    "semantic_hash": "3c16a7b98f736d050321107b9fc19b41"
+  },
+  "MaverickDesign/Json/SheetRecipe.json": {
+    "mtime": 1783821962.0808506,
+    "ast_hash": "74a950d715ea9cae6fe658fd98a6b870",
+    "semantic_hash": "74a950d715ea9cae6fe658fd98a6b870"
+  },
+  "MaverickDesign/Schema/TableData.schema.json": {
+    "mtime": 1781953485.6416008,
+    "ast_hash": "3597157a234506cad094d47b608918ff",
+    "semantic_hash": "3597157a234506cad094d47b608918ff"
+  },
+  "Plugins/LockOnTarget/Source/LockOnTargetDev/LockOnTargetDev.build.cs": {
+    "mtime": 1783127801.753732,
+    "ast_hash": "a3708c4893095a464bd8aeecdbf42f75",
+    "semantic_hash": "a3708c4893095a464bd8aeecdbf42f75"
+  },
+  "Plugins/LockOnTarget/Source/LockOnTargetDev/Private/GameplayDebugger/GameplayDebuggerCategory_LockOnTarget.cpp": {
+    "mtime": 1783127801.7549584,
+    "ast_hash": "2e099b3f8488b47688700963b80223e8",
+    "semantic_hash": "2e099b3f8488b47688700963b80223e8"
+  },
+  "Plugins/LockOnTarget/Source/LockOnTargetDev/Private/GameplayDebugger/GameplayDebuggerCategory_LockOnTarget.h": {
+    "mtime": 1783127801.7549584,
+    "ast_hash": "437cfba519d93ab4b1935ea44607ca47",
+    "semantic_hash": "437cfba519d93ab4b1935ea44607ca47"
+  },
+  "Plugins/LockOnTarget/Source/LockOnTargetDev/Private/LockOnTargetDev.cpp": {
+    "mtime": 1783127801.7554967,
+    "ast_hash": "51bcccc3ba0ecac65463052515f2bda6",
+    "semantic_hash": "51bcccc3ba0ecac65463052515f2bda6"
+  },
+  "Plugins/LockOnTarget/Source/LockOnTargetDev/Private/LockOnTargetDev.h": {
+    "mtime": 1783127801.7554967,
+    "ast_hash": "c8f75dc6a6cfd6602cfda27d191ac177",
+    "semantic_hash": "c8f75dc6a6cfd6602cfda27d191ac177"
+  },
+  "Plugins/LockOnTarget/Source/LockOnTargetEditor/LockOnTargetEditor.Build.cs": {
+    "mtime": 1783127801.7560067,
+    "ast_hash": "82a9907244da757df9af4973be9c09f2",
+    "semantic_hash": "82a9907244da757df9af4973be9c09f2"
+  },
+  "Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/LockOnComponentDetails.cpp": {
+    "mtime": 1783127801.7565243,
+    "ast_hash": "08b41381d85cd66f332bdeee8da8ad95",
+    "semantic_hash": "08b41381d85cd66f332bdeee8da8ad95"
+  },
+  "Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/LockOnComponentDetails.h": {
+    "mtime": 1783127801.7570271,
+    "ast_hash": "f4b1e11a1658d74860cc01087979d40b",
+    "semantic_hash": "f4b1e11a1658d74860cc01087979d40b"
+  },
+  "Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/LockOnTargetEditor.cpp": {
+    "mtime": 1783127801.7575724,
+    "ast_hash": "251ded4afd11dd1a3430f8981fb3d67d",
+    "semantic_hash": "251ded4afd11dd1a3430f8981fb3d67d"
+  },
+  "Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/LockOnTargetEditor.h": {
+    "mtime": 1783127801.7575724,
+    "ast_hash": "0b7b9446ee6cf861941b534511c41303",
+    "semantic_hash": "0b7b9446ee6cf861941b534511c41303"
+  },
+  "Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/SSocketSelector.cpp": {
+    "mtime": 1783127801.7581027,
+    "ast_hash": "0d5cb1ad51df04e82dc6311aa3a18284",
+    "semantic_hash": "0d5cb1ad51df04e82dc6311aa3a18284"
+  },
+  "Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/SSocketSelector.h": {
+    "mtime": 1783127801.7586088,
+    "ast_hash": "eb9c0950591aa01b500c5a8a184f8143",
+    "semantic_hash": "eb9c0950591aa01b500c5a8a184f8143"
+  },
+  "Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/TargetComponentDetails.cpp": {
+    "mtime": 1783127801.7586088,
+    "ast_hash": "679432fb074bacf585aeb263732dcb9f",
+    "semantic_hash": "679432fb074bacf585aeb263732dcb9f"
+  },
+  "Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/TargetComponentDetails.h": {
+    "mtime": 1783127801.7591307,
+    "ast_hash": "859b292fbae90a6156332d0ee49a504d",
+    "semantic_hash": "859b292fbae90a6156332d0ee49a504d"
+  },
+  "Plugins/LockOnTarget/Source/LockOnTarget/LockOnTarget.Build.cs": {
+    "mtime": 1783127801.742512,
+    "ast_hash": "0c0996916fad2434e4f52522b47d7128",
+    "semantic_hash": "0c0996916fad2434e4f52522b47d7128"
+  },
+  "Plugins/LockOnTarget/Source/LockOnTarget/LockOnTarget.cpp": {
+    "mtime": 1783127801.7434013,
+    "ast_hash": "94ba3f4d5cd92125fb5efa7c8218628a",
+    "semantic_hash": "94ba3f4d5cd92125fb5efa7c8218628a"
+  },
+  "Plugins/LockOnTarget/Source/LockOnTarget/LockOnTarget.h": {
+    "mtime": 1783127801.7439053,
+    "ast_hash": "b106507c98581d7e9888f6c9604a0441",
+    "semantic_hash": "b106507c98581d7e9888f6c9604a0441"
+  },
+  "Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetComponent.cpp": {
+    "mtime": 1783127801.7439053,
+    "ast_hash": "b551accb0202f35b4d7bbeecdae09154",
+    "semantic_hash": "b551accb0202f35b4d7bbeecdae09154"
+  },
+  "Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetExtensions/CameraModifierExtension.cpp": {
+    "mtime": 1783127801.7449083,
+    "ast_hash": "aa8d39c45b56b53541d168445ac1c614",
+    "semantic_hash": "aa8d39c45b56b53541d168445ac1c614"
+  },
+  "Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetExtensions/ControllerRotationExtension.cpp": {
+    "mtime": 1783127801.7449083,
+    "ast_hash": "d0604070da2ac84b424dbe80c4ae7572",
+    "semantic_hash": "d0604070da2ac84b424dbe80c4ae7572"
+  },
+  "Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetExtensions/LockOnTargetExtensionBase.cpp": {
+    "mtime": 1783127801.745657,
+    "ast_hash": "939bb70defc1845457cbda51978bdc2b",
+    "semantic_hash": "939bb70defc1845457cbda51978bdc2b"
+  },
+  "Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetExtensions/PawnRotationExtension.cpp": {
+    "mtime": 1783127801.745657,
+    "ast_hash": "70c21047dc7df6f4fed0882b718b6e14",
+    "semantic_hash": "70c21047dc7df6f4fed0882b718b6e14"
+  },
+  "Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetExtensions/TargetPreviewExtension.cpp": {
+    "mtime": 1783127801.746163,
+    "ast_hash": "22b8c63c8828369e9f5c9cf47adde567",
+    "semantic_hash": "22b8c63c8828369e9f5c9cf47adde567"
+  },
+  "Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetExtensions/WidgetExtension.cpp": {
+    "mtime": 1783127801.7466838,
+    "ast_hash": "4bd3078100791c55ed479acda72585cf",
+    "semantic_hash": "4bd3078100791c55ed479acda72585cf"
+  },
+  "Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetTypes.cpp": {
+    "mtime": 1783127801.7471962,
+    "ast_hash": "1fa4907f7f289e9901f42fab616789ae",
+    "semantic_hash": "1fa4907f7f289e9901f42fab616789ae"
+  },
+  "Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetComponent.cpp": {
+    "mtime": 1783127801.7471962,
+    "ast_hash": "21266d67dc06423f8a3f383e088f50b3",
+    "semantic_hash": "21266d67dc06423f8a3f383e088f50b3"
+  },
+  "Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetHandlers/TargetHandlerBase.cpp": {
+    "mtime": 1783127801.7477152,
+    "ast_hash": "3828cf4fecf07ec6e09ca72015db1357",
+    "semantic_hash": "3828cf4fecf07ec6e09ca72015db1357"
+  },
+  "Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetHandlers/WeightedTargetHandler.cpp": {
+    "mtime": 1783127801.7482195,
+    "ast_hash": "6f939a2fba79e776640d55799ba702c4",
+    "semantic_hash": "6f939a2fba79e776640d55799ba702c4"
+  },
+  "Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetManager.cpp": {
+    "mtime": 1783127801.7482195,
+    "ast_hash": "e093fd53511252f4f4de14cc74b37ad2",
+    "semantic_hash": "e093fd53511252f4f4de14cc74b37ad2"
+  },
+  "Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetComponent.h": {
+    "mtime": 1783127801.748759,
+    "ast_hash": "e0c2311fa89182ceae7fc83ea694da40",
+    "semantic_hash": "e0c2311fa89182ceae7fc83ea694da40"
+  },
+  "Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetDefines.h": {
+    "mtime": 1783127801.748759,
+    "ast_hash": "631a3ad349797b16fb35fff48d075b06",
+    "semantic_hash": "631a3ad349797b16fb35fff48d075b06"
+  },
+  "Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetExtensions/CameraModifierExtension.h": {
+    "mtime": 1783127801.7498157,
+    "ast_hash": "fcc30a1dd161f7d86b9a02a09e76c943",
+    "semantic_hash": "fcc30a1dd161f7d86b9a02a09e76c943"
+  },
+  "Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetExtensions/ControllerRotationExtension.h": {
+    "mtime": 1783127801.7498157,
+    "ast_hash": "3c8707072791e43ef57d84c9eabe60e7",
+    "semantic_hash": "3c8707072791e43ef57d84c9eabe60e7"
+  },
+  "Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetExtensions/LockOnTargetExtensionBase.h": {
+    "mtime": 1783127801.7503147,
+    "ast_hash": "be6f85e6202135f745b5af4e0041919e",
+    "semantic_hash": "be6f85e6202135f745b5af4e0041919e"
+  },
+  "Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetExtensions/PawnRotationExtension.h": {
+    "mtime": 1783127801.750913,
+    "ast_hash": "352c3219af792ab32efd928d1f999275",
+    "semantic_hash": "352c3219af792ab32efd928d1f999275"
+  },
+  "Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetExtensions/TargetPreviewExtension.h": {
+    "mtime": 1783127801.750913,
+    "ast_hash": "559ac8041221cad5619e1afc668a5bd5",
+    "semantic_hash": "559ac8041221cad5619e1afc668a5bd5"
+  },
+  "Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetExtensions/WidgetExtension.h": {
+    "mtime": 1783127801.750913,
+    "ast_hash": "f6abaa2f8154d42ffe0d2c9bafe07d01",
+    "semantic_hash": "f6abaa2f8154d42ffe0d2c9bafe07d01"
+  },
+  "Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetTypes.h": {
+    "mtime": 1783127801.7516468,
+    "ast_hash": "e78dcf65bdceb8c085349dcc2b2f7722",
+    "semantic_hash": "e78dcf65bdceb8c085349dcc2b2f7722"
+  },
+  "Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h": {
+    "mtime": 1783127801.7516468,
+    "ast_hash": "bd19f1c95b4108d15a2a9951d1b7475f",
+    "semantic_hash": "bd19f1c95b4108d15a2a9951d1b7475f"
+  },
+  "Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/TargetHandlerBase.h": {
+    "mtime": 1783127801.7526493,
+    "ast_hash": "2b7aa19ab7cc1a321024f7d50e81aaa9",
+    "semantic_hash": "2b7aa19ab7cc1a321024f7d50e81aaa9"
+  },
+  "Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h": {
+    "mtime": 1783127801.7531538,
+    "ast_hash": "31d81513ab1d38ec84cd732326c488c2",
+    "semantic_hash": "31d81513ab1d38ec84cd732326c488c2"
+  },
+  "Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetManager.h": {
+    "mtime": 1783127801.753732,
+    "ast_hash": "20254e78ba86e69c036121408ab6886c",
+    "semantic_hash": "20254e78ba86e69c036121408ab6886c"
+  },
+  "Source/Maverick.Target.cs": {
+    "mtime": 1781953485.6421058,
+    "ast_hash": "03c2493984824c0756639c4604680c9e",
+    "semantic_hash": "03c2493984824c0756639c4604680c9e"
+  },
+  "Source/MaverickEditor.Target.cs": {
+    "mtime": 1781953485.6747692,
+    "ast_hash": "6f6f97655814538f76c03ba8b5c67731",
+    "semantic_hash": "6f6f97655814538f76c03ba8b5c67731"
+  },
+  "Source/Maverick/AI/Condition/MVActionCooldownReadyCondition.cpp": {
+    "mtime": 1783127801.7591307,
+    "ast_hash": "fb93fa24ef5e43cb38c5fc20114e571a",
+    "semantic_hash": "fb93fa24ef5e43cb38c5fc20114e571a"
+  },
+  "Source/Maverick/AI/Condition/MVActionCooldownReadyCondition.h": {
+    "mtime": 1783127801.7597773,
+    "ast_hash": "ed690485331f37a326c1b4e8cbf11543",
+    "semantic_hash": "ed690485331f37a326c1b4e8cbf11543"
+  },
+  "Source/Maverick/AI/Condition/MVCombatActionEnterCondition.cpp": {
+    "mtime": 1783608009.4335306,
+    "ast_hash": "ebd72ea0c5340edcf7e7ba0783d98530",
+    "semantic_hash": "ebd72ea0c5340edcf7e7ba0783d98530"
+  },
+  "Source/Maverick/AI/Condition/MVCombatActionEnterCondition.h": {
+    "mtime": 1783608009.4335306,
+    "ast_hash": "523d197b0052d0e66bb5bd39a72796ee",
+    "semantic_hash": "523d197b0052d0e66bb5bd39a72796ee"
+  },
+  "Source/Maverick/AI/Condition/MVCombatDecisionCondition.cpp": {
+    "mtime": 1783608009.43408,
+    "ast_hash": "3cfa2d40f934c645bbd101734db9d011",
+    "semantic_hash": "3cfa2d40f934c645bbd101734db9d011"
+  },
+  "Source/Maverick/AI/Condition/MVCombatDecisionCondition.h": {
+    "mtime": 1783127801.7602801,
+    "ast_hash": "64a2e97c5274acac84c57639aca3d9c8",
+    "semantic_hash": "64a2e97c5274acac84c57639aca3d9c8"
+  },
+  "Source/Maverick/AI/Condition/MVGroggyEnterCondition.cpp": {
+    "mtime": 1783128457.3116543,
+    "ast_hash": "0b13bb1bbbddb66bb367fbec96280426",
+    "semantic_hash": "0b13bb1bbbddb66bb367fbec96280426"
+  },
+  "Source/Maverick/AI/Condition/MVGroggyEnterCondition.h": {
+    "mtime": 1783128457.3116543,
+    "ast_hash": "05768a4294ebbbaeb138d3448ba51dd4",
+    "semantic_hash": "05768a4294ebbbaeb138d3448ba51dd4"
+  },
+  "Source/Maverick/AI/Condition/MVHitReactionEnterCondition.cpp": {
+    "mtime": 1783821962.0813572,
+    "ast_hash": "094b65bb7622f510bb8642fae9bc1ed2",
+    "semantic_hash": "094b65bb7622f510bb8642fae9bc1ed2"
+  },
+  "Source/Maverick/AI/Condition/MVHitReactionEnterCondition.h": {
+    "mtime": 1783128457.3135874,
+    "ast_hash": "98e5a74a3a638e8968641f4eb5e16db0",
+    "semantic_hash": "98e5a74a3a638e8968641f4eb5e16db0"
+  },
+  "Source/Maverick/AI/Controller/MVAIController.cpp": {
+    "mtime": 1781953485.6426084,
+    "ast_hash": "6f7f9ea06bb0eade266304900b64318b",
+    "semantic_hash": "6f7f9ea06bb0eade266304900b64318b"
+  },
+  "Source/Maverick/AI/Controller/MVAIController.h": {
+    "mtime": 1781953485.643612,
+    "ast_hash": "b2090e01c533f38e632962974e9e837d",
+    "semantic_hash": "b2090e01c533f38e632962974e9e837d"
+  },
+  "Source/Maverick/AI/Enum/MVAttackDirection.h": {
+    "mtime": 1781953485.643612,
+    "ast_hash": "7d9f88070bbf797e65b1345851897e9f",
+    "semantic_hash": "7d9f88070bbf797e65b1345851897e9f"
+  },
+  "Source/Maverick/AI/Enum/MVBossCombatArea.h": {
+    "mtime": 1781953485.6441214,
+    "ast_hash": "4ed2cb32a2495b4d270a10fea0a23d9b",
+    "semantic_hash": "4ed2cb32a2495b4d270a10fea0a23d9b"
+  },
+  "Source/Maverick/AI/Evaluator/MVTargetEvaluator.cpp": {
+    "mtime": 1781953485.6441214,
+    "ast_hash": "feb3fe8e04a7f126caa63b3f5a3f8c5b",
+    "semantic_hash": "feb3fe8e04a7f126caa63b3f5a3f8c5b"
+  },
+  "Source/Maverick/AI/Evaluator/MVTargetEvaluator.h": {
+    "mtime": 1781953485.6446264,
+    "ast_hash": "0cc37b2805abf8fcfffd60769c5c6843",
+    "semantic_hash": "0cc37b2805abf8fcfffd60769c5c6843"
+  },
+  "Source/Maverick/AI/MVAICombatTypes.h": {
+    "mtime": 1783127801.7619157,
+    "ast_hash": "299b48f45c8e069631750f39e45495fe",
+    "semantic_hash": "299b48f45c8e069631750f39e45495fe"
+  },
+  "Source/Maverick/AI/MVActionCooldownComponent.cpp": {
+    "mtime": 1782630951.5172918,
+    "ast_hash": "4b94bc074eb9965e89b61685e758d8a8",
+    "semantic_hash": "4b94bc074eb9965e89b61685e758d8a8"
+  },
+  "Source/Maverick/AI/MVActionCooldownComponent.h": {
+    "mtime": 1782630951.5177953,
+    "ast_hash": "ad5e26296293a02dd1db8b0c7ceb65ea",
+    "semantic_hash": "ad5e26296293a02dd1db8b0c7ceb65ea"
+  },
+  "Source/Maverick/AI/Task/MVAttackOpportunityTask.cpp": {
+    "mtime": 1783863468.7102504,
+    "ast_hash": "f6cabcce999d1c69a86fa12a2985664c",
+    "semantic_hash": "f6cabcce999d1c69a86fa12a2985664c"
+  },
+  "Source/Maverick/AI/Task/MVAttackOpportunityTask.h": {
+    "mtime": 1783863468.7107618,
+    "ast_hash": "3814663f1af6e4c1497a8445e0dc85e2",
+    "semantic_hash": "3814663f1af6e4c1497a8445e0dc85e2"
+  },
+  "Source/Maverick/AI/Task/MVAttackTask.cpp": {
+    "mtime": 1783127801.7626073,
+    "ast_hash": "7eec51343f3d213b8b2d27b0a6d9caef",
+    "semantic_hash": "7eec51343f3d213b8b2d27b0a6d9caef"
+  },
+  "Source/Maverick/AI/Task/MVAttackTask.h": {
+    "mtime": 1782630951.5198345,
+    "ast_hash": "dbcd12c295981cc1c5db86d88cae9588",
+    "semantic_hash": "dbcd12c295981cc1c5db86d88cae9588"
+  },
+  "Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.cpp": {
+    "mtime": 1783748256.816789,
+    "ast_hash": "04a98fb71d4039d3a8030dfd7b0bf6d2",
+    "semantic_hash": "04a98fb71d4039d3a8030dfd7b0bf6d2"
+  },
+  "Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.h": {
+    "mtime": 1783821962.081988,
+    "ast_hash": "db91159e413ce22d3bf1b47fbfa8657b",
+    "semantic_hash": "db91159e413ce22d3bf1b47fbfa8657b"
+  },
+  "Source/Maverick/AI/Task/MVEnemyCombatActionTask.cpp": {
+    "mtime": 1783608009.4353998,
+    "ast_hash": "98707ef023fdc4a5a4c1c01aa199f587",
+    "semantic_hash": "98707ef023fdc4a5a4c1c01aa199f587"
+  },
+  "Source/Maverick/AI/Task/MVEnemyCombatActionTask.h": {
+    "mtime": 1783608009.4353998,
+    "ast_hash": "246fbb0608238475ef8c884d159231b5",
+    "semantic_hash": "246fbb0608238475ef8c884d159231b5"
+  },
+  "Source/Maverick/AI/Task/MVEnemyDeadTask.cpp": {
+    "mtime": 1784885428.2937677,
+    "ast_hash": "41c11b8a07f3511fd26ab0a73b2b6b52",
+    "semantic_hash": "41c11b8a07f3511fd26ab0a73b2b6b52"
+  },
+  "Source/Maverick/AI/Task/MVEnemyDeadTask.h": {
+    "mtime": 1784885428.2942705,
+    "ast_hash": "d7af32adaee78097f10ef8df7c3dfa48",
+    "semantic_hash": "d7af32adaee78097f10ef8df7c3dfa48"
+  },
+  "Source/Maverick/AI/Task/MVEnemyDodgeActionTask.cpp": {
+    "mtime": 1783863468.7107618,
+    "ast_hash": "5e56d891433807674c722e0a5ab88347",
+    "semantic_hash": "5e56d891433807674c722e0a5ab88347"
+  },
+  "Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h": {
+    "mtime": 1783863468.7112875,
+    "ast_hash": "910b87acc5c21d55f4f5b149f96b6c9e",
+    "semantic_hash": "910b87acc5c21d55f4f5b149f96b6c9e"
+  },
+  "Source/Maverick/AI/Task/MVExecuteAttackTask.cpp": {
+    "mtime": 1783608009.4364688,
+    "ast_hash": "cac67a92cb0bd03e1fbd0db80706dd97",
+    "semantic_hash": "cac67a92cb0bd03e1fbd0db80706dd97"
+  },
+  "Source/Maverick/AI/Task/MVExecuteAttackTask.h": {
+    "mtime": 1783127801.7631142,
+    "ast_hash": "e3fdaba994338968ca21b8431da2f038",
+    "semantic_hash": "e3fdaba994338968ca21b8431da2f038"
+  },
+  "Source/Maverick/AI/Task/MVFocusingTask.cpp": {
+    "mtime": 1783608009.437013,
+    "ast_hash": "587f4649825629e3c1ee0003a77dabf7",
+    "semantic_hash": "587f4649825629e3c1ee0003a77dabf7"
+  },
+  "Source/Maverick/AI/Task/MVFocusingTask.h": {
+    "mtime": 1783608009.437013,
+    "ast_hash": "a9ba31815751a8814580e0d1353ee690",
+    "semantic_hash": "a9ba31815751a8814580e0d1353ee690"
+  },
+  "Source/Maverick/AI/Task/MVGlobalCoolTimeTask.cpp": {
+    "mtime": 1783127801.7641256,
+    "ast_hash": "f9c963601dc515b730d337a304fd0938",
+    "semantic_hash": "f9c963601dc515b730d337a304fd0938"
+  },
+  "Source/Maverick/AI/Task/MVGlobalCoolTimeTask.h": {
+    "mtime": 1783127801.7641256,
+    "ast_hash": "2705e6542a7760cb8b0374ee9aa4cd2d",
+    "semantic_hash": "2705e6542a7760cb8b0374ee9aa4cd2d"
+  },
+  "Source/Maverick/AI/Task/MVGlobalSensingTask.cpp": {
+    "mtime": 1784885428.2952757,
+    "ast_hash": "fca3a256ab00bbc80d5ee509efdb6129",
+    "semantic_hash": "fca3a256ab00bbc80d5ee509efdb6129"
+  },
+  "Source/Maverick/AI/Task/MVGlobalSensingTask.h": {
+    "mtime": 1783127801.765645,
+    "ast_hash": "5b74e24235c16e107c0e677eed9f651c",
+    "semantic_hash": "5b74e24235c16e107c0e677eed9f651c"
+  },
+  "Source/Maverick/AI/Task/MVHitReactionTask.cpp": {
+    "mtime": 1784885428.2957783,
+    "ast_hash": "1d1c072b46af75cc377ace08ef691d0f",
+    "semantic_hash": "1d1c072b46af75cc377ace08ef691d0f"
+  },
+  "Source/Maverick/AI/Task/MVHitReactionTask.h": {
+    "mtime": 1783127801.7661517,
+    "ast_hash": "5b91a22772b6f040d98dcd23a2d4496e",
+    "semantic_hash": "5b91a22772b6f040d98dcd23a2d4496e"
+  },
+  "Source/Maverick/AI/Task/MVStartActionCooldownTask.cpp": {
+    "mtime": 1783127801.766683,
+    "ast_hash": "42c42ce783e765af6db47bc9d7e3dc7c",
+    "semantic_hash": "42c42ce783e765af6db47bc9d7e3dc7c"
+  },
+  "Source/Maverick/AI/Task/MVStartActionCooldownTask.h": {
+    "mtime": 1783127801.7672074,
+    "ast_hash": "7e1794fb2d2bf304b4cb601c82f99d17",
+    "semantic_hash": "7e1794fb2d2bf304b4cb601c82f99d17"
+  },
+  "Source/Maverick/AI/Task/MVStrafeMoveTask.cpp": {
+    "mtime": 1783127801.7677367,
+    "ast_hash": "1d32915dcc85a80038dc21ef996986c7",
+    "semantic_hash": "1d32915dcc85a80038dc21ef996986c7"
+  },
+  "Source/Maverick/AI/Task/MVStrafeMoveTask.h": {
+    "mtime": 1783127801.7677367,
+    "ast_hash": "ccf40f221fadeea638e90ad12b7548fc",
+    "semantic_hash": "ccf40f221fadeea638e90ad12b7548fc"
+  },
+  "Source/Maverick/Animation/MVAnimInstanceBase.cpp": {
+    "mtime": 1783821962.0830045,
+    "ast_hash": "919fb6ac9800c5d47f0966cb2b43c724",
+    "semantic_hash": "919fb6ac9800c5d47f0966cb2b43c724"
+  },
+  "Source/Maverick/Animation/MVAnimInstanceBase.h": {
+    "mtime": 1783821962.0830045,
+    "ast_hash": "a087d9f6890ca46e1eb0dfc318d8f736",
+    "semantic_hash": "a087d9f6890ca46e1eb0dfc318d8f736"
+  },
+  "Source/Maverick/Animation/Notifies/MVAnimNotify_ApplyHealingPotion.cpp": {
+    "mtime": 1783608009.4381533,
+    "ast_hash": "f35ac24c57042bf88a2a9f4bcd111316",
+    "semantic_hash": "f35ac24c57042bf88a2a9f4bcd111316"
+  },
+  "Source/Maverick/Animation/Notifies/MVAnimNotify_ApplyHealingPotion.h": {
+    "mtime": 1783608009.4381533,
+    "ast_hash": "78e9572658139f2769a02708d9f5681e",
+    "semantic_hash": "78e9572658139f2769a02708d9f5681e"
+  },
+  "Source/Maverick/Animation/Notifies/MVAnimNotify_CooldownReadyActionCut.cpp": {
+    "mtime": 1783608009.4386573,
+    "ast_hash": "1060ad2a63f3d4e01daf0c79b599f4f5",
+    "semantic_hash": "1060ad2a63f3d4e01daf0c79b599f4f5"
+  },
+  "Source/Maverick/Animation/Notifies/MVAnimNotify_CooldownReadyActionCut.h": {
+    "mtime": 1783608009.4386573,
+    "ast_hash": "2710019f7f6515f4a3581592df706d8a",
+    "semantic_hash": "2710019f7f6515f4a3581592df706d8a"
+  },
+  "Source/Maverick/Animation/Notifies/MVAnimNotify_DeathDissolve.cpp": {
+    "mtime": 1783127801.7682621,
+    "ast_hash": "659b71872b4ae29cf51b4cd990c7b174",
+    "semantic_hash": "659b71872b4ae29cf51b4cd990c7b174"
+  },
+  "Source/Maverick/Animation/Notifies/MVAnimNotify_DeathDissolve.h": {
+    "mtime": 1783127801.7688098,
+    "ast_hash": "006112ddcb3ef03574900e5c20b5ebe1",
+    "semantic_hash": "006112ddcb3ef03574900e5c20b5ebe1"
+  },
+  "Source/Maverick/Animation/Notifies/MVAnimNotify_DeathOverlay.cpp": {
+    "mtime": 1783127801.7688098,
+    "ast_hash": "4ac9b12585c108d765139587d32f7c70",
+    "semantic_hash": "4ac9b12585c108d765139587d32f7c70"
+  },
+  "Source/Maverick/Animation/Notifies/MVAnimNotify_DeathOverlay.h": {
+    "mtime": 1783127801.769312,
+    "ast_hash": "dbcb0035104fcb7cea3f76f8fa16c182",
+    "semantic_hash": "dbcb0035104fcb7cea3f76f8fa16c182"
+  },
+  "Source/Maverick/Animation/Notifies/MVAnimNotify_HitReactionDeathHandoff.cpp": {
+    "mtime": 1783127801.769312,
+    "ast_hash": "10bd1e1f1a1c42e5b257bff6c8f57578",
+    "semantic_hash": "10bd1e1f1a1c42e5b257bff6c8f57578"
+  },
+  "Source/Maverick/Animation/Notifies/MVAnimNotify_HitReactionDeathHandoff.h": {
+    "mtime": 1783127801.7700357,
+    "ast_hash": "3b56b6fb5dfb55be9e913e1bc950f888",
+    "semantic_hash": "3b56b6fb5dfb55be9e913e1bc950f888"
+  },
+  "Source/Maverick/Animation/Notifies/MVAnimNotify_HitReactionDefaultRecovery.cpp": {
+    "mtime": 1783127801.7705476,
+    "ast_hash": "e48400cd68716c7590cad15dafa25a9a",
+    "semantic_hash": "e48400cd68716c7590cad15dafa25a9a"
+  },
+  "Source/Maverick/Animation/Notifies/MVAnimNotify_HitReactionDefaultRecovery.h": {
+    "mtime": 1783127801.7710793,
+    "ast_hash": "5324b888c98cf9649d43f8a1140de515",
+    "semantic_hash": "5324b888c98cf9649d43f8a1140de515"
+  },
+  "Source/Maverick/Animation/NotifyStates/MVAnimNotifyState_Ability.cpp": {
+    "mtime": 1784885428.2967799,
+    "ast_hash": "bfbed468c02b4852e6cb8026dcc05ca5",
+    "semantic_hash": "bfbed468c02b4852e6cb8026dcc05ca5"
+  },
+  "Source/Maverick/Animation/NotifyStates/MVAnimNotifyState_Ability.h": {
+    "mtime": 1784885428.2972832,
+    "ast_hash": "f5ef1ed7b3a44496a270201e527c95cf",
+    "semantic_hash": "f5ef1ed7b3a44496a270201e527c95cf"
+  },
+  "Source/Maverick/Animation/NotifyStates/MVAnimNotifyState_AirborneLandDetector.cpp": {
+    "mtime": 1783821962.0835073,
+    "ast_hash": "e16acf2730e5822b0efa39d8e075c752",
+    "semantic_hash": "e16acf2730e5822b0efa39d8e075c752"
+  },
+  "Source/Maverick/Animation/NotifyStates/MVAnimNotifyState_AirborneLandDetector.h": {
+    "mtime": 1783821962.0840082,
+    "ast_hash": "c35e8a4ce78c30b5e3a715883830ba50",
+    "semantic_hash": "c35e8a4ce78c30b5e3a715883830ba50"
+  },
+  "Source/Maverick/Animation/NotifyStates/MVAnimNotifyState_BlockMovementInput.cpp": {
+    "mtime": 1783127801.7720942,
+    "ast_hash": "6ca37b88c67a1c80f5e5e5f9e556b01e",
+    "semantic_hash": "6ca37b88c67a1c80f5e5e5f9e556b01e"
+  },
+  "Source/Maverick/Animation/NotifyStates/MVAnimNotifyState_BlockMovementInput.h": {
+    "mtime": 1781953485.650073,
+    "ast_hash": "def2339101385b781e4094d16a555e5d",
+    "semantic_hash": "def2339101385b781e4094d16a555e5d"
+  },
+  "Source/Maverick/Animation/NotifyStates/MVAnimNotifyState_Invincible.cpp": {
+    "mtime": 1781953485.6512332,
+    "ast_hash": "28fb640b23c3ef8be2a29659185c1a49",
+    "semantic_hash": "28fb640b23c3ef8be2a29659185c1a49"
+  },
+  "Source/Maverick/Animation/NotifyStates/MVAnimNotifyState_Invincible.h": {
+    "mtime": 1781953485.6517365,
+    "ast_hash": "18efd4afeed08552c1ff9984b1398f9a",
+    "semantic_hash": "18efd4afeed08552c1ff9984b1398f9a"
+  },
+  "Source/Maverick/Animation/NotifyStates/MVAnimNotifyState_PauseRecoverableStatRecovery.cpp": {
+    "mtime": 1783608009.4397018,
+    "ast_hash": "3a2403e30f29ce13f359811a9b496a85",
+    "semantic_hash": "3a2403e30f29ce13f359811a9b496a85"
+  },
+  "Source/Maverick/Animation/NotifyStates/MVAnimNotifyState_PauseRecoverableStatRecovery.h": {
+    "mtime": 1783608009.4402204,
+    "ast_hash": "4e6fd4ef9b11249275976b87e8d77069",
+    "semantic_hash": "4e6fd4ef9b11249275976b87e8d77069"
+  },
+  "Source/Maverick/Animation/NotifyStates/MVAnimNotifyState_RecoveryEscapeWindow.cpp": {
+    "mtime": 1783127801.7720942,
+    "ast_hash": "c4cb7b0a615bb458dd39f19e38f18db7",
+    "semantic_hash": "c4cb7b0a615bb458dd39f19e38f18db7"
+  },
+  "Source/Maverick/Animation/NotifyStates/MVAnimNotifyState_RecoveryEscapeWindow.h": {
+    "mtime": 1782630951.5268075,
+    "ast_hash": "38c029e827972be314fb70730311b2ea",
+    "semantic_hash": "38c029e827972be314fb70730311b2ea"
+  },
+  "Source/Maverick/Character/MVCharacterBase.cpp": {
+    "mtime": 1784885428.297786,
+    "ast_hash": "11d854c2f1a3ca0042c267aae1e4e398",
+    "semantic_hash": "11d854c2f1a3ca0042c267aae1e4e398"
+  },
+  "Source/Maverick/Character/MVCharacterBase.h": {
+    "mtime": 1784885428.2983809,
+    "ast_hash": "abf3dc039b16dfb44e03607e25fe73e1",
+    "semantic_hash": "abf3dc039b16dfb44e03607e25fe73e1"
+  },
+  "Source/Maverick/Character/NPC/Enemy/MVEnemy.cpp": {
+    "mtime": 1784885428.2994652,
+    "ast_hash": "38e72ce0ee45f4f6979138ead1a3e7d9",
+    "semantic_hash": "38e72ce0ee45f4f6979138ead1a3e7d9"
+  },
+  "Source/Maverick/Character/NPC/Enemy/MVEnemy.h": {
+    "mtime": 1784885428.2994652,
+    "ast_hash": "df1a4fc729ea608cd93b9df33d59243b",
+    "semantic_hash": "df1a4fc729ea608cd93b9df33d59243b"
+  },
+  "Source/Maverick/Character/NPC/Enemy/MVEnemyWeapon.cpp": {
+    "mtime": 1783127801.7742321,
+    "ast_hash": "a97dfc28c65f726c8b4cc25d02091013",
+    "semantic_hash": "a97dfc28c65f726c8b4cc25d02091013"
+  },
+  "Source/Maverick/Character/NPC/Enemy/MVEnemyWeapon.h": {
+    "mtime": 1783608009.441796,
+    "ast_hash": "cc41caff33f1328ca12b427effa2caea",
+    "semantic_hash": "cc41caff33f1328ca12b427effa2caea"
+  },
+  "Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp": {
+    "mtime": 1783608009.4422982,
+    "ast_hash": "17634e3749c28b6543ac9102b45a0062",
+    "semantic_hash": "17634e3749c28b6543ac9102b45a0062"
+  },
+  "Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.h": {
+    "mtime": 1783608009.442843,
+    "ast_hash": "7cbc01cff65055dbed4d98a742427300",
+    "semantic_hash": "7cbc01cff65055dbed4d98a742427300"
+  },
+  "Source/Maverick/Character/PC/Dodge/MVPlayerDodge.cpp": {
+    "mtime": 1783608009.442843,
+    "ast_hash": "d096be3b1b584b13dbc7065172bdba1f",
+    "semantic_hash": "d096be3b1b584b13dbc7065172bdba1f"
+  },
+  "Source/Maverick/Character/PC/Dodge/MVPlayerDodge.h": {
+    "mtime": 1783608009.4433906,
+    "ast_hash": "376d1adab0502d182bfcb814aba1b535",
+    "semantic_hash": "376d1adab0502d182bfcb814aba1b535"
+  },
+  "Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp": {
+    "mtime": 1783128457.3155985,
+    "ast_hash": "31ae96736cbba8631a18db0dcc4236a2",
+    "semantic_hash": "31ae96736cbba8631a18db0dcc4236a2"
+  },
+  "Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.h": {
+    "mtime": 1783128457.3163867,
+    "ast_hash": "db316e6558128589ac89a7392726d068",
+    "semantic_hash": "db316e6558128589ac89a7392726d068"
+  },
+  "Source/Maverick/Character/PC/MVPlayerCharacter.cpp": {
+    "mtime": 1784885428.3004684,
+    "ast_hash": "0e04adc0d23d31f0351a44ca714ef34a",
+    "semantic_hash": "0e04adc0d23d31f0351a44ca714ef34a"
+  },
+  "Source/Maverick/Character/PC/MVPlayerCharacter.h": {
+    "mtime": 1784885428.3009784,
+    "ast_hash": "0520aaad6cdb220945dce6ca79b00c95",
+    "semantic_hash": "0520aaad6cdb220945dce6ca79b00c95"
+  },
+  "Source/Maverick/Combat/MVAbilityBase.cpp": {
+    "mtime": 1784885428.301481,
+    "ast_hash": "9345973be941c9b6e6f34d5c177e7304",
+    "semantic_hash": "9345973be941c9b6e6f34d5c177e7304"
+  },
+  "Source/Maverick/Combat/MVAbilityBase.h": {
+    "mtime": 1784885428.3020582,
+    "ast_hash": "ea7a9f9419cf416fa0898db42cd73e56",
+    "semantic_hash": "ea7a9f9419cf416fa0898db42cd73e56"
+  },
+  "Source/Maverick/Combat/MVHitResolverSubsystem.cpp": {
+    "mtime": 1784885428.30256,
+    "ast_hash": "2c65a711b02c23d532878e1188be70a1",
+    "semantic_hash": "2c65a711b02c23d532878e1188be70a1"
+  },
+  "Source/Maverick/Combat/MVHitResolverSubsystem.h": {
+    "mtime": 1783821962.0863583,
+    "ast_hash": "097293636100f5f17e5eb582f3cb577e",
+    "semantic_hash": "097293636100f5f17e5eb582f3cb577e"
+  },
+  "Source/Maverick/Components/MVActionComponent.cpp": {
+    "mtime": 1783748256.8172932,
+    "ast_hash": "467601a62c7a377a2fffcd8e4e98aaa3",
+    "semantic_hash": "467601a62c7a377a2fffcd8e4e98aaa3"
+  },
+  "Source/Maverick/Components/MVActionComponent.h": {
+    "mtime": 1783748256.8182971,
+    "ast_hash": "c3a981ce76cdd204c659bc801b27e3cb",
+    "semantic_hash": "c3a981ce76cdd204c659bc801b27e3cb"
+  },
+  "Source/Maverick/Components/MVCombatComponent.cpp": {
+    "mtime": 1784885428.3035612,
+    "ast_hash": "5f9e71a4c252e413488d60aa3b44f766",
+    "semantic_hash": "5f9e71a4c252e413488d60aa3b44f766"
+  },
+  "Source/Maverick/Components/MVCombatComponent.h": {
+    "mtime": 1783865335.479167,
+    "ast_hash": "5ecb89836032861b9e47c4f701769f37",
+    "semantic_hash": "5ecb89836032861b9e47c4f701769f37"
+  },
+  "Source/Maverick/Components/MVDeathComponent.cpp": {
+    "mtime": 1783127801.7807188,
+    "ast_hash": "f310695b0dea45cda418533c31a4db2e",
+    "semantic_hash": "f310695b0dea45cda418533c31a4db2e"
+  },
+  "Source/Maverick/Components/MVDeathComponent.h": {
+    "mtime": 1783127801.7812214,
+    "ast_hash": "0dd6bc5b0d5724a6c28b807de1aed719",
+    "semantic_hash": "0dd6bc5b0d5724a6c28b807de1aed719"
+  },
+  "Source/Maverick/Components/MVEnemyDodgeTokenComponent.cpp": {
+    "mtime": 1784885428.3035612,
+    "ast_hash": "c77439280ad7a219051de159584c11f6",
+    "semantic_hash": "c77439280ad7a219051de159584c11f6"
+  },
+  "Source/Maverick/Components/MVEnemyDodgeTokenComponent.h": {
+    "mtime": 1784885428.3045635,
+    "ast_hash": "60a69bfdb5323d9e94e853a17910075d",
+    "semantic_hash": "60a69bfdb5323d9e94e853a17910075d"
+  },
+  "Source/Maverick/Components/MVFinisherComponent.cpp": {
+    "mtime": 1784885428.305069,
+    "ast_hash": "2600954221012406082a0221d649c775",
+    "semantic_hash": "2600954221012406082a0221d649c775"
+  },
+  "Source/Maverick/Components/MVFinisherComponent.h": {
+    "mtime": 1784885428.305069,
+    "ast_hash": "d65a02c746359f5077c59053a397dfbb",
+    "semantic_hash": "d65a02c746359f5077c59053a397dfbb"
+  },
+  "Source/Maverick/Components/MVHitReactionComponent.cpp": {
+    "mtime": 1784885428.306071,
+    "ast_hash": "5525fce7f21b98bda9a87e02ee67e62c",
+    "semantic_hash": "5525fce7f21b98bda9a87e02ee67e62c"
+  },
+  "Source/Maverick/Components/MVHitReactionComponent.h": {
+    "mtime": 1784885428.306071,
+    "ast_hash": "73e3d3be01b23fe3e343fe2998bfda3c",
+    "semantic_hash": "73e3d3be01b23fe3e343fe2998bfda3c"
+  },
+  "Source/Maverick/Components/MVInputManagerComponent.cpp": {
+    "mtime": 1783608009.4491923,
+    "ast_hash": "12cd59c5095d39bb2314f62dc0f6010b",
+    "semantic_hash": "12cd59c5095d39bb2314f62dc0f6010b"
+  },
+  "Source/Maverick/Components/MVInputManagerComponent.h": {
+    "mtime": 1783608009.4502213,
+    "ast_hash": "0f25b1413d1034446e04ced662b7f0fb",
+    "semantic_hash": "0f25b1413d1034446e04ced662b7f0fb"
+  },
+  "Source/Maverick/Components/MVInteractableComponent.cpp": {
+    "mtime": 1783128457.321684,
+    "ast_hash": "ca58aa319219348cca8c46bae722e4ff",
+    "semantic_hash": "ca58aa319219348cca8c46bae722e4ff"
+  },
+  "Source/Maverick/Components/MVInteractableComponent.h": {
+    "mtime": 1783128457.3226862,
+    "ast_hash": "cf108611062860acc1aad09ed0a0da57",
+    "semantic_hash": "cf108611062860acc1aad09ed0a0da57"
+  },
+  "Source/Maverick/Components/MVStatComponent.cpp": {
+    "mtime": 1784885428.3075857,
+    "ast_hash": "ef94ddedda1ca92cab317398848652d8",
+    "semantic_hash": "ef94ddedda1ca92cab317398848652d8"
+  },
+  "Source/Maverick/Components/MVStatComponent.h": {
+    "mtime": 1784885428.3075857,
+    "ast_hash": "d98f2071b50485ea373fefcc3850f218",
+    "semantic_hash": "d98f2071b50485ea373fefcc3850f218"
+  },
+  "Source/Maverick/Components/MVWeaponComponent.cpp": {
+    "mtime": 1783779836.964245,
+    "ast_hash": "ca63632cad4551876eb77b0304d6ff3a",
+    "semantic_hash": "ca63632cad4551876eb77b0304d6ff3a"
+  },
+  "Source/Maverick/Components/MVWeaponComponent.h": {
+    "mtime": 1783779836.9647534,
+    "ast_hash": "1204e1f2f3da634971f572dec325d31d",
+    "semantic_hash": "1204e1f2f3da634971f572dec325d31d"
+  },
+  "Source/Maverick/Effects/MVDeathDissolveEffect.cpp": {
+    "mtime": 1783127801.783862,
+    "ast_hash": "32d62772d243c81632b64683c5a00c40",
+    "semantic_hash": "32d62772d243c81632b64683c5a00c40"
+  },
+  "Source/Maverick/Effects/MVDeathDissolveEffect.h": {
+    "mtime": 1783127801.783862,
+    "ast_hash": "c8f2736b1b10034a653106ca4c711c62",
+    "semantic_hash": "c8f2736b1b10034a653106ca4c711c62"
+  },
+  "Source/Maverick/Interaction/MVInteractableInterface.cpp": {
+    "mtime": 1781953485.6547556,
+    "ast_hash": "671dc224574e9cbe8672321f09f1f129",
+    "semantic_hash": "671dc224574e9cbe8672321f09f1f129"
+  },
+  "Source/Maverick/Interaction/MVInteractableInterface.h": {
+    "mtime": 1781953485.65527,
+    "ast_hash": "1f0e3eb060914d6f9006cf3726bb8924",
+    "semantic_hash": "1f0e3eb060914d6f9006cf3726bb8924"
+  },
+  "Source/Maverick/Maverick.Build.cs": {
+    "mtime": 1783608009.4519374,
+    "ast_hash": "2a48729aaa98930e4e84cd6d613bc9bf",
+    "semantic_hash": "2a48729aaa98930e4e84cd6d613bc9bf"
+  },
+  "Source/Maverick/Maverick.cpp": {
+    "mtime": 1782630951.5359013,
+    "ast_hash": "6fb158237eddbbf7bbb995a704d5e633",
+    "semantic_hash": "6fb158237eddbbf7bbb995a704d5e633"
+  },
+  "Source/Maverick/Maverick.h": {
+    "mtime": 1781953485.6557727,
+    "ast_hash": "4c9df6307c5cd0f637e2e4bb15b39a6c",
+    "semantic_hash": "4c9df6307c5cd0f637e2e4bb15b39a6c"
+  },
+  "Source/Maverick/Private/AI/MVDodgeThreatEvaluatorLibrary.cpp": {
+    "mtime": 1783863468.71649,
+    "ast_hash": "f44b6df2b151199c3b2ad514621ae988",
+    "semantic_hash": "f44b6df2b151199c3b2ad514621ae988"
+  },
+  "Source/Maverick/Private/Interface/MVAbilityInterface.cpp": {
+    "mtime": 1784885428.3084373,
+    "ast_hash": "6c482e93b506899cb10885032825fcb5",
+    "semantic_hash": "6c482e93b506899cb10885032825fcb5"
+  },
+  "Source/Maverick/Private/Interface/MVFinisherTargetDataInterface.cpp": {
+    "mtime": 1783748256.8192997,
+    "ast_hash": "660321b2927315a09f9c6646a429a431",
+    "semantic_hash": "660321b2927315a09f9c6646a429a431"
+  },
+  "Source/Maverick/Private/Tables/MVSheetSpecs.cpp": {
+    "mtime": 1783127801.7850564,
+    "ast_hash": "27c86c5b543b643c9ecf6918801c1aee",
+    "semantic_hash": "27c86c5b543b643c9ecf6918801c1aee"
+  },
+  "Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp": {
+    "mtime": 1783608009.4524953,
+    "ast_hash": "72890fb563e714445a022b352fe3eacf",
+    "semantic_hash": "72890fb563e714445a022b352fe3eacf"
+  },
+  "Source/Maverick/Private/Tables/MVTableManager.cpp": {
+    "mtime": 1781953485.656775,
+    "ast_hash": "6d2322d73ec9b69052f66d3460d12011",
+    "semantic_hash": "6d2322d73ec9b69052f66d3460d12011"
+  },
+  "Source/Maverick/Private/Tags/MVGameplayTags.cpp": {
+    "mtime": 1783863468.71649,
+    "ast_hash": "5022767b85ded4c0ff2457ef4bcd71e0",
+    "semantic_hash": "5022767b85ded4c0ff2457ef4bcd71e0"
+  },
+  "Source/Maverick/Private/Util/MVEditorPathFixerLibrary.cpp": {
+    "mtime": 1781953485.6572824,
+    "ast_hash": "a6825be1a582e28f5c6c15a5b5071a60",
+    "semantic_hash": "a6825be1a582e28f5c6c15a5b5071a60"
+  },
+  "Source/Maverick/Public/AI/MVDodgeThreatEvaluatorLibrary.h": {
+    "mtime": 1783863468.717351,
+    "ast_hash": "b3fedb4987374a6c1e8c6659441f0beb",
+    "semantic_hash": "b3fedb4987374a6c1e8c6659441f0beb"
+  },
+  "Source/Maverick/Public/Enum/CharacterLocomotionEnums.h": {
+    "mtime": 1781953485.6577854,
+    "ast_hash": "b8f70e7a2d25fb81a46b4b03b3f0858b",
+    "semantic_hash": "b8f70e7a2d25fb81a46b4b03b3f0858b"
+  },
+  "Source/Maverick/Public/Enum/MVActionInputPhase.h": {
+    "mtime": 1783608009.453016,
+    "ast_hash": "b39f9f1bcffe2e9fbf654cf9d416d526",
+    "semantic_hash": "b39f9f1bcffe2e9fbf654cf9d416d526"
+  },
+  "Source/Maverick/Public/Enum/MVCombatActionTypes.h": {
+    "mtime": 1783608009.453016,
+    "ast_hash": "6a8725d95ce9a58a6c2841c7a3688f58",
+    "semantic_hash": "6a8725d95ce9a58a6c2841c7a3688f58"
+  },
+  "Source/Maverick/Public/Enum/MVEquipmentEnums.h": {
+    "mtime": 1783608009.4535234,
+    "ast_hash": "52b0dac94a55496d81cd8a049d4511b3",
+    "semantic_hash": "52b0dac94a55496d81cd8a049d4511b3"
+  },
+  "Source/Maverick/Public/Enum/MVItemEnums.h": {
+    "mtime": 1783608009.454056,
+    "ast_hash": "c46d490834db43e06a879750a44f03d2",
+    "semantic_hash": "c46d490834db43e06a879750a44f03d2"
+  },
+  "Source/Maverick/Public/Interface/MVAbilityInterface.h": {
+    "mtime": 1784885428.3089378,
+    "ast_hash": "b4694e29adda4b8704e79852937278ee",
+    "semantic_hash": "b4694e29adda4b8704e79852937278ee"
+  },
+  "Source/Maverick/Public/Interface/MVActionInputHandlerInterface.h": {
+    "mtime": 1783748256.8198082,
+    "ast_hash": "5356d6711dc59664eb2576dd5cc8bb71",
+    "semantic_hash": "5356d6711dc59664eb2576dd5cc8bb71"
+  },
+  "Source/Maverick/Public/Interface/MVFinisherTargetDataInterface.h": {
+    "mtime": 1783748256.8198082,
+    "ast_hash": "6a9691bbea135e1aa70aa25baaa0d365",
+    "semantic_hash": "6a9691bbea135e1aa70aa25baaa0d365"
+  },
+  "Source/Maverick/Public/Interface/MVHitReactionRecoveryDecisionProvider.h": {
+    "mtime": 1783608009.454771,
+    "ast_hash": "e35a9227edf2880bdbafc2f16f7622a0",
+    "semantic_hash": "e35a9227edf2880bdbafc2f16f7622a0"
+  },
+  "Source/Maverick/Public/Struct/CharacterLocomotionStructs.h": {
+    "mtime": 1781953485.6582882,
+    "ast_hash": "8769f6f7939981354b2bcfcc069d2d09",
+    "semantic_hash": "8769f6f7939981354b2bcfcc069d2d09"
+  },
+  "Source/Maverick/Public/Struct/MVAIDodgeTypes.h": {
+    "mtime": 1783863468.717853,
+    "ast_hash": "0d5aba4ca9b9f03db088bb450fd2bed6",
+    "semantic_hash": "0d5aba4ca9b9f03db088bb450fd2bed6"
+  },
+  "Source/Maverick/Public/Struct/MVCombatActionTableInput.h": {
+    "mtime": 1783608009.4552891,
+    "ast_hash": "1b4c6585a1090275fc992742b61b4a83",
+    "semantic_hash": "1b4c6585a1090275fc992742b61b4a83"
+  },
+  "Source/Maverick/Public/Struct/MVHealingPotionTypes.h": {
+    "mtime": 1783608009.4552891,
+    "ast_hash": "8acd48f34a58024705a6abe186e2ef6c",
+    "semantic_hash": "8acd48f34a58024705a6abe186e2ef6c"
+  },
+  "Source/Maverick/Public/Struct/MVHitTypes.h": {
+    "mtime": 1783821962.0887213,
+    "ast_hash": "6646c88757ed5c5bdd632cceb4a47d97",
+    "semantic_hash": "6646c88757ed5c5bdd632cceb4a47d97"
+  },
+  "Source/Maverick/Public/Struct/MVWeaponTypes.h": {
+    "mtime": 1783608009.4558282,
+    "ast_hash": "4d85cae2fe0f5405f1a9da6f8c4d56bc",
+    "semantic_hash": "4d85cae2fe0f5405f1a9da6f8c4d56bc"
+  },
+  "Source/Maverick/Public/Tables/MVActionRowTableTypes.h": {
+    "mtime": 1782630951.5384147,
+    "ast_hash": "667068136d37b85f65de2d1c0e10a0ec",
+    "semantic_hash": "667068136d37b85f65de2d1c0e10a0ec"
+  },
+  "Source/Maverick/Public/Tables/MVActionTableTypes.h": {
+    "mtime": 1783821962.0887213,
+    "ast_hash": "cfd4a76422140e6cd658017b4c32e30d",
+    "semantic_hash": "cfd4a76422140e6cd658017b4c32e30d"
+  },
+  "Source/Maverick/Public/Tables/MVCharacterTableTypes.h": {
+    "mtime": 1782630951.539417,
+    "ast_hash": "32ab403e91682696eec68cebe5f0473b",
+    "semantic_hash": "32ab403e91682696eec68cebe5f0473b"
+  },
+  "Source/Maverick/Public/Tables/MVDialogueTableTypes.h": {
+    "mtime": 1783128457.3260157,
+    "ast_hash": "87a6616e7e672bf3b34c848a8b2b21dc",
+    "semantic_hash": "87a6616e7e672bf3b34c848a8b2b21dc"
+  },
+  "Source/Maverick/Public/Tables/MVGameGuideTableTypes.h": {
+    "mtime": 1783127801.7890718,
+    "ast_hash": "b2d8d5b936e47e9a2a30371f9a0b6f70",
+    "semantic_hash": "b2d8d5b936e47e9a2a30371f9a0b6f70"
+  },
+  "Source/Maverick/Public/Tables/MVHealingPotionTableTypes.h": {
+    "mtime": 1783608009.4568727,
+    "ast_hash": "e4bd9bd92df8f50049f9ae684302b5e2",
+    "semantic_hash": "e4bd9bd92df8f50049f9ae684302b5e2"
+  },
+  "Source/Maverick/Public/Tables/MVHitReactionActionTableTypes.h": {
+    "mtime": 1783821962.089725,
+    "ast_hash": "ca4c23144a9a8d11a8570c830c2591e2",
+    "semantic_hash": "ca4c23144a9a8d11a8570c830c2591e2"
+  },
+  "Source/Maverick/Public/Tables/MVItemTableTypes.h": {
+    "mtime": 1783608009.4574022,
+    "ast_hash": "c68d1ee9d6c59e5e957e371f60e3f4ab",
+    "semantic_hash": "c68d1ee9d6c59e5e957e371f60e3f4ab"
+  },
+  "Source/Maverick/Public/Tables/MVMovementActionTableTypes.h": {
+    "mtime": 1782630951.5399292,
+    "ast_hash": "071fd85ff13e8395d482ff66e1b549bd",
+    "semantic_hash": "071fd85ff13e8395d482ff66e1b549bd"
+  },
+  "Source/Maverick/Public/Tables/MVSheetSpecs.h": {
+    "mtime": 1781953485.6587906,
+    "ast_hash": "ded40794f61f88f1317df2f4dc2d6438",
+    "semantic_hash": "ded40794f61f88f1317df2f4dc2d6438"
+  },
+  "Source/Maverick/Public/Tables/MVSkillDataTableColumn.h": {
+    "mtime": 1783865335.4796667,
+    "ast_hash": "88172a7bee4ba41ac78fb7a65b18a753",
+    "semantic_hash": "88172a7bee4ba41ac78fb7a65b18a753"
+  },
+  "Source/Maverick/Public/Tables/MVStatTableTypes.h": {
+    "mtime": 1784885428.3089378,
+    "ast_hash": "7a9c1c515d35daf44336f8e6a2856bb8",
+    "semantic_hash": "7a9c1c515d35daf44336f8e6a2856bb8"
+  },
+  "Source/Maverick/Public/Tables/MVTableAssetGenerator.h": {
+    "mtime": 1782630951.5404315,
+    "ast_hash": "d2cd86badef19b2d870c2aa08adf27b5",
+    "semantic_hash": "d2cd86badef19b2d870c2aa08adf27b5"
+  },
+  "Source/Maverick/Public/Tables/MVTableManager.h": {
+    "mtime": 1781953485.659795,
+    "ast_hash": "2b012df3af7fa777313733bf462ce8c8",
+    "semantic_hash": "2b012df3af7fa777313733bf462ce8c8"
+  },
+  "Source/Maverick/Public/Tables/MVTableTypes.h": {
+    "mtime": 1781953485.659795,
+    "ast_hash": "13335dcb4fdce65f7ff73bfa5da77111",
+    "semantic_hash": "13335dcb4fdce65f7ff73bfa5da77111"
+  },
+  "Source/Maverick/Public/Tables/MVUIMessageTableTypes.h": {
+    "mtime": 1781953485.6603293,
+    "ast_hash": "11e6974f93f3db680f190ce1c631fa82",
+    "semantic_hash": "11e6974f93f3db680f190ce1c631fa82"
+  },
+  "Source/Maverick/Public/Tables/MVWeaponTableTypes.h": {
+    "mtime": 1783608009.4580493,
+    "ast_hash": "bcdec56e305f102dbe3377a13435c16d",
+    "semantic_hash": "bcdec56e305f102dbe3377a13435c16d"
+  },
+  "Source/Maverick/Public/Tags/MVGameplayTags.h": {
+    "mtime": 1783863468.717853,
+    "ast_hash": "ce03d1a699dc4b5e4dc0bbd7a4db191c",
+    "semantic_hash": "ce03d1a699dc4b5e4dc0bbd7a4db191c"
+  },
+  "Source/Maverick/Public/Util/MVEditorPathFixerLibrary.h": {
+    "mtime": 1781953485.6603293,
+    "ast_hash": "566050f48fbef6b54f9e891164c2cc8d",
+    "semantic_hash": "566050f48fbef6b54f9e891164c2cc8d"
+  },
+  "Source/Maverick/System/MVDeathRespawnFlow.cpp": {
+    "mtime": 1783127801.790601,
+    "ast_hash": "43b56c4f9b9cebcbec55b1daeb5c85e5",
+    "semantic_hash": "43b56c4f9b9cebcbec55b1daeb5c85e5"
+  },
+  "Source/Maverick/System/MVDeathRespawnFlow.h": {
+    "mtime": 1783127801.790601,
+    "ast_hash": "54f702d0c0f34f7be5748e3a5f719dab",
+    "semantic_hash": "54f702d0c0f34f7be5748e3a5f719dab"
+  },
+  "Source/Maverick/System/MVFieldTransitionResettableInterface.h": {
+    "mtime": 1783127801.7911036,
+    "ast_hash": "71d87c7b383dbe522e0b141853038ae3",
+    "semantic_hash": "71d87c7b383dbe522e0b141853038ae3"
+  },
+  "Source/Maverick/System/MVFieldTransitionSettings.h": {
+    "mtime": 1783127801.7911036,
+    "ast_hash": "2f08375e5450092f625ac3a0225f816b",
+    "semantic_hash": "2f08375e5450092f625ac3a0225f816b"
+  },
+  "Source/Maverick/System/MVFieldTransitionSubsystem.cpp": {
+    "mtime": 1783608009.4590967,
+    "ast_hash": "0c254431abd8f30c4188d2dfa52326c3",
+    "semantic_hash": "0c254431abd8f30c4188d2dfa52326c3"
+  },
+  "Source/Maverick/System/MVFieldTransitionSubsystem.h": {
+    "mtime": 1783127801.7917962,
+    "ast_hash": "8fb81121a0f0275750e233aeaadb393d",
+    "semantic_hash": "8fb81121a0f0275750e233aeaadb393d"
+  },
+  "Source/Maverick/System/MVQuestSubsystem.cpp": {
+    "mtime": 1783127801.7917962,
+    "ast_hash": "97e3e3d8761e21b5862f31659fa3df0f",
+    "semantic_hash": "97e3e3d8761e21b5862f31659fa3df0f"
+  },
+  "Source/Maverick/System/MVQuestSubsystem.h": {
+    "mtime": 1783127801.792775,
+    "ast_hash": "f8c9be0e4f950b63983f08df2816b1fb",
+    "semantic_hash": "f8c9be0e4f950b63983f08df2816b1fb"
+  },
+  "Source/Maverick/System/MVWorldSaveGame.cpp": {
+    "mtime": 1783127801.792775,
+    "ast_hash": "7934395312b487e25c2ffef27abda886",
+    "semantic_hash": "7934395312b487e25c2ffef27abda886"
+  },
+  "Source/Maverick/System/MVWorldSaveGame.h": {
+    "mtime": 1783127801.7932773,
+    "ast_hash": "c9f061339c5c89e0f0da80a59415399c",
+    "semantic_hash": "c9f061339c5c89e0f0da80a59415399c"
+  },
+  "Source/Maverick/System/MVWorldStateSubsystem.cpp": {
+    "mtime": 1783128457.3280878,
+    "ast_hash": "5a85863359505217ca1b7b3452ab6be8",
+    "semantic_hash": "5a85863359505217ca1b7b3452ab6be8"
+  },
+  "Source/Maverick/System/MVWorldStateSubsystem.h": {
+    "mtime": 1783128457.3285882,
+    "ast_hash": "056c73f82ce6533e98443177946e6427",
+    "semantic_hash": "056c73f82ce6533e98443177946e6427"
+  },
+  "Source/Maverick/System/MVWorldStateTypes.h": {
+    "mtime": 1783128457.3290887,
+    "ast_hash": "0420021682af16b37977362d5c120790",
+    "semantic_hash": "0420021682af16b37977362d5c120790"
+  },
+  "Source/Maverick/UI/Base/MVActivatableWidgetBase.cpp": {
+    "mtime": 1781953485.6610203,
+    "ast_hash": "887b3a80d2b20171dfe7a1fb28f8ee81",
+    "semantic_hash": "887b3a80d2b20171dfe7a1fb28f8ee81"
+  },
+  "Source/Maverick/UI/Base/MVActivatableWidgetBase.h": {
+    "mtime": 1781953485.6615279,
+    "ast_hash": "9dfc6124871aa27411b6b705f196a5be",
+    "semantic_hash": "9dfc6124871aa27411b6b705f196a5be"
+  },
+  "Source/Maverick/UI/Base/MVCommonButtonBase.cpp": {
+    "mtime": 1781953485.6615279,
+    "ast_hash": "05f4914d71ede50cffd186b5c87e4ccd",
+    "semantic_hash": "05f4914d71ede50cffd186b5c87e4ccd"
+  },
+  "Source/Maverick/UI/Base/MVCommonButtonBase.h": {
+    "mtime": 1781953485.6620326,
+    "ast_hash": "633dcb9cffb4f591895e066e2f0592be",
+    "semantic_hash": "633dcb9cffb4f591895e066e2f0592be"
+  },
+  "Source/Maverick/UI/Base/MVHUDWidgetBase.cpp": {
+    "mtime": 1781953485.6620326,
+    "ast_hash": "3e88a6e6421e7014b862c13b38ce78fc",
+    "semantic_hash": "3e88a6e6421e7014b862c13b38ce78fc"
+  },
+  "Source/Maverick/UI/Base/MVHUDWidgetBase.h": {
+    "mtime": 1781953485.6620326,
+    "ast_hash": "cc28c4beca7c3c845a2acfc6ac1ed349",
+    "semantic_hash": "cc28c4beca7c3c845a2acfc6ac1ed349"
+  },
+  "Source/Maverick/UI/Base/MVPopupBase.cpp": {
+    "mtime": 1781953485.6625352,
+    "ast_hash": "07b9c0b9fe977911a3a582b078f6084a",
+    "semantic_hash": "07b9c0b9fe977911a3a582b078f6084a"
+  },
+  "Source/Maverick/UI/Base/MVPopupBase.h": {
+    "mtime": 1781953485.6625352,
+    "ast_hash": "ed1633291cf0eef1a76dcb668c4dc897",
+    "semantic_hash": "ed1633291cf0eef1a76dcb668c4dc897"
+  },
+  "Source/Maverick/UI/Base/MVUIFadeController.cpp": {
+    "mtime": 1781953485.6625352,
+    "ast_hash": "8c8e3f59d36a120ba4df0ab9b83143ff",
+    "semantic_hash": "8c8e3f59d36a120ba4df0ab9b83143ff"
+  },
+  "Source/Maverick/UI/Base/MVUIFadeController.h": {
+    "mtime": 1781953485.6625352,
+    "ast_hash": "ed8887e1bc315d46b5061ad66047dd5a",
+    "semantic_hash": "ed8887e1bc315d46b5061ad66047dd5a"
+  },
+  "Source/Maverick/UI/Base/MVWidgetBase.cpp": {
+    "mtime": 1781953485.663349,
+    "ast_hash": "6c2844fd6d901e5ef3bc11326acbc534",
+    "semantic_hash": "6c2844fd6d901e5ef3bc11326acbc534"
+  },
+  "Source/Maverick/UI/Base/MVWidgetBase.h": {
+    "mtime": 1781953485.663349,
+    "ast_hash": "ffaa87244a7590503d7a2fc33e874e4f",
+    "semantic_hash": "ffaa87244a7590503d7a2fc33e874e4f"
+  },
+  "Source/Maverick/UI/Base/MVWindowBase.cpp": {
+    "mtime": 1783128457.3295903,
+    "ast_hash": "41f796d509d7fd17fcc45c78672f9f8e",
+    "semantic_hash": "41f796d509d7fd17fcc45c78672f9f8e"
+  },
+  "Source/Maverick/UI/Base/MVWindowBase.h": {
+    "mtime": 1783128457.330093,
+    "ast_hash": "30f2b0798339677562dfd09876668609",
+    "semantic_hash": "30f2b0798339677562dfd09876668609"
+  },
+  "Source/Maverick/UI/Debug/MVPIEActionTestWidget.cpp": {
+    "mtime": 1784885428.3104486,
+    "ast_hash": "97bdcbe5af8f421df89e506437417a37",
+    "semantic_hash": "97bdcbe5af8f421df89e506437417a37"
+  },
+  "Source/Maverick/UI/Debug/MVPIEActionTestWidget.h": {
+    "mtime": 1784885428.3109708,
+    "ast_hash": "75008d3f038b1370e0528a0945fdb687",
+    "semantic_hash": "75008d3f038b1370e0528a0945fdb687"
+  },
+  "Source/Maverick/UI/HUD/MVBossHPBarWidget.cpp": {
+    "mtime": 1784885428.311471,
+    "ast_hash": "57b10b5cc5f40ff3daa2eb4755306c7a",
+    "semantic_hash": "57b10b5cc5f40ff3daa2eb4755306c7a"
+  },
+  "Source/Maverick/UI/HUD/MVBossHPBarWidget.h": {
+    "mtime": 1784885428.3119712,
+    "ast_hash": "b58682bfdcc94bc140ffecddba9dcfb9",
+    "semantic_hash": "b58682bfdcc94bc140ffecddba9dcfb9"
+  },
+  "Source/Maverick/UI/HUD/MVCooldownOverlayWidget.cpp": {
+    "mtime": 1783863639.9049413,
+    "ast_hash": "4a3d705bc5373bde4140eff151b72132",
+    "semantic_hash": "4a3d705bc5373bde4140eff151b72132"
+  },
+  "Source/Maverick/UI/HUD/MVCooldownOverlayWidget.h": {
+    "mtime": 1783863639.9049413,
+    "ast_hash": "a4db9bb67c87623b70d982b9da1ccb7c",
+    "semantic_hash": "a4db9bb67c87623b70d982b9da1ccb7c"
+  },
+  "Source/Maverick/UI/HUD/MVCurrencyStatusWidget.cpp": {
+    "mtime": 1781953485.6648612,
+    "ast_hash": "7b989f6bedc818539f58cead2638ef71",
+    "semantic_hash": "7b989f6bedc818539f58cead2638ef71"
+  },
+  "Source/Maverick/UI/HUD/MVCurrencyStatusWidget.h": {
+    "mtime": 1781953485.6648612,
+    "ast_hash": "1a6ef9d2465fbb907677e2e6ec948c5e",
+    "semantic_hash": "1a6ef9d2465fbb907677e2e6ec948c5e"
+  },
+  "Source/Maverick/UI/HUD/MVMainHUDWidget.cpp": {
+    "mtime": 1784885428.3124712,
+    "ast_hash": "3d2b3af50a208d26d3a45d6ec7b2328d",
+    "semantic_hash": "3d2b3af50a208d26d3a45d6ec7b2328d"
+  },
+  "Source/Maverick/UI/HUD/MVMainHUDWidget.h": {
+    "mtime": 1783863639.90599,
+    "ast_hash": "11e5742d90cb75efc902f6d793a9b44d",
+    "semantic_hash": "11e5742d90cb75efc902f6d793a9b44d"
+  },
+  "Source/Maverick/UI/HUD/MVPlayerSkillHUDWidget.cpp": {
+    "mtime": 1783863639.9066784,
+    "ast_hash": "d6f26b8db60bb70697416e37d55db286",
+    "semantic_hash": "d6f26b8db60bb70697416e37d55db286"
+  },
+  "Source/Maverick/UI/HUD/MVPlayerSkillHUDWidget.h": {
+    "mtime": 1783863639.9072163,
+    "ast_hash": "98847f7f7186f9718911f4ea011286e2",
+    "semantic_hash": "98847f7f7186f9718911f4ea011286e2"
+  },
+  "Source/Maverick/UI/HUD/MVPlayerStatusWidget.cpp": {
+    "mtime": 1782630951.5424387,
+    "ast_hash": "84778c2239b24ea9d90515e56ca5a185",
+    "semantic_hash": "84778c2239b24ea9d90515e56ca5a185"
+  },
+  "Source/Maverick/UI/HUD/MVPlayerStatusWidget.h": {
+    "mtime": 1782630951.5429416,
+    "ast_hash": "28a6f82c8e667d8b8d51bacb8a712a98",
+    "semantic_hash": "28a6f82c8e667d8b8d51bacb8a712a98"
+  },
+  "Source/Maverick/UI/HUD/MVQuickSlotWidget.cpp": {
+    "mtime": 1783608009.46065,
+    "ast_hash": "5d5bfaea2da408a34be5d09a1013633d",
+    "semantic_hash": "5d5bfaea2da408a34be5d09a1013633d"
+  },
+  "Source/Maverick/UI/HUD/MVQuickSlotWidget.h": {
+    "mtime": 1783608009.461158,
+    "ast_hash": "431cb0675debb92754ba7fbfcffcde4c",
+    "semantic_hash": "431cb0675debb92754ba7fbfcffcde4c"
+  },
+  "Source/Maverick/UI/HUD/MVSkillSlotWidget.cpp": {
+    "mtime": 1783863639.9072163,
+    "ast_hash": "82469ad93582b290d755f14b6772bcb6",
+    "semantic_hash": "82469ad93582b290d755f14b6772bcb6"
+  },
+  "Source/Maverick/UI/HUD/MVSkillSlotWidget.h": {
+    "mtime": 1783863639.9077215,
+    "ast_hash": "f9ca4d38a196f79144467e38ec5ee5a8",
+    "semantic_hash": "f9ca4d38a196f79144467e38ec5ee5a8"
+  },
+  "Source/Maverick/UI/HUD/MVStatusBarWidget.cpp": {
+    "mtime": 1783863639.9077215,
+    "ast_hash": "e3b3b37e9666d3b5ad04f62dc9a528ed",
+    "semantic_hash": "e3b3b37e9666d3b5ad04f62dc9a528ed"
+  },
+  "Source/Maverick/UI/HUD/MVStatusBarWidget.h": {
+    "mtime": 1783863639.9087238,
+    "ast_hash": "c522a2deec34ea2b9c807c042479fd3c",
+    "semantic_hash": "c522a2deec34ea2b9c807c042479fd3c"
+  },
+  "Source/Maverick/UI/Popup/MVBossClearPopup.cpp": {
+    "mtime": 1781953485.6668725,
+    "ast_hash": "ffab25e61efe617905b7bb468b71a72d",
+    "semantic_hash": "ffab25e61efe617905b7bb468b71a72d"
+  },
+  "Source/Maverick/UI/Popup/MVBossClearPopup.h": {
+    "mtime": 1781953485.6668725,
+    "ast_hash": "caf9b76ac10bd65d251d20e0f1c566e3",
+    "semantic_hash": "caf9b76ac10bd65d251d20e0f1c566e3"
+  },
+  "Source/Maverick/UI/Popup/MVInteractionPromptPopup.cpp": {
+    "mtime": 1781953485.667382,
+    "ast_hash": "af0de27dcde4653a30210863a03b944d",
+    "semantic_hash": "af0de27dcde4653a30210863a03b944d"
+  },
+  "Source/Maverick/UI/Popup/MVInteractionPromptPopup.h": {
+    "mtime": 1781953485.667382,
+    "ast_hash": "f9d17a350e71ce91bb8f6da93781120f",
+    "semantic_hash": "f9d17a350e71ce91bb8f6da93781120f"
+  },
+  "Source/Maverick/UI/Popup/MVMessagePopup.cpp": {
+    "mtime": 1781953485.667382,
+    "ast_hash": "75b4356074e90e8f77fdd44b68ce3f24",
+    "semantic_hash": "75b4356074e90e8f77fdd44b68ce3f24"
+  },
+  "Source/Maverick/UI/Popup/MVMessagePopup.h": {
+    "mtime": 1781953485.667382,
+    "ast_hash": "9931533cc3c46c4a03e2dfae47c7fa0e",
+    "semantic_hash": "9931533cc3c46c4a03e2dfae47c7fa0e"
+  },
+  "Source/Maverick/UI/System/MVCommonUIInputData.cpp": {
+    "mtime": 1781953485.667382,
+    "ast_hash": "a9880d866457e79440f2419fdab8cf4a",
+    "semantic_hash": "a9880d866457e79440f2419fdab8cf4a"
+  },
+  "Source/Maverick/UI/System/MVCommonUIInputData.h": {
+    "mtime": 1781953485.668374,
+    "ast_hash": "cf7f0fb8bc9fcf752039a37a18bd3bef",
+    "semantic_hash": "cf7f0fb8bc9fcf752039a37a18bd3bef"
+  },
+  "Source/Maverick/UI/System/MVUIDataTypes.h": {
+    "mtime": 1783128457.3336227,
+    "ast_hash": "8d4bbf05b351d89452a0d4bc24f2e148",
+    "semantic_hash": "8d4bbf05b351d89452a0d4bc24f2e148"
+  },
+  "Source/Maverick/UI/System/MVUILayerBase.cpp": {
+    "mtime": 1783127801.796951,
+    "ast_hash": "530b2c5b3cb0fc7c8093edbaedaa63ba",
+    "semantic_hash": "530b2c5b3cb0fc7c8093edbaedaa63ba"
+  },
+  "Source/Maverick/UI/System/MVUILayerBase.h": {
+    "mtime": 1783127801.7974534,
+    "ast_hash": "386cbf909ba72af0e2b51a96da77789d",
+    "semantic_hash": "386cbf909ba72af0e2b51a96da77789d"
+  },
+  "Source/Maverick/UI/System/MVUINavigationLibrary.cpp": {
+    "mtime": 1781953485.6688764,
+    "ast_hash": "17f6aa328fe16716b12cfaca100a2340",
+    "semantic_hash": "17f6aa328fe16716b12cfaca100a2340"
+  },
+  "Source/Maverick/UI/System/MVUINavigationLibrary.h": {
+    "mtime": 1781953485.6695602,
+    "ast_hash": "8eedf4eecce7123edbb7d93766292f13",
+    "semantic_hash": "8eedf4eecce7123edbb7d93766292f13"
+  },
+  "Source/Maverick/UI/System/MVUISettings.cpp": {
+    "mtime": 1783128457.3341236,
+    "ast_hash": "925a7d41abf7c757d8ab9af9fec0490e",
+    "semantic_hash": "925a7d41abf7c757d8ab9af9fec0490e"
+  },
+  "Source/Maverick/UI/System/MVUISettings.h": {
+    "mtime": 1783128457.3341236,
+    "ast_hash": "0e477f9485daa342d0e5ef095ff173ca",
+    "semantic_hash": "0e477f9485daa342d0e5ef095ff173ca"
+  },
+  "Source/Maverick/UI/System/MVUISubsystem.cpp": {
+    "mtime": 1783128457.3351624,
+    "ast_hash": "00182b704c1eb9a97597fb19dde405d3",
+    "semantic_hash": "00182b704c1eb9a97597fb19dde405d3"
+  },
+  "Source/Maverick/UI/System/MVUISubsystem.h": {
+    "mtime": 1783128457.3351624,
+    "ast_hash": "cb99925927bce3c12a1d881f42c7b331",
+    "semantic_hash": "cb99925927bce3c12a1d881f42c7b331"
+  },
+  "Source/Maverick/UI/Window/MVDeathOverlayWindow.cpp": {
+    "mtime": 1783127801.7994697,
+    "ast_hash": "2c7c034aa31692a8228aa82bd8910af4",
+    "semantic_hash": "2c7c034aa31692a8228aa82bd8910af4"
+  },
+  "Source/Maverick/UI/Window/MVDeathOverlayWindow.h": {
+    "mtime": 1783127801.7994697,
+    "ast_hash": "8ede877b35bce1282d0d17086a8f3cae",
+    "semantic_hash": "8ede877b35bce1282d0d17086a8f3cae"
+  },
+  "Source/Maverick/UI/Window/MVDialogueWindow.cpp": {
+    "mtime": 1783128457.3356636,
+    "ast_hash": "8a788d30d7c65147da6c53f979eb5310",
+    "semantic_hash": "8a788d30d7c65147da6c53f979eb5310"
+  },
+  "Source/Maverick/UI/Window/MVDialogueWindow.h": {
+    "mtime": 1783128457.3356636,
+    "ast_hash": "e331b43a42d76cdcb24c45b7ba55eefe",
+    "semantic_hash": "e331b43a42d76cdcb24c45b7ba55eefe"
+  },
+  "Source/Maverick/UI/Window/MVEscapeWindow.cpp": {
+    "mtime": 1781953485.6715858,
+    "ast_hash": "2169f403c0e650fdae171428839b3929",
+    "semantic_hash": "2169f403c0e650fdae171428839b3929"
+  },
+  "Source/Maverick/UI/Window/MVEscapeWindow.h": {
+    "mtime": 1781953485.6715858,
+    "ast_hash": "82a006f76d911346ed2af591632623dc",
+    "semantic_hash": "82a006f76d911346ed2af591632623dc"
+  },
+  "Source/Maverick/UI/Window/MVLoadingWindow.cpp": {
+    "mtime": 1783127801.7999723,
+    "ast_hash": "8908148db33a7b65455ad21234b2b63c",
+    "semantic_hash": "8908148db33a7b65455ad21234b2b63c"
+  },
+  "Source/Maverick/UI/Window/MVLoadingWindow.h": {
+    "mtime": 1783127801.800475,
+    "ast_hash": "82212ba0491f5fc05955ba847bb19342",
+    "semantic_hash": "82212ba0491f5fc05955ba847bb19342"
+  },
+  "Source/Maverick/UI/Window/MVSkillNodeButton.cpp": {
+    "mtime": 1781953485.6720889,
+    "ast_hash": "663028527cc9fcef9185aeddd506e160",
+    "semantic_hash": "663028527cc9fcef9185aeddd506e160"
+  },
+  "Source/Maverick/UI/Window/MVSkillNodeButton.h": {
+    "mtime": 1781953485.6725936,
+    "ast_hash": "ca88e7658b948b293fb8259d25012834",
+    "semantic_hash": "ca88e7658b948b293fb8259d25012834"
+  },
+  "Source/Maverick/UI/Window/MVSkillTreeWindow.cpp": {
+    "mtime": 1781953485.6725936,
+    "ast_hash": "219947d4c0e97588c8c82dfe16459121",
+    "semantic_hash": "219947d4c0e97588c8c82dfe16459121"
+  },
+  "Source/Maverick/UI/Window/MVSkillTreeWindow.h": {
+    "mtime": 1781953485.6731105,
+    "ast_hash": "a1c862e1a1198572ca81ac866c782a9c",
+    "semantic_hash": "a1c862e1a1198572ca81ac866c782a9c"
+  },
+  "Source/Maverick/UI/Window/MVTitleWindow.cpp": {
+    "mtime": 1781953485.6731105,
+    "ast_hash": "40b5979335e94627a9b4dd4adf78ccfa",
+    "semantic_hash": "40b5979335e94627a9b4dd4adf78ccfa"
+  },
+  "Source/Maverick/UI/Window/MVTitleWindow.h": {
+    "mtime": 1781953485.6731105,
+    "ast_hash": "c6983c37e2fff9a9585bcae3050fa8e1",
+    "semantic_hash": "c6983c37e2fff9a9585bcae3050fa8e1"
+  },
+  "Source/Maverick/UI/World/MVMonsterHPBarWidget.cpp": {
+    "mtime": 1781953485.6737494,
+    "ast_hash": "33b4feff6e7b531a0d46213c82a105e1",
+    "semantic_hash": "33b4feff6e7b531a0d46213c82a105e1"
+  },
+  "Source/Maverick/UI/World/MVMonsterHPBarWidget.h": {
+    "mtime": 1781953485.6737494,
+    "ast_hash": "0eafa7b92908b956a57dd7c3864394bc",
+    "semantic_hash": "0eafa7b92908b956a57dd7c3864394bc"
+  },
+  "Source/Maverick/UI/World/MVTargetWidget.cpp": {
+    "mtime": 1781953485.674254,
+    "ast_hash": "24e416ebed08216db8db9d685e14ef07",
+    "semantic_hash": "24e416ebed08216db8db9d685e14ef07"
+  },
+  "Source/Maverick/UI/World/MVTargetWidget.h": {
+    "mtime": 1781953485.6747692,
+    "ast_hash": "871dd7dbda4790faa5b161423c3a7841",
+    "semantic_hash": "871dd7dbda4790faa5b161423c3a7841"
+  },
+  "Source/Maverick/UI/World/MVWorldWidgetBase.cpp": {
+    "mtime": 1781953485.6747692,
+    "ast_hash": "b7cfd88e7cdeb2f19789c5b939f0e89c",
+    "semantic_hash": "b7cfd88e7cdeb2f19789c5b939f0e89c"
+  },
+  "Source/Maverick/UI/World/MVWorldWidgetBase.h": {
+    "mtime": 1781953485.6747692,
+    "ast_hash": "a1c26d1a7df6b143b0eeb0a2d39e0148",
+    "semantic_hash": "a1c26d1a7df6b143b0eeb0a2d39e0148"
+  },
+  ".github/pull_request_template.md": {
+    "mtime": 1781953484.7140765,
+    "ast_hash": "9f85c1b47ef0d8841de8c5817595a92b",
+    "semantic_hash": "9f85c1b47ef0d8841de8c5817595a92b"
+  },
+  "AGENTS.md": {
+    "mtime": 1786156879.3772306,
+    "ast_hash": "d522f3661c5c85fc042e641a098ef78a",
+    "semantic_hash": "d522f3661c5c85fc042e641a098ef78a"
+  },
+  "MaverickDesign/AICombatStateTree.md": {
+    "mtime": 1782630951.5126288,
+    "ast_hash": "ee41d132ee399ea25223f0ceab72ebe6",
+    "semantic_hash": "ee41d132ee399ea25223f0ceab72ebe6"
+  },
+  "MaverickDesign/CsvToJsonConverter/BUILD.md": {
+    "mtime": 1781953485.639581,
+    "ast_hash": "9c004df322d3f4d9be79844898fa3048",
+    "semantic_hash": "9c004df322d3f4d9be79844898fa3048"
+  },
+  "MaverickDesign/DeathRespawnFlow.md": {
+    "mtime": 1783127801.7363455,
+    "ast_hash": "33a40fc6f41b73a97c11ca94d911a0ef",
+    "semantic_hash": "33a40fc6f41b73a97c11ca94d911a0ef"
+  },
+  "MaverickDesign/MDAFrameworkAnalysis.md": {
+    "mtime": 1785755240.1577396,
+    "ast_hash": "2821a0d9a82b4c2914afdf800c61a861",
+    "semantic_hash": "2821a0d9a82b4c2914afdf800c61a861"
+  },
+  "MaverickDesign/README.md": {
+    "mtime": 1782630951.5151443,
+    "ast_hash": "ab1a9635c953d0294ea0dae41502519c",
+    "semantic_hash": "ab1a9635c953d0294ea0dae41502519c"
+  },
+  "MaverickDesign/Schema/README.md": {
+    "mtime": 1781953485.6416008,
+    "ast_hash": "9e9c14d107a2ed1a7ea831cb7161dc4d",
+    "semantic_hash": "9e9c14d107a2ed1a7ea831cb7161dc4d"
+  },
+  "POLICY.md": {
+    "mtime": 1786156879.3777316,
+    "ast_hash": "2eb7f74b69e35f266ad85ad8ddf0c3bb",
+    "semantic_hash": "2eb7f74b69e35f266ad85ad8ddf0c3bb"
+  },
+  "docs/wiki/Documentation-Workflow.md": {
+    "mtime": 1786156879.379935,
+    "ast_hash": "328c9d4644a281a1e9668e0707a4eca4",
+    "semantic_hash": "328c9d4644a281a1e9668e0707a4eca4"
+  }
+}

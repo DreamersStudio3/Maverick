@@ -18,7 +18,7 @@
 ## 작업 단위
 
 - [x] Graphify 운영 정책과 TODO 역할 정리
-- [ ] 전체 코퍼스 초기 그래프, wiki, Obsidian vault 생성
+- [x] 전체 코퍼스 초기 그래프, wiki, Obsidian vault 생성
 - [ ] `Architecture.md`와 헤더 문서화 기준 작성
 - [ ] 커밋 갱신 및 pre-push 최신성 검증 구현·설치
 - [ ] 최종 Graphify wrap-up, 검증, 작업 보고서 작성
@@ -36,3 +36,8 @@
 
 - 프로젝트 자체 헤더 138개 중 현재 `/** ... */` 블록이 있는 파일은 71개, 없는 파일은 67개다. 존재 여부만 센 값이며 품질 평가는 Architecture 단계에서 수행한다.
 - `graphify` 실행 파일은 현재 PATH에 없지만 Python 3.14의 `graphifyy 0.9.36` 패키지는 설치되어 있어 `python -m graphify`로 실행할 수 있다.
+- 초기 코퍼스는 303개 파일, 약 114,275단어이며 민감 파일 제외 오류 없이 감지됐다.
+- 그래프는 3,814개 노드, 5,558개 관계, 268개 커뮤니티로 생성됐다.
+- 생성 위키는 index 포함 279개 Markdown, Obsidian vault는 4,082개 Markdown과 graph canvas로 생성됐다.
+- Graphify 진단은 1,362개 dangling-endpoint 관계와 147개 undirected same-endpoint collapse를 보고했다. 그래프는 생성됐지만 이 무결성 경고를 최종 보고서에 공개한다.
+- 협업 에이전트의 실제 토큰 usage가 결과 API에 제공되지 않아 Graphify cost tracker에는 0으로 기록됐다. 이는 의미 추출 비용이 실제로 0이었다는 뜻이 아니다.

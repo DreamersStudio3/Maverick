@@ -14,9 +14,13 @@ Intermediate/
 Saved/
 PluginsBinaries/
 PluginsIntermediate/
+Plugins/LockOnTarget/Resources/
 *.sln
 *.uasset
 *.umap
+
+# Existing user-owned, untracked research artifact outside this rollout.
+MaverickDesign/PvPvEMarketPresentation.html
 
 # Task-local operational memory is intentionally not part of the knowledge graph.
 TODO/

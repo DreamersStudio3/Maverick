@@ -1,0 +1,21 @@
+---
+source_file: "Source/Maverick/Public/Tables/MVHitReactionActionTableTypes.h"
+type: "code"
+community: "피격 반응 Row 조회"
+location: "L15"
+tags:
+  - graphify/code
+  - graphify/EXTRACTED
+  - community/__Row_
+---
+
+# FMVHitReactionActionRow()
+
+## Connections
+- [[FMVHitReactionActionData]] - `references` [EXTRACTED]
+- [[MAVERICK_API_12]] - `references` [EXTRACTED]
+- [[MVHitReactionActionTableTypes.h]] - `contains` [EXTRACTED]
+- [[MVHitReactionCopyBaseActionRow()]] - `references` [EXTRACTED]
+- [[UMVHitReactionComponentFindHitReactionActionRow()]] - `references` [EXTRACTED]
+
+#graphify/code #graphify/EXTRACTED #community/__Row_

@@ -1,0 +1,1093 @@
+# Graph Report - .  (2026-08-08)
+
+## Corpus Check
+- 303 files · ~114,275 words
+- Verdict: corpus is large enough that graph structure adds value.
+
+## Summary
+- 3814 nodes · 5558 edges · 268 communities (235 shown, 33 thin omitted)
+- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 103 edges (avg confidence: 0.8)
+- Token cost: 0 input · 0 output
+
+## Community Hubs (Navigation)
+- 플레이어 회피 방향 해석
+- DataTable 에셋 생성
+- 전투 액션 매핑
+- 캐릭터 스탯 관리
+- AI 후퇴 Launch 몽타주
+- 락온 컨트롤러 회전 확장
+- AI 스트레이프 이동
+- 무기 장착 시각화
+- 락온 대상 컴포넌트
+- AI 전역 쿨다운
+- AI 적 전투 액션
+- AI 전역 감지 설정
+- AI 적 사망 처리
+- 락온 디버거
+- 가중 대상 탐색 알고리즘
+- HUD 스탯 회복 연동
+- 락온 대상 포커스 설정
+- AI 피격 반응 태스크
+- 전투 액션 런타임 상태
+- AI 공격 실행 데이터
+- 필드 전환 관리
+- PIE 피격 판정 테스트
+- UI 기반 전환 유틸리티
+- 가중 대상 탐색 컨텍스트
+- 런타임 테이블 조회
+- 액션 Row 몽타주 해석
+- 적 회피 토큰 상태
+- UI 서브시스템 팝업 관리
+- AI 적 회피 설정
+- AI 공격 실행 로직
+- AI 전투 진입 조건
+- 스킬 쿨다운 오버레이
+- AI와 사망 설계 문서
+- 플레이어 회복약 액션
+- 플레이어 캐릭터 전력질주
+- 사망 부활 오케스트레이션
+- MDA 목표 전투 구조
+- AI 타겟 포커싱
+- 적 캐릭터 전투 실행
+- 로딩 화면 입력 처리
+- AI 피격 진입 조건
+- AI 공격 기회 판단
+- 피격 반응 상태 관리
+- 락온 대상 예외 처리
+- 스킬 데이터와 비용
+- AI 전투 컨텍스트
+- AI 기본 공격 태스크
+- 스킬 체인 런타임
+- 입력 차단 회복 취소
+- 락온 소켓 선택 에디터
+- 대상 컴포넌트 디테일 편집
+- 대화 창 페이드
+- AI 액션 쿨다운 시작
+- 상태 바 위젯
+- UI 레이어와 사망 오버레이
+- AI 적 회피 실행
+- 월드 상태 저장
+- AI 전투 액션 메타데이터
+- AI 전투 의사결정 로직
+- 이동 차단과 회복 탈출
+- 피격 회복 방향 추적
+- 락온 핵심 타입과 핸들러
+- 락온 대상 위젯 확장
+- 테이블 Row 공통 타입
+- 플레이어 스킬 HUD
+- UI 팝업 메시지 데이터
+- 피니셔 실행과 워핑
+- AI 전투 결정 설정
+- AI 쿨다운 준비 조건
+- 어빌리티 피격 Launch
+- 적 회피 토큰 지급
+- 피격 반응 Row 조회
+- CSV JSON 변환기
+- 런타임 PropTable 조회
+- 테이블 JSON 스키마
+- 락온 대상 미리보기 확장
+- 락온 대상 소켓 관리
+- AI 전역 감지 갱신
+- 퀘스트 상태 API
+- 락온 대상 네트워크 직렬화
+- 락온 Pawn 회전 확장
+- AI 그로기 진입 조건
+- PIE 전투 디버그 도구
+- 전투 액션 Chooser 입력
+- 피격 방향과 Launch 처리
+- 액션 입력 버퍼링
+- AI 회피 위협 평가
+- 스킬 슬롯 런타임 표시
+- 상호작용 프롬프트 UI
+- 사망 오버레이 페이드
+- 사망 액션 행 이름 해석
+- 피격 리액션 회복 결정
+- StateTree 타깃 평가기
+- AI 회피 위협 판정
+- 어빌리티 애님 노티파이 상태
+- 필드 전환 리셋 계약
+- 회복 물약 퀵슬롯 데이터
+- 피격 시스템 공용 타입
+- 월드 상태 저장 레코드
+- 로딩 UI 테스트 명령
+- 테이블 생성·런타임 파이프라인
+- LockOnTarget 모듈·타깃 핸들러
+- LockOnTarget 카메라 모디파이어
+- LockOnTarget 타깃 관리 구성요소
+- 플레이어 회피 입력 계약
+- 피격 판정 해석 파이프라인
+- 전투 액션 행 해석
+- 피격 리액션 입력·행 해석
+- 사망 디졸브 머티리얼 상태
+- UI 서브시스템 공용 선언
+- 로딩 가이드 카드
+- AI 공격 액션 후보 해석
+- 피니셔 Chooser 입출력
+- 팝업 닫기 수명주기
+- 메인 HUD 상태 바인딩
+- 문서·Graphify 거버넌스
+- 액터·컴포넌트 종료 정리
+- PIE 액션 테스트 UI
+- 타깃 컴포넌트 배열 편집기
+- 플레이어 이동 액션 테이블
+- LockOnTarget 에디터 모듈
+- 전투 액션 입력 처리
+- 상호작용 가능 컴포넌트
+- 사망 디졸브 효과 실행
+- UI 창·팝업 스택 생성
+- 메인 HUD 위젯 구성
+- 대화창 표시 수명주기
+- LockOnTarget 서브오브젝트 수명주기
+- LockOnTarget 컴포넌트 상세 패널
+- 전역 전투 센싱 태스크
+- 공중 착지 감지 노티파이
+- 컨트롤러 기준 이동 입력
+- 회복 물약 런타임 상태
+- 플레이어 상호작용 탐지
+- 시트 레시피 사양 로더
+- 기본 위젯 페이드 수명주기
+- 로딩 창 레이아웃·진행률
+- Maverick 모듈 테이블 명령
+- 테이블 JSON 스키마 루트
+- 테이블 JSON 필드 제약
+- 모듈 빌드 의존성
+- 가중치 기반 타깃 선택
+- LockOnTarget 포커스 지점 해석
+- LockOnTarget 타깃 캡처 상태
+- 회복 물약 적용 노티파이
+- 쿨다운 액션 컷 노티파이
+- 피격 리액션 기본 회복
+- 무적 구간 노티파이 상태
+- 사망 컴포넌트 디졸브 연동
+- 스킬 슬롯 위젯 구성
+- JSON 스키마 값 타입
+- LockOnTarget 월드 타깃 등록
+- AI 컨트롤러 지각 갱신
+- 피격 사망 전환 노티파이
+- 컴포넌트 이벤트 바인딩 수명주기
+- 상호작용 가능성·포커스 판정
+- 피격 리액션 액션 데이터
+- 테이블 시트 사양
+- 필드 전환 서브시스템 계약
+- 월드 상태 세이브 슬롯
+- UI 클래스 설정 레지스트리
+- 스킬 트리 노드 내비게이션
+- 사망 액션 포즈 해석
+- 전역 센싱 전투영역 디버그
+- 사망 디졸브 노티파이
+- 사망 오버레이 노티파이
+- 적 무기 장착 구성
+- PIE 액션 테스트 사양
+- 퀵슬롯 표시 상태 갱신
+- 회복 물약 기본값 해석
+- 어빌리티 기본 계약
+- 액션 행·몽타주 타입
+- 사망 표현 보류·시작
+- 적 회피 토큰 부여
+- 테이블 기반 UI·스탯 조회
+- 에디터 블루프린트 경로 복구
+- 월드 상태 서브시스템 접근
+- 몬스터 체력바 바인딩
+- Maverick 프로젝트 구현 원칙
+- 타깃 미리보기 확장
+- 락온 위젯 확장
+- 플레이어 캐릭터 기능 연결
+- 위협 기반 회피 토큰
+- Maverick 빌드 타깃 규칙
+- 팝업 위젯 기반 클래스
+- 상호작용 후보 판정
+- 적 무기 액터 구성
+- 피격 회복 이탈 방향
+- 상호작용 후보 선택
+- 사망 이동 모드 처리
+- 회피 토큰 소모와 초기화
+- 회피 전투 카운터 조회
+- 피격 반응 이동 모드
+- 컨트롤러 기준 이동 입력
+- 액션 입력 핸들러 등록
+- 어빌리티 생명주기 인터페이스
+- PIE 액션 테스트 위젯
+- 플레이어 상태 HUD
+- 메시지 팝업 텍스트 설정
+- 대화 윈도우 텍스트 UI
+- 몬스터 체력바 위젯 구성
+- 어빌리티 노티파이 상태
+- 캐릭터 인덱스 태그
+- 캐릭터 장비 스타일
+- 캐릭터 공중 피격 추적
+- 스트레이프 이동 기준 회전
+- 8방향 이동 상태 갱신
+- 소모품 액션 입력 처리
+- 피니셔 틱 갱신
+- 피니셔 액션 입력 처리
+- 상호작용 컴포넌트 선언
+- 상호작용 인터페이스 선언
+- 퀘스트 월드 상태 연동
+- 윈도우 베이스 초기화
+- 재화 상태 표시 갱신
+- 재화 상태 위젯 구성
+- 보스 클리어 팝업 초기화
+- 사망 오버레이 창
+- 캐릭터 목표 보행 상태
+- 상호작용 대상 시각 갱신
+- 캐릭터 플레이어 입력 설정
+- 상호작용 월드 컨텍스트
+- 액션 입력 방향 해석
+- 필드 전환 진행 표시
+- 월드 상태 서브시스템 초기화
+- 공통 버튼 베이스 선언
+- MVEscapeWindow 클래스 선언
+- 타이틀 윈도우 선언
+- 월드 위젯 베이스 선언
+- 한글 커밋 메시지 규칙
+
+## God Nodes (most connected - your core abstractions)
+1. `ETargetFocusPointType` - 62 edges
+2. `FMVGlobalSensingTaskInstanceData` - 61 edges
+3. `EFindTargetContextMode` - 59 edges
+4. `EMVEnemyDodgeTokenGrantReason` - 51 edges
+5. `FMVAICombatContext` - 38 edges
+6. `FMVSkillEntry` - 38 edges
+7. `FMVEnemyDodgeActionTaskInstanceData` - 36 edges
+8. `FMVBackOffLaunchMontageTaskInstanceData` - 33 edges
+9. `FMVEnemyCombatActionTaskInstanceData` - 33 edges
+10. `FMVSkillDataTableColumn` - 31 edges
+
+## Surprising Connections (you probably didn't know these)
+- `Build and Impact Verification` --semantically_similar_to--> `Pre-Push Graphify Wrap-Up Gate`  [INFERRED] [semantically similar]
+  .github/pull_request_template.md → docs/wiki/Documentation-Workflow.md
+- `Work and Documentation Lifecycle` --semantically_similar_to--> `Documentation Information Hierarchy`  [INFERRED] [semantically similar]
+  AGENTS.md → docs/wiki/Documentation-Workflow.md
+- `Graphify Pre-Push Freshness Gate` --semantically_similar_to--> `Pre-Push Graphify Wrap-Up Gate`  [INFERRED] [semantically similar]
+  POLICY.md → docs/wiki/Documentation-Workflow.md
+- `UTargetManager::DoesSupportWorldType()` --references--> `Type`  [EXTRACTED]
+  Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetManager.cpp → Source/Maverick/Public/Interface/MVHitReactionRecoveryDecisionProvider.h
+- `TableAssetGeneratorSortManifestRows()` --references--> `rows`  [EXTRACTED]
+  Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp → MaverickDesign/Schema/TableData.schema.json
+
+## Import Cycles
+- None detected.
+
+## Hyperedges (group relationships)
+- **Maverick Documentation Governance Lifecycle** — agents_policy_first_implementation_and_debugging, agents_work_and_documentation_lifecycle, policy_documentation_and_graph_governance, docs_wiki_documentation_workflow_information_hierarchy, docs_wiki_documentation_workflow_pre_push_wrap_up_gate [INFERRED 0.95]
+- **Graphify Update and Freshness Lifecycle** — agents_graphify_navigation_and_freshness_lifecycle, policy_graphify_pre_push_freshness_gate, docs_wiki_documentation_workflow_graphify_generated_read_models, docs_wiki_documentation_workflow_prompt_time_query_first, docs_wiki_documentation_workflow_commit_time_incremental_update, docs_wiki_documentation_workflow_pre_push_wrap_up_gate [INFERRED 0.95]
+- **Maverick Table Generation Pipeline** — maverickdesign_csvtojsonconverter_build_csvtojsonconverter, maverickdesign_schema_readme_table_json_schema_v1, maverickdesign_csvtojsonconverter_build_umvtableassetgenerator_generatedatatables, maverickdesign_csvtojsonconverter_build_dt_mvtablemanifest, maverickdesign_csvtojsonconverter_build_umvtablemanager [EXTRACTED 1.00]
+- **AI Combat Decision Pipeline** — maverickdesign_aicombatstatetree_mvglobalsensingtask, maverickdesign_aicombatstatetree_combatcontext, maverickdesign_aicombatstatetree_mvcombatdecisioncondition, maverickdesign_aicombatstatetree_fmvaicombatactioncandidate, maverickdesign_aicombatstatetree_select_and_execute_attack_task, maverickdesign_aicombatstatetree_execute_fixed_attack_task [EXTRACTED 1.00]
+- **Death Presentation Handoff Pipeline** — maverickdesign_deathrespawnflow_umvstatcomponent, maverickdesign_deathrespawnflow_fmvdeathcontext, maverickdesign_deathrespawnflow_umvhitreactioncomponent, maverickdesign_deathrespawnflow_umvanimnotify_hitreactiondeathhandoff, maverickdesign_deathrespawnflow_umvdeathcomponent, maverickdesign_deathrespawnflow_umvactioncomponent [EXTRACTED 1.00]
+- **Death Respawn Transition Gate** — maverickdesign_deathrespawnflow_umvdeathcomponent, maverickdesign_deathrespawnflow_umvdeathoverlaywindow, maverickdesign_deathrespawnflow_umvdeathrespawnflow, maverickdesign_deathrespawnflow_umvfieldtransitionsubsystem, maverickdesign_deathrespawnflow_umvloadingwindow [EXTRACTED 1.00]
+- **MDA Causal Model** — maverickdesign_mdaframeworkanalysis_mechanics, maverickdesign_mdaframeworkanalysis_dynamics, maverickdesign_mdaframeworkanalysis_aesthetics [EXTRACTED 1.00]
+- **Target Combat Architecture v0.2** — maverickdesign_mdaframeworkanalysis_basic_attack_grammar, maverickdesign_mdaframeworkanalysis_three_plus_one_skill_architecture, maverickdesign_mdaframeworkanalysis_sidegrade_loadout, maverickdesign_mdaframeworkanalysis_weapon_combat_grammar, maverickdesign_mdaframeworkanalysis_impact_armor_outcome_contract, maverickdesign_mdaframeworkanalysis_resolved_hit_transaction [EXTRACTED 1.00]
+- **Unified Hit Resolution Contract** — maverickdesign_mdaframeworkanalysis_contact_resolvedhit_hitconfirm, maverickdesign_mdaframeworkanalysis_resolved_hit_transaction, maverickdesign_mdaframeworkanalysis_impact_armor_outcome_contract, maverickdesign_mdaframeworkanalysis_action_phase_armor_profile, maverickdesign_mdaframeworkanalysis_damage_immunity, maverickdesign_mdaframeworkanalysis_movement_result_policy, maverickdesign_mdaframeworkanalysis_automatic_groggy [EXTRACTED 1.00]
+
+## Communities (268 total, 33 thin omitted)
+
+### Community 0 - "플레이어 회피 방향 해석"
+Cohesion: 0.07
+Nodes (62): ELocomotionDirection, EMVEquippedStyle, FDataTableRowHandle, FGameplayTag, FName, FRotator, FString, FVector (+54 more)
+
+### Community 1 - "DataTable 에셋 생성"
+Cohesion: 0.11
+Nodes (61): FJsonObject, source, additionalProperties, type, FMVSheetSpec, FString, int32, TArray (+53 more)
+
+### Community 2 - "전투 액션 매핑"
+Cohesion: 0.07
+Nodes (47): EMVAttackSwingDirection, EMVCombatActionTypes, EMVEquippedStyle, FName, FString, int32, TArray, UMVAbilityBase (+39 more)
+
+### Community 3 - "캐릭터 스탯 관리"
+Cohesion: 0.05
+Nodes (42): EMVDeathReason, FGameplayTag, FName, FString, MVStatClampCurrent(), MVStatClampMaxHP(), MVStatNonNegative(), UMVStatComponent::BroadcastDeathStarted() (+34 more)
+
+### Community 4 - "AI 후퇴 Launch 몽타주"
+Cohesion: 0.05
+Nodes (53): AActor, APawn, BackOffLaunchMontageBuildAwayDirection(), BackOffLaunchMontageFaceTarget(), BackOffLaunchMontageGetAnimInstance(), BackOffLaunchMontageLaunch(), BackOffLaunchMontagePlay(), BackOffLaunchMontageResolveOwner() (+45 more)
+
+### Community 5 - "락온 컨트롤러 회전 확장"
+Cohesion: 0.05
+Nodes (46): FName, FRotator, FVector, ULockOnTargetComponent, UTargetComponent, UControllerRotationExtension::CalcRotation_Implementation(), UControllerRotationExtension::Deinitialize(), UControllerRotationExtension::GetCorrectedTargetLocation() (+38 more)
+
+### Community 6 - "AI 스트레이프 이동"
+Cohesion: 0.05
+Nodes (43): APawn, EStateTreeRunStatus, FStateTreeExecutionContext, FStateTreeTransitionResult, FVector, FMVStrafeMoveTask, EnterState, ExitState (+35 more)
+
+### Community 7 - "무기 장착 시각화"
+Cohesion: 0.05
+Nodes (35): EMVWeaponRangeType, UMVHitResolverSubsystem::ResolveWeaponHitSnapshot(), EMVEquippedStyle, FGameplayTag, FName, FTransform, TArray, TCHAR (+27 more)
+
+### Community 8 - "락온 대상 컴포넌트"
+Cohesion: 0.05
+Nodes (35): AActor, ELevelTick, FActorComponentTickFunction, FName, FVector, FVector2D, TSubclassOf, UTargetComponent (+27 more)
+
+### Community 9 - "AI 전역 쿨다운"
+Cohesion: 0.05
+Nodes (45): FName, TArray, FMVActionCooldownDefinition, ActionId, bStartReady, CooldownDuration, FMVActionCooldownState, bIsReady (+37 more)
+
+### Community 10 - "AI 적 전투 액션"
+Cohesion: 0.06
+Nodes (49): AMVEnemy, APawn, EMVEnemyCombatActionKind, EStateTreeRunStatus, FName, FStateTreeExecutionContext, FStateTreeTransitionResult, int32 (+41 more)
+
+### Community 11 - "AI 전역 감지 설정"
+Cohesion: 0.04
+Nodes (52): FMVGlobalSensingTaskInstanceData, ActionCooldowns, AirborneChargeAngle, AirborneChargeMaxReach, AngleToTarget, AttackAngleTolerance, AttackCadenceActionId, AttackDirection (+44 more)
+
+### Community 12 - "AI 적 사망 처리"
+Cohesion: 0.06
+Nodes (46): EMVEnemyDeadCleanupMode, EMVEnemyDeadTaskCleanupResult, AAIController, AMVCharacterBase, AMVEnemy, AActor, APawn, EStateTreeRunStatus (+38 more)
+
+### Community 13 - "락온 디버거"
+Cohesion: 0.08
+Nodes (42): FGameplayDebuggerCanvasContext, FGameplayDebuggerCategory, APlayerController, APlayerController, FString, FVector2D, ULockOnTargetComponent, UObject (+34 more)
+
+### Community 14 - "가중 대상 탐색 알고리즘"
+Cohesion: 0.05
+Nodes (45): ECollisionChannel, FTimerHandle, UWeightedTargetHandler::FindTargetBatched(), EFindTargetContextMode, AutoFindTargetFlags, bDistanceCheck, bLineOfSightCheck, bRecentRenderCheck (+37 more)
+
+### Community 15 - "HUD 스탯 회복 연동"
+Cohesion: 0.05
+Nodes (19): FAnimNotifyEventReference, FString, UAnimSequenceBase, USkeletalMeshComponent, FindPauseRecoverableStatRecoveryStatComponent(), UMVAnimNotifyState_PauseRecoverableStatRecovery::GetNotifyName_Implementation(), UMVAnimNotifyState_PauseRecoverableStatRecovery::NotifyBegin(), UMVAnimNotifyState_PauseRecoverableStatRecovery::NotifyEnd() (+11 more)
+
+### Community 16 - "락온 대상 포커스 설정"
+Cohesion: 0.05
+Nodes (43): FOnTargetComponentCaptured, FOnTargetComponentReleased, ETargetFocusPointType, AddSocket, AssociatedComponent, AssociatedComponentName, bCanBeCaptured, BeginPlay (+35 more)
+
+### Community 17 - "AI 피격 반응 태스크"
+Cohesion: 0.07
+Nodes (38): APawn, EMVActionHitReactionType, EStateTreeRunStatus, FName, FStateTreeExecutionContext, FStateTreeTransitionResult, TCHAR, TObjectPtr (+30 more)
+
+### Community 18 - "전투 액션 런타임 상태"
+Cohesion: 0.06
+Nodes (38): FMVCombatActionEvent, ActionIndex, ActionRowName, ActionTableName, ActionType, Instigator, FMVCombatHeavyChargeAttackRuntimeState, bActive (+30 more)
+
+### Community 19 - "AI 공격 실행 데이터"
+Cohesion: 0.06
+Nodes (37): AMVEnemy, FMVExecuteFixedAttackTaskInstanceData, ActionComponent, ActionRequest, AttackChooserTable, AttackInstanceId, AttackMetadata, AttackMontageEndedHandle (+29 more)
+
+### Community 20 - "필드 전환 관리"
+Cohesion: 0.07
+Nodes (23): EMVFieldTransitionPhase, AActor, FName, FSubsystemCollectionBase, FTransform, int32, UDataTable, UMVUISubsystem (+15 more)
+
+### Community 21 - "PIE 피격 판정 테스트"
+Cohesion: 0.07
+Nodes (21): UObject, UMVHitResolverSubsystem(), UMVHitResolverSubsystem::Get(), UMVStatComponent, EMVHitReactionDirection, FGeometry, FKeyEvent, FReply (+13 more)
+
+### Community 22 - "UI 기반 전환 유틸리티"
+Cohesion: 0.06
+Nodes (15): EUINavigation, FOnFadeFinished, FUIInputConfig, FObjectInitializer, UMVActivatableWidgetBase::GetDesiredInputConfig(), UMVActivatableWidgetBase::NativeGetDesiredFocusTarget(), UMVActivatableWidgetBase::UMVActivatableWidgetBase(), FMVUIFadeController::Play() (+7 more)
+
+### Community 23 - "가중 대상 탐색 컨텍스트"
+Cohesion: 0.10
+Nodes (32): FFindTargetContext, FTargetContext, AActor, FName, FRotator, FVector, TArray, UTargetComponent (+24 more)
+
+### Community 24 - "런타임 테이블 조회"
+Cohesion: 0.12
+Nodes (32): FProperty, FName, FString, FSubsystemCollectionBase, int32, TArray, TSharedPtr, UDataTable (+24 more)
+
+### Community 25 - "액션 Row 몽타주 해석"
+Cohesion: 0.09
+Nodes (25): FDataTableRowHandle, FGameplayTag, FMVActionRow, FName, int32, UAnimInstance, UAnimMontage, UDataTable (+17 more)
+
+### Community 26 - "적 회피 토큰 상태"
+Cohesion: 0.06
+Nodes (34): AMVCharacterBase, AMVEnemy, EMVEnemyDodgeTokenGrantReason, bAutoBindPlayerDamage, BeginPlay, bGrantOnGroggyRecovered, bGrantOnLandedHitThreshold, bGrantOnReceivedHitThreshold (+26 more)
+
+### Community 27 - "UI 서브시스템 팝업 관리"
+Cohesion: 0.06
+Nodes (6): FSubsystemCollectionBase, UMVPopupBase, UMVUISubsystem::HandlePopupClosed(), UMVUISubsystem::Initialize(), UMVUISubsystem::IsPopupActive(), UMVUISubsystem::TrackActivePopup()
+
+### Community 28 - "AI 적 회피 설정"
+Cohesion: 0.07
+Nodes (31): APawn, FMVEnemyDodgeActionTaskInstanceData, ActionComponent, BackDodgeActionRow, bCancelActionOnExit, bStarted, bTransitionFromCurrentAction, bWaitForActionEnd (+23 more)
+
+### Community 29 - "AI 공격 실행 로직"
+Cohesion: 0.14
+Nodes (27): APawn, EStateTreeRunStatus, FName, FStateTreeExecutionContext, FStateTreeTransitionResult, TArray, TObjectPtr, UDataTable (+19 more)
+
+### Community 30 - "AI 전투 진입 조건"
+Cohesion: 0.09
+Nodes (29): EMVCombatContextEnterMode, EMVCombatCooldownCheckMode, CombatContextEnterCanEnterAction(), CombatContextEnterCanMoveToTarget(), CombatContextEnterCanStrafe(), CombatContextEnterIsDistanceInRange(), CombatContextEnterPassesCommonGate(), CombatContextEnterPassesCooldownGroupCheck() (+21 more)
+
+### Community 31 - "스킬 쿨다운 오버레이"
+Cohesion: 0.09
+Nodes (17): FPaintArgs, FSlateRect, FSlateWindowElementList, FWidgetStyle, SLeafWidget, FArguments, FGeometry, FLinearColor (+9 more)
+
+### Community 32 - "AI와 사망 설계 문서"
+Cohesion: 0.09
+Nodes (29): AI Combat StateTree, CombatContext, Execute Fixed Attack Task, FMVAICombatActionCandidate, Focusing Task, MVCombatDecisionCondition, MVGlobalSensingTask, MVStrafe Move Task (+21 more)
+
+### Community 33 - "플레이어 회복약 액션"
+Cohesion: 0.08
+Nodes (12): FDataTableRowHandle, FName, int32, UWorld, UMVPlayerConsumable::GetWorld(), UMVPlayerConsumable::HandleActionEnded(), UMVPlayerConsumable::HandleActionStarted(), UMVPlayerConsumable::IsHealingPotionFailedAction() (+4 more)
+
+### Community 34 - "플레이어 캐릭터 전력질주"
+Cohesion: 0.07
+Nodes (6): AMVPlayerCharacter::ResolveSprintActionRowName(), AMVPlayerCharacter::ResolveSprintActionTableName(), FGameplayTag, FName, FString, MVPlayerCharacterIndexCodeToTableToken()
+
+### Community 35 - "사망 부활 오케스트레이션"
+Cohesion: 0.08
+Nodes (20): AMVCharacterBase, AActor, InitializationValues, UMVUISubsystem, UWorld, UMVDeathComponent, UMVDeathRespawnFlow::BeginDeathSequence(), UMVDeathRespawnFlow::BindToPlayerDeath() (+12 more)
+
+### Community 36 - "MDA 목표 전투 구조"
+Cohesion: 0.10
+Nodes (28): Action Phase Armor Profile, Aesthetics, Attack Documentation Contract, Automatic Groggy, Basic Attack Grammar, Combat Contract Inconsistency, Combat Implementation Roadmap, Contact ResolvedHit HitConfirm Stages (+20 more)
+
+### Community 37 - "AI 타겟 포커싱"
+Cohesion: 0.11
+Nodes (23): AAIController, AAIController, APawn, EStateTreeRunStatus, FStateTreeExecutionContext, FStateTreeTransitionResult, FMVFocusingTask, EnterState (+15 more)
+
+### Community 38 - "적 캐릭터 전투 실행"
+Cohesion: 0.10
+Nodes (13): EMVFieldTransitionResetPolicy, AMVEnemy::Attack(), AMVEnemy::GetFieldTransitionResetFieldId_Implementation(), AMVEnemy::GetFieldTransitionResetObjectId_Implementation(), AMVEnemy::GetFieldTransitionResetPolicy_Implementation(), AMVEnemy::HandleAttackMontageEnded(), AMVEnemy::HandleEnemyDamaged(), AMVEnemy::TryHeavyAttack_Implementation() (+5 more)
+
+### Community 39 - "로딩 화면 입력 처리"
+Cohesion: 0.09
+Nodes (16): minLength, type, key, FGeometry, FKey, FKeyEvent, FObjectInitializer, FReply (+8 more)
+
+### Community 40 - "AI 피격 진입 조건"
+Cohesion: 0.09
+Nodes (23): APawn, EMVActionHitReactionType, EMVHitReactionEnterTypeFilter, FStateTreeExecutionContext, TObjectPtr, FMVHitReactionEnterCondition, TestCondition, FMVHitReactionEnterConditionInstanceData (+15 more)
+
+### Community 41 - "AI 공격 기회 판단"
+Cohesion: 0.11
+Nodes (22): AttackOpportunityTaskCanAttack(), AttackOpportunityTaskEvaluate(), AttackOpportunityTaskIsCooldownReady(), EStateTreeRunStatus, FStateTreeExecutionContext, FStateTreeTransitionResult, FMVAttackOpportunityTask, EnterState (+14 more)
+
+### Community 43 - "락온 대상 예외 처리"
+Cohesion: 0.09
+Nodes (23): ULockOnTargetComponent::ReceiveTargetException(), ETargetUnlockReason, UWeightedTargetHandler::HandleTargetException_Implementation(), UWeightedTargetHandler::HandleTargetUnlock(), UWeightedTargetHandler::OnLineOfSightTimerExpired(), ETargetExceptionType, SocketInvalidation, UMETA (+15 more)
+
+### Community 45 - "스킬 데이터와 비용"
+Cohesion: 0.08
+Nodes (23): UMVCombatComponent::CanConsumeActionCost(), UMVCombatComponent::ResolveHeavyChargeCommitTime(), FMVSkillDataTableColumn, AbilityReference, bIsChained, ChargeCommitTime, CooldownDuration, DamageMultiplier (+15 more)
+
+### Community 46 - "AI 전투 컨텍스트"
+Cohesion: 0.08
+Nodes (24): FMVAICombatContext, AngleToTarget, bActionRunning, bAirborneChargePathClear, bAttackCadenceReady, bCounterWindow, bHasLineOfSight, bHasTarget (+16 more)
+
+### Community 47 - "AI 기본 공격 태스크"
+Cohesion: 0.11
+Nodes (21): AMVEnemy, EStateTreeRunStatus, FStateTreeExecutionContext, FStateTreeTransitionResult, FMVAttackTask, EnterState, ExitState, Tick (+13 more)
+
+### Community 48 - "스킬 체인 런타임"
+Cohesion: 0.11
+Nodes (13): FMVSkillEntry, AbilityInstances, bChainActive, bIsChained, CurrentChainStageIndex, DataTable, InputWindowCloseTime, LastStageActivationTime (+5 more)
+
+### Community 49 - "입력 차단 회복 취소"
+Cohesion: 0.09
+Nodes (3): EMVRecoveryEscapeCancelTrigger, UMVInputManagerComponent::CanUseRecoveryEscapeCancelTrigger(), UMVInputManagerComponent::TryCancelActiveActionForRecoveryEscape()
+
+### Community 50 - "락온 소켓 선택 에디터"
+Cohesion: 0.14
+Nodes (20): FArguments, FName, FText, TSharedRef, TSharedPtr, IPropertyHandle, SEditableTextBox, SSocketSelector (+12 more)
+
+### Community 51 - "대상 컴포넌트 디테일 편집"
+Cohesion: 0.16
+Nodes (21): AActor, FName, FText, USceneComponent, FTargetComponentDetails, AssociatedComponentNamePropertyHandle, AssociatedComponentNameTextBox, CustomizeDetails (+13 more)
+
+### Community 53 - "대화 창 페이드"
+Cohesion: 0.09
+Nodes (4): FObjectInitializer, FText, UMVDialogueWindow::SetDialogueText(), UMVDialogueWindow::UMVDialogueWindow()
+
+### Community 54 - "AI 액션 쿨다운 시작"
+Cohesion: 0.10
+Nodes (19): APawn, EStateTreeRunStatus, FStateTreeExecutionContext, FStateTreeTransitionResult, TObjectPtr, FMVStartActionCooldownTask, EnterState, FMVStartActionCooldownTaskInstanceData (+11 more)
+
+### Community 55 - "상태 바 위젯"
+Cohesion: 0.10
+Nodes (8): FGeometry, FLinearColor, FText, UMVStatusBarWidget::BuildNativeWidgetTree(), UMVStatusBarWidget::NativeTick(), UMVStatusBarWidget::SetFillColor(), UMVStatusBarWidget::SetLabel(), UProgressBar
+
+### Community 56 - "UI 레이어와 사망 오버레이"
+Cohesion: 0.12
+Nodes (17): APlayerController, TSubclassOf, UCommonActivatableWidget, UMVPopupBase, UUserWidget, UCommonActivatableWidget, UCommonActivatableWidgetStack, UMVPopupBase (+9 more)
+
+### Community 57 - "AI 적 회피 실행"
+Cohesion: 0.16
+Nodes (18): APawn, EStateTreeRunStatus, FDataTableRowHandle, FStateTreeExecutionContext, FStateTreeTransitionResult, TObjectPtr, UObject, EnemyDodgeActionTaskEvaluateChooser() (+10 more)
+
+### Community 58 - "월드 상태 저장"
+Cohesion: 0.15
+Nodes (15): FName, FTransform, UMVWorldStateSubsystem::CompleteQuest(), UMVWorldStateSubsystem::GetQuestObjectiveValue(), UMVWorldStateSubsystem::GetQuestState(), UMVWorldStateSubsystem::GetWorldFlag(), UMVWorldStateSubsystem::IsOneTimeSpawnConsumed(), UMVWorldStateSubsystem::IsQuestCompleted() (+7 more)
+
+### Community 59 - "AI 전투 액션 메타데이터"
+Cohesion: 0.16
+Nodes (16): EMVAICombatActionRole, FORCEINLINE, FMVAICombatActionMetadata, CooldownActionId, Role, FMVAICombatResolvedAction, ActionRow, CooldownActionId (+8 more)
+
+### Community 60 - "AI 전투 의사결정 로직"
+Cohesion: 0.14
+Nodes (18): CombatDecisionCanAttackImmediately(), CombatDecisionHasReadyCandidate(), CombatDecisionIsCandidateReady(), FStateTreeExecutionContext, TArray, TestCondition, FMVAICombatActionCondition, ActionRequest (+10 more)
+
+### Community 61 - "이동 차단과 회복 탈출"
+Cohesion: 0.16
+Nodes (18): FAnimNotifyEventReference, FString, UAnimSequenceBase, USkeletalMeshComponent, FindBlockMovementInputInputManagerComponent(), UMVAnimNotifyState_BlockMovementInput::GetNotifyName_Implementation(), UMVAnimNotifyState_BlockMovementInput::NotifyBegin(), UMVAnimNotifyState_BlockMovementInput::NotifyEnd() (+10 more)
+
+### Community 62 - "피격 회복 방향 추적"
+Cohesion: 0.15
+Nodes (20): EMVActionHitReactionType, EMVActionInputDirection, EMVHitReactionDirection, FString, TCHAR, MVHitReactionDebugBoolText(), MVHitReactionLogRecoveryTrace(), MVHitReactionRecoveryDirectionToken() (+12 more)
+
+### Community 63 - "락온 핵심 타입과 핸들러"
+Cohesion: 0.12
+Nodes (17): ULockOnTargetComponent::SetDefaultTargetHandler(), ULockOnTargetComponent::SetTargetHandlerByClass(), AActor, FFindTargetRequestResponse, ULockOnTargetComponent, ULockOnTargetExtensionBase, ULockOnTargetExtensionProxy, UTargetComponent (+9 more)
+
+### Community 64 - "락온 대상 위젯 확장"
+Cohesion: 0.13
+Nodes (13): FName, TSoftClassPtr, ULockOnTargetComponent, UTargetComponent, UUserWidget, UWidgetExtension::Deinitialize(), UWidgetExtension::GetWidget(), UWidgetExtension::Initialize() (+5 more)
+
+### Community 66 - "테이블 Row 공통 타입"
+Cohesion: 0.11
+Nodes (4): USoundBase, UDataTable, IMVPostRead, PostRead
+
+### Community 67 - "플레이어 스킬 HUD"
+Cohesion: 0.11
+Nodes (10): FGeometry, FObjectInitializer, UMVCombatComponent, UMVCombatComponent, UMVPlayerSkillHUDWidget::BindToCombatComponent(), UMVPlayerSkillHUDWidget::BuildNativeWidgetTree(), UMVPlayerSkillHUDWidget::NativeTick(), UMVPlayerSkillHUDWidget::UMVPlayerSkillHUDWidget() (+2 more)
+
+### Community 68 - "UI 팝업 메시지 데이터"
+Cohesion: 0.12
+Nodes (15): UTextBlock, UMVMessagePopup(), UTextBlock, FMVMenuEntryData, ActionName, bEnabled, Label, FMVPopupMessageData (+7 more)
+
+### Community 69 - "피니셔 실행과 워핑"
+Cohesion: 0.19
+Nodes (14): AActor, FDataTableRowHandle, FName, UMVFinisherComponent::CanFinisherMove(), UMVFinisherComponent::CheckThisActorGroggy(), UMVFinisherComponent::ClearAttackData(), UMVFinisherComponent::FindFinisherAnimation(), UMVFinisherComponent::GetTargetActor_Implementation() (+6 more)
+
+### Community 70 - "AI 전투 결정 설정"
+Cohesion: 0.12
+Nodes (15): EMVAICombatDecisionState, FMVCombatDecisionCondition, FMVCombatDecisionConditionInstanceData, AirborneChargeAttack, BasicAttacks, CombatContext, CombatMaxDistance, CounterAttack (+7 more)
+
+### Community 71 - "AI 쿨다운 준비 조건"
+Cohesion: 0.14
+Nodes (14): APawn, FStateTreeExecutionContext, TObjectPtr, FMVActionCooldownReadyCondition, TestCondition, FMVActionCooldownReadyConditionInstanceData, CooldownActionId, Owner (+6 more)
+
+### Community 72 - "어빌리티 피격 Launch"
+Cohesion: 0.15
+Nodes (13): int32, TCHAR, UObject, MVAbilityLogHitLaunchTrace(), UActorComponent, UMVAbilityBase::ApplyHitLaunchDataToResolveRequest(), UMVAbilityBase::GetHitLaunchData_Implementation(), UMVAbilityBase::GetOwner() (+5 more)
+
+### Community 73 - "적 회피 토큰 지급"
+Cohesion: 0.12
+Nodes (7): NotifyEnemyDamaged, NotifyEnemyLandedHit, UMVEnemyDodgeTokenComponent::GrantDodgeToken(), UMVEnemyDodgeTokenComponent::HandleObservedTargetDamaged(), UMVEnemyDodgeTokenComponent::HandleOwnerDamaged(), UMVEnemyDodgeTokenComponent::IsRelevantEnemyHitData(), UMVEnemyDodgeTokenComponent::IsRelevantLandedHitData()
+
+### Community 74 - "피격 반응 Row 조회"
+Cohesion: 0.16
+Nodes (16): FDataTableRowHandle, FMVActionRow, UDataTable, MVHitReactionBuildAvailableRowNameLog(), MVHitReactionCopyBaseActionRow(), UMVHitReactionComponent::FindBaseActionRow(), UMVHitReactionComponent::FindHitReactionActionRow(), UMVHitReactionComponent::FindRecoveryActionRow() (+8 more)
+
+### Community 75 - "CSV JSON 변환기"
+Cohesion: 0.31
+Nodes (15): Any, build_table_document(), convert_all(), convert_client_layout(), convert_plain_layout(), convert_rows(), find_client_row(), get_base_dir() (+7 more)
+
+### Community 76 - "런타임 PropTable 조회"
+Cohesion: 0.17
+Nodes (11): KeyType, RowType, int32, TArray, TMap, TWeakObjectPtr, UDataTable, TMVPropTable (+3 more)
+
+### Community 77 - "테이블 JSON 스키마"
+Cohesion: 0.13
+Nodes (15): $defs, row, table, $ref, rows, additionalProperties, type, items (+7 more)
+
+### Community 78 - "락온 대상 미리보기 확장"
+Cohesion: 0.15
+Nodes (9): FName, ULockOnTargetComponent, UTargetComponent, UTargetPreviewExtension::BeginTargetPreview(), UTargetPreviewExtension::Deinitialize(), UTargetPreviewExtension::Initialize(), UTargetPreviewExtension::OnTargetLocked(), UTargetPreviewExtension::OnTargetUnlocked() (+1 more)
+
+### Community 79 - "락온 대상 소켓 관리"
+Cohesion: 0.17
+Nodes (11): FName, USceneComponent, UTargetComponent::AddSocket(), UTargetComponent::CanBeCaptured(), UTargetComponent::EndPlay(), UTargetComponent::RemoveSocket(), UTargetComponent::SetAssociatedComponent(), UTargetComponent::SetCanBeCaptured() (+3 more)
+
+### Community 80 - "AI 전역 감지 갱신"
+Cohesion: 0.24
+Nodes (14): AActor, APawn, EStateTreeRunStatus, Tick, GlobalSensingClearControllerTarget(), GlobalSensingClearTargetSnapshot(), GlobalSensingEnsureCooldownComponent(), GlobalSensingIsActorDead() (+6 more)
+
+### Community 81 - "퀘스트 상태 API"
+Cohesion: 0.19
+Nodes (14): FName, FSubsystemCollectionBase, int32, UObject, UMVQuestSubsystem::AddQuestObjectiveValue(), UMVQuestSubsystem::CompleteQuest(), UMVQuestSubsystem::Get(), UMVQuestSubsystem::GetQuestObjectiveValue() (+6 more)
+
+### Community 82 - "락온 대상 네트워크 직렬화"
+Cohesion: 0.16
+Nodes (12): FArchive, FNetDeltaSerializeInfo, INetDeltaBaseState, TWeakObjectPtr, uint32, UTargetComponent, FTargetInfo::GetSocketIndex(), FTargetInfo::NetDeltaSerialize() (+4 more)
+
+### Community 83 - "락온 Pawn 회전 확장"
+Cohesion: 0.16
+Nodes (9): FName, ULockOnTargetComponent, UTargetComponent, UPawnRotationExtension::Deinitialize(), UPawnRotationExtension::GetMovementComponent(), UPawnRotationExtension::Initialize(), UPawnRotationExtension::OnTargetLocked(), UPawnRotationExtension::OnTargetUnlocked() (+1 more)
+
+### Community 84 - "AI 그로기 진입 조건"
+Cohesion: 0.15
+Nodes (12): APawn, FStateTreeExecutionContext, TObjectPtr, FMVGroggyEnterCondition, TestCondition, FMVGroggyEnterConditionInstanceData, Owner, GroggyEnterResolveOwner() (+4 more)
+
+### Community 85 - "PIE 전투 디버그 도구"
+Cohesion: 0.14
+Nodes (15): AMVCharacterBase(), UMVPlayerDodge::BeginLockOnPawnRotationSuppressionForDodge(), TSubclassOf, UMVAbilityBase::ActiveCameraShake(), UMVAbilityBase::ActiveHitStopToCharacters(), UWorld, UMVFieldTransitionSubsystem::ResetPlayerStatsForTransition(), UMVFieldTransitionSubsystem::ResolvePlayerCharacter() (+7 more)
+
+### Community 86 - "전투 액션 Chooser 입력"
+Cohesion: 0.14
+Nodes (12): UChooserTable, UMVCombatComponent::GetActionRowHandleFromChooserTable(), UMVCombatComponent::GetDataTableRowFromChooserTable_Implementation(), UMVHitReactionComponent::EvaluateHitReactionChooserActionRowHandle(), FMVCombatActionTableInput, ActionType, ActionTypeTags, CurrentWeaponStyle (+4 more)
+
+### Community 87 - "피격 방향과 Launch 처리"
+Cohesion: 0.24
+Nodes (15): FRotator, FVector, UObject, MVHitReactionLogAirborneTrace(), MVHitReactionLogHitLaunchTrace(), MVHitReactionMakeYawSnapRotation(), MVHitReactionResolveHitDirection(), MVHitReactionResolveHitSourceDirection() (+7 more)
+
+### Community 88 - "액션 입력 버퍼링"
+Cohesion: 0.19
+Nodes (15): FGameplayTag, FVector2D, UMVInputManagerComponent::BufferHoldActionInput(), UMVInputManagerComponent::BufferInstantActionInput(), UMVInputManagerComponent::BuildActionInputSnapshot(), UMVInputManagerComponent::ClampActionControllerSpaceInput(), UMVInputManagerComponent::SubmitActionInput(), UMVInputManagerComponent::SubmitHoldActionInput() (+7 more)
+
+### Community 89 - "AI 회피 위협 평가"
+Cohesion: 0.20
+Nodes (13): AActor, EMVActionInputDirection, EMVCombatActionTypes, FGameplayTag, FMVDodgeThreatConfig, FMVDodgeThreatDecision, FVector, TArray (+5 more)
+
+### Community 90 - "스킬 슬롯 런타임 표시"
+Cohesion: 0.13
+Nodes (7): FText, int32, TArray, UMVSkillSlotWidget::SetHotKeyText(), UMVSkillSlotWidget::SetIconStack(), UMVSkillSlotWidget::SetRuntimeState(), UTexture2D
+
+### Community 91 - "상호작용 프롬프트 UI"
+Cohesion: 0.13
+Nodes (13): FText, UMVInteractionPromptPopup::SetPromptData(), UMVInteractionPromptPopup::SetPromptText(), FMVInteractionPromptData, CandidateCount, CandidateIndex, InputKey, PromptText (+5 more)
+
+### Community 93 - "사망 액션 행 이름 해석"
+Cohesion: 0.20
+Nodes (14): EMVDeathActionFacing, FDataTableRowHandle, FGameplayTag, FName, int32, UMVDeathComponent::CharacterIndexCodeToTableToken(), UMVDeathComponent::HandleActionEnded(), UMVDeathComponent::MakeDeathActionRowName() (+6 more)
+
+### Community 94 - "피격 리액션 회복 결정"
+Cohesion: 0.16
+Nodes (13): EMVHitReactionRecoveryDecisionType, AMVEnemy::TryChooseHitReactionRecovery(), AActor, FMVHitReactionRecoveryDecision, EscapeDirection, FMVHitReactionRecoveryDecisionContext, HitReactionDirection, HitReactionType (+5 more)
+
+### Community 95 - "StateTree 타깃 평가기"
+Cohesion: 0.21
+Nodes (11): FStateTreeEvaluatorBase, FStateTreeExecutionContext, FMVTargetEvaluator, Tick, TreeStart, TreeStop, FMVTargetEvaluatorData, Target (+3 more)
+
+### Community 96 - "AI 회피 위협 판정"
+Cohesion: 0.14
+Nodes (10): EMVActionInputDirection, EnemyDodgeActionTaskResolveDirection(), EMVDodgeThreatRejectReason, TokenUnavailable, UMETA, UMVDodgeThreatEvaluatorLibrary, uint8, USTRUCT (+2 more)
+
+### Community 97 - "어빌리티 애님 노티파이 상태"
+Cohesion: 0.25
+Nodes (13): FAnimNotifyEventReference, FString, TCHAR, TSubclassOf, UAnimSequenceBase, UMVAbilityBase, UMVCombatComponent, USkeletalMeshComponent (+5 more)
+
+### Community 98 - "필드 전환 리셋 계약"
+Cohesion: 0.14
+Nodes (10): AMVEnemy::HandleFieldTransitionReset_Implementation(), MAVERICK_API, UAnimMontage, UMVEnemyDodgeTokenComponent, UMVMainHUDWidget, UMVDeathOverlayWindow, FMVFieldTransitionResetContext(), MAVERICK_API (+2 more)
+
+### Community 99 - "회복 물약 퀵슬롯 데이터"
+Cohesion: 0.15
+Nodes (12): UMVPlayerConsumable::BuildHealingPotionQuickSlotViewData(), FMVQuickSlotViewData, bLocked, Count, HotKeyText, Icon, FText, int32 (+4 more)
+
+### Community 100 - "피격 시스템 공용 타입"
+Cohesion: 0.14
+Nodes (9): ACharacter, AMVCharacterBase, MAVERICK_API, UDataTable, UMVActionComponent, AMVCharacterBase, UMVStatComponent, UMVStatusBarWidget (+1 more)
+
+### Community 101 - "월드 상태 저장 레코드"
+Cohesion: 0.14
+Nodes (11): UMVWorldStateSubsystem::ApplySaveData(), UMVWorldStateSubsystem::FindFieldObjectRecord(), UMVWorldStateSubsystem::FindQuestRecord(), UMVWorldStateSubsystem::FindWorldFlagRecord(), UMVWorldStateSubsystem::ResetSaveData(), UMVWorldStateSubsystem::TryGetLastCheckpoint(), FMVCheckpointSaveData(), FMVFieldObjectSaveData() (+3 more)
+
+### Community 102 - "로딩 UI 테스트 명령"
+Cohesion: 0.25
+Nodes (14): UMVUILayerBase(), FString, InitializationValues, TArray, UMVUISubsystem, UWorld, MVUISubsystemAdvanceLoadingTestCardCommand(), MVUISubsystemHideLoadingTestCommand() (+6 more)
+
+### Community 103 - "테이블 생성·런타임 파이프라인"
+Cohesion: 0.19
+Nodes (13): CsvToJsonConverter, DT_MVTableManifest, UMVTableAssetGenerator::GenerateDataTables, UMVTableManager, Client Column Filter, Directly Managed DataTables, FMVTableRowBase, Maverick Table System (+5 more)
+
+### Community 104 - "LockOnTarget 모듈·타깃 핸들러"
+Cohesion: 0.17
+Nodes (7): FLockOnTargetModule, StartupModule, IModuleInterface, UTargetComponent, UTargetHandlerBase::CheckTargetState_Implementation(), UTargetHandlerBase::HandleTargetException_Implementation(), UTargetHandlerBase::IsTargetValid()
+
+### Community 105 - "LockOnTarget 카메라 모디파이어"
+Cohesion: 0.19
+Nodes (10): FName, FRotator, FVector, ULockOnTargetComponent, UTargetComponent, UCameraModifierExtension::Deinitialize(), UCameraModifierExtension::Initialize(), UCameraModifierExtension::OnTargetLocked() (+2 more)
+
+### Community 106 - "LockOnTarget 타깃 관리 구성요소"
+Cohesion: 0.15
+Nodes (9): TArray, ULockOnTargetComponent, USceneComponent, UTargetComponent, UTargetManager, UUserWidget, UTargetComponent, UWorld (+1 more)
+
+### Community 107 - "플레이어 회피 입력 계약"
+Cohesion: 0.15
+Nodes (8): AMVCharacterBase, AMVPlayerCharacter, MAVERICK_API, UDataTable, UMVActionComponent, UMVInputManagerComponent, UWorld, AMVCharacterBase
+
+### Community 108 - "피격 판정 해석 파이프라인"
+Cohesion: 0.33
+Nodes (11): FVector, TCHAR, MVHitResolverLogAirborneTrace(), MVHitResolverLogHitLaunchTrace(), MVHitResolverShouldLogAirborneTrace(), MVHitResolverTryNormalize2D(), MVHitResolverTryResolveAttackerToVictimDirection(), UMVHitResolverSubsystem::BuildResolvedHitData() (+3 more)
+
+### Community 109 - "전투 액션 행 해석"
+Cohesion: 0.17
+Nodes (13): FDataTableRowHandle, TCHAR, UDataTable, MVCombatActionTableNameFromDataTable(), UMVCombatComponent::BuildSkillEntryFromRowHandle(), UMVCombatComponent::IsValidSkillActionRowHandle(), UMVCombatComponent::LoadFallbackAttackActionTable(), UMVCombatComponent::ResolveActionRowHandleFromChooserTable() (+5 more)
+
+### Community 110 - "피격 리액션 입력·행 해석"
+Cohesion: 0.21
+Nodes (13): FGameplayTag, FName, FVector2D, UMVHitReactionComponent::HandleActionEnded(), UMVHitReactionComponent::MakeGroggyActionRowName(), UMVHitReactionComponent::MakeGroggyActionTableName(), UMVHitReactionComponent::MakeHitReactionActionTableName(), UMVHitReactionComponent::ResolveCharacterIndexCode() (+5 more)
+
+### Community 111 - "사망 디졸브 머티리얼 상태"
+Cohesion: 0.21
+Nodes (12): FMVDeathDissolveMeshState, bWasHiddenInGame, DynamicMaterials, MeshComponent, OriginalMaterials, TArray, TObjectPtr, UPROPERTY (+4 more)
+
+### Community 112 - "UI 서브시스템 공용 선언"
+Cohesion: 0.15
+Nodes (11): AMVCharacterBase, UCameraComponent, UCommonActivatableWidget, UMVDialogueWindow, UMVHUDWidgetBase, UMVLoadingWindow, UMVMessagePopup, UMVPopupBase (+3 more)
+
+### Community 113 - "로딩 가이드 카드"
+Cohesion: 0.15
+Nodes (12): UMVUISubsystem::ShowLoadingWindowForTest(), FMVLoadingGuideCard, Body, GuideId, Priority, Title, FString, FText (+4 more)
+
+### Community 114 - "AI 공격 액션 후보 해석"
+Cohesion: 0.26
+Nodes (11): FMVAttackActionRowHandle, ActionRow, FDataTableRowHandle, FGameplayTag, FSoftObjectPath, UObject, ExecuteAttackEvaluateChooserActionRowHandle(), ExecuteAttackMakeCombatChooserInput() (+3 more)
+
+### Community 115 - "피니셔 Chooser 입출력"
+Cohesion: 0.17
+Nodes (7): FMVFinisherChooserInput, VictimTag, WeaponTag, FMVFinisherChooserOutput, FGameplayTagContainer, MAVERICK_API, UMVAbilityBase
+
+### Community 117 - "메인 HUD 상태 바인딩"
+Cohesion: 0.18
+Nodes (6): FText, UMVPlayerConsumable, UMVMainHUDWidget::BindBossStatus(), UMVMainHUDWidget::BindPlayerConsumable(), UMVMainHUDWidget::EnsurePlayerSkillHUD(), UMVMainHUDWidget::InitBossStatus()
+
+### Community 118 - "문서·Graphify 거버넌스"
+Cohesion: 0.24
+Nodes (11): Graphify Navigation and Freshness Lifecycle, Work and Documentation Lifecycle, Commit-Time Incremental Graphify Update, Graphify Generated Read Models, Documentation Information Hierarchy, Pre-Push Graphify Wrap-Up Gate, Prompt-Time Query-First Workflow, Build and Impact Verification (+3 more)
+
+### Community 119 - "액터·컴포넌트 종료 정리"
+Cohesion: 0.18
+Nodes (11): FGraphEventRef, ELevelTick, FLockOnTargetExtensionTickFunction::ExecuteTick(), AMVEnemy::EndPlay(), AMVPlayerCharacter::EndPlay(), UMVCombatComponent::EndPlay(), UMVDeathComponent::EndPlay(), UMVFinisherComponent::EndPlay() (+3 more)
+
+### Community 120 - "PIE 액션 테스트 UI"
+Cohesion: 0.27
+Nodes (11): FMargin, FName, FString, UTextBlock, UVerticalBox, UWidgetTree, PIEActionTestAddButton(), PIEActionTestMakeText() (+3 more)
+
+### Community 121 - "타깃 컴포넌트 배열 편집기"
+Cohesion: 0.18
+Nodes (10): IPropertyHandle, AActor, int32, TSharedRef, GenerateArrayElementWidget, IDetailChildrenBuilder, IPropertyHandle, SEditableTextBox (+2 more)
+
+### Community 122 - "플레이어 이동 액션 테이블"
+Cohesion: 0.18
+Nodes (8): namespace, AMVPlayerCharacter::FindSprintActionRow(), UCameraShakeBase, UMVPlayerConsumable, UMVPlayerDodge, UMVPlayerInteractionDetector, MVActionHitReactions(), FMVSprintActionRow()
+
+### Community 123 - "LockOnTarget 에디터 모듈"
+Cohesion: 0.31
+Nodes (9): FLockOnTargetEditorModule, LockOnTargetStyleSet, RegisterStyles, ShutdownModule, StartupModule, UnregisterStyles, FSlateStyleSet, IModuleInterface (+1 more)
+
+### Community 124 - "전투 액션 입력 처리"
+Cohesion: 0.18
+Nodes (11): ELevelTick, FActorComponentTickFunction, FGameplayTag, FVector2D, UMVCombatComponent::ChooseTryCombatAction(), UMVCombatComponent::IsCombatActionInputTag(), UMVCombatComponent::IsHeavyChargeActionInputTag(), UMVCombatComponent::MakeActionTypeGameplayTag() (+3 more)
+
+### Community 125 - "상호작용 가능 컴포넌트"
+Cohesion: 0.25
+Nodes (8): AActor, FText, int32, UMVInteractableComponent::CanInteract_Implementation(), UMVInteractableComponent::GetInteractionPriority_Implementation(), UMVInteractableComponent::GetInteractionPromptText_Implementation(), UMVInteractableComponent::Interact_Implementation(), UMVInteractableComponent::SetPromptText()
+
+### Community 126 - "사망 디졸브 효과 실행"
+Cohesion: 0.20
+Nodes (5): AActor, UWorld, UMVDeathDissolveEffect::GetWorld(), UMVDeathDissolveEffect::InitializeEffect(), UMVDeathDissolveEffect::StartDeathDissolve_Implementation()
+
+### Community 127 - "UI 창·팝업 스택 생성"
+Cohesion: 0.18
+Nodes (10): UMVHUDWidgetBase(), TSubclassOf, UCommonActivatableWidget, UMVUISubsystem::PushPopupByClass(), UMVUISubsystem::PushWindowByClass(), UMVUISubsystem::ShowDeathOverlay(), UMVUISubsystem::ShowDefaultHUD(), UMVUISubsystem::ShowHUDByClass() (+2 more)
+
+### Community 128 - "메인 HUD 위젯 구성"
+Cohesion: 0.22
+Nodes (9): UMVBossHPBarWidget, UMVCombatComponent, UMVCurrencyStatusWidget, UMVMainHUDWidget::BuildNativeWidgetTree(), UMVPlayerConsumable, UMVPlayerSkillHUDWidget, UMVPlayerStatusWidget, UMVQuickSlotWidget (+1 more)
+
+### Community 129 - "대화창 표시 수명주기"
+Cohesion: 0.22
+Nodes (11): FText, UMVUISubsystem::HandleDialogueWindowClosed(), UMVUISubsystem::HandleDialogueWindowClosing(), UMVUISubsystem::IsDialogueWindowActive(), UMVUISubsystem::IsDialogueWindowPresent(), UMVUISubsystem::OpenDialogueWindowText(), UMVUISubsystem::QueueDialogueWindowText(), UMVUISubsystem::ShowDialogueWindowText() (+3 more)
+
+### Community 130 - "LockOnTarget 서브오브젝트 수명주기"
+Cohesion: 0.22
+Nodes (9): FLifetimeProperty, TArray, TInlineAllocator, ULockOnTargetComponent::DestroySubobject(), ULockOnTargetComponent::GetAllSubobjects(), ULockOnTargetComponent::GetLifetimeReplicatedProps(), ULockOnTargetComponent::InitializeSubobject(), FFindTargetRequestParams() (+1 more)
+
+### Community 131 - "LockOnTarget 컴포넌트 상세 패널"
+Cohesion: 0.29
+Nodes (8): IDetailCustomization, TSharedRef, FLockOnComponentDetails, CustomizeDetails, MakeInstance, OnInitialSetupNavigate, IDetailCustomization, IDetailLayoutBuilder
+
+### Community 132 - "전역 전투 센싱 태스크"
+Cohesion: 0.24
+Nodes (7): FStateTreeExecutionContext, FStateTreeTransitionResult, FMVGlobalSensingTask, EnterState, ExitState, FStateTreeTaskCommonBase, UStruct
+
+### Community 134 - "공중 착지 감지 노티파이"
+Cohesion: 0.33
+Nodes (9): FAnimNotifyEventReference, FString, UAnimSequenceBase, UMVHitReactionComponent, USkeletalMeshComponent, FindAirborneLandDetectorHitReactionComponent(), UMVAnimNotifyState_AirborneLandDetector::GetNotifyName_Implementation(), UMVAnimNotifyState_AirborneLandDetector::NotifyBegin() (+1 more)
+
+### Community 135 - "컨트롤러 기준 이동 입력"
+Cohesion: 0.27
+Nodes (10): AMVCharacterBase::AddMovementInput(), AMVCharacterBase::ApplyLocomotionDirectionSnapshot(), AMVCharacterBase::CacheControllerSpaceMovementInput(), AMVCharacterBase::ResolveControllerSpaceMovementInput(), AMVCharacterBase::ResolveWorldDirectionFromControllerSpaceInput(), AMVCharacterBase::TryGetControllerSpaceMovementInput(), ClampCharacterControllerSpaceInput(), FVector (+2 more)
+
+### Community 136 - "회복 물약 런타임 상태"
+Cohesion: 0.20
+Nodes (7): AMVPlayerCharacter, MAVERICK_API, UMVPlayerConsumable::GetHealingPotionState(), UWorld, FMVHealingPotionRuntimeState(), MAVERICK_API, UMVMainHUDWidget::HandleHealingPotionStateChanged()
+
+### Community 137 - "플레이어 상호작용 탐지"
+Cohesion: 0.20
+Nodes (8): AActor, AMVPlayerCharacter, AActor, UMVPlayerInteractionDetector::FindInteractableObject(), UMVPlayerInteractionDetector::GetOwnerActor(), UMVPlayerInteractionDetector::ResolveInteractableActor(), UPrimitiveComponent, UWorld
+
+### Community 138 - "시트 레시피 사양 로더"
+Cohesion: 0.29
+Nodes (8): FMVSheetSpec, FString, TArray, TMap, FMVSheetSpecs::Find(), FMVSheetSpecs::GetAllSheetNames(), GetRecipePath(), LoadRecipe()
+
+### Community 140 - "로딩 창 레이아웃·진행률"
+Cohesion: 0.22
+Nodes (10): FLinearColor, FName, FText, UTextBlock, UVerticalBox, UWidgetTree, MVLoadingWindowAddVerticalChild(), MVLoadingWindowMakeText() (+2 more)
+
+### Community 142 - "테이블 JSON 스키마 루트"
+Cohesion: 0.22
+Nodes (8): additionalProperties, $id, required, $schema, title, type, tables, version
+
+### Community 143 - "테이블 JSON 필드 제약"
+Cohesion: 0.22
+Nodes (9): $ref, properties, tables, version, additionalProperties, minProperties, type, const (+1 more)
+
+### Community 144 - "모듈 빌드 의존성"
+Cohesion: 0.22
+Nodes (5): ModuleRules, LockOnTarget, LockOnTargetDev, LockOnTargetEditor, Maverick
+
+### Community 145 - "가중치 기반 타깃 선택"
+Cohesion: 0.28
+Nodes (9): ULockOnTargetComponent::ProcessTargetHandlerResponse(), ULockOnTargetComponent::RequestFindTarget(), UTargetHandlerBase::FindTarget_Implementation(), UWeightedTargetHandler::FindTarget_Implementation(), UWeightedTargetHandler::TryFindTarget(), FFindTargetRequestParams, FFindTargetRequestResponse(), CreateFindTargetContext (+1 more)
+
+### Community 146 - "LockOnTarget 포커스 지점 해석"
+Cohesion: 0.25
+Nodes (9): FVector, ULockOnTargetComponent, UTargetComponent::GetCustomFocusPoint_Implementation(), UTargetComponent::GetFocusPointLocation(), UTargetComponent::GetSocketLocation(), UTargetComponent::NotifyTargetReleased(), GetCustomFocusPoint, GetSocketLocation (+1 more)
+
+### Community 147 - "LockOnTarget 타깃 캡처 상태"
+Cohesion: 0.22
+Nodes (5): UTargetComponent::DispatchTargetException(), UTargetComponent::NotifyTargetCaptured(), K2_OnCaptured, FName, int32
+
+### Community 148 - "회복 물약 적용 노티파이"
+Cohesion: 0.28
+Nodes (8): FAnimNotifyEventReference, FString, UAnimSequenceBase, UMVPlayerConsumable, USkeletalMeshComponent, FindApplyHealingPotionSubmodule(), UMVAnimNotify_ApplyHealingPotion::GetNotifyName_Implementation(), UMVAnimNotify_ApplyHealingPotion::Notify()
+
+### Community 149 - "쿨다운 액션 컷 노티파이"
+Cohesion: 0.28
+Nodes (8): AActor, FAnimNotifyEventReference, FString, UAnimSequenceBase, USkeletalMeshComponent, FindCooldownReadyActionCutOwner(), UMVAnimNotify_CooldownReadyActionCut::GetNotifyName_Implementation(), UMVAnimNotify_CooldownReadyActionCut::Notify()
+
+### Community 150 - "피격 리액션 기본 회복"
+Cohesion: 0.28
+Nodes (8): FAnimNotifyEventReference, FString, UAnimSequenceBase, UMVHitReactionComponent, USkeletalMeshComponent, FindHitReactionStartGetupComponent(), UMVAnimNotify_HitReactionDefaultRecovery::GetNotifyName_Implementation(), UMVAnimNotify_HitReactionDefaultRecovery::Notify()
+
+### Community 151 - "무적 구간 노티파이 상태"
+Cohesion: 0.39
+Nodes (8): FAnimNotifyEventReference, FString, UAnimSequenceBase, USkeletalMeshComponent, FindInvincibleCharacter(), UMVAnimNotifyState_Invincible::GetNotifyName_Implementation(), UMVAnimNotifyState_Invincible::NotifyBegin(), UMVAnimNotifyState_Invincible::NotifyEnd()
+
+### Community 152 - "사망 컴포넌트 디졸브 연동"
+Cohesion: 0.22
+Nodes (8): ACharacter, AMVCharacterBase, UMVActionComponent, UMVDeathComponent(), UMVDeathComponent::EnsureDeathDissolveEffect(), UMVDeathComponent::UMVDeathComponent(), UMVDeathDissolveEffect, UMVStatComponent
+
+### Community 153 - "스킬 슬롯 위젯 구성"
+Cohesion: 0.25
+Nodes (7): UBorder, UImage, UMVCooldownOverlayWidget, UMVSkillSlotWidget::BuildNativeWidgetTree(), USizeBox, UTextBlock, UTexture2D
+
+### Community 154 - "JSON 스키마 값 타입"
+Cohesion: 0.25
+Nodes (8): type, array, boolean, integer, null, number, object, string
+
+### Community 155 - "LockOnTarget 월드 타깃 등록"
+Cohesion: 0.29
+Nodes (6): UTargetComponent, UWorld, UTargetManager::DoesSupportWorldType(), UTargetManager::OnWorldBeginPlay(), UTargetManager::RegisterTarget(), UTargetManager::UnregisterTarget()
+
+### Community 156 - "AI 컨트롤러 지각 갱신"
+Cohesion: 0.25
+Nodes (3): AMVAIController::OnPerceptionUpdated(), AActor, TArray
+
+### Community 157 - "피격 사망 전환 노티파이"
+Cohesion: 0.32
+Nodes (7): FAnimNotifyEventReference, FString, UAnimSequenceBase, USkeletalMeshComponent, FindHitReactionDeathHandoffComponent(), UMVAnimNotify_HitReactionDeathHandoff::GetNotifyName_Implementation(), UMVAnimNotify_HitReactionDeathHandoff::Notify()
+
+### Community 158 - "컴포넌트 이벤트 바인딩 수명주기"
+Cohesion: 0.25
+Nodes (8): UMVPlayerConsumable::Deinitialize(), UMVPlayerConsumable::Initialize(), BindObservedTargetDamage, BindOwnerEvents, UnbindObservedTargetDamage, UnbindOwnerEvents, UMVEnemyDodgeTokenComponent::BeginPlay(), UMVEnemyDodgeTokenComponent::EndPlay()
+
+### Community 159 - "상호작용 가능성·포커스 판정"
+Cohesion: 0.25
+Nodes (8): UObject, UMVPlayerInteractionDetector::IsInteractableAvailable(), UMVPlayerInteractionDetector::IsInteractableSuppressed(), UMVPlayerInteractionDetector::IsInteractableWithinDetectionRange(), UMVPlayerInteractionDetector::IsInteractableWithinDialogueEscapeRange(), UMVPlayerInteractionDetector::IsPIEActionTestInteractable(), UMVPlayerInteractionDetector::SetFocusedInteractable(), UMVPlayerInteractionDetector::TryShowPIEActionTestPanelForInteractable()
+
+### Community 160 - "피격 리액션 액션 데이터"
+Cohesion: 0.25
+Nodes (8): FMVHitReactionActionData, ActionRow, ActionRowHandle, Direction, StartSection, EMVHitReactionDirection, FDataTableRowHandle, FName
+
+### Community 161 - "테이블 시트 사양"
+Cohesion: 0.25
+Nodes (6): FMVSheetSpec, bGenericFallback, KeyColumnName, RowStruct, FString, UScriptStruct
+
+### Community 162 - "필드 전환 서브시스템 계약"
+Cohesion: 0.25
+Nodes (6): AMVCharacterBase, UMVActionComponent, UMVDeathRespawnFlow, UMVLoadingWindow, UMVUISubsystem, UMVWorldStateSubsystem
+
+### Community 163 - "월드 상태 세이브 슬롯"
+Cohesion: 0.39
+Nodes (8): FString, int32, UMVWorldStateSubsystem::DeleteSaveSlot(), UMVWorldStateSubsystem::DoesSaveSlotExist(), UMVWorldStateSubsystem::LoadFromSlot(), UMVWorldStateSubsystem::ResolveSlotName(), UMVWorldStateSubsystem::SaveToSlot(), WorldStateResolveFallbackSlotName()
+
+### Community 164 - "UI 클래스 설정 레지스트리"
+Cohesion: 0.25
+Nodes (6): UMVDialogueWindow, UMVHUDWidgetBase, UMVMessagePopup, UMVPopupBase, UMVUILayerBase, UMVWindowBase
+
+### Community 166 - "사망 액션 포즈 해석"
+Cohesion: 0.29
+Nodes (7): EMVDeathActionPose, FString, UMVDeathComponent::DeathActionFacingToTableToken(), UMVDeathComponent::DeathActionPoseToTableToken(), UMVDeathComponent::IsLandingDeathActionPose(), UMVDeathComponent::ResolveDeathActionPose(), UMVDeathComponent::ResolveLandingDeathActionPose()
+
+### Community 167 - "전역 센싱 전투영역 디버그"
+Cohesion: 0.33
+Nodes (7): EMVBossCombatArea, FVector, TCHAR, UWorld, DrawGlobalSensingCombatAreaCircle(), DrawGlobalSensingCombatAreaDebug(), GlobalSensingCombatAreaText()
+
+### Community 168 - "사망 디졸브 노티파이"
+Cohesion: 0.29
+Nodes (6): FAnimNotifyEventReference, FString, UAnimSequenceBase, USkeletalMeshComponent, UMVAnimNotify_DeathDissolve::GetNotifyName_Implementation(), UMVAnimNotify_DeathDissolve::Notify()
+
+### Community 169 - "사망 오버레이 노티파이"
+Cohesion: 0.29
+Nodes (6): FAnimNotifyEventReference, FString, UAnimSequenceBase, USkeletalMeshComponent, UMVAnimNotify_DeathOverlay::GetNotifyName_Implementation(), UMVAnimNotify_DeathOverlay::Notify()
+
+### Community 170 - "적 무기 장착 구성"
+Cohesion: 0.33
+Nodes (3): AMVEnemyWeapon::AttachCombinedToHand(), AMVEnemyWeapon::AttachDualToHands(), USkeletalMeshComponent
+
+### Community 171 - "PIE 액션 테스트 사양"
+Cohesion: 0.29
+Nodes (7): EMVActionHitReactionType, TCHAR, FMVPIEActionTestSpec, GroggyDamage, HitReactionType, HPDamage, Label
+
+### Community 172 - "퀵슬롯 표시 상태 갱신"
+Cohesion: 0.33
+Nodes (5): int32, UMVQuickSlotWidget::ApplyViewData(), UMVQuickSlotWidget::SetViewData(), UMVQuickSlotWidget::UpdateCount(), UMVQuickSlotWidget::UpdateCountAndLocked()
+
+### Community 173 - "회복 물약 기본값 해석"
+Cohesion: 0.53
+Nodes (6): ApplyMVPlayerConsumableHealingPotionDataRowDefaults(), ApplyMVPlayerConsumableHealingPotionDefaults(), MakeMVPlayerConsumableDefaultHealingPotionData(), UMVPlayerConsumable::ResolveHealingPotionData(), UMVPlayerConsumable::UMVPlayerConsumable(), FMVHealingPotionTableRow()
+
+### Community 174 - "어빌리티 기본 계약"
+Cohesion: 0.33
+Nodes (3): AMVCharacterBase, MAVERICK_API, UCameraShakeBase
+
+### Community 175 - "액션 행·몽타주 타입"
+Cohesion: 0.33
+Nodes (4): UAnimInstance, UAnimMontage, FMVTableRowBase(), MAVERICK_API
+
+### Community 176 - "사망 표현 보류·시작"
+Cohesion: 0.33
+Nodes (6): UMVDeathComponent::BeginDeathPresentation(), UMVDeathComponent::ClearDeferredDeathPresentation(), UMVDeathComponent::HandleDeathStarted(), UMVDeathComponent::TryDeferDeathPresentationUntilHitReactionEnds(), UMVDeathComponent::TryStartDeathAction(), FMVDeathContext()
+
+### Community 177 - "적 회피 토큰 부여"
+Cohesion: 0.33
+Nodes (6): GrantDodgeToken, IsRelevantEnemyHitData, IsRelevantLandedHitData, UMVEnemyDodgeTokenComponent::HandleOwnerGroggyEnded(), UMVEnemyDodgeTokenComponent::NotifyEnemyDamaged(), UMVEnemyDodgeTokenComponent::NotifyEnemyLandedHit()
+
+### Community 178 - "테이블 기반 UI·스탯 조회"
+Cohesion: 0.40
+Nodes (6): UMVStatComponent::LoadStatsFromTable(), UMVTableManager, FName, UMVUISubsystem::ShowDialogueWindowById(), UMVUISubsystem::ShowPopupMessageById(), UMVLoadingWindow::LoadLoadingGuideCards()
+
+### Community 179 - "에디터 블루프린트 경로 복구"
+Cohesion: 0.47
+Nodes (5): UObject, UMVEditorPathFixerLibrary::FixAnimationBlueprintParent(), UMVEditorPathFixerLibrary::FixBlueprintParent(), UClass, USkeleton
+
+### Community 180 - "월드 상태 서브시스템 접근"
+Cohesion: 0.33
+Nodes (5): UMVFieldTransitionSubsystem::GetWorldState(), UMVQuestSubsystem::GetWorldState(), UObject, UMVWorldStateSubsystem(), UMVWorldStateSubsystem::Get()
+
+### Community 182 - "Maverick 프로젝트 구현 원칙"
+Cohesion: 0.40
+Nodes (5): Character and Domain Responsibility Separation, Maverick Project Context, Policy-First Implementation and Debugging, Trace-First Debugging Policy, Unity Build Identifier Safety
+
+### Community 183 - "타깃 미리보기 확장"
+Cohesion: 0.40
+Nodes (3): FStreamableHandle, UUserWidget, UWidgetComponent
+
+### Community 184 - "락온 위젯 확장"
+Cohesion: 0.40
+Nodes (3): FStreamableHandle, UUserWidget, UWidgetComponent
+
+### Community 185 - "플레이어 캐릭터 기능 연결"
+Cohesion: 0.40
+Nodes (5): UMVPlayerDodge::GetPlayerCharacter(), UMVPlayerDodge::Initialize(), UMVPlayerInteractionDetector::GetPlayerCharacter(), UMVPlayerInteractionDetector::Initialize(), AMVPlayerCharacter()
+
+### Community 186 - "위협 기반 회피 토큰"
+Cohesion: 0.40
+Nodes (5): AActor, FMVDodgeThreatConfig, FMVDodgeThreatDecision, TrySpendDodgeToken, UMVEnemyDodgeTokenComponent::TryConsumeDodgeTokenForThreat()
+
+### Community 187 - "Maverick 빌드 타깃 규칙"
+Cohesion: 0.40
+Nodes (3): MaverickTarget, MaverickEditorTarget, TargetRules
+
+### Community 188 - "팝업 위젯 기반 클래스"
+Cohesion: 0.50
+Nodes (3): UMVPopupBase, UMVWidgetBase(), UCommonUserWidget()
+
+### Community 189 - "상호작용 후보 판정"
+Cohesion: 0.50
+Nodes (4): FMVInteractionCandidate, FVector, UMVPlayerInteractionDetector::HasLineOfSight(), UMVPlayerInteractionDetector::TryBuildCandidate()
+
+### Community 190 - "적 무기 액터 구성"
+Cohesion: 0.50
+Nodes (3): AMVEnemy::GetWeaponActor(), AMVEnemyWeapon(), USkeletalMeshComponent
+
+### Community 191 - "피격 회복 이탈 방향"
+Cohesion: 0.50
+Nodes (4): AMVEnemy::ResolveEscapeDirectionAwayFromTarget(), AMVEnemy::ResolveHitReactionRecoveryTarget(), AActor, EMVActionInputDirection
+
+### Community 192 - "상호작용 후보 선택"
+Cohesion: 0.50
+Nodes (4): int32, UMVPlayerInteractionDetector::FindCandidateIndex(), UMVPlayerInteractionDetector::SelectInteractableByOffset(), UMVPlayerInteractionDetector::SetSelectedCandidateIndex()
+
+### Community 193 - "사망 이동 모드 처리"
+Cohesion: 0.50
+Nodes (4): ACharacter, EMovementMode, uint8, UMVDeathComponent::HandleOwnerMovementModeChanged()
+
+### Community 194 - "회피 토큰 소모와 초기화"
+Cohesion: 0.50
+Nodes (4): CanSpendDodgeToken, ResetCombatFlowCounters, UMVEnemyDodgeTokenComponent::ResetForFieldTransition(), UMVEnemyDodgeTokenComponent::TrySpendDodgeToken()
+
+### Community 196 - "피격 반응 이동 모드"
+Cohesion: 0.50
+Nodes (4): ACharacter, EMovementMode, uint8, UMVHitReactionComponent::HandleOwnerMovementModeChanged()
+
+### Community 197 - "컨트롤러 기준 이동 입력"
+Cohesion: 0.50
+Nodes (4): FVector, UMVInputManagerComponent::HandleOwnerMovementInput(), UMVInputManagerComponent::ResolveControllerSpaceInputFromWorldDirection(), UMVInputManagerComponent::UpdateActionMovementInput()
+
+### Community 198 - "액션 입력 핸들러 등록"
+Cohesion: 0.50
+Nodes (4): int32, UObject, UMVInputManagerComponent::RegisterActionInputHandler(), UMVInputManagerComponent::UnregisterActionInputHandler()
+
+### Community 202 - "메시지 팝업 텍스트 설정"
+Cohesion: 0.50
+Nodes (3): FText, UMVMessagePopup::SetMessageData(), UMVMessagePopup::SetMessageText()
+
+### Community 203 - "대화 윈도우 텍스트 UI"
+Cohesion: 0.67
+Nodes (3): UMVActivatableWidgetBase(), UMVDialogueWindow, UTextBlock
+
+### Community 207 - "캐릭터 인덱스 태그"
+Cohesion: 0.67
+Nodes (3): AMVCharacterBase::GetCharacterIndexCode(), AMVCharacterBase::SetCharacterIndexCode(), FGameplayTag
+
+### Community 208 - "캐릭터 장비 스타일"
+Cohesion: 0.67
+Nodes (3): AMVCharacterBase::GetEquippedStyle(), AMVCharacterBase::SetEquippedStyle(), EMVEquippedStyle
+
+### Community 209 - "캐릭터 공중 피격 추적"
+Cohesion: 0.67
+Nodes (3): AMVCharacterBase::OnHitResolved(), TCHAR, MVCharacterLogAirborneTrace()
+
+### Community 210 - "스트레이프 이동 기준 회전"
+Cohesion: 0.67
+Nodes (3): AMVCharacterBase::ResolveMovementInputReferenceRotation(), AMVCharacterBase::SetStrafeMode(), FRotator
+
+### Community 211 - "8방향 이동 상태 갱신"
+Cohesion: 0.67
+Nodes (3): AMVCharacterBase::UpdateLocomotionDirection(), ELocomotionDirection, ResolveCharacterEightWayDirection()
+
+### Community 212 - "소모품 액션 입력 처리"
+Cohesion: 0.67
+Nodes (3): FGameplayTag, FVector2D, UMVPlayerConsumable::TryHandleActionInput()
+
+### Community 213 - "피니셔 틱 갱신"
+Cohesion: 0.67
+Nodes (3): ELevelTick, FActorComponentTickFunction, UMVFinisherComponent::TickComponent()
+
+### Community 214 - "피니셔 액션 입력 처리"
+Cohesion: 0.67
+Nodes (3): FGameplayTag, FVector2D, UMVFinisherComponent::TryHandleActionInput()
+
+## Knowledge Gaps
+- **710 isolated node(s):** `$schema`, `$id`, `title`, `type`, `version` (+705 more)
+  These have ≤1 connection - possible missing edges or undocumented components.
+- **33 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+
+## Suggested Questions
+_Questions this graph is uniquely positioned to answer:_
+
+- **Why does `Type` connect `액터·컴포넌트 종료 정리` to `락온 대상 컴포넌트`, `락온 대상 소켓 관리`, `락온 소켓 선택 에디터`, `대상 컴포넌트 디테일 편집`, `피격 리액션 회복 결정`, `LockOnTarget 월드 타깃 등록`, `컴포넌트 이벤트 바인딩 수명주기`?**
+  _High betweenness centrality (0.242) - this node is a cross-community bridge._
+- **Why does `ULockOnTargetComponent::EndPlay()` connect `락온 대상 컴포넌트` to `액터·컴포넌트 종료 정리`?**
+  _High betweenness centrality (0.093) - this node is a cross-community bridge._
+- **Why does `AMVCharacterBase()` connect `PIE 전투 디버그 도구` to `플레이어 회피 방향 해석`, `사망 부활 오케스트레이션`, `AI 스트레이프 이동`, `무기 장착 시각화`, `어빌리티 피격 Launch`, `피격 판정 해석 파이프라인`, `캐릭터 공중 피격 추적`, `필드 전환 관리`, `PIE 피격 판정 테스트`, `무적 구간 노티파이 상태`, `피격 회복 방향 추적`?**
+  _High betweenness centrality (0.069) - this node is a cross-community bridge._
+- **What connects `$schema`, `$id`, `title` to the rest of the system?**
+  _710 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Should `플레이어 회피 방향 해석` be split into smaller, more focused modules?**
+  _Cohesion score 0.06526806526806526 - nodes in this community are weakly interconnected._
+- **Should `DataTable 에셋 생성` be split into smaller, more focused modules?**
+  _Cohesion score 0.10912698412698413 - nodes in this community are weakly interconnected._
+- **Should `전투 액션 매핑` be split into smaller, more focused modules?**
+  _Cohesion score 0.06939890710382514 - nodes in this community are weakly interconnected._

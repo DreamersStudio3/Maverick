@@ -1,0 +1,24 @@
+---
+source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetTypes.h"
+type: "code"
+community: "락온 핵심 타입과 핸들러"
+location: "L1"
+tags:
+  - graphify/code
+  - graphify/EXTRACTED
+  - community/___
+---
+
+# LockOnTargetTypes.h
+
+## Connections
+- [[ETargetExceptionType]] - `contains` [EXTRACTED]
+- [[FTargetInfo()]] - `contains` [EXTRACTED]
+- [[FindComponentByName()]] - `contains` [EXTRACTED]
+- [[LockOnTargetComponent.h]] - `imports` [EXTRACTED]
+- [[TStructOpsTypeTraitsFTargetInfo]] - `contains` [EXTRACTED]
+- [[TargetComponent.h]] - `imports` [EXTRACTED]
+- [[UTargetComponent_15]] - `contains` [EXTRACTED]
+- [[operator==()]] - `contains` [EXTRACTED]
+
+#graphify/code #graphify/EXTRACTED #community/___

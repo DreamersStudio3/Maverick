@@ -1,0 +1,20 @@
+---
+source_file: "Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp"
+type: "code"
+community: "DataTable 에셋 생성"
+location: "L81"
+tags:
+  - graphify/code
+  - graphify/EXTRACTED
+  - community/DataTable__
+---
+
+# GetConverterScriptPath()
+
+## Connections
+- [[FString_21]] - `references` [EXTRACTED]
+- [[GetConverterDir()]] - `calls` [EXTRACTED]
+- [[MVTableAssetGenerator.cpp]] - `contains` [EXTRACTED]
+- [[UMVTableAssetGeneratorRunCsvConverter()]] - `calls` [EXTRACTED]
+
+#graphify/code #graphify/EXTRACTED #community/DataTable__

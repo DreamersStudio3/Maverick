@@ -1,0 +1,17 @@
+---
+source_file: "MaverickDesign/Schema/TableData.schema.json"
+type: "concept"
+community: "JSON 스키마 값 타입"
+location: "L59"
+tags:
+  - graphify/concept
+  - graphify/EXTRACTED
+  - community/JSON___
+---
+
+# integer
+
+## Connections
+- [[type_3]] - `extends` [EXTRACTED]
+
+#graphify/concept #graphify/EXTRACTED #community/JSON___
