@@ -18,7 +18,7 @@
 
 ## 결과물
 
-- `MaverickDesign/MDAFrameworkAnalysis.md`
+- `docs/wiki/Combat-Design-MDA.md`
 
 ## 범위 원칙
 
