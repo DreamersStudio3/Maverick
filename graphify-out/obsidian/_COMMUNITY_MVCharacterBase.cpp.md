@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.09
 members: 23
 ---
 
 # MVCharacterBase.cpp
 
+**Cohesion:** 0.09 - loosely connected
 **Members:** 23 nodes
 
 ## Members
@@ -40,7 +42,7 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 7 edges to [[_COMMUNITY_FVector]]
+- 7 edges to [[_COMMUNITY_FVector_1]]
 - 2 edges to [[_COMMUNITY_AMVCharacterBaseGetCharacterIndexCode]]
 - 2 edges to [[_COMMUNITY_AMVCharacterBaseGetEquippedStyle]]
 - 2 edges to [[_COMMUNITY_MVCharacterLogAirborneTrace]]

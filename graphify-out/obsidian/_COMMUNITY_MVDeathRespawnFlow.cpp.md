@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.13
 members: 20
 ---
 
 # MVDeathRespawnFlow.cpp
 
+**Cohesion:** 0.13 - loosely connected
 **Members:** 20 nodes
 
 ## Members
@@ -37,8 +39,8 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 1 edge to [[_COMMUNITY_AMVCharacterBase]]
-- 1 edge to [[_COMMUNITY_MVDeathRespawnFlow.h]]
+- 1 edge to [[_COMMUNITY_MVAbilityBase.cpp]]
+- 1 edge to [[_COMMUNITY_MVDeathRespawnFlow.h_1]]
 
 ## Top bridge nodes
 - [[MVDeathRespawnFlow.cpp]] - degree 16, connects to 1 community

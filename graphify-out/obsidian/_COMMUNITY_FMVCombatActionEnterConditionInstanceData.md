@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.09
 members: 31
 ---
 
 # FMVCombatActionEnterConditionInstanceData
 
+**Cohesion:** 0.09 - loosely connected
 **Members:** 31 nodes
 
 ## Members

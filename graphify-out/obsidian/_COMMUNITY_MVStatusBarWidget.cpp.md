@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.10
 members: 22
 ---
 
 # MVStatusBarWidget.cpp
 
+**Cohesion:** 0.10 - loosely connected
 **Members:** 22 nodes
 
 ## Members
@@ -39,7 +41,7 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 1 edge to [[_COMMUNITY_Type_1]]
+- 1 edge to [[_COMMUNITY_Type]]
 - 1 edge to [[_COMMUNITY_PIEActionTestAddButton]]
 - 1 edge to [[_COMMUNITY_UOverlay]]
 - 1 edge to [[_COMMUNITY_UMVLoadingWindowBuildNativeWidgetTree]]

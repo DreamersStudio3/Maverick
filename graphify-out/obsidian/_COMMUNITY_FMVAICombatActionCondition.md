@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.14
 members: 20
 ---
 
 # FMVAICombatActionCondition
 
+**Cohesion:** 0.14 - loosely connected
 **Members:** 20 nodes
 
 ## Members

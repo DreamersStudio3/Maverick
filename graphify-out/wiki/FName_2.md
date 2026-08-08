@@ -1,6 +1,6 @@
 # FName
 
-> 13 nodes
+> 14 nodes · cohesion 0.19
 
 ## Key Concepts
 
@@ -9,22 +9,22 @@
 - **UMVHitReactionComponent::TryHandleHoldActionInput()** (5 connections) — `Source/Maverick/Components/MVHitReactionComponent.cpp`
 - **FVector2D** (4 connections)
 - **UMVHitReactionComponent::TryHandleActionInput()** (4 connections) — `Source/Maverick/Components/MVHitReactionComponent.cpp`
-- **UMVHitReactionComponent::TryConsumeRecoveryInput()** (3 connections) — `Source/Maverick/Components/MVHitReactionComponent.cpp`
-- **UMVHitReactionComponent::MakeHitReactionActionTableName()** (3 connections) — `Source/Maverick/Components/MVHitReactionComponent.cpp`
-- **UMVHitReactionComponent::MakeGroggyActionTableName()** (3 connections) — `Source/Maverick/Components/MVHitReactionComponent.cpp`
+- **UMVHitReactionComponent::MakeGetupRecoveryActionRowName()** (3 connections) — `Source/Maverick/Components/MVHitReactionComponent.cpp`
 - **UMVHitReactionComponent::MakeGroggyActionRowName()** (3 connections) — `Source/Maverick/Components/MVHitReactionComponent.cpp`
-- **UMVHitReactionComponent::TryConsumeRecoveryMovementInput()** (2 connections) — `Source/Maverick/Components/MVHitReactionComponent.cpp`
-- **UMVHitReactionComponent::ResolveHitReactionActionTableName()** (2 connections) — `Source/Maverick/Components/MVHitReactionComponent.cpp`
-- **UMVHitReactionComponent::ResolveCharacterIndexCode()** (2 connections) — `Source/Maverick/Components/MVHitReactionComponent.cpp`
+- **UMVHitReactionComponent::MakeGroggyActionTableName()** (3 connections) — `Source/Maverick/Components/MVHitReactionComponent.cpp`
+- **UMVHitReactionComponent::MakeHitReactionActionTableName()** (3 connections) — `Source/Maverick/Components/MVHitReactionComponent.cpp`
+- **UMVHitReactionComponent::TryConsumeRecoveryInput()** (3 connections) — `Source/Maverick/Components/MVHitReactionComponent.cpp`
 - **UMVHitReactionComponent::HandleActionEnded()** (2 connections) — `Source/Maverick/Components/MVHitReactionComponent.cpp`
+- **UMVHitReactionComponent::ResolveCharacterIndexCode()** (2 connections) — `Source/Maverick/Components/MVHitReactionComponent.cpp`
+- **UMVHitReactionComponent::ResolveHitReactionActionTableName()** (2 connections) — `Source/Maverick/Components/MVHitReactionComponent.cpp`
+- **UMVHitReactionComponent::TryConsumeRecoveryMovementInput()** (2 connections) — `Source/Maverick/Components/MVHitReactionComponent.cpp`
 
 ## Relationships
 
-- [MVHitReactionComponent.cpp](MVHitReactionComponent.cpp.md) (10 shared connections)
-- [MVHitReactionLogRecoveryTrace](MVHitReactionLogRecoveryTrace.md) (7 shared connections)
+- [MVHitReactionComponent.cpp](MVHitReactionComponent.cpp.md) (11 shared connections)
+- [MVHitReactionLogRecoveryTrace](MVHitReactionLogRecoveryTrace.md) (8 shared connections)
 - [MVHitReactionComponent.h](MVHitReactionComponent.h.md) (1 shared connections)
 - [MVHitReactionBuildAvailableRowNameLog](MVHitReactionBuildAvailableRowNameLog.md) (1 shared connections)
-- [FMVResolvedHitData](FMVResolvedHitData.md) (1 shared connections)
 - [FVector2D](FVector2D.md) (1 shared connections)
 
 ## Source Files
@@ -33,7 +33,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 53 (100%)
+- EXTRACTED: 56 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

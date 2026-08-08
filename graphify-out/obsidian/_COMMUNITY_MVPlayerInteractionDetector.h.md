@@ -1,15 +1,17 @@
 ---
 type: community
+cohesion: 0.20
 members: 10
 ---
 
 # MVPlayerInteractionDetector.h
 
+**Cohesion:** 0.20 - loosely connected
 **Members:** 10 nodes
 
 ## Members
-- [[AActor_15]] - code
 - [[AActor_16]] - code - Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.h
+- [[AActor_15]] - code
 - [[AMVPlayerCharacter_2]] - code - Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.h
 - [[MVPlayerInteractionDetector.h]] - code - Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.h
 - [[UMVPlayerInteractionDetector()]] - code - Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.h

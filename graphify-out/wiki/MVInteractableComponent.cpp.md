@@ -1,20 +1,20 @@
 # MVInteractableComponent.cpp
 
-> 11 nodes
+> 11 nodes · cohesion 0.25
 
 ## Key Concepts
 
 - **MVInteractableComponent.cpp** (7 connections) — `Source/Maverick/Components/MVInteractableComponent.cpp`
 - **AActor** (4 connections)
-- **UMVInteractableComponent::GetInteractionPromptText_Implementation()** (3 connections) — `Source/Maverick/Components/MVInteractableComponent.cpp`
 - **UMVInteractableComponent::GetInteractionPriority_Implementation()** (3 connections) — `Source/Maverick/Components/MVInteractableComponent.cpp`
-- **UMVInteractableComponent::SetPromptText()** (2 connections) — `Source/Maverick/Components/MVInteractableComponent.cpp`
+- **UMVInteractableComponent::GetInteractionPromptText_Implementation()** (3 connections) — `Source/Maverick/Components/MVInteractableComponent.cpp`
 - **FText** (2 connections)
 - **UMVInteractableComponent::CanInteract_Implementation()** (2 connections) — `Source/Maverick/Components/MVInteractableComponent.cpp`
 - **UMVInteractableComponent::Interact_Implementation()** (2 connections) — `Source/Maverick/Components/MVInteractableComponent.cpp`
-- **UMVInteractableComponent::UMVInteractableComponent()** (1 connections) — `Source/Maverick/Components/MVInteractableComponent.cpp`
-- **UMVInteractableComponent::SetCanInteract()** (1 connections) — `Source/Maverick/Components/MVInteractableComponent.cpp`
+- **UMVInteractableComponent::SetPromptText()** (2 connections) — `Source/Maverick/Components/MVInteractableComponent.cpp`
 - **int32** (1 connections)
+- **UMVInteractableComponent::SetCanInteract()** (1 connections) — `Source/Maverick/Components/MVInteractableComponent.cpp`
+- **UMVInteractableComponent::UMVInteractableComponent()** (1 connections) — `Source/Maverick/Components/MVInteractableComponent.cpp`
 
 ## Relationships
 

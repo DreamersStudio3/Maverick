@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.67
 members: 3
 ---
 
 # MVCharacterLogAirborneTrace
 
+**Cohesion:** 0.67 - moderately connected
 **Members:** 3 nodes
 
 ## Members
@@ -22,7 +24,7 @@ SORT file.name ASC
 ## Connections to other communities
 - 2 edges to [[_COMMUNITY_MVCharacterBase.cpp]]
 - 2 edges to [[_COMMUNITY_FMVResolvedHitData]]
-- 1 edge to [[_COMMUNITY_AMVCharacterBase]]
+- 1 edge to [[_COMMUNITY_MVAbilityBase.cpp]]
 
 ## Top bridge nodes
 - [[MVCharacterLogAirborneTrace()]] - degree 5, connects to 3 communities

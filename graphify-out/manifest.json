@@ -1470,9 +1470,9 @@
     "semantic_hash": "9f85c1b47ef0d8841de8c5817595a92b"
   },
   "AGENTS.md": {
-    "mtime": 1786174495.0078204,
-    "ast_hash": "ad8ad647fbce9d00c0e7fd35a4fd1d9b",
-    "semantic_hash": "ad8ad647fbce9d00c0e7fd35a4fd1d9b"
+    "mtime": 1786177340.6096308,
+    "ast_hash": "07fa754d16ae705c2bff5c6da940629e",
+    "semantic_hash": "07fa754d16ae705c2bff5c6da940629e"
   },
   "MaverickDesign/README.md": {
     "mtime": 1786175284.606934,
@@ -1485,19 +1485,19 @@
     "semantic_hash": "9e9c14d107a2ed1a7ea831cb7161dc4d"
   },
   "POLICY.md": {
-    "mtime": 1786174495.0083275,
-    "ast_hash": "9529b057aa3848898ca39ba90d38a832",
-    "semantic_hash": "9529b057aa3848898ca39ba90d38a832"
+    "mtime": 1786177340.6096308,
+    "ast_hash": "4f0ddf90f2c28234c07cb237be8d7fe5",
+    "semantic_hash": "4f0ddf90f2c28234c07cb237be8d7fe5"
   },
   "docs/wiki/Documentation-Workflow.md": {
-    "mtime": 1786175284.604474,
-    "ast_hash": "b09bc61fbfa8a9822f6f5eaf0a90f164",
-    "semantic_hash": "b09bc61fbfa8a9822f6f5eaf0a90f164"
+    "mtime": 1786177369.204873,
+    "ast_hash": "c2f3caf7d8ff6f0897aa09e32d599859",
+    "semantic_hash": "c2f3caf7d8ff6f0897aa09e32d599859"
   },
   "docs/wiki/Architecture.md": {
-    "mtime": 1786175162.8420985,
-    "ast_hash": "e91d4678b05862e6ffd26f0706922db6",
-    "semantic_hash": "e91d4678b05862e6ffd26f0706922db6"
+    "mtime": 1786177340.6114407,
+    "ast_hash": "d975f84111461e15e721d27d815cb1e1",
+    "semantic_hash": "d975f84111461e15e721d27d815cb1e1"
   },
   "docs/wiki/Header-Documentation.md": {
     "mtime": 1786164998.4681935,
@@ -1515,14 +1515,14 @@
     "semantic_hash": "efd23549322078a98a1a9a29426bab98"
   },
   "Scripts/Graphify/knowledge_guard.py": {
-    "mtime": 1786174495.008837,
-    "ast_hash": "e957edd323db1e2da4b2547e6cd7804d",
-    "semantic_hash": "e957edd323db1e2da4b2547e6cd7804d"
+    "mtime": 1786177340.6109169,
+    "ast_hash": "0f98ca8babcbfaa6d78a310817142912",
+    "semantic_hash": "0f98ca8babcbfaa6d78a310817142912"
   },
   "docs/wiki/Graphify-Adoption-Report.md": {
-    "mtime": 1786175284.6063354,
-    "ast_hash": "48687bf89946d165426203b90b479b28",
-    "semantic_hash": "48687bf89946d165426203b90b479b28"
+    "mtime": 1786177369.2058778,
+    "ast_hash": "13414c57130740679737e53c79cd7a61",
+    "semantic_hash": "13414c57130740679737e53c79cd7a61"
   },
   "docs/wiki/Combat-Design-MDA.md": {
     "mtime": 1786175105.411028,

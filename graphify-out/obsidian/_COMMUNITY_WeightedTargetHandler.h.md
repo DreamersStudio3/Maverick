@@ -1,11 +1,13 @@
 ---
 type: community
-members: 24
+cohesion: 0.09
+members: 25
 ---
 
 # WeightedTargetHandler.h
 
-**Members:** 24 nodes
+**Cohesion:** 0.09 - loosely connected
+**Members:** 25 nodes
 
 ## Members
 - [[dot-ShouldSkipTargetCustom_Implementation()]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h
@@ -29,6 +31,7 @@ members: 24
 - [[UWeightedTargetHandlerHandleTargetException_Implementation()]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetHandlers/WeightedTargetHandler.cpp
 - [[UWeightedTargetHandlerHandleTargetUnlock()]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetHandlers/WeightedTargetHandler.cpp
 - [[UWeightedTargetHandlerOnLineOfSightTimerExpired()]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetHandlers/WeightedTargetHandler.cpp
+- [[UWeightedTargetHandlerDetailedResponse()]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h
 - [[WeightedTargetHandler.h]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h
 - [[uint8_1]] - code
 - [[underlying_type_t]] - code
@@ -49,8 +52,8 @@ SORT file.name ASC
 - 1 edge to [[_COMMUNITY_LockOnTargetTypes.h]]
 
 ## Top bridge nodes
-- [[WeightedTargetHandler.h]] - degree 12, connects to 3 communities
 - [[ETargetExceptionType]] - degree 9, connects to 3 communities
+- [[WeightedTargetHandler.h]] - degree 12, connects to 2 communities
 - [[UWeightedTargetHandlerHandleTargetException_Implementation()]] - degree 5, connects to 2 communities
 - [[HandleTargetUnlock]] - degree 4, connects to 2 communities
 - [[UWeightedTargetHandlerHandleTargetUnlock()]] - degree 4, connects to 1 community

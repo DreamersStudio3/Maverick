@@ -1,11 +1,13 @@
 ---
 type: community
-members: 32
+cohesion: 0.13
+members: 33
 ---
 
 # MVExecuteAttackTask.cpp
 
-**Members:** 32 nodes
+**Cohesion:** 0.13 - loosely connected
+**Members:** 33 nodes
 
 ## Members
 - [[dot-GetInstanceDataType()_14]] - code - Source/Maverick/AI/Task/MVExecuteAttackTask.h
@@ -39,6 +41,7 @@ members: 32
 - [[Tick_9]] - code - Source/Maverick/AI/Task/MVExecuteAttackTask.h
 - [[UDataTable]] - code
 - [[UMVActionComponent()]] - code - Source/Maverick/Components/MVActionComponent.h
+- [[UMVPlayerDodgeCanTransitionCurrentAction()]] - code - Source/Maverick/Character/PC/Dodge/MVPlayerDodge.cpp
 - [[UStruct_1]] - code
 
 ## Live Query (requires Dataview plugin)
@@ -55,13 +58,14 @@ SORT file.name ASC
 - 2 edges to [[_COMMUNITY_FMVAICombatContext]]
 - 2 edges to [[_COMMUNITY_FMVExecuteFixedAttackTaskInstanceData]]
 - 1 edge to [[_COMMUNITY_MVWeaponComponent.cpp]]
-- 1 edge to [[_COMMUNITY_FindBlockMovementInputInputManagerComponent]]
+- 1 edge to [[_COMMUNITY_FVector]]
+- 1 edge to [[_COMMUNITY_MVActionInputHandlerInterface.h]]
 - 1 edge to [[_COMMUNITY_MVActionRowTableTypes.h]]
 - 1 edge to [[_COMMUNITY_MVHitReactionLogRecoveryTrace]]
 
 ## Top bridge nodes
-- [[UMVActionComponent()]] - degree 5, connects to 3 communities
 - [[MVExecuteAttackTask.cpp]] - degree 21, connects to 2 communities
 - [[EnterState_9]] - degree 12, connects to 2 communities
 - [[ExecuteAttackSelectCandidate()]] - degree 6, connects to 2 communities
 - [[ExecuteAttackCanSelectCandidate()]] - degree 5, connects to 2 communities
+- [[UMVActionComponent()]] - degree 5, connects to 2 communities

@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.19
 members: 16
 ---
 
 # MVQuestSubsystem.cpp
 
+**Cohesion:** 0.19 - loosely connected
 **Members:** 16 nodes
 
 ## Members

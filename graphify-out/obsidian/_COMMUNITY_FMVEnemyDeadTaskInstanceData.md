@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.06
 members: 51
 ---
 
 # FMVEnemyDeadTaskInstanceData
 
+**Cohesion:** 0.06 - loosely connected
 **Members:** 51 nodes
 
 ## Members

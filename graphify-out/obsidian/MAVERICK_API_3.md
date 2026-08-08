@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Combat/MVAbilityBase.h"
 type: "code"
-community: "MVAbilityBase.h"
+community: "MVHitTypes.h"
 location: "L35"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVAbilityBaseh
+  - community/MVHitTypesh
 ---
 
 # MAVERICK_API
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[MVAbilityBase.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVAbilityBaseh
+#graphify/code #graphify/EXTRACTED #community/MVHitTypesh

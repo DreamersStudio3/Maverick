@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.33
 members: 7
 ---
 
 # MVEnemyWeapon.cpp
 
+**Cohesion:** 0.33 - loosely connected
 **Members:** 7 nodes
 
 ## Members

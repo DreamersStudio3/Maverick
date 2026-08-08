@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp"
 type: "code"
-community: "UMVPlayerConsumable::Initialize"
+community: "MVPlayerConsumable.cpp"
 location: "L120"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/UMVPlayerConsumableInitialize
+  - community/MVPlayerConsumablecpp
 ---
 
 # UMVPlayerConsumable::Deinitialize()
@@ -15,4 +15,4 @@ tags:
 - [[MVPlayerConsumable.cpp]] - `contains` [EXTRACTED]
 - [[UnbindOwnerEvents]] - `calls` [INFERRED]
 
-#graphify/code #graphify/EXTRACTED #community/UMVPlayerConsumableInitialize
+#graphify/code #graphify/EXTRACTED #community/MVPlayerConsumablecpp

@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.11
 members: 19
 ---
 
 # MVTableTypes.h
 
+**Cohesion:** 0.11 - loosely connected
 **Members:** 19 nodes
 
 ## Members
@@ -44,7 +46,7 @@ SORT file.name ASC
 - 1 edge to [[_COMMUNITY_MVActionRowTableTypes.h]]
 - 1 edge to [[_COMMUNITY_MVCharacterBase.h]]
 - 1 edge to [[_COMMUNITY_MVWeaponComponent.cpp]]
-- 1 edge to [[_COMMUNITY_MVMovementActionTableTypes.h]]
+- 1 edge to [[_COMMUNITY_Player Dodge Tables]]
 
 ## Top bridge nodes
 - [[MVTableTypes.h]] - degree 16, connects to 7 communities

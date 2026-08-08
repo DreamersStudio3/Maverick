@@ -1,22 +1,24 @@
 ---
 type: community
+cohesion: 0.22
 members: 9
 ---
 
 # MVDeathRespawnFlow.h
 
+**Cohesion:** 0.22 - loosely connected
 **Members:** 9 nodes
 
 ## Members
 - [[AMVCharacterBase_9]] - code - Source/Maverick/System/MVDeathRespawnFlow.h
 - [[MVDeathRespawnFlow.h]] - code - Source/Maverick/System/MVDeathRespawnFlow.h
+- [[MVUISettings.cpp]] - code - Source/Maverick/UI/System/MVUISettings.cpp
 - [[UMVDeathComponent_2]] - code - Source/Maverick/System/MVDeathRespawnFlow.h
+- [[UMVDeathOverlayWindow]] - code - Source/Maverick/System/MVDeathRespawnFlow.h
 - [[UMVDeathRespawnFlow()]] - code - Source/Maverick/System/MVDeathRespawnFlow.h
-- [[UMVDeathRespawnFlowInitialize()]] - code - Source/Maverick/System/MVDeathRespawnFlow.cpp
-- [[UMVFieldTransitionSubsystem]] - code - Source/Maverick/System/MVDeathRespawnFlow.h
-- [[UMVFieldTransitionSubsystemGet()]] - code - Source/Maverick/System/MVFieldTransitionSubsystem.cpp
+- [[UMVMainHUDWidget]] - code - Source/Maverick/Character/NPC/Enemy/MVEnemy.h
+- [[UMVUISettingsUMVUISettings()]] - code - Source/Maverick/UI/System/MVUISettings.cpp
 - [[UMVUISubsystem_1]] - code - Source/Maverick/System/MVDeathRespawnFlow.h
-- [[UObject_15]] - code
 
 ## Live Query (requires Dataview plugin)
 
@@ -26,11 +28,11 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 1 edge to [[_COMMUNITY_MVDeathRespawnFlow.cpp]]
 - 1 edge to [[_COMMUNITY_MVEnemy.h]]
-- 1 edge to [[_COMMUNITY_MVFieldTransitionSubsystem.cpp]]
+- 1 edge to [[_COMMUNITY_MVDeathRespawnFlow.h_1]]
+- 1 edge to [[_COMMUNITY_FMVInteractionPromptData]]
 
 ## Top bridge nodes
 - [[MVDeathRespawnFlow.h]] - degree 6, connects to 1 community
-- [[UMVFieldTransitionSubsystemGet()]] - degree 3, connects to 1 community
-- [[UMVDeathRespawnFlowInitialize()]] - degree 2, connects to 1 community
+- [[UMVUISettingsUMVUISettings()]] - degree 4, connects to 1 community
+- [[UMVMainHUDWidget]] - degree 2, connects to 1 community

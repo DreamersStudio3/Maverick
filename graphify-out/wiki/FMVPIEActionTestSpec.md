@@ -1,16 +1,16 @@
 # FMVPIEActionTestSpec
 
-> 7 nodes
+> 7 nodes · cohesion 0.29
 
 ## Key Concepts
 
 - **FMVPIEActionTestSpec** (7 connections) — `Source/Maverick/UI/Debug/MVPIEActionTestWidget.cpp`
-- **TCHAR** (1 connections)
-- **Label** (1 connections) — `Source/Maverick/UI/Debug/MVPIEActionTestWidget.cpp`
 - **EMVActionHitReactionType** (1 connections)
+- **TCHAR** (1 connections)
+- **GroggyDamage** (1 connections) — `Source/Maverick/UI/Debug/MVPIEActionTestWidget.cpp`
 - **HitReactionType** (1 connections) — `Source/Maverick/UI/Debug/MVPIEActionTestWidget.cpp`
 - **HPDamage** (1 connections) — `Source/Maverick/UI/Debug/MVPIEActionTestWidget.cpp`
-- **GroggyDamage** (1 connections) — `Source/Maverick/UI/Debug/MVPIEActionTestWidget.cpp`
+- **Label** (1 connections) — `Source/Maverick/UI/Debug/MVPIEActionTestWidget.cpp`
 
 ## Relationships
 

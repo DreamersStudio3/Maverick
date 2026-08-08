@@ -1,6 +1,6 @@
 # PIEActionTestAddButton
 
-> 11 nodes
+> 11 nodes · cohesion 0.27
 
 ## Key Concepts
 
@@ -9,12 +9,12 @@
 - **PIEActionTestMakeText()** (7 connections) — `Source/Maverick/UI/Debug/MVPIEActionTestWidget.cpp`
 - **UMVPIEActionTestWidget::BuildNativeWidgetTree()** (5 connections) — `Source/Maverick/UI/Debug/MVPIEActionTestWidget.cpp`
 - **FString** (4 connections)
-- **UWidgetTree** (2 connections)
 - **FName** (2 connections)
+- **UWidgetTree** (2 connections)
 - **UMVPIEActionTestWidget::SetStatusText()** (2 connections) — `Source/Maverick/UI/Debug/MVPIEActionTestWidget.cpp`
 - **UTextBlock** (1 connections)
-- **UButton** (1 connections)
 - **UVerticalBox** (1 connections)
+- **UButton** (1 connections)
 
 ## Relationships
 

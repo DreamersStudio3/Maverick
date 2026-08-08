@@ -1,24 +1,24 @@
 # TMVPropTable
 
-> 16 nodes
+> 16 nodes · cohesion 0.17
 
 ## Key Concepts
 
 - **TMVPropTable** (17 connections) — `Source/Maverick/Public/Tables/MVTableTypes.h`
-- **.Build()** (3 connections) — `Source/Maverick/Public/Tables/MVTableTypes.h`
-- **UDataTable** (3 connections)
 - **KeyType** (3 connections)
+- **UDataTable** (3 connections)
+- **.Build()** (3 connections) — `Source/Maverick/Public/Tables/MVTableTypes.h`
 - **.Find()** (3 connections) — `Source/Maverick/Public/Tables/MVTableTypes.h`
-- **.Num()** (2 connections) — `Source/Maverick/Public/Tables/MVTableTypes.h`
-- **.Has()** (2 connections) — `Source/Maverick/Public/Tables/MVTableTypes.h`
 - **RowType** (2 connections)
 - **.GetSource()** (2 connections) — `Source/Maverick/Public/Tables/MVTableTypes.h`
+- **.Has()** (2 connections) — `Source/Maverick/Public/Tables/MVTableTypes.h`
+- **.Num()** (2 connections) — `Source/Maverick/Public/Tables/MVTableTypes.h`
 - **int32** (1 connections)
 - **TArray** (1 connections)
-- **Rows** (1 connections) — `Source/Maverick/Public/Tables/MVTableTypes.h`
 - **TMap** (1 connections)
-- **Map** (1 connections) — `Source/Maverick/Public/Tables/MVTableTypes.h`
 - **TWeakObjectPtr** (1 connections)
+- **Map** (1 connections) — `Source/Maverick/Public/Tables/MVTableTypes.h`
+- **Rows** (1 connections) — `Source/Maverick/Public/Tables/MVTableTypes.h`
 - **SourceTable** (1 connections) — `Source/Maverick/Public/Tables/MVTableTypes.h`
 
 ## Relationships

@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.21
 members: 13
 ---
 
 # FMVDeathDissolveMeshState
 
+**Cohesion:** 0.21 - loosely connected
 **Members:** 13 nodes
 
 ## Members

@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "DrawGlobalSensingCombatAreaDebug"
+community: "AI Global Sensing"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/DrawGlobalSensingCombatAreaDebug
+  - community/AI_Global_Sensing
 ---
 
 # FVector
@@ -15,4 +15,4 @@ tags:
 - [[DrawGlobalSensingCombatAreaDebug()]] - `references` [EXTRACTED]
 - [[GlobalSensingTraceClear()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/DrawGlobalSensingCombatAreaDebug
+#graphify/code #graphify/EXTRACTED #community/AI_Global_Sensing

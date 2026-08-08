@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "MVPlayerDodge.cpp"
+community: "Player Dodge Tables"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVPlayerDodgecpp
+  - community/Player_Dodge_Tables
 ---
 
 # FDataTableRowHandle
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[UMVPlayerDodgeFindDodgeActionRow()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVPlayerDodgecpp
+#graphify/code #graphify/EXTRACTED #community/Player_Dodge_Tables

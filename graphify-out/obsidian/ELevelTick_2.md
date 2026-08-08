@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "FGameplayTag"
+community: "MVCombatComponent.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/FGameplayTag
+  - community/MVCombatComponentcpp
 ---
 
 # ELevelTick
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[UMVCombatComponentTickComponent()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/FGameplayTag
+#graphify/code #graphify/EXTRACTED #community/MVCombatComponentcpp

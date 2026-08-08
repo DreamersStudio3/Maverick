@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.22
 members: 11
 ---
 
 # UMVDialogueWindow
 
+**Cohesion:** 0.22 - loosely connected
 **Members:** 11 nodes
 
 ## Members
@@ -36,6 +38,6 @@ SORT file.name ASC
 ## Top bridge nodes
 - [[FText_13]] - degree 6, connects to 2 communities
 - [[UMVDialogueWindow_1]] - degree 9, connects to 1 community
+- [[UMVUISubsystemOpenDialogueWindowText()]] - degree 3, connects to 1 community
 - [[UMVUISubsystemShowDialogueWindowText()]] - degree 3, connects to 1 community
 - [[UMVUISubsystemShowDialogueWindowTextWithTiming()]] - degree 3, connects to 1 community
-- [[UMVUISubsystemOpenDialogueWindowText()]] - degree 3, connects to 1 community

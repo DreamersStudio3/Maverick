@@ -1,14 +1,14 @@
 # TargetPreviewExtension.h
 
-> 5 nodes
+> 5 nodes · cohesion 0.40
 
 ## Key Concepts
 
 - **TargetPreviewExtension.h** (4 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetExtensions/TargetPreviewExtension.h`
-- **UUserWidget** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetExtensions/TargetPreviewExtension.h`
-- **UWidgetComponent** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetExtensions/TargetPreviewExtension.h`
 - **FStreamableHandle** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetExtensions/TargetPreviewExtension.h`
 - **ULockOnTargetExtensionBase()** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetExtensions/TargetPreviewExtension.h`
+- **UUserWidget** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetExtensions/TargetPreviewExtension.h`
+- **UWidgetComponent** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetExtensions/TargetPreviewExtension.h`
 
 ## Relationships
 

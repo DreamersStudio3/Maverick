@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "EMVRecoveryEscapeCancelTrigger"
+community: "MVInputManagerComponent.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/EMVRecoveryEscapeCancelTrigger
+  - community/MVInputManagerComponentcpp
 ---
 
 # EMVRecoveryEscapeCancelTrigger
@@ -14,4 +14,4 @@ tags:
 - [[UMVInputManagerComponentCanUseRecoveryEscapeCancelTrigger()]] - `references` [EXTRACTED]
 - [[UMVInputManagerComponentTryCancelActiveActionForRecoveryEscape()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/EMVRecoveryEscapeCancelTrigger
+#graphify/code #graphify/EXTRACTED #community/MVInputManagerComponentcpp

@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVCombatComponent.cpp"
 type: "code"
-community: "MVCombatComponent.cpp"
+community: "FDataTableRowHandle"
 location: "L58"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVCombatComponentcpp
+  - community/FDataTableRowHandle
 ---
 
 # MVCombatMakeFallbackAttackRowCandidates()
@@ -20,4 +20,4 @@ tags:
 - [[TArray_13]] - `references` [EXTRACTED]
 - [[UMVCombatComponentTryMakeFallbackAttackActionRowHandle()]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVCombatComponentcpp
+#graphify/code #graphify/EXTRACTED #community/FDataTableRowHandle

@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Character/PC/Dodge/MVPlayerDodge.cpp"
 type: "code"
-community: "AMVCharacterBase"
+community: "MVAbilityBase.cpp"
 location: "L478"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AMVCharacterBase
+  - community/MVAbilityBasecpp
 ---
 
 # UMVPlayerDodge::BeginLockOnPawnRotationSuppressionForDodge()
@@ -15,4 +15,4 @@ tags:
 - [[AMVCharacterBase()]] - `references` [EXTRACTED]
 - [[MVPlayerDodge.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AMVCharacterBase
+#graphify/code #graphify/EXTRACTED #community/MVAbilityBasecpp

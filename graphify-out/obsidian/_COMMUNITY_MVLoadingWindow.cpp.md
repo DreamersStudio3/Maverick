@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.11
 members: 23
 ---
 
 # MVLoadingWindow.cpp
 
+**Cohesion:** 0.11 - loosely connected
 **Members:** 23 nodes
 
 ## Members
@@ -41,7 +43,7 @@ SORT file.name ASC
 
 ## Connections to other communities
 - 4 edges to [[_COMMUNITY_UMVLoadingWindowBuildNativeWidgetTree]]
-- 1 edge to [[_COMMUNITY_rows]]
+- 1 edge to [[_COMMUNITY_table]]
 - 1 edge to [[_COMMUNITY_FMVLoadingGuideCard]]
 - 1 edge to [[_COMMUNITY_UMVTableManager]]
 

@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.06
 members: 36
 ---
 
 # MVUISubsystem.cpp
 
+**Cohesion:** 0.06 - loosely connected
 **Members:** 36 nodes
 
 ## Members
@@ -56,7 +58,7 @@ SORT file.name ASC
 - 9 edges to [[_COMMUNITY_UMVDialogueWindow]]
 - 8 edges to [[_COMMUNITY_UWorld]]
 - 7 edges to [[_COMMUNITY_UMVUISubsystemPushWindowByClass]]
-- 2 edges to [[_COMMUNITY_AMVCharacterBase]]
+- 2 edges to [[_COMMUNITY_MVAbilityBase.cpp]]
 - 2 edges to [[_COMMUNITY_MVTableTypes.h]]
 - 2 edges to [[_COMMUNITY_MVUISubsystem.h]]
 - 2 edges to [[_COMMUNITY_UMVTableManager]]

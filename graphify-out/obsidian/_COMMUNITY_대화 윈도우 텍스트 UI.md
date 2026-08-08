@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.67
 members: 4
 ---
 
 # 대화 윈도우 텍스트 UI
 
+**Cohesion:** 0.67 - moderately connected
 **Members:** 4 nodes
 
 ## Members

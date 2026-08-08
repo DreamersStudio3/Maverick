@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.40
 members: 6
 ---
 
 # UMVTableManager
 
+**Cohesion:** 0.40 - moderately connected
 **Members:** 6 nodes
 
 ## Members
@@ -26,7 +28,7 @@ SORT file.name ASC
 - 2 edges to [[_COMMUNITY_MVTableAssetGenerator.cpp]]
 - 2 edges to [[_COMMUNITY_MVUISubsystem.cpp]]
 - 1 edge to [[_COMMUNITY_FMVDodgeInputContext]]
-- 1 edge to [[_COMMUNITY_MVMovementActionTableTypes.h]]
+- 1 edge to [[_COMMUNITY_Player Dodge Tables]]
 - 1 edge to [[_COMMUNITY_MVActionComponent.cpp]]
 - 1 edge to [[_COMMUNITY_FName]]
 - 1 edge to [[_COMMUNITY_MVHitReactionComponent.h]]

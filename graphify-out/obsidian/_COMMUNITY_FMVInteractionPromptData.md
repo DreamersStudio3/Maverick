@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.13
 members: 15
 ---
 
 # FMVInteractionPromptData
 
+**Cohesion:** 0.13 - loosely connected
 **Members:** 15 nodes
 
 ## Members
@@ -34,7 +36,7 @@ SORT file.name ASC
 ## Connections to other communities
 - 2 edges to [[_COMMUNITY_FMVPopupMessageData]]
 - 2 edges to [[_COMMUNITY_MVUISubsystem.cpp]]
-- 1 edge to [[_COMMUNITY_MVEnemy.h]]
+- 1 edge to [[_COMMUNITY_MVDeathRespawnFlow.h]]
 - 1 edge to [[_COMMUNITY_UMVDialogueWindow]]
 - 1 edge to [[_COMMUNITY_MVUISubsystem.h]]
 

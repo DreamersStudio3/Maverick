@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.19
 members: 14
 ---
 
 # MVUILayerBase.cpp
 
+**Cohesion:** 0.19 - loosely connected
 **Members:** 14 nodes
 
 ## Members

@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.14
 members: 23
 ---
 
 # SSocketSelector
 
+**Cohesion:** 0.14 - loosely connected
 **Members:** 23 nodes
 
 ## Members
@@ -41,7 +43,7 @@ SORT file.name ASC
 
 ## Connections to other communities
 - 2 edges to [[_COMMUNITY_TargetComponentDetails.cpp]]
-- 1 edge to [[_COMMUNITY_Type_1]]
+- 1 edge to [[_COMMUNITY_Type]]
 - 1 edge to [[_COMMUNITY_FTargetComponentDetails]]
 - 1 edge to [[_COMMUNITY_SMVCooldownOverlay]]
 

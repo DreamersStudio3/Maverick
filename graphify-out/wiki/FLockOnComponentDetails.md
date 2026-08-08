@@ -1,19 +1,19 @@
 # FLockOnComponentDetails
 
-> 10 nodes
+> 10 nodes · cohesion 0.29
 
 ## Key Concepts
 
 - **FLockOnComponentDetails** (5 connections) — `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/LockOnComponentDetails.h`
 - **LockOnComponentDetails.cpp** (4 connections) — `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/LockOnComponentDetails.cpp`
-- **LockOnComponentDetails.h** (4 connections) — `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/LockOnComponentDetails.h`
 - **MakeInstance** (4 connections) — `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/LockOnComponentDetails.h`
-- **IDetailCustomization** (3 connections)
+- **LockOnComponentDetails.h** (4 connections) — `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/LockOnComponentDetails.h`
 - **CustomizeDetails** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/LockOnComponentDetails.h`
+- **IDetailCustomization** (3 connections)
 - **IDetailLayoutBuilder** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/TargetComponentDetails.h`
 - **OnInitialSetupNavigate** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/LockOnComponentDetails.h`
-- **TSharedRef** (1 connections)
 - **IDetailCustomization** (1 connections)
+- **TSharedRef** (1 connections)
 
 ## Relationships
 

@@ -1,20 +1,19 @@
 ---
 type: community
-members: 10
+cohesion: 0.29
+members: 7
 ---
 
 # FMVEnemyDodgeActionTask
 
-**Members:** 10 nodes
+**Cohesion:** 0.29 - loosely connected
+**Members:** 7 nodes
 
 ## Members
 - [[dot-GetInstanceDataType()_10]] - code - Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h
-- [[AActor_24]] - code - Source/Maverick/Public/Struct/MVAIDodgeTypes.h
 - [[APawn_22]] - code - Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h
 - [[FMVEnemyDodgeActionTask]] - code - Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h
 - [[FStateTreeTaskCommonBase_10]] - code
-- [[MVAIDodgeTypes.h]] - code - Source/Maverick/Public/Struct/MVAIDodgeTypes.h
-- [[MVDodgeThreatEvaluatorLibrary.h]] - code - Source/Maverick/Public/AI/MVDodgeThreatEvaluatorLibrary.h
 - [[MVEnemyDodgeActionTask.h]] - code - Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h
 - [[UMVActionComponent_1]] - code - Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h
 - [[UStruct_16]] - code
@@ -29,13 +28,11 @@ SORT file.name ASC
 ## Connections to other communities
 - 3 edges to [[_COMMUNITY_FMVEnemyDodgeActionTaskInstanceData]]
 - 3 edges to [[_COMMUNITY_MVEnemyDodgeActionTask.cpp]]
-- 1 edge to [[_COMMUNITY_MVMovementActionTableTypes.h]]
-- 1 edge to [[_COMMUNITY_EMVDodgeThreatRejectReason]]
 - 1 edge to [[_COMMUNITY_UMVEnemyDodgeTokenComponentTryConsumeDodgeTokenForThreat]]
+- 1 edge to [[_COMMUNITY_Player Dodge Tables]]
 
 ## Top bridge nodes
-- [[MVEnemyDodgeActionTask.h]] - degree 6, connects to 2 communities
+- [[MVEnemyDodgeActionTask.h]] - degree 6, connects to 3 communities
 - [[FMVEnemyDodgeActionTask]] - degree 6, connects to 1 community
-- [[MVAIDodgeTypes.h]] - degree 4, connects to 1 community
 - [[APawn_22]] - degree 2, connects to 1 community
 - [[UMVActionComponent_1]] - degree 2, connects to 1 community

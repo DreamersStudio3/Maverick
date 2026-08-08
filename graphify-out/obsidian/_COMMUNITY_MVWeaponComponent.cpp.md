@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.05
 members: 54
 ---
 
 # MVWeaponComponent.cpp
 
+**Cohesion:** 0.05 - loosely connected
 **Members:** 54 nodes
 
 ## Members
@@ -73,13 +75,13 @@ SORT file.name ASC
 ## Connections to other communities
 - 1 edge to [[_COMMUNITY_MVExecuteAttackTask.cpp]]
 - 1 edge to [[_COMMUNITY_MVCharacterBase.h]]
-- 1 edge to [[_COMMUNITY_AMVCharacterBase]]
+- 1 edge to [[_COMMUNITY_MVAbilityBase.cpp]]
 - 1 edge to [[_COMMUNITY_MVHitResolverSubsystem.cpp]]
 - 1 edge to [[_COMMUNITY_FMVCombatActionEvent]]
 - 1 edge to [[_COMMUNITY_MVHitReactionComponent.h]]
 - 1 edge to [[_COMMUNITY_전투 액션 Chooser 입력]]
 - 1 edge to [[_COMMUNITY_MVHitTypes.h]]
-- 1 edge to [[_COMMUNITY_MVPlayerConsumable.h]]
+- 1 edge to [[_COMMUNITY_ApplyMVPlayerConsumableHealingPotionDataRowDefaults]]
 - 1 edge to [[_COMMUNITY_MVTableTypes.h]]
 
 ## Top bridge nodes

@@ -1,12 +1,12 @@
 # MVDeathOverlayWindow.h
 
-> 3 nodes
+> 3 nodes · cohesion 0.67
 
 ## Key Concepts
 
 - **MVDeathOverlayWindow.h** (2 connections) — `Source/Maverick/UI/Window/MVDeathOverlayWindow.h`
-- **UTextBlock** (1 connections) — `Source/Maverick/UI/Window/MVDeathOverlayWindow.h`
 - **UMVDeathOverlayWindow()** (1 connections) — `Source/Maverick/UI/Window/MVDeathOverlayWindow.h`
+- **UTextBlock** (1 connections) — `Source/Maverick/UI/Window/MVDeathOverlayWindow.h`
 
 ## Relationships
 

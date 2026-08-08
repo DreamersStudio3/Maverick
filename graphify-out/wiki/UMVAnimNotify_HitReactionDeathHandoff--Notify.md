@@ -1,6 +1,6 @@
 # UMVAnimNotify_HitReactionDeathHandoff::Notify
 
-> 8 nodes
+> 8 nodes · cohesion 0.32
 
 ## Key Concepts
 
@@ -9,9 +9,9 @@
 - **MVAnimNotify_HitReactionDeathHandoff.cpp** (3 connections) — `Source/Maverick/Animation/Notifies/MVAnimNotify_HitReactionDeathHandoff.cpp`
 - **USkeletalMeshComponent** (2 connections)
 - **UMVAnimNotify_HitReactionDeathHandoff::GetNotifyName_Implementation()** (2 connections) — `Source/Maverick/Animation/Notifies/MVAnimNotify_HitReactionDeathHandoff.cpp`
-- **UAnimSequenceBase** (1 connections)
 - **FAnimNotifyEventReference** (1 connections)
 - **FString** (1 connections)
+- **UAnimSequenceBase** (1 connections)
 
 ## Relationships
 

@@ -1,11 +1,13 @@
 ---
 type: community
-members: 36
+cohesion: 0.09
+members: 35
 ---
 
 # FMVStrafeMoveTaskInstanceData
 
-**Members:** 36 nodes
+**Cohesion:** 0.09 - loosely connected
+**Members:** 35 nodes
 
 ## Members
 - [[dot-GetInstanceDataType()_19]] - code - Source/Maverick/AI/Task/MVStrafeMoveTask.h
@@ -26,7 +28,6 @@ members: 36
 - [[FStateTreeTransitionResult_12]] - code
 - [[FVector_8]] - code
 - [[MVStrafeMoveTask.cpp]] - code - Source/Maverick/AI/Task/MVStrafeMoveTask.cpp
-- [[MVStrafeMoveTask.h]] - code - Source/Maverick/AI/Task/MVStrafeMoveTask.h
 - [[MVStrafeMoveTaskApplySpeed()]] - code - Source/Maverick/AI/Task/MVStrafeMoveTask.cpp
 - [[MVStrafeMoveTaskBuildMoveDirection()]] - code - Source/Maverick/AI/Task/MVStrafeMoveTask.cpp
 - [[MVStrafeMoveTaskGetMovementComponent()]] - code - Source/Maverick/AI/Task/MVStrafeMoveTask.cpp
@@ -53,11 +54,11 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
+- 2 edges to [[_COMMUNITY_MVAICombatTypes.h]]
 - 1 edge to [[_COMMUNITY_MVCharacterBase.h]]
-- 1 edge to [[_COMMUNITY_MVAICombatTypes.h]]
 - 1 edge to [[_COMMUNITY_FMVAICombatContext]]
 
 ## Top bridge nodes
-- [[FMVStrafeMoveTaskInstanceData]] - degree 19, connects to 1 community
+- [[FMVStrafeMoveTaskInstanceData]] - degree 19, connects to 2 communities
+- [[FMVStrafeMoveTask]] - degree 6, connects to 1 community
 - [[MVStrafeMoveTaskGetMovementComponent()]] - degree 5, connects to 1 community
-- [[MVStrafeMoveTask.h]] - degree 3, connects to 1 community

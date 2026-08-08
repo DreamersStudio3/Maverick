@@ -1,6 +1,6 @@
 # FMVActionCooldownReadyConditionInstanceData
 
-> 17 nodes
+> 17 nodes · cohesion 0.14
 
 ## Key Concepts
 
@@ -14,12 +14,12 @@
 - **.GetInstanceDataType()** (2 connections) — `Source/Maverick/AI/Condition/MVActionCooldownReadyCondition.h`
 - **APawn** (1 connections)
 - **TObjectPtr** (1 connections)
-- **TObjectPtr** (1 connections)
-- **APawn** (1 connections)
-- **Owner** (1 connections) — `Source/Maverick/AI/Condition/MVActionCooldownReadyCondition.h`
-- **FName** (1 connections)
 - **CooldownActionId** (1 connections) — `Source/Maverick/AI/Condition/MVActionCooldownReadyCondition.h`
+- **Owner** (1 connections) — `Source/Maverick/AI/Condition/MVActionCooldownReadyCondition.h`
+- **APawn** (1 connections)
+- **FName** (1 connections)
 - **FStateTreeConditionCommonBase** (1 connections)
+- **TObjectPtr** (1 connections)
 - **UStruct** (1 connections)
 
 ## Relationships

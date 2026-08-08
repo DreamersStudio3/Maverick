@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetHandlers/WeightedTargetHandler.cpp"
 type: "code"
-community: "EFindTargetContextMode"
+community: "WeightedTargetHandler.cpp"
 location: "L313"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/EFindTargetContextMode
+  - community/WeightedTargetHandlercpp
 ---
 
 # UWeightedTargetHandler::ShouldSkipTargetSecondaryPass()
@@ -19,4 +19,4 @@ tags:
 - [[ShouldSkipTargetCustom]] - `calls` [INFERRED]
 - [[WeightedTargetHandler.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/EFindTargetContextMode
+#graphify/code #graphify/EXTRACTED #community/WeightedTargetHandlercpp

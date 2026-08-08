@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.22
 members: 9
 ---
 
 # MVDeathComponent.h
 
+**Cohesion:** 0.22 - loosely connected
 **Members:** 9 nodes
 
 ## Members
@@ -30,6 +32,6 @@ SORT file.name ASC
 - 1 edge to [[_COMMUNITY_UMVAnimNotify_HitReactionDeathHandoffNotify]]
 
 ## Top bridge nodes
-- [[UMVDeathComponentUMVDeathComponent()]] - degree 2, connects to 1 community
-- [[UMVDeathComponentEnsureDeathDissolveEffect()]] - degree 2, connects to 1 community
 - [[UMVDeathComponent()]] - degree 2, connects to 1 community
+- [[UMVDeathComponentEnsureDeathDissolveEffect()]] - degree 2, connects to 1 community
+- [[UMVDeathComponentUMVDeathComponent()]] - degree 2, connects to 1 community

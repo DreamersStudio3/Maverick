@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVHitReactionComponent.cpp"
 type: "code"
-community: "MVHitReactionBuildAvailableRowNameLog"
+community: "MVHitReactionComponent.h"
 location: "L101"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVHitReactionBuildAvailableRowNameLog
+  - community/MVHitReactionComponenth
 ---
 
 # MVHitReactionCopyBaseActionRow()
@@ -17,4 +17,4 @@ tags:
 - [[MVHitReactionComponent.cpp]] - `contains` [EXTRACTED]
 - [[UMVHitReactionComponentGetActionData()]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVHitReactionBuildAvailableRowNameLog
+#graphify/code #graphify/EXTRACTED #community/MVHitReactionComponenth

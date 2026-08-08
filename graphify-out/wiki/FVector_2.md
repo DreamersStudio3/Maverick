@@ -1,39 +1,31 @@
 # FVector
 
-> 15 nodes
+> 10 nodes · cohesion 0.27
 
 ## Key Concepts
 
-- **FVector** (11 connections)
-- **UMVPlayerDodge::MakeDodgeInputContext()** (11 connections) — `Source/Maverick/Character/PC/Dodge/MVPlayerDodge.cpp`
-- **DodgeResolveControllerSpaceInputFromWorldDirection()** (9 connections) — `Source/Maverick/Character/PC/Dodge/MVPlayerDodge.cpp`
-- **FVector2D** (7 connections)
-- **FRotator** (7 connections)
-- **GetReferenceForwardVector()** (7 connections) — `Source/Maverick/Character/PC/Dodge/MVPlayerDodge.cpp`
-- **ResolveDirectionVectorFromReferenceRotation()** (7 connections) — `Source/Maverick/Character/PC/Dodge/MVPlayerDodge.cpp`
-- **DodgeResolveWorldDirectionFromControllerSpaceInput()** (7 connections) — `Source/Maverick/Character/PC/Dodge/MVPlayerDodge.cpp`
-- **GetReferenceRightVector()** (6 connections) — `Source/Maverick/Character/PC/Dodge/MVPlayerDodge.cpp`
-- **DodgeClampControllerSpaceInput()** (5 connections) — `Source/Maverick/Character/PC/Dodge/MVPlayerDodge.cpp`
-- **ResolveStrafeReferenceRotation()** (5 connections) — `Source/Maverick/Character/PC/Dodge/MVPlayerDodge.cpp`
-- **MakeYawRotationFromDirection()** (4 connections) — `Source/Maverick/Character/PC/Dodge/MVPlayerDodge.cpp`
-- **UMVPlayerDodge::HandleOwnerMovementInput()** (4 connections) — `Source/Maverick/Character/PC/Dodge/MVPlayerDodge.cpp`
-- **NormalizeMovementInputDirection()** (3 connections) — `Source/Maverick/Character/PC/Dodge/MVPlayerDodge.cpp`
-- **UMVPlayerDodge::CacheControllerSpaceMovementInput()** (3 connections) — `Source/Maverick/Character/PC/Dodge/MVPlayerDodge.cpp`
+- **FVector** (5 connections)
+- **AMVCharacterBase::ResolveControllerSpaceMovementInput()** (4 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
+- **ClampCharacterControllerSpaceInput()** (4 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
+- **FVector2D** (4 connections)
+- **AMVCharacterBase::CacheControllerSpaceMovementInput()** (3 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
+- **AMVCharacterBase::ResolveWorldDirectionFromControllerSpaceInput()** (3 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
+- **AMVCharacterBase::TryGetControllerSpaceMovementInput()** (3 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
+- **AMVCharacterBase::AddMovementInput()** (2 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
+- **AMVCharacterBase::ApplyLocomotionDirectionSnapshot()** (2 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
+- **int32** (1 connections)
 
 ## Relationships
 
-- [MVPlayerDodge.cpp](MVPlayerDodge.cpp.md) (20 shared connections)
-- [AMVCharacterBase](AMVCharacterBase.md) (2 shared connections)
-- [UMVPlayerDodge::MakeDodgeActionRowName](UMVPlayerDodge--MakeDodgeActionRowName.md) (1 shared connections)
-- [FMVDodgeInputContext](FMVDodgeInputContext.md) (1 shared connections)
+- [MVCharacterBase.cpp](MVCharacterBase.cpp.md) (7 shared connections)
 
 ## Source Files
 
-- `Source/Maverick/Character/PC/Dodge/MVPlayerDodge.cpp`
+- `Source/Maverick/Character/MVCharacterBase.cpp`
 
 ## Audit Trail
 
-- EXTRACTED: 96 (100%)
+- EXTRACTED: 31 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

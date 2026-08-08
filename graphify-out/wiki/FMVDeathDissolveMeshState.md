@@ -1,22 +1,22 @@
 # FMVDeathDissolveMeshState
 
-> 13 nodes
+> 13 nodes · cohesion 0.21
 
 ## Key Concepts
 
 - **FMVDeathDissolveMeshState** (11 connections) — `Source/Maverick/Effects/MVDeathDissolveEffect.h`
 - **MVDeathDissolveEffect.h** (5 connections) — `Source/Maverick/Effects/MVDeathDissolveEffect.h`
+- **UPROPERTY** (2 connections)
 - **UMaterialInstanceDynamic** (2 connections) — `Source/Maverick/Effects/MVDeathDissolveEffect.h`
 - **UMaterialInterface** (2 connections) — `Source/Maverick/Effects/MVDeathDissolveEffect.h`
-- **USkeletalMeshComponent** (2 connections) — `Source/Maverick/Effects/MVDeathDissolveEffect.h`
-- **UPROPERTY** (2 connections)
 - **UMVDeathDissolveEffect()** (2 connections) — `Source/Maverick/Effects/MVDeathDissolveEffect.h`
-- **TObjectPtr** (1 connections)
-- **MeshComponent** (1 connections) — `Source/Maverick/Effects/MVDeathDissolveEffect.h`
-- **TArray** (1 connections)
-- **OriginalMaterials** (1 connections) — `Source/Maverick/Effects/MVDeathDissolveEffect.h`
-- **DynamicMaterials** (1 connections) — `Source/Maverick/Effects/MVDeathDissolveEffect.h`
+- **USkeletalMeshComponent** (2 connections) — `Source/Maverick/Effects/MVDeathDissolveEffect.h`
 - **bWasHiddenInGame** (1 connections) — `Source/Maverick/Effects/MVDeathDissolveEffect.h`
+- **DynamicMaterials** (1 connections) — `Source/Maverick/Effects/MVDeathDissolveEffect.h`
+- **MeshComponent** (1 connections) — `Source/Maverick/Effects/MVDeathDissolveEffect.h`
+- **OriginalMaterials** (1 connections) — `Source/Maverick/Effects/MVDeathDissolveEffect.h`
+- **TArray** (1 connections)
+- **TObjectPtr** (1 connections)
 
 ## Relationships
 

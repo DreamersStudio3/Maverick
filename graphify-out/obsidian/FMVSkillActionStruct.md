@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVCombatComponent.h"
 type: "code"
-community: "FMVCombatActionEvent"
+community: "FMVSkillEntry"
 location: "L18"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/FMVCombatActionEvent
+  - community/FMVSkillEntry
 ---
 
 # FMVSkillActionStruct
@@ -19,4 +19,4 @@ tags:
 - [[TObjectPtr_26]] - `references` [EXTRACTED]
 - [[UDataTable_5]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/FMVCombatActionEvent
+#graphify/code #graphify/EXTRACTED #community/FMVSkillEntry

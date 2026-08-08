@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.17
 members: 16
 ---
 
 # TargetComponent.cpp
 
+**Cohesion:** 0.17 - loosely connected
 **Members:** 16 nodes
 
 ## Members
@@ -37,7 +39,7 @@ SORT file.name ASC
 - 2 edges to [[_COMMUNITY_UTargetComponentDispatchTargetException]]
 - 2 edges to [[_COMMUNITY_ETargetFocusPointType]]
 - 1 edge to [[_COMMUNITY_LockOnTargetDefines.h]]
-- 1 edge to [[_COMMUNITY_Type_1]]
+- 1 edge to [[_COMMUNITY_Type]]
 
 ## Top bridge nodes
 - [[TargetComponent.cpp]] - degree 18, connects to 3 communities

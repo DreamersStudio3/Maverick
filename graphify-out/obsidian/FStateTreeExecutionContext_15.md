@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "EnterState"
+community: "AI Global Sensing"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/EnterState
+  - community/AI_Global_Sensing
 ---
 
 # FStateTreeExecutionContext
@@ -15,4 +15,4 @@ tags:
 - [[ExitState_9]] - `references` [EXTRACTED]
 - [[Tick_12]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/EnterState
+#graphify/code #graphify/EXTRACTED #community/AI_Global_Sensing

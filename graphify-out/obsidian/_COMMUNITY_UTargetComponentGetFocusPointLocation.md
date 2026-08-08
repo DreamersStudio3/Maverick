@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.25
 members: 9
 ---
 
 # UTargetComponent::GetFocusPointLocation
 
+**Cohesion:** 0.25 - loosely connected
 **Members:** 9 nodes
 
 ## Members
@@ -33,6 +35,6 @@ SORT file.name ASC
 ## Top bridge nodes
 - [[UTargetComponentGetFocusPointLocation()]] - degree 5, connects to 1 community
 - [[ULockOnTargetComponent_8]] - degree 4, connects to 1 community
-- [[UTargetComponentNotifyTargetReleased()]] - degree 3, connects to 1 community
-- [[UTargetComponentGetSocketLocation()]] - degree 3, connects to 1 community
 - [[UTargetComponentGetCustomFocusPoint_Implementation()]] - degree 3, connects to 1 community
+- [[UTargetComponentGetSocketLocation()]] - degree 3, connects to 1 community
+- [[UTargetComponentNotifyTargetReleased()]] - degree 3, connects to 1 community

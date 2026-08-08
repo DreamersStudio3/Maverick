@@ -1,6 +1,6 @@
 # MVActionRowTableTypes.h
 
-> 6 nodes
+> 6 nodes · cohesion 0.33
 
 ## Key Concepts
 
@@ -18,7 +18,7 @@
 - [MVSheetSpecs.cpp](MVSheetSpecs.cpp.md) (1 shared connections)
 - [MVTableAssetGenerator.cpp](MVTableAssetGenerator.cpp.md) (1 shared connections)
 - [MVTableTypes.h](MVTableTypes.h.md) (1 shared connections)
-- [MVMovementActionTableTypes.h](MVMovementActionTableTypes.h.md) (1 shared connections)
+- [Player Dodge Tables](Player_Dodge_Tables.md) (1 shared connections)
 - [FMVSkillDataTableColumn](FMVSkillDataTableColumn.md) (1 shared connections)
 
 ## Source Files

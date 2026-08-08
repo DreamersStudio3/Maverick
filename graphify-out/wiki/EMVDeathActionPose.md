@@ -1,16 +1,16 @@
 # EMVDeathActionPose
 
-> 7 nodes
+> 7 nodes · cohesion 0.29
 
 ## Key Concepts
 
 - **EMVDeathActionPose** (5 connections)
-- **UMVDeathComponent::ResolveDeathActionPose()** (3 connections) — `Source/Maverick/Components/MVDeathComponent.cpp`
 - **FString** (3 connections)
-- **UMVDeathComponent::DeathActionPoseToTableToken()** (3 connections) — `Source/Maverick/Components/MVDeathComponent.cpp`
 - **UMVDeathComponent::DeathActionFacingToTableToken()** (3 connections) — `Source/Maverick/Components/MVDeathComponent.cpp`
-- **UMVDeathComponent::ResolveLandingDeathActionPose()** (2 connections) — `Source/Maverick/Components/MVDeathComponent.cpp`
+- **UMVDeathComponent::DeathActionPoseToTableToken()** (3 connections) — `Source/Maverick/Components/MVDeathComponent.cpp`
+- **UMVDeathComponent::ResolveDeathActionPose()** (3 connections) — `Source/Maverick/Components/MVDeathComponent.cpp`
 - **UMVDeathComponent::IsLandingDeathActionPose()** (2 connections) — `Source/Maverick/Components/MVDeathComponent.cpp`
+- **UMVDeathComponent::ResolveLandingDeathActionPose()** (2 connections) — `Source/Maverick/Components/MVDeathComponent.cpp`
 
 ## Relationships
 

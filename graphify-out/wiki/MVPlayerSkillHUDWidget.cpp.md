@@ -1,22 +1,22 @@
 # MVPlayerSkillHUDWidget.cpp
 
-> 13 nodes
+> 13 nodes · cohesion 0.15
 
 ## Key Concepts
 
 - **MVPlayerSkillHUDWidget.cpp** (10 connections) — `Source/Maverick/UI/HUD/MVPlayerSkillHUDWidget.cpp`
-- **UMVPlayerSkillHUDWidget::UMVPlayerSkillHUDWidget()** (2 connections) — `Source/Maverick/UI/HUD/MVPlayerSkillHUDWidget.cpp`
 - **UMVPlayerSkillHUDWidget::BindToCombatComponent()** (2 connections) — `Source/Maverick/UI/HUD/MVPlayerSkillHUDWidget.cpp`
 - **UMVPlayerSkillHUDWidget::NativeTick()** (2 connections) — `Source/Maverick/UI/HUD/MVPlayerSkillHUDWidget.cpp`
+- **UMVPlayerSkillHUDWidget::UMVPlayerSkillHUDWidget()** (2 connections) — `Source/Maverick/UI/HUD/MVPlayerSkillHUDWidget.cpp`
+- **FGeometry** (1 connections)
 - **FObjectInitializer** (1 connections)
 - **UMVCombatComponent** (1 connections)
-- **UMVPlayerSkillHUDWidget::UnbindCombatComponent()** (1 connections) — `Source/Maverick/UI/HUD/MVPlayerSkillHUDWidget.cpp`
-- **UMVPlayerSkillHUDWidget::NativeOnInitialized()** (1 connections) — `Source/Maverick/UI/HUD/MVPlayerSkillHUDWidget.cpp`
 - **UMVPlayerSkillHUDWidget::NativeConstruct()** (1 connections) — `Source/Maverick/UI/HUD/MVPlayerSkillHUDWidget.cpp`
 - **UMVPlayerSkillHUDWidget::NativeDestruct()** (1 connections) — `Source/Maverick/UI/HUD/MVPlayerSkillHUDWidget.cpp`
-- **FGeometry** (1 connections)
-- **UMVPlayerSkillHUDWidget::ResolveIconAssets()** (1 connections) — `Source/Maverick/UI/HUD/MVPlayerSkillHUDWidget.cpp`
+- **UMVPlayerSkillHUDWidget::NativeOnInitialized()** (1 connections) — `Source/Maverick/UI/HUD/MVPlayerSkillHUDWidget.cpp`
 - **UMVPlayerSkillHUDWidget::RefreshSkillSlots()** (1 connections) — `Source/Maverick/UI/HUD/MVPlayerSkillHUDWidget.cpp`
+- **UMVPlayerSkillHUDWidget::ResolveIconAssets()** (1 connections) — `Source/Maverick/UI/HUD/MVPlayerSkillHUDWidget.cpp`
+- **UMVPlayerSkillHUDWidget::UnbindCombatComponent()** (1 connections) — `Source/Maverick/UI/HUD/MVPlayerSkillHUDWidget.cpp`
 
 ## Relationships
 

@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/HUD/MVStatusBarWidget.h"
 type: "code"
-community: "MVStatusBarWidget.h"
+community: "MVPlayerStatusWidget.cpp"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVStatusBarWidgeth
+  - community/MVPlayerStatusWidgetcpp
 ---
 
 # MVStatusBarWidget.h
@@ -16,4 +16,4 @@ tags:
 - [[USizeBox_1]] - `contains` [EXTRACTED]
 - [[UTextBlock_6]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVStatusBarWidgeth
+#graphify/code #graphify/EXTRACTED #community/MVPlayerStatusWidgetcpp

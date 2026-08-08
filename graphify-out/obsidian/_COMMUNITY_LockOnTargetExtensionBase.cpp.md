@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.05
 members: 56
 ---
 
 # LockOnTargetExtensionBase.cpp
 
+**Cohesion:** 0.05 - loosely connected
 **Members:** 56 nodes
 
 ## Members
@@ -73,7 +75,7 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 1 edge to [[_COMMUNITY_Type_1]]
+- 1 edge to [[_COMMUNITY_Type]]
 - 1 edge to [[_COMMUNITY_LockOnTargetDefines.h]]
 
 ## Top bridge nodes

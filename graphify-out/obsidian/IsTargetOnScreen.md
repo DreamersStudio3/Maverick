@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h"
 type: "code"
-community: "EFindTargetContextMode"
+community: "WeightedTargetHandler.cpp"
 location: "L374"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/EFindTargetContextMode
+  - community/WeightedTargetHandlercpp
 ---
 
 # IsTargetOnScreen
@@ -15,4 +15,4 @@ tags:
 - [[EFindTargetContextMode]] - `defines` [EXTRACTED]
 - [[UWeightedTargetHandlerShouldSkipTargetSecondaryPass()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/EFindTargetContextMode
+#graphify/code #graphify/INFERRED #community/WeightedTargetHandlercpp

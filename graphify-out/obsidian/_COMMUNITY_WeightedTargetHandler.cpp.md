@@ -1,27 +1,27 @@
 ---
 type: community
-members: 38
+cohesion: 0.10
+members: 36
 ---
 
 # WeightedTargetHandler.cpp
 
-**Members:** 38 nodes
+**Cohesion:** 0.10 - loosely connected
+**Members:** 36 nodes
 
 ## Members
 - [[AActor_3]] - code
-- [[CalcDeltaAngle2D]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h
-- [[CalculateTargetWeight]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h
 - [[CreateTargetContext]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h
 - [[FFindTargetContext_1]] - code
 - [[FName_15]] - code
 - [[FRotator_2]] - code
 - [[FTargetContext_1]] - code
 - [[FVector_4]] - code
-- [[GenerateDetailedResponse]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h
 - [[GetPointOfView]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h
 - [[GetTargetCaptureRadius]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h
-- [[ShouldSkipTargetPrimaryPass]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h
-- [[ShouldSkipTargetSecondaryPass]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h
+- [[IsTargetOnScreen]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h
+- [[LineOfSightTrace]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h
+- [[ShouldSkipTargetCustom]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h
 - [[StartLineOfSightTimer]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h
 - [[StopLineOfSightTimer]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h
 - [[TArray_6]] - code
@@ -41,10 +41,10 @@ members: 38
 - [[UWeightedTargetHandlerPerformSecondarySamplingPass()]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetHandlers/WeightedTargetHandler.cpp
 - [[UWeightedTargetHandlerPerformSolverPass()]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetHandlers/WeightedTargetHandler.cpp
 - [[UWeightedTargetHandlerShouldSkipTargetPrimaryPass()]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetHandlers/WeightedTargetHandler.cpp
+- [[UWeightedTargetHandlerShouldSkipTargetSecondaryPass()]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetHandlers/WeightedTargetHandler.cpp
 - [[UWeightedTargetHandlerStartLineOfSightTimer()]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetHandlers/WeightedTargetHandler.cpp
 - [[UWeightedTargetHandlerStopLineOfSightTimer()]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetHandlers/WeightedTargetHandler.cpp
 - [[UWeightedTargetHandlerUWeightedTargetHandler()]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetHandlers/WeightedTargetHandler.cpp
-- [[UWeightedTargetHandlerDetailedResponse()]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h
 - [[WeightedTargetHandler.cpp]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetHandlers/WeightedTargetHandler.cpp
 
 ## Live Query (requires Dataview plugin)
@@ -55,7 +55,7 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 17 edges to [[_COMMUNITY_EFindTargetContextMode]]
+- 16 edges to [[_COMMUNITY_EFindTargetContextMode]]
 - 5 edges to [[_COMMUNITY_WeightedTargetHandler.h]]
 - 4 edges to [[_COMMUNITY_FFindTargetRequestResponse]]
 - 2 edges to [[_COMMUNITY_LockOnTargetComponent.cpp]]
@@ -64,7 +64,7 @@ SORT file.name ASC
 
 ## Top bridge nodes
 - [[WeightedTargetHandler.cpp]] - degree 26, connects to 4 communities
-- [[UWeightedTargetHandlerCheckTargetState_Implementation()]] - degree 8, connects to 3 communities
+- [[UWeightedTargetHandlerCheckTargetState_Implementation()]] - degree 8, connects to 2 communities
+- [[UWeightedTargetHandlerPerformPrimarySamplingPass()]] - degree 8, connects to 2 communities
 - [[UWeightedTargetHandlerCreateFindTargetContext()]] - degree 7, connects to 2 communities
-- [[FFindTargetContext_1]] - degree 12, connects to 1 community
-- [[FTargetContext_1]] - degree 9, connects to 1 community
+- [[UWeightedTargetHandlerPerformSecondarySamplingPass()]] - degree 7, connects to 2 communities

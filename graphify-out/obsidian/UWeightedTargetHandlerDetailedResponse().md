@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h"
 type: "code"
-community: "WeightedTargetHandler.cpp"
+community: "WeightedTargetHandler.h"
 location: "L406"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/WeightedTargetHandlercpp
+  - community/WeightedTargetHandlerh
 ---
 
 # UWeightedTargetHandlerDetailedResponse()
@@ -15,4 +15,4 @@ tags:
 - [[UWeightedTargetHandlerGenerateDetailedResponse()]] - `references` [EXTRACTED]
 - [[WeightedTargetHandler.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/WeightedTargetHandlercpp
+#graphify/code #graphify/EXTRACTED #community/WeightedTargetHandlerh

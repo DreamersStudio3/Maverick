@@ -1,12 +1,12 @@
 # MVCurrencyStatusWidget.h
 
-> 3 nodes
+> 3 nodes · cohesion 0.67
 
 ## Key Concepts
 
 - **MVCurrencyStatusWidget.h** (2 connections) — `Source/Maverick/UI/HUD/MVCurrencyStatusWidget.h`
-- **UTextBlock** (1 connections) — `Source/Maverick/UI/HUD/MVCurrencyStatusWidget.h`
 - **UMVCurrencyStatusWidget()** (1 connections) — `Source/Maverick/UI/HUD/MVCurrencyStatusWidget.h`
+- **UTextBlock** (1 connections) — `Source/Maverick/UI/HUD/MVCurrencyStatusWidget.h`
 
 ## Relationships
 

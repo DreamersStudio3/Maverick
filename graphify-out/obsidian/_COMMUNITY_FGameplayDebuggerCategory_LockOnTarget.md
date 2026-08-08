@@ -1,16 +1,18 @@
 ---
 type: community
+cohesion: 0.08
 members: 48
 ---
 
 # FGameplayDebuggerCategory_LockOnTarget
 
+**Cohesion:** 0.08 - loosely connected
 **Members:** 48 nodes
 
 ## Members
 - [[dot-MakeInstance()]] - code - Plugins/LockOnTarget/Source/LockOnTargetDev/Private/GameplayDebugger/GameplayDebuggerCategory_LockOnTarget.h
-- [[APlayerController]] - code
 - [[APlayerController_1]] - code - Plugins/LockOnTarget/Source/LockOnTargetDev/Private/GameplayDebugger/GameplayDebuggerCategory_LockOnTarget.h
+- [[APlayerController]] - code
 - [[CollectExtensionsInfo]] - code - Plugins/LockOnTarget/Source/LockOnTargetDev/Private/GameplayDebugger/GameplayDebuggerCategory_LockOnTarget.h
 - [[CollectInvadersInfo]] - code - Plugins/LockOnTarget/Source/LockOnTargetDev/Private/GameplayDebugger/GameplayDebuggerCategory_LockOnTarget.h
 - [[CollectTargetSocketsInfo]] - code - Plugins/LockOnTarget/Source/LockOnTargetDev/Private/GameplayDebugger/GameplayDebuggerCategory_LockOnTarget.h
@@ -52,8 +54,8 @@ members: 48
 - [[ULockOnTargetComponent_1]] - code - Plugins/LockOnTarget/Source/LockOnTargetDev/Private/GameplayDebugger/GameplayDebuggerCategory_LockOnTarget.h
 - [[UObject]] - code
 - [[UTargetComponent]] - code - Plugins/LockOnTarget/Source/LockOnTargetDev/Private/GameplayDebugger/GameplayDebuggerCategory_LockOnTarget.h
-- [[UWeightedTargetHandler]] - code
 - [[UWeightedTargetHandler_1]] - code - Plugins/LockOnTarget/Source/LockOnTargetDev/Private/GameplayDebugger/GameplayDebuggerCategory_LockOnTarget.h
+- [[UWeightedTargetHandler]] - code
 - [[bSimulateTargetHandler]] - code - Plugins/LockOnTarget/Source/LockOnTargetDev/Private/GameplayDebugger/GameplayDebuggerCategory_LockOnTarget.h
 - [[uint8]] - code
 

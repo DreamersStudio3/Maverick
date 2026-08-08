@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/AI/Task/MVGlobalSensingTask.h"
 type: "code"
-community: "EnterState"
+community: "AI Global Sensing"
 location: "L173"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/EnterState
+  - community/AI_Global_Sensing
 ---
 
 # ExitState
@@ -17,4 +17,4 @@ tags:
 - [[FStateTreeTransitionResult_9]] - `references` [EXTRACTED]
 - [[MVGlobalSensingTask.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/EnterState
+#graphify/code #graphify/EXTRACTED #community/AI_Global_Sensing

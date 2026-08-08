@@ -1,13 +1,13 @@
 # MVPIEActionTestWidget.h
 
-> 4 nodes
+> 4 nodes · cohesion 0.50
 
 ## Key Concepts
 
 - **MVPIEActionTestWidget.h** (3 connections) — `Source/Maverick/UI/Debug/MVPIEActionTestWidget.h`
 - **AMVCharacterBase** (1 connections) — `Source/Maverick/UI/Debug/MVPIEActionTestWidget.h`
-- **UTextBlock** (1 connections) — `Source/Maverick/UI/Debug/MVPIEActionTestWidget.h`
 - **UMVPIEActionTestWidget()** (1 connections) — `Source/Maverick/UI/Debug/MVPIEActionTestWidget.h`
+- **UTextBlock** (1 connections) — `Source/Maverick/UI/Debug/MVPIEActionTestWidget.h`
 
 ## Relationships
 

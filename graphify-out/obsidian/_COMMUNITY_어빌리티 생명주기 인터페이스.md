@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.50
 members: 4
 ---
 
 # 어빌리티 생명주기 인터페이스
 
+**Cohesion:** 0.50 - moderately connected
 **Members:** 4 nodes
 
 ## Members

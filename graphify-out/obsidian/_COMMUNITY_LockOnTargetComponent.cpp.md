@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.05
 members: 47
 ---
 
 # LockOnTargetComponent.cpp
 
+**Cohesion:** 0.05 - loosely connected
 **Members:** 47 nodes
 
 ## Members
@@ -72,7 +74,7 @@ SORT file.name ASC
 - 2 edges to [[_COMMUNITY_TargetPreviewExtension.cpp]]
 - 2 edges to [[_COMMUNITY_WeightedTargetHandler.cpp]]
 - 2 edges to [[_COMMUNITY_ETargetFocusPointType]]
-- 1 edge to [[_COMMUNITY_Type_1]]
+- 1 edge to [[_COMMUNITY_Type]]
 
 ## Top bridge nodes
 - [[LockOnTargetComponent.cpp]] - degree 50, connects to 5 communities

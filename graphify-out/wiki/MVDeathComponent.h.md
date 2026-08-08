@@ -1,14 +1,14 @@
 # MVDeathComponent.h
 
-> 9 nodes
+> 9 nodes · cohesion 0.22
 
 ## Key Concepts
 
 - **MVDeathComponent.h** (6 connections) — `Source/Maverick/Components/MVDeathComponent.h`
 - **UMVDeathDissolveEffect** (3 connections) — `Source/Maverick/Components/MVDeathComponent.h`
-- **UMVDeathComponent::UMVDeathComponent()** (2 connections) — `Source/Maverick/Components/MVDeathComponent.cpp`
-- **UMVDeathComponent::EnsureDeathDissolveEffect()** (2 connections) — `Source/Maverick/Components/MVDeathComponent.cpp`
 - **UMVDeathComponent()** (2 connections) — `Source/Maverick/Components/MVDeathComponent.h`
+- **UMVDeathComponent::EnsureDeathDissolveEffect()** (2 connections) — `Source/Maverick/Components/MVDeathComponent.cpp`
+- **UMVDeathComponent::UMVDeathComponent()** (2 connections) — `Source/Maverick/Components/MVDeathComponent.cpp`
 - **ACharacter** (1 connections) — `Source/Maverick/Components/MVDeathComponent.h`
 - **AMVCharacterBase** (1 connections) — `Source/Maverick/Components/MVDeathComponent.h`
 - **UMVActionComponent** (1 connections) — `Source/Maverick/Components/MVDeathComponent.h`

@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.29
 members: 7
 ---
 
 # EMVDeathActionPose
 
+**Cohesion:** 0.29 - loosely connected
 **Members:** 7 nodes
 
 ## Members
@@ -29,8 +31,8 @@ SORT file.name ASC
 - 1 edge to [[_COMMUNITY_FMVDeathContext]]
 
 ## Top bridge nodes
-- [[UMVDeathComponentResolveDeathActionPose()]] - degree 3, connects to 2 communities
 - [[UMVDeathComponentDeathActionFacingToTableToken()]] - degree 3, connects to 2 communities
+- [[UMVDeathComponentResolveDeathActionPose()]] - degree 3, connects to 2 communities
 - [[EMVDeathActionPose]] - degree 5, connects to 1 community
 - [[FString_18]] - degree 3, connects to 1 community
 - [[UMVDeathComponentDeathActionPoseToTableToken()]] - degree 3, connects to 1 community

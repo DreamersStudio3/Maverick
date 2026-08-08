@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 1.00
 members: 2
 ---
 
 # FColor
 
+**Cohesion:** 1.00 - tightly connected
 **Members:** 2 nodes
 
 ## Members
@@ -19,7 +21,7 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 1 edge to [[_COMMUNITY_DrawGlobalSensingCombatAreaDebug]]
+- 1 edge to [[_COMMUNITY_AI Global Sensing]]
 - 1 edge to [[_COMMUNITY_MVPlayerInteractionDetector.cpp]]
 
 ## Top bridge nodes

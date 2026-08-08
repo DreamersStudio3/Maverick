@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.39
 members: 8
 ---
 
 # FString
 
+**Cohesion:** 0.39 - loosely connected
 **Members:** 8 nodes
 
 ## Members
@@ -29,7 +31,7 @@ SORT file.name ASC
 
 ## Top bridge nodes
 - [[int32_29]] - degree 6, connects to 1 community
-- [[WorldStateResolveFallbackSlotName()]] - degree 3, connects to 1 community
-- [[UMVWorldStateSubsystemSaveToSlot()]] - degree 3, connects to 1 community
-- [[UMVWorldStateSubsystemLoadFromSlot()]] - degree 3, connects to 1 community
 - [[UMVWorldStateSubsystemDeleteSaveSlot()]] - degree 3, connects to 1 community
+- [[UMVWorldStateSubsystemDoesSaveSlotExist()]] - degree 3, connects to 1 community
+- [[UMVWorldStateSubsystemLoadFromSlot()]] - degree 3, connects to 1 community
+- [[UMVWorldStateSubsystemResolveSlotName()]] - degree 3, connects to 1 community

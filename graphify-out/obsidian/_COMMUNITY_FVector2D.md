@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.16
 members: 17
 ---
 
 # FVector2D
 
+**Cohesion:** 0.16 - loosely connected
 **Members:** 17 nodes
 
 ## Members
@@ -34,15 +36,14 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 11 edges to [[_COMMUNITY_MVInputManagerComponent.cpp]]
+- 12 edges to [[_COMMUNITY_MVInputManagerComponent.cpp]]
 - 1 edge to [[_COMMUNITY_FGameplayTag]]
 - 1 edge to [[_COMMUNITY_FName_1]]
-- 1 edge to [[_COMMUNITY_FVector_2]]
 - 1 edge to [[_COMMUNITY_MVActionInputHandlerInterface.h]]
 
 ## Top bridge nodes
 - [[EMVActionInputPhase]] - degree 8, connects to 3 communities
 - [[FVector2D_9]] - degree 10, connects to 1 community
-- [[UMVInputManagerComponentTryRouteHoldActionInput()]] - degree 4, connects to 1 community
 - [[UMVInputManagerComponentBufferHoldActionInput()]] - degree 4, connects to 1 community
-- [[UMVInputManagerComponentSubmitHoldActionInput()]] - degree 3, connects to 1 community
+- [[UMVInputManagerComponentTryRouteHoldActionInput()]] - degree 4, connects to 1 community
+- [[UMVInputManagerComponentBufferInstantActionInput()]] - degree 3, connects to 1 community

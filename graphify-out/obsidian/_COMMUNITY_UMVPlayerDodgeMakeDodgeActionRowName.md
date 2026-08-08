@@ -1,14 +1,17 @@
 ---
 type: community
-members: 14
+cohesion: 0.18
+members: 15
 ---
 
 # UMVPlayerDodge::MakeDodgeActionRowName
 
-**Members:** 14 nodes
+**Cohesion:** 0.18 - loosely connected
+**Members:** 15 nodes
 
 ## Members
 - [[DodgeCharacterIndexCodeToTableToken()]] - code - Source/Maverick/Character/PC/Dodge/MVPlayerDodge.cpp
+- [[DodgeDirectionToRowToken()]] - code - Source/Maverick/Character/PC/Dodge/MVPlayerDodge.cpp
 - [[DodgeEquippedStyleToRowToken()]] - code - Source/Maverick/Character/PC/Dodge/MVPlayerDodge.cpp
 - [[EMVEquippedStyle_1]] - code
 - [[FGameplayTag_3]] - code
@@ -31,14 +34,14 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 11 edges to [[_COMMUNITY_MVPlayerDodge.cpp]]
-- 1 edge to [[_COMMUNITY_AMVCharacterBase]]
-- 1 edge to [[_COMMUNITY_FVector_1]]
+- 11 edges to [[_COMMUNITY_FVector]]
+- 1 edge to [[_COMMUNITY_MVAbilityBase.cpp]]
+- 1 edge to [[_COMMUNITY_Player Dodge Tables]]
 - 1 edge to [[_COMMUNITY_FMVDodgeInputContext]]
 
 ## Top bridge nodes
 - [[UMVPlayerDodgeMakeDodgeActionRowName()]] - degree 8, connects to 3 communities
-- [[UMVPlayerDodgeTryHandleActionInput()]] - degree 3, connects to 2 communities
+- [[MVDodgeBuildAvailableRowNameLog()]] - degree 4, connects to 2 communities
 - [[DodgeCharacterIndexCodeToTableToken()]] - degree 5, connects to 1 community
 - [[UMVPlayerDodgeMakeDodgeActionTableName()]] - degree 5, connects to 1 community
-- [[MVDodgeBuildAvailableRowNameLog()]] - degree 4, connects to 1 community
+- [[DodgeDirectionToRowToken()]] - degree 4, connects to 1 community

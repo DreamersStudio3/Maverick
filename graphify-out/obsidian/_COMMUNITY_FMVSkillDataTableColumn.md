@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.08
 members: 25
 ---
 
 # FMVSkillDataTableColumn
 
+**Cohesion:** 0.08 - loosely connected
 **Members:** 25 nodes
 
 ## Members
@@ -43,9 +45,9 @@ SORT file.name ASC
 
 ## Connections to other communities
 - 4 edges to [[_COMMUNITY_MVCombatComponent.cpp]]
-- 2 edges to [[_COMMUNITY_FDataTableRowHandle_1]]
+- 2 edges to [[_COMMUNITY_FDataTableRowHandle]]
 - 1 edge to [[_COMMUNITY_MVAbilityBase.cpp]]
-- 1 edge to [[_COMMUNITY_MVAbilityBase.h]]
+- 1 edge to [[_COMMUNITY_MVHitTypes.h]]
 - 1 edge to [[_COMMUNITY_전투 액션 Chooser 입력]]
 - 1 edge to [[_COMMUNITY_FMVCombatActionEvent]]
 - 1 edge to [[_COMMUNITY_FMVSkillEntry]]

@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.12
 members: 17
 ---
 
 # MVEnemyDodgeTokenComponent.cpp
 
+**Cohesion:** 0.12 - loosely connected
 **Members:** 17 nodes
 
 ## Members
@@ -37,13 +39,14 @@ SORT file.name ASC
 - 4 edges to [[_COMMUNITY_FMVResolvedHitData]]
 - 3 edges to [[_COMMUNITY_GrantDodgeToken]]
 - 3 edges to [[_COMMUNITY_EMVEnemyDodgeTokenGrantReason]]
-- 2 edges to [[_COMMUNITY_UMVPlayerConsumableInitialize]]
 - 2 edges to [[_COMMUNITY_ResetCombatFlowCounters]]
-- 1 edge to [[_COMMUNITY_UMVEnemyDodgeTokenComponentTryConsumeDodgeTokenForThreat]]
+- 1 edge to [[_COMMUNITY_UMVPlayerConsumableInitialize]]
+- 1 edge to [[_COMMUNITY_Type]]
+- 1 edge to [[_COMMUNITY_UMVEnemyDodgeTokenComponentTryConsumeDodgeTokenForThreat_1]]
 
 ## Top bridge nodes
-- [[MVEnemyDodgeTokenComponent.cpp]] - degree 22, connects to 4 communities
-- [[UMVEnemyDodgeTokenComponentHandleOwnerDamaged()]] - degree 3, connects to 1 community
+- [[MVEnemyDodgeTokenComponent.cpp]] - degree 22, connects to 5 communities
 - [[UMVEnemyDodgeTokenComponentHandleObservedTargetDamaged()]] - degree 3, connects to 1 community
-- [[UMVEnemyDodgeTokenComponentGrantDodgeToken()]] - degree 2, connects to 1 community
-- [[UMVEnemyDodgeTokenComponentIsRelevantEnemyHitData()]] - degree 2, connects to 1 community
+- [[UMVEnemyDodgeTokenComponentHandleOwnerDamaged()]] - degree 3, connects to 1 community
+- [[NotifyEnemyDamaged]] - degree 2, connects to 1 community
+- [[NotifyEnemyLandedHit]] - degree 2, connects to 1 community

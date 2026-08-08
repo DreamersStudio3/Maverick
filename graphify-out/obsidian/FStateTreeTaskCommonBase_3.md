@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "EnterState"
+community: "AI Global Sensing"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/EnterState
+  - community/AI_Global_Sensing
 ---
 
 # FStateTreeTaskCommonBase
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[FMVGlobalSensingTask]] - `inherits` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/EnterState
+#graphify/code #graphify/EXTRACTED #community/AI_Global_Sensing

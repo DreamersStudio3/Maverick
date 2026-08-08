@@ -1,20 +1,20 @@
 # AMVPlayerCharacter
 
-> 5 nodes
+> 5 nodes · cohesion 0.40
 
 ## Key Concepts
 
 - **AMVPlayerCharacter()** (6 connections) — `Source/Maverick/Character/PC/MVPlayerCharacter.h`
-- **UMVPlayerDodge::Initialize()** (2 connections) — `Source/Maverick/Character/PC/Dodge/MVPlayerDodge.cpp`
 - **UMVPlayerDodge::GetPlayerCharacter()** (2 connections) — `Source/Maverick/Character/PC/Dodge/MVPlayerDodge.cpp`
-- **UMVPlayerInteractionDetector::Initialize()** (2 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
+- **UMVPlayerDodge::Initialize()** (2 connections) — `Source/Maverick/Character/PC/Dodge/MVPlayerDodge.cpp`
 - **UMVPlayerInteractionDetector::GetPlayerCharacter()** (2 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
+- **UMVPlayerInteractionDetector::Initialize()** (2 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
 
 ## Relationships
 
-- [MVPlayerDodge.cpp](MVPlayerDodge.cpp.md) (2 shared connections)
+- [FVector](FVector.md) (2 shared connections)
 - [MVPlayerInteractionDetector.cpp](MVPlayerInteractionDetector.cpp.md) (2 shared connections)
-- [UMVPlayerConsumable::Initialize](UMVPlayerConsumable--Initialize.md) (1 shared connections)
+- [MVPlayerConsumable.cpp](MVPlayerConsumable.cpp.md) (1 shared connections)
 - [MVMovementActionTableTypes.h](MVMovementActionTableTypes.h.md) (1 shared connections)
 
 ## Source Files

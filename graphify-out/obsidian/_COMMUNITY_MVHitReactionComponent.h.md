@@ -1,11 +1,13 @@
 ---
 type: community
-members: 19
+cohesion: 0.10
+members: 22
 ---
 
 # MVHitReactionComponent.h
 
-**Members:** 19 nodes
+**Cohesion:** 0.10 - loosely connected
+**Members:** 22 nodes
 
 ## Members
 - [[ACharacter_4]] - code - Source/Maverick/Components/MVHitReactionComponent.h
@@ -16,15 +18,18 @@ members: 19
 - [[EMVHitReactionDirection_1]] - code
 - [[FDataTableRowHandle_12]] - code
 - [[FMVHitReactionActionData]] - code - Source/Maverick/Components/MVHitReactionComponent.h
+- [[FMVHitReactionActionRow()]] - code - Source/Maverick/Public/Tables/MVHitReactionActionTableTypes.h
 - [[FMVHitReactionActionRowHandle()]] - code - Source/Maverick/Public/Tables/MVHitReactionActionTableTypes.h
 - [[FName_40]] - code
 - [[MAVERICK_API_6]] - code - Source/Maverick/Components/MVHitReactionComponent.h
 - [[MAVERICK_API_12]] - code
 - [[MVHitReactionActionTableTypes.h]] - code - Source/Maverick/Public/Tables/MVHitReactionActionTableTypes.h
 - [[MVHitReactionComponent.h]] - code - Source/Maverick/Components/MVHitReactionComponent.h
+- [[MVHitReactionCopyBaseActionRow()]] - code - Source/Maverick/Components/MVHitReactionComponent.cpp
 - [[StartSection_3]] - code - Source/Maverick/Components/MVHitReactionComponent.h
 - [[UDataTable_7]] - code - Source/Maverick/Components/MVHitReactionComponent.h
 - [[UMVActionComponent_6]] - code - Source/Maverick/Components/MVHitReactionComponent.h
+- [[UMVHitReactionComponentGetActionData()]] - code - Source/Maverick/Components/MVHitReactionComponent.cpp
 - [[UMVHitReactionComponentMakeHitReactionActionRowHandleFromNames()]] - code - Source/Maverick/Components/MVHitReactionComponent.cpp
 - [[UMVHitReactionComponentResolveHitReactionActionRowHandle()]] - code - Source/Maverick/Components/MVHitReactionComponent.cpp
 
@@ -36,12 +41,12 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 3 edges to [[_COMMUNITY_MVHitReactionBuildAvailableRowNameLog]]
-- 2 edges to [[_COMMUNITY_MVHitReactionComponent.cpp]]
-- 2 edges to [[_COMMUNITY_MVHitReactionLogRecoveryTrace]]
+- 4 edges to [[_COMMUNITY_MVHitReactionComponent.cpp]]
+- 2 edges to [[_COMMUNITY_FMVResolvedHitData]]
+- 2 edges to [[_COMMUNITY_MVHitReactionBuildAvailableRowNameLog]]
+- 2 edges to [[_COMMUNITY_MVHitReactionLogRecoveryTrace_1]]
 - 2 edges to [[_COMMUNITY_MVActionRowTableTypes.h]]
 - 1 edge to [[_COMMUNITY_FName_1]]
-- 1 edge to [[_COMMUNITY_FMVResolvedHitData]]
 - 1 edge to [[_COMMUNITY_전투 액션 Chooser 입력]]
 - 1 edge to [[_COMMUNITY_UMVTableManager]]
 - 1 edge to [[_COMMUNITY_MVWeaponComponent.cpp]]
@@ -51,7 +56,7 @@ SORT file.name ASC
 
 ## Top bridge nodes
 - [[MVHitReactionComponent.h]] - degree 11, connects to 4 communities
-- [[MVHitReactionActionTableTypes.h]] - degree 5, connects to 3 communities
 - [[UMVHitReactionComponentMakeHitReactionActionRowHandleFromNames()]] - degree 4, connects to 3 communities
-- [[FMVHitReactionActionData]] - degree 10, connects to 2 communities
-- [[UMVHitReactionComponentResolveHitReactionActionRowHandle()]] - degree 4, connects to 2 communities
+- [[UMVHitReactionComponentGetActionData()]] - degree 5, connects to 2 communities
+- [[MVHitReactionActionTableTypes.h]] - degree 5, connects to 2 communities
+- [[MVHitReactionCopyBaseActionRow()]] - degree 4, connects to 2 communities

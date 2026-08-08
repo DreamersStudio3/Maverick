@@ -1,12 +1,12 @@
 ---
 source_file: "docs/wiki/Architecture.md"
 type: "document"
-community: "Maverick Architecture"
+community: "Documentation Knowledge Lifecycle"
 location: "L114"
 tags:
   - graphify/document
   - graphify/EXTRACTED
-  - community/Maverick_Architecture
+  - community/Documentation_Knowledge_Lifecycle
 ---
 
 # Hit, Stat, HitReaction
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[핵심 런타임 흐름]] - `contains` [EXTRACTED]
 
-#graphify/document #graphify/EXTRACTED #community/Maverick_Architecture
+#graphify/document #graphify/EXTRACTED #community/Documentation_Knowledge_Lifecycle

@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.11
 members: 64
 ---
 
 # MVTableAssetGenerator.cpp
 
+**Cohesion:** 0.11 - loosely connected
 **Members:** 64 nodes
 
 ## Members
@@ -84,7 +86,7 @@ SORT file.name ASC
 - 4 edges to [[_COMMUNITY_MVTableManager.cpp]]
 - 2 edges to [[_COMMUNITY_UMVTableManager]]
 - 1 edge to [[_COMMUNITY_properties]]
-- 1 edge to [[_COMMUNITY_type]]
+- 1 edge to [[_COMMUNITY_type_1]]
 - 1 edge to [[_COMMUNITY_rows]]
 - 1 edge to [[_COMMUNITY_MVActionRowTableTypes.h]]
 - 1 edge to [[_COMMUNITY_MVTableTypes.h]]

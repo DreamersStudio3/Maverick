@@ -1,15 +1,15 @@
 # FMVDeathContext
 
-> 6 nodes
+> 6 nodes · cohesion 0.33
 
 ## Key Concepts
 
 - **FMVDeathContext()** (9 connections) — `Source/Maverick/Components/MVStatComponent.h`
 - **UMVDeathComponent::BeginDeathPresentation()** (2 connections) — `Source/Maverick/Components/MVDeathComponent.cpp`
-- **UMVDeathComponent::TryDeferDeathPresentationUntilHitReactionEnds()** (2 connections) — `Source/Maverick/Components/MVDeathComponent.cpp`
 - **UMVDeathComponent::ClearDeferredDeathPresentation()** (2 connections) — `Source/Maverick/Components/MVDeathComponent.cpp`
-- **UMVDeathComponent::TryStartDeathAction()** (2 connections) — `Source/Maverick/Components/MVDeathComponent.cpp`
 - **UMVDeathComponent::HandleDeathStarted()** (2 connections) — `Source/Maverick/Components/MVDeathComponent.cpp`
+- **UMVDeathComponent::TryDeferDeathPresentationUntilHitReactionEnds()** (2 connections) — `Source/Maverick/Components/MVDeathComponent.cpp`
+- **UMVDeathComponent::TryStartDeathAction()** (2 connections) — `Source/Maverick/Components/MVDeathComponent.cpp`
 
 ## Relationships
 

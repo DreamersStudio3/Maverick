@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.14
 members: 15
 ---
 
 # FMVDodgeInputContext
 
+**Cohesion:** 0.14 - loosely connected
 **Members:** 15 nodes
 
 ## Members
@@ -32,20 +34,17 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 3 edges to [[_COMMUNITY_MVPlayerDodge.cpp]]
+- 5 edges to [[_COMMUNITY_FVector]]
 - 2 edges to [[_COMMUNITY_MVEnemyDodgeActionTask.cpp]]
+- 2 edges to [[_COMMUNITY_Player Dodge Tables]]
 - 1 edge to [[_COMMUNITY_FMVEnemyDodgeActionTaskInstanceData]]
-- 1 edge to [[_COMMUNITY_FVector_1]]
-- 1 edge to [[_COMMUNITY_AMVCharacterBase]]
 - 1 edge to [[_COMMUNITY_UMVTableManager]]
 - 1 edge to [[_COMMUNITY_전투 액션 Chooser 입력]]
 - 1 edge to [[_COMMUNITY_UMVPlayerDodgeMakeDodgeActionRowName]]
-- 1 edge to [[_COMMUNITY_MVPlayerDodge.h]]
-- 1 edge to [[_COMMUNITY_MVMovementActionTableTypes.h]]
 
 ## Top bridge nodes
-- [[FMVDodgeInputContext]] - degree 17, connects to 4 communities
+- [[FMVDodgeInputContext]] - degree 17, connects to 3 communities
 - [[FMVDodgeActionRowHandle()]] - degree 6, connects to 3 communities
-- [[UMVPlayerDodgeResolveDodgeActionRowHandle()]] - degree 4, connects to 2 communities
 - [[UMVPlayerDodgeEvaluateDodgeChooserActionRowHandle()]] - degree 4, connects to 2 communities
+- [[UMVPlayerDodgeResolveDodgeActionRowHandle()]] - degree 4, connects to 2 communities
 - [[UMVPlayerDodgeTryStartDodgeAction()]] - degree 2, connects to 1 community

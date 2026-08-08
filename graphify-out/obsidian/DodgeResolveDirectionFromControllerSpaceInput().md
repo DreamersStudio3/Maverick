@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Character/PC/Dodge/MVPlayerDodge.cpp"
 type: "code"
-community: "MVPlayerDodge.cpp"
+community: "FVector"
 location: "L163"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVPlayerDodgecpp
+  - community/FVector
 ---
 
 # DodgeResolveDirectionFromControllerSpaceInput()
@@ -18,4 +18,4 @@ tags:
 - [[ResolveDodgeEightWayDirection()]] - `calls` [EXTRACTED]
 - [[UMVPlayerDodgeMakeDodgeInputContext()]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVPlayerDodgecpp
+#graphify/code #graphify/EXTRACTED #community/FVector

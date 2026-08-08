@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.21
 members: 17
 ---
 
 # MVEnemyDodgeActionTask.cpp
 
+**Cohesion:** 0.21 - loosely connected
 **Members:** 17 nodes
 
 ## Members
@@ -39,11 +41,11 @@ SORT file.name ASC
 - 2 edges to [[_COMMUNITY_UMVEnemyDodgeTokenComponentTryConsumeDodgeTokenForThreat]]
 - 2 edges to [[_COMMUNITY_FMVDodgeInputContext]]
 - 1 edge to [[_COMMUNITY_전투 액션 Chooser 입력]]
-- 1 edge to [[_COMMUNITY_MVPlayerDodge.cpp]]
+- 1 edge to [[_COMMUNITY_Player Dodge Tables]]
 
 ## Top bridge nodes
 - [[EnemyDodgeActionTaskEvaluateChooser()]] - degree 6, connects to 3 communities
 - [[EnterState_5]] - degree 9, connects to 2 communities
 - [[EnemyDodgeActionTaskResolveActionRowHandle()]] - degree 6, connects to 2 communities
 - [[MVEnemyDodgeActionTask.cpp]] - degree 10, connects to 1 community
-- [[Tick_6]] - degree 5, connects to 1 community
+- [[ExitState_3]] - degree 5, connects to 1 community

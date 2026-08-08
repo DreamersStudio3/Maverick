@@ -1,6 +1,6 @@
 # MVCharacterLogAirborneTrace
 
-> 3 nodes
+> 3 nodes · cohesion 0.67
 
 ## Key Concepts
 
@@ -12,7 +12,7 @@
 
 - [MVCharacterBase.cpp](MVCharacterBase.cpp.md) (2 shared connections)
 - [FMVResolvedHitData](FMVResolvedHitData.md) (2 shared connections)
-- [AMVCharacterBase](AMVCharacterBase.md) (1 shared connections)
+- [MVAbilityBase.cpp](MVAbilityBase.cpp.md) (1 shared connections)
 
 ## Source Files
 

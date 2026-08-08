@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "FMVCombatActionEvent"
+community: "FMVSkillEntry"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/FMVCombatActionEvent
+  - community/FMVSkillEntry
 ---
 
 # FDataTableRowHandle
@@ -14,4 +14,4 @@ tags:
 - [[dot-GetCurrentActionRowHandle()]] - `references` [EXTRACTED]
 - [[FMVCombatHeavyChargeAttackRuntimeState]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/FMVCombatActionEvent
+#graphify/code #graphify/EXTRACTED #community/FMVSkillEntry

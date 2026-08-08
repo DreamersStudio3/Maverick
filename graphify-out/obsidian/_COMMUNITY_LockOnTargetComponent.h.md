@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.14
 members: 16
 ---
 
 # LockOnTargetComponent.h
 
+**Cohesion:** 0.14 - loosely connected
 **Members:** 16 nodes
 
 ## Members
@@ -19,8 +21,8 @@ members: 16
 - [[ULockOnTargetComponentRemoveExtensionByClass()]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetComponent.cpp
 - [[ULockOnTargetComponentSetDefaultTargetHandler()]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetComponent.cpp
 - [[ULockOnTargetComponentSetTargetHandlerByClass()]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetComponent.cpp
-- [[ULockOnTargetExtensionBase]] - code
 - [[ULockOnTargetExtensionBase_1]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetComponent.h
+- [[ULockOnTargetExtensionBase]] - code
 - [[ULockOnTargetExtensionProxy]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetComponent.h
 - [[UTargetComponent_13]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetComponent.h
 - [[UTargetHandlerBase]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetComponent.h
@@ -41,6 +43,6 @@ SORT file.name ASC
 ## Top bridge nodes
 - [[LockOnTargetComponent.h]] - degree 9, connects to 2 communities
 - [[UTargetHandlerBase]] - degree 4, connects to 1 community
-- [[ULockOnTargetComponentSetTargetHandlerByClass()]] - degree 3, connects to 1 community
-- [[ULockOnTargetComponentFindExtensionByClass()]] - degree 3, connects to 1 community
 - [[ULockOnTargetComponentAddExtensionByClass()]] - degree 3, connects to 1 community
+- [[ULockOnTargetComponentFindExtensionByClass()]] - degree 3, connects to 1 community
+- [[ULockOnTargetComponentRemoveExtensionByClass()]] - degree 3, connects to 1 community

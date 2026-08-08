@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.22
 members: 9
 ---
 
 # properties
 
+**Cohesion:** 0.22 - loosely connected
 **Members:** 9 nodes
 
 ## Members
@@ -14,8 +16,8 @@ members: 9
 - [[minProperties]] - code - MaverickDesign/Schema/TableData.schema.json
 - [[properties]] - code - MaverickDesign/Schema/TableData.schema.json
 - [[tables_1]] - code - MaverickDesign/Schema/TableData.schema.json
-- [[type_1]] - code - MaverickDesign/Schema/TableData.schema.json
 - [[type_4]] - code - MaverickDesign/Schema/TableData.schema.json
+- [[type_1]] - code - MaverickDesign/Schema/TableData.schema.json
 - [[version_1]] - code - MaverickDesign/Schema/TableData.schema.json
 
 ## Live Query (requires Dataview plugin)

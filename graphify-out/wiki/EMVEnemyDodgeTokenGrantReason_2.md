@@ -42,7 +42,7 @@
 ### references
 - [int32](int32.md) `EXTRACTED`
 - UMVEnemyDodgeTokenComponent::GrantDodgeToken() `EXTRACTED`
-- [AMVCharacterBase](AMVCharacterBase.md) `EXTRACTED`
+- AMVCharacterBase `EXTRACTED`
 - AMVEnemy `EXTRACTED`
 - TObjectPtr `EXTRACTED`
 - UPROPERTY `EXTRACTED`

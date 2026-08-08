@@ -1,11 +1,13 @@
 ---
 type: community
-members: 29
+cohesion: 0.09
+members: 23
 ---
 
 # MVPlayerCharacter.cpp
 
-**Members:** 29 nodes
+**Cohesion:** 0.09 - loosely connected
+**Members:** 23 nodes
 
 ## Members
 - [[AMVPlayerCharacterAMVPlayerCharacter()]] - code - Source/Maverick/Character/PC/MVPlayerCharacter.cpp
@@ -18,8 +20,6 @@ members: 29
 - [[AMVPlayerCharacterEndLockOnPawnRotationSuppression()]] - code - Source/Maverick/Character/PC/MVPlayerCharacter.cpp
 - [[AMVPlayerCharacterIsSprintPivoting()]] - code - Source/Maverick/Character/PC/MVPlayerCharacter.cpp
 - [[AMVPlayerCharacterRefreshLockOnPawnRotationExtension()]] - code - Source/Maverick/Character/PC/MVPlayerCharacter.cpp
-- [[AMVPlayerCharacterResolveSprintActionRowName()]] - code - Source/Maverick/Character/PC/MVPlayerCharacter.cpp
-- [[AMVPlayerCharacterResolveSprintActionTableName()]] - code - Source/Maverick/Character/PC/MVPlayerCharacter.cpp
 - [[AMVPlayerCharacterResolveSprintMinRequiredStamina()]] - code - Source/Maverick/Character/PC/MVPlayerCharacter.cpp
 - [[AMVPlayerCharacterResolveSprintResumeStaminaRatio()]] - code - Source/Maverick/Character/PC/MVPlayerCharacter.cpp
 - [[AMVPlayerCharacterResolveSprintStaminaCostPerSecond()]] - code - Source/Maverick/Character/PC/MVPlayerCharacter.cpp
@@ -32,11 +32,7 @@ members: 29
 - [[AMVPlayerCharacterTryInteract()]] - code - Source/Maverick/Character/PC/MVPlayerCharacter.cpp
 - [[AMVPlayerCharacterTryUseConsumable()]] - code - Source/Maverick/Character/PC/MVPlayerCharacter.cpp
 - [[AMVPlayerCharacterUpdateRecoverableStats()]] - code - Source/Maverick/Character/PC/MVPlayerCharacter.cpp
-- [[FGameplayTag_4]] - code
-- [[FName_33]] - code
-- [[FString_16]] - code
 - [[MVPlayerCharacter.cpp]] - code - Source/Maverick/Character/PC/MVPlayerCharacter.cpp
-- [[MVPlayerCharacterIndexCodeToTableToken()]] - code - Source/Maverick/Character/PC/MVPlayerCharacter.cpp
 
 ## Live Query (requires Dataview plugin)
 
@@ -46,8 +42,10 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 2 edges to [[_COMMUNITY_MVMovementActionTableTypes.h]]
-- 1 edge to [[_COMMUNITY_Type_1]]
+- 3 edges to [[_COMMUNITY_MVPlayerCharacter.cpp_1]]
+- 1 edge to [[_COMMUNITY_Type]]
+- 1 edge to [[_COMMUNITY_Player Dodge Tables]]
+- 1 edge to [[_COMMUNITY_MVMovementActionTableTypes.h]]
 
 ## Top bridge nodes
-- [[MVPlayerCharacter.cpp]] - degree 28, connects to 2 communities
+- [[MVPlayerCharacter.cpp]] - degree 28, connects to 4 communities

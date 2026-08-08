@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.33
 members: 10
 ---
 
 # FindAirborneLandDetectorHitReactionComponent
 
+**Cohesion:** 0.33 - loosely connected
 **Members:** 10 nodes
 
 ## Members

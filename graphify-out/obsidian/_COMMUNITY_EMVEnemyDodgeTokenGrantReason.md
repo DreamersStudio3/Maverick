@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.06
 members: 32
 ---
 
 # EMVEnemyDodgeTokenGrantReason
 
+**Cohesion:** 0.06 - loosely connected
 **Members:** 32 nodes
 
 ## Members
@@ -49,13 +51,15 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 4 edges to [[_COMMUNITY_UMVPlayerConsumableInitialize]]
 - 4 edges to [[_COMMUNITY_int32]]
 - 3 edges to [[_COMMUNITY_MVEnemyDodgeTokenComponent.cpp]]
 - 3 edges to [[_COMMUNITY_MVEnemyDodgeTokenComponent.h]]
 - 3 edges to [[_COMMUNITY_GrantDodgeToken]]
+- 2 edges to [[_COMMUNITY_UMVPlayerConsumableInitialize]]
 - 2 edges to [[_COMMUNITY_ResetCombatFlowCounters]]
-- 1 edge to [[_COMMUNITY_UMVEnemyDodgeTokenComponentTryConsumeDodgeTokenForThreat]]
+- 1 edge to [[_COMMUNITY_UMVEnemyDodgeTokenComponentTryConsumeDodgeTokenForThreat_1]]
+- 1 edge to [[_COMMUNITY_Type]]
+- 1 edge to [[_COMMUNITY_MVPlayerConsumable.cpp]]
 
 ## Top bridge nodes
-- [[EMVEnemyDodgeTokenGrantReason]] - degree 51, connects to 7 communities
+- [[EMVEnemyDodgeTokenGrantReason]] - degree 51, connects to 9 communities

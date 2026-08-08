@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.33
 members: 7
 ---
 
 # MVQuickSlotWidget.cpp
 
+**Cohesion:** 0.33 - loosely connected
 **Members:** 7 nodes
 
 ## Members
@@ -27,5 +29,5 @@ SORT file.name ASC
 - 2 edges to [[_COMMUNITY_FMVQuickSlotViewData]]
 
 ## Top bridge nodes
-- [[UMVQuickSlotWidgetSetViewData()]] - degree 2, connects to 1 community
 - [[UMVQuickSlotWidgetApplyViewData()]] - degree 2, connects to 1 community
+- [[UMVQuickSlotWidgetSetViewData()]] - degree 2, connects to 1 community

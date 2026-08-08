@@ -1,15 +1,15 @@
 # MVQuickSlotWidget.cpp
 
-> 7 nodes
+> 7 nodes · cohesion 0.33
 
 ## Key Concepts
 
 - **MVQuickSlotWidget.cpp** (5 connections) — `Source/Maverick/UI/HUD/MVQuickSlotWidget.cpp`
+- **int32** (2 connections)
+- **UMVQuickSlotWidget::ApplyViewData()** (2 connections) — `Source/Maverick/UI/HUD/MVQuickSlotWidget.cpp`
 - **UMVQuickSlotWidget::SetViewData()** (2 connections) — `Source/Maverick/UI/HUD/MVQuickSlotWidget.cpp`
 - **UMVQuickSlotWidget::UpdateCount()** (2 connections) — `Source/Maverick/UI/HUD/MVQuickSlotWidget.cpp`
-- **int32** (2 connections)
 - **UMVQuickSlotWidget::UpdateCountAndLocked()** (2 connections) — `Source/Maverick/UI/HUD/MVQuickSlotWidget.cpp`
-- **UMVQuickSlotWidget::ApplyViewData()** (2 connections) — `Source/Maverick/UI/HUD/MVQuickSlotWidget.cpp`
 - **UMVQuickSlotWidget::NativePreConstruct()** (1 connections) — `Source/Maverick/UI/HUD/MVQuickSlotWidget.cpp`
 
 ## Relationships

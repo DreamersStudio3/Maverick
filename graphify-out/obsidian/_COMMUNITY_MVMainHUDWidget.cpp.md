@@ -1,11 +1,13 @@
 ---
 type: community
-members: 12
+cohesion: 0.20
+members: 11
 ---
 
 # MVMainHUDWidget.cpp
 
-**Members:** 12 nodes
+**Cohesion:** 0.20 - loosely connected
+**Members:** 11 nodes
 
 ## Members
 - [[FText_6]] - code
@@ -13,7 +15,6 @@ members: 12
 - [[UMVMainHUDWidgetApplyHealingPotionQuickSlotView()]] - code - Source/Maverick/UI/HUD/MVMainHUDWidget.cpp
 - [[UMVMainHUDWidgetBindBossStatus()]] - code - Source/Maverick/UI/HUD/MVMainHUDWidget.cpp
 - [[UMVMainHUDWidgetBindPlayerConsumable()]] - code - Source/Maverick/UI/HUD/MVMainHUDWidget.cpp
-- [[UMVMainHUDWidgetEnsurePlayerSkillHUD()]] - code - Source/Maverick/UI/HUD/MVMainHUDWidget.cpp
 - [[UMVMainHUDWidgetHideBossHPBar()]] - code - Source/Maverick/UI/HUD/MVMainHUDWidget.cpp
 - [[UMVMainHUDWidgetInitBossStatus()]] - code - Source/Maverick/UI/HUD/MVMainHUDWidget.cpp
 - [[UMVMainHUDWidgetNativeOnInitialized()]] - code - Source/Maverick/UI/HUD/MVMainHUDWidget.cpp
@@ -36,4 +37,3 @@ SORT file.name ASC
 ## Top bridge nodes
 - [[MVMainHUDWidget.cpp]] - degree 11, connects to 2 communities
 - [[UMVMainHUDWidgetBindBossStatus()]] - degree 3, connects to 1 community
-- [[UMVMainHUDWidgetEnsurePlayerSkillHUD()]] - degree 2, connects to 1 community

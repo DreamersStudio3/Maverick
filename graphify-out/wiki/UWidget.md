@@ -1,6 +1,6 @@
 # UWidget
 
-> 13 nodes
+> 13 nodes · cohesion 0.19
 
 ## Key Concepts
 
@@ -13,8 +13,8 @@
 - **EUINavigation** (2 connections)
 - **UMVUINavigationLibrary::SetCompassNavigation()** (2 connections) — `Source/Maverick/UI/System/MVUINavigationLibrary.cpp`
 - **UMVSkillTreeWindow::NativeGetDesiredFocusTarget()** (2 connections) — `Source/Maverick/UI/Window/MVSkillTreeWindow.cpp`
-- **UWorld** (1 connections) — `Source/Maverick/UI/Base/MVUIFadeController.h`
 - **FMVUIFadeController()** (1 connections) — `Source/Maverick/UI/Base/MVUIFadeController.h`
+- **UWorld** (1 connections) — `Source/Maverick/UI/Base/MVUIFadeController.h`
 - **UMVSkillTreeWindow::NativeOnActivated()** (1 connections) — `Source/Maverick/UI/Window/MVSkillTreeWindow.cpp`
 - **UMVSkillTreeWindow::RequestRebuildExplicitNavigation()** (1 connections) — `Source/Maverick/UI/Window/MVSkillTreeWindow.cpp`
 

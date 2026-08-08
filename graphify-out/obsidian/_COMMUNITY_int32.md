@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.50
 members: 4
 ---
 
 # int32
 
+**Cohesion:** 0.50 - moderately connected
 **Members:** 4 nodes
 
 ## Members
@@ -26,5 +28,5 @@ SORT file.name ASC
 ## Top bridge nodes
 - [[int32_19]] - degree 4, connects to 1 community
 - [[dot-GetDodgeTokenCount()]] - degree 2, connects to 1 community
-- [[dot-GetReceivedHitCount()]] - degree 2, connects to 1 community
 - [[dot-GetLandedHitCount()]] - degree 2, connects to 1 community
+- [[dot-GetReceivedHitCount()]] - degree 2, connects to 1 community

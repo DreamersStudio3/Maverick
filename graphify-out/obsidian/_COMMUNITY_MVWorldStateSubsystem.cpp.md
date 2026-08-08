@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.15
 members: 21
 ---
 
 # MVWorldStateSubsystem.cpp
 
+**Cohesion:** 0.15 - loosely connected
 **Members:** 21 nodes
 
 ## Members
@@ -46,5 +48,5 @@ SORT file.name ASC
 ## Top bridge nodes
 - [[MVWorldStateSubsystem.cpp]] - degree 32, connects to 4 communities
 - [[FName_47]] - degree 16, connects to 1 community
-- [[UMVWorldStateSubsystemSetQuestObjectiveValue()]] - degree 3, connects to 1 community
 - [[UMVWorldStateSubsystemGetQuestObjectiveValue()]] - degree 3, connects to 1 community
+- [[UMVWorldStateSubsystemSetQuestObjectiveValue()]] - degree 3, connects to 1 community

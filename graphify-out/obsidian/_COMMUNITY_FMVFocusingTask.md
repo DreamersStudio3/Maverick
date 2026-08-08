@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.23
 members: 14
 ---
 
 # FMVFocusingTask
 
+**Cohesion:** 0.23 - loosely connected
 **Members:** 14 nodes
 
 ## Members

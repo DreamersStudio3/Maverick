@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVCombatComponent.cpp"
 type: "code"
-community: "FGameplayTag"
+community: "MVCombatComponent.cpp"
 location: "L259"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/FGameplayTag
+  - community/MVCombatComponentcpp
 ---
 
 # UMVCombatComponent::TickComponent()
@@ -16,4 +16,4 @@ tags:
 - [[FActorComponentTickFunction_1]] - `references` [EXTRACTED]
 - [[MVCombatComponent.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/FGameplayTag
+#graphify/code #graphify/EXTRACTED #community/MVCombatComponentcpp

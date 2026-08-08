@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.06
 members: 40
 ---
 
 # FMVExecuteFixedAttackTaskInstanceData
 
+**Cohesion:** 0.06 - loosely connected
 **Members:** 40 nodes
 
 ## Members
@@ -61,7 +63,7 @@ SORT file.name ASC
 - 2 edges to [[_COMMUNITY_ExecuteAttackResolveActionCandidate]]
 - 2 edges to [[_COMMUNITY_MVExecuteAttackTask.cpp]]
 - 1 edge to [[_COMMUNITY_FMVAttackTaskInstanceData]]
-- 1 edge to [[_COMMUNITY_MVHitTypes.h]]
+- 1 edge to [[_COMMUNITY_Player Dodge Tables]]
 - 1 edge to [[_COMMUNITY_FMVAICombatActionCondition]]
 - 1 edge to [[_COMMUNITY_FMVAICombatContext]]
 

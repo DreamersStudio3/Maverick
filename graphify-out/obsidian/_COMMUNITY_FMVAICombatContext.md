@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.08
 members: 24
 ---
 
 # FMVAICombatContext
 
+**Cohesion:** 0.08 - loosely connected
 **Members:** 24 nodes
 
 ## Members

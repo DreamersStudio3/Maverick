@@ -1,19 +1,21 @@
 ---
 type: community
+cohesion: 0.05
 members: 57
 ---
 
 # FMVBackOffLaunchMontageTaskInstanceData
 
+**Cohesion:** 0.05 - loosely connected
 **Members:** 57 nodes
 
 ## Members
 - [[dot-GetInstanceDataType()_7]] - code - Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.h
-- [[AActor_7]] - code
 - [[AActor_8]] - code - Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.h
+- [[AActor_7]] - code
 - [[ACharacter]] - code
-- [[APawn_15]] - code
 - [[APawn_16]] - code - Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.h
+- [[APawn_15]] - code
 - [[ActiveMontage]] - code - Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.h
 - [[AnimInstance]] - code - Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.h
 - [[BackOffLaunchMontageBuildAwayDirection()]] - code - Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.cpp

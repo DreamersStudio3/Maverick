@@ -1,19 +1,19 @@
 # UMVLoadingWindow::BuildNativeWidgetTree
 
-> 10 nodes
+> 10 nodes · cohesion 0.22
 
 ## Key Concepts
 
 - **UMVLoadingWindow::BuildNativeWidgetTree()** (8 connections) — `Source/Maverick/UI/Window/MVLoadingWindow.cpp`
 - **MVLoadingWindowMakeText()** (7 connections) — `Source/Maverick/UI/Window/MVLoadingWindow.cpp`
 - **MVLoadingWindowAddVerticalChild()** (5 connections) — `Source/Maverick/UI/Window/MVLoadingWindow.cpp`
-- **FText** (2 connections)
 - **FLinearColor** (2 connections)
+- **FText** (2 connections)
 - **UMVLoadingWindow::SetLoadingProgress()** (2 connections) — `Source/Maverick/UI/Window/MVLoadingWindow.cpp`
-- **UTextBlock** (1 connections)
-- **UWidgetTree** (1 connections)
 - **FName** (1 connections)
+- **UTextBlock** (1 connections)
 - **UVerticalBox** (1 connections)
+- **UWidgetTree** (1 connections)
 
 ## Relationships
 

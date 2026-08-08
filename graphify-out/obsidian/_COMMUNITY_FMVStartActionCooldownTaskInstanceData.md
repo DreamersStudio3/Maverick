@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.10
 members: 22
 ---
 
 # FMVStartActionCooldownTaskInstanceData
 
+**Cohesion:** 0.10 - loosely connected
 **Members:** 22 nodes
 
 ## Members

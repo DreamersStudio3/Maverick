@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.07
 members: 42
 ---
 
 # FMVHitReactionTaskInstanceData
 
+**Cohesion:** 0.07 - loosely connected
 **Members:** 42 nodes
 
 ## Members

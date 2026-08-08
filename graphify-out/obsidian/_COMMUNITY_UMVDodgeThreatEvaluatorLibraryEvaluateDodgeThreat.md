@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.20
 members: 15
 ---
 
 # UMVDodgeThreatEvaluatorLibrary::EvaluateDodgeThreat
 
+**Cohesion:** 0.20 - loosely connected
 **Members:** 15 nodes
 
 ## Members

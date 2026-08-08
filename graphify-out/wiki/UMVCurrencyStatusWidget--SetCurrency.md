@@ -1,12 +1,12 @@
 # UMVCurrencyStatusWidget::SetCurrency
 
-> 3 nodes
+> 3 nodes · cohesion 0.67
 
 ## Key Concepts
 
 - **UMVCurrencyStatusWidget::SetCurrency()** (2 connections) — `Source/Maverick/UI/HUD/MVCurrencyStatusWidget.cpp`
-- **MVCurrencyStatusWidget.cpp** (1 connections) — `Source/Maverick/UI/HUD/MVCurrencyStatusWidget.cpp`
 - **int32** (1 connections)
+- **MVCurrencyStatusWidget.cpp** (1 connections) — `Source/Maverick/UI/HUD/MVCurrencyStatusWidget.cpp`
 
 ## Relationships
 

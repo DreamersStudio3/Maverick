@@ -1,11 +1,13 @@
 ---
 type: community
-members: 26
+cohesion: 0.10
+members: 25
 ---
 
 # MVEnemy.cpp
 
-**Members:** 26 nodes
+**Cohesion:** 0.10 - loosely connected
+**Members:** 25 nodes
 
 ## Members
 - [[AMVEnemyAMVEnemy()]] - code - Source/Maverick/Character/NPC/Enemy/MVEnemy.cpp
@@ -18,7 +20,6 @@ members: 26
 - [[AMVEnemyGetFieldTransitionResetObjectId_Implementation()]] - code - Source/Maverick/Character/NPC/Enemy/MVEnemy.cpp
 - [[AMVEnemyGetFieldTransitionResetPolicy_Implementation()]] - code - Source/Maverick/Character/NPC/Enemy/MVEnemy.cpp
 - [[AMVEnemyHandleAttackMontageEnded()]] - code - Source/Maverick/Character/NPC/Enemy/MVEnemy.cpp
-- [[AMVEnemyHandleEnemyDamaged()]] - code - Source/Maverick/Character/NPC/Enemy/MVEnemy.cpp
 - [[AMVEnemyHandleEnemyGroggyEnded()]] - code - Source/Maverick/Character/NPC/Enemy/MVEnemy.cpp
 - [[AMVEnemyHandleEnemyGroggyStarted()]] - code - Source/Maverick/Character/NPC/Enemy/MVEnemy.cpp
 - [[AMVEnemyHideBoundBossHUD()]] - code - Source/Maverick/Character/NPC/Enemy/MVEnemy.cpp
@@ -44,13 +45,12 @@ SORT file.name ASC
 
 ## Connections to other communities
 - 2 edges to [[_COMMUNITY_AMVEnemyResolveEscapeDirectionAwayFromTarget]]
-- 1 edge to [[_COMMUNITY_Type_1]]
+- 1 edge to [[_COMMUNITY_Type]]
 - 1 edge to [[_COMMUNITY_적 무기 액터 구성]]
+- 1 edge to [[_COMMUNITY_FMVResolvedHitData]]
 - 1 edge to [[_COMMUNITY_MVEnemy.h]]
 - 1 edge to [[_COMMUNITY_피격 리액션 회복 결정]]
-- 1 edge to [[_COMMUNITY_MVAICombatTypes.h]]
-- 1 edge to [[_COMMUNITY_FMVResolvedHitData]]
+- 1 edge to [[_COMMUNITY_FMVCombatActionEvent]]
 
 ## Top bridge nodes
-- [[MVEnemy.cpp]] - degree 27, connects to 6 communities
-- [[AMVEnemyHandleEnemyDamaged()]] - degree 2, connects to 1 community
+- [[MVEnemy.cpp]] - degree 27, connects to 7 communities

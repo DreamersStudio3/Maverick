@@ -1,6 +1,6 @@
 # MVTableTypes.h
 
-> 19 nodes
+> 19 nodes · cohesion 0.11
 
 ## Key Concepts
 
@@ -11,17 +11,17 @@
 - **MVTableManager.h** (3 connections) — `Source/Maverick/Public/Tables/MVTableManager.h`
 - **MVUIMessageTableTypes.h** (3 connections) — `Source/Maverick/Public/Tables/MVUIMessageTableTypes.h`
 - **MVGameGuideTableTypes.h** (2 connections) — `Source/Maverick/Public/Tables/MVGameGuideTableTypes.h`
-- **USoundBase** (1 connections) — `Source/Maverick/Public/Tables/MVDialogueTableTypes.h`
 - **FMVTableRowBase()** (1 connections) — `Source/Maverick/Public/Tables/MVDialogueTableTypes.h`
+- **USoundBase** (1 connections) — `Source/Maverick/Public/Tables/MVDialogueTableTypes.h`
 - **FMVGameGuideRow()** (1 connections) — `Source/Maverick/Public/Tables/MVGameGuideTableTypes.h`
 - **FMVCharacterStatRow()** (1 connections) — `Source/Maverick/Public/Tables/MVStatTableTypes.h`
 - **UDataTable** (1 connections) — `Source/Maverick/Public/Tables/MVTableManager.h`
 - **UEngineSubsystem()** (1 connections) — `Source/Maverick/Public/Tables/MVTableManager.h`
-- **.~IMVPostRead()** (1 connections) — `Source/Maverick/Public/Tables/MVTableTypes.h`
-- **PostRead** (1 connections) — `Source/Maverick/Public/Tables/MVTableTypes.h`
-- **FMVTableRowBase()** (1 connections) — `Source/Maverick/Public/Tables/MVTableTypes.h`
 - **FMVGenericTableRow()** (1 connections) — `Source/Maverick/Public/Tables/MVTableTypes.h`
 - **FMVTableManifestRow()** (1 connections) — `Source/Maverick/Public/Tables/MVTableTypes.h`
+- **FMVTableRowBase()** (1 connections) — `Source/Maverick/Public/Tables/MVTableTypes.h`
+- **.~IMVPostRead()** (1 connections) — `Source/Maverick/Public/Tables/MVTableTypes.h`
+- **PostRead** (1 connections) — `Source/Maverick/Public/Tables/MVTableTypes.h`
 - **FMVUIMessageRow()** (1 connections) — `Source/Maverick/Public/Tables/MVUIMessageTableTypes.h`
 
 ## Relationships
@@ -34,7 +34,7 @@
 - [MVActionRowTableTypes.h](MVActionRowTableTypes.h.md) (1 shared connections)
 - [MVCharacterBase.h](MVCharacterBase.h.md) (1 shared connections)
 - [MVWeaponComponent.cpp](MVWeaponComponent.cpp.md) (1 shared connections)
-- [MVMovementActionTableTypes.h](MVMovementActionTableTypes.h.md) (1 shared connections)
+- [Player Dodge Tables](Player_Dodge_Tables.md) (1 shared connections)
 
 ## Source Files
 

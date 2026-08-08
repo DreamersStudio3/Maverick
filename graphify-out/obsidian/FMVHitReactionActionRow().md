@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Public/Tables/MVHitReactionActionTableTypes.h"
 type: "code"
-community: "MVHitReactionBuildAvailableRowNameLog"
+community: "MVHitReactionComponent.h"
 location: "L15"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVHitReactionBuildAvailableRowNameLog
+  - community/MVHitReactionComponenth
 ---
 
 # FMVHitReactionActionRow()
@@ -18,4 +18,4 @@ tags:
 - [[MVHitReactionCopyBaseActionRow()]] - `references` [EXTRACTED]
 - [[UMVHitReactionComponentFindHitReactionActionRow()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVHitReactionBuildAvailableRowNameLog
+#graphify/code #graphify/EXTRACTED #community/MVHitReactionComponenth

@@ -1,11 +1,11 @@
 # Build and Impact Verification
 
-> 2 nodes
+> 2 nodes · cohesion 1.00
 
 ## Key Concepts
 
-- **Pull Request Checklist** (1 connections) — `.github/pull_request_template.md`
 - **Build and Impact Verification** (1 connections) — `.github/pull_request_template.md`
+- **Pull Request Checklist** (1 connections) — `.github/pull_request_template.md`
 
 ## Relationships
 

@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Character/PC/Dodge/MVPlayerDodge.cpp"
 type: "code"
-community: "AMVCharacterBase"
+community: "FVector"
 location: "L423"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AMVCharacterBase
+  - community/FVector
 ---
 
 # UMVPlayerDodge::ApplyDodgeInputContext()
@@ -17,4 +17,4 @@ tags:
 - [[MVPlayerDodge.cpp]] - `contains` [EXTRACTED]
 - [[MakeYawRotationFromDirection()]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AMVCharacterBase
+#graphify/code #graphify/EXTRACTED #community/FVector

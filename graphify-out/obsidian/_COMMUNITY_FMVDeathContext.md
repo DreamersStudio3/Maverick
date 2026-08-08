@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.33
 members: 6
 ---
 
 # FMVDeathContext
 
+**Cohesion:** 0.33 - loosely connected
 **Members:** 6 nodes
 
 ## Members
@@ -31,6 +33,6 @@ SORT file.name ASC
 ## Top bridge nodes
 - [[FMVDeathContext()]] - degree 9, connects to 3 communities
 - [[UMVDeathComponentBeginDeathPresentation()]] - degree 2, connects to 1 community
-- [[UMVDeathComponentTryDeferDeathPresentationUntilHitReactionEnds()]] - degree 2, connects to 1 community
 - [[UMVDeathComponentClearDeferredDeathPresentation()]] - degree 2, connects to 1 community
-- [[UMVDeathComponentTryStartDeathAction()]] - degree 2, connects to 1 community
+- [[UMVDeathComponentHandleDeathStarted()]] - degree 2, connects to 1 community
+- [[UMVDeathComponentTryDeferDeathPresentationUntilHitReactionEnds()]] - degree 2, connects to 1 community

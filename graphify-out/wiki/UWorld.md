@@ -1,23 +1,23 @@
 # UWorld
 
-> 14 nodes
+> 14 nodes · cohesion 0.25
 
 ## Key Concepts
 
 - **UWorld** (7 connections)
 - **MVUISubsystemResolveLoadingTestSubsystem()** (6 connections) — `Source/Maverick/UI/System/MVUISubsystem.cpp`
 - **MVUISubsystemShowLoadingTestCommand()** (6 connections) — `Source/Maverick/UI/System/MVUISubsystem.cpp`
-- **MVUISubsystemHideLoadingTestCommand()** (5 connections) — `Source/Maverick/UI/System/MVUISubsystem.cpp`
 - **MVUISubsystemAdvanceLoadingTestCardCommand()** (5 connections) — `Source/Maverick/UI/System/MVUISubsystem.cpp`
-- **MVUISubsystemShouldUseNativeLoadingTestWindow()** (4 connections) — `Source/Maverick/UI/System/MVUISubsystem.cpp`
-- **TArray** (4 connections)
+- **MVUISubsystemHideLoadingTestCommand()** (5 connections) — `Source/Maverick/UI/System/MVUISubsystem.cpp`
 - **FString** (4 connections)
+- **TArray** (4 connections)
+- **MVUISubsystemShouldUseNativeLoadingTestWindow()** (4 connections) — `Source/Maverick/UI/System/MVUISubsystem.cpp`
 - **UMVUILayerBase()** (3 connections) — `Source/Maverick/UI/System/MVUILayerBase.h`
 - **UMVUISubsystem::GetOrCreateRootLayer()** (3 connections) — `Source/Maverick/UI/System/MVUISubsystem.cpp`
-- **UMVUISubsystem::PushLayer()** (3 connections) — `Source/Maverick/UI/System/MVUISubsystem.cpp`
 - **UMVUISubsystem::HandleWorldInit()** (3 connections) — `Source/Maverick/UI/System/MVUISubsystem.cpp`
-- **UMVUISubsystem** (1 connections)
+- **UMVUISubsystem::PushLayer()** (3 connections) — `Source/Maverick/UI/System/MVUISubsystem.cpp`
 - **InitializationValues** (1 connections)
+- **UMVUISubsystem** (1 connections)
 
 ## Relationships
 

@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.19
 members: 13
 ---
 
 # UWidget
 
+**Cohesion:** 0.19 - loosely connected
 **Members:** 13 nodes
 
 ## Members

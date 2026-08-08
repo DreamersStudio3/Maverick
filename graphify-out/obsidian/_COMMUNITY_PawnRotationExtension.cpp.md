@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.16
 members: 15
 ---
 
 # PawnRotationExtension.cpp
 
+**Cohesion:** 0.16 - loosely connected
 **Members:** 15 nodes
 
 ## Members

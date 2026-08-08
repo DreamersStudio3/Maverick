@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.25
 members: 11
 ---
 
 # MVInteractableComponent.cpp
 
+**Cohesion:** 0.25 - loosely connected
 **Members:** 11 nodes
 
 ## Members

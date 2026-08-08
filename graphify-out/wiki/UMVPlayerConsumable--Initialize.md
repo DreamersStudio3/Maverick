@@ -1,36 +1,28 @@
 # UMVPlayerConsumable::Initialize
 
-> 8 nodes
+> 3 nodes · cohesion 0.67
 
 ## Key Concepts
 
-- **UMVPlayerConsumable::Initialize()** (4 connections) — `Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp`
-- **UMVEnemyDodgeTokenComponent::EndPlay()** (4 connections) — `Source/Maverick/Components/MVEnemyDodgeTokenComponent.cpp`
-- **UnbindOwnerEvents** (4 connections) — `Source/Maverick/Components/MVEnemyDodgeTokenComponent.h`
-- **UMVEnemyDodgeTokenComponent::BeginPlay()** (3 connections) — `Source/Maverick/Components/MVEnemyDodgeTokenComponent.cpp`
 - **BindOwnerEvents** (3 connections) — `Source/Maverick/Components/MVEnemyDodgeTokenComponent.h`
-- **UMVPlayerConsumable::Deinitialize()** (2 connections) — `Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp`
+- **UMVEnemyDodgeTokenComponent::BeginPlay()** (3 connections) — `Source/Maverick/Components/MVEnemyDodgeTokenComponent.cpp`
 - **BindObservedTargetDamage** (2 connections) — `Source/Maverick/Components/MVEnemyDodgeTokenComponent.h`
-- **UnbindObservedTargetDamage** (2 connections) — `Source/Maverick/Components/MVEnemyDodgeTokenComponent.h`
 
 ## Relationships
 
-- [EMVEnemyDodgeTokenGrantReason](EMVEnemyDodgeTokenGrantReason.md) (4 shared connections)
-- [MVPlayerConsumable.cpp](MVPlayerConsumable.cpp.md) (2 shared connections)
-- [MVEnemyDodgeTokenComponent.cpp](MVEnemyDodgeTokenComponent.cpp.md) (2 shared connections)
-- [AMVPlayerCharacter](AMVPlayerCharacter.md) (1 shared connections)
-- [Type](Type_2.md) (1 shared connections)
+- [EMVEnemyDodgeTokenGrantReason](EMVEnemyDodgeTokenGrantReason.md) (2 shared connections)
+- [MVPlayerConsumable.cpp](MVPlayerConsumable.cpp.md) (1 shared connections)
+- [MVEnemyDodgeTokenComponent.cpp](MVEnemyDodgeTokenComponent.cpp.md) (1 shared connections)
 
 ## Source Files
 
-- `Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp`
 - `Source/Maverick/Components/MVEnemyDodgeTokenComponent.cpp`
 - `Source/Maverick/Components/MVEnemyDodgeTokenComponent.h`
 
 ## Audit Trail
 
-- EXTRACTED: 10 (42%)
-- INFERRED: 14 (58%)
+- EXTRACTED: 3 (38%)
+- INFERRED: 5 (62%)
 - AMBIGUOUS: 0 (0%)
 
 ---

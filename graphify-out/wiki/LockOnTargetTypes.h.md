@@ -1,18 +1,18 @@
 # LockOnTargetTypes.h
 
-> 9 nodes
+> 9 nodes · cohesion 0.28
 
 ## Key Concepts
 
 - **LockOnTargetTypes.h** (8 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetTypes.h`
+- **FindComponentByName()** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetTypes.h`
 - **FTargetInfo()** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetTypes.h`
 - **TStructOpsTypeTraits<FTargetInfo>** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetTypes.h`
-- **FindComponentByName()** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetTypes.h`
 - **operator==()** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetTypes.h`
-- **UTargetComponent** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetTypes.h`
-- **TStructOpsTypeTraitsBase2** (1 connections)
 - **AActor** (1 connections)
 - **FName** (1 connections)
+- **TStructOpsTypeTraitsBase2** (1 connections)
+- **UTargetComponent** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetTypes.h`
 
 ## Relationships
 

@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.22
 members: 10
 ---
 
 # UMVLoadingWindow::BuildNativeWidgetTree
 
+**Cohesion:** 0.22 - loosely connected
 **Members:** 10 nodes
 
 ## Members

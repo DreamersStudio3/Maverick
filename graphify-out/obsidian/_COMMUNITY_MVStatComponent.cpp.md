@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.05
 members: 59
 ---
 
 # MVStatComponent.cpp
 
+**Cohesion:** 0.05 - loosely connected
 **Members:** 59 nodes
 
 ## Members

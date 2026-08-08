@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/AI/Task/MVGlobalSensingTask.h"
 type: "code"
-community: "EnterState"
+community: "AI Global Sensing"
 location: "L152"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/EnterState
+  - community/AI_Global_Sensing
 ---
 
 # FMVGlobalSensingTask
@@ -19,4 +19,4 @@ tags:
 - [[MVGlobalSensingTask.h]] - `contains` [EXTRACTED]
 - [[Tick_12]] - `defines` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/EnterState
+#graphify/code #graphify/EXTRACTED #community/AI_Global_Sensing

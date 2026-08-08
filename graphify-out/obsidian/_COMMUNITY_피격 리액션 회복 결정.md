@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.16
 members: 14
 ---
 
 # 피격 리액션 회복 결정
 
+**Cohesion:** 0.16 - loosely connected
 **Members:** 14 nodes
 
 ## Members
@@ -34,8 +36,8 @@ SORT file.name ASC
 - 1 edge to [[_COMMUNITY_MVEnemy.cpp]]
 - 1 edge to [[_COMMUNITY_MVEnemy.h]]
 - 1 edge to [[_COMMUNITY_MVHitReactionComponent.cpp]]
-- 1 edge to [[_COMMUNITY_MVHitTypes.h]]
-- 1 edge to [[_COMMUNITY_Type_1]]
+- 1 edge to [[_COMMUNITY_Player Dodge Tables]]
+- 1 edge to [[_COMMUNITY_Type]]
 
 ## Top bridge nodes
 - [[MVHitReactionRecoveryDecisionProvider.h]] - degree 7, connects to 3 communities

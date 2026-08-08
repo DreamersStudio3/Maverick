@@ -1,33 +1,35 @@
 # FMVSkillEntry
 
-> 24 nodes
+> 33 nodes · cohesion 0.08
 
 ## Key Concepts
 
 - **FMVSkillEntry** (38 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **FMVSkillActionStruct** (6 connections) — `Source/Maverick/Components/MVCombatComponent.h`
 - **.GetCurrentSkillData()** (6 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **FName** (5 connections)
 - **UMVAbilityBase** (4 connections) — `Source/Maverick/Components/MVCombatComponent.h`
-- **.GetCurrentAbility()** (2 connections) — `Source/Maverick/Components/MVCombatComponent.h`
-- **.ContainsAbility()** (2 connections) — `Source/Maverick/Components/MVCombatComponent.h`
-- **.IsInterStageCooldownValid()** (2 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **.GetCurrentActionRowHandle()** (3 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **.GetCurrentRowName()** (3 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **TObjectPtr** (3 connections)
 - **.ActivateChain()** (2 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **.ContainsAbility()** (2 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **.GetCurrentAbility()** (2 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **.IsInterStageCooldownValid()** (2 connections) — `Source/Maverick/Components/MVCombatComponent.h`
 - **.StartPostAbilityResetWindow()** (2 connections) — `Source/Maverick/Components/MVCombatComponent.h`
 - **.TryAdvanceChainStage()** (2 connections) — `Source/Maverick/Components/MVCombatComponent.h`
-- **bIsChained** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
-- **TArray** (1 connections)
-- **AbilityInstances** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
-- **SkillRowNames** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **FDataTableRowHandle** (2 connections)
+- **UDataTable** (2 connections)
 - **DataTable** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
-- **MainCooldownDuration** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
-- **LastUsedTime** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
-- **CurrentChainStageIndex** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **RowName** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **AbilityInstances** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
 - **bChainActive** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
-- **LastStageActivationTime** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
-- **InputWindowCloseTime** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
-- **.IsMainCooldownReady()** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
-- **.IsInputWindowValid()** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **bIsChained** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **CurrentChainStageIndex** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **DataTable** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
 - **.GetRemainingInputWindowTime()** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
-- **.ResetChain()** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **InputWindowCloseTime** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- *... and 8 more nodes in this community*
 
 ## Relationships
 
@@ -42,7 +44,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 75 (100%)
+- EXTRACTED: 101 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

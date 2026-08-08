@@ -1,6 +1,6 @@
 # FMVAICombatActionCondition
 
-> 20 nodes
+> 20 nodes · cohesion 0.14
 
 ## Key Concepts
 
@@ -10,20 +10,20 @@
 - **TestCondition** (6 connections) — `Source/Maverick/AI/Condition/MVCombatDecisionCondition.h`
 - **CombatDecisionCanAttackImmediately()** (5 connections) — `Source/Maverick/AI/Condition/MVCombatDecisionCondition.cpp`
 - **MVCombatDecisionCondition.cpp** (4 connections) — `Source/Maverick/AI/Condition/MVCombatDecisionCondition.cpp`
-- **TArray** (1 connections)
 - **FStateTreeExecutionContext** (1 connections)
-- **.FMVAICombatActionCondition()** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
+- **TArray** (1 connections)
 - **ActionRequest** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
-- **Metadata** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
-- **MinDistance** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
-- **MaxDistance** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
-- **MaxAbsAngle** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
-- **bRequiresLineOfSight** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
-- **bRequiresForwardPathClear** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
+- **bRequiresAirbornePattern** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
 - **bRequiresBackwardPathClear** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
+- **bRequiresForwardPathClear** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
+- **bRequiresLineOfSight** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
 - **bRequiresTargetCanBeAirborne** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
 - **bRequiresTargetNotAirborne** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
-- **bRequiresAirbornePattern** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
+- **.FMVAICombatActionCondition()** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
+- **MaxAbsAngle** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
+- **MaxDistance** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
+- **Metadata** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
+- **MinDistance** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
 
 ## Relationships
 

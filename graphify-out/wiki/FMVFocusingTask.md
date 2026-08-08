@@ -1,23 +1,23 @@
 # FMVFocusingTask
 
-> 14 nodes
+> 14 nodes · cohesion 0.23
 
 ## Key Concepts
 
 - **FMVFocusingTask** (6 connections) — `Source/Maverick/AI/Task/MVFocusingTask.h`
 - **EnterState** (6 connections) — `Source/Maverick/AI/Task/MVFocusingTask.h`
 - **MVFocusingTaskResolveAIController()** (5 connections) — `Source/Maverick/AI/Task/MVFocusingTask.cpp`
-- **MVFocusingTask.cpp** (4 connections) — `Source/Maverick/AI/Task/MVFocusingTask.cpp`
 - **FStateTreeExecutionContext** (4 connections)
-- **Tick** (4 connections) — `Source/Maverick/AI/Task/MVFocusingTask.h`
+- **MVFocusingTask.cpp** (4 connections) — `Source/Maverick/AI/Task/MVFocusingTask.cpp`
 - **ExitState** (4 connections) — `Source/Maverick/AI/Task/MVFocusingTask.h`
+- **Tick** (4 connections) — `Source/Maverick/AI/Task/MVFocusingTask.h`
 - **EStateTreeRunStatus** (2 connections)
 - **FStateTreeTransitionResult** (2 connections)
 - **.GetInstanceDataType()** (2 connections) — `Source/Maverick/AI/Task/MVFocusingTask.h`
-- **FStateTreeTaskCommonBase** (1 connections)
-- **UStruct** (1 connections)
 - **AAIController** (1 connections)
 - **APawn** (1 connections)
+- **FStateTreeTaskCommonBase** (1 connections)
+- **UStruct** (1 connections)
 
 ## Relationships
 

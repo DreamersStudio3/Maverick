@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.29
 members: 10
 ---
 
 # FLockOnComponentDetails
 
+**Cohesion:** 0.29 - loosely connected
 **Members:** 10 nodes
 
 ## Members

@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.15
 members: 14
 ---
 
 # FMVQuickSlotViewData
 
+**Cohesion:** 0.15 - loosely connected
 **Members:** 14 nodes
 
 ## Members

@@ -1,13 +1,13 @@
 {
   "$schema": "maverick.graphify-export/v1",
-  "generated_at_utc": "2026-08-08T08:14:21.533919+00:00",
-  "graph_sha256": "38a844d161227d599d1f2a700b0fa1d6bc44ca0359d3c5e1fa1ebcd481daba9e",
-  "labels_sha256": "9a269c74f4cc4ae2c49a5b43fddf2981286583e30e59ae18e2d461e0f7f8d4ec",
+  "generated_at_utc": "2026-08-08T08:37:10.264270+00:00",
+  "graph_sha256": "81ddbe8692fc290080bd65f90d0eba84650a2932e8e113593c1745053a36f0f3",
+  "labels_sha256": "6fe27c8c181eaa158e2ba3b5cc4d1c084fa8587375ab9b84c3435667cb03f433",
   "label_signature_sha256": "7716180767e10d33b7349e652951f9e0aa1d80bfbc08b13a10923edae67504d7",
-  "manifest_sha256": "8211b84d590fc7809624a3ca407d40ba2a69c099d98be12ce43461953466107f",
-  "graph_html_sha256": "03a8f87320a5992534efcf2c91f43089e5d458c74fd724635685b425e93975f9",
-  "wiki_tree_sha256": "9b5b7877a6f686533400101f5c1ff5db4b0349b09a59e2b4500f343059db8e3c",
-  "wiki_files": 318,
-  "obsidian_tree_sha256": "10787989a051671c956e93ce9719da560ca7b029422b7eaf3f18bdf11b64fa74",
-  "obsidian_files": 4171
+  "manifest_sha256": "c036125f72cc1e2722cad0db4c28ed71fe785eab0bd770efda9112610927903b",
+  "graph_html_sha256": "a96d1fa93c23e2b785ba5b54d00243775aaa5228f8fdef0aee7c7cebb4ab2ce3",
+  "wiki_tree_sha256": "eb7a2088aa42ac6aeea60a92b2255885e5c0a15a9563ded416f5da4d944534d0",
+  "wiki_files": 324,
+  "obsidian_tree_sha256": "e47f3b04dfb5e93d01f2134bfa8a71426b5f72d16a3f4ed4d1b7327ce9808a9d",
+  "obsidian_files": 4185
 }

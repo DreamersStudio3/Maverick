@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.08
 members: 25
 ---
 
 # MVPlayerInteractionDetector.cpp
 
+**Cohesion:** 0.08 - loosely connected
 **Members:** 25 nodes
 
 ## Members

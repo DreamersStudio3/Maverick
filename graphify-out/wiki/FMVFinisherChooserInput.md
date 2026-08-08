@@ -1,15 +1,15 @@
 # FMVFinisherChooserInput
 
-> 6 nodes
+> 6 nodes · cohesion 0.33
 
 ## Key Concepts
 
 - **FMVFinisherChooserInput** (6 connections) — `Source/Maverick/Components/MVFinisherComponent.h`
-- **FGameplayTagContainer** (1 connections)
-- **VictimTag** (1 connections) — `Source/Maverick/Components/MVFinisherComponent.h`
-- **WeaponTag** (1 connections) — `Source/Maverick/Components/MVFinisherComponent.h`
 - **.IsValid()** (1 connections) — `Source/Maverick/Components/MVFinisherComponent.h`
 - **.Reset()** (1 connections) — `Source/Maverick/Components/MVFinisherComponent.h`
+- **VictimTag** (1 connections) — `Source/Maverick/Components/MVFinisherComponent.h`
+- **WeaponTag** (1 connections) — `Source/Maverick/Components/MVFinisherComponent.h`
+- **FGameplayTagContainer** (1 connections)
 
 ## Relationships
 

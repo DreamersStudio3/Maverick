@@ -1,6 +1,6 @@
 # FMVPopupMessageData
 
-> 23 nodes
+> 23 nodes · cohesion 0.10
 
 ## Key Concepts
 
@@ -17,16 +17,16 @@
 - **UMVMessagePopup::SetMessageData()** (2 connections) — `Source/Maverick/UI/Popup/MVMessagePopup.cpp`
 - **UMVMessagePopup::SetMessageText()** (2 connections) — `Source/Maverick/UI/Popup/MVMessagePopup.cpp`
 - **FName** (2 connections)
-- **UTextBlock** (1 connections) — `Source/Maverick/UI/Popup/MVInteractionPromptPopup.h`
 - **UMVInteractionPromptPopup()** (1 connections) — `Source/Maverick/UI/Popup/MVInteractionPromptPopup.h`
+- **UTextBlock** (1 connections) — `Source/Maverick/UI/Popup/MVInteractionPromptPopup.h`
 - **FText** (1 connections)
 - **UTextBlock** (1 connections) — `Source/Maverick/UI/Popup/MVMessagePopup.h`
-- **MessageId** (1 connections) — `Source/Maverick/UI/System/MVUIDataTypes.h`
-- **MessageText** (1 connections) — `Source/Maverick/UI/System/MVUIDataTypes.h`
-- **Duration** (1 connections) — `Source/Maverick/UI/System/MVUIDataTypes.h`
-- **Label** (1 connections) — `Source/Maverick/UI/System/MVUIDataTypes.h`
 - **ActionName** (1 connections) — `Source/Maverick/UI/System/MVUIDataTypes.h`
 - **bEnabled** (1 connections) — `Source/Maverick/UI/System/MVUIDataTypes.h`
+- **Label** (1 connections) — `Source/Maverick/UI/System/MVUIDataTypes.h`
+- **Duration** (1 connections) — `Source/Maverick/UI/System/MVUIDataTypes.h`
+- **MessageId** (1 connections) — `Source/Maverick/UI/System/MVUIDataTypes.h`
+- **MessageText** (1 connections) — `Source/Maverick/UI/System/MVUIDataTypes.h`
 
 ## Relationships
 

@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.06
 members: 36
 ---
 
 # Maverick 전투 MDA와 목표 전투 계약
 
+**Cohesion:** 0.06 - loosely connected
 **Members:** 36 nodes
 
 ## Members

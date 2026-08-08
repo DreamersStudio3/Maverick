@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/System/MVUISettings.cpp"
 type: "code"
-community: "MVEnemy.h"
+community: "MVDeathRespawnFlow.h"
 location: "L15"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVEnemyh
+  - community/MVDeathRespawnFlowh
 ---
 
 # UMVUISettings::UMVUISettings()
@@ -17,4 +17,4 @@ tags:
 - [[UMVInteractionPromptPopup]] - `references` [EXTRACTED]
 - [[UMVMainHUDWidget]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVEnemyh
+#graphify/code #graphify/EXTRACTED #community/MVDeathRespawnFlowh

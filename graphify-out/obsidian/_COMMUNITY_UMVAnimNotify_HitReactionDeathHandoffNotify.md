@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.32
 members: 8
 ---
 
 # UMVAnimNotify_HitReactionDeathHandoff::Notify
 
+**Cohesion:** 0.32 - loosely connected
 **Members:** 8 nodes
 
 ## Members

@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.33
 members: 13
 ---
 
 # MVHitResolverSubsystem.cpp
 
+**Cohesion:** 0.33 - loosely connected
 **Members:** 13 nodes
 
 ## Members
@@ -30,10 +32,9 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 2 edges to [[_COMMUNITY_AMVCharacterBase]]
+- 3 edges to [[_COMMUNITY_MVAbilityBase.cpp]]
 - 2 edges to [[_COMMUNITY_MVHitTypes.h]]
 - 2 edges to [[_COMMUNITY_FMVResolvedHitData]]
-- 1 edge to [[_COMMUNITY_MVAbilityBase.cpp]]
 - 1 edge to [[_COMMUNITY_MVWeaponComponent.cpp]]
 
 ## Top bridge nodes

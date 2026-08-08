@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.06
 members: 53
 ---
 
 # AI 적 전투 액션
 
+**Cohesion:** 0.06 - loosely connected
 **Members:** 53 nodes
 
 ## Members

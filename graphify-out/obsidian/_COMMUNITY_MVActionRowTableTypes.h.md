@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.33
 members: 6
 ---
 
 # MVActionRowTableTypes.h
 
+**Cohesion:** 0.33 - loosely connected
 **Members:** 6 nodes
 
 ## Members
@@ -28,7 +30,7 @@ SORT file.name ASC
 - 1 edge to [[_COMMUNITY_MVSheetSpecs.cpp]]
 - 1 edge to [[_COMMUNITY_MVTableAssetGenerator.cpp]]
 - 1 edge to [[_COMMUNITY_MVTableTypes.h]]
-- 1 edge to [[_COMMUNITY_MVMovementActionTableTypes.h]]
+- 1 edge to [[_COMMUNITY_Player Dodge Tables]]
 - 1 edge to [[_COMMUNITY_FMVSkillDataTableColumn]]
 
 ## Top bridge nodes

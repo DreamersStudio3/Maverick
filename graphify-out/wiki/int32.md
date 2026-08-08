@@ -1,13 +1,13 @@
 # int32
 
-> 4 nodes
+> 4 nodes · cohesion 0.50
 
 ## Key Concepts
 
 - **int32** (4 connections)
 - **.GetDodgeTokenCount()** (2 connections) — `Source/Maverick/Components/MVEnemyDodgeTokenComponent.h`
-- **.GetReceivedHitCount()** (2 connections) — `Source/Maverick/Components/MVEnemyDodgeTokenComponent.h`
 - **.GetLandedHitCount()** (2 connections) — `Source/Maverick/Components/MVEnemyDodgeTokenComponent.h`
+- **.GetReceivedHitCount()** (2 connections) — `Source/Maverick/Components/MVEnemyDodgeTokenComponent.h`
 
 ## Relationships
 

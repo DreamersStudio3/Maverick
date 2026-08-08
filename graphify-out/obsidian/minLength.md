@@ -1,12 +1,12 @@
 ---
 source_file: "MaverickDesign/Schema/TableData.schema.json"
 type: "code"
-community: "rows"
+community: "table"
 location: "L45"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/rows
+  - community/table
 ---
 
 # minLength
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[key_1]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/rows
+#graphify/code #graphify/EXTRACTED #community/table

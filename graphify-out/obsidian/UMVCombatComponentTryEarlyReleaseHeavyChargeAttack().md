@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVCombatComponent.cpp"
 type: "code"
-community: "MVCombatComponent.cpp"
+community: "FDataTableRowHandle"
 location: "L1881"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVCombatComponentcpp
+  - community/FDataTableRowHandle
 ---
 
 # UMVCombatComponent::TryEarlyReleaseHeavyChargeAttack()
@@ -15,4 +15,4 @@ tags:
 - [[FName_35]] - `calls` [EXTRACTED]
 - [[MVCombatComponent.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVCombatComponentcpp
+#graphify/code #graphify/EXTRACTED #community/FDataTableRowHandle

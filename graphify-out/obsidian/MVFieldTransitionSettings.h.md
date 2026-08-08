@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/System/MVFieldTransitionSettings.h"
 type: "code"
-community: "MVFieldTransitionSettings.h"
+community: "MVFieldTransitionSubsystem.cpp"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVFieldTransitionSettingsh
+  - community/MVFieldTransitionSubsystemcpp
 ---
 
 # MVFieldTransitionSettings.h
@@ -15,4 +15,4 @@ tags:
 - [[MVFieldTransitionSubsystem.cpp]] - `imports` [EXTRACTED]
 - [[UMVFieldTransitionSettings()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVFieldTransitionSettingsh
+#graphify/code #graphify/EXTRACTED #community/MVFieldTransitionSubsystemcpp

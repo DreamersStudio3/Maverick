@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.20
 members: 14
 ---
 
 # FName
 
+**Cohesion:** 0.20 - loosely connected
 **Members:** 14 nodes
 
 ## Members
@@ -39,6 +41,6 @@ SORT file.name ASC
 ## Top bridge nodes
 - [[UMVDeathComponentResolveDeathActionRowHandle()]] - degree 6, connects to 3 communities
 - [[UMVDeathComponentMakeDeathActionRowName()]] - degree 6, connects to 2 communities
-- [[UMVDeathComponentResolveDeathActionFacing()]] - degree 3, connects to 2 communities
 - [[UMVDeathComponentCharacterIndexCodeToTableToken()]] - degree 3, connects to 2 communities
+- [[UMVDeathComponentResolveDeathActionFacing()]] - degree 3, connects to 2 communities
 - [[UMVDeathComponentMakeLegacyDeathActionRowName()]] - degree 5, connects to 1 community

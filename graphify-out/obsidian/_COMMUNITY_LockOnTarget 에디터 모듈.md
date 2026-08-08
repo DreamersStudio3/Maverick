@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.31
 members: 11
 ---
 
 # LockOnTarget 에디터 모듈
 
+**Cohesion:** 0.31 - loosely connected
 **Members:** 11 nodes
 
 ## Members

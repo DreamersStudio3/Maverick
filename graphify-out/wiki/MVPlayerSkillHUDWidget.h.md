@@ -1,6 +1,6 @@
 # MVPlayerSkillHUDWidget.h
 
-> 6 nodes
+> 6 nodes · cohesion 0.33
 
 ## Key Concepts
 
@@ -8,8 +8,8 @@
 - **UMVPlayerSkillHUDWidget::BuildNativeWidgetTree()** (3 connections) — `Source/Maverick/UI/HUD/MVPlayerSkillHUDWidget.cpp`
 - **UMVSkillSlotWidget** (2 connections) — `Source/Maverick/UI/HUD/MVPlayerSkillHUDWidget.h`
 - **UMVCombatComponent** (1 connections) — `Source/Maverick/UI/HUD/MVPlayerSkillHUDWidget.h`
-- **UTexture2D** (1 connections) — `Source/Maverick/UI/HUD/MVPlayerSkillHUDWidget.h`
 - **UMVPlayerSkillHUDWidget()** (1 connections) — `Source/Maverick/UI/HUD/MVPlayerSkillHUDWidget.h`
+- **UTexture2D** (1 connections) — `Source/Maverick/UI/HUD/MVPlayerSkillHUDWidget.h`
 
 ## Relationships
 

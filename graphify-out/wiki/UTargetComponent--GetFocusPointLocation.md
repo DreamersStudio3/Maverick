@@ -1,17 +1,17 @@
 # UTargetComponent::GetFocusPointLocation
 
-> 9 nodes
+> 9 nodes · cohesion 0.25
 
 ## Key Concepts
 
 - **UTargetComponent::GetFocusPointLocation()** (5 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetComponent.cpp`
 - **ULockOnTargetComponent** (4 connections)
-- **UTargetComponent::NotifyTargetReleased()** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetComponent.cpp`
-- **UTargetComponent::GetSocketLocation()** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetComponent.cpp`
 - **FVector** (3 connections)
 - **UTargetComponent::GetCustomFocusPoint_Implementation()** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetComponent.cpp`
-- **GetSocketLocation** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h`
+- **UTargetComponent::GetSocketLocation()** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetComponent.cpp`
+- **UTargetComponent::NotifyTargetReleased()** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetComponent.cpp`
 - **GetCustomFocusPoint** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h`
+- **GetSocketLocation** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h`
 - **K2_OnReleased** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h`
 
 ## Relationships

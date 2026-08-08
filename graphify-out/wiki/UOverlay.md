@@ -1,13 +1,13 @@
 # UOverlay
 
-> 8 nodes
+> 8 nodes · cohesion 0.29
 
 ## Key Concepts
 
 - **UOverlay** (7 connections) — `Source/Maverick/UI/System/MVUILayerBase.h`
 - **MVUILayerBase.h** (5 connections) — `Source/Maverick/UI/System/MVUILayerBase.h`
-- **UMVUILayerBase::BuildNativeLayerTree()** (3 connections) — `Source/Maverick/UI/System/MVUILayerBase.cpp`
 - **UMVUILayerBase::AddFullScreenOverlayChild()** (3 connections) — `Source/Maverick/UI/System/MVUILayerBase.cpp`
+- **UMVUILayerBase::BuildNativeLayerTree()** (3 connections) — `Source/Maverick/UI/System/MVUILayerBase.cpp`
 - **UMVDeathOverlayWindow::BuildNativeWidgetTree()** (3 connections) — `Source/Maverick/UI/Window/MVDeathOverlayWindow.cpp`
 - **UCommonActivatableWidgetStack** (2 connections) — `Source/Maverick/UI/System/MVUILayerBase.h`
 - **UCommonActivatableWidget** (1 connections) — `Source/Maverick/UI/System/MVUILayerBase.h`
@@ -16,8 +16,8 @@
 ## Relationships
 
 - [MVUILayerBase.cpp](MVUILayerBase.cpp.md) (2 shared connections)
-- [UWidget](UWidget.md) (1 shared connections)
 - [UWorld](UWorld.md) (1 shared connections)
+- [UWidget](UWidget.md) (1 shared connections)
 - [MVSkillSlotWidget.h](MVSkillSlotWidget.h.md) (1 shared connections)
 - [MVStatusBarWidget.cpp](MVStatusBarWidget.cpp.md) (1 shared connections)
 - [UMVLoadingWindow::BuildNativeWidgetTree](UMVLoadingWindow--BuildNativeWidgetTree.md) (1 shared connections)

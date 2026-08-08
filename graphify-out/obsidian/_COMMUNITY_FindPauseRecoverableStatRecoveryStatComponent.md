@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.39
 members: 9
 ---
 
 # FindPauseRecoverableStatRecoveryStatComponent
 
+**Cohesion:** 0.39 - loosely connected
 **Members:** 9 nodes
 
 ## Members

@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.15
 members: 16
 ---
 
 # TargetPreviewExtension.cpp
 
+**Cohesion:** 0.15 - loosely connected
 **Members:** 16 nodes
 
 ## Members

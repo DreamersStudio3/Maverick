@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "MVGlobalSensingTask.cpp"
+community: "AI Global Sensing"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVGlobalSensingTaskcpp
+  - community/AI_Global_Sensing
 ---
 
 # APawn
@@ -14,4 +14,4 @@ tags:
 - [[GlobalSensingClearControllerTarget()]] - `references` [EXTRACTED]
 - [[GlobalSensingEnsureCooldownComponent()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVGlobalSensingTaskcpp
+#graphify/code #graphify/EXTRACTED #community/AI_Global_Sensing

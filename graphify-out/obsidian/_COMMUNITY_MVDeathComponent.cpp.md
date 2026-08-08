@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.11
 members: 19
 ---
 
 # MVDeathComponent.cpp
 
+**Cohesion:** 0.11 - loosely connected
 **Members:** 19 nodes
 
 ## Members
@@ -40,7 +42,7 @@ SORT file.name ASC
 - 5 edges to [[_COMMUNITY_FMVDeathContext]]
 - 5 edges to [[_COMMUNITY_EMVDeathActionPose]]
 - 2 edges to [[_COMMUNITY_MVDeathComponent.h]]
-- 1 edge to [[_COMMUNITY_Type_1]]
+- 1 edge to [[_COMMUNITY_Type]]
 - 1 edge to [[_COMMUNITY_사망 이동 모드 처리]]
 
 ## Top bridge nodes

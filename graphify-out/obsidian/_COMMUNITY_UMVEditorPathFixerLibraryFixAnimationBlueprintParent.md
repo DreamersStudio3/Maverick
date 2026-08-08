@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.47
 members: 6
 ---
 
 # UMVEditorPathFixerLibrary::FixAnimationBlueprintParent
 
+**Cohesion:** 0.47 - moderately connected
 **Members:** 6 nodes
 
 ## Members

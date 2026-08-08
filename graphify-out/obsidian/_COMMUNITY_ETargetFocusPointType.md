@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.05
 members: 43
 ---
 
 # ETargetFocusPointType
 
+**Cohesion:** 0.05 - loosely connected
 **Members:** 43 nodes
 
 ## Members

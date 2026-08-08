@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVInputManagerComponent.h"
 type: "code"
-community: "FindBlockMovementInputInputManagerComponent"
+community: "MVActionInputHandlerInterface.h"
 location: "L54"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/FindBlockMovementInputInputManagerComponent
+  - community/MVActionInputHandlerInterfaceh
 ---
 
 # UMVInputManagerComponent()
@@ -18,4 +18,4 @@ tags:
 - [[MVInputManagerComponent.h]] - `contains` [EXTRACTED]
 - [[UMVPlayerDodgeCanTransitionCurrentAction()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/FindBlockMovementInputInputManagerComponent
+#graphify/code #graphify/EXTRACTED #community/MVActionInputHandlerInterfaceh

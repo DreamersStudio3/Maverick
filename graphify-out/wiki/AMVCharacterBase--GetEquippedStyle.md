@@ -1,12 +1,12 @@
 # AMVCharacterBase::GetEquippedStyle
 
-> 3 nodes
+> 3 nodes · cohesion 0.67
 
 ## Key Concepts
 
+- **AMVCharacterBase::GetEquippedStyle()** (2 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
 - **AMVCharacterBase::SetEquippedStyle()** (2 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
 - **EMVEquippedStyle** (2 connections)
-- **AMVCharacterBase::GetEquippedStyle()** (2 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
 
 ## Relationships
 

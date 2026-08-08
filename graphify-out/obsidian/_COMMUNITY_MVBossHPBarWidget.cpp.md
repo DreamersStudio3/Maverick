@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.14
 members: 15
 ---
 
 # MVBossHPBarWidget.cpp
 
+**Cohesion:** 0.14 - loosely connected
 **Members:** 15 nodes
 
 ## Members

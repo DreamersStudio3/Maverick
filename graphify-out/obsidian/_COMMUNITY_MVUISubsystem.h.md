@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.12
 members: 16
 ---
 
 # MVUISubsystem.h
 
+**Cohesion:** 0.12 - loosely connected
 **Members:** 16 nodes
 
 ## Members
@@ -33,12 +35,12 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 2 edges to [[_COMMUNITY_AMVCharacterBase]]
+- 2 edges to [[_COMMUNITY_MVAbilityBase.cpp]]
 - 2 edges to [[_COMMUNITY_MVUISubsystem.cpp]]
 - 1 edge to [[_COMMUNITY_FMVPopupMessageData]]
 - 1 edge to [[_COMMUNITY_FMVInteractionPromptData]]
 
 ## Top bridge nodes
 - [[MVUISubsystem.h]] - degree 15, connects to 2 communities
-- [[UMVUISubsystemShowPIEActionTestPanel()]] - degree 3, connects to 2 communities
 - [[UMVUISubsystemOpenPIEActionTestPanel()]] - degree 3, connects to 2 communities
+- [[UMVUISubsystemShowPIEActionTestPanel()]] - degree 3, connects to 2 communities

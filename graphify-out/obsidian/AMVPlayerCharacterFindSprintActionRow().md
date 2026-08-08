@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Character/PC/MVPlayerCharacter.cpp"
 type: "code"
-community: "MVMovementActionTableTypes.h"
+community: "Player Dodge Tables"
 location: "L243"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVMovementActionTableTypesh
+  - community/Player_Dodge_Tables
 ---
 
 # AMVPlayerCharacter::FindSprintActionRow()
@@ -16,4 +16,4 @@ tags:
 - [[MVPlayerCharacter.cpp]] - `contains` [EXTRACTED]
 - [[UMVTableManager]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVMovementActionTableTypesh
+#graphify/code #graphify/EXTRACTED #community/Player_Dodge_Tables

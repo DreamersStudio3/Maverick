@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.27
 members: 11
 ---
 
 # PIEActionTestAddButton
 
+**Cohesion:** 0.27 - loosely connected
 **Members:** 11 nodes
 
 ## Members
@@ -28,9 +30,10 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 5 edges to [[_COMMUNITY_MVPIEActionTestWidget.cpp]]
+- 4 edges to [[_COMMUNITY_MVPIEActionTestWidget.cpp]]
 - 2 edges to [[_COMMUNITY_MVSkillSlotWidget.h]]
 - 2 edges to [[_COMMUNITY_UMVLoadingWindowBuildNativeWidgetTree]]
+- 1 edge to [[_COMMUNITY_MVPIEActionTestWidget.cpp_1]]
 - 1 edge to [[_COMMUNITY_MVPlayerSkillHUDWidget.h]]
 - 1 edge to [[_COMMUNITY_MVStatusBarWidget.cpp]]
 - 1 edge to [[_COMMUNITY_UOverlay]]

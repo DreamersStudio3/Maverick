@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/AI/Task/MVGlobalSensingTask.cpp"
 type: "code"
-community: "MVGlobalSensingTask.cpp"
+community: "AI Global Sensing"
 location: "L370"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVGlobalSensingTaskcpp
+  - community/AI_Global_Sensing
 ---
 
 # FMVGlobalSensingTask::FMVGlobalSensingTask()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[MVGlobalSensingTask.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVGlobalSensingTaskcpp
+#graphify/code #graphify/EXTRACTED #community/AI_Global_Sensing

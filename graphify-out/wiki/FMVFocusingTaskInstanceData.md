@@ -1,20 +1,20 @@
 # FMVFocusingTaskInstanceData
 
-> 11 nodes
+> 11 nodes · cohesion 0.20
 
 ## Key Concepts
 
 - **FMVFocusingTaskInstanceData** (11 connections) — `Source/Maverick/AI/Task/MVFocusingTask.h`
 - **MVFocusingTask.h** (3 connections) — `Source/Maverick/AI/Task/MVFocusingTask.h`
 - **AAIController** (2 connections) — `Source/Maverick/AI/Task/MVFocusingTask.h`
-- **TObjectPtr** (1 connections)
-- **APawn** (1 connections)
-- **UPROPERTY** (1 connections)
-- **Target** (1 connections) — `Source/Maverick/AI/Task/MVFocusingTask.h`
-- **Owner** (1 connections) — `Source/Maverick/AI/Task/MVFocusingTask.h`
 - **bCanFocus** (1 connections) — `Source/Maverick/AI/Task/MVFocusingTask.h`
-- **FocusController** (1 connections) — `Source/Maverick/AI/Task/MVFocusingTask.h`
 - **bFocusApplied** (1 connections) — `Source/Maverick/AI/Task/MVFocusingTask.h`
+- **FocusController** (1 connections) — `Source/Maverick/AI/Task/MVFocusingTask.h`
+- **Owner** (1 connections) — `Source/Maverick/AI/Task/MVFocusingTask.h`
+- **Target** (1 connections) — `Source/Maverick/AI/Task/MVFocusingTask.h`
+- **APawn** (1 connections)
+- **TObjectPtr** (1 connections)
+- **UPROPERTY** (1 connections)
 
 ## Relationships
 

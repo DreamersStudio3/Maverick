@@ -1,30 +1,30 @@
 # MVDeathRespawnFlow.h
 
-> 9 nodes
+> 9 nodes · cohesion 0.22
 
 ## Key Concepts
 
 - **MVDeathRespawnFlow.h** (6 connections) — `Source/Maverick/System/MVDeathRespawnFlow.h`
-- **UMVFieldTransitionSubsystem** (3 connections) — `Source/Maverick/System/MVDeathRespawnFlow.h`
-- **UMVFieldTransitionSubsystem::Get()** (3 connections) — `Source/Maverick/System/MVFieldTransitionSubsystem.cpp`
-- **UMVDeathRespawnFlow::Initialize()** (2 connections) — `Source/Maverick/System/MVDeathRespawnFlow.cpp`
+- **UMVUISettings::UMVUISettings()** (4 connections) — `Source/Maverick/UI/System/MVUISettings.cpp`
+- **UMVMainHUDWidget** (2 connections) — `Source/Maverick/Character/NPC/Enemy/MVEnemy.h`
+- **UMVDeathOverlayWindow** (2 connections) — `Source/Maverick/System/MVDeathRespawnFlow.h`
 - **AMVCharacterBase** (1 connections) — `Source/Maverick/System/MVDeathRespawnFlow.h`
 - **UMVDeathComponent** (1 connections) — `Source/Maverick/System/MVDeathRespawnFlow.h`
-- **UMVUISubsystem** (1 connections) — `Source/Maverick/System/MVDeathRespawnFlow.h`
 - **UMVDeathRespawnFlow()** (1 connections) — `Source/Maverick/System/MVDeathRespawnFlow.h`
-- **UObject** (1 connections)
+- **UMVUISubsystem** (1 connections) — `Source/Maverick/System/MVDeathRespawnFlow.h`
+- **MVUISettings.cpp** (1 connections) — `Source/Maverick/UI/System/MVUISettings.cpp`
 
 ## Relationships
 
-- [MVDeathRespawnFlow.cpp](MVDeathRespawnFlow.cpp.md) (1 shared connections)
 - [MVEnemy.h](MVEnemy.h.md) (1 shared connections)
-- [MVFieldTransitionSubsystem.cpp](MVFieldTransitionSubsystem.cpp.md) (1 shared connections)
+- [MVDeathRespawnFlow.h](MVDeathRespawnFlow.h.md) (1 shared connections)
+- [FMVInteractionPromptData](FMVInteractionPromptData.md) (1 shared connections)
 
 ## Source Files
 
-- `Source/Maverick/System/MVDeathRespawnFlow.cpp`
+- `Source/Maverick/Character/NPC/Enemy/MVEnemy.h`
 - `Source/Maverick/System/MVDeathRespawnFlow.h`
-- `Source/Maverick/System/MVFieldTransitionSubsystem.cpp`
+- `Source/Maverick/UI/System/MVUISettings.cpp`
 
 ## Audit Trail
 

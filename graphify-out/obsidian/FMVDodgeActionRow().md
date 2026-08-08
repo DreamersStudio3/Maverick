@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Public/Tables/MVMovementActionTableTypes.h"
 type: "code"
-community: "MVPlayerDodge.cpp"
+community: "Player Dodge Tables"
 location: "L18"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVPlayerDodgecpp
+  - community/Player_Dodge_Tables
 ---
 
 # FMVDodgeActionRow()
@@ -18,4 +18,4 @@ tags:
 - [[UMVPlayerDodgeConsumeDodgeCost()]] - `references` [EXTRACTED]
 - [[UMVPlayerDodgeFindDodgeActionRow()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVPlayerDodgecpp
+#graphify/code #graphify/EXTRACTED #community/Player_Dodge_Tables

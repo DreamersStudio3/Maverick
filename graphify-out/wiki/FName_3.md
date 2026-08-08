@@ -1,19 +1,19 @@
 # FName
 
-> 10 nodes
+> 10 nodes · cohesion 0.22
 
 ## Key Concepts
 
 - **FName** (5 connections)
 - **MVFieldTransitionActionTableNameFromDataTable()** (4 connections) — `Source/Maverick/System/MVFieldTransitionSubsystem.cpp`
-- **UMVFieldTransitionSubsystem::StartCheckpointTravelToTransform()** (3 connections) — `Source/Maverick/System/MVFieldTransitionSubsystem.cpp`
-- **UMVFieldTransitionSubsystem::SetLastCheckpointFromActor()** (3 connections) — `Source/Maverick/System/MVFieldTransitionSubsystem.cpp`
 - **UMVFieldTransitionSubsystem::HandlePreTransitionActionEnded()** (3 connections) — `Source/Maverick/System/MVFieldTransitionSubsystem.cpp`
 - **UMVFieldTransitionSubsystem::ResolveTransitionResetFieldId()** (3 connections) — `Source/Maverick/System/MVFieldTransitionSubsystem.cpp`
-- **UMVFieldTransitionSubsystem::StartDeathRespawnTransition()** (2 connections) — `Source/Maverick/System/MVFieldTransitionSubsystem.cpp`
+- **UMVFieldTransitionSubsystem::SetLastCheckpointFromActor()** (3 connections) — `Source/Maverick/System/MVFieldTransitionSubsystem.cpp`
+- **UMVFieldTransitionSubsystem::StartCheckpointTravelToTransform()** (3 connections) — `Source/Maverick/System/MVFieldTransitionSubsystem.cpp`
 - **AActor** (2 connections)
-- **UDataTable** (1 connections)
+- **UMVFieldTransitionSubsystem::StartDeathRespawnTransition()** (2 connections) — `Source/Maverick/System/MVFieldTransitionSubsystem.cpp`
 - **FTransform** (1 connections)
+- **UDataTable** (1 connections)
 
 ## Relationships
 

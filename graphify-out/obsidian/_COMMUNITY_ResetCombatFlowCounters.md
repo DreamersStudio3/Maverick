@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.50
 members: 4
 ---
 
 # ResetCombatFlowCounters
 
+**Cohesion:** 0.50 - moderately connected
 **Members:** 4 nodes
 
 ## Members
@@ -25,7 +27,7 @@ SORT file.name ASC
 - 2 edges to [[_COMMUNITY_EMVEnemyDodgeTokenGrantReason]]
 
 ## Top bridge nodes
-- [[UMVEnemyDodgeTokenComponentTrySpendDodgeToken()]] - degree 3, connects to 1 community
 - [[ResetCombatFlowCounters]] - degree 3, connects to 1 community
-- [[UMVEnemyDodgeTokenComponentResetForFieldTransition()]] - degree 2, connects to 1 community
+- [[UMVEnemyDodgeTokenComponentTrySpendDodgeToken()]] - degree 3, connects to 1 community
 - [[CanSpendDodgeToken]] - degree 2, connects to 1 community
+- [[UMVEnemyDodgeTokenComponentResetForFieldTransition()]] - degree 2, connects to 1 community

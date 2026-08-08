@@ -1,6 +1,6 @@
 # Maverick 전투 MDA와 목표 전투 계약
 
-> 36 nodes
+> 36 nodes · cohesion 0.06
 
 ## Key Concepts
 
@@ -8,10 +8,15 @@
 - **9. 구현 순서** (6 connections) — `docs/wiki/Combat-Design-MDA.md`
 - **5. 목표 공격 문법** (5 connections) — `docs/wiki/Combat-Design-MDA.md`
 - **6. 목표 피격과 행동권 계약** (5 connections) — `docs/wiki/Combat-Design-MDA.md`
-- **3. 현재 전투 기준선** (4 connections) — `docs/wiki/Combat-Design-MDA.md`
 - **10. 검증 계약** (4 connections) — `docs/wiki/Combat-Design-MDA.md`
+- **3. 현재 전투 기준선** (4 connections) — `docs/wiki/Combat-Design-MDA.md`
 - **13. 주요 근거** (3 connections) — `docs/wiki/Combat-Design-MDA.md`
 - **Combat-Design-MDA.md** (1 connections) — `docs/wiki/Combat-Design-MDA.md`
+- **10.1 자동화와 런타임 검증** (1 connections) — `docs/wiki/Combat-Design-MDA.md`
+- **10.2 플레이테스트 이벤트** (1 connections) — `docs/wiki/Combat-Design-MDA.md`
+- **10.3 판단 지표** (1 connections) — `docs/wiki/Combat-Design-MDA.md`
+- **11. 공격 데이터의 최소 문서 계약** (1 connections) — `docs/wiki/Combat-Design-MDA.md`
+- **12. 구현 전 결정할 질문** (1 connections) — `docs/wiki/Combat-Design-MDA.md`
 - **1. 문서 사용법과 증거 범위** (1 connections) — `docs/wiki/Combat-Design-MDA.md`
 - **2. 설계 북극성과 MDA 판단 기준** (1 connections) — `docs/wiki/Combat-Design-MDA.md`
 - **3.1 현재 플레이 루프** (1 connections) — `docs/wiki/Combat-Design-MDA.md`
@@ -24,11 +29,6 @@
 - **5.4 무기는 전투 문법을 바꾼다** (1 connections) — `docs/wiki/Combat-Design-MDA.md`
 - **6.1 액션 종료 권한을 분리한다** (1 connections) — `docs/wiki/Combat-Design-MDA.md`
 - **6.2 Impact와 Armor는 행동 중단만 결정한다** (1 connections) — `docs/wiki/Combat-Design-MDA.md`
-- **6.3 한 타격은 하나의 결과 거래다** (1 connections) — `docs/wiki/Combat-Design-MDA.md`
-- **6.4 무적, Guard, 이동, 그로기를 분리한다** (1 connections) — `docs/wiki/Combat-Design-MDA.md`
-- **7. Q와 R의 목표 역할** (1 connections) — `docs/wiki/Combat-Design-MDA.md`
-- **8. 목표 Dynamics와 가드레일** (1 connections) — `docs/wiki/Combat-Design-MDA.md`
-- **P0. 현재 취소 경로 추적** (1 connections) — `docs/wiki/Combat-Design-MDA.md`
 - *... and 11 more nodes in this community*
 
 ## Relationships

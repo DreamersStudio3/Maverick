@@ -1,6 +1,6 @@
 # MVStatComponent.h
 
-> 4 nodes
+> 4 nodes · cohesion 0.50
 
 ## Key Concepts
 
@@ -11,7 +11,6 @@
 
 ## Relationships
 
-- [MVPlayerStatusWidget.cpp](MVPlayerStatusWidget.cpp.md) (1 shared connections)
 - [MVHitTypes.h](MVHitTypes.h.md) (1 shared connections)
 - [FMVDeathContext](FMVDeathContext.md) (1 shared connections)
 - [UMVTableManager](UMVTableManager.md) (1 shared connections)
@@ -20,6 +19,7 @@
 - [FindPauseRecoverableStatRecoveryStatComponent](FindPauseRecoverableStatRecoveryStatComponent.md) (1 shared connections)
 - [MVBossHPBarWidget.cpp](MVBossHPBarWidget.cpp.md) (1 shared connections)
 - [MVMainHUDWidget.cpp](MVMainHUDWidget.cpp.md) (1 shared connections)
+- [MVPlayerStatusWidget.cpp](MVPlayerStatusWidget.cpp.md) (1 shared connections)
 
 ## Source Files
 

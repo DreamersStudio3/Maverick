@@ -1,15 +1,15 @@
 ---
 type: community
-members: 29
+cohesion: 0.09
+members: 24
 ---
 
 # MVPlayerConsumable.cpp
 
-**Members:** 29 nodes
+**Cohesion:** 0.09 - loosely connected
+**Members:** 24 nodes
 
 ## Members
-- [[FDataTableRowHandle_4]] - code
-- [[FName_31]] - code
 - [[MVPlayerConsumable.cpp]] - code - Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp
 - [[UMVPlayerConsumableApplyHealingPotionEffect()]] - code - Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp
 - [[UMVPlayerConsumableBindOwnerEvents()]] - code - Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp
@@ -17,25 +17,22 @@ members: 29
 - [[UMVPlayerConsumableCanPlayHealingPotionFailedAction()]] - code - Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp
 - [[UMVPlayerConsumableCanTransitionActiveActionForHealingPotion()]] - code - Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp
 - [[UMVPlayerConsumableCanUseHealingPotion()]] - code - Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp
+- [[UMVPlayerConsumableDeinitialize()]] - code - Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp
 - [[UMVPlayerConsumableGetWorld()]] - code - Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp
-- [[UMVPlayerConsumableHandleActionEnded()]] - code - Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp
-- [[UMVPlayerConsumableHandleActionStarted()]] - code - Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp
 - [[UMVPlayerConsumableHandleHPChanged()]] - code - Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp
 - [[UMVPlayerConsumableHasHealingPotionFailedAction()]] - code - Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp
 - [[UMVPlayerConsumableHasHealingPotionUseAction()]] - code - Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp
+- [[UMVPlayerConsumableInitialize()]] - code - Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp
 - [[UMVPlayerConsumableInitializeHealingPotionState()]] - code - Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp
-- [[UMVPlayerConsumableIsHealingPotionFailedAction()]] - code - Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp
-- [[UMVPlayerConsumableIsHealingPotionUseAction()]] - code - Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp
 - [[UMVPlayerConsumableIsHealingPotionUseActionRunning()]] - code - Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp
-- [[UMVPlayerConsumableResolveHealingPotionActionTableName()]] - code - Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp
 - [[UMVPlayerConsumableRestoreConsumableCountsForWorldReset()]] - code - Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp
 - [[UMVPlayerConsumableRestoreHealingPotionCountToDefault()]] - code - Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp
 - [[UMVPlayerConsumableSetHealingPotionCount()]] - code - Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp
 - [[UMVPlayerConsumableTryPlayHealingPotionFailedAction()]] - code - Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp
-- [[UMVPlayerConsumableTryStartHealingPotionAction()]] - code - Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp
 - [[UMVPlayerConsumableTryUseHealingPotion()]] - code - Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp
 - [[UMVPlayerConsumableUnbindOwnerEvents()]] - code - Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp
 - [[UWorld_4]] - code
+- [[UnbindOwnerEvents]] - code - Source/Maverick/Components/MVEnemyDodgeTokenComponent.h
 - [[int32_11]] - code
 
 ## Live Query (requires Dataview plugin)
@@ -46,13 +43,18 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 6 edges to [[_COMMUNITY_ApplyMVPlayerConsumableHealingPotionDataRowDefaults]]
-- 2 edges to [[_COMMUNITY_UMVPlayerConsumableInitialize]]
+- 6 edges to [[_COMMUNITY_MVPlayerConsumable.cpp_1]]
+- 5 edges to [[_COMMUNITY_ApplyMVPlayerConsumableHealingPotionDataRowDefaults]]
 - 1 edge to [[_COMMUNITY_FMVQuickSlotViewData]]
 - 1 edge to [[_COMMUNITY_MVPlayerConsumable.h]]
 - 1 edge to [[_COMMUNITY_UMVPlayerConsumableTryHandleActionInput]]
-- 1 edge to [[_COMMUNITY_MVHitTypes.h]]
+- 1 edge to [[_COMMUNITY_Player Dodge Tables]]
+- 1 edge to [[_COMMUNITY_AMVPlayerCharacter]]
+- 1 edge to [[_COMMUNITY_UMVPlayerConsumableInitialize]]
+- 1 edge to [[_COMMUNITY_Type]]
+- 1 edge to [[_COMMUNITY_EMVEnemyDodgeTokenGrantReason]]
 
 ## Top bridge nodes
 - [[MVPlayerConsumable.cpp]] - degree 35, connects to 6 communities
-- [[FDataTableRowHandle_4]] - degree 3, connects to 1 community
+- [[UMVPlayerConsumableInitialize()]] - degree 4, connects to 2 communities
+- [[UnbindOwnerEvents]] - degree 4, connects to 2 communities

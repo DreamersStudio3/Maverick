@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.10
 members: 23
 ---
 
 # FMVPopupMessageData
 
+**Cohesion:** 0.10 - loosely connected
 **Members:** 23 nodes
 
 ## Members

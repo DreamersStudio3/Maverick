@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVInputManagerComponent.cpp"
 type: "code"
-community: "FVector"
+community: "MVInputManagerComponent.cpp"
 location: "L654"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/FVector
+  - community/MVInputManagerComponentcpp
 ---
 
 # UMVInputManagerComponent::ResolveControllerSpaceInputFromWorldDirection()
@@ -16,4 +16,4 @@ tags:
 - [[FVector2D_9]] - `references` [EXTRACTED]
 - [[MVInputManagerComponent.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/FVector
+#graphify/code #graphify/EXTRACTED #community/MVInputManagerComponentcpp

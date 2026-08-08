@@ -1,6 +1,6 @@
 # MVCharacterBase.h
 
-> 19 nodes
+> 19 nodes · cohesion 0.11
 
 ## Key Concepts
 
@@ -12,25 +12,25 @@
 - **UCharacterMovementComponent** (2 connections) — `Source/Maverick/Animation/MVAnimInstanceBase.h`
 - **AMVCharacterBase** (1 connections) — `Source/Maverick/Animation/MVAnimInstanceBase.h`
 - **UMVAnimInstanceBase()** (1 connections) — `Source/Maverick/Animation/MVAnimInstanceBase.h`
-- **UMVStatComponent** (1 connections) — `Source/Maverick/Character/MVCharacterBase.h`
+- **UCurveFloat** (1 connections) — `Source/Maverick/Character/MVCharacterBase.h`
+- **UMotionWarpingComponent** (1 connections) — `Source/Maverick/Character/MVCharacterBase.h`
 - **UMVActionComponent** (1 connections) — `Source/Maverick/Character/MVCharacterBase.h`
 - **UMVCombatComponent** (1 connections) — `Source/Maverick/Character/MVCharacterBase.h`
 - **UMVDeathComponent** (1 connections) — `Source/Maverick/Character/MVCharacterBase.h`
 - **UMVHitReactionComponent** (1 connections) — `Source/Maverick/Character/MVCharacterBase.h`
 - **UMVInputManagerComponent** (1 connections) — `Source/Maverick/Character/MVCharacterBase.h`
+- **UMVStatComponent** (1 connections) — `Source/Maverick/Character/MVCharacterBase.h`
 - **UMVWeaponComponent** (1 connections) — `Source/Maverick/Character/MVCharacterBase.h`
-- **UCurveFloat** (1 connections) — `Source/Maverick/Character/MVCharacterBase.h`
-- **UMotionWarpingComponent** (1 connections) — `Source/Maverick/Character/MVCharacterBase.h`
 - **FCharacterInputState()** (1 connections) — `Source/Maverick/Public/Struct/CharacterLocomotionStructs.h`
 - **FMVCharacterIndexRow()** (1 connections) — `Source/Maverick/Public/Tables/MVCharacterTableTypes.h`
 
 ## Relationships
 
 - [FMVStrafeMoveTaskInstanceData](FMVStrafeMoveTaskInstanceData.md) (1 shared connections)
-- [AMVCharacterBase](AMVCharacterBase.md) (1 shared connections)
+- [MVAbilityBase.cpp](MVAbilityBase.cpp.md) (1 shared connections)
 - [MVWeaponComponent.cpp](MVWeaponComponent.cpp.md) (1 shared connections)
 - [MVHitTypes.h](MVHitTypes.h.md) (1 shared connections)
-- [MVPlayerDodge.h](MVPlayerDodge.h.md) (1 shared connections)
+- [Player Dodge Tables](Player_Dodge_Tables.md) (1 shared connections)
 - [MVHitReactionComponent.cpp](MVHitReactionComponent.cpp.md) (1 shared connections)
 - [MVTableTypes.h](MVTableTypes.h.md) (1 shared connections)
 

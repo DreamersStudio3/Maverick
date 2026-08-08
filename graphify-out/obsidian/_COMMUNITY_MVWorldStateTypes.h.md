@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.14
 members: 14
 ---
 
 # MVWorldStateTypes.h
 
+**Cohesion:** 0.14 - loosely connected
 **Members:** 14 nodes
 
 ## Members
@@ -38,6 +40,6 @@ SORT file.name ASC
 ## Top bridge nodes
 - [[MVWorldStateTypes.h]] - degree 8, connects to 2 communities
 - [[UMVWorldStateSubsystemFindFieldObjectRecord()]] - degree 3, connects to 1 community
-- [[UMVWorldStateSubsystemFindWorldFlagRecord()]] - degree 3, connects to 1 community
 - [[UMVWorldStateSubsystemFindQuestRecord()]] - degree 3, connects to 1 community
-- [[UMVWorldStateSubsystemResetSaveData()]] - degree 2, connects to 1 community
+- [[UMVWorldStateSubsystemFindWorldFlagRecord()]] - degree 3, connects to 1 community
+- [[UMVWorldStateSubsystemApplySaveData()]] - degree 2, connects to 1 community

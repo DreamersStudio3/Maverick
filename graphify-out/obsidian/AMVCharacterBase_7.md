@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVInputManagerComponent.h"
 type: "code"
-community: "FindBlockMovementInputInputManagerComponent"
+community: "MVActionInputHandlerInterface.h"
 location: "L9"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/FindBlockMovementInputInputManagerComponent
+  - community/MVActionInputHandlerInterfaceh
 ---
 
 # AMVCharacterBase
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[MVInputManagerComponent.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/FindBlockMovementInputInputManagerComponent
+#graphify/code #graphify/EXTRACTED #community/MVActionInputHandlerInterfaceh

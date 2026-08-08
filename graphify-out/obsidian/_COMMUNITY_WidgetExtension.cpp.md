@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.13
 members: 19
 ---
 
 # WidgetExtension.cpp
 
+**Cohesion:** 0.13 - loosely connected
 **Members:** 19 nodes
 
 ## Members

@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.12
 members: 53
 ---
 
 # knowledge_guard.py
 
+**Cohesion:** 0.12 - loosely connected
 **Members:** 53 nodes
 
 ## Members

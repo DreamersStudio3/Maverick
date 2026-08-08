@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.15
 members: 15
 ---
 
 # GroggyEnterResolveOwner
 
+**Cohesion:** 0.15 - loosely connected
 **Members:** 15 nodes
 
 ## Members

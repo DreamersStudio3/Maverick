@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.67
 members: 3
 ---
 
 # AMVCharacterBase::GetEquippedStyle
 
+**Cohesion:** 0.67 - moderately connected
 **Members:** 3 nodes
 
 ## Members
@@ -23,5 +25,5 @@ SORT file.name ASC
 - 2 edges to [[_COMMUNITY_MVCharacterBase.cpp]]
 
 ## Top bridge nodes
-- [[AMVCharacterBaseSetEquippedStyle()]] - degree 2, connects to 1 community
 - [[AMVCharacterBaseGetEquippedStyle()]] - degree 2, connects to 1 community
+- [[AMVCharacterBaseSetEquippedStyle()]] - degree 2, connects to 1 community

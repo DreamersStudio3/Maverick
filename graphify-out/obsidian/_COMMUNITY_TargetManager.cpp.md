@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.29
 members: 8
 ---
 
 # TargetManager.cpp
 
+**Cohesion:** 0.29 - loosely connected
 **Members:** 8 nodes
 
 ## Members
@@ -25,7 +27,7 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 1 edge to [[_COMMUNITY_Type_1]]
+- 1 edge to [[_COMMUNITY_Type]]
 
 ## Top bridge nodes
 - [[UTargetManagerDoesSupportWorldType()]] - degree 2, connects to 1 community

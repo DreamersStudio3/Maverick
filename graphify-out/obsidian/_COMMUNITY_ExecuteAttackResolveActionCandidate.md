@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.26
 members: 12
 ---
 
 # ExecuteAttackResolveActionCandidate
 
+**Cohesion:** 0.26 - loosely connected
 **Members:** 12 nodes
 
 ## Members
@@ -33,7 +35,7 @@ SORT file.name ASC
 - 4 edges to [[_COMMUNITY_MVAICombatTypes.h]]
 - 2 edges to [[_COMMUNITY_전투 액션 Chooser 입력]]
 - 2 edges to [[_COMMUNITY_FMVExecuteFixedAttackTaskInstanceData]]
-- 1 edge to [[_COMMUNITY_MVHitTypes.h]]
+- 1 edge to [[_COMMUNITY_Player Dodge Tables]]
 - 1 edge to [[_COMMUNITY_FMVEnemyDeadTaskInstanceData]]
 
 ## Top bridge nodes

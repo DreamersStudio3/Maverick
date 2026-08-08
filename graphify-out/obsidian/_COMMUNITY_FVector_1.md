@@ -1,28 +1,25 @@
 ---
 type: community
-members: 15
+cohesion: 0.27
+members: 10
 ---
 
 # FVector
 
-**Members:** 15 nodes
+**Cohesion:** 0.27 - loosely connected
+**Members:** 10 nodes
 
 ## Members
-- [[DodgeClampControllerSpaceInput()]] - code - Source/Maverick/Character/PC/Dodge/MVPlayerDodge.cpp
-- [[DodgeResolveControllerSpaceInputFromWorldDirection()]] - code - Source/Maverick/Character/PC/Dodge/MVPlayerDodge.cpp
-- [[DodgeResolveWorldDirectionFromControllerSpaceInput()]] - code - Source/Maverick/Character/PC/Dodge/MVPlayerDodge.cpp
-- [[FRotator_4]] - code
-- [[FVector_10]] - code
-- [[FVector2D_4]] - code
-- [[GetReferenceForwardVector()]] - code - Source/Maverick/Character/PC/Dodge/MVPlayerDodge.cpp
-- [[GetReferenceRightVector()]] - code - Source/Maverick/Character/PC/Dodge/MVPlayerDodge.cpp
-- [[MakeYawRotationFromDirection()]] - code - Source/Maverick/Character/PC/Dodge/MVPlayerDodge.cpp
-- [[NormalizeMovementInputDirection()]] - code - Source/Maverick/Character/PC/Dodge/MVPlayerDodge.cpp
-- [[ResolveDirectionVectorFromReferenceRotation()]] - code - Source/Maverick/Character/PC/Dodge/MVPlayerDodge.cpp
-- [[ResolveStrafeReferenceRotation()]] - code - Source/Maverick/Character/PC/Dodge/MVPlayerDodge.cpp
-- [[UMVPlayerDodgeCacheControllerSpaceMovementInput()]] - code - Source/Maverick/Character/PC/Dodge/MVPlayerDodge.cpp
-- [[UMVPlayerDodgeHandleOwnerMovementInput()]] - code - Source/Maverick/Character/PC/Dodge/MVPlayerDodge.cpp
-- [[UMVPlayerDodgeMakeDodgeInputContext()]] - code - Source/Maverick/Character/PC/Dodge/MVPlayerDodge.cpp
+- [[AMVCharacterBaseAddMovementInput()]] - code - Source/Maverick/Character/MVCharacterBase.cpp
+- [[AMVCharacterBaseApplyLocomotionDirectionSnapshot()]] - code - Source/Maverick/Character/MVCharacterBase.cpp
+- [[AMVCharacterBaseCacheControllerSpaceMovementInput()]] - code - Source/Maverick/Character/MVCharacterBase.cpp
+- [[AMVCharacterBaseResolveControllerSpaceMovementInput()]] - code - Source/Maverick/Character/MVCharacterBase.cpp
+- [[AMVCharacterBaseResolveWorldDirectionFromControllerSpaceInput()]] - code - Source/Maverick/Character/MVCharacterBase.cpp
+- [[AMVCharacterBaseTryGetControllerSpaceMovementInput()]] - code - Source/Maverick/Character/MVCharacterBase.cpp
+- [[ClampCharacterControllerSpaceInput()]] - code - Source/Maverick/Character/MVCharacterBase.cpp
+- [[FVector_9]] - code
+- [[FVector2D_2]] - code
+- [[int32_9]] - code
 
 ## Live Query (requires Dataview plugin)
 
@@ -32,14 +29,11 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 20 edges to [[_COMMUNITY_MVPlayerDodge.cpp]]
-- 2 edges to [[_COMMUNITY_AMVCharacterBase]]
-- 1 edge to [[_COMMUNITY_UMVPlayerDodgeMakeDodgeActionRowName]]
-- 1 edge to [[_COMMUNITY_FMVDodgeInputContext]]
+- 7 edges to [[_COMMUNITY_MVCharacterBase.cpp]]
 
 ## Top bridge nodes
-- [[UMVPlayerDodgeMakeDodgeInputContext()]] - degree 11, connects to 2 communities
-- [[FVector2D_4]] - degree 7, connects to 2 communities
-- [[ResolveStrafeReferenceRotation()]] - degree 5, connects to 2 communities
-- [[MakeYawRotationFromDirection()]] - degree 4, connects to 2 communities
-- [[FVector_10]] - degree 11, connects to 1 community
+- [[AMVCharacterBaseResolveControllerSpaceMovementInput()]] - degree 4, connects to 1 community
+- [[ClampCharacterControllerSpaceInput()]] - degree 4, connects to 1 community
+- [[AMVCharacterBaseCacheControllerSpaceMovementInput()]] - degree 3, connects to 1 community
+- [[AMVCharacterBaseResolveWorldDirectionFromControllerSpaceInput()]] - degree 3, connects to 1 community
+- [[AMVCharacterBaseTryGetControllerSpaceMovementInput()]] - degree 3, connects to 1 community

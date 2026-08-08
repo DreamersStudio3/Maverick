@@ -1,23 +1,23 @@
 # GroggyEnterResolveOwner
 
-> 15 nodes
+> 15 nodes · cohesion 0.15
 
 ## Key Concepts
 
 - **GroggyEnterResolveOwner()** (5 connections) — `Source/Maverick/AI/Condition/MVGroggyEnterCondition.cpp`
-- **FMVGroggyEnterConditionInstanceData** (4 connections) — `Source/Maverick/AI/Condition/MVGroggyEnterCondition.h`
 - **FMVGroggyEnterCondition** (4 connections) — `Source/Maverick/AI/Condition/MVGroggyEnterCondition.h`
 - **TestCondition** (4 connections) — `Source/Maverick/AI/Condition/MVGroggyEnterCondition.h`
-- **MVGroggyEnterCondition.cpp** (2 connections) — `Source/Maverick/AI/Condition/MVGroggyEnterCondition.cpp`
+- **FMVGroggyEnterConditionInstanceData** (4 connections) — `Source/Maverick/AI/Condition/MVGroggyEnterCondition.h`
 - **FStateTreeExecutionContext** (2 connections)
-- **MVGroggyEnterCondition.h** (2 connections) — `Source/Maverick/AI/Condition/MVGroggyEnterCondition.h`
+- **MVGroggyEnterCondition.cpp** (2 connections) — `Source/Maverick/AI/Condition/MVGroggyEnterCondition.cpp`
 - **.GetInstanceDataType()** (2 connections) — `Source/Maverick/AI/Condition/MVGroggyEnterCondition.h`
+- **MVGroggyEnterCondition.h** (2 connections) — `Source/Maverick/AI/Condition/MVGroggyEnterCondition.h`
 - **APawn** (1 connections)
 - **TObjectPtr** (1 connections)
-- **TObjectPtr** (1 connections)
-- **APawn** (1 connections)
 - **Owner** (1 connections) — `Source/Maverick/AI/Condition/MVGroggyEnterCondition.h`
+- **APawn** (1 connections)
 - **FStateTreeConditionCommonBase** (1 connections)
+- **TObjectPtr** (1 connections)
 - **UStruct** (1 connections)
 
 ## Relationships

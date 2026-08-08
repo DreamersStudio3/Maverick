@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.12
 members: 35
 ---
 
 # MVTableManager.cpp
 
+**Cohesion:** 0.12 - loosely connected
 **Members:** 35 nodes
 
 ## Members
@@ -58,6 +60,6 @@ SORT file.name ASC
 ## Top bridge nodes
 - [[TableManagerJsonValueToString()]] - degree 5, connects to 1 community
 - [[UMVTableManagerTryGetGenericField()]] - degree 5, connects to 1 community
-- [[UMVTableManagerGet()]] - degree 3, connects to 1 community
 - [[UMVTableManagerFindManifestRow()]] - degree 3, connects to 1 community
+- [[UMVTableManagerGet()]] - degree 3, connects to 1 community
 - [[UMVTableManagerLoadAllTables()]] - degree 2, connects to 1 community

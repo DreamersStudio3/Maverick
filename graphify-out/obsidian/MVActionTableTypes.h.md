@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Public/Tables/MVActionTableTypes.h"
 type: "code"
-community: "MVHitTypes.h"
+community: "Player Dodge Tables"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVHitTypesh
+  - community/Player_Dodge_Tables
 ---
 
 # MVActionTableTypes.h
@@ -21,4 +21,4 @@ tags:
 - [[MVMovementActionTableTypes.h]] - `imports` [EXTRACTED]
 - [[MVPlayerConsumable.cpp]] - `imports` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVHitTypesh
+#graphify/code #graphify/EXTRACTED #community/Player_Dodge_Tables

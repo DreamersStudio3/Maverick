@@ -1,18 +1,18 @@
 {
   "$schema": "maverick.graphify-wrap-up/v1",
-  "generated_at_utc": "2026-08-08T08:14:31.065848+00:00",
-  "head_at_stamp": "224a72258e609664607075d4a3d030d26a89058a",
+  "generated_at_utc": "2026-08-08T08:39:39.918125+00:00",
+  "head_at_stamp": "e3fe6032732c06d02e044ec678a82646e063bb0a",
   "graphify_version": "0.9.36",
-  "source_fingerprint": "f0dd1523cb76db2135f2d646f630000f3a82efe2683572c1870753f2081ea9db",
+  "source_fingerprint": "ab5a3a2001c173f33f1640f9dbe6d09b441c07f97ad61bb4ab33e72b58e70025",
   "source_files": 342,
-  "artifact_fingerprint": "d6c42ed73d0e7ecb462821c0a0e660947562f2032efb607f9b529f383f0480e1",
-  "artifact_files": 4496,
+  "artifact_fingerprint": "b4a6be0ab52a109bba3e39b31336455cba3bbbb5d667da266fa569763a1ba5fc",
+  "artifact_files": 4516,
   "semantic_documents": 10,
   "graph": {
-    "nodes": 3865,
-    "edges": 5658,
-    "communities": 303,
-    "wiki_community_articles": 303,
-    "obsidian_notes": 3865
+    "nodes": 3873,
+    "edges": 5664,
+    "communities": 309,
+    "wiki_community_articles": 309,
+    "obsidian_notes": 3873
   }
 }

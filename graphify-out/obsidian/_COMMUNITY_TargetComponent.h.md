@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.15
 members: 13
 ---
 
 # TargetComponent.h
 
+**Cohesion:** 0.15 - loosely connected
 **Members:** 13 nodes
 
 ## Members
@@ -36,7 +38,7 @@ SORT file.name ASC
 
 ## Top bridge nodes
 - [[TargetComponent.h]] - degree 7, connects to 2 communities
+- [[dot-GetInvaders()]] - degree 3, connects to 1 community
 - [[ULockOnTargetComponent_11]] - degree 3, connects to 1 community
 - [[USceneComponent_4]] - degree 3, connects to 1 community
 - [[UTargetManager]] - degree 3, connects to 1 community
-- [[dot-GetInvaders()]] - degree 3, connects to 1 community

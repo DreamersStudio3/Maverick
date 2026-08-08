@@ -1,6 +1,6 @@
 # UMVTableManager
 
-> 6 nodes
+> 6 nodes · cohesion 0.40
 
 ## Key Concepts
 
@@ -13,18 +13,18 @@
 
 ## Relationships
 
-- [MVUISubsystem.cpp](MVUISubsystem.cpp.md) (2 shared connections)
 - [MVTableAssetGenerator.cpp](MVTableAssetGenerator.cpp.md) (2 shared connections)
+- [MVUISubsystem.cpp](MVUISubsystem.cpp.md) (2 shared connections)
 - [MVStatComponent.cpp](MVStatComponent.cpp.md) (1 shared connections)
-- [UMVDialogueWindow](UMVDialogueWindow.md) (1 shared connections)
-- [FMVPopupMessageData](FMVPopupMessageData.md) (1 shared connections)
-- [MVLoadingWindow.cpp](MVLoadingWindow.cpp.md) (1 shared connections)
 - [FMVDodgeInputContext](FMVDodgeInputContext.md) (1 shared connections)
-- [MVMovementActionTableTypes.h](MVMovementActionTableTypes.h.md) (1 shared connections)
+- [Player Dodge Tables](Player_Dodge_Tables.md) (1 shared connections)
 - [MVActionComponent.cpp](MVActionComponent.cpp.md) (1 shared connections)
 - [FName](FName.md) (1 shared connections)
 - [MVHitReactionComponent.h](MVHitReactionComponent.h.md) (1 shared connections)
 - [MVTableManager.cpp](MVTableManager.cpp.md) (1 shared connections)
+- [MVStatComponent.h](MVStatComponent.h.md) (1 shared connections)
+- [UMVDialogueWindow](UMVDialogueWindow.md) (1 shared connections)
+- [FMVPopupMessageData](FMVPopupMessageData.md) (1 shared connections)
 
 ## Source Files
 

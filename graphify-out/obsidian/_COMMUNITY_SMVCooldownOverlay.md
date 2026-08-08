@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.09
 members: 30
 ---
 
 # SMVCooldownOverlay
 
+**Cohesion:** 0.09 - loosely connected
 **Members:** 30 nodes
 
 ## Members

@@ -1,25 +1,25 @@
 # LockOnTargetComponent.h
 
-> 16 nodes
+> 16 nodes · cohesion 0.14
 
 ## Key Concepts
 
 - **LockOnTargetComponent.h** (9 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetComponent.h`
 - **TSubclassOf** (4 connections)
-- **ULockOnTargetExtensionBase** (4 connections)
 - **UTargetHandlerBase** (4 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetComponent.h`
-- **ULockOnTargetComponent::SetTargetHandlerByClass()** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetComponent.cpp`
-- **ULockOnTargetComponent::FindExtensionByClass()** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetComponent.cpp`
+- **ULockOnTargetExtensionBase** (4 connections)
 - **ULockOnTargetComponent::AddExtensionByClass()** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetComponent.cpp`
+- **ULockOnTargetComponent::FindExtensionByClass()** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetComponent.cpp`
 - **ULockOnTargetComponent::RemoveExtensionByClass()** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetComponent.cpp`
-- **ULockOnTargetComponent::SetDefaultTargetHandler()** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetComponent.cpp`
+- **ULockOnTargetComponent::SetTargetHandlerByClass()** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetComponent.cpp`
 - **ULockOnTargetComponent::AddDefaultExtension()** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetComponent.cpp`
-- **ULockOnTargetComponent** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetComponent.h`
-- **UTargetComponent** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetComponent.h`
+- **ULockOnTargetComponent::SetDefaultTargetHandler()** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetComponent.cpp`
 - **AActor** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetComponent.h`
+- **FFindTargetRequestResponse** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetComponent.h`
+- **ULockOnTargetComponent** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetComponent.h`
 - **ULockOnTargetExtensionBase** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetComponent.h`
 - **ULockOnTargetExtensionProxy** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetComponent.h`
-- **FFindTargetRequestResponse** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetComponent.h`
+- **UTargetComponent** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetComponent.h`
 
 ## Relationships
 

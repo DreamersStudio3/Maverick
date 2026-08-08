@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Combat/MVAbilityBase.cpp"
 type: "code"
-community: "AMVCharacterBase"
+community: "MVAbilityBase.cpp"
 location: "L136"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AMVCharacterBase
+  - community/MVAbilityBasecpp
 ---
 
 # UMVAbilityBase::ActiveCameraShake()
@@ -17,4 +17,4 @@ tags:
 - [[TSubclassOf_2]] - `references` [EXTRACTED]
 - [[UCameraShakeBase_1]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AMVCharacterBase
+#graphify/code #graphify/EXTRACTED #community/MVAbilityBasecpp

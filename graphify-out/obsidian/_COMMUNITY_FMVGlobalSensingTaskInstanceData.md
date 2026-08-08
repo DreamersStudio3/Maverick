@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.04
 members: 51
 ---
 
 # FMVGlobalSensingTaskInstanceData
 
+**Cohesion:** 0.04 - loosely connected
 **Members:** 51 nodes
 
 ## Members
@@ -68,12 +70,11 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 5 edges to [[_COMMUNITY_MVGlobalSensingTask.cpp]]
-- 2 edges to [[_COMMUNITY_FMVGlobalCoolTimeTaskInstanceData]]
-- 1 edge to [[_COMMUNITY_DrawGlobalSensingCombatAreaDebug]]
+- 6 edges to [[_COMMUNITY_AI Global Sensing]]
+- 2 edges to [[_COMMUNITY_FMVGlobalCoolTimeTaskInstanceData_2]]
 - 1 edge to [[_COMMUNITY_FMVAICombatContext]]
 - 1 edge to [[_COMMUNITY_MVAICombatTypes.h]]
 - 1 edge to [[_COMMUNITY_MVStatComponent.h]]
 
 ## Top bridge nodes
-- [[FMVGlobalSensingTaskInstanceData]] - degree 61, connects to 6 communities
+- [[FMVGlobalSensingTaskInstanceData]] - degree 61, connects to 5 communities

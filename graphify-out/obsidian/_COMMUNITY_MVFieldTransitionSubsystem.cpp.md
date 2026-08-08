@@ -1,19 +1,21 @@
 ---
 type: community
-members: 29
+cohesion: 0.08
+members: 24
 ---
 
 # MVFieldTransitionSubsystem.cpp
 
-**Members:** 29 nodes
+**Cohesion:** 0.08 - loosely connected
+**Members:** 24 nodes
 
 ## Members
 - [[EMVFieldTransitionPhase]] - code
-- [[FMVFieldTransitionRequest()]] - code - Source/Maverick/System/MVFieldTransitionSubsystem.h
 - [[FSubsystemCollectionBase_1]] - code
 - [[FText_4]] - code
+- [[MVFieldTransitionSettings.h]] - code - Source/Maverick/System/MVFieldTransitionSettings.h
 - [[MVFieldTransitionSubsystem.cpp]] - code - Source/Maverick/System/MVFieldTransitionSubsystem.cpp
-- [[UMVFieldTransitionSubsystemApplyTransitionDestination()]] - code - Source/Maverick/System/MVFieldTransitionSubsystem.cpp
+- [[UMVFieldTransitionSettings()]] - code - Source/Maverick/System/MVFieldTransitionSettings.h
 - [[UMVFieldTransitionSubsystemBeginLoadingReset()]] - code - Source/Maverick/System/MVFieldTransitionSubsystem.cpp
 - [[UMVFieldTransitionSubsystemClearUIBeforeLoadingIfNeeded()]] - code - Source/Maverick/System/MVFieldTransitionSubsystem.cpp
 - [[UMVFieldTransitionSubsystemCompleteTransition()]] - code - Source/Maverick/System/MVFieldTransitionSubsystem.cpp
@@ -21,22 +23,17 @@ members: 29
 - [[UMVFieldTransitionSubsystemFinishTransitionAfterScreenChange()]] - code - Source/Maverick/System/MVFieldTransitionSubsystem.cpp
 - [[UMVFieldTransitionSubsystemGetUISubsystem()]] - code - Source/Maverick/System/MVFieldTransitionSubsystem.cpp
 - [[UMVFieldTransitionSubsystemInitialize()]] - code - Source/Maverick/System/MVFieldTransitionSubsystem.cpp
-- [[UMVFieldTransitionSubsystemResetTransitionState()]] - code - Source/Maverick/System/MVFieldTransitionSubsystem.cpp
 - [[UMVFieldTransitionSubsystemResetUIToDefaultAfterTransition()]] - code - Source/Maverick/System/MVFieldTransitionSubsystem.cpp
-- [[UMVFieldTransitionSubsystemResetWorldActorsForTransition()]] - code - Source/Maverick/System/MVFieldTransitionSubsystem.cpp
 - [[UMVFieldTransitionSubsystemResolvePlayerCharacter()]] - code - Source/Maverick/System/MVFieldTransitionSubsystem.cpp
 - [[UMVFieldTransitionSubsystemRestorePlayerInputAfterTransition()]] - code - Source/Maverick/System/MVFieldTransitionSubsystem.cpp
 - [[UMVFieldTransitionSubsystemResumePreparedPostTransitionAction()]] - code - Source/Maverick/System/MVFieldTransitionSubsystem.cpp
 - [[UMVFieldTransitionSubsystemSetTransitionPhase()]] - code - Source/Maverick/System/MVFieldTransitionSubsystem.cpp
 - [[UMVFieldTransitionSubsystemStartAutomaticLoadingCompletion()]] - code - Source/Maverick/System/MVFieldTransitionSubsystem.cpp
-- [[UMVFieldTransitionSubsystemStartTransition()]] - code - Source/Maverick/System/MVFieldTransitionSubsystem.cpp
-- [[UMVFieldTransitionSubsystemTryPreparePostTransitionAction()]] - code - Source/Maverick/System/MVFieldTransitionSubsystem.cpp
 - [[UMVFieldTransitionSubsystemTryStartPreTransitionAction()]] - code - Source/Maverick/System/MVFieldTransitionSubsystem.cpp
 - [[UMVFieldTransitionSubsystemUnbindPreTransitionAction()]] - code - Source/Maverick/System/MVFieldTransitionSubsystem.cpp
 - [[UMVFieldTransitionSubsystemUpdateTransitionProgress()]] - code - Source/Maverick/System/MVFieldTransitionSubsystem.cpp
 - [[UMVUISubsystem_2]] - code
 - [[UWorld_12]] - code
-- [[int32_27]] - code
 
 ## Live Query (requires Dataview plugin)
 
@@ -46,17 +43,14 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 7 edges to [[_COMMUNITY_FName_2]]
-- 3 edges to [[_COMMUNITY_AMVCharacterBase]]
-- 1 edge to [[_COMMUNITY_MVFieldTransitionSettings.h]]
+- 6 edges to [[_COMMUNITY_FName_2]]
+- 5 edges to [[_COMMUNITY_MVFieldTransitionSubsystem.cpp_1]]
+- 2 edges to [[_COMMUNITY_MVAbilityBase.cpp]]
 - 1 edge to [[_COMMUNITY_MVEnemy.h]]
-- 1 edge to [[_COMMUNITY_MVDeathRespawnFlow.h]]
+- 1 edge to [[_COMMUNITY_MVDeathRespawnFlow.h_1]]
 - 1 edge to [[_COMMUNITY_UMVWorldStateSubsystem]]
 - 1 edge to [[_COMMUNITY_MVWorldStateTypes.h]]
-- 1 edge to [[_COMMUNITY_MVFieldTransitionSubsystem.h]]
 
 ## Top bridge nodes
 - [[MVFieldTransitionSubsystem.cpp]] - degree 33, connects to 7 communities
-- [[FMVFieldTransitionRequest()]] - degree 7, connects to 2 communities
-- [[UMVFieldTransitionSubsystemTryPreparePostTransitionAction()]] - degree 3, connects to 1 community
 - [[UMVFieldTransitionSubsystemResolvePlayerCharacter()]] - degree 3, connects to 1 community

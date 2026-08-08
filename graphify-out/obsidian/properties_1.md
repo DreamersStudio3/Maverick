@@ -1,12 +1,12 @@
 ---
 source_file: "MaverickDesign/Schema/TableData.schema.json"
 type: "code"
-community: "rows"
+community: "table"
 location: "L42"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/rows
+  - community/table
 ---
 
 # properties
@@ -16,4 +16,4 @@ tags:
 - [[rows_1]] - `contains` [EXTRACTED]
 - [[table]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/rows
+#graphify/code #graphify/EXTRACTED #community/table

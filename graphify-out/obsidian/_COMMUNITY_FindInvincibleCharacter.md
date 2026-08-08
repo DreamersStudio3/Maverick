@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.39
 members: 9
 ---
 
 # FindInvincibleCharacter
 
+**Cohesion:** 0.39 - loosely connected
 **Members:** 9 nodes
 
 ## Members
@@ -26,7 +28,7 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 1 edge to [[_COMMUNITY_AMVCharacterBase]]
+- 1 edge to [[_COMMUNITY_MVAbilityBase.cpp]]
 
 ## Top bridge nodes
 - [[FindInvincibleCharacter()]] - degree 5, connects to 1 community

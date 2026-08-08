@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.40
 members: 5
 ---
 
 # AMVPlayerCharacter
 
+**Cohesion:** 0.40 - moderately connected
 **Members:** 5 nodes
 
 ## Members
@@ -22,14 +24,14 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 2 edges to [[_COMMUNITY_MVPlayerDodge.cpp]]
+- 2 edges to [[_COMMUNITY_FVector]]
 - 2 edges to [[_COMMUNITY_MVPlayerInteractionDetector.cpp]]
-- 1 edge to [[_COMMUNITY_UMVPlayerConsumableInitialize]]
+- 1 edge to [[_COMMUNITY_MVPlayerConsumable.cpp]]
 - 1 edge to [[_COMMUNITY_MVMovementActionTableTypes.h]]
 
 ## Top bridge nodes
 - [[AMVPlayerCharacter()]] - degree 6, connects to 2 communities
-- [[UMVPlayerDodgeInitialize()]] - degree 2, connects to 1 community
 - [[UMVPlayerDodgeGetPlayerCharacter()]] - degree 2, connects to 1 community
-- [[UMVPlayerInteractionDetectorInitialize()]] - degree 2, connects to 1 community
+- [[UMVPlayerDodgeInitialize()]] - degree 2, connects to 1 community
 - [[UMVPlayerInteractionDetectorGetPlayerCharacter()]] - degree 2, connects to 1 community
+- [[UMVPlayerInteractionDetectorInitialize()]] - degree 2, connects to 1 community

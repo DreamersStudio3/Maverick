@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.14
 members: 15
 ---
 
 # 전투 액션 Chooser 입력
 
+**Cohesion:** 0.14 - loosely connected
 **Members:** 15 nodes
 
 ## Members
@@ -32,9 +34,9 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 4 edges to [[_COMMUNITY_MVCombatComponent.cpp]]
+- 4 edges to [[_COMMUNITY_FDataTableRowHandle]]
 - 2 edges to [[_COMMUNITY_ExecuteAttackResolveActionCandidate]]
-- 2 edges to [[_COMMUNITY_FDataTableRowHandle_1]]
+- 2 edges to [[_COMMUNITY_MVCombatComponent.cpp]]
 - 1 edge to [[_COMMUNITY_MVEnemyDodgeActionTask.cpp]]
 - 1 edge to [[_COMMUNITY_FMVDodgeInputContext]]
 - 1 edge to [[_COMMUNITY_FMVSkillDataTableColumn]]
@@ -47,6 +49,6 @@ SORT file.name ASC
 ## Top bridge nodes
 - [[UChooserTable]] - degree 7, connects to 5 communities
 - [[FMVCombatActionTableInput]] - degree 15, connects to 3 communities
+- [[UMVCombatComponentGetDataTableRowFromChooserTable_Implementation()]] - degree 4, connects to 3 communities
 - [[UMVCombatComponentGetActionRowHandleFromChooserTable()]] - degree 5, connects to 2 communities
-- [[UMVCombatComponentGetDataTableRowFromChooserTable_Implementation()]] - degree 4, connects to 2 communities
 - [[UMVHitReactionComponentEvaluateHitReactionChooserActionRowHandle()]] - degree 3, connects to 2 communities

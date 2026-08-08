@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Public/AI/MVDodgeThreatEvaluatorLibrary.h"
 type: "code"
-community: "FMVEnemyDodgeActionTask"
+community: "UMVEnemyDodgeTokenComponent::TryConsumeDodgeTokenForThreat"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/FMVEnemyDodgeActionTask
+  - community/UMVEnemyDodgeTokenComponentTryConsumeDodgeTokenForThreat
 ---
 
 # MVDodgeThreatEvaluatorLibrary.h
@@ -15,4 +15,4 @@ tags:
 - [[EMVDodgeThreatRejectReason]] - `contains` [EXTRACTED]
 - [[MVAIDodgeTypes.h]] - `imports` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/FMVEnemyDodgeActionTask
+#graphify/code #graphify/EXTRACTED #community/UMVEnemyDodgeTokenComponentTryConsumeDodgeTokenForThreat

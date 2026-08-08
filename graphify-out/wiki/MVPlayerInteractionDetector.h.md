@@ -1,6 +1,6 @@
 # MVPlayerInteractionDetector.h
 
-> 10 nodes
+> 10 nodes · cohesion 0.20
 
 ## Key Concepts
 
@@ -8,12 +8,12 @@
 - **UMVPlayerInteractionDetector::ResolveInteractableActor()** (4 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
 - **UPrimitiveComponent** (4 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.h`
 - **UMVPlayerInteractionDetector::FindInteractableObject()** (3 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
-- **UMVPlayerInteractionDetector::GetOwnerActor()** (2 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
 - **AActor** (2 connections)
+- **UMVPlayerInteractionDetector::GetOwnerActor()** (2 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
 - **AActor** (1 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.h`
 - **AMVPlayerCharacter** (1 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.h`
-- **UWorld** (1 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.h`
 - **UMVPlayerInteractionDetector()** (1 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.h`
+- **UWorld** (1 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.h`
 
 ## Relationships
 

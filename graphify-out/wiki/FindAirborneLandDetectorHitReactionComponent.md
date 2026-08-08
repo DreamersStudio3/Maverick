@@ -1,6 +1,6 @@
 # FindAirborneLandDetectorHitReactionComponent
 
-> 10 nodes
+> 10 nodes · cohesion 0.33
 
 ## Key Concepts
 
@@ -9,11 +9,11 @@
 - **UMVAnimNotifyState_AirborneLandDetector::NotifyEnd()** (5 connections) — `Source/Maverick/Animation/NotifyStates/MVAnimNotifyState_AirborneLandDetector.cpp`
 - **MVAnimNotifyState_AirborneLandDetector.cpp** (4 connections) — `Source/Maverick/Animation/NotifyStates/MVAnimNotifyState_AirborneLandDetector.cpp`
 - **USkeletalMeshComponent** (3 connections)
-- **UAnimSequenceBase** (2 connections)
 - **FAnimNotifyEventReference** (2 connections)
+- **UAnimSequenceBase** (2 connections)
 - **UMVAnimNotifyState_AirborneLandDetector::GetNotifyName_Implementation()** (2 connections) — `Source/Maverick/Animation/NotifyStates/MVAnimNotifyState_AirborneLandDetector.cpp`
-- **UMVHitReactionComponent** (1 connections)
 - **FString** (1 connections)
+- **UMVHitReactionComponent** (1 connections)
 
 ## Relationships
 

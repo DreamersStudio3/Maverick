@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.28
 members: 9
 ---
 
 # LockOnTargetTypes.h
 
+**Cohesion:** 0.28 - loosely connected
 **Members:** 9 nodes
 
 ## Members

@@ -1,16 +1,16 @@
 # UMVAnimNotify_DeathDissolve::Notify
 
-> 7 nodes
+> 7 nodes · cohesion 0.29
 
 ## Key Concepts
 
 - **UMVAnimNotify_DeathDissolve::Notify()** (4 connections) — `Source/Maverick/Animation/Notifies/MVAnimNotify_DeathDissolve.cpp`
 - **MVAnimNotify_DeathDissolve.cpp** (2 connections) — `Source/Maverick/Animation/Notifies/MVAnimNotify_DeathDissolve.cpp`
 - **UMVAnimNotify_DeathDissolve::GetNotifyName_Implementation()** (2 connections) — `Source/Maverick/Animation/Notifies/MVAnimNotify_DeathDissolve.cpp`
-- **USkeletalMeshComponent** (1 connections)
-- **UAnimSequenceBase** (1 connections)
 - **FAnimNotifyEventReference** (1 connections)
 - **FString** (1 connections)
+- **UAnimSequenceBase** (1 connections)
+- **USkeletalMeshComponent** (1 connections)
 
 ## Relationships
 

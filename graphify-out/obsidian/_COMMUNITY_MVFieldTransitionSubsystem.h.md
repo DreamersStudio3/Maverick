@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.25
 members: 8
 ---
 
 # MVFieldTransitionSubsystem.h
 
+**Cohesion:** 0.25 - loosely connected
 **Members:** 8 nodes
 
 ## Members
@@ -25,7 +27,7 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 1 edge to [[_COMMUNITY_MVFieldTransitionSubsystem.cpp]]
+- 1 edge to [[_COMMUNITY_MVFieldTransitionSubsystem.cpp_1]]
 
 ## Top bridge nodes
 - [[MVFieldTransitionSubsystem.h]] - degree 8, connects to 1 community

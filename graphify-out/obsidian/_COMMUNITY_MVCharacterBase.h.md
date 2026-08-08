@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.11
 members: 19
 ---
 
 # MVCharacterBase.h
 
+**Cohesion:** 0.11 - loosely connected
 **Members:** 19 nodes
 
 ## Members
@@ -37,10 +39,10 @@ SORT file.name ASC
 
 ## Connections to other communities
 - 1 edge to [[_COMMUNITY_FMVStrafeMoveTaskInstanceData]]
-- 1 edge to [[_COMMUNITY_AMVCharacterBase]]
+- 1 edge to [[_COMMUNITY_MVAbilityBase.cpp]]
 - 1 edge to [[_COMMUNITY_MVWeaponComponent.cpp]]
 - 1 edge to [[_COMMUNITY_MVHitTypes.h]]
-- 1 edge to [[_COMMUNITY_MVPlayerDodge.h]]
+- 1 edge to [[_COMMUNITY_Player Dodge Tables]]
 - 1 edge to [[_COMMUNITY_MVHitReactionComponent.cpp]]
 - 1 edge to [[_COMMUNITY_MVTableTypes.h]]
 

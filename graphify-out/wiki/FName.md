@@ -1,22 +1,22 @@
 # FName
 
-> 14 nodes
+> 14 nodes · cohesion 0.20
 
 ## Key Concepts
 
 - **FName** (7 connections)
-- **UMVDeathComponent::ResolveDeathActionRowHandle()** (6 connections) — `Source/Maverick/Components/MVDeathComponent.cpp`
 - **UMVDeathComponent::MakeDeathActionRowName()** (6 connections) — `Source/Maverick/Components/MVDeathComponent.cpp`
+- **UMVDeathComponent::ResolveDeathActionRowHandle()** (6 connections) — `Source/Maverick/Components/MVDeathComponent.cpp`
 - **FGameplayTag** (5 connections)
 - **UMVDeathComponent::MakeLegacyDeathActionRowName()** (5 connections) — `Source/Maverick/Components/MVDeathComponent.cpp`
 - **EMVDeathActionFacing** (4 connections)
-- **UMVDeathComponent::ResolveDeathActionFacing()** (3 connections) — `Source/Maverick/Components/MVDeathComponent.cpp`
-- **UMVDeathComponent::MakeDeathActionTableName()** (3 connections) — `Source/Maverick/Components/MVDeathComponent.cpp`
 - **UMVDeathComponent::CharacterIndexCodeToTableToken()** (3 connections) — `Source/Maverick/Components/MVDeathComponent.cpp`
-- **UMVDeathComponent::TryBeginDeferredDeathPresentation()** (2 connections) — `Source/Maverick/Components/MVDeathComponent.cpp`
-- **UMVDeathComponent::ResolveDeathActionTableName()** (2 connections) — `Source/Maverick/Components/MVDeathComponent.cpp`
+- **UMVDeathComponent::MakeDeathActionTableName()** (3 connections) — `Source/Maverick/Components/MVDeathComponent.cpp`
+- **UMVDeathComponent::ResolveDeathActionFacing()** (3 connections) — `Source/Maverick/Components/MVDeathComponent.cpp`
 - **int32** (2 connections)
 - **UMVDeathComponent::HandleActionEnded()** (2 connections) — `Source/Maverick/Components/MVDeathComponent.cpp`
+- **UMVDeathComponent::ResolveDeathActionTableName()** (2 connections) — `Source/Maverick/Components/MVDeathComponent.cpp`
+- **UMVDeathComponent::TryBeginDeferredDeathPresentation()** (2 connections) — `Source/Maverick/Components/MVDeathComponent.cpp`
 - **FDataTableRowHandle** (1 connections)
 
 ## Relationships

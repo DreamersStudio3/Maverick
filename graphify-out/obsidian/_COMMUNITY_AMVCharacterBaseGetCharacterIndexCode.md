@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.67
 members: 3
 ---
 
 # AMVCharacterBase::GetCharacterIndexCode
 
+**Cohesion:** 0.67 - moderately connected
 **Members:** 3 nodes
 
 ## Members
@@ -23,5 +25,5 @@ SORT file.name ASC
 - 2 edges to [[_COMMUNITY_MVCharacterBase.cpp]]
 
 ## Top bridge nodes
-- [[AMVCharacterBaseSetCharacterIndexCode()]] - degree 2, connects to 1 community
 - [[AMVCharacterBaseGetCharacterIndexCode()]] - degree 2, connects to 1 community
+- [[AMVCharacterBaseSetCharacterIndexCode()]] - degree 2, connects to 1 community

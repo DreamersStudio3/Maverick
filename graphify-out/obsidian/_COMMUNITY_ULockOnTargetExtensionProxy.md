@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.22
 members: 10
 ---
 
 # ULockOnTargetExtensionProxy
 
+**Cohesion:** 0.22 - loosely connected
 **Members:** 10 nodes
 
 ## Members
@@ -36,4 +38,4 @@ SORT file.name ASC
 - [[ULockOnTargetComponentGetAllSubobjects()]] - degree 4, connects to 1 community
 - [[ULockOnTargetComponentGetLifetimeReplicatedProps()]] - degree 3, connects to 1 community
 - [[TargetHandlerBase.h]] - degree 3, connects to 1 community
-- [[ULockOnTargetComponentInitializeSubobject()]] - degree 2, connects to 1 community
+- [[ULockOnTargetComponentDestroySubobject()]] - degree 2, connects to 1 community

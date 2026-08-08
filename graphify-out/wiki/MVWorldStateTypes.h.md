@@ -1,22 +1,22 @@
 # MVWorldStateTypes.h
 
-> 14 nodes
+> 14 nodes · cohesion 0.14
 
 ## Key Concepts
 
 - **MVWorldStateTypes.h** (8 connections) — `Source/Maverick/System/MVWorldStateTypes.h`
 - **UMVWorldStateSubsystem::FindFieldObjectRecord()** (3 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
-- **UMVWorldStateSubsystem::FindWorldFlagRecord()** (3 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
 - **UMVWorldStateSubsystem::FindQuestRecord()** (3 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
+- **UMVWorldStateSubsystem::FindWorldFlagRecord()** (3 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
 - **FMVWorldSaveData()** (3 connections) — `Source/Maverick/System/MVWorldStateTypes.h`
 - **MVWorldSaveGame.h** (2 connections) — `Source/Maverick/System/MVWorldSaveGame.h`
-- **UMVWorldStateSubsystem::ResetSaveData()** (2 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
 - **UMVWorldStateSubsystem::ApplySaveData()** (2 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
+- **UMVWorldStateSubsystem::ResetSaveData()** (2 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
 - **UMVWorldStateSubsystem::TryGetLastCheckpoint()** (2 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
 - **FMVCheckpointSaveData()** (2 connections) — `Source/Maverick/System/MVWorldStateTypes.h`
 - **FMVFieldObjectSaveData()** (2 connections) — `Source/Maverick/System/MVWorldStateTypes.h`
-- **FMVWorldFlagSaveData()** (2 connections) — `Source/Maverick/System/MVWorldStateTypes.h`
 - **FMVQuestSaveData()** (2 connections) — `Source/Maverick/System/MVWorldStateTypes.h`
+- **FMVWorldFlagSaveData()** (2 connections) — `Source/Maverick/System/MVWorldStateTypes.h`
 - **UMVWorldSaveGame()** (1 connections) — `Source/Maverick/System/MVWorldSaveGame.h`
 
 ## Relationships

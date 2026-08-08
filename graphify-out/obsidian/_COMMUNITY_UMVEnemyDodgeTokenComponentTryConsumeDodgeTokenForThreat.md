@@ -1,21 +1,21 @@
 ---
 type: community
-members: 8
+cohesion: 0.33
+members: 6
 ---
 
 # UMVEnemyDodgeTokenComponent::TryConsumeDodgeTokenForThreat
 
-**Members:** 8 nodes
+**Cohesion:** 0.33 - loosely connected
+**Members:** 6 nodes
 
 ## Members
-- [[AActor_18]] - code
+- [[AActor_24]] - code - Source/Maverick/Public/Struct/MVAIDodgeTypes.h
 - [[EMVActionInputDirection]] - code
 - [[EnemyDodgeActionTaskResolveDirection()]] - code - Source/Maverick/AI/Task/MVEnemyDodgeActionTask.cpp
 - [[FMVAIDodgeRequest()]] - code - Source/Maverick/Public/Struct/MVAIDodgeTypes.h
-- [[FMVDodgeThreatConfig]] - code
-- [[FMVDodgeThreatDecision]] - code
-- [[TrySpendDodgeToken]] - code - Source/Maverick/Components/MVEnemyDodgeTokenComponent.h
-- [[UMVEnemyDodgeTokenComponentTryConsumeDodgeTokenForThreat()]] - code - Source/Maverick/Components/MVEnemyDodgeTokenComponent.cpp
+- [[MVAIDodgeTypes.h]] - code - Source/Maverick/Public/Struct/MVAIDodgeTypes.h
+- [[MVDodgeThreatEvaluatorLibrary.h]] - code - Source/Maverick/Public/AI/MVDodgeThreatEvaluatorLibrary.h
 
 ## Live Query (requires Dataview plugin)
 
@@ -26,14 +26,13 @@ SORT file.name ASC
 
 ## Connections to other communities
 - 2 edges to [[_COMMUNITY_MVEnemyDodgeActionTask.cpp]]
-- 1 edge to [[_COMMUNITY_FMVEnemyDodgeActionTaskInstanceData]]
-- 1 edge to [[_COMMUNITY_FMVCombatActionEvent]]
-- 1 edge to [[_COMMUNITY_MVEnemyDodgeTokenComponent.cpp]]
-- 1 edge to [[_COMMUNITY_EMVEnemyDodgeTokenGrantReason]]
 - 1 edge to [[_COMMUNITY_FMVEnemyDodgeActionTask]]
+- 1 edge to [[_COMMUNITY_FMVEnemyDodgeActionTaskInstanceData]]
+- 1 edge to [[_COMMUNITY_UMVEnemyDodgeTokenComponentTryConsumeDodgeTokenForThreat_1]]
+- 1 edge to [[_COMMUNITY_EMVDodgeThreatRejectReason]]
 
 ## Top bridge nodes
-- [[UMVEnemyDodgeTokenComponentTryConsumeDodgeTokenForThreat()]] - degree 7, connects to 2 communities
 - [[FMVAIDodgeRequest()]] - degree 4, connects to 2 communities
 - [[EnemyDodgeActionTaskResolveDirection()]] - degree 4, connects to 1 community
-- [[TrySpendDodgeToken]] - degree 2, connects to 1 community
+- [[MVAIDodgeTypes.h]] - degree 4, connects to 1 community
+- [[MVDodgeThreatEvaluatorLibrary.h]] - degree 2, connects to 1 community

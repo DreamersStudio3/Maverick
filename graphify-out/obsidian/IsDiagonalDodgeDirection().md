@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Character/PC/Dodge/MVPlayerDodge.cpp"
 type: "code"
-community: "MVPlayerDodge.cpp"
+community: "FVector"
 location: "L116"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVPlayerDodgecpp
+  - community/FVector
 ---
 
 # IsDiagonalDodgeDirection()
@@ -16,4 +16,4 @@ tags:
 - [[MVPlayerDodge.cpp]] - `contains` [EXTRACTED]
 - [[ResolveDodgeFacingDirection()]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVPlayerDodgecpp
+#graphify/code #graphify/EXTRACTED #community/FVector

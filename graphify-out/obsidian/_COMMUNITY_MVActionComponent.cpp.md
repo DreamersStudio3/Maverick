@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.09
 members: 35
 ---
 
 # MVActionComponent.cpp
 
+**Cohesion:** 0.09 - loosely connected
 **Members:** 35 nodes
 
 ## Members

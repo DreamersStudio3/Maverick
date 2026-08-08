@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Combat/MVAbilityBase.h"
 type: "code"
-community: "MVAbilityBase.h"
+community: "MVHitTypes.h"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVAbilityBaseh
+  - community/MVHitTypesh
 ---
 
 # MVAbilityBase.h
@@ -20,4 +20,4 @@ tags:
 - [[UActorComponent]] - `contains` [EXTRACTED]
 - [[UCameraShakeBase_2]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVAbilityBaseh
+#graphify/code #graphify/EXTRACTED #community/MVHitTypesh

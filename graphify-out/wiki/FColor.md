@@ -1,6 +1,6 @@
 # FColor
 
-> 2 nodes
+> 2 nodes · cohesion 1.00
 
 ## Key Concepts
 
@@ -9,7 +9,7 @@
 
 ## Relationships
 
-- [DrawGlobalSensingCombatAreaDebug](DrawGlobalSensingCombatAreaDebug.md) (1 shared connections)
+- [AI Global Sensing](AI_Global_Sensing.md) (1 shared connections)
 - [MVPlayerInteractionDetector.cpp](MVPlayerInteractionDetector.cpp.md) (1 shared connections)
 
 ## Source Files

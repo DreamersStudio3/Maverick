@@ -1,10 +1,12 @@
 ---
 type: community
+cohesion: 0.19
 members: 18
 ---
 
 # MVFinisherComponent.cpp
 
+**Cohesion:** 0.19 - loosely connected
 **Members:** 18 nodes
 
 ## Members
@@ -36,7 +38,7 @@ SORT file.name ASC
 
 ## Connections to other communities
 - 1 edge to [[_COMMUNITY_전투 액션 Chooser 입력]]
-- 1 edge to [[_COMMUNITY_Type_1]]
+- 1 edge to [[_COMMUNITY_Type]]
 - 1 edge to [[_COMMUNITY_UMVFinisherComponentTickComponent]]
 - 1 edge to [[_COMMUNITY_UMVFinisherComponentTryHandleActionInput]]
 - 1 edge to [[_COMMUNITY_FMVSkillDataTableColumn]]
