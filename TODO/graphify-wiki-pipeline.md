@@ -2,7 +2,7 @@
 
 ## 목표
 
-- Maverick의 코드와 정본 문서를 Graphify 지식 그래프, 생성 위키, Obsidian vault로 초기화한다.
+- Maverick의 코드와 위키 문서를 Graphify 지식 그래프, 생성 위키, Obsidian vault로 초기화한다.
 - 작업 시작, 커밋, switch/checkout에 의한 브랜치·커밋 전환, pre-push의 역할을 분리하고 원격에 stale 문서가 올라가지 않게 한다.
 - 에이전트가 전체 코드를 읽기 전에 사용할 Architecture 문서와 query-first 행동강령을 만든다.
 - 기존 TODO와 C++ 헤더 문서화의 역할을 Graphify와 충돌하지 않게 정리한다.
@@ -31,7 +31,7 @@
 - switch/checkout으로 브랜치나 커밋을 전환할 때는 실행 조건을 만족하는 공식 `post-checkout` 훅으로 새 snapshot의 전체 코드 graph를 재구축한다. reset·restore·pull, 경로 단위 checkout과 문서 의미·생성 뷰 갱신은 이 시점의 책임이 아니다.
 - pre-push는 전체 wrap-up의 필수 게이트로 사용한다.
 - `TODO/`는 단기 실행 메모이고 Graphify 입력에서 제외한다.
-- `docs/wiki/`는 사람이 관리하는 정본, `graphify-out/`은 재생성 가능한 읽기 모델로 분리한다.
+- `docs/wiki/`는 사람이 관리하는 위키, `graphify-out/`은 재생성 가능한 읽기 모델로 분리한다.
 - 현재 Graphify 0.9.36과 공식 문서는 프로젝트 산출물에 `.graphify/`가 아니라 `graphify-out/`을 사용한다.
 
 ## 검증 기록

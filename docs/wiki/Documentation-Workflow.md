@@ -11,8 +11,8 @@ Maverick의 문서는 사람이 빠르게 의도를 이해하고, 에이전트�
 | `TODO/<task>.md` | 진행 중인 작업의 목표, 상태, 결정, 검증 | 작업자가 직접 갱신하는 단기 기록 |
 | C++ 헤더의 `/** ... */` | 타입과 가까운 책임, 라이프사이클, 불변조건 | 해당 코드를 바꾼 작업자가 함께 갱신 |
 | `docs/wiki/Architecture.md` | 현재 구조, 책임 경계, 주요 흐름과 바이너리 에셋 공백 | 구조 변경 시 사람이 검토해 갱신 |
-| `docs/wiki/`의 나머지 문서 | 설계 의도, 운영 규칙, 장기 결정의 정본 | 사람이 검토해 직접 갱신 |
-| `MaverickDesign/` | 도메인 상세 설계, 테이블 데이터와 schema의 기존 정본 | 해당 기능과 데이터 변경 시 기존 문서를 갱신 |
+| `docs/wiki/`의 나머지 문서 | 설계 의도, 운영 규칙, 장기 결정을 담는 위키 | 사람이 검토해 직접 갱신 |
+| `MaverickDesign/` | 도메인 상세 설계, 테이블 데이터와 schema의 기존 위키 | 해당 기능과 데이터 변경 시 기존 문서를 갱신 |
 | `graphify-out/graph.json` | 코드와 문서 관계를 질의하는 지식 그래프 | Graphify로만 생성 |
 | `graphify-out/wiki/` | 커뮤니티 단위의 에이전트 탐색용 위키 | Graphify로만 생성 |
 | `graphify-out/obsidian/` | 노드 단위의 Obsidian 탐색 vault | Graphify로만 생성 |
@@ -37,7 +37,7 @@ Maverick의 문서는 사람이 빠르게 의도를 이해하고, 에이전트�
 
 커밋 시점을 일상적인 저비용 갱신 시점으로 사용한다. 저장소에 설치한 Graphify 공식 `post-commit` 훅이 코드 AST를 비동기로 증분 갱신한다.
 
-1. 먼저 코드와 사람이 관리하는 정본 문서를 하나의 일관된 작업 단위로 커밋한다.
+1. 먼저 코드와 사람이 관리하는 위키 문서를 하나의 일관된 작업 단위로 커밋한다.
 2. 공식 훅이 `graphify update`를 실행해 로컬 질의용 graph와 manifest를 따라오게 한다.
 3. 훅이 바꾼 graph만으로 wiki·Obsidian을 갱신하거나 커밋하지 않는다. 문서 의미 노드와 생성 뷰가 아직 이전 상태일 수 있기 때문이다.
 4. 다음 일반 커밋에서는 `graphify-out/` 중간 변경을 stage하지 않고, push 전 wrap-up에서 한 번에 정리한다.
@@ -76,12 +76,12 @@ pre-push는 누락을 막는 최종 게이트다. push할 커밋에 지식 원�
 2. 구조적 책임이나 경계가 달라졌으면 `docs/wiki/Architecture.md`를 갱신한다.
 3. Codex에서 `$graphify . --update`를 실행해 코드 구조 추출과 문서·미디어 의미 추출을 모두 반영한다.
 4. 그래프 진단과 커뮤니티 이름을 확인하고 wiki, Obsidian, HTML을 다시 내보낸다.
-5. 정본과 생성 산출물을 검토한 뒤 둘을 먼저 stage한다.
+5. 위키·코드와 생성 산출물을 검토한 뒤 함께 stage한다.
 6. `python Scripts/Graphify/knowledge_guard.py stamp`로 결정론적 최신성 표식을 만든다.
 7. `graphify-out/wrap-up.json`까지 stage하고, 공식 비동기 post-commit 재실행을 막기 위해 해당 wrap-up 커밋에만 `GRAPHIFY_SKIP_HOOK=1`을 설정한다.
 8. 커밋 직후 수동 guard 검증을 통과시킨 뒤 push를 다시 실행한다.
 
-훅은 의미 문서의 품질을 대신 판단하지 않는다. 대신 마지막 wrap-up 이후 코드나 정본 문서가 달라졌는지를 결정론적으로 검사하고, stale 상태라면 push를 중단한다.
+훅은 위키 문서의 품질을 대신 판단하지 않는다. 대신 마지막 wrap-up 이후 코드나 위키 문서가 달라졌는지를 결정론적으로 검사하고, stale 상태라면 push를 중단한다.
 
 ## 초기화와 조회 명령
 
@@ -118,7 +118,7 @@ clone마다 한 번 다음 installer를 실행한다.
 
 installer는 Graphify 공식 `post-commit`, `post-checkout`, graph merge driver를 설치한 뒤 Maverick의 동기식 `pre-push` gate를 추가한다. `post-checkout`은 지원되는 브랜치·커밋 전환 뒤 코드 graph를 비동기로 따라오게 하는 훅이지, 문서 의미와 생성 뷰의 최신성을 보증하는 gate가 아니다. 저장소 밖 shared hook 경로와 자동 통합할 수 없는 기존 `pre-push`는 덮어쓰지 않고 설치를 거부한다. 제거할 때는 `./Scripts/Graphify/Install-Hooks.ps1 -Action Uninstall`을 사용한다.
 
-gate는 LLM이나 Graphify 생성 작업을 훅 안에서 실행하지 않는다. push할 각 ref tip의 정본 Git blob, `graphify-out/` 산출물, `wrap-up.json` fingerprint가 같은 스냅샷인지 빠르게 검사한다. 누락되거나 stale이면 push를 중단하고 위 wrap-up 절차를 요구한다.
+gate는 LLM이나 Graphify 생성 작업을 훅 안에서 실행하지 않는다. push할 각 ref tip의 코드·위키 Git blob, `graphify-out/` 산출물, `wrap-up.json` fingerprint가 같은 스냅샷인지 빠르게 검사한다. 누락되거나 stale이면 push를 중단하고 위 wrap-up 절차를 요구한다.
 
 수동으로 현재 커밋을 검사할 수 있다.
 
@@ -126,7 +126,7 @@ gate는 LLM이나 Graphify 생성 작업을 훅 안에서 실행하지 않는다
 python Scripts/Graphify/knowledge_guard.py check --commit HEAD
 ```
 
-stamp는 stage된 스냅샷을 기준으로 생성한다. 따라서 정본과 생성 산출물에 stage되지 않은 변경이 있거나, Graphify corpus와 manifest hash가 다르거나, 문서·미디어 `semantic_hash`가 최신이 아니거나, graph와 wiki·Obsidian 구조가 맞지 않으면 생성을 거부한다. 이 성질 때문에 단순 `graphify update`만 실행하고 의미 추출·export를 생략한 상태는 정상 push 경로를 통과할 수 없다.
+stamp는 stage된 스냅샷을 기준으로 생성한다. 따라서 위키·코드와 생성 산출물에 stage되지 않은 변경이 있거나, Graphify corpus와 manifest hash가 다르거나, 문서·미디어 `semantic_hash`가 최신이 아니거나, graph와 wiki·Obsidian 구조가 맞지 않으면 생성을 거부한다. 이 성질 때문에 단순 `graphify update`만 실행하고 의미 추출·export를 생략한 상태는 정상 push 경로를 통과할 수 없다.
 
 이 gate는 installer를 실행한 clone에서의 로컬 필수 장치이며 `git push --no-verify`로 우회할 수 있다. 팀 정책을 기술적으로 강제해야 하면 CI에서 `python Scripts/Graphify/knowledge_guard.py check --commit <검사 SHA>`를 실행하고 branch protection의 필수 check로 등록한다.
 
@@ -153,4 +153,4 @@ Obsidian에서 저장소의 `graphify-out/obsidian/` 디렉터리를 vault로 �
 - 책임과 호출 순서만으로는 이유나 운영 계약을 설명하기 어렵다.
 - `Architecture.md` 한 문단으로는 변경 시 검토 기준을 보존할 수 없다.
 
-AI StateTree, 사망·부활, 테이블 파이프라인처럼 이미 독립 설계 문서가 있는 도메인은 새 문서를 중복 생성하지 않고 기존 정본을 갱신한다.
+AI StateTree, 사망·부활, 테이블 파이프라인처럼 이미 독립 설계 문서가 있는 도메인은 새 문서를 중복 생성하지 않고 기존 위키 문서를 갱신한다.

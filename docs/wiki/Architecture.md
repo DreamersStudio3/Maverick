@@ -184,7 +184,7 @@ direct-managed /Game/Table/DT_*  -> DT_MVTableManifest
   -> typed FindRow / TMVPropTable / Blueprint lookup
 ```
 
-JSON은 에디터 중간 산출물이고 런타임 정본은 CSV에서 생성한 테이블, 직접 관리하는 `UDataTable`, manifest다. `UMVTableManager`는 `UEngineSubsystem`으로 typed row와 Blueprint reflection 조회를 제공한다. 현재 직접 관리 root는 `Attack`, `Death`, `Dodge`, `Groggy`, `HitReaction`, `Props`, `Sprint`, `Weapons`이며 `MaverickDesign/README.md`의 목록과 drift가 있다. 실제 행, row struct, source hash와 manifest 완전성은 에디터 검증이 필요하다.
+JSON은 에디터 중간 산출물이고 런타임 기준 데이터는 CSV에서 생성한 테이블, 직접 관리하는 `UDataTable`, manifest다. `UMVTableManager`는 `UEngineSubsystem`으로 typed row와 Blueprint reflection 조회를 제공한다. 현재 직접 관리 root는 `Attack`, `Death`, `Dodge`, `Groggy`, `HitReaction`, `Props`, `Sprint`, `Weapons`이며 `MaverickDesign/README.md`의 목록과 drift가 있다. 실제 행, row struct, source hash와 manifest 완전성은 에디터 검증이 필요하다.
 
 ### LockOnTarget 경계
 

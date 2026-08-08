@@ -258,7 +258,7 @@ def ensure_relevant_files_are_staged(root: Path, corpus: dict[str, str]) -> None
         raise GuardError(
             "wrap-up 대상 파일을 먼저 stage해야 합니다.\n"
             f"  - {preview}{extra}\n"
-            "정본과 생성 산출물을 stage한 뒤 stamp를 다시 실행하세요."
+            "위키·코드와 생성 산출물을 stage한 뒤 stamp를 다시 실행하세요."
         )
 
 
@@ -645,11 +645,11 @@ def verify_commit(root: Path, revision: str) -> str:
     artifact_fingerprint, artifact_files = fingerprint(entries, is_artifact_path)
     failures: list[str] = []
     if stamp.get("source_fingerprint") != source_fingerprint:
-        failures.append("정본 source fingerprint")
+        failures.append("위키·코드 source fingerprint")
     if stamp.get("artifact_fingerprint") != artifact_fingerprint:
         failures.append("Graphify artifact fingerprint")
     if stamp.get("source_files") != source_files:
-        failures.append("정본 파일 수")
+        failures.append("위키·코드 파일 수")
     if stamp.get("artifact_files") != artifact_files:
         failures.append("산출물 파일 수")
     if failures:
@@ -687,7 +687,7 @@ def check_commits(root: Path, revisions: Sequence[str], *, default_head: bool) -
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     subparsers = parser.add_subparsers(dest="command", required=True)
-    subparsers.add_parser("stamp", help="staged 정본과 산출물의 wrap-up stamp 생성")
+    subparsers.add_parser("stamp", help="staged 위키·코드와 산출물의 wrap-up stamp 생성")
     subparsers.add_parser("export", help="wiki·Obsidian·HTML export와 provenance 생성")
     check_parser = subparsers.add_parser("check", help="커밋의 wrap-up stamp 검증")
     check_parser.add_argument("--stdin", action="store_true", help="pre-push stdin 읽기")
