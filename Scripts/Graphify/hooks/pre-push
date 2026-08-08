@@ -1,0 +1,21 @@
+#!/bin/sh
+# MAVERICK_GRAPHIFY_PRE_PUSH_V1
+
+repo_root=$(git rev-parse --show-toplevel) || exit 1
+python_hint_file="$repo_root/graphify-out/.graphify_python"
+if [ -r "$python_hint_file" ]; then
+    IFS= read -r pinned_python < "$python_hint_file"
+else
+    pinned_python=""
+fi
+
+if [ -n "$pinned_python" ] && "$pinned_python" -c "import sys" >/dev/null 2>&1; then
+    "$pinned_python" "$repo_root/Scripts/Graphify/knowledge_guard.py" check --stdin
+elif command -v python >/dev/null 2>&1; then
+    python "$repo_root/Scripts/Graphify/knowledge_guard.py" check --stdin
+elif command -v py >/dev/null 2>&1; then
+    py -3 "$repo_root/Scripts/Graphify/knowledge_guard.py" check --stdin
+else
+    echo "[Graphify guard] Python을 찾을 수 없어 push를 중단합니다." >&2
+    exit 1
+fi

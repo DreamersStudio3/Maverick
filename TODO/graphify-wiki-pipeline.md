@@ -20,13 +20,13 @@
 - [x] Graphify 운영 정책과 TODO 역할 정리
 - [x] 전체 코퍼스 초기 그래프, wiki, Obsidian vault 생성
 - [x] `Architecture.md`와 헤더 문서화 기준 작성
-- [ ] 커밋 갱신 및 pre-push 최신성 검증 구현·설치
+- [x] 커밋 갱신 및 pre-push 최신성 검증 구현·설치
 - [ ] 최종 Graphify wrap-up, 검증, 작업 보고서 작성
 
 ## 결정
 
 - 프롬프트 수신 시점은 TODO 작성과 기존 그래프 조회에 사용하고 Graphify를 재생성하지 않는다.
-- 일상 갱신은 커밋 전 수행한다. 코드만 바뀌면 AST 증분 갱신을 사용하고, 문서가 바뀌면 Graphify 스킬의 의미 추출을 포함한다.
+- 일상 갱신은 각 커밋 뒤 공식 훅의 코드 AST 증분 갱신을 사용한다. 문서 의미 추출과 생성 뷰 갱신은 pre-push wrap-up에서 한 번 수행한다.
 - pre-push는 전체 wrap-up의 필수 게이트로 사용한다.
 - `TODO/`는 단기 실행 메모이고 Graphify 입력에서 제외한다.
 - `docs/wiki/`는 사람이 관리하는 정본, `graphify-out/`은 재생성 가능한 읽기 모델로 분리한다.
@@ -45,3 +45,7 @@
 - C++ Doxygen 단순 coverage는 71/138이지만 빈 블록과 보조 타입 문서가 포함돼 품질 지표로 사용할 수 없다.
 - 모든 헤더 100% 대신 비자명한 상태·lifecycle·도메인 계약을 가진 주요 타입을 필수 문서화 대상으로 정했다.
 - Graphify 0.9.36은 C++ 주석 의미를 추출하지 않으므로 타입 로컬 계약은 헤더에, 교차 타입 구조와 근거는 `docs/wiki/`에 유지한다.
+- 공식 post-commit/post-checkout 훅과 graph merge driver를 설치했고, 별도 pre-push guard의 설치·재설치·상태 확인을 검증했다.
+- guard는 stage된 Graphify corpus의 manifest/hash/semantic coverage, graph와 wiki·Obsidian 구조, outgoing commit의 source·artifact fingerprint를 검사한다.
+- 삭제 전용 ref push는 no-op으로 통과하고, wrap-up stamp가 없는 현재 commit은 의도대로 차단되는 것을 검증했다.
+- `.codex/hooks.json`의 `graphify hook-check`는 Graphify 0.9.36에서 호환용 no-op이므로 강제 장치로 오해되지 않게 제거했다.
