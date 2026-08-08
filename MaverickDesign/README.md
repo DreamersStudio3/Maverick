@@ -56,6 +56,8 @@ Client,1,1,1,0,0
 
 에디터 생성 명령은 CSV 변환을 자동으로 실행합니다. 변환만 따로 확인하려면 프로젝트 루트에서 실행합니다.
 
+변환기는 Python 표준 라이브러리만 사용하므로 별도 패키지 설치가 필요하지 않습니다.
+
 ```powershell
 python MaverickDesign\CsvToJsonConverter\CsvToJsonConverter.py
 ```

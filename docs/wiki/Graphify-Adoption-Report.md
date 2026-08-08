@@ -8,7 +8,7 @@
 
 - Graphify는 코드와 문서의 현재 관계를 좁히는 검색 지도다. 책임, lifecycle, 바이너리 에셋 경계를 설명하는 `Architecture.md`는 계속 필요하다.
 - C++의 `/** ... */`는 JSDoc이 아니라 Doxygen 형식 문서 주석으로 보고 유지한다. 모든 헤더의 형식적 보유율보다 비자명한 주요 타입의 로컬 계약을 우선한다.
-- `TODO/`는 작업 중 실행 맥락, `docs/wiki/`와 `MaverickDesign/`은 장기 위키, `graphify-out/`은 재생성 가능한 읽기 모델이다.
+- `TODO/`는 작업 중 실행 맥락, `docs/wiki/`는 장기 위키, `MaverickDesign/`은 테이블 원본·도구·schema 공간, `graphify-out/`은 재생성 가능한 읽기 모델이다.
 - 각 소스 디렉터리에 `README.md`를 자동 생성하지 않는다. 파일 목록과 심볼 관계는 Graphify에 맡기고, 여러 타입·에셋 경계를 가로지르는 설계 근거만 위키 문서로 만든다.
 
 도입과 검증은 로컬 `graphifyy 0.9.36`, [Graphify 공식 저장소](https://github.com/Graphify-Labs/graphify), [공식 PyPI 패키지](https://pypi.org/project/graphifyy/)를 기준으로 수행했다.
@@ -50,7 +50,7 @@ Graphify는 관련된 정보와 파일을 빠르게 찾고 연결 경로를 좁�
 - 모듈과 디렉터리의 역할, 주요 컴포넌트와 subsystem의 소유권 및 수명
 - 입력, Action, hit, stat, hit reaction, death, field transition으로 이어지는 주요 실행 흐름과 판단 주체
 - Blueprint, WBP, StateTree, Chooser, Montage, DataTable 등 코드 밖 에셋의 연결
-- 현재 코드에서 확인한 구현과 `MaverickDesign/`에 적힌 설계 목표의 차이
+- 현재 코드에서 확인한 구현과 `docs/wiki/`에 적힌 설계 목표의 차이
 - 세부 내용을 확인할 수 있는 대표 코드, 설정, 설계 문서와 에셋의 진입점
 
 개별 함수의 구현이나 모든 파일 목록까지 옮겨 적지는 않는다. 그런 정보는 Graphify와 원본 코드에서 확인하고, `Architecture.md`에는 여러 파일과 에셋을 함께 봐야 이해되는 내용만 남긴다.
@@ -98,7 +98,7 @@ Graphify는 관련된 정보와 파일을 빠르게 찾고 연결 경로를 좁�
 - `FMVUIFadeController`
 - `AMVAIController`
 
-로컬 `graphifyy 0.9.36`의 C++ extractor는 class, function, include, call 구조는 추출하지만 Doxygen 주석 본문을 의미 노드로 만들지 않는다. 따라서 헤더 블록은 인간과 에이전트가 타입 가까이에서 읽는 로컬 계약으로 유지하고, 여러 타입에 걸친 구조와 설계 근거는 의미 추출 대상인 `docs/wiki/` 또는 기존 `MaverickDesign/` 위키 문서에 둔다.
+로컬 `graphifyy 0.9.36`의 C++ extractor는 class, function, include, call 구조는 추출하지만 Doxygen 주석 본문을 의미 노드로 만들지 않는다. 따라서 헤더 블록은 인간과 에이전트가 타입 가까이에서 읽는 로컬 계약으로 유지하고, 여러 타입에 걸친 구조와 설계 근거는 의미 추출 대상인 `docs/wiki/`에 둔다.
 
 ## TODO와 Graphify의 역할
 
@@ -110,7 +110,7 @@ Graphify는 관련된 정보와 파일을 빠르게 찾고 연결 경로를 좁�
 | 구조 결정 확정 | 완료 상태와 근거 링크 기록 | 장기 가치가 있는 책임·설계·운영 지식 반영 | 아직 재생성하지 않아도 됨 |
 | push 전 | 미해결 항목 확인·종료 정리 | 코드와 일치하는지 최종 검토 | 위키에서 의미 추출하고 읽기 모델 재생성 |
 
-`TODO/`는 `.graphifyignore`에서 제외했다. 미완성 가설과 작업 로그가 지식 그래프를 오염시키지 않게 하기 위해서다. 작업 종료 때 장기 가치가 있는 결정만 `docs/wiki/`나 기존 `MaverickDesign/` 위키 문서로 옮긴 뒤 Graphify가 이를 반영한다. 따라서 TODO 진행 관리 규칙은 유지하되 장기 위키 대용으로 사용하지 않는다.
+`TODO/`는 `.graphifyignore`에서 제외했다. 미완성 가설과 작업 로그가 지식 그래프를 오염시키지 않게 하기 위해서다. 작업 종료 때 장기 가치가 있는 결정만 `docs/wiki/`로 옮긴 뒤 Graphify가 이를 반영한다. 따라서 TODO 진행 관리 규칙은 유지하되 장기 위키 대용으로 사용하지 않는다.
 
 ## 추가·변경된 파일
 
@@ -138,7 +138,7 @@ Codex에서 강제 장치로 오인될 수 있던 `.codex/hooks.json`의 `graphi
 | --- | --- | --- |
 | `bc27495` | Graphify 위키 운영 기준 | 기존 `AGENTS.md`, `POLICY.md`, TODO 관행, Graphify skill의 update·hook·export 지침 |
 | `1ad5bb6` | 초기 graph·wiki·Obsidian 생성 | `.graphifyignore`로 감지한 303파일 corpus, Graphify AST·문서 의미 추출, 진단·라벨·export 결과 |
-| `9f57fd7` | Architecture와 헤더 기준 | Graphify query 결과, `Source/Maverick/`, `Plugins/LockOnTarget/`, `.Build.cs`·`.uproject`·`.ini`, `MaverickDesign/` 설계 문서, 138개 헤더 감사 |
+| `9f57fd7` | Architecture와 헤더 기준 | Graphify query 결과, `Source/Maverick/`, `Plugins/LockOnTarget/`, `.Build.cs`·`.uproject`·`.ini`, 당시 설계 자료, 138개 헤더 감사 |
 | `3aa7907` | pre-push 최신성 검사 | 공식 `graphify hook install/status`, 설치된 0.9.36 구현 확인, manifest·semantic hash·export 구조·Git blob 검증 테스트 |
 | 최종 wrap-up | 본 보고서 의미 추출, 생성 뷰·provenance·stamp 갱신 | 위 위키 문서 전체와 최종 staged snapshot; 정확한 hash는 이 보고서를 포함한 커밋 후 Git 이력에서 확인 |
 | 후속 브랜치 전환 보완 | `post-checkout` 갱신 시점·조건·예외 문서화 | 설치된 0.9.36 훅과 `graphify/hooks.py`, 전역 skill의 `references/hooks.md` 대조 |

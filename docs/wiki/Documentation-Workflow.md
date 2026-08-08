@@ -12,7 +12,7 @@ Maverick의 문서는 사람이 빠르게 의도를 이해하고, 에이전트�
 | C++ 헤더의 `/** ... */` | 타입과 가까운 책임, 라이프사이클, 불변조건 | 해당 코드를 바꾼 작업자가 함께 갱신 |
 | `docs/wiki/Architecture.md` | 현재 구조, 책임 경계, 주요 흐름과 바이너리 에셋 공백 | 구조 변경 시 사람이 검토해 갱신 |
 | `docs/wiki/`의 나머지 문서 | 설계 의도, 운영 규칙, 장기 결정을 담는 위키 | 사람이 검토해 직접 갱신 |
-| `MaverickDesign/` | 도메인 상세 설계, 테이블 데이터와 schema의 기존 위키 | 해당 기능과 데이터 변경 시 기존 문서를 갱신 |
+| `MaverickDesign/` | 테이블 원본, JSON 중간 산출물, 변환 도구와 schema 안내 | 테이블 파이프라인 변경 시 두 README를 갱신 |
 | `graphify-out/graph.json` | 코드와 문서 관계를 질의하는 지식 그래프 | Graphify로만 생성 |
 | `graphify-out/wiki/` | 커뮤니티 단위의 에이전트 탐색용 위키 | Graphify로만 생성 |
 | `graphify-out/obsidian/` | 노드 단위의 Obsidian 탐색 vault | Graphify로만 생성 |
@@ -153,4 +153,4 @@ Obsidian에서 저장소의 `graphify-out/obsidian/` 디렉터리를 vault로 �
 - 책임과 호출 순서만으로는 이유나 운영 계약을 설명하기 어렵다.
 - `Architecture.md` 한 문단으로는 변경 시 검토 기준을 보존할 수 없다.
 
-AI StateTree, 사망·부활, 테이블 파이프라인처럼 이미 독립 설계 문서가 있는 도메인은 새 문서를 중복 생성하지 않고 기존 위키 문서를 갱신한다.
+AI StateTree나 사망·부활처럼 코드와 에셋 경계를 가로지르는 계약은 먼저 `Architecture.md`에 압축한다. 한 절로 부족할 만큼 독립적인 설계 근거와 검증 기준이 있을 때만 `docs/wiki/<Domain>.md`를 추가한다. 테이블 작성법과 schema 계약은 `MaverickDesign/README.md`와 `MaverickDesign/Schema/README.md`에서 관리한다.
