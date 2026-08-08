@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Character/PC/Dodge/MVPlayerDodge.h"
 type: "code"
-community: "플레이어 회피 입력 계약"
+community: "회피·질주 액션 데이터"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/__
 ---
 
 # MVPlayerDodge.h
@@ -24,4 +24,4 @@ tags:
 - [[UMVInputManagerComponent_1]] - `contains` [EXTRACTED]
 - [[UWorld_7]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/__

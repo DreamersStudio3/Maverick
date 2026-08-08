@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "액션 입력 방향 해석"
+community: "액션 입력 버퍼링"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/__
 ---
 
 # EMVActionInputDirection
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[UMVInputManagerComponentResolveActionInputDirection()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/__

@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.67
 members: 3
 ---
 
 # 상호작용 컴포넌트 선언
 
-**Cohesion:** 0.67 - moderately connected
 **Members:** 3 nodes
 
 ## Members

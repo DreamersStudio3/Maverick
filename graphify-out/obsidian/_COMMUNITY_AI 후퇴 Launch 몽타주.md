@@ -1,21 +1,19 @@
 ---
 type: community
-cohesion: 0.05
 members: 57
 ---
 
 # AI 후퇴 Launch 몽타주
 
-**Cohesion:** 0.05 - loosely connected
 **Members:** 57 nodes
 
 ## Members
 - [[dot-GetInstanceDataType()_8]] - code - Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.h
-- [[AActor_8]] - code - Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.h
 - [[AActor_7]] - code
+- [[AActor_8]] - code - Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.h
 - [[ACharacter]] - code
-- [[APawn_12]] - code - Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.h
 - [[APawn_11]] - code
+- [[APawn_12]] - code - Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.h
 - [[ActiveMontage]] - code - Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.h
 - [[AnimInstance]] - code - Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.h
 - [[BackOffLaunchMontageBuildAwayDirection()]] - code - Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.cpp

@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.22
 members: 10
 ---
 
 # LockOnTarget 서브오브젝트 수명주기
 
-**Cohesion:** 0.22 - loosely connected
 **Members:** 10 nodes
 
 ## Members
@@ -29,8 +27,7 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 4 edges to [[_COMMUNITY_락온 대상 컴포넌트]]
-- 1 edge to [[_COMMUNITY_락온 핵심 타입과 핸들러]]
+- 5 edges to [[_COMMUNITY_락온 대상 컴포넌트]]
 - 1 edge to [[_COMMUNITY_가중치 기반 타깃 선택]]
 
 ## Top bridge nodes
@@ -38,4 +35,4 @@ SORT file.name ASC
 - [[ULockOnTargetComponentGetAllSubobjects()]] - degree 4, connects to 1 community
 - [[ULockOnTargetComponentGetLifetimeReplicatedProps()]] - degree 3, connects to 1 community
 - [[TargetHandlerBase.h]] - degree 3, connects to 1 community
-- [[ULockOnTargetComponentDestroySubobject()]] - degree 2, connects to 1 community
+- [[ULockOnTargetComponentInitializeSubobject()]] - degree 2, connects to 1 community

@@ -1,7 +1,7 @@
 ---
 source_file: ""
 type: "code"
-community: "피격 판정 서브시스템 선언"
+community: "피격 시스템 공용 타입"
 tags:
   - graphify/code
   - graphify/EXTRACTED

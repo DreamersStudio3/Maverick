@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.05
 members: 46
 ---
 
 # 가중 대상 탐색 알고리즘
 
-**Cohesion:** 0.05 - loosely connected
 **Members:** 46 nodes
 
 ## Members
@@ -72,6 +70,6 @@ SORT file.name ASC
 ## Top bridge nodes
 - [[EFindTargetContextMode]] - degree 59, connects to 3 communities
 - [[UWeightedTargetHandlerFindTargetBatched()]] - degree 6, connects to 2 communities
-- [[CalcDeltaAngle2D]] - degree 2, connects to 1 community
+- [[ShouldSkipTargetPrimaryPass]] - degree 2, connects to 1 community
 - [[CalculateTargetWeight]] - degree 2, connects to 1 community
-- [[GenerateDetailedResponse]] - degree 2, connects to 1 community
+- [[ShouldSkipTargetSecondaryPass]] - degree 2, connects to 1 community

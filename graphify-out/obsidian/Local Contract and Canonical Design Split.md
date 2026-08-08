@@ -4,7 +4,7 @@ type: "rationale"
 community: "문서·Graphify 거버넌스"
 tags:
   - graphify/rationale
-  - graphify/INFERRED
+  - graphify/EXTRACTED
   - community/Graphify_
 ---
 
@@ -14,4 +14,4 @@ tags:
 - [[Graphify Doxygen Extraction Gap]] - `rationale_for` [EXTRACTED]
 - [[Information Hierarchy]] - `semantically_similar_to` [INFERRED]
 
-#graphify/rationale #graphify/INFERRED #community/Graphify_
+#graphify/rationale #graphify/EXTRACTED #community/Graphify_

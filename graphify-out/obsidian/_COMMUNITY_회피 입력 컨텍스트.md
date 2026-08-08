@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.14
 members: 15
 ---
 
 # 회피 입력 컨텍스트
 
-**Cohesion:** 0.14 - loosely connected
 **Members:** 15 nodes
 
 ## Members
@@ -34,19 +32,17 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 4 edges to [[_COMMUNITY_플레이어 회피 방향 해석]]
+- 5 edges to [[_COMMUNITY_회피 입력 방향 구성]]
 - 2 edges to [[_COMMUNITY_AI 적 회피 실행]]
+- 2 edges to [[_COMMUNITY_회피·질주 액션 데이터]]
 - 1 edge to [[_COMMUNITY_AI 적 회피 설정]]
-- 1 edge to [[_COMMUNITY_회피 입력 방향 구성]]
-- 1 edge to [[_COMMUNITY_캐릭터 도메인 연동]]
 - 1 edge to [[_COMMUNITY_테이블 기반 UI·스탯 조회]]
 - 1 edge to [[_COMMUNITY_전투 액션 Chooser 입력]]
-- 1 edge to [[_COMMUNITY_플레이어 회피 입력 계약]]
-- 1 edge to [[_COMMUNITY_플레이어 이동 액션 테이블]]
+- 1 edge to [[_COMMUNITY_플레이어 회피 방향 해석]]
 
 ## Top bridge nodes
-- [[FMVDodgeInputContext]] - degree 17, connects to 4 communities
+- [[FMVDodgeInputContext]] - degree 17, connects to 3 communities
 - [[FMVDodgeActionRowHandle()]] - degree 6, connects to 3 communities
-- [[UMVPlayerDodgeEvaluateDodgeChooserActionRowHandle()]] - degree 4, connects to 2 communities
 - [[UMVPlayerDodgeResolveDodgeActionRowHandle()]] - degree 4, connects to 2 communities
+- [[UMVPlayerDodgeEvaluateDodgeChooserActionRowHandle()]] - degree 4, connects to 2 communities
 - [[UMVPlayerDodgeTryStartDodgeAction()]] - degree 2, connects to 1 community

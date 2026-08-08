@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.13
 members: 19
 ---
 
 # 락온 대상 위젯 확장
 
-**Cohesion:** 0.13 - loosely connected
 **Members:** 19 nodes
 
 ## Members

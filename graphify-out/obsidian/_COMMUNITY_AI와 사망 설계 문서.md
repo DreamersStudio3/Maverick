@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.09
 members: 29
 ---
 
 # AI와 사망 설계 문서
 
-**Cohesion:** 0.09 - loosely connected
 **Members:** 29 nodes
 
 ## Members

@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.05
 members: 43
 ---
 
 # 락온 대상 포커스 설정
 
-**Cohesion:** 0.05 - loosely connected
 **Members:** 43 nodes
 
 ## Members

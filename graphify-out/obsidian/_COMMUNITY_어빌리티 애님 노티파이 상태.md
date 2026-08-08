@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.25
 members: 14
 ---
 
 # 어빌리티 애님 노티파이 상태
 
-**Cohesion:** 0.25 - loosely connected
 **Members:** 14 nodes
 
 ## Members

@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 1.00
 members: 2
 ---
 
 # UI 탐색 블루프린트 라이브러리
 
-**Cohesion:** 1.00 - tightly connected
 **Members:** 2 nodes
 
 ## Members

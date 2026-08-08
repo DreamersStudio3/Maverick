@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Character/MVCharacterBase.cpp"
 type: "code"
-community: "공통 캐릭터 생명주기"
+community: "캐릭터 인덱스 코드 관리"
 location: "L196"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/___
 ---
 
 # AMVCharacterBase::SetCharacterIndexCode()
@@ -15,4 +15,4 @@ tags:
 - [[FGameplayTag_1]] - `references` [EXTRACTED]
 - [[MVCharacterBase.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/___

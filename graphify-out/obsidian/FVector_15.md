@@ -1,7 +1,7 @@
 ---
 source_file: ""
 type: "code"
-community: "컨트롤러 기준 이동 입력"
+community: "입력 차단 회복 취소"
 tags:
   - graphify/code
   - graphify/EXTRACTED

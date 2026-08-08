@@ -1,7 +1,7 @@
 ---
 source_file: ""
 type: "code"
-community: "피격 회복 이탈 방향"
+community: "적 캐릭터 전투 실행"
 tags:
   - graphify/code
   - graphify/EXTRACTED

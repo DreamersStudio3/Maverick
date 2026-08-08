@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.25
 members: 8
 ---
 
 # 스킬 트리 노드 내비게이션
 
-**Cohesion:** 0.25 - loosely connected
 **Members:** 8 nodes
 
 ## Members

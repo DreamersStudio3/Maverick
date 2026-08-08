@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.15
 members: 14
 ---
 
 # AI 기본 공격 태스크
 
-**Cohesion:** 0.15 - loosely connected
 **Members:** 14 nodes
 
 ## Members

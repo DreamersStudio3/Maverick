@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.06
 members: 39
 ---
 
 # AI 공격 실행 데이터
 
-**Cohesion:** 0.06 - loosely connected
 **Members:** 39 nodes
 
 ## Members
@@ -58,9 +56,8 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 4 edges to [[_COMMUNITY_AI 공격 액션 후보 해석]]
-- 3 edges to [[_COMMUNITY_AI 전투 액션 메타데이터]]
-- 2 edges to [[_COMMUNITY_AI 공격 실행 로직]]
+- 5 edges to [[_COMMUNITY_AI 전투 액션 메타데이터]]
+- 4 edges to [[_COMMUNITY_AI 공격 실행 로직]]
 - 1 edge to [[_COMMUNITY_AI 기본 공격 태스크]]
 - 1 edge to [[_COMMUNITY_AI 전투 의사결정 로직]]
 - 1 edge to [[_COMMUNITY_AI 전투 컨텍스트]]

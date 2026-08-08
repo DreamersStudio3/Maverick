@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.47
 members: 6
 ---
 
 # 에디터 블루프린트 경로 복구
 
-**Cohesion:** 0.47 - moderately connected
 **Members:** 6 nodes
 
 ## Members

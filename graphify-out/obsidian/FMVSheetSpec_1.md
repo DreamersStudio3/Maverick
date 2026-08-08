@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "DataTable 에셋 생성"
+community: "JSON 테이블 생성·해시"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/DataTable__
+  - community/JSON__
 ---
 
 # FMVSheetSpec
@@ -14,4 +14,4 @@ tags:
 - [[TableAssetGeneratorBuildGeneratedTableHash()]] - `references` [EXTRACTED]
 - [[UMVTableAssetGeneratorBuildAndSaveDataTable()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/DataTable__
+#graphify/code #graphify/EXTRACTED #community/JSON__

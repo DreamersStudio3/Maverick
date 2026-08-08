@@ -1,7 +1,7 @@
 ---
 source_file: "Source/Maverick/Character/NPC/Enemy/MVEnemy.cpp"
 type: "code"
-community: "피격 회복 이탈 방향"
+community: "적 캐릭터 전투 실행"
 location: "L459"
 tags:
   - graphify/code

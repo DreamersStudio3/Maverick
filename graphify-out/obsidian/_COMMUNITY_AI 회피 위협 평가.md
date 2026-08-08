@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.20
 members: 15
 ---
 
 # AI 회피 위협 평가
 
-**Cohesion:** 0.20 - loosely connected
 **Members:** 15 nodes
 
 ## Members

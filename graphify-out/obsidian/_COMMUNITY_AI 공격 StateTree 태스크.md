@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.29
 members: 11
 ---
 
 # AI 공격 StateTree 태스크
 
-**Cohesion:** 0.29 - loosely connected
 **Members:** 11 nodes
 
 ## Members

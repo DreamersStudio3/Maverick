@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.12
 members: 53
 ---
 
 # Graphify 최신성 Guard
 
-**Cohesion:** 0.12 - loosely connected
 **Members:** 53 nodes
 
 ## Members

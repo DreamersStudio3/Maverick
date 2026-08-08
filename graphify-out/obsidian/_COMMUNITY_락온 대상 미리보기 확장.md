@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.15
 members: 16
 ---
 
 # 락온 대상 미리보기 확장
 
-**Cohesion:** 0.15 - loosely connected
 **Members:** 16 nodes
 
 ## Members

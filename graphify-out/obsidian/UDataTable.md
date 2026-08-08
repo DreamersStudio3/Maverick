@@ -1,7 +1,7 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 공격 실행 로직"
+community: "AI 공격 액션 실행"
 tags:
   - graphify/code
   - graphify/EXTRACTED

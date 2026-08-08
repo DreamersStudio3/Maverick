@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/System/MVFieldTransitionSubsystem.cpp"
 type: "code"
-community: "캐릭터 도메인 연동"
+community: "어빌리티 피격 Launch"
 location: "L554"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/__Launch
 ---
 
 # UMVFieldTransitionSubsystem::ResetPlayerStatsForTransition()
@@ -15,4 +15,4 @@ tags:
 - [[AMVCharacterBase()]] - `references` [EXTRACTED]
 - [[MVFieldTransitionSubsystem.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/__Launch

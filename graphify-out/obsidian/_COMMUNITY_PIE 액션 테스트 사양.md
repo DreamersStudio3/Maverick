@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.29
 members: 7
 ---
 
 # PIE 액션 테스트 사양
 
-**Cohesion:** 0.29 - loosely connected
 **Members:** 7 nodes
 
 ## Members

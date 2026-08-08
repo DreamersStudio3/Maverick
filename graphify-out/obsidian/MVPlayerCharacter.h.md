@@ -1,7 +1,7 @@
 ---
 source_file: "Source/Maverick/Character/PC/MVPlayerCharacter.h"
 type: "code"
-community: "플레이어 이동 액션 테이블"
+community: "플레이어 캐릭터 기능 구성"
 location: "L1"
 tags:
   - graphify/code

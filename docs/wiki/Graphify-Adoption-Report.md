@@ -2,7 +2,7 @@
 
 ## 요약
 
-Maverick의 내부 지식은 사람이 관리하는 정본과 Graphify가 만드는 읽기 모델로 분리했다. 작업 시작에는 TODO와 기존 그래프 질의를 사용하고, 일반 커밋 뒤에는 저비용 AST 증분 갱신만 수행한다. 원격 push 직전에는 문서 의미 추출, graph 진단, wiki·Obsidian·HTML export, 최신성 stamp를 한 번에 커밋하고 pre-push gate로 검증한다.
+프로젝트 매버릭의 내부 위키는 사람이 관리하는 정본과 Graphify가 만드는 읽기 모델로 분리한다. 작업 시작에는 TODO와 기존 그래프 쿼리를 사용하고, 개별 커밋 직후에는 저비용 AST 증분 갱신을 수행한다. 지원되는 브랜치·커밋 전환에서는 새 snapshot의 전체 코드 graph를 다시 만들고, 원격 push 직전에는 문서 의미 추출, graph 진단, wiki·Obsidian·HTML export, 최신성 stamp를 한 번에 커밋한 뒤 pre-push Git hook 게이트를 거친다.
 
 핵심 결론은 다음과 같다.
 
@@ -19,11 +19,12 @@ Maverick의 내부 지식은 사람이 관리하는 정본과 Graphify가 만드
 | --- | --- | --- |
 | 프롬프트 수신 | `POLICY.md` 확인, `TODO/<task>.md` 생성·갱신, 기존 graph를 `query`/`path`/`explain`으로 조회 | Graphify 재생성 |
 | 일반 커밋 | 코드와 정본 문서를 함께 커밋하고 공식 `post-commit` 훅의 비동기 AST 증분 갱신을 로컬 질의 안전망으로 사용 | 중간 `graphify-out/`만 별도 커밋, 문서 의미 추출 완료로 간주 |
+| switch/checkout으로 브랜치·커밋 전환 | 조건을 만족하면 공식 `post-checkout` 훅으로 새 snapshot의 전체 코드 graph를 비동기 재구축하고, 즉시 질의할 때 현재 전환의 완료 로그 확인 | reset·restore·pull까지 포괄한다고 간주, 문서 의미·wiki·Obsidian 최신성 보장으로 간주 |
 | 원격 push 전 | `$graphify . --update` 전체 의미 갱신, 진단·라벨 검토, wiki·Obsidian·HTML export, stage, stamp, wrap-up 커밋, guard 검증 | 훅 안에서 LLM 추출이나 대규모 export 실행 |
 
-프롬프트마다 재생성하면 아직 확정되지 않은 실험을 그래프에 반복 반영하고 생성 파일 churn을 만든다. 반대로 push 직전만 갱신하면 긴 작업 중 로컬 관계가 너무 오래 낡을 수 있다. 따라서 **커밋 뒤 AST 안전망 + pre-push 전체 wrap-up** 조합을 채택했다.
+프롬프트마다 그래프를 갱신하면 아직 확정되지 않은 실험 내용이 반영되어 그래프가 금방 더러워질 수 있다. 반대로 push 직전에만 갱신하면 작업이 길어졌을 때 개발 의도 같은 것들이 빠질 수 있다. 따라서 **post-commit + post-checkout + pre-push** 조합을 채택했다.
 
-공식 훅은 `post-commit`과 `post-checkout`, `graph.json` merge driver를 제공하지만 문서 의미 추출과 wiki·Obsidian export까지 보장하지 않는다. Maverick의 `pre-push`는 생성 작업을 하지 않고, outgoing commit의 정본·manifest·semantic coverage·생성물·stamp가 같은 Git 스냅샷인지 빠르게 검증한다.
+현재 0.9.36 공식 `post-checkout`은 Git의 세 번째 hook 인자가 `1`인 switch/checkout 계열 전환에서만 실행한다. 변경 파일 목록이 없으므로 새 snapshot의 전체 코드 corpus를 재추출하지만, 백그라운드 작업이며 기존 semantic 문서 노드는 보존될 수 있고 wiki·Obsidian export까지 보장하지 않는다. 경로 단위 checkout은 인자가 `0`이라 건너뛰며, merge·rebase·cherry-pick 중, `graphify-out/`이 없는 브랜치와 linked worktree에서도 실행하지 않는다. 로그에는 대상 ref 표식이 없으므로 현재 전환 뒤 추가된 결과를 확인해야 한다. Maverick의 `pre-push`는 생성 작업을 하지 않고, outgoing commit의 정본·manifest·semantic coverage·생성물·stamp가 같은 Git 스냅샷인지 빠르게 검증한다.
 
 ## 왜 `.graphify/`가 아니라 `graphify-out/`인가
 
@@ -88,7 +89,7 @@ Graphify는 관련 선언, 파일, 커뮤니티와 최단 경로를 빠르게 �
 
 | 범주 | 파일 또는 경로 | 역할 |
 | --- | --- | --- |
-| 상위 행동강령 | `AGENTS.md`, `POLICY.md` | query-first, 문서 책임, 커밋·pre-push 규칙의 진입점 |
+| 상위 행동강령 | `AGENTS.md`, `POLICY.md` | query-first, 문서 책임, 커밋·switch/checkout·pre-push 규칙의 진입점 |
 | 입력·Git 규칙 | `.graphifyignore`, `.gitignore`, `.gitattributes` | corpus 제외, 로컬 cache 제외, LF와 graph merge driver |
 | 단기 작업 기록 | `TODO/README.md`, `TODO/graphify-wiki-pipeline.md` | TODO 생성·갱신·종료 규칙과 이번 도입 상태 |
 | 사람이 관리하는 정본 | `docs/wiki/Documentation-Workflow.md` | 단일 운영 절차 |
@@ -113,14 +114,15 @@ Codex에서 강제 장치로 오인될 수 있던 `.codex/hooks.json`의 `graphi
 | `9f57fd7` | Architecture와 헤더 기준 | Graphify query 결과, `Source/Maverick/`, `Plugins/LockOnTarget/`, `.Build.cs`·`.uproject`·`.ini`, `MaverickDesign/` 설계 문서, 138개 헤더 감사 |
 | `3aa7907` | pre-push 최신성 검사 | 공식 `graphify hook install/status`, 설치된 0.9.36 구현 확인, manifest·semantic hash·export 구조·Git blob 검증 테스트 |
 | 최종 wrap-up | 본 보고서 의미 추출, 생성 뷰·provenance·stamp 갱신 | 위 정본 전체와 최종 staged snapshot; 정확한 hash는 이 보고서를 포함한 커밋 후 Git 이력에서 확인 |
+| 후속 브랜치 전환 보완 | `post-checkout` 갱신 시점·조건·예외 문서화 | 설치된 0.9.36 훅과 `graphify/hooks.py`, 전역 skill의 `references/hooks.md` 대조 |
 
-외부 기준은 [Graphify 공식 저장소](https://github.com/Graphify-Labs/graphify)와 [graphifyy PyPI](https://pypi.org/project/graphifyy/)다. 실행 절차는 전역 Graphify skill의 `SKILL.md`, `references/update.md`, `references/hooks.md`, `references/exports.md`, `references/extraction-spec.md`를 사용했다. 프로젝트 사실은 Graphify 결과만 믿지 않고 관련 C++·설정·설계 문서와 대조했다.
+외부 기준은 [Graphify 공식 저장소](https://github.com/Graphify-Labs/graphify)와 [graphifyy PyPI](https://pypi.org/project/graphifyy/)다. 실행 절차는 전역 Graphify skill의 `SKILL.md`, `references/update.md`, `references/hooks.md`, `references/exports.md`, `references/extraction-spec.md`를 사용했다. `references/hooks.md`는 주로 post-commit을 설명하므로 post-checkout의 세부 조건은 설치된 훅, `graphify/hooks.py`, `graphify/watch.py`를 직접 대조했다. 프로젝트 사실은 Graphify 결과만 믿지 않고 관련 C++·설정·설계 문서와 대조했다.
 
 ## 지표
 
-아래의 현재 값은 **최종 Graphify 의미 갱신 전, 보고서 작성 시점의 재생성 working snapshot**이다. 본 보고서가 corpus에 추가되므로 최종 wrap-up 커밋의 값은 다시 확인해야 한다.
+아래 값은 초기 도입 작업의 진행과 `7f7945e` 도입 완료 snapshot을 보존한 역사적 기준선이다. 이번 후속 보완을 포함한 실시간 수치는 이 문서에 반복 기록하지 않고 생성물인 `graphify-out/GRAPH_REPORT.md`와 export provenance를 기준으로 확인한다.
 
-| 지표 | 초기 `1ad5bb6` | 현재 snapshot | 최종 wrap-up |
+| 지표 | 초기 `1ad5bb6` | 도입 중간 snapshot | 도입 완료 `7f7945e` |
 | --- | ---: | ---: | --- |
 | corpus | 303파일 | 305파일 | 309파일 |
 | 추정 단어 | 114,275 | 116,535 | 121,631 |
@@ -131,12 +133,13 @@ Codex에서 강제 장치로 오인될 수 있던 `.codex/hooks.json`의 `graphi
 | wiki Markdown, index 포함 | 279 | 288 | 292 |
 | Obsidian Markdown | 4,082 | 4,120 | 4,186 |
 
-최종 canvas는 3,905개 file node와 281개 community group, 합계 4,186개 node를 가진다. export provenance는 wiki 292개와 Graphify 소유 Obsidian 파일 4,189개의 exact tree hash를 기록한다. 초기 token-reduction benchmark는 전체를 순진하게 읽는 약 254,266 tokens 대비 평균 질의 문맥 약 5,335 tokens, 약 47.7배 감소를 측정했다. 이는 탐색 문맥량 비교이며 답변 정확도나 실행 시간의 보장은 아니다.
+도입 완료 당시 canvas는 3,905개 file node와 281개 community group, 합계 4,186개 node를 가졌다. 당시 export provenance는 wiki 292개와 Graphify 소유 Obsidian 파일 4,189개의 exact tree hash를 기록했다. 초기 token-reduction benchmark는 전체를 순진하게 읽는 약 254,266 tokens 대비 평균 질의 문맥 약 5,335 tokens, 약 47.7배 감소를 측정했다. 이는 탐색 문맥량 비교이며 답변 정확도나 실행 시간의 보장은 아니다.
 
 ## 검증 결과
 
 - 설치 환경은 Python 3.14의 `graphifyy 0.9.36`이며 PATH에 `graphify`가 없을 때 `python -m graphify`로 실행됨을 확인했다.
 - 공식 `post-commit`, `post-checkout` 훅과 `merge.graphify` driver, Maverick `pre-push`가 설치됨을 `Install-Hooks.ps1 -Action Status`로 확인했다.
+- 설치된 `post-checkout`이 checkout 구분 인자 `1`만 허용하고, 전환 뒤 전체 코드 corpus를 비동기 재구축하며 경로 단위 checkout, merge·rebase·cherry-pick 중, 결과 디렉터리가 없는 브랜치와 linked worktree에서는 건너뛰는 것을 훅 본문과 설치 패키지에서 확인했다.
 - installer 재실행, 상태 확인, pinned Python, LF·실행 모드, 기존 foreign hook 거부와 저장소 밖 shared hook 경로 거부를 확인했다.
 - guard가 stage되지 않은 정본·산출물, stale semantic hash, 불일치 export provenance, stamp 없는 commit을 거부함을 확인했다.
 - 삭제 ref만 있는 push는 검사할 commit이 없으므로 no-op으로 통과함을 확인했다.
@@ -150,6 +153,7 @@ Codex에서 강제 장치로 오인될 수 있던 `.codex/hooks.json`의 `graphi
 - 초기 진단은 1,362개 dangling-endpoint relation과 동일 endpoint collapse 145개(directed 해석), 147개(undirected 해석)를 보고했다. graph는 탐색에 사용할 수 있지만 완전한 호출 graph로 간주하지 않고, 매 wrap-up에서 진단을 공개·비교해야 한다.
 - `GRAPH_REPORT.md`와 `cost.json`의 0 input/0 output은 협업 에이전트 결과 API가 실제 usage를 제공하지 않아 기록된 값이다. 의미 추출 비용이 실제로 0이라는 뜻이 아니다.
 - 로컬 Git hook은 clone마다 설치해야 하며 `git push --no-verify`로 우회할 수 있다. 팀 강제가 필요하면 CI에서 `knowledge_guard.py check --commit <SHA>`를 필수 check로 실행하고 branch protection을 건다.
+- Windows의 Graphify rebuild 잠금은 0.9.36에서 no-op fallback이므로 빠른 연속 switch/checkout은 백그라운드 갱신끼리 경쟁할 수 있다. 현재 전환의 재구축 완료를 확인한 뒤 다음 전환이나 graph 질의를 수행한다.
 - 커뮤니티가 재배치되면 wiki와 Obsidian 파일명이 대량 변경될 수 있다. 일반 커밋마다 생성물을 올리지 않고 pre-push wrap-up 한 커밋으로 churn을 모은다.
 - C++ Doxygen 본문은 0.9.36 의미 graph에 들어가지 않는다. 교차 타입 의도는 정본 Markdown에도 반영해야 한다.
 - Graphify는 텍스트 corpus의 지도이며 Blueprint·StateTree·Chooser·Montage·DataTable 내부와 런타임 순서의 최종 증거가 아니다. 해당 판단은 `Architecture.md`의 `에셋 확인 필요` 표시와 Unreal Editor 검증을 따른다.
@@ -172,7 +176,7 @@ python -m graphify path "시작 심볼" "도착 심볼"
 python -m graphify explain "핵심 심볼"
 ```
 
-일반 구현 커밋 뒤에는 공식 hook의 AST 갱신을 기다리되, 그 중간 `graphify-out/`은 stage하지 않는다. push 전에는 Codex의 Graphify skill로 전체 의미 갱신을 수행한 뒤 다음 순서를 따른다.
+일반 구현 커밋 뒤에는 공식 hook의 AST 증분 갱신을 기다리되, 그 중간 `graphify-out/`은 stage하지 않는다. switch/checkout으로 브랜치나 커밋을 바꾼 뒤에는 훅 실행 조건과 현재 전환의 전체 코드 재구축 결과를 확인한 다음 graph를 질의한다. 훅이 건너뛴 상태에서 즉시 코드 graph가 필요하면 `python -m graphify update .`를 동기 실행한다. push 전에는 Codex의 Graphify skill로 전체 의미 갱신을 수행한 뒤 다음 순서를 따른다.
 
 ```powershell
 # Codex에서: $graphify . --update

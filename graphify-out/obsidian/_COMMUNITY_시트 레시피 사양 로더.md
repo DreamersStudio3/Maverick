@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.29
 members: 10
 ---
 
 # 시트 레시피 사양 로더
 
-**Cohesion:** 0.29 - loosely connected
 **Members:** 10 nodes
 
 ## Members
@@ -29,7 +27,7 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 2 edges to [[_COMMUNITY_액션 행·몽타주 타입]]
+- 2 edges to [[_COMMUNITY_피격 반응 행 조회]]
 - 1 edge to [[_COMMUNITY_테이블 Row 공통 타입]]
 
 ## Top bridge nodes

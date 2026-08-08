@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.13
 members: 20
 ---
 
 # 사망 부활 오케스트레이션
 
-**Cohesion:** 0.13 - loosely connected
 **Members:** 20 nodes
 
 ## Members
@@ -39,8 +37,8 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 1 edge to [[_COMMUNITY_캐릭터 도메인 연동]]
-- 1 edge to [[_COMMUNITY_필드 전환 사망 연동]]
+- 1 edge to [[_COMMUNITY_어빌리티 피격 Launch]]
+- 1 edge to [[_COMMUNITY_사망 부활 UI 흐름]]
 
 ## Top bridge nodes
 - [[MVDeathRespawnFlow.cpp]] - degree 16, connects to 1 community

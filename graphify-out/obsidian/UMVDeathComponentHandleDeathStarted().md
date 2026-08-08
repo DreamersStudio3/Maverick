@@ -1,7 +1,7 @@
 ---
 source_file: "Source/Maverick/Components/MVDeathComponent.cpp"
 type: "code"
-community: "사망 표현 보류·시작"
+community: "캐릭터 사망 표현"
 location: "L792"
 tags:
   - graphify/code

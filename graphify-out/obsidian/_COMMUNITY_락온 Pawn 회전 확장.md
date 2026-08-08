@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.16
 members: 15
 ---
 
 # 락온 Pawn 회전 확장
 
-**Cohesion:** 0.16 - loosely connected
 **Members:** 15 nodes
 
 ## Members

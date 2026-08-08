@@ -1,7 +1,7 @@
 ---
 source_file: "Source/Maverick/Components/MVDeathComponent.h"
 type: "code"
-community: "사망 컴포넌트 디졸브 연동"
+community: "피격 사망 전환 노티파이"
 location: "L85"
 tags:
   - graphify/code

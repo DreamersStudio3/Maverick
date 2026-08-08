@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 1.00
 members: 2
 ---
 
 # 쿨다운 준비 액션컷 노티파이
 
-**Cohesion:** 1.00 - tightly connected
 **Members:** 2 nodes
 
 ## Members

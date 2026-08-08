@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVActionComponent.h"
 type: "code"
-community: "액션 행·몽타주 타입"
+community: "AI 공격 액션 실행"
 location: "L11"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/AI___
 ---
 
 # UAnimMontage
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[MVActionComponent.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/AI___

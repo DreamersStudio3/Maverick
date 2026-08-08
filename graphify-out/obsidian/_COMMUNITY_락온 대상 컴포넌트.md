@@ -1,13 +1,11 @@
 ---
 type: community
-cohesion: 0.05
-members: 53
+members: 56
 ---
 
 # 락온 대상 컴포넌트
 
-**Cohesion:** 0.05 - loosely connected
-**Members:** 53 nodes
+**Members:** 56 nodes
 
 ## Members
 - [[AActor_2]] - code
@@ -53,8 +51,10 @@ members: 53
 - [[ULockOnTargetComponentServer_UpdateTargetInfo_Implementation()]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetComponent.cpp
 - [[ULockOnTargetComponentServer_UpdateTargetInfo_Validate()]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetComponent.cpp
 - [[ULockOnTargetComponentSetCanCaptureTarget()]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetComponent.cpp
+- [[ULockOnTargetComponentSetDefaultTargetHandler()]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetComponent.cpp
 - [[ULockOnTargetComponentSetLockOnTargetManual()]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetComponent.cpp
 - [[ULockOnTargetComponentSetLockOnTargetManualByInfo()]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetComponent.cpp
+- [[ULockOnTargetComponentSetTargetHandlerByClass()]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetComponent.cpp
 - [[ULockOnTargetComponentSwitchTargetManual()]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetComponent.cpp
 - [[ULockOnTargetComponentSwitchTargetPitch()]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetComponent.cpp
 - [[ULockOnTargetComponentSwitchTargetYaw()]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetComponent.cpp
@@ -63,6 +63,7 @@ members: 53
 - [[ULockOnTargetComponentUpdateTargetInfo()]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetComponent.cpp
 - [[ULockOnTargetExtensionBase]] - code
 - [[UTargetComponent_2]] - code
+- [[UTargetHandlerBase]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetComponent.h
 
 ## Live Query (requires Dataview plugin)
 
@@ -72,19 +73,19 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 4 edges to [[_COMMUNITY_LockOnTarget 서브오브젝트 수명주기]]
-- 3 edges to [[_COMMUNITY_락온 대상 예외 처리]]
-- 3 edges to [[_COMMUNITY_락온 핵심 타입과 핸들러]]
-- 3 edges to [[_COMMUNITY_LockOnTarget 모듈·타깃 핸들러]]
+- 5 edges to [[_COMMUNITY_LockOnTarget 서브오브젝트 수명주기]]
+- 4 edges to [[_COMMUNITY_락온 대상 예외 처리]]
 - 2 edges to [[_COMMUNITY_가중치 기반 타깃 선택]]
+- 2 edges to [[_COMMUNITY_LockOnTarget 모듈·타깃 핸들러]]
 - 2 edges to [[_COMMUNITY_락온 대상 미리보기 확장]]
 - 2 edges to [[_COMMUNITY_가중 대상 탐색 컨텍스트]]
 - 2 edges to [[_COMMUNITY_락온 대상 포커스 설정]]
-- 1 edge to [[_COMMUNITY_피니셔 실행과 워핑]]
+- 1 edge to [[_COMMUNITY_종료 처리와 확장 틱]]
+- 1 edge to [[_COMMUNITY_락온 핵심 타입과 핸들러]]
 
 ## Top bridge nodes
-- [[LockOnTargetComponent.cpp]] - degree 50, connects to 5 communities
+- [[LockOnTargetComponent.cpp]] - degree 50, connects to 4 communities
 - [[FTargetInfo]] - degree 16, connects to 4 communities
-- [[TSubclassOf]] - degree 4, connects to 1 community
+- [[UTargetHandlerBase]] - degree 4, connects to 2 communities
 - [[ULockOnTargetComponentEndPlay()]] - degree 3, connects to 1 community
 - [[NotifyTargetReleased]] - degree 3, connects to 1 community

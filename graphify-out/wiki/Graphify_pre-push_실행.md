@@ -1,6 +1,6 @@
 # Graphify pre-push 실행
 
-> 2 nodes · cohesion 1.00
+> 2 nodes
 
 ## Key Concepts
 

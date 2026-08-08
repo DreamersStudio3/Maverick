@@ -1,7 +1,7 @@
 ---
 source_file: "Source/Maverick/UI/Window/MVDeathOverlayWindow.cpp"
 type: "code"
-community: "UI 레이어와 사망 오버레이"
+community: "UI 레이어 오버레이 구성"
 location: "L87"
 tags:
   - graphify/code

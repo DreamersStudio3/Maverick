@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 1.00
 members: 2
 ---
 
 # 락온 컨트롤러 회전 확장
 
-**Cohesion:** 1.00 - tightly connected
 **Members:** 2 nodes
 
 ## Members

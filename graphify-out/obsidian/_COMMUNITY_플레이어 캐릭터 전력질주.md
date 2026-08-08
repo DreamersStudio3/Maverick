@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.07
 members: 29
 ---
 
 # 플레이어 캐릭터 전력질주
 
-**Cohesion:** 0.07 - loosely connected
 **Members:** 29 nodes
 
 ## Members
@@ -48,8 +46,9 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 2 edges to [[_COMMUNITY_플레이어 이동 액션 테이블]]
-- 1 edge to [[_COMMUNITY_피니셔 실행과 워핑]]
+- 1 edge to [[_COMMUNITY_종료 처리와 확장 틱]]
+- 1 edge to [[_COMMUNITY_회피·질주 액션 데이터]]
+- 1 edge to [[_COMMUNITY_플레이어 캐릭터 기능 구성]]
 
 ## Top bridge nodes
-- [[MVPlayerCharacter.cpp]] - degree 28, connects to 2 communities
+- [[MVPlayerCharacter.cpp]] - degree 28, connects to 3 communities

@@ -1,7 +1,7 @@
 ---
 source_file: "Source/Maverick/Public/Tables/MVHitReactionActionTableTypes.h"
 type: "code"
-community: "피격 회복 방향 추적"
+community: "피격 반응 행 조회"
 location: "L24"
 tags:
   - graphify/code

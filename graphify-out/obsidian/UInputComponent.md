@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "공통 캐릭터 생명주기"
+community: "캐릭터 입력 컴포넌트 설정"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/___
 ---
 
 # UInputComponent
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[AMVCharacterBaseSetupPlayerInputComponent()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/___

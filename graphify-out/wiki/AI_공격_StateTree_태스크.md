@@ -1,14 +1,14 @@
 # AI 공격 StateTree 태스크
 
-> 11 nodes · cohesion 0.29
+> 11 nodes
 
 ## Key Concepts
 
 - **FMVAttackTask** (6 connections) — `Source/Maverick/AI/Task/MVAttackTask.h`
 - **EnterState** (5 connections) — `Source/Maverick/AI/Task/MVAttackTask.h`
 - **MVAttackTask.cpp** (4 connections) — `Source/Maverick/AI/Task/MVAttackTask.cpp`
-- **ExitState** (4 connections) — `Source/Maverick/AI/Task/MVAttackTask.h`
 - **Tick** (4 connections) — `Source/Maverick/AI/Task/MVAttackTask.h`
+- **ExitState** (4 connections) — `Source/Maverick/AI/Task/MVAttackTask.h`
 - **FStateTreeExecutionContext** (3 connections)
 - **EStateTreeRunStatus** (2 connections)
 - **FStateTreeTransitionResult** (2 connections)

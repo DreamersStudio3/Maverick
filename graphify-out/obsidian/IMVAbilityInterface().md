@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Public/Interface/MVAbilityInterface.h"
 type: "code"
-community: "어빌리티 기본 계약"
+community: "피격 시스템 공용 타입"
 location: "L19"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/___
 ---
 
 # IMVAbilityInterface()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[MVAbilityInterface.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/___

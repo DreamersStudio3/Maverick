@@ -1,13 +1,11 @@
 ---
 type: community
-cohesion: 0.14
-members: 23
+members: 20
 ---
 
 # 락온 소켓 선택 에디터
 
-**Cohesion:** 0.14 - loosely connected
-**Members:** 23 nodes
+**Members:** 20 nodes
 
 ## Members
 - [[dot-SLATE_BEGIN_ARGS()]] - code - Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/SSocketSelector.h
@@ -16,7 +14,6 @@ members: 23
 - [[FName]] - code
 - [[FText]] - code
 - [[IPropertyHandle]] - code - Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/SSocketSelector.h
-- [[OnGetSocketContent]] - code - Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/SSocketSelector.h
 - [[OnPropertyUpdated]] - code - Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/SSocketSelector.h
 - [[OnSocketSelected]] - code - Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/SSocketSelector.h
 - [[OnTextBoxCommitted]] - code - Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/SSocketSelector.h
@@ -26,11 +23,9 @@ members: 23
 - [[SSocketSelector]] - code - Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/SSocketSelector.h
 - [[SSocketSelector.cpp]] - code - Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/SSocketSelector.cpp
 - [[SSocketSelector.h]] - code - Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/SSocketSelector.h
-- [[SWidget]] - code - Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/TargetComponentDetails.h
 - [[SceneComponent]] - code - Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/SSocketSelector.h
 - [[TAttribute]] - code
 - [[TSharedPtr_1]] - code
-- [[TSharedRef_2]] - code
 - [[TextBox]] - code - Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/SSocketSelector.h
 - [[USceneComponent]] - code - Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/SSocketSelector.h
 
@@ -42,12 +37,12 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 2 edges to [[_COMMUNITY_대상 컴포넌트 디테일 편집]]
-- 1 edge to [[_COMMUNITY_피니셔 실행과 워핑]]
-- 1 edge to [[_COMMUNITY_타깃 디테일 커스터마이징]]
-- 1 edge to [[_COMMUNITY_스킬 쿨다운 오버레이]]
+- 2 edges to [[_COMMUNITY_타깃 디테일 커스터마이징]]
+- 1 edge to [[_COMMUNITY_대상 컴포넌트 디테일 편집]]
+- 1 edge to [[_COMMUNITY_종료 처리와 확장 틱]]
 
 ## Top bridge nodes
-- [[SWidget]] - degree 4, connects to 3 communities
+- [[SSocketSelector]] - degree 16, connects to 1 community
 - [[SSocketSelector.h]] - degree 7, connects to 1 community
+- [[SSocketSelector.cpp]] - degree 6, connects to 1 community
 - [[OnTextBoxCommitted]] - degree 6, connects to 1 community

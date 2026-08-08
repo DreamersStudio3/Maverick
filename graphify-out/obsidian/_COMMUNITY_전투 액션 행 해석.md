@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.17
 members: 13
 ---
 
 # 전투 액션 행 해석
 
-**Cohesion:** 0.17 - loosely connected
 **Members:** 13 nodes
 
 ## Members
@@ -41,6 +39,6 @@ SORT file.name ASC
 ## Top bridge nodes
 - [[FDataTableRowHandle_6]] - degree 10, connects to 2 communities
 - [[UMVCombatComponentTryStartActionWithAbility()]] - degree 5, connects to 2 communities
-- [[UMVCombatComponentIsValidSkillActionRowHandle()]] - degree 4, connects to 2 communities
 - [[UMVCombatComponentResolveActionRowHandleFromChooserTable()]] - degree 4, connects to 2 communities
+- [[UMVCombatComponentIsValidSkillActionRowHandle()]] - degree 4, connects to 2 communities
 - [[UMVCombatComponentResolveHeavyChargeEarlyReleaseRow()]] - degree 4, connects to 2 communities

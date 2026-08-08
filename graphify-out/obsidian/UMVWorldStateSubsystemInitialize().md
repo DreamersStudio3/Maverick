@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/System/MVWorldStateSubsystem.cpp"
 type: "code"
-community: "월드 상태 서브시스템 초기화"
+community: "월드 상태 저장"
 location: "L21"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/__
 ---
 
 # UMVWorldStateSubsystem::Initialize()
@@ -15,4 +15,4 @@ tags:
 - [[FSubsystemCollectionBase_3]] - `references` [EXTRACTED]
 - [[MVWorldStateSubsystem.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/__

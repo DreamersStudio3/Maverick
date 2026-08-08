@@ -1,7 +1,7 @@
 ---
 source_file: "Source/Maverick/UI/Base/MVUIFadeController.cpp"
 type: "code"
-community: "UI 기반 전환 유틸리티"
+community: "UI 페이드 재생 제어"
 location: "L91"
 tags:
   - graphify/code

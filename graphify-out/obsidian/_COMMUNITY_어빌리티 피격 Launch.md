@@ -1,15 +1,14 @@
 ---
 type: community
-cohesion: 0.11
-members: 21
+members: 28
 ---
 
 # 어빌리티 피격 Launch
 
-**Cohesion:** 0.11 - loosely connected
-**Members:** 21 nodes
+**Members:** 28 nodes
 
 ## Members
+- [[AMVCharacterBase()]] - code - Source/Maverick/Character/MVCharacterBase.h
 - [[FMVHitLaunchData()]] - code - Source/Maverick/Public/Struct/MVHitTypes.h
 - [[MVAbilityBase.cpp]] - code - Source/Maverick/Combat/MVAbilityBase.cpp
 - [[MVAbilityLogHitLaunchTrace()]] - code - Source/Maverick/Combat/MVAbilityBase.cpp
@@ -29,6 +28,12 @@ members: 21
 - [[UMVAbilityBaseSetOwner()]] - code - Source/Maverick/Combat/MVAbilityBase.cpp
 - [[UMVAbilityBaseStartAbility_Implementation()]] - code - Source/Maverick/Combat/MVAbilityBase.cpp
 - [[UMVAbilityBaseTryConsumeAbilityCost()]] - code - Source/Maverick/Combat/MVAbilityBase.cpp
+- [[UMVFieldTransitionSubsystemResetPlayerStatsForTransition()]] - code - Source/Maverick/System/MVFieldTransitionSubsystem.cpp
+- [[UMVPIEActionTestWidgetResolveAttackerCharacter()]] - code - Source/Maverick/UI/Debug/MVPIEActionTestWidget.cpp
+- [[UMVPIEActionTestWidgetResolveTargetCharacter()]] - code - Source/Maverick/UI/Debug/MVPIEActionTestWidget.cpp
+- [[UMVPIEActionTestWidgetSetTargetCharacter()]] - code - Source/Maverick/UI/Debug/MVPIEActionTestWidget.cpp
+- [[UMVPlayerDodgeBeginLockOnPawnRotationSuppressionForDodge()]] - code - Source/Maverick/Character/PC/Dodge/MVPlayerDodge.cpp
+- [[UMVUISubsystemResolvePIEActionTestTargetCharacter()]] - code - Source/Maverick/UI/System/MVUISubsystem.cpp
 - [[UObject_4]] - code
 - [[int32_13]] - code
 
@@ -40,15 +45,25 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 3 edges to [[_COMMUNITY_캐릭터 도메인 연동]]
+- 4 edges to [[_COMMUNITY_회피 입력 방향 구성]]
+- 4 edges to [[_COMMUNITY_PIE 피격 판정 테스트]]
+- 3 edges to [[_COMMUNITY_피격 판정 해석 파이프라인]]
+- 3 edges to [[_COMMUNITY_필드 전환 관리]]
+- 3 edges to [[_COMMUNITY_피격 시스템 공용 타입]]
+- 2 edges to [[_COMMUNITY_UI 서브시스템 공용 선언]]
+- 2 edges to [[_COMMUNITY_UI 서브시스템 팝업 관리]]
+- 1 edge to [[_COMMUNITY_무적 구간 노티파이 상태]]
+- 1 edge to [[_COMMUNITY_피격 공중 상태 추적]]
+- 1 edge to [[_COMMUNITY_공통 캐릭터 이동 선언]]
+- 1 edge to [[_COMMUNITY_플레이어 회피 방향 해석]]
+- 1 edge to [[_COMMUNITY_무기 장착 시각화]]
+- 1 edge to [[_COMMUNITY_피격 회복 방향 추적]]
+- 1 edge to [[_COMMUNITY_사망 부활 오케스트레이션]]
 - 1 edge to [[_COMMUNITY_스킬 데이터와 비용]]
-- 1 edge to [[_COMMUNITY_피격 판정 해석 파이프라인]]
-- 1 edge to [[_COMMUNITY_어빌리티 기본 계약]]
-- 1 edge to [[_COMMUNITY_피격 시스템 공용 타입]]
 
 ## Top bridge nodes
-- [[UMVAbilityBaseActiveCameraShake()]] - degree 4, connects to 1 community
-- [[UActorComponent]] - degree 3, connects to 1 community
+- [[AMVCharacterBase()]] - degree 28, connects to 14 communities
 - [[UMVAbilityBaseApplyHitLaunchDataToResolveRequest()]] - degree 3, connects to 1 community
+- [[UActorComponent]] - degree 3, connects to 1 community
 - [[FMVHitLaunchData()]] - degree 3, connects to 1 community
-- [[UMVAbilityBaseActiveHitStopToCharacters()]] - degree 2, connects to 1 community
+- [[UMVPlayerDodgeBeginLockOnPawnRotationSuppressionForDodge()]] - degree 2, connects to 1 community

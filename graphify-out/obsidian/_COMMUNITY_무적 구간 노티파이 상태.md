@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.39
 members: 9
 ---
 
 # 무적 구간 노티파이 상태
 
-**Cohesion:** 0.39 - loosely connected
 **Members:** 9 nodes
 
 ## Members
@@ -28,7 +26,7 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 1 edge to [[_COMMUNITY_캐릭터 도메인 연동]]
+- 1 edge to [[_COMMUNITY_어빌리티 피격 Launch]]
 
 ## Top bridge nodes
 - [[FindInvincibleCharacter()]] - degree 5, connects to 1 community

@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp"
 type: "code"
-community: "DataTable 에셋 생성"
+community: "JSON 스키마 값 타입"
 location: "L431"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/DataTable__
+  - community/JSON___
 ---
 
 # TableAssetGeneratorBuildManifestHash()
@@ -20,4 +20,4 @@ tags:
 - [[UMVTableAssetGeneratorSaveManifest()]] - `calls` [EXTRACTED]
 - [[source]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/DataTable__
+#graphify/code #graphify/EXTRACTED #community/JSON___

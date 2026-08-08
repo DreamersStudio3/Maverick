@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.10
 members: 23
 ---
 
 # UI 팝업 메시지 데이터
 
-**Cohesion:** 0.10 - loosely connected
 **Members:** 23 nodes
 
 ## Members
@@ -47,7 +45,7 @@ SORT file.name ASC
 - 1 edge to [[_COMMUNITY_플레이어 상호작용 감지]]
 - 1 edge to [[_COMMUNITY_테이블 기반 UI·스탯 조회]]
 - 1 edge to [[_COMMUNITY_UI 서브시스템 공용 선언]]
-- 1 edge to [[_COMMUNITY_대화창 표시 수명주기]]
+- 1 edge to [[_COMMUNITY_대화창 표시 대기열 수명주기]]
 
 ## Top bridge nodes
 - [[MVUIDataTypes.h]] - degree 7, connects to 3 communities

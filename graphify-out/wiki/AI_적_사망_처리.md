@@ -1,6 +1,6 @@
 # AI 적 사망 처리
 
-> 51 nodes · cohesion 0.06
+> 51 nodes
 
 ## Key Concepts
 
@@ -9,31 +9,31 @@
 - **EnterState** (7 connections) — `Source/Maverick/AI/Task/MVEnemyDeadTask.h`
 - **Tick** (7 connections) — `Source/Maverick/AI/Task/MVEnemyDeadTask.h`
 - **MVEnemyDeadTask.h** (6 connections) — `Source/Maverick/AI/Task/MVEnemyDeadTask.h`
-- **EnemyDeadTaskApplyCleanup()** (5 connections) — `Source/Maverick/AI/Task/MVEnemyDeadTask.cpp`
-- **EnemyDeadTaskReleaseLockOnForOwner()** (5 connections) — `Source/Maverick/AI/Task/MVEnemyDeadTask.cpp`
 - **EnemyDeadTaskResolveOwner()** (5 connections) — `Source/Maverick/AI/Task/MVEnemyDeadTask.cpp`
+- **EnemyDeadTaskReleaseLockOnForOwner()** (5 connections) — `Source/Maverick/AI/Task/MVEnemyDeadTask.cpp`
+- **EnemyDeadTaskApplyCleanup()** (5 connections) — `Source/Maverick/AI/Task/MVEnemyDeadTask.cpp`
 - **FMVEnemyDeadTask** (5 connections) — `Source/Maverick/AI/Task/MVEnemyDeadTask.h`
 - **APawn** (4 connections)
 - **EnemyDeadTaskScheduleDestroy()** (4 connections) — `Source/Maverick/AI/Task/MVEnemyDeadTask.cpp`
 - **FStateTreeExecutionContext** (3 connections)
+- **EnemyDeadTaskIsDeathPresentationFinished()** (3 connections) — `Source/Maverick/AI/Task/MVEnemyDeadTask.cpp`
 - **EnemyDeadTaskClearPlayerLockOnTargetingOwner()** (3 connections) — `Source/Maverick/AI/Task/MVEnemyDeadTask.cpp`
 - **EnemyDeadTaskDisableOwnerTargetCapture()** (3 connections) — `Source/Maverick/AI/Task/MVEnemyDeadTask.cpp`
 - **EnemyDeadTaskGetEffectiveCleanupDelaySeconds()** (3 connections) — `Source/Maverick/AI/Task/MVEnemyDeadTask.cpp`
-- **EnemyDeadTaskIsDeathPresentationFinished()** (3 connections) — `Source/Maverick/AI/Task/MVEnemyDeadTask.cpp`
 - **.IsValid()** (2 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
+- **EStateTreeRunStatus** (2 connections)
 - **AAIController** (2 connections) — `Source/Maverick/AI/Task/MVEnemyDeadTask.h`
 - **AMVCharacterBase** (2 connections) — `Source/Maverick/AI/Task/MVEnemyDeadTask.h`
-- **EStateTreeRunStatus** (2 connections)
-- **.GetInstanceDataType()** (2 connections) — `Source/Maverick/AI/Task/MVEnemyDeadTask.h`
 - **UMVDeathComponent** (2 connections) — `Source/Maverick/AI/Task/MVEnemyDeadTask.h`
-- **EMVEnemyDeadCleanupMode** (1 connections)
+- **.GetInstanceDataType()** (2 connections) — `Source/Maverick/AI/Task/MVEnemyDeadTask.h`
+- **TObjectPtr** (1 connections)
+- **AActor** (1 connections)
 - **EMVEnemyDeadTaskCleanupResult** (1 connections)
-- **AMVEnemy** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDeadTask.h`
 - *... and 26 more nodes in this community*
 
 ## Relationships
 
-- [AI 공격 액션 후보 해석](AI_%EA%B3%B5%EA%B2%A9_%EC%95%A1%EC%85%98_%ED%9B%84%EB%B3%B4_%ED%95%B4%EC%84%9D.md) (1 shared connections)
+- [AI 전투 액션 메타데이터](AI_%EC%A0%84%ED%88%AC_%EC%95%A1%EC%85%98_%EB%A9%94%ED%83%80%EB%8D%B0%EC%9D%B4%ED%84%B0.md) (1 shared connections)
 
 ## Source Files
 

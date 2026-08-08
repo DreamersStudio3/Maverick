@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetHandlers/TargetHandlerBase.cpp"
 type: "code"
-community: "LockOnTarget 모듈·타깃 핸들러"
+community: "락온 대상 예외 처리"
 location: "L23"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/LockOnTarget__
+  - community/___
 ---
 
 # UTargetHandlerBase::HandleTargetException_Implementation()
@@ -16,4 +16,4 @@ tags:
 - [[FTargetInfo]] - `references` [EXTRACTED]
 - [[TargetHandlerBase.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/LockOnTarget__
+#graphify/code #graphify/EXTRACTED #community/___

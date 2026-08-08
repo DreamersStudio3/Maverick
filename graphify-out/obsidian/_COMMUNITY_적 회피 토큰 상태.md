@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.06
 members: 35
 ---
 
 # 적 회피 토큰 상태
 
-**Cohesion:** 0.06 - loosely connected
 **Members:** 35 nodes
 
 ## Members

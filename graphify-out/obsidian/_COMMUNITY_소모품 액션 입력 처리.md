@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.67
 members: 3
 ---
 
 # 소모품 액션 입력 처리
 
-**Cohesion:** 0.67 - moderately connected
 **Members:** 3 nodes
 
 ## Members

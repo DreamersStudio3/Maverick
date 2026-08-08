@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.28
 members: 9
 ---
 
 # 가중치 기반 타깃 선택
 
-**Cohesion:** 0.28 - loosely connected
 **Members:** 9 nodes
 
 ## Members

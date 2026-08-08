@@ -1,7 +1,7 @@
 ---
 source_file: "Source/Maverick/UI/HUD/MVMainHUDWidget.cpp"
 type: "code"
-community: "메인 HUD 위젯 구성"
+community: "메인 HUD 상태 바인딩"
 location: "L129"
 tags:
   - graphify/code

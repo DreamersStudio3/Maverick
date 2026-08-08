@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.28
 members: 9
 ---
 
 # 피격 리액션 기본 회복
 
-**Cohesion:** 0.28 - loosely connected
 **Members:** 9 nodes
 
 ## Members

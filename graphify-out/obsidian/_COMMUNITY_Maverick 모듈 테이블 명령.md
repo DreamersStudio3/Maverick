@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.22
 members: 9
 ---
 
 # Maverick 모듈 테이블 명령
 
-**Cohesion:** 0.22 - loosely connected
 **Members:** 9 nodes
 
 ## Members

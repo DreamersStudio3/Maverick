@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.12
 members: 35
 ---
 
 # 런타임 테이블 조회
 
-**Cohesion:** 0.12 - loosely connected
 **Members:** 35 nodes
 
 ## Members
@@ -54,12 +52,13 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 4 edges to [[_COMMUNITY_DataTable 에셋 생성]]
+- 2 edges to [[_COMMUNITY_JSON 테이블 생성·해시]]
+- 2 edges to [[_COMMUNITY_테이블 매니페스트 생성과 검증]]
 - 1 edge to [[_COMMUNITY_테이블 기반 UI·스탯 조회]]
 
 ## Top bridge nodes
 - [[TableManagerJsonValueToString()]] - degree 5, connects to 1 community
 - [[UMVTableManagerTryGetGenericField()]] - degree 5, connects to 1 community
-- [[UMVTableManagerFindManifestRow()]] - degree 3, connects to 1 community
 - [[UMVTableManagerGet()]] - degree 3, connects to 1 community
+- [[UMVTableManagerFindManifestRow()]] - degree 3, connects to 1 community
 - [[UMVTableManagerLoadAllTables()]] - degree 2, connects to 1 community

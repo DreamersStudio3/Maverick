@@ -1,17 +1,16 @@
 ---
 source_file: "AGENTS.md"
 type: "rationale"
-community: "Maverick 아키텍처 정본"
+community: "프로젝트 작업 정책"
 tags:
   - graphify/rationale
   - graphify/EXTRACTED
-  - community/Maverick__
+  - community/__
 ---
 
 # Trace-First Debugging
 
 ## Connections
-- [[Maverick_1]] - `rationale_for` [EXTRACTED]
 - [[Trace-First Debugging Workflow]] - `references` [EXTRACTED]
 
-#graphify/rationale #graphify/EXTRACTED #community/Maverick__
+#graphify/rationale #graphify/EXTRACTED #community/__

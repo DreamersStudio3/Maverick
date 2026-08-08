@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.29
 members: 10
 ---
 
 # LockOnTarget 컴포넌트 상세 패널
 
-**Cohesion:** 0.29 - loosely connected
 **Members:** 10 nodes
 
 ## Members

@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.05
 members: 59
 ---
 
 # 캐릭터 스탯 관리
 
-**Cohesion:** 0.05 - loosely connected
 **Members:** 59 nodes
 
 ## Members

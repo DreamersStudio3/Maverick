@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Public/Tables/MVCharacterTableTypes.h"
 type: "code"
-community: "테이블 Row 공통 타입"
+community: "공통 캐릭터 이동 선언"
 location: "L15"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/_Row__
+  - community/___
 ---
 
 # FMVCharacterIndexRow()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[MVCharacterTableTypes.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/_Row__
+#graphify/code #graphify/EXTRACTED #community/___

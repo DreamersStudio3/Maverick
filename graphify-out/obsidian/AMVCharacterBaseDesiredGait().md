@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Character/MVCharacterBase.cpp"
 type: "code"
-community: "공통 캐릭터 생명주기"
+community: "캐릭터 목표 보행 상태"
 location: "L508"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/___
 ---
 
 # AMVCharacterBase::DesiredGait()
@@ -15,4 +15,4 @@ tags:
 - [[EGait]] - `references` [EXTRACTED]
 - [[MVCharacterBase.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/___

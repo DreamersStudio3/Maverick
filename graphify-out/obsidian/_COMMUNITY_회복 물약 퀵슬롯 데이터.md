@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.15
 members: 14
 ---
 
 # 회복 물약 퀵슬롯 데이터
 
-**Cohesion:** 0.15 - loosely connected
 **Members:** 14 nodes
 
 ## Members

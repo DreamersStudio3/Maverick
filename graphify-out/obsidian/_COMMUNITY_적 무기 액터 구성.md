@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.50
 members: 4
 ---
 
 # 적 무기 액터 구성
 
-**Cohesion:** 0.50 - moderately connected
 **Members:** 4 nodes
 
 ## Members

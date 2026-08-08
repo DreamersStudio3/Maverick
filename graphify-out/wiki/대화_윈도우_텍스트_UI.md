@@ -1,12 +1,12 @@
 # 대화 윈도우 텍스트 UI
 
-> 4 nodes · cohesion 0.67
+> 4 nodes
 
 ## Key Concepts
 
 - **MVDialogueWindow.h** (3 connections) — `Source/Maverick/UI/Window/MVDialogueWindow.h`
-- **UMVActivatableWidgetBase()** (2 connections) — `Source/Maverick/UI/Window/MVDialogueWindow.h`
 - **UMVDialogueWindow** (2 connections) — `Source/Maverick/UI/Window/MVDialogueWindow.h`
+- **UMVActivatableWidgetBase()** (2 connections) — `Source/Maverick/UI/Window/MVDialogueWindow.h`
 - **UTextBlock** (1 connections) — `Source/Maverick/UI/Window/MVDialogueWindow.h`
 
 ## Relationships

@@ -46,7 +46,29 @@ Maverick의 문서는 사람이 빠르게 의도를 이해하고, 에이전트�
 
 C++ `/** ... */`만 바뀐 경우 공식 훅이 파일 hash와 AST를 갱신하지만 Graphify 0.9.36은 주석 내용을 의미 노드로 추출하지 않는다. 여러 타입에 걸친 중요한 의도는 `docs/wiki/`에도 반영한다.
 
-### 3. 원격 push 전
+### 3. switch/checkout으로 브랜치나 커밋을 전환할 때
+
+`git switch <branch>`, `git switch --detach <commit>`, `git checkout <branch|commit>`으로 현재 작업 트리가 다른 Git snapshot을 체크아웃하는 시점에는 설치된 공식 `post-checkout` 훅을 갱신 안전망으로 사용한다. 이전 브랜치의 코드 관계가 새 snapshot 질의에 섞이지 않게 하는 시점이다. 여기서 말하는 전환은 이 checkout 계열 명령이며, 작업 트리를 크게 바꿀 수 있는 모든 Git 명령을 뜻하지 않는다.
+
+1. 진행 중인 변경을 먼저 커밋하거나 안전하게 보관한 뒤 브랜치를 전환한다.
+2. 훅은 Git의 checkout 구분 인자가 `1`일 때만 실행하며, 전환된 snapshot의 전체 코드 corpus를 백그라운드에서 다시 추출한다. 일반 커밋의 변경 파일 증분 추출보다 범위가 넓다.
+3. 전환 직후 graph를 질의해야 하면 로그에서 **현재 전환 뒤 새로 추가된** 결과를 확인한다. 성공 시 `[graphify watch] Rebuilt:` 또는 변경 없음 메시지가 기록되고, 실패 시 `Rebuild failed`가 기록된다. 로그에는 branch나 commit SHA가 없으므로 과거 성공 줄을 현재 결과로 오인하지 않는다. 특히 Windows에서는 rebuild 잠금이 no-op fallback이므로 현재 재구축이 끝나기 전에 다시 전환하거나 질의하지 않는다.
+4. 대상 브랜치에 `graphify-out/`이 없거나 현재 디렉터리가 Git linked worktree이면 0.9.36 훅은 실행하지 않는다. 로그에서 현재 전환 결과를 구분할 수 없거나 훅이 건너뛴 일반 코드 graph를 즉시 써야 하면 `graphify-out/`이 있는 상태에서 동기식 `python -m graphify update .`를 실행한다. 결과 디렉터리 자체가 없으면 초기 Graphify 구축 절차를 먼저 수행한다.
+5. 이 단계도 문서·미디어 의미 재추출이나 wiki·Obsidian export를 완료하지 않는다. 기존 semantic 문서 노드는 보존될 수 있으므로 문서에 관한 판단은 원본과 대조한다. 훅이 만든 중간 `graphify-out/`만 stage하지 않고, 최종 생성 뷰는 push 전 wrap-up에서 동기화한다.
+
+```powershell
+$graphifyLog = Join-Path $HOME ".cache/graphify-rebuild.log"
+if (Test-Path $graphifyLog) {
+    Get-Item $graphifyLog | Select-Object LastWriteTimeUtc, Length
+    Get-Content $graphifyLog -Tail 50
+} else {
+    Write-Warning "Graphify rebuild 로그가 아직 없습니다."
+}
+```
+
+`git checkout -- <path>` 같은 경로 단위 복원은 checkout 구분 인자가 `0`이므로 현재 훅이 즉시 종료한다. `git restore`, `git reset`, 같은 브랜치의 pull·merge도 `post-checkout` 보장 범위가 아니며, rebase·merge·cherry-pick 진행 중에는 훅이 호출되더라도 충돌을 피하려고 건너뛴다. 이런 작업으로 코드가 달라졌다면 다음 일반 커밋의 `post-commit` 또는 최종 pre-push wrap-up을 기준으로 삼고, 그 전에 graph를 사용해야 하면 동기식 코드 갱신을 실행하거나 원본 코드와 대조한다.
+
+### 4. 원격 push 전
 
 pre-push는 누락을 막는 최종 게이트다. push할 커밋에 지식 원본 변경이 있으면 다음 wrap-up을 수행한다.
 
@@ -94,7 +116,7 @@ clone마다 한 번 다음 installer를 실행한다.
 ./Scripts/Graphify/Install-Hooks.ps1 -Action Status
 ```
 
-installer는 Graphify 공식 `post-commit`, `post-checkout`, graph merge driver를 설치한 뒤 Maverick의 동기식 `pre-push` gate를 추가한다. 저장소 밖 shared hook 경로와 자동 통합할 수 없는 기존 `pre-push`는 덮어쓰지 않고 설치를 거부한다. 제거할 때는 `./Scripts/Graphify/Install-Hooks.ps1 -Action Uninstall`을 사용한다.
+installer는 Graphify 공식 `post-commit`, `post-checkout`, graph merge driver를 설치한 뒤 Maverick의 동기식 `pre-push` gate를 추가한다. `post-checkout`은 지원되는 브랜치·커밋 전환 뒤 코드 graph를 비동기로 따라오게 하는 훅이지, 문서 의미와 생성 뷰의 최신성을 보증하는 gate가 아니다. 저장소 밖 shared hook 경로와 자동 통합할 수 없는 기존 `pre-push`는 덮어쓰지 않고 설치를 거부한다. 제거할 때는 `./Scripts/Graphify/Install-Hooks.ps1 -Action Uninstall`을 사용한다.
 
 gate는 LLM이나 Graphify 생성 작업을 훅 안에서 실행하지 않는다. push할 각 ref tip의 정본 Git blob, `graphify-out/` 산출물, `wrap-up.json` fingerprint가 같은 스냅샷인지 빠르게 검사한다. 누락되거나 stale이면 push를 중단하고 위 wrap-up 절차를 요구한다.
 

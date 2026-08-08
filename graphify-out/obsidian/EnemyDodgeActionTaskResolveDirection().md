@@ -1,7 +1,7 @@
 ---
 source_file: "Source/Maverick/AI/Task/MVEnemyDodgeActionTask.cpp"
 type: "code"
-community: "AI 회피 요청 타입"
+community: "AI 회피 방향 결정"
 location: "L30"
 tags:
   - graphify/code

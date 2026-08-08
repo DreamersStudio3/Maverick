@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVHitReactionComponent.cpp"
 type: "code"
-community: "피격 반응 Row 조회"
+community: "피격·회복 액션 행 조회"
 location: "L1364"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__Row_
+  - community/___
 ---
 
 # UMVHitReactionComponent::TryStartRecoveryAction()
@@ -16,4 +16,4 @@ tags:
 - [[MVHitReactionComponent.cpp]] - `contains` [EXTRACTED]
 - [[TCHAR_7]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__Row_
+#graphify/code #graphify/EXTRACTED #community/___

@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "피격 반응 진입 조건"
+community: "AI 피격 진입 조건"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/AI___
 ---
 
 # EMVActionHitReactionType
@@ -14,4 +14,4 @@ tags:
 - [[HitReactionEnterIsStateTreeHandledType()]] - `references` [EXTRACTED]
 - [[HitReactionEnterMatchesTypeFilter()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/AI___

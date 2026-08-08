@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.16
 members: 14
 ---
 
 # 피격 리액션 회복 결정
 
-**Cohesion:** 0.16 - loosely connected
 **Members:** 14 nodes
 
 ## Members
@@ -37,7 +35,7 @@ SORT file.name ASC
 - 1 edge to [[_COMMUNITY_필드 전환 리셋 계약]]
 - 1 edge to [[_COMMUNITY_피격 반응 상태 관리]]
 - 1 edge to [[_COMMUNITY_피격 시스템 공용 타입]]
-- 1 edge to [[_COMMUNITY_피니셔 실행과 워핑]]
+- 1 edge to [[_COMMUNITY_종료 처리와 확장 틱]]
 
 ## Top bridge nodes
 - [[MVHitReactionRecoveryDecisionProvider.h]] - degree 7, connects to 3 communities

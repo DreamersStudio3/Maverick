@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.40
 members: 5
 ---
 
 # 위협 기반 회피 토큰
 
-**Cohesion:** 0.40 - moderately connected
 **Members:** 5 nodes
 
 ## Members
@@ -26,7 +24,7 @@ SORT file.name ASC
 ## Connections to other communities
 - 1 edge to [[_COMMUNITY_전투 액션 런타임 상태]]
 - 1 edge to [[_COMMUNITY_적 회피 토큰 지급]]
-- 1 edge to [[_COMMUNITY_AI 회피 요청 타입]]
+- 1 edge to [[_COMMUNITY_AI 회피 방향 결정]]
 - 1 edge to [[_COMMUNITY_적 회피 토큰 상태]]
 
 ## Top bridge nodes

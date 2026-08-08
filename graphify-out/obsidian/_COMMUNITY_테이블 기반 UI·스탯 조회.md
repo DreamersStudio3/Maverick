@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.40
 members: 6
 ---
 
 # 테이블 기반 UI·스탯 조회
 
-**Cohesion:** 0.40 - moderately connected
 **Members:** 6 nodes
 
 ## Members
@@ -28,15 +26,15 @@ SORT file.name ASC
 - 2 edges to [[_COMMUNITY_DataTable 에셋 생성]]
 - 2 edges to [[_COMMUNITY_UI 서브시스템 팝업 관리]]
 - 1 edge to [[_COMMUNITY_회피 입력 컨텍스트]]
-- 1 edge to [[_COMMUNITY_플레이어 이동 액션 테이블]]
+- 1 edge to [[_COMMUNITY_회피·질주 액션 데이터]]
 - 1 edge to [[_COMMUNITY_액션 Row 몽타주 해석]]
 - 1 edge to [[_COMMUNITY_사망 액션 행 이름 해석]]
-- 1 edge to [[_COMMUNITY_피격 회복 방향 추적]]
+- 1 edge to [[_COMMUNITY_피격 반응 행 조회]]
 - 1 edge to [[_COMMUNITY_캐릭터 스탯 관리]]
-- 1 edge to [[_COMMUNITY_스탯 컴포넌트 UI 연결]]
+- 1 edge to [[_COMMUNITY_회복 스탯 일시정지 노티파이]]
 - 1 edge to [[_COMMUNITY_런타임 테이블 조회]]
 - 1 edge to [[_COMMUNITY_UI 팝업 메시지 데이터]]
-- 1 edge to [[_COMMUNITY_대화창 표시 수명주기]]
+- 1 edge to [[_COMMUNITY_대화창 표시 대기열 수명주기]]
 - 1 edge to [[_COMMUNITY_로딩 화면 입력 처리]]
 
 ## Top bridge nodes

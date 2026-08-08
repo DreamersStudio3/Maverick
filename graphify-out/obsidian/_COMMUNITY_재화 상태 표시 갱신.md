@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.67
 members: 3
 ---
 
 # 재화 상태 표시 갱신
 
-**Cohesion:** 0.67 - moderately connected
 **Members:** 3 nodes
 
 ## Members

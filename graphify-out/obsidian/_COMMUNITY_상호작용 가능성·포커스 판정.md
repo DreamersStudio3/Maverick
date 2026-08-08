@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.25
 members: 8
 ---
 
 # 상호작용 가능성·포커스 판정
 
-**Cohesion:** 0.25 - loosely connected
 **Members:** 8 nodes
 
 ## Members

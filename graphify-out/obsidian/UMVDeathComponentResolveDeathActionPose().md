@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVDeathComponent.cpp"
 type: "code"
-community: "사망 액션 포즈 해석"
+community: "캐릭터 사망 표현"
 location: "L586"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/__
 ---
 
 # UMVDeathComponent::ResolveDeathActionPose()
@@ -16,4 +16,4 @@ tags:
 - [[FMVDeathContext()]] - `references` [EXTRACTED]
 - [[MVDeathComponent.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/__

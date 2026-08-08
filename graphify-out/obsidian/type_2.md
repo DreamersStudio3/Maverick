@@ -1,12 +1,12 @@
 ---
 source_file: "MaverickDesign/Schema/TableData.schema.json"
 type: "code"
-community: "DataTable 에셋 생성"
+community: "JSON 스키마 값 타입"
 location: "L16"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/DataTable__
+  - community/JSON___
 ---
 
 # type
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[source]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/DataTable__
+#graphify/code #graphify/EXTRACTED #community/JSON___

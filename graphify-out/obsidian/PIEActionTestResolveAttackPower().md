@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/Debug/MVPIEActionTestWidget.cpp"
 type: "code"
-community: "PIE 피격 판정 테스트"
+community: "피격 시스템 공용 타입"
 location: "L90"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/PIE___
+  - community/___
 ---
 
 # PIEActionTestResolveAttackPower()
@@ -17,4 +17,4 @@ tags:
 - [[UMVHitResolverSubsystem()]] - `references` [EXTRACTED]
 - [[UMVPIEActionTestWidgetExecuteTestByIndex()]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/PIE___
+#graphify/code #graphify/EXTRACTED #community/___

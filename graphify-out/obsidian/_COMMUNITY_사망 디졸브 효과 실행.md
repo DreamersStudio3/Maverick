@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.20
 members: 11
 ---
 
 # 사망 디졸브 효과 실행
 
-**Cohesion:** 0.20 - loosely connected
 **Members:** 11 nodes
 
 ## Members

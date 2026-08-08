@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.25
 members: 8
 ---
 
 # 테이블 시트 사양
 
-**Cohesion:** 0.25 - loosely connected
 **Members:** 8 nodes
 
 ## Members

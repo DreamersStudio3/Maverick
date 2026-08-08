@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Character/MVCharacterBase.cpp"
 type: "code"
-community: "공통 캐릭터 생명주기"
+community: "장착 스타일 상태 관리"
 location: "L276"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/___
 ---
 
 # AMVCharacterBase::SetEquippedStyle()
@@ -15,4 +15,4 @@ tags:
 - [[EMVEquippedStyle]] - `references` [EXTRACTED]
 - [[MVCharacterBase.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/___

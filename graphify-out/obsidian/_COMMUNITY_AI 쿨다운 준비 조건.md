@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.14
 members: 17
 ---
 
 # AI 쿨다운 준비 조건
 
-**Cohesion:** 0.14 - loosely connected
 **Members:** 17 nodes
 
 ## Members

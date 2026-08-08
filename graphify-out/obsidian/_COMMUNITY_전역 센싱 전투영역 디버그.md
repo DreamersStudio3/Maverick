@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.33
 members: 7
 ---
 
 # 전역 센싱 전투영역 디버그
 
-**Cohesion:** 0.33 - loosely connected
 **Members:** 7 nodes
 
 ## Members

@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.04
 members: 52
 ---
 
 # AI 전역 감지 설정
 
-**Cohesion:** 0.04 - loosely connected
 **Members:** 52 nodes
 
 ## Members

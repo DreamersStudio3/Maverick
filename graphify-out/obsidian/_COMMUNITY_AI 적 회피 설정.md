@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.07
 members: 29
 ---
 
 # AI 적 회피 설정
 
-**Cohesion:** 0.07 - loosely connected
 **Members:** 29 nodes
 
 ## Members
@@ -49,8 +47,8 @@ SORT file.name ASC
 
 ## Connections to other communities
 - 3 edges to [[_COMMUNITY_AI 적 회피 실행]]
-- 3 edges to [[_COMMUNITY_적 회피 StateTree 선언]]
-- 1 edge to [[_COMMUNITY_AI 회피 요청 타입]]
+- 3 edges to [[_COMMUNITY_적 회피 액션 태스크]]
+- 1 edge to [[_COMMUNITY_AI 회피 방향 결정]]
 - 1 edge to [[_COMMUNITY_회피 입력 컨텍스트]]
 
 ## Top bridge nodes

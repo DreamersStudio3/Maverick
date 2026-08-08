@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.27
 members: 11
 ---
 
 # PIE 액션 테스트 UI
 
-**Cohesion:** 0.27 - loosely connected
 **Members:** 11 nodes
 
 ## Members
@@ -32,10 +30,10 @@ SORT file.name ASC
 ## Connections to other communities
 - 5 edges to [[_COMMUNITY_PIE 피격 판정 테스트]]
 - 2 edges to [[_COMMUNITY_스킬 슬롯 위젯 구성]]
-- 2 edges to [[_COMMUNITY_로딩 화면 입력 처리]]
-- 1 edge to [[_COMMUNITY_플레이어 스킬 HUD]]
+- 2 edges to [[_COMMUNITY_로딩 창 구성과 진행률]]
+- 1 edge to [[_COMMUNITY_플레이어 스킬 HUD 구성]]
 - 1 edge to [[_COMMUNITY_상태 바 위젯]]
-- 1 edge to [[_COMMUNITY_UI 레이어와 사망 오버레이]]
+- 1 edge to [[_COMMUNITY_UI 레이어 오버레이 구성]]
 
 ## Top bridge nodes
 - [[FMargin]] - degree 8, connects to 5 communities

@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.10
 members: 22
 ---
 
 # AI 액션 쿨다운 시작
 
-**Cohesion:** 0.10 - loosely connected
 **Members:** 22 nodes
 
 ## Members

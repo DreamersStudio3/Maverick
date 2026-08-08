@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.17
 members: 12
 ---
 
 # 피니셔 Chooser 입출력
 
-**Cohesion:** 0.17 - loosely connected
 **Members:** 12 nodes
 
 ## Members
@@ -31,7 +29,7 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 1 edge to [[_COMMUNITY_플레이어 회피 입력 계약]]
+- 1 edge to [[_COMMUNITY_액션 입력 처리 계약]]
 
 ## Top bridge nodes
 - [[MVFinisherComponent.h]] - degree 5, connects to 1 community

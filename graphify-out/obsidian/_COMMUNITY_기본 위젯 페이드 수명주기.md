@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.20
 members: 10
 ---
 
 # 기본 위젯 페이드 수명주기
 
-**Cohesion:** 0.20 - loosely connected
 **Members:** 10 nodes
 
 ## Members

@@ -1,7 +1,7 @@
 ---
 source_file: "Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.h"
 type: "code"
-community: "플레이어 회피 입력 계약"
+community: "회복 물약 런타임 상태"
 location: "L11"
 tags:
   - graphify/code

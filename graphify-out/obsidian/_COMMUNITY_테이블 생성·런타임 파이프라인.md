@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.19
 members: 13
 ---
 
 # 테이블 생성·런타임 파이프라인
 
-**Cohesion:** 0.19 - loosely connected
 **Members:** 13 nodes
 
 ## Members

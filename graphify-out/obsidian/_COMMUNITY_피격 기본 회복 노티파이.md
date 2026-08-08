@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 1.00
 members: 2
 ---
 
 # 피격 기본 회복 노티파이
 
-**Cohesion:** 1.00 - tightly connected
 **Members:** 2 nodes
 
 ## Members

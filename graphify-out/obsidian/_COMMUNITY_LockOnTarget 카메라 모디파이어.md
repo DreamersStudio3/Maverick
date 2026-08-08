@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.19
 members: 13
 ---
 
 # LockOnTarget 카메라 모디파이어
 
-**Cohesion:** 0.19 - loosely connected
 **Members:** 13 nodes
 
 ## Members

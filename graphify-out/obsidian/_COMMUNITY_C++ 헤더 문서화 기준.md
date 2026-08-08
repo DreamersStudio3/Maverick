@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.20
 members: 10
 ---
 
 # C++ 헤더 문서화 기준
 
-**Cohesion:** 0.20 - loosely connected
 **Members:** 10 nodes
 
 ## Members

@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.33
 members: 7
 ---
 
 # 퀵슬롯 표시 상태 갱신
 
-**Cohesion:** 0.33 - loosely connected
 **Members:** 7 nodes
 
 ## Members
@@ -29,5 +27,5 @@ SORT file.name ASC
 - 2 edges to [[_COMMUNITY_회복 물약 퀵슬롯 데이터]]
 
 ## Top bridge nodes
-- [[UMVQuickSlotWidgetApplyViewData()]] - degree 2, connects to 1 community
 - [[UMVQuickSlotWidgetSetViewData()]] - degree 2, connects to 1 community
+- [[UMVQuickSlotWidgetApplyViewData()]] - degree 2, connects to 1 community

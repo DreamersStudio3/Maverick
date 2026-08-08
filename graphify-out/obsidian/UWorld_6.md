@@ -1,7 +1,7 @@
 ---
 source_file: ""
 type: "code"
-community: "플레이어 회피 방향 해석"
+community: "회피 월드 컨텍스트 조회"
 tags:
   - graphify/code
   - graphify/EXTRACTED

@@ -1,12 +1,12 @@
 ---
 source_file: "MaverickDesign/Schema/TableData.schema.json"
 type: "code"
-community: "로딩 화면 입력 처리"
+community: "테이블 JSON 스키마"
 location: "L43"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/_JSON_
 ---
 
 # key
@@ -17,4 +17,4 @@ tags:
 - [[properties_1]] - `contains` [EXTRACTED]
 - [[type_6]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/_JSON_

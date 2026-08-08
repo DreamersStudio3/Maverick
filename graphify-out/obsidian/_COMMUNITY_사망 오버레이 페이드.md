@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.13
 members: 15
 ---
 
 # 사망 오버레이 페이드
 
-**Cohesion:** 0.13 - loosely connected
 **Members:** 15 nodes
 
 ## Members
@@ -34,7 +32,7 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 1 edge to [[_COMMUNITY_UI 레이어와 사망 오버레이]]
+- 1 edge to [[_COMMUNITY_UI 레이어 오버레이 구성]]
 
 ## Top bridge nodes
 - [[MVDeathOverlayWindow.cpp]] - degree 14, connects to 1 community

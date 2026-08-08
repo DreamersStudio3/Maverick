@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "UI 기반 전환 유틸리티"
+community: "활성 위젯 입력과 전환"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/UI___
+  - community/___
 ---
 
 # FObjectInitializer
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[UMVActivatableWidgetBaseUMVActivatableWidgetBase()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/UI___
+#graphify/code #graphify/EXTRACTED #community/___

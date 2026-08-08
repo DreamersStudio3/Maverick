@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/HUD/MVBossHPBarWidget.cpp"
 type: "code"
-community: "HUD 스탯 회복 연동"
+community: "보스 체력바 상태 연동"
 location: "L17"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/HUD___
+  - community/___
 ---
 
 # UMVBossHPBarWidget::BindToStatComponent()
@@ -16,4 +16,4 @@ tags:
 - [[MVBossHPBarWidget.cpp]] - `contains` [EXTRACTED]
 - [[UMVStatComponent()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/HUD___
+#graphify/code #graphify/EXTRACTED #community/___

@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/System/MVFieldTransitionSubsystem.cpp"
 type: "code"
-community: "필드 전환 요청 실행"
+community: "필드 전환 관리"
 location: "L602"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/__
 ---
 
 # UMVFieldTransitionSubsystem::TryPreparePostTransitionAction()
@@ -16,4 +16,4 @@ tags:
 - [[FMVFieldTransitionRequest()]] - `references` [EXTRACTED]
 - [[MVFieldTransitionSubsystem.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/__

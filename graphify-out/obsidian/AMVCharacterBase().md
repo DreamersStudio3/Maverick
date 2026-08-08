@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Character/MVCharacterBase.h"
 type: "code"
-community: "캐릭터 도메인 연동"
+community: "어빌리티 피격 Launch"
 location: "L56"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/__Launch
 ---
 
 # AMVCharacterBase()
@@ -41,4 +41,4 @@ tags:
 - [[UMVUISubsystemResolvePIEActionTestTargetCharacter()]] - `references` [EXTRACTED]
 - [[UMVUISubsystemShowPIEActionTestPanel()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/__Launch

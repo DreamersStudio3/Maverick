@@ -1,7 +1,7 @@
 ---
 source_file: ""
 type: "code"
-community: "PIE 피격 판정 테스트"
+community: "PIE 액션 테스트 입력"
 tags:
   - graphify/code
   - graphify/EXTRACTED

@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.50
 members: 5
 ---
 
 # 팝업 위젯 기반 클래스
 
-**Cohesion:** 0.50 - moderately connected
 **Members:** 5 nodes
 
 ## Members

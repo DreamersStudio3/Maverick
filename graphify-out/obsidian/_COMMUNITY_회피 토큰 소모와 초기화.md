@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.50
 members: 4
 ---
 
 # 회피 토큰 소모와 초기화
 
-**Cohesion:** 0.50 - moderately connected
 **Members:** 4 nodes
 
 ## Members
@@ -27,7 +25,7 @@ SORT file.name ASC
 - 2 edges to [[_COMMUNITY_적 회피 토큰 상태]]
 
 ## Top bridge nodes
-- [[ResetCombatFlowCounters]] - degree 3, connects to 1 community
 - [[UMVEnemyDodgeTokenComponentTrySpendDodgeToken()]] - degree 3, connects to 1 community
-- [[CanSpendDodgeToken]] - degree 2, connects to 1 community
+- [[ResetCombatFlowCounters]] - degree 3, connects to 1 community
 - [[UMVEnemyDodgeTokenComponentResetForFieldTransition()]] - degree 2, connects to 1 community
+- [[CanSpendDodgeToken]] - degree 2, connects to 1 community

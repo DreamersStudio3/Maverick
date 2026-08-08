@@ -1,18 +1,18 @@
 # Maverick 모듈 테이블 명령
 
-> 9 nodes · cohesion 0.22
+> 9 nodes
 
 ## Key Concepts
 
 - **Maverick.cpp** (5 connections) — `Source/Maverick/Maverick.cpp`
 - **FMaverickModule** (4 connections) — `Source/Maverick/Maverick.cpp`
 - **FDefaultGameModuleImpl** (1 connections)
-- **.ShutdownModule()** (1 connections) — `Source/Maverick/Maverick.cpp`
 - **.StartupModule()** (1 connections) — `Source/Maverick/Maverick.cpp`
-- **GenerateDataTablesFromMenu()** (1 connections) — `Source/Maverick/Maverick.cpp`
-- **Maverick.h** (1 connections) — `Source/Maverick/Maverick.h`
-- **RefreshTableManifestFromMenu()** (1 connections) — `Source/Maverick/Maverick.cpp`
+- **.ShutdownModule()** (1 connections) — `Source/Maverick/Maverick.cpp`
 - **RegisterEditorMenus()** (1 connections) — `Source/Maverick/Maverick.cpp`
+- **GenerateDataTablesFromMenu()** (1 connections) — `Source/Maverick/Maverick.cpp`
+- **RefreshTableManifestFromMenu()** (1 connections) — `Source/Maverick/Maverick.cpp`
+- **Maverick.h** (1 connections) — `Source/Maverick/Maverick.h`
 
 ## Relationships
 

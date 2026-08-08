@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVCombatComponent.cpp"
 type: "code"
-community: "전투 컴포넌트 Tick"
+community: "전투 액션 입력 처리"
 location: "L259"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__Tick
+  - community/___
 ---
 
 # UMVCombatComponent::TickComponent()
@@ -16,4 +16,4 @@ tags:
 - [[FActorComponentTickFunction_1]] - `references` [EXTRACTED]
 - [[MVCombatComponent.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__Tick
+#graphify/code #graphify/EXTRACTED #community/___

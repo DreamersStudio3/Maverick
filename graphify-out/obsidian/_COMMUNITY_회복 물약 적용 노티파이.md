@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.28
 members: 9
 ---
 
 # 회복 물약 적용 노티파이
 
-**Cohesion:** 0.28 - loosely connected
 **Members:** 9 nodes
 
 ## Members

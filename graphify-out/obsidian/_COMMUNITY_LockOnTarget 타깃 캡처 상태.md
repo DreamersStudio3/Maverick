@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.22
 members: 9
 ---
 
 # LockOnTarget 타깃 캡처 상태
 
-**Cohesion:** 0.22 - loosely connected
 **Members:** 9 nodes
 
 ## Members
@@ -34,8 +32,8 @@ SORT file.name ASC
 - 1 edge to [[_COMMUNITY_락온 대상 예외 처리]]
 
 ## Top bridge nodes
-- [[UTargetComponentDispatchTargetException()]] - degree 4, connects to 2 communities
 - [[UTargetComponentNotifyTargetCaptured()]] - degree 4, connects to 2 communities
+- [[UTargetComponentDispatchTargetException()]] - degree 4, connects to 2 communities
 - [[dot-IsSocketValid()]] - degree 4, connects to 1 community
-- [[dot-GetInvadersNum()]] - degree 3, connects to 1 community
+- [[FName_12]] - degree 3, connects to 1 community
 - [[dot-IsCaptured()]] - degree 3, connects to 1 community

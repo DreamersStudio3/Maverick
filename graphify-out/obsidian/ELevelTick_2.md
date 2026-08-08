@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "전투 컴포넌트 Tick"
+community: "전투 액션 입력 처리"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__Tick
+  - community/___
 ---
 
 # ELevelTick
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[UMVCombatComponentTickComponent()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__Tick
+#graphify/code #graphify/EXTRACTED #community/___

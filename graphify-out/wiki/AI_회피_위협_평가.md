@@ -1,6 +1,6 @@
 # AI 회피 위협 평가
 
-> 15 nodes · cohesion 0.20
+> 15 nodes
 
 ## Key Concepts
 
@@ -8,17 +8,17 @@
 - **MVDodgeThreatEvaluatorLibrary.cpp** (6 connections) — `Source/Maverick/Private/AI/MVDodgeThreatEvaluatorLibrary.cpp`
 - **MVDodgeThreatResolveEscapeDirection()** (5 connections) — `Source/Maverick/Private/AI/MVDodgeThreatEvaluatorLibrary.cpp`
 - **MVDodgeThreatIsActionTypeAllowed()** (4 connections) — `Source/Maverick/Private/AI/MVDodgeThreatEvaluatorLibrary.cpp`
-- **MVDodgeThreatResolveActionTag()** (4 connections) — `Source/Maverick/Private/AI/MVDodgeThreatEvaluatorLibrary.cpp`
 - **MVDodgeThreatResolveSignedAngle()** (4 connections) — `Source/Maverick/Private/AI/MVDodgeThreatEvaluatorLibrary.cpp`
+- **MVDodgeThreatResolveActionTag()** (4 connections) — `Source/Maverick/Private/AI/MVDodgeThreatEvaluatorLibrary.cpp`
 - **AActor** (3 connections)
 - **FVector** (2 connections)
-- **EMVActionInputDirection** (1 connections)
 - **EMVCombatActionTypes** (1 connections)
-- **FGameplayTag** (1 connections)
-- **FMVDodgeThreatConfig** (1 connections)
-- **FMVDodgeThreatDecision** (1 connections)
 - **TArray** (1 connections)
+- **EMVActionInputDirection** (1 connections)
+- **FGameplayTag** (1 connections)
 - **FMVDodgeThreatConfig::FMVDodgeThreatConfig()** (1 connections) — `Source/Maverick/Private/AI/MVDodgeThreatEvaluatorLibrary.cpp`
+- **FMVDodgeThreatDecision** (1 connections)
+- **FMVDodgeThreatConfig** (1 connections)
 
 ## Relationships
 

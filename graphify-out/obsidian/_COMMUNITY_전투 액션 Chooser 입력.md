@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.14
 members: 15
 ---
 
 # 전투 액션 Chooser 입력
 
-**Cohesion:** 0.14 - loosely connected
 **Members:** 15 nodes
 
 ## Members
@@ -35,7 +33,7 @@ SORT file.name ASC
 
 ## Connections to other communities
 - 4 edges to [[_COMMUNITY_전투 액션 매핑]]
-- 2 edges to [[_COMMUNITY_AI 공격 액션 후보 해석]]
+- 2 edges to [[_COMMUNITY_AI 공격 실행 로직]]
 - 2 edges to [[_COMMUNITY_전투 액션 행 해석]]
 - 1 edge to [[_COMMUNITY_AI 적 회피 실행]]
 - 1 edge to [[_COMMUNITY_회피 입력 컨텍스트]]
@@ -43,7 +41,7 @@ SORT file.name ASC
 - 1 edge to [[_COMMUNITY_전투 액션 런타임 상태]]
 - 1 edge to [[_COMMUNITY_피니셔 실행과 워핑]]
 - 1 edge to [[_COMMUNITY_피격 반응 상태 관리]]
-- 1 edge to [[_COMMUNITY_피격 회복 방향 추적]]
+- 1 edge to [[_COMMUNITY_피격 반응 행 조회]]
 - 1 edge to [[_COMMUNITY_무기 장착 시각화]]
 
 ## Top bridge nodes

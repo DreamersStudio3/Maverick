@@ -1,7 +1,7 @@
 ---
 source_file: ""
 type: "code"
-community: "스킬 체인 런타임"
+community: "전투 액션 매핑"
 tags:
   - graphify/code
   - graphify/EXTRACTED

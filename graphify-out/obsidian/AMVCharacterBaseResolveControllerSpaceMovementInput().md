@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Character/MVCharacterBase.cpp"
 type: "code"
-community: "공통 캐릭터 생명주기"
+community: "캐릭터 이동 입력 변환"
 location: "L411"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/___
 ---
 
 # AMVCharacterBase::ResolveControllerSpaceMovementInput()
@@ -17,4 +17,4 @@ tags:
 - [[FVector2D_2]] - `references` [EXTRACTED]
 - [[MVCharacterBase.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/___

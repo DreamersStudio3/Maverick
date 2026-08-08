@@ -1,5 +1,5 @@
 ---
-source_file: "AGENTS.md"
+source_file: "docs/wiki/Architecture.md"
 type: "rationale"
 community: "Maverick 아키텍처 정본"
 tags:
@@ -11,7 +11,7 @@ tags:
 # CharacterBase Responsibility Boundary
 
 ## Connections
-- [[CharacterBase Responsibility Boundary_1]] - `semantically_similar_to` [INFERRED]
-- [[Maverick_1]] - `rationale_for` [EXTRACTED]
+- [[Action Execution Pipeline]] - `rationale_for` [EXTRACTED]
+- [[Maverick Runtime Module]] - `conceptually_related_to` [EXTRACTED]
 
 #graphify/rationale #graphify/EXTRACTED #community/Maverick__

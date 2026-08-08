@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.15
 members: 15
 ---
 
 # AI 그로기 진입 조건
 
-**Cohesion:** 0.15 - loosely connected
 **Members:** 15 nodes
 
 ## Members

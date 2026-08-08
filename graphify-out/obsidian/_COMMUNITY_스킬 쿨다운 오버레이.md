@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.09
 members: 30
 ---
 
 # 스킬 쿨다운 오버레이
 
-**Cohesion:** 0.09 - loosely connected
 **Members:** 30 nodes
 
 ## Members
@@ -49,7 +47,7 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 1 edge to [[_COMMUNITY_락온 소켓 선택 에디터]]
+- 1 edge to [[_COMMUNITY_타깃 디테일 커스터마이징]]
 
 ## Top bridge nodes
 - [[UMVCooldownOverlayWidgetRebuildWidget()]] - degree 6, connects to 1 community

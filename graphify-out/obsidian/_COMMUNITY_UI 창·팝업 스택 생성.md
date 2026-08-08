@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.18
 members: 11
 ---
 
 # UI 창·팝업 스택 생성
 
-**Cohesion:** 0.18 - loosely connected
 **Members:** 11 nodes
 
 ## Members
@@ -36,5 +34,5 @@ SORT file.name ASC
 - [[UMVUISubsystemPushWindowByClass()]] - degree 4, connects to 1 community
 - [[UMVUISubsystemPushPopupByClass()]] - degree 3, connects to 1 community
 - [[UMVUISubsystemShowHUDByClass()]] - degree 3, connects to 1 community
-- [[UMVUISubsystemShowDeathOverlay()]] - degree 2, connects to 1 community
 - [[UMVUISubsystemShowDefaultHUD()]] - degree 2, connects to 1 community
+- [[UMVUISubsystemShowLoadingWindow()]] - degree 2, connects to 1 community

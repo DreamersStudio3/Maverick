@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 1.00
 members: 2
 ---
 
 # 회복 이탈 윈도우 노티파이
 
-**Cohesion:** 1.00 - tightly connected
 **Members:** 2 nodes
 
 ## Members

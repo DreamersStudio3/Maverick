@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.33
 members: 6
 ---
 
 # 월드 상태 서브시스템 접근
 
-**Cohesion:** 0.33 - loosely connected
 **Members:** 6 nodes
 
 ## Members

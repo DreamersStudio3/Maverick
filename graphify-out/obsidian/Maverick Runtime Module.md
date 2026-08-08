@@ -11,7 +11,7 @@ tags:
 # Maverick Runtime Module
 
 ## Connections
-- [[CharacterBase Responsibility Boundary_1]] - `conceptually_related_to` [EXTRACTED]
+- [[CharacterBase Responsibility Boundary]] - `conceptually_related_to` [EXTRACTED]
 - [[Hit to Respawn Pipeline]] - `conceptually_related_to` [EXTRACTED]
 - [[Maverick Architecture]] - `conceptually_related_to` [EXTRACTED]
 

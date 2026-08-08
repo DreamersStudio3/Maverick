@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.08
 members: 26
 ---
 
 # 피격 반응 상태 관리
 
-**Cohesion:** 0.08 - loosely connected
 **Members:** 26 nodes
 
 ## Members
@@ -45,15 +43,16 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 16 edges to [[_COMMUNITY_피격 회복 방향 추적]]
-- 11 edges to [[_COMMUNITY_피격 방향과 Launch 처리]]
-- 11 edges to [[_COMMUNITY_피격 리액션 입력·행 해석]]
-- 8 edges to [[_COMMUNITY_피격 반응 Row 조회]]
-- 1 edge to [[_COMMUNITY_피니셔 실행과 워핑]]
+- 15 edges to [[_COMMUNITY_피격 회복 방향 추적]]
+- 12 edges to [[_COMMUNITY_피격 방향과 Launch 처리]]
+- 10 edges to [[_COMMUNITY_피격 리액션 입력·행 해석]]
+- 7 edges to [[_COMMUNITY_피격·회복 액션 행 조회]]
+- 2 edges to [[_COMMUNITY_피격 반응 행 조회]]
+- 1 edge to [[_COMMUNITY_종료 처리와 확장 틱]]
 - 1 edge to [[_COMMUNITY_전투 액션 Chooser 입력]]
 - 1 edge to [[_COMMUNITY_피격 반응 이동 모드]]
 - 1 edge to [[_COMMUNITY_피격 리액션 회복 결정]]
-- 1 edge to [[_COMMUNITY_테이블 Row 공통 타입]]
+- 1 edge to [[_COMMUNITY_공통 캐릭터 이동 선언]]
 
 ## Top bridge nodes
-- [[MVHitReactionComponent.cpp]] - degree 75, connects to 9 communities
+- [[MVHitReactionComponent.cpp]] - degree 75, connects to 10 communities

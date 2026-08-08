@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetManager.cpp"
 type: "code"
-community: "피니셔 실행과 워핑"
+community: "락온 대상 관리자 수명주기"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/___
 ---
 
 # TargetManager.cpp
@@ -18,4 +18,4 @@ tags:
 - [[UTargetManagerUTargetManager()]] - `contains` [EXTRACTED]
 - [[UTargetManagerUnregisterTarget()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/___

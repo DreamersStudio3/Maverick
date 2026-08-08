@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/AI/Condition/MVHitReactionEnterCondition.cpp"
 type: "code"
-community: "피격 반응 진입 조건"
+community: "AI 피격 진입 조건"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/AI___
 ---
 
 # MVHitReactionEnterCondition.cpp
@@ -17,4 +17,4 @@ tags:
 - [[HitReactionEnterResolveOwner()]] - `contains` [EXTRACTED]
 - [[TestCondition_4]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/AI___

@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Character/MVCharacterBase.cpp"
 type: "code"
-community: "공통 캐릭터 생명주기"
+community: "스트레이프 이동 기준 회전"
 location: "L238"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/___
 ---
 
 # AMVCharacterBase::ResolveMovementInputReferenceRotation()
@@ -15,4 +15,4 @@ tags:
 - [[FRotator_3]] - `references` [EXTRACTED]
 - [[MVCharacterBase.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/___

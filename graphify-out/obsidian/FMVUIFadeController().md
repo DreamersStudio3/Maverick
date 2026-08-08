@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/Base/MVUIFadeController.h"
 type: "code"
-community: "UI 기반 전환 유틸리티"
+community: "스킬 트리 UI 탐색"
 location: "L9"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/UI___
+  - community/__UI_
 ---
 
 # FMVUIFadeController()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[MVUIFadeController.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/UI___
+#graphify/code #graphify/EXTRACTED #community/__UI_

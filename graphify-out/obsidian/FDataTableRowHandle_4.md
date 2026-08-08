@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "플레이어 회피 방향 해석"
+community: "회피·질주 액션 데이터"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/__
 ---
 
 # FDataTableRowHandle
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[UMVPlayerDodgeFindDodgeActionRow()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/__

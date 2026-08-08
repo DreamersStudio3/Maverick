@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.67
 members: 3
 ---
 
 # 윈도우 베이스 초기화
 
-**Cohesion:** 0.67 - moderately connected
 **Members:** 3 nodes
 
 ## Members

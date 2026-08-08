@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Animation/NotifyStates/MVAnimNotifyState_BlockMovementInput.cpp"
 type: "code"
-community: "이동 입력 차단 Notify"
+community: "이동 입력 차단 노티파이"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___Notify
+  - community/___
 ---
 
 # MVAnimNotifyState_BlockMovementInput.cpp
@@ -17,4 +17,4 @@ tags:
 - [[UMVAnimNotifyState_BlockMovementInputNotifyBegin()]] - `contains` [EXTRACTED]
 - [[UMVAnimNotifyState_BlockMovementInputNotifyEnd()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___Notify
+#graphify/code #graphify/EXTRACTED #community/___

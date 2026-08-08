@@ -1,21 +1,21 @@
 # AI 회피 위협 판정
 
-> 8 nodes · cohesion 0.25
+> 8 nodes
 
 ## Key Concepts
 
 - **EMVDodgeThreatRejectReason** (8 connections) — `Source/Maverick/Public/AI/MVDodgeThreatEvaluatorLibrary.h`
+- **uint8** (1 connections)
+- **UMETA** (1 connections) — `Source/Maverick/Public/AI/MVDodgeThreatEvaluatorLibrary.h`
+- **TokenUnavailable** (1 connections) — `Source/Maverick/Public/AI/MVDodgeThreatEvaluatorLibrary.h`
+- **USTRUCT** (1 connections)
 - **.FMVDodgeThreatConfig()** (1 connections) — `Source/Maverick/Public/AI/MVDodgeThreatEvaluatorLibrary.h`
 - **.FMVDodgeThreatDecision()** (1 connections) — `Source/Maverick/Public/AI/MVDodgeThreatEvaluatorLibrary.h`
-- **TokenUnavailable** (1 connections) — `Source/Maverick/Public/AI/MVDodgeThreatEvaluatorLibrary.h`
-- **UMETA** (1 connections) — `Source/Maverick/Public/AI/MVDodgeThreatEvaluatorLibrary.h`
 - **UMVDodgeThreatEvaluatorLibrary** (1 connections) — `Source/Maverick/Public/AI/MVDodgeThreatEvaluatorLibrary.h`
-- **uint8** (1 connections)
-- **USTRUCT** (1 connections)
 
 ## Relationships
 
-- [AI 회피 요청 타입](AI_%ED%9A%8C%ED%94%BC_%EC%9A%94%EC%B2%AD_%ED%83%80%EC%9E%85.md) (1 shared connections)
+- [AI 회피 방향 결정](AI_%ED%9A%8C%ED%94%BC_%EB%B0%A9%ED%96%A5_%EA%B2%B0%EC%A0%95.md) (1 shared connections)
 
 ## Source Files
 

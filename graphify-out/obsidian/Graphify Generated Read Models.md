@@ -13,6 +13,7 @@ tags:
 ## Connections
 - [[Commit-Time Incremental Update]] - `implements` [EXTRACTED]
 - [[Information Hierarchy]] - `conceptually_related_to` [EXTRACTED]
+- [[Post-Checkout Snapshot Rebuild]] - `implements` [EXTRACTED]
 - [[Pre-Push Wrap-Up Gate]] - `implements` [EXTRACTED]
 - [[Prompt-Time Query-First]] - `references` [EXTRACTED]
 

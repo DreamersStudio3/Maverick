@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.05
 members: 53
 ---
 
 # AI 전역 쿨다운
 
-**Cohesion:** 0.05 - loosely connected
 **Members:** 53 nodes
 
 ## Members

@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.06
 members: 51
 ---
 
 # AI 적 사망 처리
 
-**Cohesion:** 0.06 - loosely connected
 **Members:** 51 nodes
 
 ## Members
@@ -70,7 +68,7 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 1 edge to [[_COMMUNITY_AI 공격 액션 후보 해석]]
+- 1 edge to [[_COMMUNITY_AI 전투 액션 메타데이터]]
 
 ## Top bridge nodes
 - [[dot-IsValid()]] - degree 2, connects to 1 community

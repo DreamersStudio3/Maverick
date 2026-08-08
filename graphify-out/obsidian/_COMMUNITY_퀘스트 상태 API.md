@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.19
 members: 16
 ---
 
 # 퀘스트 상태 API
 
-**Cohesion:** 0.19 - loosely connected
 **Members:** 16 nodes
 
 ## Members

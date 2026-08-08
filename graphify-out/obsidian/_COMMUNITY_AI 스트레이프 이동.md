@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.09
 members: 36
 ---
 
 # AI 스트레이프 이동
 
-**Cohesion:** 0.09 - loosely connected
 **Members:** 36 nodes
 
 ## Members
@@ -57,7 +55,7 @@ SORT file.name ASC
 ## Connections to other communities
 - 1 edge to [[_COMMUNITY_AI 전투 액션 메타데이터]]
 - 1 edge to [[_COMMUNITY_AI 전투 컨텍스트]]
-- 1 edge to [[_COMMUNITY_공통 캐릭터 선언]]
+- 1 edge to [[_COMMUNITY_공통 캐릭터 이동 선언]]
 
 ## Top bridge nodes
 - [[FMVStrafeMoveTaskInstanceData]] - degree 19, connects to 1 community

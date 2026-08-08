@@ -1,7 +1,7 @@
 ---
 source_file: ""
 type: "code"
-community: "이동 차단과 회복 탈출"
+community: "회복 탈출 윈도우 노티파이"
 tags:
   - graphify/code
   - graphify/EXTRACTED

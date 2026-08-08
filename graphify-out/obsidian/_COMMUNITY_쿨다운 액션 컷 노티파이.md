@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.28
 members: 9
 ---
 
 # 쿨다운 액션 컷 노티파이
 
-**Cohesion:** 0.28 - loosely connected
 **Members:** 9 nodes
 
 ## Members

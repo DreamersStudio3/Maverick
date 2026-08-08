@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.12
 members: 17
 ---
 
 # 적 회피 토큰 지급
 
-**Cohesion:** 0.12 - loosely connected
 **Members:** 17 nodes
 
 ## Members
@@ -45,7 +43,7 @@ SORT file.name ASC
 
 ## Top bridge nodes
 - [[MVEnemyDodgeTokenComponent.cpp]] - degree 22, connects to 4 communities
-- [[UMVEnemyDodgeTokenComponentHandleObservedTargetDamaged()]] - degree 3, connects to 1 community
 - [[UMVEnemyDodgeTokenComponentHandleOwnerDamaged()]] - degree 3, connects to 1 community
-- [[NotifyEnemyDamaged]] - degree 2, connects to 1 community
-- [[NotifyEnemyLandedHit]] - degree 2, connects to 1 community
+- [[UMVEnemyDodgeTokenComponentHandleObservedTargetDamaged()]] - degree 3, connects to 1 community
+- [[UMVEnemyDodgeTokenComponentGrantDodgeToken()]] - degree 2, connects to 1 community
+- [[UMVEnemyDodgeTokenComponentIsRelevantEnemyHitData()]] - degree 2, connects to 1 community

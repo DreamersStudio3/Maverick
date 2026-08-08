@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/AI/MVAICombatTypes.h"
 type: "code"
-community: "AI 공격 액션 후보 해석"
+community: "AI 전투 액션 메타데이터"
 location: "L38"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI____
+  - community/AI___
 ---
 
 # FMVAttackActionRowHandle
@@ -22,4 +22,4 @@ tags:
 - [[FMVSelectAndExecuteAttackTaskInstanceData]] - `references` [EXTRACTED]
 - [[MVAICombatTypes.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI____
+#graphify/code #graphify/EXTRACTED #community/AI___

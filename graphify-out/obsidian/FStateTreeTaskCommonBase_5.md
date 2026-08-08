@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "적 회피 StateTree 선언"
+community: "적 회피 액션 태스크"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__StateTree_
+  - community/___
 ---
 
 # FStateTreeTaskCommonBase
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[FMVEnemyDodgeActionTask]] - `inherits` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__StateTree_
+#graphify/code #graphify/EXTRACTED #community/___

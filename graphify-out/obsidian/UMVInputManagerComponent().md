@@ -1,7 +1,7 @@
 ---
 source_file: "Source/Maverick/Components/MVInputManagerComponent.h"
 type: "code"
-community: "액션 전환 입력 관리"
+community: "액션 입력 처리 계약"
 location: "L54"
 tags:
   - graphify/code

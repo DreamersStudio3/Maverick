@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/AI/Task/MVExecuteAttackTask.cpp"
 type: "code"
-community: "AI 공격 액션 후보 해석"
+community: "AI 공격 실행 로직"
 location: "L94"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI____
+  - community/AI___
 ---
 
 # ExecuteAttackEvaluateChooserActionRowHandle()
@@ -21,4 +21,4 @@ tags:
 - [[UChooserTable]] - `references` [EXTRACTED]
 - [[UObject_2]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI____
+#graphify/code #graphify/EXTRACTED #community/AI___

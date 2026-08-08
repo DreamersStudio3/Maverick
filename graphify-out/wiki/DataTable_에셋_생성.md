@@ -1,55 +1,49 @@
 # DataTable 에셋 생성
 
-> 64 nodes · cohesion 0.11
+> 21 nodes
 
 ## Key Concepts
 
 - **MVTableAssetGenerator.cpp** (47 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
 - **FString** (44 connections)
-- **UMVTableAssetGenerator::BuildAndSaveDataTable()** (17 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
-- **TArray** (16 connections)
-- **FMVTableManifestRow** (15 connections) — `Source/Maverick/Public/Tables/MVTableAssetGenerator.h`
-- **TableAssetGeneratorBuildGeneratedTableHash()** (10 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
-- **UMVTableAssetGenerator::BuildCsvOriginManifestRowsFromJsonFile()** (10 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
-- **UMVTableAssetGenerator::SaveManifest()** (10 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
-- **TryGetArrayField()** (9 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
-- **UMVTableAssetGenerator::ImportJsonFile()** (9 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
-- **TSharedPtr** (8 connections)
-- **JsonValueToGeneratorString()** (8 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
-- **TableAssetGeneratorReadStringKeySet()** (8 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
-- **TryGetObjectField()** (8 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
-- **FJsonValue** (8 connections) — `Source/Maverick/Public/Tables/MVTableAssetGenerator.h`
 - **GetJsonDir()** (7 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
-- **TableAssetGeneratorAddManifestRow()** (7 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
-- **TableAssetGeneratorBuildManifestHash()** (7 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
-- **TableAssetGeneratorCanReuseDataTable()** (7 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
-- **TableAssetGeneratorReadIntegerKeySet()** (7 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
-- **UMVTableAssetGenerator::BuildCsvOriginManifestRows()** (7 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
 - **UMVTableAssetGenerator::ImportAllJsonFiles()** (7 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
-- **CreateOrResetDataTable()** (6 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
+- **UMVTableAssetGenerator::BuildCsvOriginManifestRows()** (7 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
 - **GetConverterDir()** (6 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
-- **TableAssetGeneratorAppendJsonHashValue()** (6 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
-- *... and 39 more nodes in this community*
+- **ToTableAssetName()** (6 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
+- **TableAssetGeneratorSortManifestRows()** (6 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
+- **ToTablePackagePath()** (5 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
+- **TableAssetGeneratorIsDirectManagedJsonPath()** (5 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
+- **UMVTableAssetGenerator::RunCsvConverter()** (5 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
+- **UMVTableAssetGenerator::DeleteStaleGeneratedAssets()** (5 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
+- **GetMaverickDesignDir()** (4 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
+- **GetConverterExePath()** (4 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
+- **GetConverterScriptPath()** (4 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
+- **TableAssetGeneratorIsDirectManagedPackagePath()** (4 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
+- **TableAssetGeneratorIsDirectManagedObjectPath()** (4 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
+- **UMVTableAssetGenerator::GenerateDataTables()** (4 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
+- **UMVTableAssetGenerator::RefreshTableManifest()** (4 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
+- **SanitizeAssetName()** (3 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
+- **TableAssetGeneratorIsUnderPackageRoot()** (3 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
 
 ## Relationships
 
-- [런타임 테이블 조회](%EB%9F%B0%ED%83%80%EC%9E%84_%ED%85%8C%EC%9D%B4%EB%B8%94_%EC%A1%B0%ED%9A%8C.md) (4 shared connections)
+- [테이블 매니페스트 생성과 검증](%ED%85%8C%EC%9D%B4%EB%B8%94_%EB%A7%A4%EB%8B%88%ED%8E%98%EC%8A%A4%ED%8A%B8_%EC%83%9D%EC%84%B1%EA%B3%BC_%EA%B2%80%EC%A6%9D.md) (33 shared connections)
+- [테이블 에셋 매니페스트 관리](%ED%85%8C%EC%9D%B4%EB%B8%94_%EC%97%90%EC%85%8B_%EB%A7%A4%EB%8B%88%ED%8E%98%EC%8A%A4%ED%8A%B8_%EA%B4%80%EB%A6%AC.md) (18 shared connections)
+- [JSON 테이블 생성·해시](JSON_%ED%85%8C%EC%9D%B4%EB%B8%94_%EC%83%9D%EC%84%B1%C2%B7%ED%95%B4%EC%8B%9C.md) (12 shared connections)
+- [JSON 스키마 값 타입](JSON_%EC%8A%A4%ED%82%A4%EB%A7%88_%EA%B0%92_%ED%83%80%EC%9E%85.md) (4 shared connections)
 - [테이블 기반 UI·스탯 조회](%ED%85%8C%EC%9D%B4%EB%B8%94_%EA%B8%B0%EB%B0%98_UI%C2%B7%EC%8A%A4%ED%83%AF_%EC%A1%B0%ED%9A%8C.md) (2 shared connections)
-- [테이블 JSON 필드 제약](%ED%85%8C%EC%9D%B4%EB%B8%94_JSON_%ED%95%84%EB%93%9C_%EC%A0%9C%EC%95%BD.md) (1 shared connections)
-- [JSON 스키마 값 타입](JSON_%EC%8A%A4%ED%82%A4%EB%A7%88_%EA%B0%92_%ED%83%80%EC%9E%85.md) (1 shared connections)
-- [액션 행·몽타주 타입](%EC%95%A1%EC%85%98_%ED%96%89%C2%B7%EB%AA%BD%ED%83%80%EC%A3%BC_%ED%83%80%EC%9E%85.md) (1 shared connections)
+- [피격 반응 행 조회](%ED%94%BC%EA%B2%A9_%EB%B0%98%EC%9D%91_%ED%96%89_%EC%A1%B0%ED%9A%8C.md) (1 shared connections)
 - [테이블 Row 공통 타입](%ED%85%8C%EC%9D%B4%EB%B8%94_Row_%EA%B3%B5%ED%86%B5_%ED%83%80%EC%9E%85.md) (1 shared connections)
 - [테이블 JSON 스키마](%ED%85%8C%EC%9D%B4%EB%B8%94_JSON_%EC%8A%A4%ED%82%A4%EB%A7%88.md) (1 shared connections)
 
 ## Source Files
 
-- `MaverickDesign/Schema/TableData.schema.json`
 - `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
-- `Source/Maverick/Public/Tables/MVTableAssetGenerator.h`
 
 ## Audit Trail
 
-- EXTRACTED: 451 (100%)
+- EXTRACTED: 184 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

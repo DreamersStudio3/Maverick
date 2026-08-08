@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.08
 members: 25
 ---
 
 # 스킬 데이터와 비용
 
-**Cohesion:** 0.08 - loosely connected
 **Members:** 25 nodes
 
 ## Members
@@ -47,12 +45,12 @@ SORT file.name ASC
 - 4 edges to [[_COMMUNITY_전투 액션 매핑]]
 - 2 edges to [[_COMMUNITY_전투 액션 행 해석]]
 - 1 edge to [[_COMMUNITY_어빌리티 피격 Launch]]
-- 1 edge to [[_COMMUNITY_어빌리티 기본 계약]]
+- 1 edge to [[_COMMUNITY_피격 시스템 공용 타입]]
 - 1 edge to [[_COMMUNITY_전투 액션 Chooser 입력]]
 - 1 edge to [[_COMMUNITY_전투 액션 런타임 상태]]
 - 1 edge to [[_COMMUNITY_스킬 체인 런타임]]
 - 1 edge to [[_COMMUNITY_피니셔 실행과 워핑]]
-- 1 edge to [[_COMMUNITY_액션 행·몽타주 타입]]
+- 1 edge to [[_COMMUNITY_피격 반응 행 조회]]
 
 ## Top bridge nodes
 - [[FMVSkillDataTableColumn]] - degree 31, connects to 5 communities

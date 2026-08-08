@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVHitReactionComponent.cpp"
 type: "code"
-community: "피격 반응 Row 조회"
+community: "피격·회복 액션 행 조회"
 location: "L1977"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__Row_
+  - community/___
 ---
 
 # UMVHitReactionComponent::FindBaseActionRow()
@@ -17,4 +17,4 @@ tags:
 - [[MVHitReactionBuildAvailableRowNameLog()]] - `calls` [EXTRACTED]
 - [[MVHitReactionComponent.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__Row_
+#graphify/code #graphify/EXTRACTED #community/___

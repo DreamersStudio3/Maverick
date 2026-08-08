@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.10
 members: 36
 ---
 
 # 가중 대상 탐색 컨텍스트
 
-**Cohesion:** 0.10 - loosely connected
 **Members:** 36 nodes
 
 ## Members
@@ -66,5 +64,5 @@ SORT file.name ASC
 - [[WeightedTargetHandler.cpp]] - degree 26, connects to 4 communities
 - [[UWeightedTargetHandlerCheckTargetState_Implementation()]] - degree 8, connects to 2 communities
 - [[UWeightedTargetHandlerPerformPrimarySamplingPass()]] - degree 8, connects to 2 communities
-- [[UWeightedTargetHandlerCreateFindTargetContext()]] - degree 7, connects to 2 communities
 - [[UWeightedTargetHandlerPerformSecondarySamplingPass()]] - degree 7, connects to 2 communities
+- [[UWeightedTargetHandlerCreateFindTargetContext()]] - degree 7, connects to 2 communities

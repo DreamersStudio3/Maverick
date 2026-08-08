@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.40
 members: 5
 ---
 
 # 타깃 미리보기 확장
 
-**Cohesion:** 0.40 - moderately connected
 **Members:** 5 nodes
 
 ## Members

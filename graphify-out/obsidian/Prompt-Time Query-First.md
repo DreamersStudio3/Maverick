@@ -12,5 +12,6 @@ tags:
 
 ## Connections
 - [[Graphify Generated Read Models]] - `references` [EXTRACTED]
+- [[Information Hierarchy]] - `implements` [EXTRACTED]
 
 #graphify/rationale #graphify/EXTRACTED #community/Graphify_

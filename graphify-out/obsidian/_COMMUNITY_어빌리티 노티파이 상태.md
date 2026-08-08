@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.67
 members: 3
 ---
 
 # 어빌리티 노티파이 상태
 
-**Cohesion:** 0.67 - moderately connected
 **Members:** 3 nodes
 
 ## Members

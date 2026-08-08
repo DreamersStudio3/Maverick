@@ -1,7 +1,7 @@
 ---
 source_file: "Source/Maverick/Character/PC/Dodge/MVPlayerDodge.cpp"
 type: "code"
-community: "회피 방향 벡터 변환"
+community: "회피 입력 방향 구성"
 location: "L243"
 tags:
   - graphify/code

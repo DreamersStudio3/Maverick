@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h"
 type: "code"
-community: "적 회피 StateTree 선언"
+community: "적 회피 액션 태스크"
 location: "L92"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__StateTree_
+  - community/___
 ---
 
 # FMVEnemyDodgeActionTask
@@ -19,4 +19,4 @@ tags:
 - [[MVEnemyDodgeActionTask.h]] - `contains` [EXTRACTED]
 - [[Tick_6]] - `defines` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__StateTree_
+#graphify/code #graphify/EXTRACTED #community/___

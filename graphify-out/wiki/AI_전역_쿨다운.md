@@ -1,6 +1,6 @@
 # AI 전역 쿨다운
 
-> 53 nodes · cohesion 0.05
+> 53 nodes
 
 ## Key Concepts
 
@@ -10,23 +10,23 @@
 - **EnterState** (8 connections) — `Source/Maverick/AI/Task/MVGlobalCoolTimeTask.h`
 - **MVActionCooldownComponent.cpp** (7 connections) — `Source/Maverick/AI/MVActionCooldownComponent.cpp`
 - **Tick** (7 connections) — `Source/Maverick/AI/Task/MVGlobalCoolTimeTask.h`
-- **FMVGlobalCoolTimeTask** (6 connections) — `Source/Maverick/AI/Task/MVGlobalCoolTimeTask.h`
 - **ResolveCooldownOwner()** (6 connections) — `Source/Maverick/AI/Task/MVGlobalCoolTimeTask.cpp`
+- **FMVGlobalCoolTimeTask** (6 connections) — `Source/Maverick/AI/Task/MVGlobalCoolTimeTask.h`
 - **UMVActionCooldownComponent()** (5 connections) — `Source/Maverick/AI/MVActionCooldownComponent.h`
 - **EnsureCooldownComponent()** (5 connections) — `Source/Maverick/AI/Task/MVGlobalCoolTimeTask.cpp`
 - **FName** (4 connections)
 - **FMVActionCooldownState** (4 connections) — `Source/Maverick/AI/MVActionCooldownComponent.h`
 - **FStateTreeExecutionContext** (4 connections)
-- **ExitState** (4 connections) — `Source/Maverick/AI/Task/MVGlobalCoolTimeTask.h`
 - **UpdateQueryOutputs()** (4 connections) — `Source/Maverick/AI/Task/MVGlobalCoolTimeTask.cpp`
-- **MVActionCooldownComponent.h** (3 connections) — `Source/Maverick/AI/MVActionCooldownComponent.h`
+- **ExitState** (4 connections) — `Source/Maverick/AI/Task/MVGlobalCoolTimeTask.h`
 - **UMVActionCooldownComponent::ConfigureCooldowns()** (3 connections) — `Source/Maverick/AI/MVActionCooldownComponent.cpp`
 - **UMVActionCooldownComponent::GetReadyActionIds()** (3 connections) — `Source/Maverick/AI/MVActionCooldownComponent.cpp`
+- **MVActionCooldownComponent.h** (3 connections) — `Source/Maverick/AI/MVActionCooldownComponent.h`
 - **MVGlobalCoolTimeTask.h** (3 connections) — `Source/Maverick/AI/Task/MVGlobalCoolTimeTask.h`
 - **TArray** (2 connections)
-- **UMVActionCooldownComponent::GetRemainingTime()** (2 connections) — `Source/Maverick/AI/MVActionCooldownComponent.cpp`
-- **UMVActionCooldownComponent::IsCooldownReady()** (2 connections) — `Source/Maverick/AI/MVActionCooldownComponent.cpp`
 - **UMVActionCooldownComponent::StartCooldown()** (2 connections) — `Source/Maverick/AI/MVActionCooldownComponent.cpp`
+- **UMVActionCooldownComponent::IsCooldownReady()** (2 connections) — `Source/Maverick/AI/MVActionCooldownComponent.cpp`
+- **UMVActionCooldownComponent::GetRemainingTime()** (2 connections) — `Source/Maverick/AI/MVActionCooldownComponent.cpp`
 - **APawn** (2 connections)
 - **EStateTreeRunStatus** (2 connections)
 - *... and 28 more nodes in this community*

@@ -1,13 +1,11 @@
 ---
 type: community
-cohesion: 0.14
-members: 32
+members: 35
 ---
 
 # AI 공격 실행 로직
 
-**Cohesion:** 0.14 - loosely connected
-**Members:** 32 nodes
+**Members:** 35 nodes
 
 ## Members
 - [[dot-GetInstanceDataType()_12]] - code - Source/Maverick/AI/Task/MVExecuteAttackTask.h
@@ -16,21 +14,25 @@ members: 32
 - [[EStateTreeRunStatus_6]] - code
 - [[EnterState_6]] - code - Source/Maverick/AI/Task/MVExecuteAttackTask.h
 - [[EnterState_7]] - code - Source/Maverick/AI/Task/MVExecuteAttackTask.h
-- [[ExecuteAttackActionTableNameFromDataTable()]] - code - Source/Maverick/AI/Task/MVExecuteAttackTask.cpp
 - [[ExecuteAttackCanSelectCandidate()]] - code - Source/Maverick/AI/Task/MVExecuteAttackTask.cpp
+- [[ExecuteAttackEvaluateChooserActionRowHandle()]] - code - Source/Maverick/AI/Task/MVExecuteAttackTask.cpp
 - [[ExecuteAttackIsStartedActionRunning()]] - code - Source/Maverick/AI/Task/MVExecuteAttackTask.cpp
+- [[ExecuteAttackMakeCombatChooserInput()]] - code - Source/Maverick/AI/Task/MVExecuteAttackTask.cpp
+- [[ExecuteAttackResolveActionCandidate()]] - code - Source/Maverick/AI/Task/MVExecuteAttackTask.cpp
 - [[ExecuteAttackResolveActionRequest()]] - code - Source/Maverick/AI/Task/MVExecuteAttackTask.cpp
+- [[ExecuteAttackResolveActionTypeTag()]] - code - Source/Maverick/AI/Task/MVExecuteAttackTask.cpp
 - [[ExecuteAttackResolveOwner()]] - code - Source/Maverick/AI/Task/MVExecuteAttackTask.cpp
 - [[ExecuteAttackSelectCandidate()]] - code - Source/Maverick/AI/Task/MVExecuteAttackTask.cpp
 - [[ExecuteAttackStartCooldown()]] - code - Source/Maverick/AI/Task/MVExecuteAttackTask.cpp
-- [[ExecuteAttackTryStartAction()]] - code - Source/Maverick/AI/Task/MVExecuteAttackTask.cpp
 - [[ExitState_4]] - code - Source/Maverick/AI/Task/MVExecuteAttackTask.h
 - [[ExitState_5]] - code - Source/Maverick/AI/Task/MVExecuteAttackTask.h
+- [[FGameplayTag]] - code
+- [[FMVActionRequest()]] - code - Source/Maverick/Public/Tables/MVActionTableTypes.h
 - [[FMVExecuteFixedAttackTask]] - code - Source/Maverick/AI/Task/MVExecuteAttackTask.h
 - [[FMVExecuteFixedAttackTaskFMVExecuteFixedAttackTask()]] - code - Source/Maverick/AI/Task/MVExecuteAttackTask.cpp
 - [[FMVSelectAndExecuteAttackTask]] - code - Source/Maverick/AI/Task/MVExecuteAttackTask.h
 - [[FMVSelectAndExecuteAttackTaskFMVSelectAndExecuteAttackTask()]] - code - Source/Maverick/AI/Task/MVExecuteAttackTask.cpp
-- [[FName_23]] - code
+- [[FSoftObjectPath_1]] - code
 - [[FStateTreeExecutionContext_12]] - code
 - [[FStateTreeTaskCommonBase_6]] - code
 - [[FStateTreeTransitionResult_6]] - code
@@ -39,8 +41,7 @@ members: 32
 - [[TObjectPtr_16]] - code
 - [[Tick_7]] - code - Source/Maverick/AI/Task/MVExecuteAttackTask.h
 - [[Tick_8]] - code - Source/Maverick/AI/Task/MVExecuteAttackTask.h
-- [[UDataTable]] - code
-- [[UMVActionComponent()]] - code - Source/Maverick/Components/MVActionComponent.h
+- [[UObject_2]] - code
 - [[UStruct_12]] - code
 
 ## Live Query (requires Dataview plugin)
@@ -51,19 +52,18 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 8 edges to [[_COMMUNITY_AI 공격 액션 후보 해석]]
-- 3 edges to [[_COMMUNITY_AI 전투 액션 메타데이터]]
-- 2 edges to [[_COMMUNITY_AI 전투 의사결정 로직]]
+- 7 edges to [[_COMMUNITY_AI 전투 액션 메타데이터]]
+- 6 edges to [[_COMMUNITY_AI 공격 액션 실행]]
+- 4 edges to [[_COMMUNITY_AI 공격 실행 데이터]]
+- 3 edges to [[_COMMUNITY_AI 전투 의사결정 로직]]
 - 2 edges to [[_COMMUNITY_AI 전투 컨텍스트]]
-- 2 edges to [[_COMMUNITY_AI 공격 실행 데이터]]
+- 2 edges to [[_COMMUNITY_전투 액션 Chooser 입력]]
 - 1 edge to [[_COMMUNITY_무기 장착 시각화]]
-- 1 edge to [[_COMMUNITY_액션 전환 입력 관리]]
-- 1 edge to [[_COMMUNITY_액션 행·몽타주 타입]]
-- 1 edge to [[_COMMUNITY_피격 회복 방향 추적]]
+- 1 edge to [[_COMMUNITY_피격 시스템 공용 타입]]
 
 ## Top bridge nodes
-- [[UMVActionComponent()]] - degree 5, connects to 3 communities
+- [[FMVActionRequest()]] - degree 10, connects to 4 communities
 - [[MVExecuteAttackTask.cpp]] - degree 21, connects to 2 communities
 - [[EnterState_7]] - degree 12, connects to 2 communities
+- [[ExecuteAttackEvaluateChooserActionRowHandle()]] - degree 8, connects to 2 communities
 - [[ExecuteAttackSelectCandidate()]] - degree 6, connects to 2 communities
-- [[ExecuteAttackCanSelectCandidate()]] - degree 5, connects to 2 communities

@@ -1,7 +1,7 @@
 ---
 source_file: "Source/Maverick/Public/Tables/MVHealingPotionTableTypes.h"
 type: "code"
-community: "회복 물약 기본값 해석"
+community: "회복 물약 런타임 상태"
 location: "L1"
 tags:
   - graphify/code

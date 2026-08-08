@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "스탯 회복 정지 Notify"
+community: "회복 스탯 일시정지 노티파이"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___Notify
+  - community/___
 ---
 
 # USkeletalMeshComponent
@@ -15,4 +15,4 @@ tags:
 - [[UMVAnimNotifyState_PauseRecoverableStatRecoveryNotifyBegin()]] - `references` [EXTRACTED]
 - [[UMVAnimNotifyState_PauseRecoverableStatRecoveryNotifyEnd()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___Notify
+#graphify/code #graphify/EXTRACTED #community/___

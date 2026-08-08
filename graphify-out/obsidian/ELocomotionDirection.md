@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "공통 캐릭터 생명주기"
+community: "8방향 이동 방향 갱신"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/8___
 ---
 
 # ELocomotionDirection
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[ResolveCharacterEightWayDirection()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/8___

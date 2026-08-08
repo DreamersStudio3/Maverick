@@ -1,7 +1,7 @@
 ---
 source_file: "Source/Maverick/Combat/MVHitResolverSubsystem.h"
 type: "code"
-community: "피격 판정 서브시스템 선언"
+community: "피격 시스템 공용 타입"
 location: "L8"
 tags:
   - graphify/code

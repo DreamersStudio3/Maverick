@@ -1,35 +1,23 @@
 ---
 type: community
-cohesion: 0.07
-members: 34
+members: 24
 ---
 
 # Maverick 아키텍처 정본
 
-**Cohesion:** 0.07 - loosely connected
-**Members:** 34 nodes
+**Members:** 24 nodes
 
 ## Members
 - [[AI StateTree]] - document - docs/wiki/Architecture.md
 - [[Action Execution Pipeline]] - concept - docs/wiki/Architecture.md
-- [[Actual Codebase First]] - rationale - AGENTS.md
 - [[Architecture]] - document - docs/wiki/Architecture.md
-- [[CharacterBase Responsibility Boundary]] - rationale - AGENTS.md
-- [[CharacterBase Responsibility Boundary_1]] - rationale - docs/wiki/Architecture.md
-- [[Document and Knowledge Graph Operations]] - rationale - POLICY.md
+- [[CharacterBase Responsibility Boundary]] - rationale - docs/wiki/Architecture.md
 - [[Graphify Evidence Boundary]] - rationale - docs/wiki/Architecture.md
-- [[Graphify Internal Wiki Workflow]] - rationale - AGENTS.md
-- [[Graphify Post-Commit and Pre-Push Workflow]] - rationale - POLICY.md
 - [[Hit to Respawn Pipeline]] - concept - docs/wiki/Architecture.md
 - [[Hit, Stat, HitReaction]] - document - docs/wiki/Architecture.md
-- [[Korean Conventional Commits]] - concept - POLICY.md
 - [[LockOnTarget 경계]] - document - docs/wiki/Architecture.md
-- [[Maverick_1]] - concept - AGENTS.md
 - [[Maverick Architecture]] - document - docs/wiki/Architecture.md
 - [[Maverick Runtime Module]] - concept - docs/wiki/Architecture.md
-- [[TODO Work Tracking]] - rationale - AGENTS.md
-- [[Trace-First Debugging]] - rationale - AGENTS.md
-- [[Trace-First Debugging Workflow]] - rationale - POLICY.md
 - [[UI와 CommonUI]] - document - docs/wiki/Architecture.md
 - [[갱신 조건]] - document - docs/wiki/Architecture.md
 - [[관련 문서]] - document - docs/wiki/Architecture.md

@@ -14,7 +14,6 @@ tags:
 ## Connections
 - [[Architecture]] - `contains` [EXTRACTED]
 - [[Graphify Evidence Boundary]] - `rationale_for` [EXTRACTED]
-- [[Graphify Internal Wiki Workflow]] - `references` [EXTRACTED]
 - [[Maverick Runtime Module]] - `conceptually_related_to` [EXTRACTED]
 - [[갱신 조건]] - `contains` [EXTRACTED]
 - [[관련 문서]] - `contains` [EXTRACTED]

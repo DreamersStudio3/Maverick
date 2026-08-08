@@ -1,7 +1,7 @@
 ---
 source_file: "MaverickDesign/Schema/TableData.schema.json"
 type: "code"
-community: "테이블 JSON 필드 제약"
+community: "테이블 JSON 스키마 루트"
 location: "L26"
 tags:
   - graphify/code

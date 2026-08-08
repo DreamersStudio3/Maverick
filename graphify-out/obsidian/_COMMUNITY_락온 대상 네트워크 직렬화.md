@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.16
 members: 15
 ---
 
 # 락온 대상 네트워크 직렬화
 
-**Cohesion:** 0.16 - loosely connected
 **Members:** 15 nodes
 
 ## Members

@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "사망 액션 포즈 해석"
+community: "사망 액션 행 이름 해석"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/____
 ---
 
 # FString
@@ -15,4 +15,4 @@ tags:
 - [[UMVDeathComponentDeathActionFacingToTableToken()]] - `references` [EXTRACTED]
 - [[UMVDeathComponentDeathActionPoseToTableToken()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/____

@@ -1,23 +1,23 @@
 # AI 전역 감지 갱신
 
-> 16 nodes · cohesion 0.24
+> 16 nodes
 
 ## Key Concepts
 
 - **MVGlobalSensingTask.cpp** (18 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.cpp`
 - **UpdateGlobalSensingSnapshot()** (14 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.cpp`
-- **Tick** (5 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
 - **GlobalSensingEnsureCooldownComponent()** (5 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.cpp`
+- **Tick** (5 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
 - **GlobalSensingTraceClear()** (4 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.cpp`
 - **UpdateGlobalSensingCooldownContext()** (4 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.cpp`
 - **AActor** (3 connections)
-- **EStateTreeRunStatus** (3 connections)
+- **GlobalSensingLineOfSightClear()** (3 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.cpp`
+- **GlobalSensingIsActorDead()** (3 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.cpp`
 - **GlobalSensingClearControllerTarget()** (3 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.cpp`
 - **GlobalSensingClearTargetSnapshot()** (3 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.cpp`
-- **GlobalSensingIsActorDead()** (3 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.cpp`
-- **GlobalSensingLineOfSightClear()** (3 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.cpp`
-- **UpdateGlobalSensingCombatContext()** (3 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.cpp`
 - **UpdateGlobalSensingLifeContext()** (3 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.cpp`
+- **UpdateGlobalSensingCombatContext()** (3 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.cpp`
+- **EStateTreeRunStatus** (3 connections)
 - **APawn** (2 connections)
 - **FMVGlobalSensingTask::FMVGlobalSensingTask()** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.cpp`
 

@@ -1,7 +1,7 @@
 ---
 source_file: "Source/Maverick/Components/MVHitReactionComponent.cpp"
 type: "code"
-community: "피격 회복 방향 추적"
+community: "피격 반응 행 조회"
 location: "L1903"
 tags:
   - graphify/code

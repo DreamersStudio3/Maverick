@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.09
 members: 35
 ---
 
 # 액션 Row 몽타주 해석
 
-**Cohesion:** 0.09 - loosely connected
 **Members:** 35 nodes
 
 ## Members

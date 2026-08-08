@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.13
 members: 15
 ---
 
 # 스킬 슬롯 런타임 표시
 
-**Cohesion:** 0.13 - loosely connected
 **Members:** 15 nodes
 
 ## Members

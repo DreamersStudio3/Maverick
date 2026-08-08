@@ -11,7 +11,7 @@ tags:
 # Action Execution Pipeline
 
 ## Connections
-- [[CharacterBase Responsibility Boundary_1]] - `rationale_for` [EXTRACTED]
+- [[CharacterBase Responsibility Boundary]] - `rationale_for` [EXTRACTED]
 - [[Hit to Respawn Pipeline]] - `conceptually_related_to` [AMBIGUOUS]
 
 #graphify/concept #graphify/EXTRACTED #community/Maverick__

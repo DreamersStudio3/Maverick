@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.22
 members: 10
 ---
 
 # 필드 전환 요청 식별
 
-**Cohesion:** 0.22 - loosely connected
 **Members:** 10 nodes
 
 ## Members
@@ -29,12 +27,11 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 6 edges to [[_COMMUNITY_필드 전환 관리]]
-- 1 edge to [[_COMMUNITY_필드 전환 요청 실행]]
+- 7 edges to [[_COMMUNITY_필드 전환 관리]]
 
 ## Top bridge nodes
-- [[UMVFieldTransitionSubsystemResolveTransitionResetFieldId()]] - degree 3, connects to 2 communities
 - [[MVFieldTransitionActionTableNameFromDataTable()]] - degree 4, connects to 1 community
-- [[UMVFieldTransitionSubsystemHandlePreTransitionActionEnded()]] - degree 3, connects to 1 community
-- [[UMVFieldTransitionSubsystemSetLastCheckpointFromActor()]] - degree 3, connects to 1 community
 - [[UMVFieldTransitionSubsystemStartCheckpointTravelToTransform()]] - degree 3, connects to 1 community
+- [[UMVFieldTransitionSubsystemSetLastCheckpointFromActor()]] - degree 3, connects to 1 community
+- [[UMVFieldTransitionSubsystemHandlePreTransitionActionEnded()]] - degree 3, connects to 1 community
+- [[UMVFieldTransitionSubsystemResolveTransitionResetFieldId()]] - degree 3, connects to 1 community

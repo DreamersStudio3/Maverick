@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.06
 members: 36
 ---
 
 # UI 서브시스템 팝업 관리
 
-**Cohesion:** 0.06 - loosely connected
 **Members:** 36 nodes
 
 ## Members
@@ -55,10 +53,10 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 9 edges to [[_COMMUNITY_대화창 표시 수명주기]]
+- 9 edges to [[_COMMUNITY_대화창 표시 대기열 수명주기]]
 - 8 edges to [[_COMMUNITY_로딩 UI 테스트 명령]]
 - 7 edges to [[_COMMUNITY_UI 창·팝업 스택 생성]]
-- 2 edges to [[_COMMUNITY_캐릭터 도메인 연동]]
+- 2 edges to [[_COMMUNITY_어빌리티 피격 Launch]]
 - 2 edges to [[_COMMUNITY_테이블 Row 공통 타입]]
 - 2 edges to [[_COMMUNITY_UI 서브시스템 공용 선언]]
 - 2 edges to [[_COMMUNITY_테이블 기반 UI·스탯 조회]]

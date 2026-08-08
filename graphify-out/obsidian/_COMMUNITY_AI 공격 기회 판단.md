@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.11
 members: 26
 ---
 
 # AI 공격 기회 판단
 
-**Cohesion:** 0.11 - loosely connected
 **Members:** 26 nodes
 
 ## Members

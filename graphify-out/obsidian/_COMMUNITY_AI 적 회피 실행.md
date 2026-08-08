@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.21
 members: 17
 ---
 
 # AI 적 회피 실행
 
-**Cohesion:** 0.21 - loosely connected
 **Members:** 17 nodes
 
 ## Members
@@ -37,15 +35,15 @@ SORT file.name ASC
 
 ## Connections to other communities
 - 3 edges to [[_COMMUNITY_AI 적 회피 설정]]
-- 3 edges to [[_COMMUNITY_적 회피 StateTree 선언]]
-- 2 edges to [[_COMMUNITY_AI 회피 요청 타입]]
+- 3 edges to [[_COMMUNITY_적 회피 액션 태스크]]
+- 2 edges to [[_COMMUNITY_AI 회피 방향 결정]]
 - 2 edges to [[_COMMUNITY_회피 입력 컨텍스트]]
 - 1 edge to [[_COMMUNITY_전투 액션 Chooser 입력]]
-- 1 edge to [[_COMMUNITY_플레이어 회피 방향 해석]]
+- 1 edge to [[_COMMUNITY_회피·질주 액션 데이터]]
 
 ## Top bridge nodes
 - [[EnemyDodgeActionTaskEvaluateChooser()]] - degree 6, connects to 3 communities
 - [[EnterState_5]] - degree 9, connects to 2 communities
 - [[EnemyDodgeActionTaskResolveActionRowHandle()]] - degree 6, connects to 2 communities
 - [[MVEnemyDodgeActionTask.cpp]] - degree 10, connects to 1 community
-- [[ExitState_3]] - degree 5, connects to 1 community
+- [[Tick_6]] - degree 5, connects to 1 community

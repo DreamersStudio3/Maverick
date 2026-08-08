@@ -1,13 +1,11 @@
 ---
 type: community
-cohesion: 0.17
-members: 13
+members: 12
 ---
 
 # LockOnTarget 모듈·타깃 핸들러
 
-**Cohesion:** 0.17 - loosely connected
-**Members:** 13 nodes
+**Members:** 12 nodes
 
 ## Members
 - [[dot-IsAvailable()]] - code - Plugins/LockOnTarget/Source/LockOnTarget/LockOnTarget.h
@@ -20,7 +18,6 @@ members: 13
 - [[TargetHandlerBase.cpp]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetHandlers/TargetHandlerBase.cpp
 - [[UTargetComponent_10]] - code
 - [[UTargetHandlerBaseCheckTargetState_Implementation()]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetHandlers/TargetHandlerBase.cpp
-- [[UTargetHandlerBaseHandleTargetException_Implementation()]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetHandlers/TargetHandlerBase.cpp
 - [[UTargetHandlerBaseIsTargetValid()]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetHandlers/TargetHandlerBase.cpp
 - [[UTargetHandlerBaseUTargetHandlerBase()]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetHandlers/TargetHandlerBase.cpp
 
@@ -32,7 +29,7 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 3 edges to [[_COMMUNITY_락온 대상 컴포넌트]]
+- 2 edges to [[_COMMUNITY_락온 대상 컴포넌트]]
 - 1 edge to [[_COMMUNITY_락온 컨트롤러 회전 확장]]
 - 1 edge to [[_COMMUNITY_락온 대상 미리보기 확장]]
 - 1 edge to [[_COMMUNITY_락온 대상 위젯 확장]]
@@ -43,6 +40,5 @@ SORT file.name ASC
 
 ## Top bridge nodes
 - [[LockOnTargetDefines.h]] - degree 8, connects to 6 communities
-- [[UTargetHandlerBaseHandleTargetException_Implementation()]] - degree 3, connects to 2 communities
-- [[TargetHandlerBase.cpp]] - degree 6, connects to 1 community
+- [[TargetHandlerBase.cpp]] - degree 6, connects to 2 communities
 - [[UTargetHandlerBaseCheckTargetState_Implementation()]] - degree 2, connects to 1 community

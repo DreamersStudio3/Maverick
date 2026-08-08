@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "사망 액션 포즈 해석"
+community: "캐릭터 사망 표현"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/__
 ---
 
 # EMVDeathActionPose
@@ -17,4 +17,4 @@ tags:
 - [[UMVDeathComponentResolveDeathActionPose()]] - `references` [EXTRACTED]
 - [[UMVDeathComponentResolveLandingDeathActionPose()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/__

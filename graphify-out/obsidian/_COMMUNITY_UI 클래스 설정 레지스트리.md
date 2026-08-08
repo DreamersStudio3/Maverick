@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.25
 members: 8
 ---
 
 # UI 클래스 설정 레지스트리
 
-**Cohesion:** 0.25 - loosely connected
 **Members:** 8 nodes
 
 ## Members

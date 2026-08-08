@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.08
 members: 25
 ---
 
 # 플레이어 상호작용 감지
 
-**Cohesion:** 0.08 - loosely connected
 **Members:** 25 nodes
 
 ## Members

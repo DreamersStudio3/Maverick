@@ -1,6 +1,6 @@
 # AI 기본 공격 태스크
 
-> 14 nodes · cohesion 0.15
+> 14 nodes
 
 ## Key Concepts
 
@@ -8,16 +8,16 @@
 - **MVAttackTask.h** (5 connections) — `Source/Maverick/AI/Task/MVAttackTask.h`
 - **MVAttackDirection.h** (4 connections) — `Source/Maverick/AI/Enum/MVAttackDirection.h`
 - **AMVEnemy** (2 connections) — `Source/Maverick/AI/Task/MVAttackTask.h`
-- **AttackDirection** (1 connections) — `Source/Maverick/AI/Task/MVAttackTask.h`
-- **AttackInstanceId** (1 connections) — `Source/Maverick/AI/Task/MVAttackTask.h`
-- **AttackMontageEndedHandle** (1 connections) — `Source/Maverick/AI/Task/MVAttackTask.h`
-- **Enemy** (1 connections) — `Source/Maverick/AI/Task/MVAttackTask.h`
-- **Pawn** (1 connections) — `Source/Maverick/AI/Task/MVAttackTask.h`
-- **APawn** (1 connections)
-- **EMVAttackDirection** (1 connections)
-- **FDelegateHandle** (1 connections)
-- **int32** (1 connections)
 - **TObjectPtr** (1 connections)
+- **APawn** (1 connections)
+- **Pawn** (1 connections) — `Source/Maverick/AI/Task/MVAttackTask.h`
+- **Enemy** (1 connections) — `Source/Maverick/AI/Task/MVAttackTask.h`
+- **EMVAttackDirection** (1 connections)
+- **AttackDirection** (1 connections) — `Source/Maverick/AI/Task/MVAttackTask.h`
+- **int32** (1 connections)
+- **AttackInstanceId** (1 connections) — `Source/Maverick/AI/Task/MVAttackTask.h`
+- **FDelegateHandle** (1 connections)
+- **AttackMontageEndedHandle** (1 connections) — `Source/Maverick/AI/Task/MVAttackTask.h`
 
 ## Relationships
 

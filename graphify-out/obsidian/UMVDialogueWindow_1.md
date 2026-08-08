@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "대화창 표시 수명주기"
+community: "대화창 표시 대기열 수명주기"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/___
 ---
 
 # UMVDialogueWindow
@@ -21,4 +21,4 @@ tags:
 - [[UMVUISubsystemShowDialogueWindowTextWithTiming()]] - `references` [EXTRACTED]
 - [[UMVUISubsystemTrackActiveDialogueWindow()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/___

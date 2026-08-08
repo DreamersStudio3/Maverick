@@ -1,16 +1,15 @@
 ---
 type: community
-cohesion: 0.09
-members: 23
+members: 27
 ---
 
 # 입력 차단 회복 취소
 
-**Cohesion:** 0.09 - loosely connected
-**Members:** 23 nodes
+**Members:** 27 nodes
 
 ## Members
 - [[EMVRecoveryEscapeCancelTrigger]] - code
+- [[FVector_15]] - code
 - [[MVInputManagerComponent.cpp]] - code - Source/Maverick/Components/MVInputManagerComponent.cpp
 - [[UMVInputManagerComponentBeginMovementInputBlock()]] - code - Source/Maverick/Components/MVInputManagerComponent.cpp
 - [[UMVInputManagerComponentBeginPlay()]] - code - Source/Maverick/Components/MVInputManagerComponent.cpp
@@ -21,10 +20,12 @@ members: 23
 - [[UMVInputManagerComponentCompactActionInputHandlers()]] - code - Source/Maverick/Components/MVInputManagerComponent.cpp
 - [[UMVInputManagerComponentEndMovementInputBlock()]] - code - Source/Maverick/Components/MVInputManagerComponent.cpp
 - [[UMVInputManagerComponentEndRecoveryEscapeWindow()]] - code - Source/Maverick/Components/MVInputManagerComponent.cpp
+- [[UMVInputManagerComponentHandleOwnerMovementInput()]] - code - Source/Maverick/Components/MVInputManagerComponent.cpp
 - [[UMVInputManagerComponentHasRecentRecoveryMovementInput()]] - code - Source/Maverick/Components/MVInputManagerComponent.cpp
 - [[UMVInputManagerComponentIsMovementInputBlocked()]] - code - Source/Maverick/Components/MVInputManagerComponent.cpp
 - [[UMVInputManagerComponentIsRecoveryEscapeWindowOpen()]] - code - Source/Maverick/Components/MVInputManagerComponent.cpp
 - [[UMVInputManagerComponentResetNotifyState()]] - code - Source/Maverick/Components/MVInputManagerComponent.cpp
+- [[UMVInputManagerComponentResolveControllerSpaceInputFromWorldDirection()]] - code - Source/Maverick/Components/MVInputManagerComponent.cpp
 - [[UMVInputManagerComponentSortActionInputHandlers()]] - code - Source/Maverick/Components/MVInputManagerComponent.cpp
 - [[UMVInputManagerComponentTryCancelActiveActionForRecoveryEscape()]] - code - Source/Maverick/Components/MVInputManagerComponent.cpp
 - [[UMVInputManagerComponentTryCancelActiveActionToLocomotionForRecoveryEscape()]] - code - Source/Maverick/Components/MVInputManagerComponent.cpp
@@ -33,6 +34,7 @@ members: 23
 - [[UMVInputManagerComponentTryRouteBufferedHoldActionInput()]] - code - Source/Maverick/Components/MVInputManagerComponent.cpp
 - [[UMVInputManagerComponentTryRouteRecoveryWindowOpened()]] - code - Source/Maverick/Components/MVInputManagerComponent.cpp
 - [[UMVInputManagerComponentUMVInputManagerComponent()]] - code - Source/Maverick/Components/MVInputManagerComponent.cpp
+- [[UMVInputManagerComponentUpdateActionMovementInput()]] - code - Source/Maverick/Components/MVInputManagerComponent.cpp
 
 ## Live Query (requires Dataview plugin)
 
@@ -42,11 +44,10 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 10 edges to [[_COMMUNITY_액션 입력 버퍼링]]
-- 3 edges to [[_COMMUNITY_컨트롤러 기준 이동 입력]]
+- 12 edges to [[_COMMUNITY_액션 입력 버퍼링]]
 - 2 edges to [[_COMMUNITY_액션 입력 핸들러 등록]]
-- 1 edge to [[_COMMUNITY_액션 입력 방향 해석]]
-- 1 edge to [[_COMMUNITY_플레이어 회피 입력 계약]]
+- 1 edge to [[_COMMUNITY_액션 입력 처리 계약]]
 
 ## Top bridge nodes
-- [[MVInputManagerComponent.cpp]] - degree 38, connects to 5 communities
+- [[MVInputManagerComponent.cpp]] - degree 38, connects to 3 communities
+- [[UMVInputManagerComponentResolveControllerSpaceInputFromWorldDirection()]] - degree 3, connects to 1 community

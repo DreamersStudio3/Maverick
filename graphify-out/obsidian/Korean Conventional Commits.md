@@ -1,16 +1,18 @@
 ---
 source_file: "POLICY.md"
 type: "concept"
-community: "Maverick 아키텍처 정본"
+community: "프로젝트 작업 정책"
 tags:
   - graphify/concept
   - graphify/EXTRACTED
-  - community/Maverick__
+  - community/__
 ---
 
 # Korean Conventional Commits
 
 ## Connections
-- [[Maverick_1]] - `conceptually_related_to` [EXTRACTED]
+- [[Commit Message Structure]] - `implements` [EXTRACTED]
+- [[Korean Commit Type Mapping]] - `implements` [EXTRACTED]
+- [[Maverick Project Policy]] - `references` [EXTRACTED]
 
-#graphify/concept #graphify/EXTRACTED #community/Maverick__
+#graphify/concept #graphify/EXTRACTED #community/__

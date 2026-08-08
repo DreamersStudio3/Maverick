@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.25
 members: 9
 ---
 
 # 스킬 슬롯 위젯 구성
 
-**Cohesion:** 0.25 - loosely connected
 **Members:** 9 nodes
 
 ## Members
@@ -30,8 +28,8 @@ SORT file.name ASC
 ## Connections to other communities
 - 2 edges to [[_COMMUNITY_PIE 액션 테스트 UI]]
 - 1 edge to [[_COMMUNITY_스킬 슬롯 런타임 표시]]
-- 1 edge to [[_COMMUNITY_UI 레이어와 사망 오버레이]]
-- 1 edge to [[_COMMUNITY_로딩 화면 입력 처리]]
+- 1 edge to [[_COMMUNITY_UI 레이어 오버레이 구성]]
+- 1 edge to [[_COMMUNITY_로딩 창 구성과 진행률]]
 
 ## Top bridge nodes
 - [[UMVSkillSlotWidgetBuildNativeWidgetTree()]] - degree 5, connects to 3 communities

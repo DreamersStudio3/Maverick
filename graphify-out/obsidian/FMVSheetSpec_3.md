@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Public/Tables/MVTableAssetGenerator.h"
 type: "code"
-community: "DataTable 에셋 생성"
+community: "JSON 테이블 생성·해시"
 location: "L8"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/DataTable__
+  - community/JSON__
 ---
 
 # FMVSheetSpec
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[MVTableAssetGenerator.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/DataTable__
+#graphify/code #graphify/EXTRACTED #community/JSON__

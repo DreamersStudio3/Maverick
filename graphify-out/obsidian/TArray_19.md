@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "DataTable 에셋 생성"
+community: "테이블 매니페스트 생성과 검증"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/DataTable__
+  - community/___
 ---
 
 # TArray
@@ -28,4 +28,4 @@ tags:
 - [[UMVTableAssetGeneratorScanDirectManagedDataTables()]] - `references` [EXTRACTED]
 - [[UMVTableAssetGeneratorValidateCharacterStatMapping()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/DataTable__
+#graphify/code #graphify/EXTRACTED #community/___

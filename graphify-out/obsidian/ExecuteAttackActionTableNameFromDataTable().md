@@ -1,7 +1,7 @@
 ---
 source_file: "Source/Maverick/AI/Task/MVExecuteAttackTask.cpp"
 type: "code"
-community: "AI 공격 실행 로직"
+community: "AI 공격 액션 실행"
 location: "L34"
 tags:
   - graphify/code

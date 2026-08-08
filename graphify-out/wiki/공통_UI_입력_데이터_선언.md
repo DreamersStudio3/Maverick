@@ -1,6 +1,6 @@
 # 공통 UI 입력 데이터 선언
 
-> 2 nodes · cohesion 1.00
+> 2 nodes
 
 ## Key Concepts
 

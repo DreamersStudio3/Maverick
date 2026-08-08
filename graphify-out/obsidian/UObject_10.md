@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "DataTable 에셋 생성"
+community: "테이블 에셋 매니페스트 관리"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/DataTable__
+  - community/___
 ---
 
 # UObject
@@ -14,4 +14,4 @@ tags:
 - [[TableAssetGeneratorReadStoredSourceHash()]] - `references` [EXTRACTED]
 - [[TableAssetGeneratorWriteStoredSourceHash()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/DataTable__
+#graphify/code #graphify/EXTRACTED #community/___

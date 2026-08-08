@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/Debug/MVPIEActionTestWidget.cpp"
 type: "code"
-community: "캐릭터 도메인 연동"
+community: "어빌리티 피격 Launch"
 location: "L446"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/__Launch
 ---
 
 # UMVPIEActionTestWidget::ResolveAttackerCharacter()
@@ -15,4 +15,4 @@ tags:
 - [[AMVCharacterBase()]] - `references` [EXTRACTED]
 - [[MVPIEActionTestWidget.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/__Launch

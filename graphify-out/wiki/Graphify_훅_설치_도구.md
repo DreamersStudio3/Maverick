@@ -1,14 +1,14 @@
 # Graphify 훅 설치 도구
 
-> 5 nodes · cohesion 0.40
+> 5 nodes
 
 ## Key Concepts
 
 - **Install-Hooks.ps1** (4 connections) — `Scripts/Graphify/Install-Hooks.ps1`
-- **Assert-GraphifyOfficialInstalled()** (1 connections) — `Scripts/Graphify/Install-Hooks.ps1`
+- **Resolve-MaverickHookDirectory()** (1 connections) — `Scripts/Graphify/Install-Hooks.ps1`
 - **Assert-ShellHookCompatible()** (1 connections) — `Scripts/Graphify/Install-Hooks.ps1`
 - **Get-GraphifyOfficialState()** (1 connections) — `Scripts/Graphify/Install-Hooks.ps1`
-- **Resolve-MaverickHookDirectory()** (1 connections) — `Scripts/Graphify/Install-Hooks.ps1`
+- **Assert-GraphifyOfficialInstalled()** (1 connections) — `Scripts/Graphify/Install-Hooks.ps1`
 
 ## Relationships
 

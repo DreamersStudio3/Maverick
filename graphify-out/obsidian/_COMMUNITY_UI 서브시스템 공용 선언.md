@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.12
 members: 16
 ---
 
 # UI 서브시스템 공용 선언
 
-**Cohesion:** 0.12 - loosely connected
 **Members:** 16 nodes
 
 ## Members
@@ -35,12 +33,12 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 2 edges to [[_COMMUNITY_캐릭터 도메인 연동]]
+- 2 edges to [[_COMMUNITY_어빌리티 피격 Launch]]
 - 2 edges to [[_COMMUNITY_UI 서브시스템 팝업 관리]]
 - 1 edge to [[_COMMUNITY_UI 팝업 메시지 데이터]]
 - 1 edge to [[_COMMUNITY_상호작용 프롬프트 UI]]
 
 ## Top bridge nodes
 - [[MVUISubsystem.h]] - degree 15, connects to 2 communities
-- [[UMVUISubsystemOpenPIEActionTestPanel()]] - degree 3, connects to 2 communities
 - [[UMVUISubsystemShowPIEActionTestPanel()]] - degree 3, connects to 2 communities
+- [[UMVUISubsystemOpenPIEActionTestPanel()]] - degree 3, connects to 2 communities

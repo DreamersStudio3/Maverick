@@ -1470,14 +1470,14 @@
     "semantic_hash": "9f85c1b47ef0d8841de8c5817595a92b"
   },
   "AGENTS.md": {
-    "mtime": 1786165415.7581065,
-    "ast_hash": "8c62504d451df1e984dfce520095281f",
-    "semantic_hash": "8c62504d451df1e984dfce520095281f"
+    "mtime": 1786171745.805909,
+    "ast_hash": "660f0e044f3525f61e7dfd3cb59ad393",
+    "semantic_hash": "660f0e044f3525f61e7dfd3cb59ad393"
   },
   "MaverickDesign/AICombatStateTree.md": {
-    "mtime": 1782630951.5126288,
-    "ast_hash": "ee41d132ee399ea25223f0ceab72ebe6",
-    "semantic_hash": "ee41d132ee399ea25223f0ceab72ebe6"
+    "mtime": 1786172671.9945054,
+    "ast_hash": "4700ec8d952fb5b4de4575c630d8bec1",
+    "semantic_hash": "4700ec8d952fb5b4de4575c630d8bec1"
   },
   "MaverickDesign/CsvToJsonConverter/BUILD.md": {
     "mtime": 1781953485.639581,
@@ -1485,19 +1485,19 @@
     "semantic_hash": "9c004df322d3f4d9be79844898fa3048"
   },
   "MaverickDesign/DeathRespawnFlow.md": {
-    "mtime": 1783127801.7363455,
-    "ast_hash": "33a40fc6f41b73a97c11ca94d911a0ef",
-    "semantic_hash": "33a40fc6f41b73a97c11ca94d911a0ef"
+    "mtime": 1786172681.752918,
+    "ast_hash": "ca0121292416262781e200c9e604638a",
+    "semantic_hash": "ca0121292416262781e200c9e604638a"
   },
   "MaverickDesign/MDAFrameworkAnalysis.md": {
-    "mtime": 1785755240.1577396,
-    "ast_hash": "2821a0d9a82b4c2914afdf800c61a861",
-    "semantic_hash": "2821a0d9a82b4c2914afdf800c61a861"
+    "mtime": 1786172678.7161336,
+    "ast_hash": "bb3c1be53664a044dcf45c8360a71ffc",
+    "semantic_hash": "bb3c1be53664a044dcf45c8360a71ffc"
   },
   "MaverickDesign/README.md": {
-    "mtime": 1782630951.5151443,
-    "ast_hash": "ab1a9635c953d0294ea0dae41502519c",
-    "semantic_hash": "ab1a9635c953d0294ea0dae41502519c"
+    "mtime": 1786172689.023258,
+    "ast_hash": "3d030deaa4f33fc3439f513f412b218f",
+    "semantic_hash": "3d030deaa4f33fc3439f513f412b218f"
   },
   "MaverickDesign/Schema/README.md": {
     "mtime": 1781953485.6416008,
@@ -1505,14 +1505,14 @@
     "semantic_hash": "9e9c14d107a2ed1a7ea831cb7161dc4d"
   },
   "POLICY.md": {
-    "mtime": 1786165415.7591739,
-    "ast_hash": "2a795f0572d466fd7642035493a92c42",
-    "semantic_hash": "2a795f0572d466fd7642035493a92c42"
+    "mtime": 1786171745.8065321,
+    "ast_hash": "75221e7a4c7126997df49b43e8b4d686",
+    "semantic_hash": "75221e7a4c7126997df49b43e8b4d686"
   },
   "docs/wiki/Documentation-Workflow.md": {
-    "mtime": 1786166776.0513866,
-    "ast_hash": "8e3ef7afd151d68ed7e9943c1a5faaf2",
-    "semantic_hash": "8e3ef7afd151d68ed7e9943c1a5faaf2"
+    "mtime": 1786171866.1359305,
+    "ast_hash": "fa0ef5f3f86d0b1610bd0edb7d240465",
+    "semantic_hash": "fa0ef5f3f86d0b1610bd0edb7d240465"
   },
   "docs/wiki/Architecture.md": {
     "mtime": 1786164936.1158848,
@@ -1540,8 +1540,8 @@
     "semantic_hash": "51177040fc62ab2502b1e4f7607a14e0"
   },
   "docs/wiki/Graphify-Adoption-Report.md": {
-    "mtime": 1786168983.5374417,
-    "ast_hash": "c419344e466ef9fd5535d8b94951b4dc",
-    "semantic_hash": "c419344e466ef9fd5535d8b94951b4dc"
+    "mtime": 1786173156.0017126,
+    "ast_hash": "ef2ecff201e131c77f72142007ab76ce",
+    "semantic_hash": "ef2ecff201e131c77f72142007ab76ce"
   }
 }

@@ -1,20 +1,21 @@
 ---
 type: community
-cohesion: 0.20
-members: 14
+members: 17
 ---
 
 # 사망 액션 행 이름 해석
 
-**Cohesion:** 0.20 - loosely connected
-**Members:** 14 nodes
+**Members:** 17 nodes
 
 ## Members
 - [[EMVDeathActionFacing]] - code
 - [[FDataTableRowHandle_8]] - code
 - [[FGameplayTag_7]] - code
 - [[FName_37]] - code
+- [[FString_17]] - code
 - [[UMVDeathComponentCharacterIndexCodeToTableToken()]] - code - Source/Maverick/Components/MVDeathComponent.cpp
+- [[UMVDeathComponentDeathActionFacingToTableToken()]] - code - Source/Maverick/Components/MVDeathComponent.cpp
+- [[UMVDeathComponentDeathActionPoseToTableToken()]] - code - Source/Maverick/Components/MVDeathComponent.cpp
 - [[UMVDeathComponentHandleActionEnded()]] - code - Source/Maverick/Components/MVDeathComponent.cpp
 - [[UMVDeathComponentMakeDeathActionRowName()]] - code - Source/Maverick/Components/MVDeathComponent.cpp
 - [[UMVDeathComponentMakeDeathActionTableName()]] - code - Source/Maverick/Components/MVDeathComponent.cpp
@@ -33,14 +34,12 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 9 edges to [[_COMMUNITY_캐릭터 사망 표현]]
-- 3 edges to [[_COMMUNITY_사망 액션 포즈 해석]]
-- 2 edges to [[_COMMUNITY_사망 표현 보류·시작]]
+- 15 edges to [[_COMMUNITY_캐릭터 사망 표현]]
 - 1 edge to [[_COMMUNITY_테이블 기반 UI·스탯 조회]]
 
 ## Top bridge nodes
-- [[UMVDeathComponentResolveDeathActionRowHandle()]] - degree 6, connects to 3 communities
-- [[UMVDeathComponentMakeDeathActionRowName()]] - degree 6, connects to 2 communities
-- [[UMVDeathComponentCharacterIndexCodeToTableToken()]] - degree 3, connects to 2 communities
-- [[UMVDeathComponentResolveDeathActionFacing()]] - degree 3, connects to 2 communities
+- [[UMVDeathComponentResolveDeathActionRowHandle()]] - degree 6, connects to 2 communities
+- [[UMVDeathComponentMakeDeathActionRowName()]] - degree 6, connects to 1 community
 - [[UMVDeathComponentMakeLegacyDeathActionRowName()]] - degree 5, connects to 1 community
+- [[UMVDeathComponentResolveDeathActionFacing()]] - degree 3, connects to 1 community
+- [[UMVDeathComponentMakeDeathActionTableName()]] - degree 3, connects to 1 community

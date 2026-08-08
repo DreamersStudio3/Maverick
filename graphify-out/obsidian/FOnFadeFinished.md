@@ -1,7 +1,7 @@
 ---
 source_file: ""
 type: "code"
-community: "UI 기반 전환 유틸리티"
+community: "UI 페이드 재생 제어"
 tags:
   - graphify/code
   - graphify/EXTRACTED

@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "액션 행·몽타주 타입"
+community: "피격 반응 행 조회"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/___
 ---
 
 # MAVERICK_API
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[FMVTableRowBase()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/___

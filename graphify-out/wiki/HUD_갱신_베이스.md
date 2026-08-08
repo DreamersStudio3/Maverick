@@ -1,6 +1,6 @@
 # HUD 갱신 베이스
 
-> 2 nodes · cohesion 1.00
+> 2 nodes
 
 ## Key Concepts
 

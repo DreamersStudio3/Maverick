@@ -1,7 +1,7 @@
 ---
 source_file: "Source/Maverick/UI/Window/MVLoadingWindow.cpp"
 type: "code"
-community: "로딩 화면 입력 처리"
+community: "로딩 창 구성과 진행률"
 location: "L25"
 tags:
   - graphify/code

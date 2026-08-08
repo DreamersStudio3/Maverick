@@ -1,6 +1,6 @@
 # MVEscapeWindow 클래스 선언
 
-> 2 nodes · cohesion 1.00
+> 2 nodes
 
 ## Key Concepts
 

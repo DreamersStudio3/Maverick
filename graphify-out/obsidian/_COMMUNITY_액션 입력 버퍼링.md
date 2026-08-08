@@ -1,15 +1,14 @@
 ---
 type: community
-cohesion: 0.19
-members: 15
+members: 17
 ---
 
 # 액션 입력 버퍼링
 
-**Cohesion:** 0.19 - loosely connected
-**Members:** 15 nodes
+**Members:** 17 nodes
 
 ## Members
+- [[EMVActionInputDirection_4]] - code
 - [[EMVActionInputPhase]] - code - Source/Maverick/Public/Enum/MVActionInputPhase.h
 - [[FGameplayTag_10]] - code
 - [[FVector2D_9]] - code
@@ -18,6 +17,7 @@ members: 15
 - [[UMVInputManagerComponentBufferInstantActionInput()]] - code - Source/Maverick/Components/MVInputManagerComponent.cpp
 - [[UMVInputManagerComponentBuildActionInputSnapshot()]] - code - Source/Maverick/Components/MVInputManagerComponent.cpp
 - [[UMVInputManagerComponentClampActionControllerSpaceInput()]] - code - Source/Maverick/Components/MVInputManagerComponent.cpp
+- [[UMVInputManagerComponentResolveActionInputDirection()]] - code - Source/Maverick/Components/MVInputManagerComponent.cpp
 - [[UMVInputManagerComponentSubmitActionInput()]] - code - Source/Maverick/Components/MVInputManagerComponent.cpp
 - [[UMVInputManagerComponentSubmitHoldActionInput()]] - code - Source/Maverick/Components/MVInputManagerComponent.cpp
 - [[UMVInputManagerComponentTryGetBufferedActionInput()]] - code - Source/Maverick/Components/MVInputManagerComponent.cpp
@@ -34,16 +34,14 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 10 edges to [[_COMMUNITY_입력 차단 회복 취소]]
+- 12 edges to [[_COMMUNITY_입력 차단 회복 취소]]
 - 1 edge to [[_COMMUNITY_전투 액션 입력 처리]]
 - 1 edge to [[_COMMUNITY_피격 리액션 입력·행 해석]]
-- 1 edge to [[_COMMUNITY_액션 입력 방향 해석]]
-- 1 edge to [[_COMMUNITY_컨트롤러 기준 이동 입력]]
-- 1 edge to [[_COMMUNITY_액션 전환 입력 관리]]
+- 1 edge to [[_COMMUNITY_액션 입력 처리 계약]]
 
 ## Top bridge nodes
 - [[EMVActionInputPhase]] - degree 8, connects to 3 communities
-- [[FVector2D_9]] - degree 10, connects to 2 communities
-- [[UMVInputManagerComponentBufferHoldActionInput()]] - degree 4, connects to 1 community
+- [[FVector2D_9]] - degree 10, connects to 1 community
 - [[UMVInputManagerComponentTryRouteHoldActionInput()]] - degree 4, connects to 1 community
-- [[UMVInputManagerComponentBufferInstantActionInput()]] - degree 3, connects to 1 community
+- [[UMVInputManagerComponentBufferHoldActionInput()]] - degree 4, connects to 1 community
+- [[UMVInputManagerComponentSubmitHoldActionInput()]] - degree 3, connects to 1 community

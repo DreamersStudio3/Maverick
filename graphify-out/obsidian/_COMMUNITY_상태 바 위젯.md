@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.10
 members: 22
 ---
 
 # 상태 바 위젯
 
-**Cohesion:** 0.10 - loosely connected
 **Members:** 22 nodes
 
 ## Members
@@ -41,10 +39,10 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 1 edge to [[_COMMUNITY_피니셔 실행과 워핑]]
+- 1 edge to [[_COMMUNITY_종료 처리와 확장 틱]]
 - 1 edge to [[_COMMUNITY_PIE 액션 테스트 UI]]
-- 1 edge to [[_COMMUNITY_UI 레이어와 사망 오버레이]]
-- 1 edge to [[_COMMUNITY_로딩 화면 입력 처리]]
+- 1 edge to [[_COMMUNITY_UI 레이어 오버레이 구성]]
+- 1 edge to [[_COMMUNITY_로딩 창 구성과 진행률]]
 - 1 edge to [[_COMMUNITY_로딩 가이드 카드]]
 
 ## Top bridge nodes

@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.33
 members: 10
 ---
 
 # 공중 착지 감지 노티파이
 
-**Cohesion:** 0.33 - loosely connected
 **Members:** 10 nodes
 
 ## Members

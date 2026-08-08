@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.28
 members: 9
 ---
 
 # 전역 전투 센싱 태스크
 
-**Cohesion:** 0.28 - loosely connected
 **Members:** 9 nodes
 
 ## Members

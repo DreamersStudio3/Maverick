@@ -1,13 +1,11 @@
 ---
 type: community
-cohesion: 0.20
-members: 12
+members: 11
 ---
 
 # 메인 HUD 위젯 구성
 
-**Cohesion:** 0.20 - loosely connected
-**Members:** 12 nodes
+**Members:** 11 nodes
 
 ## Members
 - [[MVMainHUDWidget.h]] - code - Source/Maverick/UI/HUD/MVMainHUDWidget.h
@@ -16,7 +14,6 @@ members: 12
 - [[UMVCurrencyStatusWidget]] - code - Source/Maverick/UI/HUD/MVMainHUDWidget.h
 - [[UMVMainHUDWidget()]] - code - Source/Maverick/UI/HUD/MVMainHUDWidget.h
 - [[UMVMainHUDWidgetBuildNativeWidgetTree()]] - code - Source/Maverick/UI/HUD/MVMainHUDWidget.cpp
-- [[UMVMainHUDWidgetEnsurePlayerSkillHUD()]] - code - Source/Maverick/UI/HUD/MVMainHUDWidget.cpp
 - [[UMVPlayerConsumable_3]] - code - Source/Maverick/UI/HUD/MVMainHUDWidget.h
 - [[UMVPlayerSkillHUDWidget]] - code - Source/Maverick/UI/HUD/MVMainHUDWidget.h
 - [[UMVPlayerStatusWidget]] - code - Source/Maverick/UI/HUD/MVMainHUDWidget.h
@@ -37,4 +34,4 @@ SORT file.name ASC
 ## Top bridge nodes
 - [[MVMainHUDWidget.h]] - degree 10, connects to 1 community
 - [[UMVMainHUDWidgetBuildNativeWidgetTree()]] - degree 4, connects to 1 community
-- [[UMVMainHUDWidgetEnsurePlayerSkillHUD()]] - degree 2, connects to 1 community
+- [[UMVPlayerSkillHUDWidget]] - degree 3, connects to 1 community

@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.07
 members: 42
 ---
 
 # AI 피격 반응 태스크
 
-**Cohesion:** 0.07 - loosely connected
 **Members:** 42 nodes
 
 ## Members

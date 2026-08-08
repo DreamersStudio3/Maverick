@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp"
 type: "code"
-community: "DataTable 에셋 생성"
+community: "테이블 에셋 매니페스트 관리"
 location: "L179"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/DataTable__
+  - community/___
 ---
 
 # TableAssetGeneratorResolveKeyColumnName()
@@ -17,4 +17,4 @@ tags:
 - [[UMVTableAssetGeneratorBuildManifestRowForDataTable()]] - `calls` [EXTRACTED]
 - [[UScriptStruct_1]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/DataTable__
+#graphify/code #graphify/EXTRACTED #community/___

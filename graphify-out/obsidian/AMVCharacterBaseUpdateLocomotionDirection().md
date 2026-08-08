@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Character/MVCharacterBase.cpp"
 type: "code"
-community: "공통 캐릭터 생명주기"
+community: "8방향 이동 방향 갱신"
 location: "L387"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/8___
 ---
 
 # AMVCharacterBase::UpdateLocomotionDirection()
@@ -15,4 +15,4 @@ tags:
 - [[MVCharacterBase.cpp]] - `contains` [EXTRACTED]
 - [[ResolveCharacterEightWayDirection()]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/8___

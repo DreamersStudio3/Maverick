@@ -1,17 +1,18 @@
 ---
 source_file: "docs/wiki/Graphify-Adoption-Report.md"
 type: "rationale"
-community: "Graphify 도입 Wrap-up"
+community: "Graphify 도입 전략과 검증"
 tags:
   - graphify/rationale
-  - graphify/EXTRACTED
-  - community/Graphify__Wrap-up
+  - graphify/INFERRED
+  - community/Graphify___
 ---
 
 # Final Graph Health Validation
 
 ## Connections
-- [[AST Safety Net and Pre-Push Wrap-Up]] - `implements` [EXTRACTED]
 - [[Final Graph Snapshot]] - `conceptually_related_to` [INFERRED]
+- [[Graphify Limitations and Evidence Gaps]] - `conceptually_related_to` [INFERRED]
+- [[Three-Stage Graphify Update Strategy]] - `implements` [EXTRACTED]
 
-#graphify/rationale #graphify/EXTRACTED #community/Graphify__Wrap-up
+#graphify/rationale #graphify/INFERRED #community/Graphify___

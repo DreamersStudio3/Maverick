@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.21
 members: 14
 ---
 
 # StateTree 타깃 평가기
 
-**Cohesion:** 0.21 - loosely connected
 **Members:** 14 nodes
 
 ## Members

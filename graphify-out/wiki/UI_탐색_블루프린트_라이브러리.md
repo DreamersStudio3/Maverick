@@ -1,6 +1,6 @@
 # UI 탐색 블루프린트 라이브러리
 
-> 2 nodes · cohesion 1.00
+> 2 nodes
 
 ## Key Concepts
 

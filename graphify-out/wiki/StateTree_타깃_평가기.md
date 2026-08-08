@@ -1,6 +1,6 @@
 # StateTree 타깃 평가기
 
-> 14 nodes · cohesion 0.21
+> 14 nodes
 
 ## Key Concepts
 
@@ -8,15 +8,15 @@
 - **FMVTargetEvaluatorData** (5 connections) — `Source/Maverick/AI/Evaluator/MVTargetEvaluator.h`
 - **MVTargetEvaluator.cpp** (4 connections) — `Source/Maverick/AI/Evaluator/MVTargetEvaluator.cpp`
 - **FStateTreeExecutionContext** (3 connections)
-- **.GetInstanceDataType()** (3 connections) — `Source/Maverick/AI/Evaluator/MVTargetEvaluator.h`
-- **Tick** (3 connections) — `Source/Maverick/AI/Evaluator/MVTargetEvaluator.h`
-- **TreeStart** (3 connections) — `Source/Maverick/AI/Evaluator/MVTargetEvaluator.h`
-- **TreeStop** (3 connections) — `Source/Maverick/AI/Evaluator/MVTargetEvaluator.h`
 - **MVTargetEvaluator.h** (3 connections) — `Source/Maverick/AI/Evaluator/MVTargetEvaluator.h`
-- **FStateTreeEvaluatorBase** (1 connections)
-- **Target** (1 connections) — `Source/Maverick/AI/Evaluator/MVTargetEvaluator.h`
-- **APawn** (1 connections)
+- **.GetInstanceDataType()** (3 connections) — `Source/Maverick/AI/Evaluator/MVTargetEvaluator.h`
+- **TreeStart** (3 connections) — `Source/Maverick/AI/Evaluator/MVTargetEvaluator.h`
+- **Tick** (3 connections) — `Source/Maverick/AI/Evaluator/MVTargetEvaluator.h`
+- **TreeStop** (3 connections) — `Source/Maverick/AI/Evaluator/MVTargetEvaluator.h`
 - **TObjectPtr** (1 connections)
+- **APawn** (1 connections)
+- **Target** (1 connections) — `Source/Maverick/AI/Evaluator/MVTargetEvaluator.h`
+- **FStateTreeEvaluatorBase** (1 connections)
 - **UScriptStruct** (1 connections)
 
 ## Relationships

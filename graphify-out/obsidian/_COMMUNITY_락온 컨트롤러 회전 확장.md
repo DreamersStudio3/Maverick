@@ -1,12 +1,10 @@
 ---
 type: community
-cohesion: 0.05
 members: 56
 ---
 
 # 락온 컨트롤러 회전 확장
 
-**Cohesion:** 0.05 - loosely connected
 **Members:** 56 nodes
 
 ## Members
@@ -75,7 +73,7 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 1 edge to [[_COMMUNITY_피니셔 실행과 워핑]]
+- 1 edge to [[_COMMUNITY_종료 처리와 확장 틱]]
 - 1 edge to [[_COMMUNITY_LockOnTarget 모듈·타깃 핸들러]]
 
 ## Top bridge nodes

@@ -1,34 +1,34 @@
 # AI 전역 감지 설정
 
-> 52 nodes · cohesion 0.04
+> 52 nodes
 
 ## Key Concepts
 
 - **FMVGlobalSensingTaskInstanceData** (61 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
-- **ActionCooldowns** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
-- **AirborneChargeAngle** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **TObjectPtr** (1 connections)
+- **AActor** (1 connections)
+- **Target** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **APawn** (1 connections)
+- **Owner** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **DefensiveArea** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **OffensiveArea** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **SprintTriggerDistance** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **SprintMaxReach** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **SprintAttackAngle** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
 - **AirborneChargeMaxReach** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
-- **AngleToTarget** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
-- **AttackAngleTolerance** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
-- **AttackCadenceActionId** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
-- **AttackDirection** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
-- **BackwardPathTraceDistance** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
-- **bActionRunning** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
-- **bAirborneChargePathClear** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **AirborneChargeAngle** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
 - **BasicAttackMaxReach** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
-- **bAttackCadenceReady** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **AttackAngleTolerance** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **ForwardPathTraceDistance** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **BackwardPathTraceDistance** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **StrafePathTraceDistance** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **TArray** (1 connections)
+- **ActionCooldowns** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **FName** (1 connections)
+- **AttackCadenceActionId** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **int32** (1 connections)
+- **CurrentPhase** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
 - **bCounterWindow** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
-- **bDrawCombatAreaDebug** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
-- **bHasLineOfSight** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
-- **bHasTarget** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
-- **bIsDead** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
-- **bNeedAttackAngle** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
-- **bNeedClearAttackPath** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
-- **bShouldUseAirborneCharge** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
-- **bSprintPathClear** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
-- **bStrafePathClear** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
-- **bTargetCanBeAirborne** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
-- **bTargetIsAirborne** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
 - *... and 27 more nodes in this community*
 
 ## Relationships

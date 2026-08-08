@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "공통 캐릭터 생명주기"
+community: "캐릭터 인덱스 코드 관리"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/___
 ---
 
 # FGameplayTag
@@ -14,4 +14,4 @@ tags:
 - [[AMVCharacterBaseGetCharacterIndexCode()]] - `references` [EXTRACTED]
 - [[AMVCharacterBaseSetCharacterIndexCode()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/___

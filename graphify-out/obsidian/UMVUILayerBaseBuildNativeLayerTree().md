@@ -1,7 +1,7 @@
 ---
 source_file: "Source/Maverick/UI/System/MVUILayerBase.cpp"
 type: "code"
-community: "UI 레이어와 사망 오버레이"
+community: "UI 레이어 오버레이 구성"
 location: "L152"
 tags:
   - graphify/code

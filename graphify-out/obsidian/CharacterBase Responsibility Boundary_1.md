@@ -1,18 +1,16 @@
 ---
-source_file: "docs/wiki/Architecture.md"
-type: "rationale"
-community: "Maverick 아키텍처 정본"
+source_file: "AGENTS.md"
+type: "concept"
+community: "캐릭터 도메인 책임 분리"
 tags:
-  - graphify/rationale
+  - graphify/concept
   - graphify/EXTRACTED
-  - community/Maverick__
+  - community/___
 ---
 
 # CharacterBase Responsibility Boundary
 
 ## Connections
-- [[Action Execution Pipeline]] - `rationale_for` [EXTRACTED]
-- [[CharacterBase Responsibility Boundary]] - `semantically_similar_to` [INFERRED]
-- [[Maverick Runtime Module]] - `conceptually_related_to` [EXTRACTED]
+- [[Domain Component Separation]] - `implements` [EXTRACTED]
 
-#graphify/rationale #graphify/EXTRACTED #community/Maverick__
+#graphify/concept #graphify/EXTRACTED #community/___
