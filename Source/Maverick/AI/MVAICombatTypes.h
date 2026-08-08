@@ -66,6 +66,13 @@ struct FMVAICombatActionMetadata
 	EMVAICombatActionRole Role = EMVAICombatActionRole::None;
 };
 
+/**
+ * StateTree가 공격 가능 여부를 판정할 때 사용하는 후보 계약.
+ *
+ * `ActionRequest`와 거리·각도·시야·이동 경로 조건을 모두 통과해야 실행 후보가 된다.
+ * `MaxDistance <= 0`은 상한 없음이며, 쿨다운 ID는 Metadata 값이 없으면 ActionRequest RowName을 쓴다.
+ * Role은 에디터 분류용 메타데이터이며 현재 후보 필터에는 참여하지 않는다.
+ */
 USTRUCT(BlueprintType)
 struct FMVAICombatActionCondition
 {
@@ -128,6 +135,13 @@ struct FMVAICombatResolvedAction
 	EMVAICombatActionRole Role = EMVAICombatActionRole::None;
 };
 
+/**
+ * 한 번의 StateTree 평가에서 공유하는 AI 전투 상태 snapshot.
+ *
+ * GlobalSensing Task가 타깃·거리·각도·LOS·경로·액션·쿨다운 상태를 갱신하고 Condition과 공격 Task가
+ * 읽는다. `LastAttackTag`는 공격 Task의 출력을 다시 바인딩해 직전 공격 반복을 줄이는 feedback 값이다.
+ * 실제 property binding과 상태 우선순위는 StateTree 에셋이 소유한다.
+ */
 USTRUCT(BlueprintType)
 struct FMVAICombatContext
 {

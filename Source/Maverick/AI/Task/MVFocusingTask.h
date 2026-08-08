@@ -28,6 +28,11 @@ struct FMVFocusingTaskInstanceData
 	bool bFocusApplied = false;
 };
 
+/**
+ * State 진입 시 AIController focus를 적용하고 유지하다가 Exit에서 해제하는 지속형 StateTree Task.
+ * 성공 즉시 끝나는 Task가 아니므로 전투 부모나 이동·대기 State에 두고, 공격 중 강제 회전을 원하지 않으면
+ * 공격 State에는 배치하지 않는다.
+ */
 USTRUCT(meta = (DisplayName = "Focusing Task"))
 struct FMVFocusingTask : public FStateTreeTaskCommonBase
 {

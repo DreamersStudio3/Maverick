@@ -56,6 +56,11 @@ struct FMVStrafeMoveTaskInstanceData
 	bool bAppliedStrafeMoveSpeed = false;
 };
 
+/**
+ * 타깃 주위를 횡이동하면서 목표 거리를 보정하는 시간 제한 StateTree Task.
+ * 진입 시 이동 속도를 임시 적용하고 Tick에서 경로와 거리를 보정하며 Exit에서 원래 속도를 복구한다.
+ * 공격 후보가 즉시 실행 가능한지와 State 진입 우선순위는 CombatDecision과 StateTree 에셋이 결정한다.
+ */
 USTRUCT()
 struct FMVStrafeMoveTask : public FStateTreeTaskCommonBase
 {

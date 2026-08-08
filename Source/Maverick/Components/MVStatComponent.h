@@ -66,6 +66,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMVOnDamageAccumulationReset);
  * 명시적으로 설정된 CharacterIndexCode와 동일한 CharacterStat row에서 기본 스탯을
  * 로드하고 HP, 스태미너, MP, groggy, 이동/전투 수치의 현재값과 변경 이벤트를 소유한다.
  * `OnDamaged` 구독을 통해 확정된 피해의 HP 차감도 처리한다.
+ * HP가 처음 0 이하가 되면 문맥을 담은 `OnDeathStarted(FMVDeathContext)`를 사망 진입점으로 발행하고,
+ * 매개변수 없는 `OnDead`는 기존 Blueprint와의 호환을 위해 함께 유지한다.
  * NotifyState가 요청한 회복 일시정지, 최근 감소 UI 홀드, 그로기 누적 게이지 감소도 이 컴포넌트의 상태로 관리한다.
  * 다른 도메인 컴포넌트의 캐릭터 선택 상태는 참조하지 않는다.
  *

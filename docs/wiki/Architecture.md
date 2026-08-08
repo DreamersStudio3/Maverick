@@ -14,7 +14,7 @@ Graphify는 관련 파일과 심볼을 찾는 지도이며 호출 순서의 최�
 ## 증거 범위
 
 - `현재 구현`: C++, `.Build.cs`, `.uproject`, `.ini`에서 확인한 사실이다.
-- `설계 목표`: `MaverickDesign/` 문서에 있지만 현재 텍스트 코드만으로 완전한 적용을 확인할 수 없는 내용이다.
+- `설계 목표`: `docs/wiki/`에 기록했지만 현재 텍스트 코드만으로 완전한 적용을 확인할 수 없는 내용이다.
 - `에셋 확인 필요`: Blueprint/WBP/StateTree/Chooser/Montage/DataTable 내부 연결이 필요한 내용이다.
 
 초기 Graphify 코퍼스는 `Content/`와 Unreal 생성 디렉터리, 작업용 `TODO/`를 제외한다. 따라서 그래프에 노드가 없다는 사실만으로 에셋이나 연결이 없다고 결론 내리지 않는다.
@@ -131,7 +131,11 @@ flowchart LR
 5. Death overlay 최소 표시가 끝나면 FieldTransitionSubsystem이 loading UI, resettable actor, checkpoint 이동, stat/input/UI 복구를 순서대로 실행한다.
 6. WorldStateSubsystem은 checkpoint, consumed spawn, flag, quest와 SaveGame 상태를 보존한다. GameInstance 수명의 QuestSubsystem은 WorldState 의존성을 초기화하고 quest 읽기·쓰기와 선택적 저장을 위임하는 facade다.
 
-`MaverickDesign/DeathRespawnFlow.md`의 이중 완료 gate 설명과 달리 현재 코드는 overlay 완료가 실질 gate이고 presentation 완료는 overlay 누락 fallback이다. 설계 문서를 수정할 때 이 drift를 함께 해소해야 한다.
+현재 전환 gate는 DeathOverlay 최소 표시 완료다. presentation finished는 overlay 요청이 누락된 경우 전환을 보장하는 fallback이며, 사망 몽타주 종료를 별도 필수 gate로 기다리지 않는다. 사망 상태에서는 이동·액션·상호작용 입력을 막지만 DeathOverlay는 시점 입력을 허용한다. LoadingWindow가 받는 입력은 도움말 카드 전환에만 쓰고 창 종료와 UI·입력 복원은 FieldTransition이 맡는다.
+
+필드 상태 전용 서브시스템은 두지 않는다. 저장할 사실은 WorldState가 보관하고, 실제 숨김·복원·제거는 `IMVFieldTransitionResettableInterface`를 구현한 actor가 맡는다. 현재 C++에서 확인된 reset policy 적용은 `AMVEnemy`의 `ResetEveryTransition`이며, `PersistIfConsumed`, `PersistState`, `TransientOnly`는 각 도메인 구현을 추가할 때 검증해야 하는 설계 계약이다.
+
+`DT_Death_P1`, `AM_Death_*`, `WBP_DeathOverlayWindow`, `WBP_LoadingWindow`의 row 참조, notify, widget binding은 `에셋 확인 필요`다. 사망 직후 전투·입력을 한곳에서 중단하는 기능과 로딩 화면의 현재 필드 이름 표시는 아직 C++에서 확인되지 않은 `설계 목표`다.
 
 ### AI StateTree
 
@@ -150,7 +154,15 @@ StateTree asset
 - `AMVAIController`의 AIPerception `TargetActor`와 GlobalSensing의 현재 플레이어 탐색은 텍스트 코드에서 연결되지 않은 별도 경로다.
 - C++은 StateTree 컴포넌트를 직접 생성하지 않는다. 실제로 Controller의 BrainComponent, 기타 Controller component, Pawn component 중 어디에 배치되는지는 Blueprint 구성에 따라 달라질 수 있다.
 
-세부 설계는 `MaverickDesign/AICombatStateTree.md`를 참고하되 실제 `.uasset` 상태 순서와 binding을 에디터에서 확인한다.
+StateTree 에셋을 수정할 때는 다음 계약을 함께 확인한다.
+
+- 위에서 먼저 성립한 상태가 아래의 MoveToTarget이나 Strafe를 가릴 수 있으므로 상태 순서와 후보 범위를 함께 설계한다.
+- `GlobalSensing.CombatContext`는 Condition과 Task로, 공격 Task의 `LastAttackTag`는 GlobalSensing으로 되돌아가도록 binding한다.
+- 후보별 거리와 각도가 공격 가능 범위를 결정한다. `CombatMaxDistance`는 이동 상태를 나누는 기준이지 공격 사거리가 아니다.
+- Focusing은 지속 부모나 이동 상태에 둔다. 공격 중 강제 회전을 원하지 않으면 공격 상태에는 두지 않는다.
+- GlobalSensing과 Global Action Cooldown Task가 같은 cooldown component를 동시에 tick하지 않게 소유자를 하나만 둔다.
+
+실제 자식 상태 순서, property binding, Task 배치, 공격 후보, Chooser, cooldown ID와 타깃 경로는 `에셋 확인 필요`다.
 
 ### UI와 CommonUI
 
@@ -186,6 +198,8 @@ direct-managed /Game/Table/DT_*  -> DT_MVTableManifest
 
 JSON은 에디터 중간 산출물이고 런타임 기준 데이터는 CSV에서 생성한 테이블, 직접 관리하는 `UDataTable`, manifest다. `UMVTableManager`는 `UEngineSubsystem`으로 typed row와 Blueprint reflection 조회를 제공한다. 현재 직접 관리 root는 `Attack`, `Death`, `Dodge`, `Groggy`, `HitReaction`, `Props`, `Sprint`, `Weapons`이며 `MaverickDesign/README.md`의 목록과 drift가 있다. 실제 행, row struct, source hash와 manifest 완전성은 에디터 검증이 필요하다.
 
+`GameGuide`는 도움말과 팁의 노출 문구만 소유한다. 아이템 설명이나 로어를 복제하지 않으며, 추후 아이템 정보를 도움말로 보여줄 때는 별도 큐레이션 데이터가 `Item` row를 참조한다.
+
 ### LockOnTarget 경계
 
 플러그인은 targeting 정책과 상태를 소유한다.
@@ -210,9 +224,7 @@ Maverick은 플레이어 dodge suppression, sprint, Action 실행 중 rotation e
 
 - `docs/wiki/Documentation-Workflow.md`: 문서와 Graphify 갱신 절차.
 - `docs/wiki/Header-Documentation.md`: C++ 헤더 책임 문서화 기준.
-- `MaverickDesign/AICombatStateTree.md`: AI StateTree 설계와 에디터 구성.
-- `MaverickDesign/DeathRespawnFlow.md`: 사망·부활 설계 상세와 현재 drift.
-- `MaverickDesign/MDAFrameworkAnalysis.md`: 현재와 목표 전투 구조 구분.
+- `docs/wiki/Combat-Design-MDA.md`: 현재 전투와 목표 전투 계약, 구현 우선순위.
 - `MaverickDesign/README.md`, `MaverickDesign/Schema/README.md`: 테이블 생성 및 schema 계약.
 
 ## 갱신 조건
