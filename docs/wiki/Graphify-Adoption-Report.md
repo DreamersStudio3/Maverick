@@ -26,24 +26,55 @@
 
 현재 0.9.36 공식 `post-checkout`은 Git의 세 번째 hook 인자가 `1`인 switch/checkout 계열 전환에서만 실행한다. 변경 파일 목록이 없으므로 새 snapshot의 전체 코드 corpus를 재추출하지만, 백그라운드 작업이며 기존 semantic 문서 노드는 보존될 수 있고 wiki·Obsidian export까지 보장하지 않는다. 경로 단위 checkout은 인자가 `0`이라 건너뛰며, merge·rebase·cherry-pick 중, `graphify-out/`이 없는 브랜치와 linked worktree에서도 실행하지 않는다. 로그에는 대상 ref 표식이 없으므로 현재 전환 뒤 추가된 결과를 확인해야 한다. Maverick의 `pre-push`는 생성 작업을 하지 않고, outgoing commit의 정본·manifest·semantic coverage·생성물·stamp가 같은 Git 스냅샷인지 빠르게 검증한다.
 
-Obsidian에서는 `graphify-out/obsidian/`을 vault로 연다. 이 vault는 읽기 모델이므로 사람이 장기 문서를 직접 쓰지 않는다. Graphify가 소유하는 Markdown, `graph.canvas`, `.obsidian/graph.json`은 공유하고, 개인별 `workspace*.json`, `app.json` 같은 UI 상태는 Git과 wrap-up provenance에서 제외한다.
+## Obsidian에서 Graphify 문서 보기
 
-## `Architecture.md`를 병행하는 이유
+1. **Obsidian을 설치한다.** [Obsidian 공식 다운로드 페이지](https://obsidian.md/download)에서 운영체제에 맞는 설치 파일을 내려받아 설치한다. Windows에서는 `Download for Windows`를 선택하고 설치 파일을 실행하면 된다.
+2. **Graphify 문서 폴더를 확인한다.** Maverick 저장소를 최신 상태로 받은 뒤 `graphify-out/obsidian/` 폴더와 그 안의 `graph.canvas`가 있는지 확인한다. 이 폴더 전체가 Obsidian에서 열 vault다.
+3. **폴더를 vault로 연결한다.** Obsidian을 처음 실행했다면 `Open folder as vault` 옆의 `Open`을 선택하고 `Maverick/graphify-out/obsidian/` 폴더를 지정한다. 다른 vault가 이미 열려 있다면 왼쪽 아래 `Vault profile` → `Manage Vaults...` → `Open folder as vault` 순서로 같은 폴더를 연다. 화면 위치가 달라졌다면 [Obsidian의 vault 관리 안내](https://obsidian.md/help/manage-vaults)를 참고한다.
+4. **전체 구조를 먼저 살펴본다.** 왼쪽 파일 탐색기에서 `graph.canvas`를 열면 코드와 문서의 연결을 한 화면에서 볼 수 있다. 빈 공간을 드래그해 이동하고 마우스 휠로 확대·축소한다. Canvas 조작법은 [Obsidian Canvas 안내](https://obsidian.md/help/plugins/canvas)에서 확인할 수 있다.
+5. **필요한 문서를 검색한다.** `Ctrl+O`를 눌러 파일명으로 노트를 찾거나 `Ctrl+Shift+F`를 눌러 전체 본문을 검색한다. `_COMMUNITY_`로 시작하는 노트는 관련 코드와 개념을 묶은 요약 문서이며, 일반 노트의 링크를 따라가면 연결된 타입·함수·원본 파일을 확인할 수 있다. 자세한 단축키는 [Quick switcher](https://obsidian.md/help/plugins/quick-switcher)와 [Search](https://obsidian.md/help/Plugins/Search) 안내를 따른다.
+6. **생성 문서는 조회용으로만 사용한다.** `graphify-out/obsidian/` 안의 Markdown과 Canvas를 직접 수정해도 다음 Graphify 갱신에서 덮어써진다. 장기 보존할 설명은 `docs/wiki/`에 작성하고, 생성 vault는 최신 Graphify 결과를 탐색하는 용도로 사용한다.
 
-Graphify는 관련 선언, 파일, 커뮤니티와 최단 경로를 빠르게 찾는 데 강하다. 그러나 다음 정보는 자동 graph만으로 정본화하기 어렵다.
+## `Architecture.md`를 함께 관리하는 이유
 
-- 컴포넌트와 subsystem의 의도된 소유권 및 lifecycle 경계
-- 입력 → Action → hit → stat/hit reaction → death/field transition 같은 권위와 순서
-- Blueprint, WBP, StateTree, Chooser, Montage, DataTable 등 `.uasset` 내부 연결
-- 현재 C++에서 확인된 사실과 `MaverickDesign/`의 설계 목표 사이의 drift
+Graphify는 관련된 정보와 파일을 빠르게 찾고 연결 경로를 좁히는 데 유용하다. 다만 Maverick의 Graphify 입력에는 Unreal Editor의 `Content/`와 생성 디렉터리가 포함되지 않는다. 그래서 Blueprint, WBP, StateTree, Chooser, Montage, DataTable 같은 에셋의 연결은 그래프에 나타나지 않을 수 있고, 코드만으로는 컴포넌트의 소유권이나 실제 실행 순서를 알기 어려운 경우도 있다.
 
-초기 corpus는 `Content/`와 Unreal 생성 디렉터리를 제외하므로 graph에 노드가 없다는 사실은 에셋이나 연결의 부재를 증명하지 않는다. 이에 `docs/wiki/Architecture.md`를 안정적인 첫 진입점으로 두고, 다음 순서를 표준화했다.
+이 빈 부분은 `docs/wiki/Architecture.md`에 기록한다. 이 문서는 파일 목록을 다시 적는 곳이 아니라, 프로젝트의 큰 책임 경계와 Graphify가 읽지 못한 에셋 연결을 모아 두는 첫 진입점이다. 에이전트와 개발자는 다음 순서로 프로젝트를 살펴본다.
 
-1. `Architecture.md`에서 전체 책임과 에셋 공백을 파악한다.
-2. `graphify query`, `path`, `explain`으로 관련 심볼과 파일을 좁힌다.
-3. 변경할 원본 코드와 에디터 에셋만 확인한다.
+1. `Architecture.md`에서 전체 구조, 주요 책임, 에셋 확인이 필요한 부분을 파악한다.
+2. `graphify query`, `path`, `explain`으로 작업과 관련된 심볼과 파일을 좁힌다.
+3. 좁혀진 원본 코드와 Unreal Editor의 관련 에셋을 직접 확인한다.
 
-즉 `Architecture.md`는 Graphify의 중복본이 아니라 자동 graph가 표현하지 못하는 책임·수명·증거 한계를 보완한다.
+### 무엇을 기록하는가
+
+- 모듈과 디렉터리의 역할, 주요 컴포넌트와 subsystem의 소유권 및 수명
+- 입력, Action, hit, stat, hit reaction, death, field transition으로 이어지는 주요 실행 흐름과 판단 주체
+- Blueprint, WBP, StateTree, Chooser, Montage, DataTable 등 코드 밖 에셋의 연결
+- 현재 코드에서 확인한 구현과 `MaverickDesign/`에 적힌 설계 목표의 차이
+- 세부 내용을 확인할 수 있는 대표 코드, 설정, 설계 문서와 에셋의 진입점
+
+개별 함수의 구현이나 모든 파일 목록까지 옮겨 적지는 않는다. 그런 정보는 Graphify와 원본 코드에서 확인하고, `Architecture.md`에는 여러 파일과 에셋을 함께 봐야 이해되는 내용만 남긴다.
+
+### 언제 갱신하는가
+
+다음과 같은 변경을 한 작업자는 코드나 에셋 변경과 같은 작업 단위에서 `Architecture.md`도 함께 갱신한다.
+
+- 모듈, 플러그인 의존성 또는 디렉터리의 역할이 달라진 경우
+- 컴포넌트나 subsystem의 소유권, 수명, 판단 권한이 달라진 경우
+- 입력, 전투, 피격, 사망, 필드 전환, AI, UI, 테이블의 주요 흐름이나 순서가 달라진 경우
+- C++와 Blueprint 사이의 책임을 옮기거나 `.uasset` 연결을 추가·변경한 경우
+- 주요 타입이나 파일을 이동·이름 변경·삭제해 기존 진입점이 맞지 않게 된 경우
+- Graphify 조회 결과와 문서 내용이 달라 원본을 확인한 결과, 문서가 낡았다고 확인된 경우
+
+함수 내부 구현만 바뀌고 위 책임이나 흐름에 영향이 없다면 `Architecture.md`를 고치지 않아도 된다.
+
+### 어떻게 갱신하는가
+
+1. 관련 코드, 설정, 설계 문서와 Unreal Editor 에셋을 먼저 확인한다.
+2. 변경 이력을 문장 끝에 계속 덧붙이지 않고, 기존 문단·표·다이어그램을 현재 상태에 맞게 다시 정리한다.
+3. 코드에서 확인한 사실, 아직 구현되지 않은 설계 목표, 에디터에서 추가 확인할 내용을 구분해 적는다. 확인하지 못한 에셋 연결은 추측하지 않고 `에셋 확인 필요`로 남긴다.
+4. 구조를 바꾼 작업자가 코드와 `Architecture.md`를 같은 커밋에 포함한다.
+5. push 전 wrap-up에서 문서와 코드가 맞는지 마지막으로 확인한 뒤 Graphify를 갱신한다. `graphify-out/`의 생성 문서는 직접 수정하지 않는다.
 
 ## C++ 헤더 문서화 결론
 
