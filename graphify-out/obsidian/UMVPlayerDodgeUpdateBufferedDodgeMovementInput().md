@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Character/PC/Dodge/MVPlayerDodge.cpp"
 type: "code"
-community: "회피 입력 방향 구성"
+community: "MVPlayerDodge.cpp"
 location: "L447"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVPlayerDodgecpp
 ---
 
 # UMVPlayerDodge::UpdateBufferedDodgeMovementInput()
@@ -15,4 +15,4 @@ tags:
 - [[FVector_10]] - `references` [EXTRACTED]
 - [[MVPlayerDodge.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVPlayerDodgecpp

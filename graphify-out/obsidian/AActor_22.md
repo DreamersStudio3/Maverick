@@ -1,17 +1,18 @@
 ---
 source_file: ""
 type: "code"
-community: "사망 디졸브 효과 실행"
+community: "UMVDodgeThreatEvaluatorLibrary::EvaluateDodgeThreat"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/UMVDodgeThreatEvaluatorLibraryEvaluateDodgeThreat
 ---
 
 # AActor
 
 ## Connections
-- [[UMVDeathDissolveEffectInitializeEffect()]] - `references` [EXTRACTED]
-- [[UMVDeathDissolveEffectStartDeathDissolve_Implementation()]] - `references` [EXTRACTED]
+- [[MVDodgeThreatResolveEscapeDirection()]] - `references` [EXTRACTED]
+- [[MVDodgeThreatResolveSignedAngle()]] - `references` [EXTRACTED]
+- [[UMVDodgeThreatEvaluatorLibraryEvaluateDodgeThreat()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/UMVDodgeThreatEvaluatorLibraryEvaluateDodgeThreat

@@ -1,16 +1,17 @@
 ---
 source_file: ""
 type: "code"
-community: "필드 전환 관리"
+community: "MVInteractableComponent.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVInteractableComponentcpp
 ---
 
 # FText
 
 ## Connections
-- [[UMVFieldTransitionSubsystemUpdateTransitionProgress()]] - `references` [EXTRACTED]
+- [[UMVInteractableComponentGetInteractionPromptText_Implementation()]] - `references` [EXTRACTED]
+- [[UMVInteractableComponentSetPromptText()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVInteractableComponentcpp

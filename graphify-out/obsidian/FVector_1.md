@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "LockOnTarget 카메라 모디파이어"
+community: "CameraModifierExtension.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/LockOnTarget__
+  - community/CameraModifierExtensioncpp
 ---
 
 # FVector
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[ULockOnTargetCameraModifier_ZoomModifyCamera()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/LockOnTarget__
+#graphify/code #graphify/EXTRACTED #community/CameraModifierExtensioncpp

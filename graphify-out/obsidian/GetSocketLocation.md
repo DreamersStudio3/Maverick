@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h"
 type: "code"
-community: "LockOnTarget 포커스 지점 해석"
+community: "UTargetComponent::GetFocusPointLocation"
 location: "L191"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/LockOnTarget___
+  - community/UTargetComponentGetFocusPointLocation
 ---
 
 # GetSocketLocation
@@ -15,4 +15,4 @@ tags:
 - [[ETargetFocusPointType]] - `defines` [EXTRACTED]
 - [[UTargetComponentGetFocusPointLocation()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/LockOnTarget___
+#graphify/code #graphify/INFERRED #community/UTargetComponentGetFocusPointLocation

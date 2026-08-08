@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTargetDev/Private/GameplayDebugger/GameplayDebuggerCategory_LockOnTarget.h"
 type: "code"
-community: "락온 디버거"
+community: "FGameplayDebuggerCategory_LockOnTarget"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/_
+  - community/FGameplayDebuggerCategory_LockOnTarget
 ---
 
 # GameplayDebuggerCategory_LockOnTarget.h
@@ -22,4 +22,4 @@ tags:
 - [[UTargetComponent]] - `contains` [EXTRACTED]
 - [[UWeightedTargetHandler_1]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/_
+#graphify/code #graphify/EXTRACTED #community/FGameplayDebuggerCategory_LockOnTarget

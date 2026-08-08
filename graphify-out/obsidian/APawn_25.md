@@ -1,17 +1,17 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 전역 감지 갱신"
+community: "FMVGlobalCoolTimeTaskInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVGlobalCoolTimeTaskInstanceData
 ---
 
 # APawn
 
 ## Connections
-- [[GlobalSensingClearControllerTarget()]] - `references` [EXTRACTED]
-- [[GlobalSensingEnsureCooldownComponent()]] - `references` [EXTRACTED]
+- [[EnsureCooldownComponent()]] - `references` [EXTRACTED]
+- [[ResolveCooldownOwner()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVGlobalCoolTimeTaskInstanceData

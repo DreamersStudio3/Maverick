@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp"
 type: "code"
-community: "플레이어 회복약 액션"
+community: "MVPlayerConsumable.cpp"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVPlayerConsumablecpp
 ---
 
 # MVPlayerConsumable.cpp
@@ -48,4 +48,4 @@ tags:
 - [[UMVPlayerConsumableUMVPlayerConsumable()]] - `contains` [EXTRACTED]
 - [[UMVPlayerConsumableUnbindOwnerEvents()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVPlayerConsumablecpp

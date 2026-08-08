@@ -1,17 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 공격 실행 로직"
+community: "FMVAttackTaskInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVAttackTaskInstanceData
 ---
 
 # UStruct
 
 ## Connections
-- [[dot-GetInstanceDataType()_12]] - `references` [EXTRACTED]
-- [[dot-GetInstanceDataType()_13]] - `references` [EXTRACTED]
+- [[dot-GetInstanceDataType()_6]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVAttackTaskInstanceData

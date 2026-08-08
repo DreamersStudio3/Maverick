@@ -1,18 +1,18 @@
 ---
 source_file: "Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp"
 type: "code"
-community: "테이블 매니페스트 생성과 검증"
+community: "MVTableAssetGenerator.cpp"
 location: "L495"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVTableAssetGeneratorcpp
 ---
 
 # TableAssetGeneratorReadStringKeySet()
 
 ## Connections
-- [[FString_21]] - `references` [EXTRACTED]
+- [[FString_22]] - `references` [EXTRACTED]
 - [[JsonValueToGeneratorString()]] - `calls` [EXTRACTED]
 - [[MVTableAssetGenerator.cpp]] - `contains` [EXTRACTED]
 - [[TArray_19]] - `references` [EXTRACTED]
@@ -21,4 +21,4 @@ tags:
 - [[TryGetObjectField()]] - `calls` [EXTRACTED]
 - [[UMVTableAssetGeneratorValidateCharacterStatMapping()]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVTableAssetGeneratorcpp

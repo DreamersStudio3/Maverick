@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 공격 실행 로직"
+community: "ExecuteAttackResolveActionCandidate"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/ExecuteAttackResolveActionCandidate
 ---
 
 # FGameplayTag
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[ExecuteAttackResolveActionTypeTag()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/ExecuteAttackResolveActionCandidate

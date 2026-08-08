@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "월드 상태 저장"
+community: "UMVWorldStateSubsystem::Initialize"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/UMVWorldStateSubsystemInitialize
 ---
 
 # FSubsystemCollectionBase
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[UMVWorldStateSubsystemInitialize()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/UMVWorldStateSubsystemInitialize

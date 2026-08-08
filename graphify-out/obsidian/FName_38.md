@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "피니셔 실행과 워핑"
+community: "MVFinisherComponent.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVFinisherComponentcpp
 ---
 
 # FName
@@ -15,4 +15,4 @@ tags:
 - [[UMVFinisherComponentSetWarpTarget()]] - `calls` [EXTRACTED]
 - [[UMVFinisherComponentTryFinisherMove()]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVFinisherComponentcpp

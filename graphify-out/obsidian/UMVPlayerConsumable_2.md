@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "메인 HUD 상태 바인딩"
+community: "MVMainHUDWidget.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/_HUD__
+  - community/MVMainHUDWidgetcpp
 ---
 
 # UMVPlayerConsumable
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[UMVMainHUDWidgetBindPlayerConsumable()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/_HUD__
+#graphify/code #graphify/EXTRACTED #community/MVMainHUDWidgetcpp

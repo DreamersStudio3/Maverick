@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVEnemyDodgeTokenComponent.cpp"
 type: "code"
-community: "적 회피 토큰 부여"
+community: "GrantDodgeToken"
 location: "L44"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/GrantDodgeToken
 ---
 
 # UMVEnemyDodgeTokenComponent::NotifyEnemyLandedHit()
@@ -17,4 +17,4 @@ tags:
 - [[IsRelevantLandedHitData]] - `calls` [INFERRED]
 - [[MVEnemyDodgeTokenComponent.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/GrantDodgeToken

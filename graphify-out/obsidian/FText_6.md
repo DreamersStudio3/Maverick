@@ -1,16 +1,17 @@
 ---
 source_file: ""
 type: "code"
-community: "회복 물약 퀵슬롯 데이터"
+community: "MVMainHUDWidget.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVMainHUDWidgetcpp
 ---
 
 # FText
 
 ## Connections
-- [[FMVQuickSlotViewData]] - `references` [EXTRACTED]
+- [[UMVMainHUDWidgetBindBossStatus()]] - `references` [EXTRACTED]
+- [[UMVMainHUDWidgetInitBossStatus()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVMainHUDWidgetcpp

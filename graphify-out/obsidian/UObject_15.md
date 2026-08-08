@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "사망 부활 UI 흐름"
+community: "MVDeathRespawnFlow.h"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__UI_
+  - community/MVDeathRespawnFlowh
 ---
 
 # UObject
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[UMVFieldTransitionSubsystemGet()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__UI_
+#graphify/code #graphify/EXTRACTED #community/MVDeathRespawnFlowh

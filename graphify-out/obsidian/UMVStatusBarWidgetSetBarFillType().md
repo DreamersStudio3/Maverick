@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/HUD/MVStatusBarWidget.cpp"
 type: "code"
-community: "종료 처리와 확장 틱"
+community: "Type"
 location: "L31"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/Type
 ---
 
 # UMVStatusBarWidget::SetBarFillType()
@@ -15,4 +15,4 @@ tags:
 - [[MVStatusBarWidget.cpp]] - `contains` [EXTRACTED]
 - [[Type_9]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/Type

@@ -1,0 +1,55 @@
+# MVHitTypes.h
+
+> 16 nodes
+
+## Key Concepts
+
+- **MVHitTypes.h** (17 connections) — `Source/Maverick/Public/Struct/MVHitTypes.h`
+- **MVActionTableTypes.h** (8 connections) — `Source/Maverick/Public/Tables/MVActionTableTypes.h`
+- **MVBossHPBarWidget.h** (5 connections) — `Source/Maverick/UI/HUD/MVBossHPBarWidget.h`
+- **UMVHitResolverSubsystem::Get()** (3 connections) — `Source/Maverick/Combat/MVHitResolverSubsystem.cpp`
+- **MVHitResolverSubsystem.h** (3 connections) — `Source/Maverick/Combat/MVHitResolverSubsystem.h`
+- **UMVHitResolverSubsystem()** (3 connections) — `Source/Maverick/Combat/MVHitResolverSubsystem.h`
+- **MVActionHitReactions()** (2 connections) — `Source/Maverick/Public/Tables/MVActionTableTypes.h`
+- **UObject** (1 connections)
+- **UMVStatComponent** (1 connections) — `Source/Maverick/Combat/MVHitResolverSubsystem.h`
+- **AMVCharacterBase** (1 connections) — `Source/Maverick/Public/Struct/MVHitTypes.h`
+- **FMVHitResolveContext()** (1 connections) — `Source/Maverick/Public/Struct/MVHitTypes.h`
+- **namespace** (1 connections)
+- **UTextBlock** (1 connections) — `Source/Maverick/UI/HUD/MVBossHPBarWidget.h`
+- **UMVStatComponent** (1 connections) — `Source/Maverick/UI/HUD/MVBossHPBarWidget.h`
+- **UMVStatusBarWidget** (1 connections) — `Source/Maverick/UI/HUD/MVBossHPBarWidget.h`
+- **UMVBossHPBarWidget()** (1 connections) — `Source/Maverick/UI/HUD/MVBossHPBarWidget.h`
+
+## Relationships
+
+- [MVHitResolverSubsystem.cpp](MVHitResolverSubsystem.cpp.md) (2 shared connections)
+- [MVPIEActionTestWidget.cpp](MVPIEActionTestWidget.cpp.md) (2 shared connections)
+- [FMVHitReactionEnterConditionInstanceData](FMVHitReactionEnterConditionInstanceData.md) (1 shared connections)
+- [FMVHitReactionTaskInstanceData](FMVHitReactionTaskInstanceData.md) (1 shared connections)
+- [MVCharacterBase.h](MVCharacterBase.h.md) (1 shared connections)
+- [MVAbilityBase.h](MVAbilityBase.h.md) (1 shared connections)
+- [MVEnemyDodgeTokenComponent.h](MVEnemyDodgeTokenComponent.h.md) (1 shared connections)
+- [MVHitReactionComponent.h](MVHitReactionComponent.h.md) (1 shared connections)
+- [MVStatComponent.h](MVStatComponent.h.md) (1 shared connections)
+- [MVAbilityBase.cpp](MVAbilityBase.cpp.md) (1 shared connections)
+- [FMVResolvedHitData](FMVResolvedHitData.md) (1 shared connections)
+- [MVWeaponComponent.cpp](MVWeaponComponent.cpp.md) (1 shared connections)
+
+## Source Files
+
+- `Source/Maverick/Combat/MVHitResolverSubsystem.cpp`
+- `Source/Maverick/Combat/MVHitResolverSubsystem.h`
+- `Source/Maverick/Public/Struct/MVHitTypes.h`
+- `Source/Maverick/Public/Tables/MVActionTableTypes.h`
+- `Source/Maverick/UI/HUD/MVBossHPBarWidget.h`
+
+## Audit Trail
+
+- EXTRACTED: 50 (100%)
+- INFERRED: 0 (0%)
+- AMBIGUOUS: 0 (0%)
+
+---
+
+*Part of the graphify knowledge wiki. See [index](index.md) to navigate.*

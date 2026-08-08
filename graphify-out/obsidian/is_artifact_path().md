@@ -1,12 +1,12 @@
 ---
 source_file: "Scripts/Graphify/knowledge_guard.py"
 type: "code"
-community: "Graphify 최신성 Guard"
+community: "knowledge_guard.py"
 location: "L140"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Graphify__Guard
+  - community/knowledge_guardpy
 ---
 
 # is_artifact_path()
@@ -18,4 +18,4 @@ tags:
 - [[verify_commit()]] - `indirect_call` [INFERRED]
 - [[write_stamp()]] - `indirect_call` [INFERRED]
 
-#graphify/code #graphify/EXTRACTED #community/Graphify__Guard
+#graphify/code #graphify/EXTRACTED #community/knowledge_guardpy

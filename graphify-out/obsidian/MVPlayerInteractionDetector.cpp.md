@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp"
 type: "code"
-community: "플레이어 상호작용 감지"
+community: "MVPlayerInteractionDetector.cpp"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVPlayerInteractionDetectorcpp
 ---
 
 # MVPlayerInteractionDetector.cpp
@@ -57,4 +57,4 @@ tags:
 - [[UMVPlayerInteractionDetectorUpdateInteractionInputReleaseGate()]] - `contains` [EXTRACTED]
 - [[UMVPlayerInteractionDetectorUpdateInteractionPrompt()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVPlayerInteractionDetectorcpp

@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/AI/Task/MVStrafeMoveTask.cpp"
 type: "code"
-community: "AI 스트레이프 이동"
+community: "FMVStrafeMoveTaskInstanceData"
 location: "L76"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI__
+  - community/FMVStrafeMoveTaskInstanceData
 ---
 
 # MVStrafeMoveTaskGetMovementComponent()
@@ -18,4 +18,4 @@ tags:
 - [[MVStrafeMoveTaskRestoreSpeed()]] - `calls` [EXTRACTED]
 - [[UCharacterMovementComponent]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI__
+#graphify/code #graphify/EXTRACTED #community/FMVStrafeMoveTaskInstanceData

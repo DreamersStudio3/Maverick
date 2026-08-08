@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVEnemyDodgeTokenComponent.h"
 type: "code"
-community: "적 회피 토큰 상태"
+community: "EMVEnemyDodgeTokenGrantReason"
 location: "L13"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/EMVEnemyDodgeTokenGrantReason
 ---
 
 # EMVEnemyDodgeTokenGrantReason
@@ -16,7 +16,7 @@ tags:
 - [[dot-GetLandedHitCount()]] - `method` [EXTRACTED]
 - [[dot-GetReceivedHitCount()]] - `method` [EXTRACTED]
 - [[AMVCharacterBase_5]] - `references` [EXTRACTED]
-- [[AMVEnemy_4]] - `references` [EXTRACTED]
+- [[AMVEnemy_3]] - `references` [EXTRACTED]
 - [[BeginPlay_1]] - `defines` [EXTRACTED]
 - [[BindObservedTargetDamage]] - `defines` [EXTRACTED]
 - [[BindOwnerEvents]] - `defines` [EXTRACTED]
@@ -61,7 +61,7 @@ tags:
 - [[bGrantOnReceivedHitThreshold]] - `defines` [EXTRACTED]
 - [[bGroggyActive]] - `defines` [EXTRACTED]
 - [[bGroggyEndedByFinisher]] - `defines` [EXTRACTED]
-- [[int32_18]] - `references` [EXTRACTED]
+- [[int32_19]] - `references` [EXTRACTED]
 - [[uint8_5]] - `inherits` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/EMVEnemyDodgeTokenGrantReason

@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVCombatComponent.cpp"
 type: "code"
-community: "전투 액션 런타임 상태"
+community: "FMVCombatActionEvent"
 location: "L2002"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/FMVCombatActionEvent
 ---
 
 # UMVCombatComponent::ResetHeavyChargeAttackState()
@@ -15,4 +15,4 @@ tags:
 - [[FMVCombatHeavyChargeAttackRuntimeState]] - `calls` [INFERRED]
 - [[MVCombatComponent.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/FMVCombatActionEvent

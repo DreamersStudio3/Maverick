@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/Debug/MVPIEActionTestWidget.cpp"
 type: "code"
-community: "PIE 피격 판정 테스트"
+community: "MVPIEActionTestWidget.cpp"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/PIE___
+  - community/MVPIEActionTestWidgetcpp
 ---
 
 # MVPIEActionTestWidget.cpp
@@ -44,4 +44,4 @@ tags:
 - [[UMVPIEActionTestWidgetSetStatusText()]] - `contains` [EXTRACTED]
 - [[UMVPIEActionTestWidgetSetTargetCharacter()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/PIE___
+#graphify/code #graphify/EXTRACTED #community/MVPIEActionTestWidgetcpp

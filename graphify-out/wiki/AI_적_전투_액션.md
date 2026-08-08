@@ -33,8 +33,8 @@
 
 ## Relationships
 
-- [AI 전투 액션 메타데이터](AI_%EC%A0%84%ED%88%AC_%EC%95%A1%EC%85%98_%EB%A9%94%ED%83%80%EB%8D%B0%EC%9D%B4%ED%84%B0.md) (1 shared connections)
-- [AI 전투 컨텍스트](AI_%EC%A0%84%ED%88%AC_%EC%BB%A8%ED%85%8D%EC%8A%A4%ED%8A%B8.md) (1 shared connections)
+- [MVAICombatTypes.h](MVAICombatTypes.h.md) (1 shared connections)
+- [FMVAICombatContext](FMVAICombatContext.md) (1 shared connections)
 
 ## Source Files
 

@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h"
 type: "code"
-community: "AI 적 회피 실행"
+community: "MVEnemyDodgeActionTask.cpp"
 location: "L105"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/MVEnemyDodgeActionTaskcpp
 ---
 
 # EnterState
@@ -22,4 +22,4 @@ tags:
 - [[FStateTreeTransitionResult_5]] - `references` [EXTRACTED]
 - [[MVEnemyDodgeActionTask.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/MVEnemyDodgeActionTaskcpp

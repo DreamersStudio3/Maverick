@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "어빌리티 피격 Launch"
+community: "MVAbilityBase.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__Launch
+  - community/MVAbilityBasecpp
 ---
 
 # TCHAR
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[MVAbilityLogHitLaunchTrace()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__Launch
+#graphify/code #graphify/EXTRACTED #community/MVAbilityBasecpp

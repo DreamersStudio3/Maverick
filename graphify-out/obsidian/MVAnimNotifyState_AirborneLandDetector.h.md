@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Animation/NotifyStates/MVAnimNotifyState_AirborneLandDetector.h"
 type: "code"
-community: "공중 착지 감지 노티파이"
+community: "MVAnimNotifyState_AirborneLandDetector.h"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVAnimNotifyState_AirborneLandDetectorh
 ---
 
 # MVAnimNotifyState_AirborneLandDetector.h
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[UMVAnimNotifyState_AirborneLandDetector()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVAnimNotifyState_AirborneLandDetectorh

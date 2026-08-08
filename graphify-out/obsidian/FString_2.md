@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "회복 물약 적용 노티파이"
+community: "LockOnTargetExtensionBase.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/LockOnTargetExtensionBasecpp
 ---
 
 # FString
 
 ## Connections
-- [[UMVAnimNotify_ApplyHealingPotionGetNotifyName_Implementation()]] - `references` [EXTRACTED]
+- [[FLockOnTargetExtensionTickFunctionDiagnosticMessage()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/LockOnTargetExtensionBasecpp

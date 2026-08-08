@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/Window/MVSkillTreeWindow.cpp"
 type: "code"
-community: "스킬 트리 UI 탐색"
+community: "UWidget"
 location: "L11"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__UI_
+  - community/UWidget
 ---
 
 # UMVSkillTreeWindow::RequestRebuildExplicitNavigation()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[MVSkillTreeWindow.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__UI_
+#graphify/code #graphify/EXTRACTED #community/UWidget

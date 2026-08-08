@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Maverick.cpp"
 type: "code"
-community: "Maverick 모듈 테이블 명령"
+community: "Maverick.cpp"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Maverick___
+  - community/Maverickcpp
 ---
 
 # Maverick.cpp
@@ -18,4 +18,4 @@ tags:
 - [[RefreshTableManifestFromMenu()]] - `contains` [EXTRACTED]
 - [[RegisterEditorMenus()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Maverick___
+#graphify/code #graphify/EXTRACTED #community/Maverickcpp

@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/HUD/MVMainHUDWidget.cpp"
 type: "code"
-community: "회복 물약 런타임 상태"
+community: "MVPlayerConsumable.h"
 location: "L199"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVPlayerConsumableh
 ---
 
 # UMVMainHUDWidget::HandleHealingPotionStateChanged()
@@ -15,4 +15,4 @@ tags:
 - [[FMVHealingPotionRuntimeState()]] - `references` [EXTRACTED]
 - [[MVMainHUDWidget.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVPlayerConsumableh

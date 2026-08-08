@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/System/MVUIDataTypes.h"
 type: "code"
-community: "UI 팝업 메시지 데이터"
+community: "FMVPopupMessageData"
 location: "L31"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/UI___
+  - community/FMVPopupMessageData
 ---
 
 # MessageId
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[FMVPopupMessageData]] - `defines` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/UI___
+#graphify/code #graphify/EXTRACTED #community/FMVPopupMessageData

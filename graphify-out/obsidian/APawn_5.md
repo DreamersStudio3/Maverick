@@ -1,16 +1,17 @@
 ---
-source_file: ""
+source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetExtensions/LockOnTargetExtensionBase.h"
 type: "code"
-community: "AI 그로기 진입 조건"
+community: "LockOnTargetExtensionBase.cpp"
+location: "L16"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/LockOnTargetExtensionBasecpp
 ---
 
 # APawn
 
 ## Connections
-- [[GroggyEnterResolveOwner()]] - `references` [EXTRACTED]
+- [[LockOnTargetExtensionBase.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/LockOnTargetExtensionBasecpp

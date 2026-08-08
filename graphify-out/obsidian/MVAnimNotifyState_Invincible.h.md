@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Animation/NotifyStates/MVAnimNotifyState_Invincible.h"
 type: "code"
-community: "무적 상태 노티파이"
+community: "MVAnimNotifyState_Invincible.h"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVAnimNotifyState_Invincibleh
 ---
 
 # MVAnimNotifyState_Invincible.h
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[UMVAnimNotifyState_Invincible()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVAnimNotifyState_Invincibleh

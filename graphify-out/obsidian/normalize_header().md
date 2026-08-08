@@ -1,12 +1,12 @@
 ---
 source_file: "MaverickDesign/CsvToJsonConverter/CsvToJsonConverter.py"
 type: "code"
-community: "Graphify 최신성 Guard"
+community: "knowledge_guard.py"
 location: "L115"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Graphify__Guard
+  - community/knowledge_guardpy
 ---
 
 # normalize_header()
@@ -16,4 +16,4 @@ tags:
 - [[convert_client_layout()]] - `calls` [EXTRACTED]
 - [[convert_plain_layout()]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Graphify__Guard
+#graphify/code #graphify/EXTRACTED #community/knowledge_guardpy

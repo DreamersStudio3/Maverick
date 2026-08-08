@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Public/Tables/MVSkillDataTableColumn.h"
 type: "code"
-community: "스킬 데이터와 비용"
+community: "FMVSkillDataTableColumn"
 location: "L25"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/FMVSkillDataTableColumn
 ---
 
 # FMVSkillDataTableColumn
@@ -16,7 +16,7 @@ tags:
 - [[dot-GetCurrentSkillData()]] - `references` [EXTRACTED]
 - [[AbilityReference]] - `defines` [EXTRACTED]
 - [[ChargeCommitTime]] - `defines` [EXTRACTED]
-- [[CooldownDuration_3]] - `defines` [EXTRACTED]
+- [[CooldownDuration_1]] - `defines` [EXTRACTED]
 - [[DamageMultiplier]] - `defines` [EXTRACTED]
 - [[EMVAttackSwingDirection_1]] - `references` [EXTRACTED]
 - [[EarlyReleaseBlendOutTime]] - `defines` [EXTRACTED]
@@ -44,4 +44,4 @@ tags:
 - [[bIsChained_1]] - `defines` [EXTRACTED]
 - [[uint32_2]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/FMVSkillDataTableColumn

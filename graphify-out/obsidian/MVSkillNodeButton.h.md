@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/Window/MVSkillNodeButton.h"
 type: "code"
-community: "스킬 노드 버튼"
+community: "MVSkillNodeButton.h"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVSkillNodeButtonh
 ---
 
 # MVSkillNodeButton.h
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[UMVCommonButtonBase()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVSkillNodeButtonh

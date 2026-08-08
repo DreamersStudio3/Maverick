@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "피니셔 Chooser 입출력"
+community: "FMVFinisherChooserInput"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/_Chooser_
+  - community/FMVFinisherChooserInput
 ---
 
 # FGameplayTagContainer
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[FMVFinisherChooserInput]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/_Chooser_
+#graphify/code #graphify/EXTRACTED #community/FMVFinisherChooserInput

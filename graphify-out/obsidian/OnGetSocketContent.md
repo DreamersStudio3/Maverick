@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/SSocketSelector.h"
 type: "code"
-community: "타깃 디테일 커스터마이징"
+community: "SSocketSelector"
 location: "L33"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/SSocketSelector
 ---
 
 # OnGetSocketContent
@@ -17,4 +17,4 @@ tags:
 - [[SWidget]] - `references` [EXTRACTED]
 - [[TSharedRef_2]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/SSocketSelector

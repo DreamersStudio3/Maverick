@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h"
 type: "code"
-community: "락온 대상 컴포넌트"
+community: "LockOnTargetComponent.cpp"
 location: "L230"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/__
+  - community/LockOnTargetComponentcpp
 ---
 
 # NotifyTargetReleased
@@ -16,4 +16,4 @@ tags:
 - [[ULockOnTargetComponentEndPlay()]] - `calls` [INFERRED]
 - [[ULockOnTargetComponentOnTargetInfoUpdated()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/__
+#graphify/code #graphify/INFERRED #community/LockOnTargetComponentcpp

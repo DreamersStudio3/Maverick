@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h"
 type: "code"
-community: "LockOnTarget 타깃 캡처 상태"
+community: "UTargetComponent::DispatchTargetException"
 location: "L156"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/LockOnTarget___
+  - community/UTargetComponentDispatchTargetException
 ---
 
 # .IsCaptured()
@@ -16,4 +16,4 @@ tags:
 - [[ETargetFocusPointType]] - `method` [EXTRACTED]
 - [[UTargetComponentDispatchTargetException()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/EXTRACTED #community/LockOnTarget___
+#graphify/code #graphify/EXTRACTED #community/UTargetComponentDispatchTargetException

@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Combat/MVAbilityBase.cpp"
 type: "code"
-community: "어빌리티 피격 Launch"
+community: "MVAbilityBase.cpp"
 location: "L82"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__Launch
+  - community/MVAbilityBasecpp
 ---
 
 # UMVAbilityBase::PrepareAbilityExecution()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[MVAbilityBase.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__Launch
+#graphify/code #graphify/EXTRACTED #community/MVAbilityBasecpp

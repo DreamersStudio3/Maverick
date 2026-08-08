@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 적 사망 처리"
+community: "FMVStrafeMoveTaskInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVStrafeMoveTaskInstanceData
 ---
 
 # FStateTreeTaskCommonBase
 
 ## Connections
-- [[FMVEnemyDeadTask]] - `inherits` [EXTRACTED]
+- [[FMVStrafeMoveTask]] - `inherits` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVStrafeMoveTaskInstanceData

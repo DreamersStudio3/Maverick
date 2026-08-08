@@ -1,16 +1,17 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 전투 결정 설정"
+community: "ULockOnTargetExtensionProxy"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/ULockOnTargetExtensionProxy
 ---
 
 # TArray
 
 ## Connections
-- [[FMVCombatDecisionConditionInstanceData]] - `references` [EXTRACTED]
+- [[ULockOnTargetComponentGetAllSubobjects()]] - `references` [EXTRACTED]
+- [[ULockOnTargetComponentGetLifetimeReplicatedProps()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/ULockOnTargetExtensionProxy

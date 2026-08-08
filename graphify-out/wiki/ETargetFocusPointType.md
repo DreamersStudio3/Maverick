@@ -1,61 +1,53 @@
 # ETargetFocusPointType
 
-> God node · 62 connections · `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h`
+> 43 nodes
 
-**Community:** [락온 대상 포커스 설정](%EB%9D%BD%EC%98%A8_%EB%8C%80%EC%83%81_%ED%8F%AC%EC%BB%A4%EC%8A%A4_%EC%84%A4%EC%A0%95.md)
+## Key Concepts
 
-## Connections by Relation
+- **ETargetFocusPointType** (62 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h`
+- **uint8** (1 connections)
+- **UMETA** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h`
+- **UTargetComponent** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h`
+- **uint32** (1 connections)
+- **NumInlinedInvaders** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h`
+- **bCanBeCaptured** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h`
+- **AssociatedComponentName** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h`
+- **Sockets** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h`
+- **bForceCustomCaptureRadius** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h`
+- **CustomCaptureRadius** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h`
+- **Priority** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h`
+- **FocusPointType** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h`
+- **FocusPointCustomSocket** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h`
+- **FVector** (1 connections)
+- **FocusPointRelativeOffset** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h`
+- **bWantsDisplayWidget** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h`
+- **TSoftClassPtr** (1 connections)
+- **CustomWidgetClass** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h`
+- **WidgetRelativeOffset** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h`
+- **bWantsDisplayHPWidget** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h`
+- **CustomHPWidgetClass** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h`
+- **HPWidgetSocket** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h`
+- **HPWidgetRelativeOffset** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h`
+- **FOnTargetComponentCaptured** (1 connections)
+- *... and 18 more nodes in this community*
 
-### contains
-- TargetComponent.h `EXTRACTED`
+## Relationships
 
-### defines
-- DispatchTargetException `EXTRACTED`
-- NotifyTargetReleased `EXTRACTED`
-- CanBeReferencedOverNetwork `EXTRACTED`
-- GetCustomFocusPoint `EXTRACTED`
-- GetSocketLocation `EXTRACTED`
-- K2_OnCaptured `EXTRACTED`
-- K2_OnReleased `EXTRACTED`
-- NotifyTargetCaptured `EXTRACTED`
-- AddSocket `EXTRACTED`
-- AssociatedComponent `EXTRACTED`
-- AssociatedComponentName `EXTRACTED`
-- bCanBeCaptured `EXTRACTED`
-- BeginPlay `EXTRACTED`
-- bForceCustomCaptureRadius `EXTRACTED`
-- bWantsDisplayHPWidget `EXTRACTED`
-- bWantsDisplayWidget `EXTRACTED`
-- CanBeCaptured `EXTRACTED`
-- CustomCaptureRadius `EXTRACTED`
-- CustomHPWidgetClass `EXTRACTED`
-- CustomWidgetClass `EXTRACTED`
+- [TargetComponent.h](TargetComponent.h.md) (7 shared connections)
+- [UTargetComponent::DispatchTargetException](UTargetComponent--DispatchTargetException.md) (6 shared connections)
+- [UTargetComponent::GetFocusPointLocation](UTargetComponent--GetFocusPointLocation.md) (3 shared connections)
+- [TargetComponent.cpp](TargetComponent.cpp.md) (2 shared connections)
+- [LockOnTargetComponent.cpp](LockOnTargetComponent.cpp.md) (2 shared connections)
 
-### inherits
-- uint8 `EXTRACTED`
+## Source Files
 
-### method
-- .IsSocketValid() `EXTRACTED`
-- .GetInvaders() `EXTRACTED`
-- .GetInvadersNum() `EXTRACTED`
-- .IsCaptured() `EXTRACTED`
-- .GetAssociatedComponent() `EXTRACTED`
-- .GetDefaultSocket() `EXTRACTED`
+- `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h`
 
-### references
-- ULockOnTargetComponent `EXTRACTED`
-- USceneComponent `EXTRACTED`
-- FName `EXTRACTED`
-- UUserWidget `EXTRACTED`
-- TArray `EXTRACTED`
-- FOnTargetComponentCaptured `EXTRACTED`
-- FOnTargetComponentReleased `EXTRACTED`
-- NumInlinedInvaders `EXTRACTED`
-- FVector `EXTRACTED`
-- TInlineAllocator `EXTRACTED`
-- TSoftClassPtr `EXTRACTED`
-- TWeakObjectPtr `EXTRACTED`
-- uint32 `EXTRACTED`
+## Audit Trail
+
+- EXTRACTED: 104 (100%)
+- INFERRED: 0 (0%)
+- AMBIGUOUS: 0 (0%)
 
 ---
 

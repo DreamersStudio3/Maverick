@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 전투 진입 조건"
+community: "FMVActionCooldownReadyConditionInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVActionCooldownReadyConditionInstanceData
 ---
 
 # FStateTreeConditionCommonBase
 
 ## Connections
-- [[FMVCombatActionEnterCondition]] - `inherits` [EXTRACTED]
+- [[FMVActionCooldownReadyCondition]] - `inherits` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVActionCooldownReadyConditionInstanceData

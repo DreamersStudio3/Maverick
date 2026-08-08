@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 기본 공격 태스크"
+community: "GroggyEnterResolveOwner"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/GroggyEnterResolveOwner
 ---
 
 # TObjectPtr
 
 ## Connections
-- [[FMVAttackTaskInstanceData]] - `references` [EXTRACTED]
+- [[FMVGroggyEnterConditionInstanceData]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/GroggyEnterResolveOwner

@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "PIE 액션 테스트 UI"
+community: "PIEActionTestAddButton"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/PIE___UI
+  - community/PIEActionTestAddButton
 ---
 
 # FName
@@ -14,4 +14,4 @@ tags:
 - [[PIEActionTestAddButton()]] - `references` [EXTRACTED]
 - [[PIEActionTestMakeText()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/PIE___UI
+#graphify/code #graphify/EXTRACTED #community/PIEActionTestAddButton

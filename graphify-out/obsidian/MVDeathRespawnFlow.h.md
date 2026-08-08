@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/System/MVDeathRespawnFlow.h"
 type: "code"
-community: "사망 부활 UI 흐름"
+community: "MVDeathRespawnFlow.h"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__UI_
+  - community/MVDeathRespawnFlowh
 ---
 
 # MVDeathRespawnFlow.h
@@ -19,4 +19,4 @@ tags:
 - [[UMVFieldTransitionSubsystem]] - `contains` [EXTRACTED]
 - [[UMVUISubsystem_1]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__UI_
+#graphify/code #graphify/EXTRACTED #community/MVDeathRespawnFlowh

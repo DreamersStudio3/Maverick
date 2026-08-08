@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVCombatComponent.h"
 type: "code"
-community: "전투 액션 런타임 상태"
+community: "FMVCombatActionEvent"
 location: "L35"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/FMVCombatActionEvent
 ---
 
 # FMVCombatActionEvent
@@ -25,6 +25,6 @@ tags:
 - [[TObjectPtr_26]] - `references` [EXTRACTED]
 - [[UMVDodgeThreatEvaluatorLibraryEvaluateDodgeThreat()]] - `references` [EXTRACTED]
 - [[UMVEnemyDodgeTokenComponentTryConsumeDodgeTokenForThreat()]] - `references` [EXTRACTED]
-- [[int32_16]] - `references` [EXTRACTED]
+- [[int32_17]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/FMVCombatActionEvent

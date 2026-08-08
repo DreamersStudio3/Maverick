@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetManager.h"
 type: "code"
-community: "LockOnTarget 타깃 관리 구성요소"
+community: "TargetComponent.h"
 location: "L16"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/LockOnTarget___
+  - community/TargetComponenth
 ---
 
 # UWorldSubsystem()
@@ -15,4 +15,4 @@ tags:
 - [[TargetManager.h]] - `contains` [EXTRACTED]
 - [[UTargetManager]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/LockOnTarget___
+#graphify/code #graphify/INFERRED #community/TargetComponenth

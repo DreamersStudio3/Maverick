@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/TargetHandlerBase.h"
 type: "code"
-community: "LockOnTarget 서브오브젝트 수명주기"
+community: "ULockOnTargetExtensionProxy"
 location: "L58"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/LockOnTarget__
+  - community/ULockOnTargetExtensionProxy
 ---
 
 # ULockOnTargetExtensionProxy()
@@ -19,4 +19,4 @@ tags:
 - [[ULockOnTargetComponentInitializeSubobject()]] - `references` [EXTRACTED]
 - [[UTargetHandlerBase]] - `calls` [INFERRED]
 
-#graphify/code #graphify/EXTRACTED #community/LockOnTarget__
+#graphify/code #graphify/EXTRACTED #community/ULockOnTargetExtensionProxy

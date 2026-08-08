@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "락온 대상 컴포넌트"
+community: "LockOnTargetComponent.h"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/LockOnTargetComponenth
 ---
 
 # ULockOnTargetExtensionBase
@@ -16,4 +16,4 @@ tags:
 - [[ULockOnTargetComponentFindExtensionByClass()]] - `references` [EXTRACTED]
 - [[ULockOnTargetComponentRemoveExtensionByClass()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/LockOnTargetComponenth

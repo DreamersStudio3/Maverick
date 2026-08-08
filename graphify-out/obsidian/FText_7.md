@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "스킬 슬롯 런타임 표시"
+community: "FMVQuickSlotViewData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/FMVQuickSlotViewData
 ---
 
 # FText
 
 ## Connections
-- [[UMVSkillSlotWidgetSetHotKeyText()]] - `references` [EXTRACTED]
+- [[FMVQuickSlotViewData]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/FMVQuickSlotViewData

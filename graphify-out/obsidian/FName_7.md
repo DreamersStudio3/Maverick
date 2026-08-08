@@ -1,17 +1,17 @@
 ---
 source_file: ""
 type: "code"
-community: "락온 대상 미리보기 확장"
+community: "LockOnTargetComponent.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/LockOnTargetComponentcpp
 ---
 
 # FName
 
 ## Connections
-- [[UTargetPreviewExtensionOnTargetLocked()]] - `references` [EXTRACTED]
-- [[UTargetPreviewExtensionOnTargetUnlocked()]] - `references` [EXTRACTED]
+- [[ULockOnTargetComponentNotifyTargetSocketChanged()]] - `references` [EXTRACTED]
+- [[ULockOnTargetComponentSetLockOnTargetManual()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/LockOnTargetComponentcpp

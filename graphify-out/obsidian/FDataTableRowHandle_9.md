@@ -1,19 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "피니셔 실행과 워핑"
+community: "FName"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/FName
 ---
 
 # FDataTableRowHandle
 
 ## Connections
-- [[UMVFinisherComponentClearAttackData()]] - `calls` [EXTRACTED]
-- [[UMVFinisherComponentFindFinisherAnimation()]] - `references` [EXTRACTED]
-- [[UMVFinisherComponentSendAnimation()]] - `references` [EXTRACTED]
-- [[UMVFinisherComponentSetAttackData()]] - `references` [EXTRACTED]
+- [[UMVDeathComponentResolveDeathActionRowHandle()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/FName

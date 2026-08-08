@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 타겟 포커싱"
+community: "MVEnemyDodgeActionTask.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI__
+  - community/MVEnemyDodgeActionTaskcpp
 ---
 
 # TObjectPtr
 
 ## Connections
-- [[FMVFocusingTaskInstanceData]] - `references` [EXTRACTED]
+- [[EnemyDodgeActionTaskResolveOwner()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI__
+#graphify/code #graphify/EXTRACTED #community/MVEnemyDodgeActionTaskcpp

@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/AI/MVAICombatTypes.h"
 type: "code"
-community: "AI 전투 액션 메타데이터"
-location: "L199"
+community: "MVAICombatTypes.h"
+location: "L213"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/MVAICombatTypesh
 ---
 
 # MakeCooldownActionId()
@@ -14,8 +14,8 @@ tags:
 ## Connections
 - [[FMVAICombatActionMetadata]] - `references` [EXTRACTED]
 - [[FMVAICombatResolvedAction]] - `references` [EXTRACTED]
-- [[FMVActionRequest()]] - `references` [EXTRACTED]
+- [[FMVActionRequest]] - `references` [EXTRACTED]
 - [[FORCEINLINE]] - `references` [EXTRACTED]
 - [[MVAICombatTypes.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/MVAICombatTypesh

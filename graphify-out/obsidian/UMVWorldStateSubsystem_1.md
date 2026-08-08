@@ -1,17 +1,17 @@
 ---
-source_file: "Source/Maverick/System/MVFieldTransitionSubsystem.h"
+source_file: "Source/Maverick/System/MVQuestSubsystem.h"
 type: "code"
-community: "필드 전환 서브시스템 계약"
-location: "L15"
+community: "MVQuestSubsystem.h"
+location: "L7"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVQuestSubsystemh
 ---
 
 # UMVWorldStateSubsystem
 
 ## Connections
-- [[MVFieldTransitionSubsystem.h]] - `contains` [EXTRACTED]
+- [[MVQuestSubsystem.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVQuestSubsystemh

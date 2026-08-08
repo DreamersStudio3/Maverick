@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/AI/MVAICombatTypes.h"
 type: "code"
-community: "AI 전투 컨텍스트"
-location: "L132"
+community: "FMVAICombatContext"
+location: "L146"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI__
+  - community/FMVAICombatContext
 ---
 
 # FMVAICombatContext
@@ -18,7 +18,7 @@ tags:
 - [[CurrentArea]] - `defines` [EXTRACTED]
 - [[CurrentPhase]] - `defines` [EXTRACTED]
 - [[DistanceToTarget]] - `defines` [EXTRACTED]
-- [[EMVBossCombatArea_1]] - `references` [EXTRACTED]
+- [[EMVBossCombatArea]] - `references` [EXTRACTED]
 - [[ExecuteAttackCanSelectCandidate()]] - `references` [EXTRACTED]
 - [[ExecuteAttackSelectCandidate()]] - `references` [EXTRACTED]
 - [[FMVAttackOpportunityTaskInstanceData]] - `references` [EXTRACTED]
@@ -28,13 +28,13 @@ tags:
 - [[FMVGlobalSensingTaskInstanceData]] - `references` [EXTRACTED]
 - [[FMVSelectAndExecuteAttackTaskInstanceData]] - `references` [EXTRACTED]
 - [[FMVStrafeMoveTaskInstanceData]] - `references` [EXTRACTED]
-- [[FName_15]] - `references` [EXTRACTED]
+- [[FName]] - `references` [EXTRACTED]
 - [[IsActionReady()]] - `references` [EXTRACTED]
 - [[IsDistanceInRange()]] - `references` [EXTRACTED]
-- [[LastAttackTag]] - `defines` [EXTRACTED]
+- [[LastAttackTag_1]] - `defines` [EXTRACTED]
 - [[MVAICombatTypes.h]] - `contains` [EXTRACTED]
 - [[ReadyActionIds]] - `defines` [EXTRACTED]
-- [[TArray_7]] - `references` [EXTRACTED]
+- [[TArray_1]] - `references` [EXTRACTED]
 - [[bActionRunning]] - `defines` [EXTRACTED]
 - [[bAirborneChargePathClear]] - `defines` [EXTRACTED]
 - [[bAttackCadenceReady]] - `defines` [EXTRACTED]
@@ -49,6 +49,6 @@ tags:
 - [[bStrafePathClear]] - `defines` [EXTRACTED]
 - [[bTargetCanBeAirborne]] - `defines` [EXTRACTED]
 - [[bTargetIsAirborne]] - `defines` [EXTRACTED]
-- [[int32_2]] - `references` [EXTRACTED]
+- [[int32]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI__
+#graphify/code #graphify/EXTRACTED #community/FMVAICombatContext

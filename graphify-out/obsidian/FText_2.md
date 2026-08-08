@@ -1,17 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "상호작용 가능 컴포넌트"
+community: "TargetComponentDetails.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/TargetComponentDetailscpp
 ---
 
 # FText
 
 ## Connections
-- [[UMVInteractableComponentGetInteractionPromptText_Implementation()]] - `references` [EXTRACTED]
-- [[UMVInteractableComponentSetPromptText()]] - `references` [EXTRACTED]
+- [[OnCommitAssociatedComponentNameText]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/TargetComponentDetailscpp

@@ -1,17 +1,17 @@
 ---
 source_file: ""
 type: "code"
-community: "전역 전투 센싱 태스크"
+community: "EnterState"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/EnterState
 ---
 
 # FStateTreeTransitionResult
 
 ## Connections
-- [[EnterState_10]] - `references` [EXTRACTED]
-- [[ExitState_8]] - `references` [EXTRACTED]
+- [[EnterState_12]] - `references` [EXTRACTED]
+- [[ExitState_9]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/EnterState

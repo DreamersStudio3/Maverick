@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "윈도우 베이스 초기화"
+community: "UMVWindowBase::UMVWindowBase"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/UMVWindowBaseUMVWindowBase
 ---
 
 # FObjectInitializer
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[UMVWindowBaseUMVWindowBase()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/UMVWindowBaseUMVWindowBase

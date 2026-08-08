@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "Graphify 최신성 Guard"
+community: "knowledge_guard.py"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Graphify__Guard
+  - community/knowledge_guardpy
 ---
 
 # Any
@@ -17,4 +17,4 @@ tags:
 - [[convert_rows()]] - `references` [EXTRACTED]
 - [[parse_value()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Graphify__Guard
+#graphify/code #graphify/EXTRACTED #community/knowledge_guardpy

@@ -1,18 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "플레이어 회복약 액션"
+community: "FMVEnemyDodgeActionTaskInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/FMVEnemyDodgeActionTaskInstanceData
 ---
 
 # FDataTableRowHandle
 
 ## Connections
-- [[ApplyMVPlayerConsumableHealingPotionDataRowDefaults()]] - `references` [EXTRACTED]
-- [[UMVPlayerConsumableResolveHealingPotionActionTableName()]] - `references` [EXTRACTED]
-- [[UMVPlayerConsumableTryStartHealingPotionAction()]] - `references` [EXTRACTED]
+- [[FMVEnemyDodgeActionTaskInstanceData]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/FMVEnemyDodgeActionTaskInstanceData

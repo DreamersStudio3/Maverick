@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Animation/Notifies/MVAnimNotify_DeathOverlay.h"
 type: "code"
-community: "사망 오버레이 노티파이"
+community: "MVAnimNotify_DeathOverlay.h"
 location: "L14"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVAnimNotify_DeathOverlayh
 ---
 
 # UMVAnimNotify_DeathOverlay()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[MVAnimNotify_DeathOverlay.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVAnimNotify_DeathOverlayh

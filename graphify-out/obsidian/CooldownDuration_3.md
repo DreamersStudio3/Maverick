@@ -1,17 +1,17 @@
 ---
-source_file: "Source/Maverick/Public/Tables/MVSkillDataTableColumn.h"
+source_file: "Source/Maverick/AI/MVActionCooldownComponent.h"
 type: "code"
-community: "스킬 데이터와 비용"
-location: "L73"
+community: "FMVGlobalCoolTimeTaskInstanceData"
+location: "L28"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/FMVGlobalCoolTimeTaskInstanceData
 ---
 
 # CooldownDuration
 
 ## Connections
-- [[FMVSkillDataTableColumn]] - `defines` [EXTRACTED]
+- [[FMVActionCooldownState]] - `defines` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/FMVGlobalCoolTimeTaskInstanceData

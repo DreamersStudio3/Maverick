@@ -1,17 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "LockOnTarget 카메라 모디파이어"
+community: "FMVGlobalCoolTimeTaskInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/LockOnTarget__
+  - community/FMVGlobalCoolTimeTaskInstanceData
 ---
 
 # FName
 
 ## Connections
-- [[UCameraModifierExtensionOnTargetLocked()]] - `references` [EXTRACTED]
-- [[UCameraModifierExtensionOnTargetUnlocked()]] - `references` [EXTRACTED]
+- [[FMVGlobalCoolTimeTaskInstanceData]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/LockOnTarget__
+#graphify/code #graphify/EXTRACTED #community/FMVGlobalCoolTimeTaskInstanceData

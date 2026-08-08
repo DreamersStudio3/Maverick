@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 적 회피 설정"
+community: "FMVGlobalSensingTaskInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVGlobalSensingTaskInstanceData
 ---
 
 # UPROPERTY
 
 ## Connections
-- [[FMVEnemyDodgeActionTaskInstanceData]] - `references` [EXTRACTED]
+- [[FMVGlobalSensingTaskInstanceData]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVGlobalSensingTaskInstanceData

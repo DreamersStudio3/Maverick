@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/TargetHandlerBase.h"
 type: "code"
-community: "가중치 기반 타깃 선택"
+community: "FFindTargetRequestResponse"
 location: "L36"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/FFindTargetRequestResponse
 ---
 
 # FFindTargetRequestResponse()
@@ -20,4 +20,4 @@ tags:
 - [[UWeightedTargetHandlerFindTarget_Implementation()]] - `references` [EXTRACTED]
 - [[UWeightedTargetHandlerPerformSecondarySamplingPass()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/FFindTargetRequestResponse

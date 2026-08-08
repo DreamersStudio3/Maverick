@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "공중 착지 감지 노티파이"
+community: "FindAirborneLandDetectorHitReactionComponent"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/FindAirborneLandDetectorHitReactionComponent
 ---
 
 # UMVHitReactionComponent
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[FindAirborneLandDetectorHitReactionComponent()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/FindAirborneLandDetectorHitReactionComponent

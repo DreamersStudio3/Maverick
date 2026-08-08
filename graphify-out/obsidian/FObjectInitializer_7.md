@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "대화 창 페이드"
+community: "MVDialogueWindow.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVDialogueWindowcpp
 ---
 
 # FObjectInitializer
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[UMVDialogueWindowUMVDialogueWindow()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVDialogueWindowcpp

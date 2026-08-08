@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 전역 감지 설정"
+community: "MVExecuteAttackTask.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/MVExecuteAttackTaskcpp
 ---
 
 # TArray
 
 ## Connections
-- [[FMVGlobalSensingTaskInstanceData]] - `references` [EXTRACTED]
+- [[ExecuteAttackSelectCandidate()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/MVExecuteAttackTaskcpp

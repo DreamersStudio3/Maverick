@@ -1,17 +1,19 @@
 ---
-source_file: "Source/Maverick/System/MVFieldTransitionSubsystem.h"
+source_file: "Source/Maverick/AI/Task/MVExecuteAttackTask.h"
 type: "code"
-community: "필드 전환 서브시스템 계약"
-location: "L11"
+community: "FMVExecuteFixedAttackTaskInstanceData"
+location: "L13"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/FMVExecuteFixedAttackTaskInstanceData
 ---
 
 # UMVActionComponent
 
 ## Connections
-- [[MVFieldTransitionSubsystem.h]] - `contains` [EXTRACTED]
+- [[FMVExecuteFixedAttackTaskInstanceData]] - `references` [EXTRACTED]
+- [[FMVSelectAndExecuteAttackTaskInstanceData]] - `references` [EXTRACTED]
+- [[MVExecuteAttackTask.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/FMVExecuteFixedAttackTaskInstanceData

@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/System/MVUISubsystem.h"
 type: "code"
-community: "상호작용 프롬프트 UI"
+community: "FMVInteractionPromptData"
 location: "L15"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__UI
+  - community/FMVInteractionPromptData
 ---
 
 # UMVInteractionPromptPopup
@@ -17,4 +17,4 @@ tags:
 - [[UMVUISubsystemShowInteractionPrompt()]] - `references` [EXTRACTED]
 - [[UMVUISubsystemShowInteractionPromptText()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__UI
+#graphify/code #graphify/EXTRACTED #community/FMVInteractionPromptData

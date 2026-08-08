@@ -1,18 +1,18 @@
 ---
 source_file: "Source/Maverick/AI/Condition/MVCombatActionEnterCondition.h"
 type: "code"
-community: "AI 전투 진입 조건"
+community: "FMVCombatActionEnterConditionInstanceData"
 location: "L81"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVCombatActionEnterConditionInstanceData
 ---
 
 # .GetInstanceDataType()
 
 ## Connections
 - [[FMVCombatActionEnterCondition]] - `method` [EXTRACTED]
-- [[UStruct_2]] - `references` [EXTRACTED]
+- [[UStruct_8]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVCombatActionEnterConditionInstanceData

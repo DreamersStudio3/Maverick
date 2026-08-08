@@ -1,19 +1,19 @@
 ---
 source_file: "Source/Maverick/Components/MVActionComponent.cpp"
 type: "code"
-community: "액션 Row 몽타주 해석"
+community: "MVActionComponent.cpp"
 location: "L211"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/_Row__
+  - community/MVActionComponentcpp
 ---
 
 # UMVActionComponent::TryTransitionActionFromRowHandle()
 
 ## Connections
-- [[FDataTableRowHandle_5]] - `references` [EXTRACTED]
+- [[FDataTableRowHandle_6]] - `references` [EXTRACTED]
 - [[FName_34]] - `references` [EXTRACTED]
 - [[MVActionComponent.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/_Row__
+#graphify/code #graphify/EXTRACTED #community/MVActionComponentcpp

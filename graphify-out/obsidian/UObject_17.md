@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "월드 상태 서브시스템 접근"
+community: "UMVWorldStateSubsystem"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/UMVWorldStateSubsystem
 ---
 
 # UObject
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[UMVWorldStateSubsystemGet()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/UMVWorldStateSubsystem

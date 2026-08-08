@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 공격 실행 로직"
+community: "FMVAICombatActionCondition"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVAICombatActionCondition
 ---
 
 # TArray
 
 ## Connections
-- [[ExecuteAttackSelectCandidate()]] - `references` [EXTRACTED]
+- [[CombatDecisionHasReadyCandidate()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVAICombatActionCondition

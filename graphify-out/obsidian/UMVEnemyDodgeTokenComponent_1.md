@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVEnemyDodgeTokenComponent.h"
 type: "code"
-community: "적 회피 토큰 상태"
+community: "EMVEnemyDodgeTokenGrantReason"
 location: "L30"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/EMVEnemyDodgeTokenGrantReason
 ---
 
 # UMVEnemyDodgeTokenComponent
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[EMVEnemyDodgeTokenGrantReason]] - `defines` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/EMVEnemyDodgeTokenGrantReason

@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTargetDev/Private/GameplayDebugger/GameplayDebuggerCategory_LockOnTarget.cpp"
 type: "code"
-community: "락온 디버거"
+community: "FGameplayDebuggerCategory_LockOnTarget"
 location: "L36"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/_
+  - community/FGameplayDebuggerCategory_LockOnTarget
 ---
 
 # DecomposeAngle()
@@ -18,4 +18,4 @@ tags:
 - [[OnKeyPressedSwitchTarget]] - `calls` [EXTRACTED]
 - [[SimulateTargetHandler]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/_
+#graphify/code #graphify/EXTRACTED #community/FGameplayDebuggerCategory_LockOnTarget

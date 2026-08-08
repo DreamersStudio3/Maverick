@@ -1,17 +1,17 @@
 ---
 source_file: ""
 type: "code"
-community: "메인 HUD 상태 바인딩"
+community: "MVBossHPBarWidget.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/_HUD__
+  - community/MVBossHPBarWidgetcpp
 ---
 
 # FText
 
 ## Connections
-- [[UMVMainHUDWidgetBindBossStatus()]] - `references` [EXTRACTED]
-- [[UMVMainHUDWidgetInitBossStatus()]] - `references` [EXTRACTED]
+- [[UMVBossHPBarWidgetBindToStatComponent()]] - `references` [EXTRACTED]
+- [[UMVBossHPBarWidgetInitializeBossBar()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/_HUD__
+#graphify/code #graphify/EXTRACTED #community/MVBossHPBarWidgetcpp

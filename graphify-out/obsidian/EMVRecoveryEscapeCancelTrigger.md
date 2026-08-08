@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "입력 차단 회복 취소"
+community: "EMVRecoveryEscapeCancelTrigger"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/EMVRecoveryEscapeCancelTrigger
 ---
 
 # EMVRecoveryEscapeCancelTrigger
@@ -14,4 +14,4 @@ tags:
 - [[UMVInputManagerComponentCanUseRecoveryEscapeCancelTrigger()]] - `references` [EXTRACTED]
 - [[UMVInputManagerComponentTryCancelActiveActionForRecoveryEscape()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/EMVRecoveryEscapeCancelTrigger

@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 전역 감지 갱신"
+community: "MVGlobalSensingTask.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/MVGlobalSensingTaskcpp
 ---
 
 # AActor
@@ -15,4 +15,4 @@ tags:
 - [[GlobalSensingLineOfSightClear()]] - `references` [EXTRACTED]
 - [[GlobalSensingTraceClear()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/MVGlobalSensingTaskcpp

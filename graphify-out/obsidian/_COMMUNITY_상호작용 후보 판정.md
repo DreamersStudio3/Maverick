@@ -21,8 +21,8 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 2 edges to [[_COMMUNITY_플레이어 상호작용 감지]]
-- 1 edge to [[_COMMUNITY_플레이어 상호작용 탐지]]
+- 2 edges to [[_COMMUNITY_MVPlayerInteractionDetector.cpp]]
+- 1 edge to [[_COMMUNITY_MVPlayerInteractionDetector.h]]
 
 ## Top bridge nodes
 - [[UMVPlayerInteractionDetectorTryBuildCandidate()]] - degree 4, connects to 2 communities

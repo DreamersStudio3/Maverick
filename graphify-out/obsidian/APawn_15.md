@@ -1,19 +1,18 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 적 사망 처리"
+community: "FMVBackOffLaunchMontageTaskInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVBackOffLaunchMontageTaskInstanceData
 ---
 
 # APawn
 
 ## Connections
-- [[EnemyDeadTaskClearPlayerLockOnTargetingOwner()]] - `references` [EXTRACTED]
-- [[EnemyDeadTaskDisableOwnerTargetCapture()]] - `references` [EXTRACTED]
-- [[EnemyDeadTaskReleaseLockOnForOwner()]] - `references` [EXTRACTED]
-- [[EnemyDeadTaskResolveOwner()]] - `references` [EXTRACTED]
+- [[BackOffLaunchMontageFaceTarget()]] - `references` [EXTRACTED]
+- [[BackOffLaunchMontageResolveOwner()]] - `references` [EXTRACTED]
+- [[BackOffLaunchMontageResolveTarget()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVBackOffLaunchMontageTaskInstanceData

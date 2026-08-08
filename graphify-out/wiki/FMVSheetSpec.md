@@ -1,0 +1,32 @@
+# FMVSheetSpec
+
+> 8 nodes
+
+## Key Concepts
+
+- **FMVSheetSpec** (6 connections) — `Source/Maverick/Public/Tables/MVSheetSpecs.h`
+- **MVSheetSpecs.h** (2 connections) — `Source/Maverick/Public/Tables/MVSheetSpecs.h`
+- **UScriptStruct** (1 connections)
+- **RowStruct** (1 connections) — `Source/Maverick/Public/Tables/MVSheetSpecs.h`
+- **FString** (1 connections)
+- **KeyColumnName** (1 connections) — `Source/Maverick/Public/Tables/MVSheetSpecs.h`
+- **bGenericFallback** (1 connections) — `Source/Maverick/Public/Tables/MVSheetSpecs.h`
+- **FMVSheetSpecs()** (1 connections) — `Source/Maverick/Public/Tables/MVSheetSpecs.h`
+
+## Relationships
+
+- No strong cross-community connections detected
+
+## Source Files
+
+- `Source/Maverick/Public/Tables/MVSheetSpecs.h`
+
+## Audit Trail
+
+- EXTRACTED: 14 (100%)
+- INFERRED: 0 (0%)
+- AMBIGUOUS: 0 (0%)
+
+---
+
+*Part of the graphify knowledge wiki. See [index](index.md) to navigate.*

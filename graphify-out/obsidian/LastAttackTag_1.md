@@ -1,17 +1,17 @@
 ---
-source_file: "Source/Maverick/AI/Task/MVEnemyCombatActionTask.h"
+source_file: "Source/Maverick/AI/MVAICombatTypes.h"
 type: "code"
-community: "AI 적 전투 액션"
-location: "L64"
+community: "FMVAICombatContext"
+location: "L172"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVAICombatContext
 ---
 
 # LastAttackTag
 
 ## Connections
-- [[FMVEnemyCombatActionTaskInstanceData]] - `defines` [EXTRACTED]
+- [[FMVAICombatContext]] - `defines` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVAICombatContext

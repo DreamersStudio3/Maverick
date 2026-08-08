@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/System/MVUINavigationLibrary.h"
 type: "code"
-community: "UI 탐색 블루프린트 라이브러리"
+community: "MVUINavigationLibrary.h"
 location: "L9"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/UI___
+  - community/MVUINavigationLibraryh
 ---
 
 # UBlueprintFunctionLibrary()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[MVUINavigationLibrary.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/UI___
+#graphify/code #graphify/EXTRACTED #community/MVUINavigationLibraryh

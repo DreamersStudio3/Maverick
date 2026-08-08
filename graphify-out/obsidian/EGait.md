@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "캐릭터 목표 보행 상태"
+community: "AMVCharacterBase::DesiredGait"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/AMVCharacterBaseDesiredGait
 ---
 
 # EGait
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[AMVCharacterBaseDesiredGait()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/AMVCharacterBaseDesiredGait

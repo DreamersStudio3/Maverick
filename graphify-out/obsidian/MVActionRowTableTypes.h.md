@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Public/Tables/MVActionRowTableTypes.h"
 type: "code"
-community: "피격 반응 행 조회"
+community: "MVActionRowTableTypes.h"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVActionRowTableTypesh
 ---
 
 # MVActionRowTableTypes.h
@@ -22,4 +22,4 @@ tags:
 - [[MVTableAssetGenerator.cpp]] - `imports` [EXTRACTED]
 - [[MVTableTypes.h]] - `imports` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVActionRowTableTypesh

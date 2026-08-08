@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Public/Tables/MVSkillDataTableColumn.h"
 type: "code"
-community: "스킬 데이터와 비용"
+community: "FMVSkillDataTableColumn"
 location: "L14"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/FMVSkillDataTableColumn
 ---
 
 # UMVAbilityBase
@@ -15,4 +15,4 @@ tags:
 - [[FMVSkillDataTableColumn]] - `references` [EXTRACTED]
 - [[MVSkillDataTableColumn.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/FMVSkillDataTableColumn

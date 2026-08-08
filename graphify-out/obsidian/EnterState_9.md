@@ -1,24 +1,28 @@
 ---
-source_file: "Source/Maverick/AI/Task/MVGlobalCoolTimeTask.h"
+source_file: "Source/Maverick/AI/Task/MVExecuteAttackTask.h"
 type: "code"
-community: "AI 전역 쿨다운"
-location: "L53"
+community: "MVExecuteAttackTask.cpp"
+location: "L139"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI__
+  - community/MVExecuteAttackTaskcpp
 ---
 
 # EnterState
 
 ## Connections
-- [[EStateTreeRunStatus_8]] - `references` [EXTRACTED]
-- [[EnsureCooldownComponent()]] - `calls` [EXTRACTED]
-- [[FMVGlobalCoolTimeTask]] - `defines` [EXTRACTED]
-- [[FStateTreeExecutionContext_14]] - `references` [EXTRACTED]
-- [[FStateTreeTransitionResult_8]] - `references` [EXTRACTED]
-- [[MVGlobalCoolTimeTask.cpp]] - `contains` [EXTRACTED]
-- [[ResolveCooldownOwner()]] - `calls` [EXTRACTED]
-- [[UpdateQueryOutputs()]] - `calls` [EXTRACTED]
+- [[EStateTreeRunStatus_6]] - `references` [EXTRACTED]
+- [[ExecuteAttackResolveActionCandidate()]] - `calls` [EXTRACTED]
+- [[ExecuteAttackResolveActionRequest()]] - `calls` [EXTRACTED]
+- [[ExecuteAttackResolveOwner()]] - `calls` [EXTRACTED]
+- [[ExecuteAttackSelectCandidate()]] - `calls` [EXTRACTED]
+- [[ExecuteAttackStartCooldown()]] - `calls` [EXTRACTED]
+- [[ExecuteAttackTryStartAction()]] - `calls` [EXTRACTED]
+- [[FMVAICombatActionMetadata]] - `calls` [EXTRACTED]
+- [[FMVSelectAndExecuteAttackTask]] - `defines` [EXTRACTED]
+- [[FStateTreeExecutionContext_12]] - `references` [EXTRACTED]
+- [[FStateTreeTransitionResult_6]] - `references` [EXTRACTED]
+- [[MVExecuteAttackTask.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI__
+#graphify/code #graphify/EXTRACTED #community/MVExecuteAttackTaskcpp

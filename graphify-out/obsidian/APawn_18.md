@@ -1,18 +1,16 @@
 ---
-source_file: "Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h"
+source_file: ""
 type: "code"
-community: "적 회피 액션 태스크"
-location: "L11"
+community: "AI 적 전투 액션"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/AI___
 ---
 
 # APawn
 
 ## Connections
-- [[FMVEnemyDodgeActionTaskInstanceData]] - `references` [EXTRACTED]
-- [[MVEnemyDodgeActionTask.h]] - `contains` [EXTRACTED]
+- [[FMVEnemyCombatActionTaskInstanceData]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/AI___

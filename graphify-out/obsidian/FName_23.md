@@ -1,7 +1,7 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 공격 액션 실행"
+community: "AI 적 전투 액션"
 tags:
   - graphify/code
   - graphify/EXTRACTED
@@ -11,8 +11,7 @@ tags:
 # FName
 
 ## Connections
-- [[ExecuteAttackActionTableNameFromDataTable()]] - `references` [EXTRACTED]
-- [[ExecuteAttackIsStartedActionRunning()]] - `references` [EXTRACTED]
-- [[ExecuteAttackTryStartAction()]] - `references` [EXTRACTED]
+- [[EnemyCombatActionTaskMakeActionTag()]] - `references` [EXTRACTED]
+- [[EnemyCombatActionTaskTryStartCooldown()]] - `references` [EXTRACTED]
 
 #graphify/code #graphify/EXTRACTED #community/AI___

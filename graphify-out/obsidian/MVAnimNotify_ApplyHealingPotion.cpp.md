@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Animation/Notifies/MVAnimNotify_ApplyHealingPotion.cpp"
 type: "code"
-community: "회복 물약 적용 노티파이"
+community: "UMVAnimNotify_ApplyHealingPotion::Notify"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/UMVAnimNotify_ApplyHealingPotionNotify
 ---
 
 # MVAnimNotify_ApplyHealingPotion.cpp
@@ -16,4 +16,4 @@ tags:
 - [[UMVAnimNotify_ApplyHealingPotionGetNotifyName_Implementation()]] - `contains` [EXTRACTED]
 - [[UMVAnimNotify_ApplyHealingPotionNotify()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/UMVAnimNotify_ApplyHealingPotionNotify

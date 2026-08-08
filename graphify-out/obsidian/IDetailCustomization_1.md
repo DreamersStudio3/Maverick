@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "LockOnTarget 컴포넌트 상세 패널"
+community: "FLockOnComponentDetails"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/LockOnTarget___
+  - community/FLockOnComponentDetails
 ---
 
 # IDetailCustomization
@@ -15,4 +15,4 @@ tags:
 - [[LockOnComponentDetails.h]] - `imports` [EXTRACTED]
 - [[TargetComponentDetails.h]] - `imports` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/LockOnTarget___
+#graphify/code #graphify/EXTRACTED #community/FLockOnComponentDetails

@@ -1,19 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 전역 쿨다운"
+community: "LockOnTargetTypes.h"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI__
+  - community/LockOnTargetTypesh
 ---
 
 # FName
 
 ## Connections
-- [[UMVActionCooldownComponentGetReadyActionIds()]] - `references` [EXTRACTED]
-- [[UMVActionCooldownComponentGetRemainingTime()]] - `references` [EXTRACTED]
-- [[UMVActionCooldownComponentIsCooldownReady()]] - `references` [EXTRACTED]
-- [[UMVActionCooldownComponentStartCooldown()]] - `references` [EXTRACTED]
+- [[FindComponentByName()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI__
+#graphify/code #graphify/EXTRACTED #community/LockOnTargetTypesh

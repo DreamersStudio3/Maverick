@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/HUD/MVMainHUDWidget.cpp"
 type: "code"
-community: "메인 HUD 상태 바인딩"
+community: "MVMainHUDWidget.cpp"
 location: "L129"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/_HUD__
+  - community/MVMainHUDWidgetcpp
 ---
 
 # UMVMainHUDWidget::EnsurePlayerSkillHUD()
@@ -15,4 +15,4 @@ tags:
 - [[MVMainHUDWidget.cpp]] - `contains` [EXTRACTED]
 - [[UMVPlayerSkillHUDWidget]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/_HUD__
+#graphify/code #graphify/EXTRACTED #community/MVMainHUDWidgetcpp

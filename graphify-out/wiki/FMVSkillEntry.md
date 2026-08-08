@@ -1,56 +1,50 @@
 # FMVSkillEntry
 
-> God node · 38 connections · `Source/Maverick/Components/MVCombatComponent.h`
+> 24 nodes
 
-**Community:** [스킬 체인 런타임](%EC%8A%A4%ED%82%AC_%EC%B2%B4%EC%9D%B8_%EB%9F%B0%ED%83%80%EC%9E%84.md)
+## Key Concepts
 
-## Connections by Relation
+- **FMVSkillEntry** (38 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **.GetCurrentSkillData()** (6 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **UMVAbilityBase** (4 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **.GetCurrentAbility()** (2 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **.ContainsAbility()** (2 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **.IsInterStageCooldownValid()** (2 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **.ActivateChain()** (2 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **.StartPostAbilityResetWindow()** (2 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **.TryAdvanceChainStage()** (2 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **bIsChained** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **TArray** (1 connections)
+- **AbilityInstances** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **SkillRowNames** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **DataTable** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **MainCooldownDuration** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **LastUsedTime** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **CurrentChainStageIndex** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **bChainActive** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **LastStageActivationTime** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **InputWindowCloseTime** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **.IsMainCooldownReady()** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **.IsInputWindowValid()** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **.GetRemainingInputWindowTime()** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **.ResetChain()** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
 
-### contains
-- MVCombatComponent.h `EXTRACTED`
+## Relationships
 
-### defines
-- AbilityInstances `EXTRACTED`
-- bChainActive `EXTRACTED`
-- bIsChained `EXTRACTED`
-- CurrentChainStageIndex `EXTRACTED`
-- DataTable `EXTRACTED`
-- InputWindowCloseTime `EXTRACTED`
-- LastStageActivationTime `EXTRACTED`
-- LastUsedTime `EXTRACTED`
-- MainCooldownDuration `EXTRACTED`
-- SkillRowNames `EXTRACTED`
+- [FMVCombatActionEvent](FMVCombatActionEvent.md) (8 shared connections)
+- [MVCombatComponent.cpp](MVCombatComponent.cpp.md) (5 shared connections)
+- [FDataTableRowHandle](FDataTableRowHandle.md) (3 shared connections)
+- [FMVSkillDataTableColumn](FMVSkillDataTableColumn.md) (1 shared connections)
 
-### method
-- .GetCurrentSkillData() `EXTRACTED`
-- .GetCurrentActionRowHandle() `EXTRACTED`
-- .GetCurrentRowName() `EXTRACTED`
-- .ActivateChain() `EXTRACTED`
-- .ContainsAbility() `EXTRACTED`
-- .GetCurrentAbility() `EXTRACTED`
-- .IsInterStageCooldownValid() `EXTRACTED`
-- .StartPostAbilityResetWindow() `EXTRACTED`
-- .TryAdvanceChainStage() `EXTRACTED`
-- .GetRemainingInputWindowTime() `EXTRACTED`
-- .IsInputWindowValid() `EXTRACTED`
-- .IsMainCooldownReady() `EXTRACTED`
-- .ResetChain() `EXTRACTED`
+## Source Files
 
-### references
-- UMVCombatComponent::TryStartActionWithAbility() `EXTRACTED`
-- FName `EXTRACTED`
-- UMVCombatComponent::SelectBasicAttackChainStageForSwing() `EXTRACTED`
-- UMVCombatComponent::GetBasicAttackSkillDataAtStage() `EXTRACTED`
-- UMVCombatComponent::MarkBasicAttackChainStarted() `EXTRACTED`
-- UMVCombatComponent::ResolveHeavyChargeEarlyReleaseChainStageIndex() `EXTRACTED`
-- UMVCombatComponent::ResolveHeavyChargeEarlyReleaseRow() `EXTRACTED`
-- UMVAbilityBase `EXTRACTED`
-- int32 `EXTRACTED`
-- UMVCombatComponent::BuildSkillEntryFromRowHandle() `EXTRACTED`
-- UMVCombatComponent::ResolveHeavyChargeStartChainStageIndex() `EXTRACTED`
-- TObjectPtr `EXTRACTED`
-- UDataTable `EXTRACTED`
-- TArray `EXTRACTED`
+- `Source/Maverick/Components/MVCombatComponent.h`
+
+## Audit Trail
+
+- EXTRACTED: 75 (100%)
+- INFERRED: 0 (0%)
+- AMBIGUOUS: 0 (0%)
 
 ---
 

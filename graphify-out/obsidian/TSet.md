@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "테이블 매니페스트 생성과 검증"
+community: "MVTableAssetGenerator.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVTableAssetGeneratorcpp
 ---
 
 # TSet
@@ -14,4 +14,4 @@ tags:
 - [[TableAssetGeneratorReadIntegerKeySet()]] - `references` [EXTRACTED]
 - [[TableAssetGeneratorReadStringKeySet()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVTableAssetGeneratorcpp

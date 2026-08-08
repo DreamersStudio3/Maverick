@@ -1,17 +1,19 @@
 ---
 source_file: ""
 type: "code"
-community: "가중 대상 탐색 컨텍스트"
+community: "LockOnTargetExtensionBase.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/LockOnTargetExtensionBasecpp
 ---
 
 # FName
 
 ## Connections
-- [[UWeightedTargetHandlerGenerateDetailedResponse()]] - `calls` [EXTRACTED]
-- [[UWeightedTargetHandlerOnTargetUnlocked()]] - `references` [EXTRACTED]
+- [[FLockOnTargetExtensionTickFunctionDiagnosticContext()]] - `references` [EXTRACTED]
+- [[ULockOnTargetExtensionProxyOnSocketChanged()]] - `references` [EXTRACTED]
+- [[ULockOnTargetExtensionProxyOnTargetLocked()]] - `references` [EXTRACTED]
+- [[ULockOnTargetExtensionProxyOnTargetUnlocked()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/LockOnTargetExtensionBasecpp

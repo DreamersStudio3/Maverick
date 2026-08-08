@@ -1,22 +1,26 @@
 ---
-source_file: "Source/Maverick/AI/Task/MVFocusingTask.h"
+source_file: "Source/Maverick/AI/Task/MVExecuteAttackTask.h"
 type: "code"
-community: "AI 타겟 포커싱"
-location: "L43"
+community: "MVExecuteAttackTask.cpp"
+location: "L77"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI__
+  - community/MVExecuteAttackTaskcpp
 ---
 
 # EnterState
 
 ## Connections
-- [[EStateTreeRunStatus_7]] - `references` [EXTRACTED]
-- [[FMVFocusingTask]] - `defines` [EXTRACTED]
-- [[FStateTreeExecutionContext_13]] - `references` [EXTRACTED]
-- [[FStateTreeTransitionResult_7]] - `references` [EXTRACTED]
-- [[MVFocusingTask.cpp]] - `contains` [EXTRACTED]
-- [[MVFocusingTaskResolveAIController()]] - `calls` [EXTRACTED]
+- [[EStateTreeRunStatus_6]] - `references` [EXTRACTED]
+- [[ExecuteAttackResolveActionCandidate()]] - `calls` [EXTRACTED]
+- [[ExecuteAttackResolveActionRequest()]] - `calls` [EXTRACTED]
+- [[ExecuteAttackResolveOwner()]] - `calls` [EXTRACTED]
+- [[ExecuteAttackStartCooldown()]] - `calls` [EXTRACTED]
+- [[ExecuteAttackTryStartAction()]] - `calls` [EXTRACTED]
+- [[FMVExecuteFixedAttackTask]] - `defines` [EXTRACTED]
+- [[FStateTreeExecutionContext_12]] - `references` [EXTRACTED]
+- [[FStateTreeTransitionResult_6]] - `references` [EXTRACTED]
+- [[MVExecuteAttackTask.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI__
+#graphify/code #graphify/EXTRACTED #community/MVExecuteAttackTaskcpp

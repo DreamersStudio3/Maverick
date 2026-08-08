@@ -1,16 +1,17 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 전투 컨텍스트"
+community: "TargetComponent.h"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI__
+  - community/TargetComponenth
 ---
 
 # TArray
 
 ## Connections
-- [[FMVAICombatContext]] - `references` [EXTRACTED]
+- [[dot-GetInvaders()]] - `references` [EXTRACTED]
+- [[ETargetFocusPointType]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI__
+#graphify/code #graphify/EXTRACTED #community/TargetComponenth

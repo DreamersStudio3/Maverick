@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/AI/Condition/MVHitReactionEnterCondition.h"
 type: "code"
-community: "AI 피격 진입 조건"
+community: "FMVHitReactionEnterConditionInstanceData"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVHitReactionEnterConditionInstanceData
 ---
 
 # MVHitReactionEnterCondition.h
@@ -16,4 +16,4 @@ tags:
 - [[FMVHitReactionEnterConditionInstanceData]] - `contains` [EXTRACTED]
 - [[MVHitTypes.h]] - `imports` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVHitReactionEnterConditionInstanceData

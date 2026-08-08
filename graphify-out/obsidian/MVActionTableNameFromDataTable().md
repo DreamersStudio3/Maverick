@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVActionComponent.cpp"
 type: "code"
-community: "액션 Row 몽타주 해석"
+community: "MVActionComponent.cpp"
 location: "L16"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/_Row__
+  - community/MVActionComponentcpp
 ---
 
 # MVActionTableNameFromDataTable()
@@ -17,4 +17,4 @@ tags:
 - [[UDataTable_3]] - `references` [EXTRACTED]
 - [[UMVActionComponentFindActionRow()]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/_Row__
+#graphify/code #graphify/EXTRACTED #community/MVActionComponentcpp

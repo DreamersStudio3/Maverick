@@ -1,7 +1,7 @@
 ---
 source_file: ""
 type: "code"
-community: "공중 착지 감지 노티파이"
+community: "어빌리티 애님 노티파이 상태"
 tags:
   - graphify/code
   - graphify/EXTRACTED
@@ -11,6 +11,6 @@ tags:
 # FString
 
 ## Connections
-- [[UMVAnimNotifyState_AirborneLandDetectorGetNotifyName_Implementation()]] - `references` [EXTRACTED]
+- [[UMVAnimNotifyState_AbilityGetNotifyName_Implementation()]] - `references` [EXTRACTED]
 
 #graphify/code #graphify/EXTRACTED #community/___

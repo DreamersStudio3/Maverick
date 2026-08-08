@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 타겟 포커싱"
+community: "AI 적 전투 액션"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI__
+  - community/AI___
 ---
 
 # UPROPERTY
 
 ## Connections
-- [[FMVFocusingTaskInstanceData]] - `references` [EXTRACTED]
+- [[FMVEnemyCombatActionTaskInstanceData]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI__
+#graphify/code #graphify/EXTRACTED #community/AI___

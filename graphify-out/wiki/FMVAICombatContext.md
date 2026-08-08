@@ -1,54 +1,56 @@
 # FMVAICombatContext
 
-> God node · 38 connections · `Source/Maverick/AI/MVAICombatTypes.h`
+> 24 nodes
 
-**Community:** [AI 전투 컨텍스트](AI_%EC%A0%84%ED%88%AC_%EC%BB%A8%ED%85%8D%EC%8A%A4%ED%8A%B8.md)
+## Key Concepts
 
-## Connections by Relation
+- **FMVAICombatContext** (38 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
+- **EMVBossCombatArea** (1 connections)
+- **TArray** (1 connections)
+- **int32** (1 connections)
+- **bHasTarget** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
+- **DistanceToTarget** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
+- **AngleToTarget** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
+- **CurrentArea** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
+- **bHasLineOfSight** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
+- **bActionRunning** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
+- **ReadyActionIds** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
+- **LastAttackTag** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
+- **bAttackCadenceReady** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
+- **CurrentPhase** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
+- **bCounterWindow** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
+- **bSprintPathClear** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
+- **bAirborneChargePathClear** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
+- **bTargetCanBeAirborne** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
+- **bTargetIsAirborne** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
+- **bShouldUseAirborneCharge** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
+- **bNeedAttackAngle** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
+- **bNeedClearAttackPath** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
+- **bStrafePathClear** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
+- **bIsDead** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
 
-### contains
-- MVAICombatTypes.h `EXTRACTED`
+## Relationships
 
-### defines
-- AngleToTarget `EXTRACTED`
-- bActionRunning `EXTRACTED`
-- bAirborneChargePathClear `EXTRACTED`
-- bAttackCadenceReady `EXTRACTED`
-- bCounterWindow `EXTRACTED`
-- bHasLineOfSight `EXTRACTED`
-- bHasTarget `EXTRACTED`
-- bIsDead `EXTRACTED`
-- bNeedAttackAngle `EXTRACTED`
-- bNeedClearAttackPath `EXTRACTED`
-- bShouldUseAirborneCharge `EXTRACTED`
-- bSprintPathClear `EXTRACTED`
-- bStrafePathClear `EXTRACTED`
-- bTargetCanBeAirborne `EXTRACTED`
-- bTargetIsAirborne `EXTRACTED`
-- CurrentArea `EXTRACTED`
-- CurrentPhase `EXTRACTED`
-- DistanceToTarget `EXTRACTED`
-- LastAttackTag `EXTRACTED`
-- ReadyActionIds `EXTRACTED`
+- [MVAICombatTypes.h](MVAICombatTypes.h.md) (4 shared connections)
+- [FMVAICombatActionCondition](FMVAICombatActionCondition.md) (2 shared connections)
+- [MVExecuteAttackTask.cpp](MVExecuteAttackTask.cpp.md) (2 shared connections)
+- [FMVCombatActionEnterConditionInstanceData](FMVCombatActionEnterConditionInstanceData.md) (1 shared connections)
+- [FMVAttackOpportunityTaskInstanceData](FMVAttackOpportunityTaskInstanceData.md) (1 shared connections)
+- [AI 적 전투 액션](AI_%EC%A0%81_%EC%A0%84%ED%88%AC_%EC%95%A1%EC%85%98.md) (1 shared connections)
+- [FMVCombatDecisionConditionInstanceData](FMVCombatDecisionConditionInstanceData.md) (1 shared connections)
+- [FMVExecuteFixedAttackTaskInstanceData](FMVExecuteFixedAttackTaskInstanceData.md) (1 shared connections)
+- [FMVGlobalSensingTaskInstanceData](FMVGlobalSensingTaskInstanceData.md) (1 shared connections)
+- [FMVStrafeMoveTaskInstanceData](FMVStrafeMoveTaskInstanceData.md) (1 shared connections)
 
-### references
-- [FMVGlobalSensingTaskInstanceData](FMVGlobalSensingTaskInstanceData.md) `EXTRACTED`
-- [FMVEnemyCombatActionTaskInstanceData](FMVEnemyCombatActionTaskInstanceData.md) `EXTRACTED`
-- FMVCombatActionEnterConditionInstanceData `EXTRACTED`
-- FMVSelectAndExecuteAttackTaskInstanceData `EXTRACTED`
-- FMVStrafeMoveTaskInstanceData `EXTRACTED`
-- FMVCombatDecisionConditionInstanceData `EXTRACTED`
-- FMVAttackOpportunityTaskInstanceData `EXTRACTED`
-- CombatDecisionHasReadyCandidate() `EXTRACTED`
-- CombatDecisionIsCandidateReady() `EXTRACTED`
-- ExecuteAttackSelectCandidate() `EXTRACTED`
-- ExecuteAttackCanSelectCandidate() `EXTRACTED`
-- FName `EXTRACTED`
-- IsActionReady() `EXTRACTED`
-- IsDistanceInRange() `EXTRACTED`
-- EMVBossCombatArea `EXTRACTED`
-- int32 `EXTRACTED`
-- TArray `EXTRACTED`
+## Source Files
+
+- `Source/Maverick/AI/MVAICombatTypes.h`
+
+## Audit Trail
+
+- EXTRACTED: 61 (100%)
+- INFERRED: 0 (0%)
+- AMBIGUOUS: 0 (0%)
 
 ---
 

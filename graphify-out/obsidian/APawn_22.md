@@ -1,16 +1,18 @@
 ---
-source_file: ""
+source_file: "Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h"
 type: "code"
-community: "AI 타겟 포커싱"
+community: "FMVEnemyDodgeActionTask"
+location: "L11"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI__
+  - community/FMVEnemyDodgeActionTask
 ---
 
 # APawn
 
 ## Connections
-- [[FMVFocusingTaskInstanceData]] - `references` [EXTRACTED]
+- [[FMVEnemyDodgeActionTaskInstanceData]] - `references` [EXTRACTED]
+- [[MVEnemyDodgeActionTask.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI__
+#graphify/code #graphify/EXTRACTED #community/FMVEnemyDodgeActionTask

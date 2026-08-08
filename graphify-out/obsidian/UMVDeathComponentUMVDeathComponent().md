@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVDeathComponent.cpp"
 type: "code"
-community: "사망 컴포넌트 디졸브 연동"
+community: "MVDeathComponent.h"
 location: "L14"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVDeathComponenth
 ---
 
 # UMVDeathComponent::UMVDeathComponent()
@@ -15,4 +15,4 @@ tags:
 - [[MVDeathComponent.cpp]] - `contains` [EXTRACTED]
 - [[UMVDeathDissolveEffect]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVDeathComponenth

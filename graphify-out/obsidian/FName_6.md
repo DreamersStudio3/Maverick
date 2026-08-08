@@ -1,17 +1,19 @@
 ---
 source_file: ""
 type: "code"
-community: "락온 Pawn 회전 확장"
+community: "TargetComponentDetails.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/_Pawn__
+  - community/TargetComponentDetailscpp
 ---
 
 # FName
 
 ## Connections
-- [[UPawnRotationExtensionOnTargetLocked()]] - `references` [EXTRACTED]
-- [[UPawnRotationExtensionOnTargetUnlocked()]] - `references` [EXTRACTED]
+- [[GetAssociatedComponentNameValue]] - `references` [EXTRACTED]
+- [[OnCommitAssociatedComponentNameEntry]] - `references` [EXTRACTED]
+- [[OnCommitAssociatedComponentNameText]] - `calls` [EXTRACTED]
+- [[OnGetMeshContent]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/_Pawn__
+#graphify/code #graphify/EXTRACTED #community/TargetComponentDetailscpp

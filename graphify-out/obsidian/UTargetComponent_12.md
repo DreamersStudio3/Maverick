@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "락온 대상 관리자 수명주기"
+community: "TargetManager.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/TargetManagercpp
 ---
 
 # UTargetComponent
@@ -14,4 +14,4 @@ tags:
 - [[UTargetManagerRegisterTarget()]] - `references` [EXTRACTED]
 - [[UTargetManagerUnregisterTarget()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/TargetManagercpp

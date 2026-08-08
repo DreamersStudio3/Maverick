@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Animation/Notifies/MVAnimNotify_DeathDissolve.cpp"
 type: "code"
-community: "사망 디졸브 노티파이"
+community: "UMVAnimNotify_DeathDissolve::Notify"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/UMVAnimNotify_DeathDissolveNotify
 ---
 
 # MVAnimNotify_DeathDissolve.cpp
@@ -15,4 +15,4 @@ tags:
 - [[UMVAnimNotify_DeathDissolveGetNotifyName_Implementation()]] - `contains` [EXTRACTED]
 - [[UMVAnimNotify_DeathDissolveNotify()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/UMVAnimNotify_DeathDissolveNotify

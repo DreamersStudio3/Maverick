@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "캐릭터 인덱스 코드 관리"
+community: "AMVCharacterBase::GetCharacterIndexCode"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/AMVCharacterBaseGetCharacterIndexCode
 ---
 
 # FGameplayTag
@@ -14,4 +14,4 @@ tags:
 - [[AMVCharacterBaseGetCharacterIndexCode()]] - `references` [EXTRACTED]
 - [[AMVCharacterBaseSetCharacterIndexCode()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/AMVCharacterBaseGetCharacterIndexCode

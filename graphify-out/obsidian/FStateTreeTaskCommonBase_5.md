@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "적 회피 액션 태스크"
+community: "FMVAttackOpportunityTaskInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/FMVAttackOpportunityTaskInstanceData
 ---
 
 # FStateTreeTaskCommonBase
 
 ## Connections
-- [[FMVEnemyDodgeActionTask]] - `inherits` [EXTRACTED]
+- [[FMVAttackOpportunityTask]] - `inherits` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/FMVAttackOpportunityTaskInstanceData

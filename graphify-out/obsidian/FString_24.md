@@ -1,21 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "월드 상태 세이브 슬롯"
+community: "FMVSheetSpec"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/FMVSheetSpec
 ---
 
 # FString
 
 ## Connections
-- [[UMVWorldStateSubsystemDeleteSaveSlot()]] - `references` [EXTRACTED]
-- [[UMVWorldStateSubsystemDoesSaveSlotExist()]] - `references` [EXTRACTED]
-- [[UMVWorldStateSubsystemLoadFromSlot()]] - `references` [EXTRACTED]
-- [[UMVWorldStateSubsystemResolveSlotName()]] - `references` [EXTRACTED]
-- [[UMVWorldStateSubsystemSaveToSlot()]] - `references` [EXTRACTED]
-- [[WorldStateResolveFallbackSlotName()]] - `references` [EXTRACTED]
+- [[FMVSheetSpec_2]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/FMVSheetSpec

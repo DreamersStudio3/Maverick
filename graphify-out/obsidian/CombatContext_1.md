@@ -1,17 +1,17 @@
 ---
-source_file: "Source/Maverick/AI/Condition/MVCombatDecisionCondition.h"
+source_file: "Source/Maverick/AI/Task/MVAttackOpportunityTask.h"
 type: "code"
-community: "AI 전투 결정 설정"
+community: "FMVAttackOpportunityTaskInstanceData"
 location: "L14"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVAttackOpportunityTaskInstanceData
 ---
 
 # CombatContext
 
 ## Connections
-- [[FMVCombatDecisionConditionInstanceData]] - `defines` [EXTRACTED]
+- [[FMVAttackOpportunityTaskInstanceData]] - `defines` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVAttackOpportunityTaskInstanceData

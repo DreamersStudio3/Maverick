@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/AI/Task/MVEnemyDeadTask.h"
 type: "code"
-community: "AI 적 사망 처리"
+community: "FMVEnemyDeadTaskInstanceData"
 location: "L22"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVEnemyDeadTaskInstanceData
 ---
 
 # FMVEnemyDeadTaskInstanceData
@@ -15,7 +15,7 @@ tags:
 - [[AAIController]] - `references` [EXTRACTED]
 - [[AIController]] - `defines` [EXTRACTED]
 - [[AMVCharacterBase]] - `references` [EXTRACTED]
-- [[APawn_16]] - `references` [EXTRACTED]
+- [[APawn_20]] - `references` [EXTRACTED]
 - [[Character]] - `defines` [EXTRACTED]
 - [[CleanupDelayElapsedSeconds]] - `defines` [EXTRACTED]
 - [[CleanupDelaySeconds]] - `defines` [EXTRACTED]
@@ -28,9 +28,9 @@ tags:
 - [[MVEnemyDeadTask.h]] - `contains` [EXTRACTED]
 - [[MinimumCleanupDelaySeconds]] - `defines` [EXTRACTED]
 - [[Owner_5]] - `defines` [EXTRACTED]
-- [[TObjectPtr_13]] - `references` [EXTRACTED]
+- [[TObjectPtr_17]] - `references` [EXTRACTED]
 - [[UMVDeathComponent]] - `references` [EXTRACTED]
-- [[UPROPERTY_2]] - `references` [EXTRACTED]
+- [[UPROPERTY_6]] - `references` [EXTRACTED]
 - [[bCleanupApplied]] - `defines` [EXTRACTED]
 - [[bCleanupDelayStarted]] - `defines` [EXTRACTED]
 - [[bClearLockOnTargetOnEnter]] - `defines` [EXTRACTED]
@@ -41,4 +41,4 @@ tags:
 - [[bStopCharacterMovement]] - `defines` [EXTRACTED]
 - [[bWaitForDeathPresentationFinished]] - `defines` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVEnemyDeadTaskInstanceData

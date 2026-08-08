@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/System/MVFieldTransitionSubsystem.cpp"
 type: "code"
-community: "사망 부활 UI 흐름"
+community: "MVDeathRespawnFlow.h"
 location: "L63"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__UI_
+  - community/MVDeathRespawnFlowh
 ---
 
 # UMVFieldTransitionSubsystem::Get()
@@ -16,4 +16,4 @@ tags:
 - [[UMVFieldTransitionSubsystem]] - `references` [EXTRACTED]
 - [[UObject_15]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__UI_
+#graphify/code #graphify/EXTRACTED #community/MVDeathRespawnFlowh

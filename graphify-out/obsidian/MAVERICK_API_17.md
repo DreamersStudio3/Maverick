@@ -1,17 +1,17 @@
 ---
-source_file: "Source/Maverick/UI/World/MVWorldWidgetBase.h"
+source_file: "Source/Maverick/System/MVFieldTransitionResettableInterface.h"
 type: "code"
-community: "월드 위젯 베이스 선언"
-location: "L8"
+community: "MVEnemy.h"
+location: "L48"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVEnemyh
 ---
 
 # MAVERICK_API
 
 ## Connections
-- [[MVWorldWidgetBase.h]] - `contains` [EXTRACTED]
+- [[MVFieldTransitionResettableInterface.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVEnemyh

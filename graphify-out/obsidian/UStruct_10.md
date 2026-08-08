@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 적 사망 처리"
+community: "FMVHitReactionEnterConditionInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVHitReactionEnterConditionInstanceData
 ---
 
 # UStruct
 
 ## Connections
-- [[dot-GetInstanceDataType()_10]] - `references` [EXTRACTED]
+- [[dot-GetInstanceDataType()_3]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVHitReactionEnterConditionInstanceData

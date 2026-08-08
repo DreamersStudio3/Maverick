@@ -1,17 +1,17 @@
 ---
-source_file: "Source/Maverick/AI/MVAICombatTypes.h"
+source_file: "Source/Maverick/Components/MVHitReactionComponent.h"
 type: "code"
-community: "AI 전투 액션 메타데이터"
-location: "L43"
+community: "MVHitReactionComponent.h"
+location: "L37"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/MVHitReactionComponenth
 ---
 
 # ActionRow
 
 ## Connections
-- [[FMVAttackActionRowHandle]] - `defines` [EXTRACTED]
+- [[FMVHitReactionActionData]] - `defines` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/MVHitReactionComponenth

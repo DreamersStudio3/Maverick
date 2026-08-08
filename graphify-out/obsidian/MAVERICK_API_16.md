@@ -1,17 +1,17 @@
 ---
-source_file: "Source/Maverick/UI/Window/MVTitleWindow.h"
+source_file: "Source/Maverick/UI/World/MVWorldWidgetBase.h"
 type: "code"
-community: "타이틀 윈도우 선언"
+community: "MVWorldWidgetBase.h"
 location: "L8"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVWorldWidgetBaseh
 ---
 
 # MAVERICK_API
 
 ## Connections
-- [[MVTitleWindow.h]] - `contains` [EXTRACTED]
+- [[MVWorldWidgetBase.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVWorldWidgetBaseh

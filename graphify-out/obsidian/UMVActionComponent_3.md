@@ -1,18 +1,17 @@
 ---
-source_file: "Source/Maverick/AI/Task/MVHitReactionTask.h"
+source_file: "Source/Maverick/Character/MVCharacterBase.h"
 type: "code"
-community: "AI 피격 반응 태스크"
-location: "L9"
+community: "MVCharacterBase.h"
+location: "L18"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/MVCharacterBaseh
 ---
 
 # UMVActionComponent
 
 ## Connections
-- [[FMVHitReactionTaskInstanceData]] - `references` [EXTRACTED]
-- [[MVHitReactionTask.h]] - `contains` [EXTRACTED]
+- [[MVCharacterBase.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/MVCharacterBaseh

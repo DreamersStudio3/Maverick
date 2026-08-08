@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/System/MVFieldTransitionSubsystem.cpp"
 type: "code"
-community: "필드 전환 요청 식별"
+community: "FName"
 location: "L25"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/FName
 ---
 
 # MVFieldTransitionActionTableNameFromDataTable()
@@ -17,4 +17,4 @@ tags:
 - [[UDataTable_12]] - `references` [EXTRACTED]
 - [[UMVFieldTransitionSubsystemHandlePreTransitionActionEnded()]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/FName

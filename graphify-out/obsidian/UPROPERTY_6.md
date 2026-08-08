@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 전역 쿨다운"
+community: "FMVEnemyDeadTaskInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI__
+  - community/FMVEnemyDeadTaskInstanceData
 ---
 
 # UPROPERTY
 
 ## Connections
-- [[FMVGlobalCoolTimeTaskInstanceData]] - `references` [EXTRACTED]
+- [[FMVEnemyDeadTaskInstanceData]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI__
+#graphify/code #graphify/EXTRACTED #community/FMVEnemyDeadTaskInstanceData

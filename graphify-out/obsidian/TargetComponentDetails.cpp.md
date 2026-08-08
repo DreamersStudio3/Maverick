@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/TargetComponentDetails.cpp"
 type: "code"
-community: "대상 컴포넌트 디테일 편집"
+community: "TargetComponentDetails.cpp"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/TargetComponentDetailscpp
 ---
 
 # TargetComponentDetails.cpp
@@ -25,4 +25,4 @@ tags:
 - [[TargetComponentDetails.h]] - `imports` [EXTRACTED]
 - [[UpdateAssociatedComponentNameText]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/TargetComponentDetailscpp

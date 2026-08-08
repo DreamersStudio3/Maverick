@@ -1,16 +1,17 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 후퇴 Launch 몽타주"
+community: "FMVExecuteFixedAttackTaskInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI__Launch_
+  - community/FMVExecuteFixedAttackTaskInstanceData
 ---
 
 # UPROPERTY
 
 ## Connections
-- [[FMVBackOffLaunchMontageTaskInstanceData]] - `references` [EXTRACTED]
+- [[FMVExecuteFixedAttackTaskInstanceData]] - `references` [EXTRACTED]
+- [[FMVSelectAndExecuteAttackTaskInstanceData]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI__Launch_
+#graphify/code #graphify/EXTRACTED #community/FMVExecuteFixedAttackTaskInstanceData

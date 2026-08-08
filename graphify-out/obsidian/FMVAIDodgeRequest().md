@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Public/Struct/MVAIDodgeTypes.h"
 type: "code"
-community: "AI 회피 방향 결정"
+community: "UMVEnemyDodgeTokenComponent::TryConsumeDodgeTokenForThreat"
 location: "L11"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/UMVEnemyDodgeTokenComponentTryConsumeDodgeTokenForThreat
 ---
 
 # FMVAIDodgeRequest()
@@ -17,4 +17,4 @@ tags:
 - [[MVAIDodgeTypes.h]] - `contains` [EXTRACTED]
 - [[UMVEnemyDodgeTokenComponentTryConsumeDodgeTokenForThreat()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/UMVEnemyDodgeTokenComponentTryConsumeDodgeTokenForThreat

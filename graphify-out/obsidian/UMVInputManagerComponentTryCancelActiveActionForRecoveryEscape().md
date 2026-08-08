@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVInputManagerComponent.cpp"
 type: "code"
-community: "입력 차단 회복 취소"
+community: "EMVRecoveryEscapeCancelTrigger"
 location: "L546"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/EMVRecoveryEscapeCancelTrigger
 ---
 
 # UMVInputManagerComponent::TryCancelActiveActionForRecoveryEscape()
@@ -15,4 +15,4 @@ tags:
 - [[EMVRecoveryEscapeCancelTrigger]] - `references` [EXTRACTED]
 - [[MVInputManagerComponent.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/EMVRecoveryEscapeCancelTrigger

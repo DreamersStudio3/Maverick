@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVFinisherComponent.cpp"
 type: "code"
-community: "피니셔 실행과 워핑"
+community: "MVFinisherComponent.cpp"
 location: "L378"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVFinisherComponentcpp
 ---
 
 # UMVFinisherComponent::SetWarpTarget()
@@ -16,4 +16,4 @@ tags:
 - [[FName_38]] - `calls` [EXTRACTED]
 - [[MVFinisherComponent.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVFinisherComponentcpp

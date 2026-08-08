@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVEnemyDodgeTokenComponent.h"
 type: "code"
-community: "적 회피 토큰 부여"
+community: "GrantDodgeToken"
 location: "L52"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/___
+  - community/GrantDodgeToken
 ---
 
 # GrantDodgeToken
@@ -17,4 +17,4 @@ tags:
 - [[UMVEnemyDodgeTokenComponentNotifyEnemyDamaged()]] - `calls` [INFERRED]
 - [[UMVEnemyDodgeTokenComponentNotifyEnemyLandedHit()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/___
+#graphify/code #graphify/INFERRED #community/GrantDodgeToken

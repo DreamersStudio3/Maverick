@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Public/Tables/MVUIMessageTableTypes.h"
 type: "code"
-community: "테이블 Row 공통 타입"
+community: "MVTableTypes.h"
 location: "L8"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/_Row__
+  - community/MVTableTypesh
 ---
 
 # FMVUIMessageRow()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[MVUIMessageTableTypes.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/_Row__
+#graphify/code #graphify/EXTRACTED #community/MVTableTypesh

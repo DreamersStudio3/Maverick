@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "Graphify 최신성 Guard"
+community: "knowledge_guard.py"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Graphify__Guard
+  - community/knowledge_guardpy
 ---
 
 # ArgumentParser
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[build_parser()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Graphify__Guard
+#graphify/code #graphify/EXTRACTED #community/knowledge_guardpy

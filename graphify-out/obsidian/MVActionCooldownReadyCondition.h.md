@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/AI/Condition/MVActionCooldownReadyCondition.h"
 type: "code"
-community: "AI 쿨다운 준비 조건"
+community: "FMVActionCooldownReadyConditionInstanceData"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVActionCooldownReadyConditionInstanceData
 ---
 
 # MVActionCooldownReadyCondition.h
@@ -16,4 +16,4 @@ tags:
 - [[FMVActionCooldownReadyConditionInstanceData]] - `contains` [EXTRACTED]
 - [[MVActionCooldownReadyCondition.cpp]] - `imports` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVActionCooldownReadyConditionInstanceData

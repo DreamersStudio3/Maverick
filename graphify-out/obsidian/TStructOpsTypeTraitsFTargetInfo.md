@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetTypes.h"
 type: "code"
-community: "락온 핵심 타입과 핸들러"
+community: "LockOnTargetTypes.h"
 location: "L59"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/LockOnTargetTypesh
 ---
 
 # TStructOpsTypeTraits<FTargetInfo>
@@ -16,4 +16,4 @@ tags:
 - [[LockOnTargetTypes.h]] - `contains` [EXTRACTED]
 - [[TStructOpsTypeTraitsBase2_1]] - `inherits` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/LockOnTargetTypesh

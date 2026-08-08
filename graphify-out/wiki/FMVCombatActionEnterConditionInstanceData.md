@@ -1,0 +1,52 @@
+# FMVCombatActionEnterConditionInstanceData
+
+> 31 nodes
+
+## Key Concepts
+
+- **FMVCombatActionEnterConditionInstanceData** (25 connections) — `Source/Maverick/AI/Condition/MVCombatActionEnterCondition.h`
+- **MVCombatActionEnterCondition.cpp** (7 connections) — `Source/Maverick/AI/Condition/MVCombatActionEnterCondition.cpp`
+- **CombatContextEnterPassesCommonGate()** (6 connections) — `Source/Maverick/AI/Condition/MVCombatActionEnterCondition.cpp`
+- **TestCondition** (6 connections) — `Source/Maverick/AI/Condition/MVCombatActionEnterCondition.h`
+- **CombatContextEnterCanEnterAction()** (5 connections) — `Source/Maverick/AI/Condition/MVCombatActionEnterCondition.cpp`
+- **CombatContextEnterCanStrafe()** (5 connections) — `Source/Maverick/AI/Condition/MVCombatActionEnterCondition.cpp`
+- **CombatContextEnterIsDistanceInRange()** (4 connections) — `Source/Maverick/AI/Condition/MVCombatActionEnterCondition.cpp`
+- **CombatContextEnterCanMoveToTarget()** (4 connections) — `Source/Maverick/AI/Condition/MVCombatActionEnterCondition.cpp`
+- **FMVCombatActionEnterCondition** (4 connections) — `Source/Maverick/AI/Condition/MVCombatActionEnterCondition.h`
+- **CombatContextEnterPassesCooldownGroupCheck()** (3 connections) — `Source/Maverick/AI/Condition/MVCombatActionEnterCondition.cpp`
+- **.GetInstanceDataType()** (2 connections) — `Source/Maverick/AI/Condition/MVCombatActionEnterCondition.h`
+- **FStateTreeExecutionContext** (1 connections)
+- **CombatContext** (1 connections) — `Source/Maverick/AI/Condition/MVCombatActionEnterCondition.h`
+- **EMVCombatContextEnterMode** (1 connections)
+- **Mode** (1 connections) — `Source/Maverick/AI/Condition/MVCombatActionEnterCondition.h`
+- **EMVCombatActionTypes** (1 connections)
+- **ActionType** (1 connections) — `Source/Maverick/AI/Condition/MVCombatActionEnterCondition.h`
+- **FName** (1 connections)
+- **CooldownActionId** (1 connections) — `Source/Maverick/AI/Condition/MVCombatActionEnterCondition.h`
+- **EMVCombatCooldownCheckMode** (1 connections)
+- **CooldownCheckMode** (1 connections) — `Source/Maverick/AI/Condition/MVCombatActionEnterCondition.h`
+- **TArray** (1 connections)
+- **CooldownActionIds** (1 connections) — `Source/Maverick/AI/Condition/MVCombatActionEnterCondition.h`
+- **MinDistance** (1 connections) — `Source/Maverick/AI/Condition/MVCombatActionEnterCondition.h`
+- **MaxDistance** (1 connections) — `Source/Maverick/AI/Condition/MVCombatActionEnterCondition.h`
+- *... and 6 more nodes in this community*
+
+## Relationships
+
+- [MVAICombatTypes.h](MVAICombatTypes.h.md) (2 shared connections)
+- [FMVAICombatContext](FMVAICombatContext.md) (1 shared connections)
+
+## Source Files
+
+- `Source/Maverick/AI/Condition/MVCombatActionEnterCondition.cpp`
+- `Source/Maverick/AI/Condition/MVCombatActionEnterCondition.h`
+
+## Audit Trail
+
+- EXTRACTED: 91 (100%)
+- INFERRED: 0 (0%)
+- AMBIGUOUS: 0 (0%)
+
+---
+
+*Part of the graphify knowledge wiki. See [index](index.md) to navigate.*

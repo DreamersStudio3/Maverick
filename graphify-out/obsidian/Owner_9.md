@@ -1,17 +1,17 @@
 ---
-source_file: "Source/Maverick/AI/Task/MVFocusingTask.h"
+source_file: "Source/Maverick/Public/Interface/MVHitReactionRecoveryDecisionProvider.h"
 type: "code"
-community: "AI 타겟 포커싱"
-location: "L19"
+community: "피격 리액션 회복 결정"
+location: "L34"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI__
+  - community/___
 ---
 
 # Owner
 
 ## Connections
-- [[FMVFocusingTaskInstanceData]] - `defines` [EXTRACTED]
+- [[FMVHitReactionRecoveryDecisionContext]] - `defines` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI__
+#graphify/code #graphify/EXTRACTED #community/___

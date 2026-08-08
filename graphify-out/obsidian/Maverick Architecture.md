@@ -1,20 +1,18 @@
 ---
 source_file: "docs/wiki/Architecture.md"
 type: "document"
-community: "Maverick 아키텍처 정본"
+community: "Maverick Architecture"
 location: "L1"
 tags:
   - graphify/document
   - graphify/EXTRACTED
-  - community/Maverick__
+  - community/Maverick_Architecture
 ---
 
 # Maverick Architecture
 
 ## Connections
 - [[Architecture]] - `contains` [EXTRACTED]
-- [[Graphify Evidence Boundary]] - `rationale_for` [EXTRACTED]
-- [[Maverick Runtime Module]] - `conceptually_related_to` [EXTRACTED]
 - [[갱신 조건]] - `contains` [EXTRACTED]
 - [[관련 문서]] - `contains` [EXTRACTED]
 - [[디렉터리 책임]] - `contains` [EXTRACTED]
@@ -26,4 +24,4 @@ tags:
 - [[캐릭터 조립과 소유권]] - `contains` [EXTRACTED]
 - [[핵심 런타임 흐름]] - `contains` [EXTRACTED]
 
-#graphify/document #graphify/EXTRACTED #community/Maverick__
+#graphify/document #graphify/EXTRACTED #community/Maverick_Architecture

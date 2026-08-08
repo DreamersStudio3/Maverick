@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Character/MVCharacterBase.cpp"
 type: "code"
-community: "피격 공중 상태 추적"
+community: "MVCharacterLogAirborneTrace"
 location: "L306"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVCharacterLogAirborneTrace
 ---
 
 # AMVCharacterBase::OnHitResolved()
@@ -16,4 +16,4 @@ tags:
 - [[MVCharacterBase.cpp]] - `contains` [EXTRACTED]
 - [[MVCharacterLogAirborneTrace()]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVCharacterLogAirborneTrace

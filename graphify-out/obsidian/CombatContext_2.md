@@ -1,8 +1,8 @@
 ---
-source_file: "Source/Maverick/AI/Task/MVAttackOpportunityTask.h"
+source_file: "Source/Maverick/AI/Task/MVEnemyCombatActionTask.h"
 type: "code"
-community: "AI 공격 기회 판단"
-location: "L14"
+community: "AI 적 전투 액션"
+location: "L28"
 tags:
   - graphify/code
   - graphify/EXTRACTED
@@ -12,6 +12,6 @@ tags:
 # CombatContext
 
 ## Connections
-- [[FMVAttackOpportunityTaskInstanceData]] - `defines` [EXTRACTED]
+- [[FMVEnemyCombatActionTaskInstanceData]] - `defines` [EXTRACTED]
 
 #graphify/code #graphify/EXTRACTED #community/AI___

@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/World/MVMonsterHPBarWidget.cpp"
 type: "code"
-community: "몬스터 체력바 바인딩"
+community: "MVMonsterHPBarWidget.cpp"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVMonsterHPBarWidgetcpp
 ---
 
 # MVMonsterHPBarWidget.cpp
@@ -17,4 +17,4 @@ tags:
 - [[UMVMonsterHPBarWidgetNativeDestruct()]] - `contains` [EXTRACTED]
 - [[UMVMonsterHPBarWidgetUnbindStatComponent()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVMonsterHPBarWidgetcpp

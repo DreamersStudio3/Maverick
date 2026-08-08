@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "스킬 체인 런타임"
+community: "FMVSkillEntry"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/FMVSkillEntry
 ---
 
 # TArray
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[FMVSkillEntry]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/FMVSkillEntry

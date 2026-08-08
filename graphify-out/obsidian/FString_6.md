@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "피격 사망 전환 노티파이"
+community: "UMVAnimNotify_DeathOverlay::Notify"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/UMVAnimNotify_DeathOverlayNotify
 ---
 
 # FString
 
 ## Connections
-- [[UMVAnimNotify_HitReactionDeathHandoffGetNotifyName_Implementation()]] - `references` [EXTRACTED]
+- [[UMVAnimNotify_DeathOverlayGetNotifyName_Implementation()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/UMVAnimNotify_DeathOverlayNotify

@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 전투 의사결정 로직"
+community: "FMVGlobalSensingTaskInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVGlobalSensingTaskInstanceData
 ---
 
 # TArray
 
 ## Connections
-- [[CombatDecisionHasReadyCandidate()]] - `references` [EXTRACTED]
+- [[FMVGlobalSensingTaskInstanceData]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVGlobalSensingTaskInstanceData

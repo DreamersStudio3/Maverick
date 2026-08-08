@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Character/PC/Dodge/MVPlayerDodge.cpp"
 type: "code"
-community: "회피 입력 컨텍스트"
+community: "FMVDodgeInputContext"
 location: "L670"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/FMVDodgeInputContext
 ---
 
 # UMVPlayerDodge::EvaluateDodgeChooserActionRowHandle()
@@ -17,4 +17,4 @@ tags:
 - [[MVPlayerDodge.cpp]] - `contains` [EXTRACTED]
 - [[UChooserTable]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/FMVDodgeInputContext

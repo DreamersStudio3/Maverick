@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 전역 쿨다운"
+community: "FMVFocusingTask"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI__
+  - community/FMVFocusingTask
 ---
 
 # APawn
 
 ## Connections
-- [[FMVGlobalCoolTimeTaskInstanceData]] - `references` [EXTRACTED]
+- [[MVFocusingTaskResolveAIController()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI__
+#graphify/code #graphify/EXTRACTED #community/FMVFocusingTask

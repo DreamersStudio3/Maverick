@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "캐릭터 스탯 관리"
+community: "MVStatComponent.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVStatComponentcpp
 ---
 
 # FName
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[UMVStatComponentSetStatTableReference()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVStatComponentcpp

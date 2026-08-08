@@ -1,18 +1,19 @@
 ---
 source_file: ""
 type: "code"
-community: "사망 액션 행 이름 해석"
+community: "MVCombatComponent.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/____
+  - community/MVCombatComponentcpp
 ---
 
 # FString
 
 ## Connections
-- [[UMVDeathComponentCharacterIndexCodeToTableToken()]] - `references` [EXTRACTED]
-- [[UMVDeathComponentDeathActionFacingToTableToken()]] - `references` [EXTRACTED]
-- [[UMVDeathComponentDeathActionPoseToTableToken()]] - `references` [EXTRACTED]
+- [[MVCombatActionTypeToString()]] - `references` [EXTRACTED]
+- [[MVCombatIsDodgeContextualAttackRowName()]] - `references` [EXTRACTED]
+- [[MVCombatRowHandleToString()]] - `references` [EXTRACTED]
+- [[MVCombatSkillRowNamesToString()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/____
+#graphify/code #graphify/EXTRACTED #community/MVCombatComponentcpp

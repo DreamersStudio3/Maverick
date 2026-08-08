@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/HUD/MVPlayerStatusWidget.cpp"
 type: "code"
-community: "플레이어 상태 HUD 연동"
+community: "MVPlayerStatusWidget.cpp"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__HUD_
+  - community/MVPlayerStatusWidgetcpp
 ---
 
 # MVPlayerStatusWidget.cpp
@@ -25,4 +25,4 @@ tags:
 - [[UMVPlayerStatusWidgetNativeOnInitialized()]] - `contains` [EXTRACTED]
 - [[UMVPlayerStatusWidgetUnbindStatComponent()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__HUD_
+#graphify/code #graphify/EXTRACTED #community/MVPlayerStatusWidgetcpp

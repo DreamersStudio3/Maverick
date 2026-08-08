@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/AI/Condition/MVCombatActionEnterCondition.cpp"
 type: "code"
-community: "AI 전투 진입 조건"
+community: "FMVCombatActionEnterConditionInstanceData"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVCombatActionEnterConditionInstanceData
 ---
 
 # MVCombatActionEnterCondition.cpp
@@ -20,4 +20,4 @@ tags:
 - [[CombatContextEnterPassesCooldownGroupCheck()]] - `contains` [EXTRACTED]
 - [[TestCondition_1]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVCombatActionEnterConditionInstanceData

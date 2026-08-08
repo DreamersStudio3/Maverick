@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "전역 전투 센싱 태스크"
+community: "FMVEnemyDeadTaskInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/FMVEnemyDeadTaskInstanceData
 ---
 
 # FStateTreeTaskCommonBase
 
 ## Connections
-- [[FMVGlobalSensingTask]] - `inherits` [EXTRACTED]
+- [[FMVEnemyDeadTask]] - `inherits` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/FMVEnemyDeadTaskInstanceData

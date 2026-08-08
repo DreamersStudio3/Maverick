@@ -12,13 +12,13 @@ tags:
 # FMVHitReactionRecoveryDecisionContext
 
 ## Connections
-- [[AActor_24]] - `references` [EXTRACTED]
+- [[AActor_23]] - `references` [EXTRACTED]
 - [[AMVEnemyTryChooseHitReactionRecovery()]] - `references` [EXTRACTED]
 - [[EMVActionHitReactionType_3]] - `references` [EXTRACTED]
 - [[EMVHitReactionDirection_2]] - `references` [EXTRACTED]
 - [[HitReactionDirection]] - `defines` [EXTRACTED]
 - [[HitReactionType]] - `defines` [EXTRACTED]
 - [[MVHitReactionRecoveryDecisionProvider.h]] - `contains` [EXTRACTED]
-- [[Owner_14]] - `defines` [EXTRACTED]
+- [[Owner_9]] - `defines` [EXTRACTED]
 
 #graphify/code #graphify/EXTRACTED #community/___

@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "UI 레이어와 사망 오버레이"
+community: "MVUILayerBase.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/UI___
+  - community/MVUILayerBasecpp
 ---
 
 # UUserWidget
@@ -15,4 +15,4 @@ tags:
 - [[UMVUILayerBaseSetHUDByClass()]] - `references` [EXTRACTED]
 - [[UMVUILayerBaseSetHUDWidget()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/UI___
+#graphify/code #graphify/EXTRACTED #community/MVUILayerBasecpp

@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/Debug/MVPIEActionTestWidget.cpp"
 type: "code"
-community: "PIE 액션 테스트 입력"
+community: "UMVPIEActionTestWidget::NativeOnKeyDown"
 location: "L186"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/PIE___
+  - community/UMVPIEActionTestWidgetNativeOnKeyDown
 ---
 
 # UMVPIEActionTestWidget::NativeOnKeyDown()
@@ -17,4 +17,4 @@ tags:
 - [[FReply]] - `references` [EXTRACTED]
 - [[MVPIEActionTestWidget.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/PIE___
+#graphify/code #graphify/EXTRACTED #community/UMVPIEActionTestWidgetNativeOnKeyDown

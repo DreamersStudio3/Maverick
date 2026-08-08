@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/Base/MVActivatableWidgetBase.cpp"
 type: "code"
-community: "활성 위젯 입력과 전환"
+community: "MVActivatableWidgetBase.cpp"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVActivatableWidgetBasecpp
 ---
 
 # MVActivatableWidgetBase.cpp
@@ -25,4 +25,4 @@ tags:
 - [[UMVActivatableWidgetBaseSetUIFadeDurations()]] - `contains` [EXTRACTED]
 - [[UMVActivatableWidgetBaseUMVActivatableWidgetBase()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVActivatableWidgetBasecpp

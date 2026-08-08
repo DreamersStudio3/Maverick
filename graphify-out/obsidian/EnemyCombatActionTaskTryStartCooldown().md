@@ -12,9 +12,9 @@ tags:
 # EnemyCombatActionTaskTryStartCooldown()
 
 ## Connections
-- [[APawn_13]] - `references` [EXTRACTED]
+- [[APawn_17]] - `references` [EXTRACTED]
 - [[EnterState_3]] - `calls` [EXTRACTED]
-- [[FName_20]] - `references` [EXTRACTED]
+- [[FName_23]] - `references` [EXTRACTED]
 - [[MVEnemyCombatActionTask.cpp]] - `contains` [EXTRACTED]
 
 #graphify/code #graphify/EXTRACTED #community/AI___

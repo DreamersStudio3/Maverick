@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Public/Struct/MVHitTypes.h"
 type: "code"
-community: "피격 방향과 Launch 처리"
+community: "FMVResolvedHitData"
 location: "L81"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__Launch_
+  - community/FMVResolvedHitData
 ---
 
 # FMVResolvedHitData()
@@ -14,7 +14,7 @@ tags:
 ## Connections
 - [[AMVCharacterBaseOnHitResolved()]] - `references` [EXTRACTED]
 - [[AMVEnemyHandleEnemyDamaged()]] - `references` [EXTRACTED]
-- [[ExitState_9]] - `calls` [INFERRED]
+- [[ExitState_4]] - `calls` [INFERRED]
 - [[FMVHitReactionEnterConditionInstanceData]] - `references` [EXTRACTED]
 - [[FMVHitReactionTaskInstanceData]] - `references` [EXTRACTED]
 - [[MVCharacterLogAirborneTrace()]] - `references` [EXTRACTED]
@@ -42,4 +42,4 @@ tags:
 - [[UMVStatComponentResetDeathState()]] - `calls` [EXTRACTED]
 - [[UMVStatComponentWouldDieFromHit()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__Launch_
+#graphify/code #graphify/EXTRACTED #community/FMVResolvedHitData

@@ -1,20 +1,19 @@
 ---
 source_file: ""
 type: "code"
-community: "피격·회복 액션 행 조회"
+community: "MVFinisherComponent.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVFinisherComponentcpp
 ---
 
 # FDataTableRowHandle
 
 ## Connections
-- [[UMVHitReactionComponentFindBaseActionRow()]] - `references` [EXTRACTED]
-- [[UMVHitReactionComponentFindHitReactionActionRow()]] - `references` [EXTRACTED]
-- [[UMVHitReactionComponentFindRecoveryActionRow()]] - `references` [EXTRACTED]
-- [[UMVHitReactionComponentResolveRecoveryActionRowHandle()]] - `references` [EXTRACTED]
-- [[UMVHitReactionComponentTryStartRecoveryAction()]] - `references` [EXTRACTED]
+- [[UMVFinisherComponentClearAttackData()]] - `calls` [EXTRACTED]
+- [[UMVFinisherComponentFindFinisherAnimation()]] - `references` [EXTRACTED]
+- [[UMVFinisherComponentSendAnimation()]] - `references` [EXTRACTED]
+- [[UMVFinisherComponentSetAttackData()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVFinisherComponentcpp

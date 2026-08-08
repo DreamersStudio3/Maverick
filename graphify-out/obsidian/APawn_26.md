@@ -1,16 +1,17 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 전역 감지 설정"
+community: "MVGlobalSensingTask.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/MVGlobalSensingTaskcpp
 ---
 
 # APawn
 
 ## Connections
-- [[FMVGlobalSensingTaskInstanceData]] - `references` [EXTRACTED]
+- [[GlobalSensingClearControllerTarget()]] - `references` [EXTRACTED]
+- [[GlobalSensingEnsureCooldownComponent()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/MVGlobalSensingTaskcpp

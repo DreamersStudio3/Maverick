@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "피격·회복 액션 행 조회"
+community: "MVHitReactionBuildAvailableRowNameLog"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVHitReactionBuildAvailableRowNameLog
 ---
 
 # UDataTable
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[MVHitReactionBuildAvailableRowNameLog()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVHitReactionBuildAvailableRowNameLog

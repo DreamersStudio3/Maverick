@@ -1,20 +1,20 @@
 ---
 source_file: "Source/Maverick/AI/MVAICombatTypes.h"
 type: "code"
-community: "AI 전투 액션 메타데이터"
+community: "ExecuteAttackResolveActionCandidate"
 location: "L38"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/ExecuteAttackResolveActionCandidate
 ---
 
 # FMVAttackActionRowHandle
 
 ## Connections
-- [[dot-IsValid()]] - `method` [EXTRACTED]
-- [[dot-Reset()]] - `method` [EXTRACTED]
-- [[ActionRow]] - `defines` [EXTRACTED]
+- [[dot-IsValid()_2]] - `method` [EXTRACTED]
+- [[dot-Reset()_2]] - `method` [EXTRACTED]
+- [[ActionRow_1]] - `defines` [EXTRACTED]
 - [[ExecuteAttackEvaluateChooserActionRowHandle()]] - `references` [EXTRACTED]
 - [[ExecuteAttackResolveActionCandidate()]] - `references` [EXTRACTED]
 - [[FDataTableRowHandle]] - `references` [EXTRACTED]
@@ -22,4 +22,4 @@ tags:
 - [[FMVSelectAndExecuteAttackTaskInstanceData]] - `references` [EXTRACTED]
 - [[MVAICombatTypes.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/ExecuteAttackResolveActionCandidate

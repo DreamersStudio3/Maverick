@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/System/MVUILayerBase.h"
 type: "code"
-community: "UI 레이어 오버레이 구성"
+community: "UOverlay"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/UI___
+  - community/UOverlay
 ---
 
 # MVUILayerBase.h
@@ -18,4 +18,4 @@ tags:
 - [[UMVUILayerBase()]] - `contains` [EXTRACTED]
 - [[UOverlay]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/UI___
+#graphify/code #graphify/EXTRACTED #community/UOverlay

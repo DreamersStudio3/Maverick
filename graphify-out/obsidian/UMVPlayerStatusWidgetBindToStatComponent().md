@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/HUD/MVPlayerStatusWidget.cpp"
 type: "code"
-community: "회복 스탯 일시정지 노티파이"
+community: "MVStatComponent.h"
 location: "L10"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVStatComponenth
 ---
 
 # UMVPlayerStatusWidget::BindToStatComponent()
@@ -15,4 +15,4 @@ tags:
 - [[MVPlayerStatusWidget.cpp]] - `contains` [EXTRACTED]
 - [[UMVStatComponent()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVStatComponenth

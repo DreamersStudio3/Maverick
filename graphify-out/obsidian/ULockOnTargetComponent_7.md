@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "락온 대상 위젯 확장"
+community: "WidgetExtension.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/WidgetExtensioncpp
 ---
 
 # ULockOnTargetComponent
@@ -14,4 +14,4 @@ tags:
 - [[UWidgetExtensionDeinitialize()]] - `references` [EXTRACTED]
 - [[UWidgetExtensionInitialize()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/WidgetExtensioncpp

@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 공격 기회 판단"
+community: "FMVActionCooldownReadyConditionInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVActionCooldownReadyConditionInstanceData
 ---
 
 # FName
 
 ## Connections
-- [[FMVAttackOpportunityTaskInstanceData]] - `references` [EXTRACTED]
+- [[FMVActionCooldownReadyConditionInstanceData]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVActionCooldownReadyConditionInstanceData

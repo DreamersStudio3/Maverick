@@ -1,18 +1,18 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 전역 감지 갱신"
+community: "EnterState"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/EnterState
 ---
 
 # EStateTreeRunStatus
 
 ## Connections
-- [[EnterState_10]] - `references` [EXTRACTED]
-- [[Tick_11]] - `references` [EXTRACTED]
+- [[EnterState_12]] - `references` [EXTRACTED]
+- [[Tick_12]] - `references` [EXTRACTED]
 - [[UpdateGlobalSensingSnapshot()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/EnterState

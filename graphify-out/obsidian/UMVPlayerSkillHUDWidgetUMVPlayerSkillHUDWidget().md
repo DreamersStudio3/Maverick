@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/HUD/MVPlayerSkillHUDWidget.cpp"
 type: "code"
-community: "플레이어 스킬 HUD"
+community: "MVPlayerSkillHUDWidget.cpp"
 location: "L13"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__HUD
+  - community/MVPlayerSkillHUDWidgetcpp
 ---
 
 # UMVPlayerSkillHUDWidget::UMVPlayerSkillHUDWidget()
@@ -15,4 +15,4 @@ tags:
 - [[FObjectInitializer_4]] - `references` [EXTRACTED]
 - [[MVPlayerSkillHUDWidget.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__HUD
+#graphify/code #graphify/EXTRACTED #community/MVPlayerSkillHUDWidgetcpp

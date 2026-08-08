@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "LockOnTarget 모듈·타깃 핸들러"
+community: "LockOnTargetDefines.h"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/LockOnTarget__
+  - community/LockOnTargetDefinesh
 ---
 
 # IModuleInterface
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[FLockOnTargetModule]] - `inherits` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/LockOnTarget__
+#graphify/code #graphify/EXTRACTED #community/LockOnTargetDefinesh

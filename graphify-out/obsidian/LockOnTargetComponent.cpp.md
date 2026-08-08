@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetComponent.cpp"
 type: "code"
-community: "락온 대상 컴포넌트"
+community: "LockOnTargetComponent.cpp"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/LockOnTargetComponentcpp
 ---
 
 # LockOnTargetComponent.cpp
@@ -63,4 +63,4 @@ tags:
 - [[ULockOnTargetComponentULockOnTargetComponent()]] - `contains` [EXTRACTED]
 - [[ULockOnTargetComponentUpdateTargetInfo()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/LockOnTargetComponentcpp

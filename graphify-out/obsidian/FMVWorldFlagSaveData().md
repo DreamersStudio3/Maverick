@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/System/MVWorldStateTypes.h"
 type: "code"
-community: "월드 상태 저장 레코드"
+community: "MVWorldStateTypes.h"
 location: "L58"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVWorldStateTypesh
 ---
 
 # FMVWorldFlagSaveData()
@@ -15,4 +15,4 @@ tags:
 - [[MVWorldStateTypes.h]] - `contains` [EXTRACTED]
 - [[UMVWorldStateSubsystemFindWorldFlagRecord()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVWorldStateTypesh

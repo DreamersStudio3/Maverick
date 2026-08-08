@@ -1,17 +1,14 @@
 ---
 source_file: "MaverickDesign/Schema/README.md"
 type: "concept"
-community: "테이블 생성·런타임 파이프라인"
+community: "Table JSON Schema v1"
 location: "lines 1-43"
 tags:
   - graphify/concept
   - graphify/EXTRACTED
-  - community/__
+  - community/Table_JSON_Schema_v1
 ---
 
 # Table JSON Schema v1
 
-## Connections
-- [[CsvToJsonConverter]] - `implements` [EXTRACTED]
-
-#graphify/concept #graphify/EXTRACTED #community/__
+#graphify/concept #graphify/EXTRACTED #community/Table_JSON_Schema_v1

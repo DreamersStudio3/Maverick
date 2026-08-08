@@ -1,12 +1,12 @@
 ---
 source_file: "Scripts/Graphify/knowledge_guard.py"
 type: "code"
-community: "Graphify 최신성 Guard"
+community: "knowledge_guard.py"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Graphify__Guard
+  - community/knowledge_guardpy
 ---
 
 # knowledge_guard.py
@@ -46,4 +46,4 @@ tags:
 - [[verify_commit()]] - `contains` [EXTRACTED]
 - [[write_stamp()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Graphify__Guard
+#graphify/code #graphify/EXTRACTED #community/knowledge_guardpy

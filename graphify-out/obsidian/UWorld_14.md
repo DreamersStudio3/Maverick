@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "로딩 UI 테스트 명령"
+community: "UWorld"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/_UI__
+  - community/UWorld
 ---
 
 # UWorld
@@ -19,4 +19,4 @@ tags:
 - [[UMVUISubsystemHandleWorldInit()]] - `references` [EXTRACTED]
 - [[UMVUISubsystemPushLayer()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/_UI__
+#graphify/code #graphify/EXTRACTED #community/UWorld

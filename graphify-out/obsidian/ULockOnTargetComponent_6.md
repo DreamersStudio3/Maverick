@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "락온 대상 미리보기 확장"
+community: "TargetPreviewExtension.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/TargetPreviewExtensioncpp
 ---
 
 # ULockOnTargetComponent
@@ -14,4 +14,4 @@ tags:
 - [[UTargetPreviewExtensionDeinitialize()]] - `references` [EXTRACTED]
 - [[UTargetPreviewExtensionInitialize()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/TargetPreviewExtensioncpp

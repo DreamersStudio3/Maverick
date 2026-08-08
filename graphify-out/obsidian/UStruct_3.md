@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 전투 결정 설정"
+community: "FMVGlobalCoolTimeTaskInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVGlobalCoolTimeTaskInstanceData
 ---
 
 # UStruct
 
 ## Connections
-- [[dot-GetInstanceDataType()_2]] - `references` [EXTRACTED]
+- [[dot-GetInstanceDataType()_17]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVGlobalCoolTimeTaskInstanceData

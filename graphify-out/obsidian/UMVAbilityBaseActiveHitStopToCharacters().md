@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Combat/MVAbilityBase.cpp"
 type: "code"
-community: "어빌리티 피격 Launch"
+community: "MVAbilityBase.cpp"
 location: "L120"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__Launch
+  - community/MVAbilityBasecpp
 ---
 
 # UMVAbilityBase::ActiveHitStopToCharacters()
@@ -15,4 +15,4 @@ tags:
 - [[AMVCharacterBase()]] - `references` [EXTRACTED]
 - [[MVAbilityBase.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__Launch
+#graphify/code #graphify/EXTRACTED #community/MVAbilityBasecpp

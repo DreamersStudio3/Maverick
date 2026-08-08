@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/AI/Condition/MVCombatDecisionCondition.cpp"
 type: "code"
-community: "AI 전투 의사결정 로직"
+community: "FMVAICombatActionCondition"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVAICombatActionCondition
 ---
 
 # MVCombatDecisionCondition.cpp
@@ -15,6 +15,6 @@ tags:
 - [[CombatDecisionCanAttackImmediately()]] - `contains` [EXTRACTED]
 - [[CombatDecisionHasReadyCandidate()]] - `contains` [EXTRACTED]
 - [[CombatDecisionIsCandidateReady()]] - `contains` [EXTRACTED]
-- [[TestCondition_2]] - `contains` [EXTRACTED]
+- [[TestCondition_4]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVAICombatActionCondition

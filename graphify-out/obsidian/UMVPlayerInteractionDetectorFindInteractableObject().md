@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp"
 type: "code"
-community: "플레이어 상호작용 탐지"
+community: "MVPlayerInteractionDetector.h"
 location: "L534"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVPlayerInteractionDetectorh
 ---
 
 # UMVPlayerInteractionDetector::FindInteractableObject()
@@ -16,4 +16,4 @@ tags:
 - [[UObject_3]] - `references` [EXTRACTED]
 - [[UPrimitiveComponent]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVPlayerInteractionDetectorh

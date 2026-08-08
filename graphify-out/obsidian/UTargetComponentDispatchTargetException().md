@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetComponent.cpp"
 type: "code"
-community: "LockOnTarget 타깃 캡처 상태"
+community: "UTargetComponent::DispatchTargetException"
 location: "L123"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/LockOnTarget___
+  - community/UTargetComponentDispatchTargetException
 ---
 
 # UTargetComponent::DispatchTargetException()
@@ -17,4 +17,4 @@ tags:
 - [[ETargetExceptionType]] - `references` [EXTRACTED]
 - [[TargetComponent.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/LockOnTarget___
+#graphify/code #graphify/EXTRACTED #community/UTargetComponentDispatchTargetException

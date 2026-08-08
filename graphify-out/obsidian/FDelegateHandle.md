@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 기본 공격 태스크"
+community: "FMVExecuteFixedAttackTaskInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVExecuteFixedAttackTaskInstanceData
 ---
 
 # FDelegateHandle
 
 ## Connections
-- [[FMVAttackTaskInstanceData]] - `references` [EXTRACTED]
+- [[FMVExecuteFixedAttackTaskInstanceData]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVExecuteFixedAttackTaskInstanceData

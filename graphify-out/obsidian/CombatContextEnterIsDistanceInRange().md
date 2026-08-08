@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/AI/Condition/MVCombatActionEnterCondition.cpp"
 type: "code"
-community: "AI 전투 진입 조건"
+community: "FMVCombatActionEnterConditionInstanceData"
 location: "L75"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVCombatActionEnterConditionInstanceData
 ---
 
 # CombatContextEnterIsDistanceInRange()
@@ -17,4 +17,4 @@ tags:
 - [[FMVCombatActionEnterConditionInstanceData]] - `references` [EXTRACTED]
 - [[MVCombatActionEnterCondition.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVCombatActionEnterConditionInstanceData

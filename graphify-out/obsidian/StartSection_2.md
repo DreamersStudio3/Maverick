@@ -1,17 +1,17 @@
 ---
-source_file: "Source/Maverick/AI/Task/MVEnemyCombatActionTask.h"
+source_file: "Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h"
 type: "code"
-community: "AI 적 전투 액션"
-location: "L37"
+community: "FMVEnemyDodgeActionTaskInstanceData"
+location: "L47"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVEnemyDodgeActionTaskInstanceData
 ---
 
 # StartSection
 
 ## Connections
-- [[FMVEnemyCombatActionTaskInstanceData]] - `defines` [EXTRACTED]
+- [[FMVEnemyDodgeActionTaskInstanceData]] - `defines` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVEnemyDodgeActionTaskInstanceData

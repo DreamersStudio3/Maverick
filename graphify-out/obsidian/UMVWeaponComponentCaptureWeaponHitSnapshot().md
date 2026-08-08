@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVWeaponComponent.cpp"
 type: "code"
-community: "무기 장착 시각화"
+community: "MVWeaponComponent.cpp"
 location: "L83"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVWeaponComponentcpp
 ---
 
 # UMVWeaponComponent::CaptureWeaponHitSnapshot()
@@ -15,4 +15,4 @@ tags:
 - [[FMVWeaponHitSnapshot()]] - `references` [EXTRACTED]
 - [[MVWeaponComponent.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVWeaponComponentcpp

@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "쿨다운 액션 컷 노티파이"
+community: "UMVAnimNotify_CooldownReadyActionCut::Notify"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/UMVAnimNotify_CooldownReadyActionCutNotify
 ---
 
 # AActor
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[FindCooldownReadyActionCutOwner()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/UMVAnimNotify_CooldownReadyActionCutNotify

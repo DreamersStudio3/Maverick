@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/Window/MVLoadingWindow.cpp"
 type: "code"
-community: "로딩 창 구성과 진행률"
+community: "UMVLoadingWindow::BuildNativeWidgetTree"
 location: "L242"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/UMVLoadingWindowBuildNativeWidgetTree
 ---
 
 # UMVLoadingWindow::BuildNativeWidgetTree()
@@ -21,4 +21,4 @@ tags:
 - [[UOverlay]] - `references` [EXTRACTED]
 - [[UProgressBar]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/UMVLoadingWindowBuildNativeWidgetTree

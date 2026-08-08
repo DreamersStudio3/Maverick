@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "사망 오버레이 페이드"
+community: "MVDeathOverlayWindow.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVDeathOverlayWindowcpp
 ---
 
 # FObjectInitializer
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[UMVDeathOverlayWindowUMVDeathOverlayWindow()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVDeathOverlayWindowcpp

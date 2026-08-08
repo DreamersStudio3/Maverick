@@ -1,17 +1,17 @@
 ---
-source_file: "Source/Maverick/AI/MVAICombatTypes.h"
+source_file: "Source/Maverick/AI/Task/MVAttackOpportunityTask.h"
 type: "code"
-community: "AI 전투 의사결정 로직"
-location: "L92"
+community: "FMVAttackOpportunityTaskInstanceData"
+location: "L23"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVAttackOpportunityTaskInstanceData
 ---
 
 # MaxAbsAngle
 
 ## Connections
-- [[FMVAICombatActionCondition]] - `defines` [EXTRACTED]
+- [[FMVAttackOpportunityTaskInstanceData]] - `defines` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVAttackOpportunityTaskInstanceData

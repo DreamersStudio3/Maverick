@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "액션 입력 버퍼링"
+community: "FVector2D"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/FVector2D
 ---
 
 # uint8
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[EMVActionInputPhase]] - `inherits` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/FVector2D

@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVHitReactionComponent.cpp"
 type: "code"
-community: "피격 회복 방향 추적"
+community: "MVHitReactionLogRecoveryTrace"
 location: "L149"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVHitReactionLogRecoveryTrace
 ---
 
 # MVHitReactionLogRecoveryTrace()
@@ -29,4 +29,4 @@ tags:
 - [[UMVInputManagerComponent()]] - `references` [EXTRACTED]
 - [[UObject_6]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVHitReactionLogRecoveryTrace

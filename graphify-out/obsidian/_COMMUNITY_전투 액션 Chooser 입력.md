@@ -32,17 +32,17 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 4 edges to [[_COMMUNITY_전투 액션 매핑]]
-- 2 edges to [[_COMMUNITY_AI 공격 실행 로직]]
-- 2 edges to [[_COMMUNITY_전투 액션 행 해석]]
-- 1 edge to [[_COMMUNITY_AI 적 회피 실행]]
-- 1 edge to [[_COMMUNITY_회피 입력 컨텍스트]]
-- 1 edge to [[_COMMUNITY_스킬 데이터와 비용]]
-- 1 edge to [[_COMMUNITY_전투 액션 런타임 상태]]
-- 1 edge to [[_COMMUNITY_피니셔 실행과 워핑]]
-- 1 edge to [[_COMMUNITY_피격 반응 상태 관리]]
-- 1 edge to [[_COMMUNITY_피격 반응 행 조회]]
-- 1 edge to [[_COMMUNITY_무기 장착 시각화]]
+- 4 edges to [[_COMMUNITY_MVCombatComponent.cpp]]
+- 2 edges to [[_COMMUNITY_ExecuteAttackResolveActionCandidate]]
+- 2 edges to [[_COMMUNITY_FDataTableRowHandle_1]]
+- 1 edge to [[_COMMUNITY_MVEnemyDodgeActionTask.cpp]]
+- 1 edge to [[_COMMUNITY_FMVDodgeInputContext]]
+- 1 edge to [[_COMMUNITY_FMVSkillDataTableColumn]]
+- 1 edge to [[_COMMUNITY_FMVCombatActionEvent]]
+- 1 edge to [[_COMMUNITY_MVFinisherComponent.cpp]]
+- 1 edge to [[_COMMUNITY_MVHitReactionComponent.cpp]]
+- 1 edge to [[_COMMUNITY_MVHitReactionComponent.h]]
+- 1 edge to [[_COMMUNITY_MVWeaponComponent.cpp]]
 
 ## Top bridge nodes
 - [[UChooserTable]] - degree 7, connects to 5 communities

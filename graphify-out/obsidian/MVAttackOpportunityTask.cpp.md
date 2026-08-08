@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/AI/Task/MVAttackOpportunityTask.cpp"
 type: "code"
-community: "AI 공격 기회 판단"
+community: "FMVAttackOpportunityTaskInstanceData"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVAttackOpportunityTaskInstanceData
 ---
 
 # MVAttackOpportunityTask.cpp
@@ -19,4 +19,4 @@ tags:
 - [[FMVAttackOpportunityTaskFMVAttackOpportunityTask()]] - `contains` [EXTRACTED]
 - [[Tick_1]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVAttackOpportunityTaskInstanceData

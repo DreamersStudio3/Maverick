@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/AI/Task/MVExecuteAttackTask.cpp"
 type: "code"
-community: "AI 공격 실행 로직"
+community: "ExecuteAttackResolveActionCandidate"
 location: "L81"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/ExecuteAttackResolveActionCandidate
 ---
 
 # ExecuteAttackMakeCombatChooserInput()
@@ -19,4 +19,4 @@ tags:
 - [[MVExecuteAttackTask.cpp]] - `contains` [EXTRACTED]
 - [[UObject_2]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/ExecuteAttackResolveActionCandidate

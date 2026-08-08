@@ -1,22 +1,22 @@
 ---
-source_file: "Source/Maverick/AI/Condition/MVHitReactionEnterCondition.h"
+source_file: "Source/Maverick/AI/Condition/MVCombatDecisionCondition.h"
 type: "code"
-community: "AI 피격 진입 조건"
-location: "L63"
+community: "FMVAICombatActionCondition"
+location: "L60"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVAICombatActionCondition
 ---
 
 # TestCondition
 
 ## Connections
-- [[FMVHitReactionEnterCondition]] - `defines` [EXTRACTED]
-- [[FStateTreeExecutionContext_4]] - `references` [EXTRACTED]
-- [[HitReactionEnterIsStateTreeHandledType()]] - `calls` [EXTRACTED]
-- [[HitReactionEnterMatchesTypeFilter()]] - `calls` [EXTRACTED]
-- [[HitReactionEnterResolveOwner()]] - `calls` [EXTRACTED]
-- [[MVHitReactionEnterCondition.cpp]] - `contains` [EXTRACTED]
+- [[CombatDecisionCanAttackImmediately()]] - `calls` [EXTRACTED]
+- [[CombatDecisionHasReadyCandidate()]] - `calls` [EXTRACTED]
+- [[CombatDecisionIsCandidateReady()]] - `calls` [EXTRACTED]
+- [[FMVCombatDecisionCondition]] - `defines` [EXTRACTED]
+- [[FStateTreeExecutionContext_2]] - `references` [EXTRACTED]
+- [[MVCombatDecisionCondition.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVAICombatActionCondition

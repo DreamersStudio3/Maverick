@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetComponent.cpp"
 type: "code"
-community: "LockOnTarget 서브오브젝트 수명주기"
+community: "ULockOnTargetExtensionProxy"
 location: "L101"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/LockOnTarget__
+  - community/ULockOnTargetExtensionProxy
 ---
 
 # ULockOnTargetComponent::GetLifetimeReplicatedProps()
@@ -14,6 +14,6 @@ tags:
 ## Connections
 - [[FLifetimeProperty]] - `references` [EXTRACTED]
 - [[LockOnTargetComponent.cpp]] - `contains` [EXTRACTED]
-- [[TArray]] - `references` [EXTRACTED]
+- [[TArray_5]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/LockOnTarget__
+#graphify/code #graphify/EXTRACTED #community/ULockOnTargetExtensionProxy

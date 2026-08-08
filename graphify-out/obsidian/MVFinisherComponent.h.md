@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVFinisherComponent.h"
 type: "code"
-community: "피니셔 Chooser 입출력"
+community: "MVActionInputHandlerInterface.h"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/_Chooser_
+  - community/MVActionInputHandlerInterfaceh
 ---
 
 # MVFinisherComponent.h
@@ -18,4 +18,4 @@ tags:
 - [[MVActionInputHandlerInterface.h]] - `imports` [EXTRACTED]
 - [[UMVAbilityBase_4]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/_Chooser_
+#graphify/code #graphify/EXTRACTED #community/MVActionInputHandlerInterfaceh

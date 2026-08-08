@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "적 회피 액션 태스크"
+community: "FMVAttackOpportunityTaskInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/FMVAttackOpportunityTaskInstanceData
 ---
 
 # UStruct
 
 ## Connections
-- [[dot-GetInstanceDataType()_11]] - `references` [EXTRACTED]
+- [[dot-GetInstanceDataType()_5]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/FMVAttackOpportunityTaskInstanceData

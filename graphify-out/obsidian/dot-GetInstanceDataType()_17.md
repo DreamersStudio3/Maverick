@@ -1,18 +1,18 @@
 ---
-source_file: "Source/Maverick/AI/Task/MVHitReactionTask.h"
+source_file: "Source/Maverick/AI/Task/MVGlobalCoolTimeTask.h"
 type: "code"
-community: "AI 피격 반응 태스크"
-location: "L66"
+community: "FMVGlobalCoolTimeTaskInstanceData"
+location: "L52"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVGlobalCoolTimeTaskInstanceData
 ---
 
 # .GetInstanceDataType()
 
 ## Connections
-- [[FMVHitReactionTask]] - `method` [EXTRACTED]
-- [[UStruct_16]] - `references` [EXTRACTED]
+- [[FMVGlobalCoolTimeTask]] - `method` [EXTRACTED]
+- [[UStruct_3]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVGlobalCoolTimeTaskInstanceData

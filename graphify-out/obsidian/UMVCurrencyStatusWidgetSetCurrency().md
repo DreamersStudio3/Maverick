@@ -1,18 +1,18 @@
 ---
 source_file: "Source/Maverick/UI/HUD/MVCurrencyStatusWidget.cpp"
 type: "code"
-community: "재화 상태 표시 갱신"
+community: "UMVCurrencyStatusWidget::SetCurrency"
 location: "L5"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/UMVCurrencyStatusWidgetSetCurrency
 ---
 
 # UMVCurrencyStatusWidget::SetCurrency()
 
 ## Connections
 - [[MVCurrencyStatusWidget.cpp]] - `contains` [EXTRACTED]
-- [[int32_31]] - `references` [EXTRACTED]
+- [[int32_32]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/UMVCurrencyStatusWidgetSetCurrency

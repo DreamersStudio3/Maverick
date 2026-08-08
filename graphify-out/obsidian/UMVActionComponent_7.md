@@ -1,17 +1,17 @@
 ---
-source_file: "Source/Maverick/Components/MVHitReactionComponent.h"
+source_file: "Source/Maverick/System/MVFieldTransitionSubsystem.h"
 type: "code"
-community: "피격 반응 행 조회"
-location: "L20"
+community: "MVFieldTransitionSubsystem.h"
+location: "L11"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVFieldTransitionSubsystemh
 ---
 
 # UMVActionComponent
 
 ## Connections
-- [[MVHitReactionComponent.h]] - `contains` [EXTRACTED]
+- [[MVFieldTransitionSubsystem.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVFieldTransitionSubsystemh

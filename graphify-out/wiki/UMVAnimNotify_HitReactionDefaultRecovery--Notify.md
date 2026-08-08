@@ -1,0 +1,33 @@
+# UMVAnimNotify_HitReactionDefaultRecovery::Notify
+
+> 9 nodes
+
+## Key Concepts
+
+- **UMVAnimNotify_HitReactionDefaultRecovery::Notify()** (5 connections) — `Source/Maverick/Animation/Notifies/MVAnimNotify_HitReactionDefaultRecovery.cpp`
+- **FindHitReactionStartGetupComponent()** (4 connections) — `Source/Maverick/Animation/Notifies/MVAnimNotify_HitReactionDefaultRecovery.cpp`
+- **MVAnimNotify_HitReactionDefaultRecovery.cpp** (3 connections) — `Source/Maverick/Animation/Notifies/MVAnimNotify_HitReactionDefaultRecovery.cpp`
+- **USkeletalMeshComponent** (2 connections)
+- **UMVAnimNotify_HitReactionDefaultRecovery::GetNotifyName_Implementation()** (2 connections) — `Source/Maverick/Animation/Notifies/MVAnimNotify_HitReactionDefaultRecovery.cpp`
+- **UMVHitReactionComponent** (1 connections)
+- **UAnimSequenceBase** (1 connections)
+- **FAnimNotifyEventReference** (1 connections)
+- **FString** (1 connections)
+
+## Relationships
+
+- No strong cross-community connections detected
+
+## Source Files
+
+- `Source/Maverick/Animation/Notifies/MVAnimNotify_HitReactionDefaultRecovery.cpp`
+
+## Audit Trail
+
+- EXTRACTED: 20 (100%)
+- INFERRED: 0 (0%)
+- AMBIGUOUS: 0 (0%)
+
+---
+
+*Part of the graphify knowledge wiki. See [index](index.md) to navigate.*

@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.cpp"
 type: "code"
-community: "AI 후퇴 Launch 몽타주"
+community: "FMVBackOffLaunchMontageTaskInstanceData"
 location: "L142"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI__Launch_
+  - community/FMVBackOffLaunchMontageTaskInstanceData
 ---
 
 # FMVBackOffLaunchMontageTask::FMVBackOffLaunchMontageTask()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[MVBackOffLaunchMontageTask.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI__Launch_
+#graphify/code #graphify/EXTRACTED #community/FMVBackOffLaunchMontageTaskInstanceData

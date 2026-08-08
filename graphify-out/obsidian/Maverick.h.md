@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Maverick.h"
 type: "code"
-community: "Maverick 모듈 테이블 명령"
+community: "Maverick.cpp"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Maverick___
+  - community/Maverickcpp
 ---
 
 # Maverick.h
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[Maverick.cpp]] - `imports` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Maverick___
+#graphify/code #graphify/EXTRACTED #community/Maverickcpp

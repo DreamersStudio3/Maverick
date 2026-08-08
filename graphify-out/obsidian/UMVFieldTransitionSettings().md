@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/System/MVFieldTransitionSettings.h"
 type: "code"
-community: "필드 전환 관리"
+community: "MVFieldTransitionSettings.h"
 location: "L16"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVFieldTransitionSettingsh
 ---
 
 # UMVFieldTransitionSettings()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[MVFieldTransitionSettings.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVFieldTransitionSettingsh

@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "전투 액션 런타임 상태"
+community: "FMVCombatActionEvent"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/FMVCombatActionEvent
 ---
 
 # UDataTable
@@ -14,4 +14,4 @@ tags:
 - [[FMVSkillActionStruct]] - `references` [EXTRACTED]
 - [[FMVSkillEntry]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/FMVCombatActionEvent

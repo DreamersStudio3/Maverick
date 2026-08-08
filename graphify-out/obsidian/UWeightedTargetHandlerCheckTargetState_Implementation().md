@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetHandlers/WeightedTargetHandler.cpp"
 type: "code"
-community: "가중 대상 탐색 컨텍스트"
+community: "WeightedTargetHandler.cpp"
 location: "L54"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/___
+  - community/WeightedTargetHandlercpp
 ---
 
 # UWeightedTargetHandler::CheckTargetState_Implementation()
@@ -21,4 +21,4 @@ tags:
 - [[StopLineOfSightTimer]] - `calls` [INFERRED]
 - [[WeightedTargetHandler.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/___
+#graphify/code #graphify/INFERRED #community/WeightedTargetHandlercpp

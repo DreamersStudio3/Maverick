@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVFinisherComponent.cpp"
 type: "code"
-community: "피니셔 액션 입력 처리"
+community: "UMVFinisherComponent::TryHandleActionInput"
 location: "L73"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/UMVFinisherComponentTryHandleActionInput
 ---
 
 # UMVFinisherComponent::TryHandleActionInput()
@@ -16,4 +16,4 @@ tags:
 - [[FVector2D_7]] - `references` [EXTRACTED]
 - [[MVFinisherComponent.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/UMVFinisherComponentTryHandleActionInput

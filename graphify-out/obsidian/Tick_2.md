@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/AI/Task/MVAttackTask.h"
 type: "code"
-community: "AI 공격 StateTree 태스크"
+community: "FMVAttackTaskInstanceData"
 location: "L45"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI__StateTree_
+  - community/FMVAttackTaskInstanceData
 ---
 
 # Tick
@@ -17,4 +17,4 @@ tags:
 - [[FStateTreeExecutionContext_7]] - `references` [EXTRACTED]
 - [[MVAttackTask.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI__StateTree_
+#graphify/code #graphify/EXTRACTED #community/FMVAttackTaskInstanceData

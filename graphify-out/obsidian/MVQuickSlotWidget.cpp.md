@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/HUD/MVQuickSlotWidget.cpp"
 type: "code"
-community: "퀵슬롯 표시 상태 갱신"
+community: "MVQuickSlotWidget.cpp"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVQuickSlotWidgetcpp
 ---
 
 # MVQuickSlotWidget.cpp
@@ -18,4 +18,4 @@ tags:
 - [[UMVQuickSlotWidgetUpdateCount()]] - `contains` [EXTRACTED]
 - [[UMVQuickSlotWidgetUpdateCountAndLocked()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVQuickSlotWidgetcpp

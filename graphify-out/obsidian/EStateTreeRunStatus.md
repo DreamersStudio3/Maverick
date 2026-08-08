@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 공격 기회 판단"
+community: "FMVAttackOpportunityTaskInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVAttackOpportunityTaskInstanceData
 ---
 
 # EStateTreeRunStatus
@@ -15,4 +15,4 @@ tags:
 - [[EnterState]] - `references` [EXTRACTED]
 - [[Tick_1]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVAttackOpportunityTaskInstanceData

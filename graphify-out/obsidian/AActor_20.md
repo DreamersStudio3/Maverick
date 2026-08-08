@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "상호작용 가능 컴포넌트"
+community: "MVInteractableComponent.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVInteractableComponentcpp
 ---
 
 # AActor
@@ -16,4 +16,4 @@ tags:
 - [[UMVInteractableComponentGetInteractionPromptText_Implementation()]] - `references` [EXTRACTED]
 - [[UMVInteractableComponentInteract_Implementation()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVInteractableComponentcpp

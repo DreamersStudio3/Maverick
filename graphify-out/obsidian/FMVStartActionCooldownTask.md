@@ -1,20 +1,20 @@
 ---
 source_file: "Source/Maverick/AI/Task/MVStartActionCooldownTask.h"
 type: "code"
-community: "AI 액션 쿨다운 시작"
+community: "FMVStartActionCooldownTaskInstanceData"
 location: "L30"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVStartActionCooldownTaskInstanceData
 ---
 
 # FMVStartActionCooldownTask
 
 ## Connections
-- [[dot-GetInstanceDataType()_18]] - `method` [EXTRACTED]
-- [[EnterState_12]] - `defines` [EXTRACTED]
-- [[FStateTreeTaskCommonBase_11]] - `inherits` [EXTRACTED]
+- [[dot-GetInstanceDataType()_12]] - `method` [EXTRACTED]
+- [[EnterState_7]] - `defines` [EXTRACTED]
+- [[FStateTreeTaskCommonBase_12]] - `inherits` [EXTRACTED]
 - [[MVStartActionCooldownTask.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVStartActionCooldownTaskInstanceData

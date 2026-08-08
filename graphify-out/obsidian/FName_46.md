@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "퀘스트 상태 API"
+community: "MVQuestSubsystem.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__API
+  - community/MVQuestSubsystemcpp
 ---
 
 # FName
@@ -19,4 +19,4 @@ tags:
 - [[UMVQuestSubsystemSetQuestObjectiveValue()]] - `references` [EXTRACTED]
 - [[UMVQuestSubsystemSetQuestState()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__API
+#graphify/code #graphify/EXTRACTED #community/MVQuestSubsystemcpp

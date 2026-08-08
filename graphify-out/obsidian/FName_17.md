@@ -1,16 +1,18 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 전역 쿨다운"
+community: "UTargetComponent::DispatchTargetException"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI__
+  - community/UTargetComponentDispatchTargetException
 ---
 
 # FName
 
 ## Connections
-- [[FMVActionCooldownDefinition]] - `references` [EXTRACTED]
+- [[dot-GetDefaultSocket()]] - `references` [EXTRACTED]
+- [[dot-IsSocketValid()]] - `references` [EXTRACTED]
+- [[ETargetFocusPointType]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI__
+#graphify/code #graphify/EXTRACTED #community/UTargetComponentDispatchTargetException

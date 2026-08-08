@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetExtensions/LockOnTargetExtensionBase.h"
 type: "code"
-community: "락온 컨트롤러 회전 확장"
+community: "LockOnTargetExtensionBase.cpp"
 location: "L13"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/LockOnTargetExtensionBasecpp
 ---
 
 # ULockOnTargetExtensionBase
@@ -15,4 +15,4 @@ tags:
 - [[LockOnTargetExtensionBase.h]] - `contains` [EXTRACTED]
 - [[ULockOnTargetExtensionProxy_1]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/LockOnTargetExtensionBasecpp

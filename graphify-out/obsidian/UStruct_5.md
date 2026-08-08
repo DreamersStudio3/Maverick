@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 피격 진입 조건"
+community: "FMVStrafeMoveTaskInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVStrafeMoveTaskInstanceData
 ---
 
 # UStruct
 
 ## Connections
-- [[dot-GetInstanceDataType()_4]] - `references` [EXTRACTED]
+- [[dot-GetInstanceDataType()_19]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVStrafeMoveTaskInstanceData

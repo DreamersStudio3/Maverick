@@ -1,17 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "LockOnTarget 서브오브젝트 수명주기"
+community: "FMVCombatDecisionConditionInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/LockOnTarget__
+  - community/FMVCombatDecisionConditionInstanceData
 ---
 
 # TArray
 
 ## Connections
-- [[ULockOnTargetComponentGetAllSubobjects()]] - `references` [EXTRACTED]
-- [[ULockOnTargetComponentGetLifetimeReplicatedProps()]] - `references` [EXTRACTED]
+- [[FMVCombatDecisionConditionInstanceData]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/LockOnTarget__
+#graphify/code #graphify/EXTRACTED #community/FMVCombatDecisionConditionInstanceData

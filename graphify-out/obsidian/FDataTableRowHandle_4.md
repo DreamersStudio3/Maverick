@@ -1,16 +1,18 @@
 ---
 source_file: ""
 type: "code"
-community: "회피·질주 액션 데이터"
+community: "MVPlayerConsumable.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVPlayerConsumablecpp
 ---
 
 # FDataTableRowHandle
 
 ## Connections
-- [[UMVPlayerDodgeFindDodgeActionRow()]] - `references` [EXTRACTED]
+- [[ApplyMVPlayerConsumableHealingPotionDataRowDefaults()]] - `references` [EXTRACTED]
+- [[UMVPlayerConsumableResolveHealingPotionActionTableName()]] - `references` [EXTRACTED]
+- [[UMVPlayerConsumableTryStartHealingPotionAction()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVPlayerConsumablecpp

@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/AI/Task/MVExecuteAttackTask.cpp"
 type: "code"
-community: "AI 공격 실행 로직"
+community: "MVExecuteAttackTask.cpp"
 location: "L358"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/MVExecuteAttackTaskcpp
 ---
 
 # FMVExecuteFixedAttackTask::FMVExecuteFixedAttackTask()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[MVExecuteAttackTask.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/MVExecuteAttackTaskcpp

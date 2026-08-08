@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetExtensions/LockOnTargetExtensionBase.cpp"
 type: "code"
-community: "종료 처리와 확장 틱"
+community: "Type"
 location: "L13"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/Type
 ---
 
 # FLockOnTargetExtensionTickFunction::ExecuteTick()
@@ -17,4 +17,4 @@ tags:
 - [[LockOnTargetExtensionBase.cpp]] - `contains` [EXTRACTED]
 - [[Type_9]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/Type

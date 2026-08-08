@@ -1,17 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "필드 전환 요청 식별"
+community: "MVMonsterHPBarWidget.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVMonsterHPBarWidgetcpp
 ---
 
 # AActor
 
 ## Connections
-- [[UMVFieldTransitionSubsystemSetLastCheckpointFromActor()]] - `references` [EXTRACTED]
-- [[UMVFieldTransitionSubsystemStartDeathRespawnTransition()]] - `references` [EXTRACTED]
+- [[UMVMonsterHPBarWidgetBindToActor()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVMonsterHPBarWidgetcpp

@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "피격 리액션 입력·행 해석"
+community: "FName"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/FName
 ---
 
 # FName
@@ -24,4 +24,4 @@ tags:
 - [[UMVHitReactionComponentResolveRecoveryActionRowHandle()]] - `references` [EXTRACTED]
 - [[UMVHitReactionComponentSnapOwnerYawToHitDirectionForLaunch()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/FName

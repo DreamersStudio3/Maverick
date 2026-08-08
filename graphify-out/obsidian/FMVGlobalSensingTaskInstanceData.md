@@ -1,19 +1,19 @@
 ---
 source_file: "Source/Maverick/AI/Task/MVGlobalSensingTask.h"
 type: "code"
-community: "AI 전역 감지 설정"
+community: "FMVGlobalSensingTaskInstanceData"
 location: "L13"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVGlobalSensingTaskInstanceData
 ---
 
 # FMVGlobalSensingTaskInstanceData
 
 ## Connections
-- [[AActor_12]] - `references` [EXTRACTED]
-- [[APawn_26]] - `references` [EXTRACTED]
+- [[AActor_28]] - `references` [EXTRACTED]
+- [[APawn_3]] - `references` [EXTRACTED]
 - [[ActionCooldowns_1]] - `defines` [EXTRACTED]
 - [[AirborneChargeAngle]] - `defines` [EXTRACTED]
 - [[AirborneChargeMaxReach]] - `defines` [EXTRACTED]
@@ -32,27 +32,27 @@ tags:
 - [[DefensiveArea]] - `defines` [EXTRACTED]
 - [[DistanceToTarget_1]] - `defines` [EXTRACTED]
 - [[DrawGlobalSensingCombatAreaDebug()]] - `references` [EXTRACTED]
-- [[EMVAttackDirection_2]] - `references` [EXTRACTED]
-- [[EMVBossCombatArea_3]] - `references` [EXTRACTED]
+- [[EMVAttackDirection_1]] - `references` [EXTRACTED]
+- [[EMVBossCombatArea_1]] - `references` [EXTRACTED]
 - [[FMVAICombatContext]] - `references` [EXTRACTED]
 - [[FMVActionCooldownDefinition]] - `references` [EXTRACTED]
-- [[FName_26]] - `references` [EXTRACTED]
+- [[FName_4]] - `references` [EXTRACTED]
 - [[ForwardPathTraceDistance]] - `defines` [EXTRACTED]
 - [[GlobalSensingClearTargetSnapshot()]] - `references` [EXTRACTED]
 - [[LastAttackTag_4]] - `defines` [EXTRACTED]
 - [[MVGlobalSensingTask.h]] - `contains` [EXTRACTED]
 - [[OffensiveArea]] - `defines` [EXTRACTED]
-- [[Owner_11]] - `defines` [EXTRACTED]
+- [[Owner_14]] - `defines` [EXTRACTED]
 - [[ReadyActionIds_2]] - `defines` [EXTRACTED]
 - [[SprintAttackAngle]] - `defines` [EXTRACTED]
 - [[SprintMaxReach_1]] - `defines` [EXTRACTED]
 - [[SprintTriggerDistance]] - `defines` [EXTRACTED]
 - [[StrafePathTraceDistance]] - `defines` [EXTRACTED]
-- [[TArray_12]] - `references` [EXTRACTED]
-- [[TObjectPtr_21]] - `references` [EXTRACTED]
+- [[TArray_4]] - `references` [EXTRACTED]
+- [[TObjectPtr_3]] - `references` [EXTRACTED]
 - [[Target_4]] - `defines` [EXTRACTED]
 - [[UMVActionCooldownComponent()]] - `references` [EXTRACTED]
-- [[UPROPERTY_7]] - `references` [EXTRACTED]
+- [[UPROPERTY_3]] - `references` [EXTRACTED]
 - [[UpdateGlobalSensingCombatContext()]] - `references` [EXTRACTED]
 - [[UpdateGlobalSensingCooldownContext()]] - `references` [EXTRACTED]
 - [[UpdateGlobalSensingLifeContext()]] - `references` [EXTRACTED]
@@ -72,6 +72,6 @@ tags:
 - [[bStrafePathClear_1]] - `defines` [EXTRACTED]
 - [[bTargetCanBeAirborne_1]] - `defines` [EXTRACTED]
 - [[bTargetIsAirborne_1]] - `defines` [EXTRACTED]
-- [[int32_7]] - `references` [EXTRACTED]
+- [[int32_2]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVGlobalSensingTaskInstanceData

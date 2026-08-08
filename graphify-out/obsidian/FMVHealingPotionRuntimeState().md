@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Public/Struct/MVHealingPotionTypes.h"
 type: "code"
-community: "회복 물약 런타임 상태"
+community: "MVPlayerConsumable.h"
 location: "L13"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVPlayerConsumableh
 ---
 
 # FMVHealingPotionRuntimeState()
@@ -17,4 +17,4 @@ tags:
 - [[UMVMainHUDWidgetHandleHealingPotionStateChanged()]] - `references` [EXTRACTED]
 - [[UMVPlayerConsumableGetHealingPotionState()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVPlayerConsumableh

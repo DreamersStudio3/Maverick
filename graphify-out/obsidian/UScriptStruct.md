@@ -11,6 +11,6 @@ tags:
 # UScriptStruct
 
 ## Connections
-- [[dot-GetInstanceDataType()_5]] - `references` [EXTRACTED]
+- [[dot-GetInstanceDataType()_4]] - `references` [EXTRACTED]
 
 #graphify/code #graphify/EXTRACTED #community/StateTree__

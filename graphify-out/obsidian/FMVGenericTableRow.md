@@ -1,17 +1,14 @@
 ---
 source_file: "MaverickDesign/Schema/README.md"
 type: "concept"
-community: "테이블 생성·런타임 파이프라인"
+community: "FMVGenericTableRow"
 location: "lines 111-118"
 tags:
   - graphify/concept
   - graphify/EXTRACTED
-  - community/__
+  - community/FMVGenericTableRow
 ---
 
 # FMVGenericTableRow
 
-## Connections
-- [[UMVTableAssetGeneratorGenerateDataTables]] - `references` [EXTRACTED]
-
-#graphify/concept #graphify/EXTRACTED #community/__
+#graphify/concept #graphify/EXTRACTED #community/FMVGenericTableRow

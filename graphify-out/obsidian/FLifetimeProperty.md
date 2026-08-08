@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "LockOnTarget 서브오브젝트 수명주기"
+community: "ULockOnTargetExtensionProxy"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/LockOnTarget__
+  - community/ULockOnTargetExtensionProxy
 ---
 
 # FLifetimeProperty
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[ULockOnTargetComponentGetLifetimeReplicatedProps()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/LockOnTarget__
+#graphify/code #graphify/EXTRACTED #community/ULockOnTargetExtensionProxy

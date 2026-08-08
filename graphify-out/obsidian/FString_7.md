@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "피격 리액션 기본 회복"
+community: "UMVAnimNotify_HitReactionDeathHandoff::Notify"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/UMVAnimNotify_HitReactionDeathHandoffNotify
 ---
 
 # FString
 
 ## Connections
-- [[UMVAnimNotify_HitReactionDefaultRecoveryGetNotifyName_Implementation()]] - `references` [EXTRACTED]
+- [[UMVAnimNotify_HitReactionDeathHandoffGetNotifyName_Implementation()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/UMVAnimNotify_HitReactionDeathHandoffNotify

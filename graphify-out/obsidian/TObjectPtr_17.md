@@ -1,17 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 공격 실행 데이터"
+community: "FMVEnemyDeadTaskInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVEnemyDeadTaskInstanceData
 ---
 
 # TObjectPtr
 
 ## Connections
-- [[FMVExecuteFixedAttackTaskInstanceData]] - `references` [EXTRACTED]
-- [[FMVSelectAndExecuteAttackTaskInstanceData]] - `references` [EXTRACTED]
+- [[FMVEnemyDeadTaskInstanceData]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVEnemyDeadTaskInstanceData

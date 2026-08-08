@@ -1,18 +1,16 @@
 ---
-source_file: "Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.h"
+source_file: ""
 type: "code"
-community: "AI 후퇴 Launch 몽타주"
-location: "L8"
+community: "FMVHitReactionEnterConditionInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI__Launch_
+  - community/FMVHitReactionEnterConditionInstanceData
 ---
 
 # APawn
 
 ## Connections
-- [[FMVBackOffLaunchMontageTaskInstanceData]] - `references` [EXTRACTED]
-- [[MVBackOffLaunchMontageTask.h]] - `contains` [EXTRACTED]
+- [[FMVHitReactionEnterConditionInstanceData]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI__Launch_
+#graphify/code #graphify/EXTRACTED #community/FMVHitReactionEnterConditionInstanceData

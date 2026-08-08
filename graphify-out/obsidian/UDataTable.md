@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 공격 액션 실행"
+community: "MVExecuteAttackTask.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/MVExecuteAttackTaskcpp
 ---
 
 # UDataTable
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[ExecuteAttackActionTableNameFromDataTable()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/MVExecuteAttackTaskcpp

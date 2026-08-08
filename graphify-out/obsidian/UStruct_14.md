@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 전역 쿨다운"
+community: "AI 적 전투 액션"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI__
+  - community/AI___
 ---
 
 # UStruct
 
 ## Connections
-- [[dot-GetInstanceDataType()_15]] - `references` [EXTRACTED]
+- [[dot-GetInstanceDataType()_8]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI__
+#graphify/code #graphify/EXTRACTED #community/AI___

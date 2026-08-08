@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/AI/Task/MVGlobalSensingTask.h"
 type: "code"
-community: "전역 전투 센싱 태스크"
+community: "MVAICombatTypes.h"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVAICombatTypesh
 ---
 
 # MVGlobalSensingTask.h
@@ -17,6 +17,5 @@ tags:
 - [[MVAICombatTypes.h]] - `imports` [EXTRACTED]
 - [[MVAttackDirection.h]] - `imports` [EXTRACTED]
 - [[MVBossCombatArea.h]] - `imports` [EXTRACTED]
-- [[MVGlobalSensingTask.cpp]] - `imports` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVAICombatTypesh

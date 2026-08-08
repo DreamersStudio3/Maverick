@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h"
 type: "code"
-community: "가중 대상 탐색 알고리즘"
+community: "EFindTargetContextMode"
 location: "L93"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/EFindTargetContextMode
 ---
 
 # EFindTargetContextMode
@@ -59,7 +59,7 @@ tags:
 - [[TraceCollisionChannel]] - `defines` [EXTRACTED]
 - [[TryFindTarget]] - `defines` [EXTRACTED]
 - [[UMETA_2]] - `defines` [EXTRACTED]
-- [[USTRUCT]] - `references` [EXTRACTED]
+- [[USTRUCT_6]] - `references` [EXTRACTED]
 - [[UWeightedTargetHandler_3]] - `defines` [EXTRACTED]
 - [[UWeightedTargetHandlerCreateFindTargetContext()]] - `references` [EXTRACTED]
 - [[ViewConeAngle]] - `defines` [EXTRACTED]
@@ -72,4 +72,4 @@ tags:
 - [[bScreenCapture]] - `defines` [EXTRACTED]
 - [[uint8_3]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/EFindTargetContextMode

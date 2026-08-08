@@ -1,16 +1,20 @@
 ---
 source_file: ""
 type: "code"
-community: "피격 리액션 액션 데이터"
+community: "MVHitReactionBuildAvailableRowNameLog"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVHitReactionBuildAvailableRowNameLog
 ---
 
 # FDataTableRowHandle
 
 ## Connections
-- [[FMVHitReactionActionData]] - `references` [EXTRACTED]
+- [[UMVHitReactionComponentFindBaseActionRow()]] - `references` [EXTRACTED]
+- [[UMVHitReactionComponentFindHitReactionActionRow()]] - `references` [EXTRACTED]
+- [[UMVHitReactionComponentFindRecoveryActionRow()]] - `references` [EXTRACTED]
+- [[UMVHitReactionComponentResolveRecoveryActionRowHandle()]] - `references` [EXTRACTED]
+- [[UMVHitReactionComponentTryStartRecoveryAction()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVHitReactionBuildAvailableRowNameLog

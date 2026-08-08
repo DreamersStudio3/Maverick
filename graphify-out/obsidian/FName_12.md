@@ -1,18 +1,17 @@
 ---
 source_file: ""
 type: "code"
-community: "LockOnTarget 타깃 캡처 상태"
+community: "TargetPreviewExtension.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/LockOnTarget___
+  - community/TargetPreviewExtensioncpp
 ---
 
 # FName
 
 ## Connections
-- [[dot-GetDefaultSocket()]] - `references` [EXTRACTED]
-- [[dot-IsSocketValid()]] - `references` [EXTRACTED]
-- [[ETargetFocusPointType]] - `references` [EXTRACTED]
+- [[UTargetPreviewExtensionOnTargetLocked()]] - `references` [EXTRACTED]
+- [[UTargetPreviewExtensionOnTargetUnlocked()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/LockOnTarget___
+#graphify/code #graphify/EXTRACTED #community/TargetPreviewExtensioncpp

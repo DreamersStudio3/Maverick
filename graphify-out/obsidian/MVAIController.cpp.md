@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/AI/Controller/MVAIController.cpp"
 type: "code"
-community: "AI 컨트롤러 지각 갱신"
+community: "MVAIController.cpp"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/MVAIControllercpp
 ---
 
 # MVAIController.cpp
@@ -17,4 +17,4 @@ tags:
 - [[AMVAIControllerOnPerceptionUpdated()]] - `contains` [EXTRACTED]
 - [[MVAIController.h]] - `imports` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/MVAIControllercpp

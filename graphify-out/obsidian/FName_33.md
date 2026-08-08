@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "플레이어 캐릭터 전력질주"
+community: "MVPlayerCharacter.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVPlayerCharactercpp
 ---
 
 # FName
@@ -14,4 +14,4 @@ tags:
 - [[AMVPlayerCharacterResolveSprintActionRowName()]] - `references` [EXTRACTED]
 - [[AMVPlayerCharacterResolveSprintActionTableName()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVPlayerCharactercpp

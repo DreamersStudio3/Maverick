@@ -11,7 +11,7 @@ members: 4
 - [[UMVInputManagerComponentRegisterActionInputHandler()]] - code - Source/Maverick/Components/MVInputManagerComponent.cpp
 - [[UMVInputManagerComponentUnregisterActionInputHandler()]] - code - Source/Maverick/Components/MVInputManagerComponent.cpp
 - [[UObject_7]] - code
-- [[int32_20]] - code
+- [[int32_21]] - code
 
 ## Live Query (requires Dataview plugin)
 
@@ -21,7 +21,7 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 2 edges to [[_COMMUNITY_입력 차단 회복 취소]]
+- 2 edges to [[_COMMUNITY_MVInputManagerComponent.cpp]]
 
 ## Top bridge nodes
 - [[UMVInputManagerComponentRegisterActionInputHandler()]] - degree 3, connects to 1 community

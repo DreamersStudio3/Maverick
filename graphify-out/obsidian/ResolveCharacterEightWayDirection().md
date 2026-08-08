@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Character/MVCharacterBase.cpp"
 type: "code"
-community: "8방향 이동 방향 갱신"
+community: "ResolveCharacterEightWayDirection"
 location: "L61"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/8___
+  - community/ResolveCharacterEightWayDirection
 ---
 
 # ResolveCharacterEightWayDirection()
@@ -16,4 +16,4 @@ tags:
 - [[ELocomotionDirection]] - `references` [EXTRACTED]
 - [[MVCharacterBase.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/8___
+#graphify/code #graphify/EXTRACTED #community/ResolveCharacterEightWayDirection

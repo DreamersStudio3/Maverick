@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Effects/MVDeathDissolveEffect.h"
 type: "code"
-community: "사망 디졸브 머티리얼 상태"
+community: "FMVDeathDissolveMeshState"
 location: "L9"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/FMVDeathDissolveMeshState
 ---
 
 # UMaterialInterface
@@ -15,4 +15,4 @@ tags:
 - [[FMVDeathDissolveMeshState]] - `references` [EXTRACTED]
 - [[MVDeathDissolveEffect.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/FMVDeathDissolveMeshState

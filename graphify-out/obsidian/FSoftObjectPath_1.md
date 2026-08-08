@@ -1,17 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 공격 실행 로직"
+community: "FMVEnemyDodgeActionTaskInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVEnemyDodgeActionTaskInstanceData
 ---
 
 # FSoftObjectPath
 
 ## Connections
-- [[ExecuteAttackEvaluateChooserActionRowHandle()]] - `references` [EXTRACTED]
-- [[ExecuteAttackResolveActionCandidate()]] - `references` [EXTRACTED]
+- [[FMVEnemyDodgeActionTaskInstanceData]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVEnemyDodgeActionTaskInstanceData

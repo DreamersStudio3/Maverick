@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVStatComponent.h"
 type: "code"
-community: "테이블 기반 UI·스탯 조회"
+community: "UMVTableManager"
 location: "L9"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__UI_
+  - community/UMVTableManager
 ---
 
 # UMVTableManager
@@ -26,4 +26,4 @@ tags:
 - [[UMVUISubsystemShowDialogueWindowById()]] - `references` [EXTRACTED]
 - [[UMVUISubsystemShowPopupMessageById()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__UI_
+#graphify/code #graphify/EXTRACTED #community/UMVTableManager

@@ -11,7 +11,7 @@ members: 4
 - [[IMVAbilityInterfaceEndAbility_Implementation()]] - code - Source/Maverick/Private/Interface/MVAbilityInterface.cpp
 - [[IMVAbilityInterfaceStartAbility_Implementation()]] - code - Source/Maverick/Private/Interface/MVAbilityInterface.cpp
 - [[MVAbilityInterface.cpp]] - code - Source/Maverick/Private/Interface/MVAbilityInterface.cpp
-- [[int32_22]] - code
+- [[int32_23]] - code
 
 ## Live Query (requires Dataview plugin)
 

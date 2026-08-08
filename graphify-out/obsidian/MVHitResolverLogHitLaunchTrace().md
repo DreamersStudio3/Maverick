@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Combat/MVHitResolverSubsystem.cpp"
 type: "code"
-community: "피격 판정 해석 파이프라인"
+community: "MVHitResolverSubsystem.cpp"
 location: "L31"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVHitResolverSubsystemcpp
 ---
 
 # MVHitResolverLogHitLaunchTrace()
@@ -17,4 +17,4 @@ tags:
 - [[TCHAR_5]] - `references` [EXTRACTED]
 - [[UMVHitResolverSubsystemResolveAttackHit()]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVHitResolverSubsystemcpp

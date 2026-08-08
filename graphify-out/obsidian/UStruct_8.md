@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 후퇴 Launch 몽타주"
+community: "FMVCombatActionEnterConditionInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI__Launch_
+  - community/FMVCombatActionEnterConditionInstanceData
 ---
 
 # UStruct
 
 ## Connections
-- [[dot-GetInstanceDataType()_8]] - `references` [EXTRACTED]
+- [[dot-GetInstanceDataType()_1]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI__Launch_
+#graphify/code #graphify/EXTRACTED #community/FMVCombatActionEnterConditionInstanceData

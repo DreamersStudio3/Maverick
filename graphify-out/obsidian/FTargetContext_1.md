@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "가중 대상 탐색 컨텍스트"
+community: "WeightedTargetHandler.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/WeightedTargetHandlercpp
 ---
 
 # FTargetContext
@@ -21,4 +21,4 @@ tags:
 - [[UWeightedTargetHandlerPerformSolverPass()]] - `references` [EXTRACTED]
 - [[UWeightedTargetHandlerShouldSkipTargetSecondaryPass()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/WeightedTargetHandlercpp

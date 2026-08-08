@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Private/Tables/MVTableManager.cpp"
 type: "code"
-community: "런타임 테이블 조회"
+community: "MVTableManager.cpp"
 location: "L186"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVTableManagercpp
 ---
 
 # UMVTableManager::FindDataTable()
@@ -16,4 +16,4 @@ tags:
 - [[MVTableManager.cpp]] - `contains` [EXTRACTED]
 - [[UDataTable_9]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVTableManagercpp

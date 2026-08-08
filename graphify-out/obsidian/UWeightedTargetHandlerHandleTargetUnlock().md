@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetHandlers/WeightedTargetHandler.cpp"
 type: "code"
-community: "락온 대상 예외 처리"
+community: "WeightedTargetHandler.h"
 location: "L350"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/WeightedTargetHandlerh
 ---
 
 # UWeightedTargetHandler::HandleTargetUnlock()
@@ -17,4 +17,4 @@ tags:
 - [[TryFindTarget]] - `calls` [INFERRED]
 - [[WeightedTargetHandler.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/WeightedTargetHandlerh

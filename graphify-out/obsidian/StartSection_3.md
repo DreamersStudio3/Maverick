@@ -1,17 +1,17 @@
 ---
-source_file: "Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h"
+source_file: "Source/Maverick/Components/MVHitReactionComponent.h"
 type: "code"
-community: "AI 적 회피 설정"
-location: "L47"
+community: "MVHitReactionComponent.h"
+location: "L35"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/MVHitReactionComponenth
 ---
 
 # StartSection
 
 ## Connections
-- [[FMVEnemyDodgeActionTaskInstanceData]] - `defines` [EXTRACTED]
+- [[FMVHitReactionActionData]] - `defines` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/MVHitReactionComponenth

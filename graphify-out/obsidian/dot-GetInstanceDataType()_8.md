@@ -1,18 +1,18 @@
 ---
-source_file: "Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.h"
+source_file: "Source/Maverick/AI/Task/MVEnemyCombatActionTask.h"
 type: "code"
-community: "AI 후퇴 Launch 몽타주"
-location: "L98"
+community: "AI 적 전투 액션"
+location: "L91"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI__Launch_
+  - community/AI___
 ---
 
 # .GetInstanceDataType()
 
 ## Connections
-- [[FMVBackOffLaunchMontageTask]] - `method` [EXTRACTED]
-- [[UStruct_8]] - `references` [EXTRACTED]
+- [[FMVEnemyCombatActionTask]] - `method` [EXTRACTED]
+- [[UStruct_14]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI__Launch_
+#graphify/code #graphify/EXTRACTED #community/AI___

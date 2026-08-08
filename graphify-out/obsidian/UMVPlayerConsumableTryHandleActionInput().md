@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp"
 type: "code"
-community: "소모품 액션 입력 처리"
+community: "UMVPlayerConsumable::TryHandleActionInput"
 location: "L226"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/UMVPlayerConsumableTryHandleActionInput
 ---
 
 # UMVPlayerConsumable::TryHandleActionInput()
@@ -16,4 +16,4 @@ tags:
 - [[FVector2D_3]] - `references` [EXTRACTED]
 - [[MVPlayerConsumable.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/UMVPlayerConsumableTryHandleActionInput

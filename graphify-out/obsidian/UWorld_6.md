@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "회피 월드 컨텍스트 조회"
+community: "MVPlayerDodge.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVPlayerDodgecpp
 ---
 
 # UWorld
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[UMVPlayerDodgeGetWorld()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVPlayerDodgecpp

@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/Window/MVDeathOverlayWindow.h"
 type: "code"
-community: "사망 오버레이 창"
+community: "MVDeathOverlayWindow.h"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVDeathOverlayWindowh
 ---
 
 # MVDeathOverlayWindow.h
@@ -15,4 +15,4 @@ tags:
 - [[UMVDeathOverlayWindow()]] - `contains` [EXTRACTED]
 - [[UTextBlock_9]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVDeathOverlayWindowh

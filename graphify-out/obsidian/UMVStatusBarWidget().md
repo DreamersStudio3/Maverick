@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/HUD/MVStatusBarWidget.h"
 type: "code"
-community: "플레이어 상태 HUD 연동"
+community: "MVStatusBarWidget.h"
 location: "L20"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__HUD_
+  - community/MVStatusBarWidgeth
 ---
 
 # UMVStatusBarWidget()
@@ -15,4 +15,4 @@ tags:
 - [[MVStatusBarWidget.h]] - `contains` [EXTRACTED]
 - [[UMVPlayerStatusWidgetApplyStatusBarSize()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__HUD_
+#graphify/code #graphify/EXTRACTED #community/MVStatusBarWidgeth

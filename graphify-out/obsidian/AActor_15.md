@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "플레이어 상호작용 탐지"
+community: "MVPlayerInteractionDetector.h"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVPlayerInteractionDetectorh
 ---
 
 # AActor
@@ -14,4 +14,4 @@ tags:
 - [[UMVPlayerInteractionDetectorGetOwnerActor()]] - `references` [EXTRACTED]
 - [[UMVPlayerInteractionDetectorResolveInteractableActor()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVPlayerInteractionDetectorh

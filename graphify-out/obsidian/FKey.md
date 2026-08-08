@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "상호작용 프롬프트 UI"
+community: "FMVInteractionPromptData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__UI
+  - community/FMVInteractionPromptData
 ---
 
 # FKey
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[FMVInteractionPromptData]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__UI
+#graphify/code #graphify/EXTRACTED #community/FMVInteractionPromptData

@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/LockOnTarget.h"
 type: "code"
-community: "LockOnTarget 모듈·타깃 핸들러"
+community: "LockOnTargetDefines.h"
 location: "L8"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/LockOnTarget__
+  - community/LockOnTargetDefinesh
 ---
 
 # FLockOnTargetModule
@@ -17,4 +17,4 @@ tags:
 - [[LockOnTarget.h]] - `contains` [EXTRACTED]
 - [[StartupModule_2]] - `defines` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/LockOnTarget__
+#graphify/code #graphify/EXTRACTED #community/LockOnTargetDefinesh

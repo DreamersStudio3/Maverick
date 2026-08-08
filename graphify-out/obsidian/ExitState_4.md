@@ -1,21 +1,23 @@
 ---
-source_file: "Source/Maverick/AI/Task/MVExecuteAttackTask.h"
+source_file: "Source/Maverick/AI/Task/MVHitReactionTask.h"
 type: "code"
-community: "AI 공격 실행 로직"
-location: "L74"
+community: "FMVHitReactionTaskInstanceData"
+location: "L79"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVHitReactionTaskInstanceData
 ---
 
 # ExitState
 
 ## Connections
-- [[ExecuteAttackIsStartedActionRunning()]] - `calls` [EXTRACTED]
-- [[FMVExecuteFixedAttackTask]] - `defines` [EXTRACTED]
-- [[FStateTreeExecutionContext_12]] - `references` [EXTRACTED]
-- [[FStateTreeTransitionResult_6]] - `references` [EXTRACTED]
-- [[MVExecuteAttackTask.cpp]] - `contains` [EXTRACTED]
+- [[FMVHitReactionTask]] - `defines` [EXTRACTED]
+- [[FMVResolvedHitData()]] - `calls` [INFERRED]
+- [[FStateTreeExecutionContext_16]] - `references` [EXTRACTED]
+- [[FStateTreeTransitionResult_10]] - `references` [EXTRACTED]
+- [[HitReactionTaskIsStartedActionRunning()]] - `calls` [EXTRACTED]
+- [[HitReactionTaskLogTrace()]] - `calls` [EXTRACTED]
+- [[MVHitReactionTask.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVHitReactionTaskInstanceData

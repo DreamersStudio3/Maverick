@@ -1,22 +1,22 @@
 ---
 source_file: "Source/Maverick/AI/Task/MVHitReactionTask.cpp"
 type: "code"
-community: "AI 피격 반응 태스크"
+community: "FMVHitReactionTaskInstanceData"
 location: "L42"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVHitReactionTaskInstanceData
 ---
 
 # HitReactionTaskLogTrace()
 
 ## Connections
-- [[EnterState_11]] - `calls` [EXTRACTED]
-- [[ExitState_9]] - `calls` [EXTRACTED]
+- [[EnterState_6]] - `calls` [EXTRACTED]
+- [[ExitState_4]] - `calls` [EXTRACTED]
 - [[FMVHitReactionTaskInstanceData]] - `references` [EXTRACTED]
 - [[MVHitReactionTask.cpp]] - `contains` [EXTRACTED]
 - [[TCHAR_1]] - `references` [EXTRACTED]
-- [[Tick_12]] - `calls` [EXTRACTED]
+- [[Tick_7]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVHitReactionTaskInstanceData

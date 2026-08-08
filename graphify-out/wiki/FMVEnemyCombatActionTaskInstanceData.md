@@ -40,8 +40,8 @@
 - UMVActionComponent `EXTRACTED`
 - APawn `EXTRACTED`
 - EMVEnemyCombatActionKind `EXTRACTED`
-- FName `EXTRACTED`
-- int32 `EXTRACTED`
+- [FName](FName.md) `EXTRACTED`
+- [int32](int32.md) `EXTRACTED`
 - TObjectPtr `EXTRACTED`
 - UPROPERTY `EXTRACTED`
 

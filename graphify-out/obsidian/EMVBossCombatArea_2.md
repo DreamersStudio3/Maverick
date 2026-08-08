@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "전역 센싱 전투영역 디버그"
+community: "FMVCombatActionEnterConditionInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/FMVCombatActionEnterConditionInstanceData
 ---
 
 # EMVBossCombatArea
 
 ## Connections
-- [[GlobalSensingCombatAreaText()]] - `references` [EXTRACTED]
+- [[FMVCombatActionEnterConditionInstanceData]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/FMVCombatActionEnterConditionInstanceData

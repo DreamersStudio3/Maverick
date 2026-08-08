@@ -1,17 +1,17 @@
 ---
-source_file: "Source/Maverick/AI/Task/MVGlobalCoolTimeTask.h"
+source_file: "Source/Maverick/AI/Task/MVExecuteAttackTask.h"
 type: "code"
-community: "AI 전역 쿨다운"
-location: "L15"
+community: "FMVExecuteFixedAttackTaskInstanceData"
+location: "L26"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI__
+  - community/FMVExecuteFixedAttackTaskInstanceData
 ---
 
 # Owner
 
 ## Connections
-- [[FMVGlobalCoolTimeTaskInstanceData]] - `defines` [EXTRACTED]
+- [[FMVExecuteFixedAttackTaskInstanceData]] - `defines` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI__
+#graphify/code #graphify/EXTRACTED #community/FMVExecuteFixedAttackTaskInstanceData

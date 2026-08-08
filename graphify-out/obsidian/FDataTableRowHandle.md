@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 전투 액션 메타데이터"
+community: "ExecuteAttackResolveActionCandidate"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/ExecuteAttackResolveActionCandidate
 ---
 
 # FDataTableRowHandle
@@ -14,4 +14,4 @@ tags:
 - [[FMVAICombatResolvedAction]] - `references` [EXTRACTED]
 - [[FMVAttackActionRowHandle]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/ExecuteAttackResolveActionCandidate

@@ -1,12 +1,12 @@
 ---
 source_file: "Scripts/Graphify/knowledge_guard.py"
 type: "code"
-community: "Graphify 최신성 Guard"
+community: "knowledge_guard.py"
 location: "L700"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Graphify__Guard
+  - community/knowledge_guardpy
 ---
 
 # main()
@@ -20,4 +20,4 @@ tags:
 - [[revisions_from_stdin()]] - `calls` [EXTRACTED]
 - [[write_stamp()]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Graphify__Guard
+#graphify/code #graphify/EXTRACTED #community/knowledge_guardpy

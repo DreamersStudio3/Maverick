@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/Window/MVLoadingWindow.cpp"
 type: "code"
-community: "로딩 창 구성과 진행률"
+community: "UMVLoadingWindow::BuildNativeWidgetTree"
 location: "L25"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/UMVLoadingWindowBuildNativeWidgetTree
 ---
 
 # MVLoadingWindowMakeText()
@@ -14,10 +14,10 @@ tags:
 ## Connections
 - [[FLinearColor_2]] - `references` [EXTRACTED]
 - [[FName_51]] - `references` [EXTRACTED]
-- [[FText_14]] - `references` [EXTRACTED]
+- [[FText_15]] - `references` [EXTRACTED]
 - [[MVLoadingWindow.cpp]] - `contains` [EXTRACTED]
 - [[UMVLoadingWindowBuildNativeWidgetTree()]] - `calls` [EXTRACTED]
 - [[UTextBlock_11]] - `references` [EXTRACTED]
 - [[UWidgetTree_1]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/UMVLoadingWindowBuildNativeWidgetTree

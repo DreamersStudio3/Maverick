@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h"
 type: "code"
-community: "락온 대상 포커스 설정"
+community: "ETargetFocusPointType"
 location: "L65"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/ETargetFocusPointType
 ---
 
 # Sockets
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[ETargetFocusPointType]] - `defines` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/ETargetFocusPointType

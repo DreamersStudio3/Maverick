@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/Window/MVDialogueWindow.cpp"
 type: "code"
-community: "대화 창 페이드"
+community: "MVDialogueWindow.cpp"
 location: "L6"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVDialogueWindowcpp
 ---
 
 # UMVDialogueWindow::UMVDialogueWindow()
@@ -15,4 +15,4 @@ tags:
 - [[FObjectInitializer_7]] - `references` [EXTRACTED]
 - [[MVDialogueWindow.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVDialogueWindowcpp

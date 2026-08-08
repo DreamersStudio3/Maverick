@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "적 캐릭터 전투 실행"
+community: "AMVEnemy::ResolveEscapeDirectionAwayFromTarget"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/AMVEnemyResolveEscapeDirectionAwayFromTarget
 ---
 
 # AActor
@@ -14,4 +14,4 @@ tags:
 - [[AMVEnemyResolveEscapeDirectionAwayFromTarget()]] - `references` [EXTRACTED]
 - [[AMVEnemyResolveHitReactionRecoveryTarget()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/AMVEnemyResolveEscapeDirectionAwayFromTarget

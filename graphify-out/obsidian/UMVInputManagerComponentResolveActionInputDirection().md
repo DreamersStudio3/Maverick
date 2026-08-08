@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVInputManagerComponent.cpp"
 type: "code"
-community: "액션 입력 버퍼링"
+community: "FVector2D"
 location: "L236"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/FVector2D
 ---
 
 # UMVInputManagerComponent::ResolveActionInputDirection()
@@ -16,4 +16,4 @@ tags:
 - [[FVector2D_9]] - `references` [EXTRACTED]
 - [[MVInputManagerComponent.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/FVector2D

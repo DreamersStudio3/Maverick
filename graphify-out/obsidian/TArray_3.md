@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 전투 진입 조건"
+community: "FMVGlobalCoolTimeTaskInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVGlobalCoolTimeTaskInstanceData
 ---
 
 # TArray
 
 ## Connections
-- [[FMVCombatActionEnterConditionInstanceData]] - `references` [EXTRACTED]
+- [[FMVGlobalCoolTimeTaskInstanceData]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVGlobalCoolTimeTaskInstanceData

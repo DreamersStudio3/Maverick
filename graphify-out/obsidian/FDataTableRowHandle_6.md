@@ -1,25 +1,18 @@
 ---
 source_file: ""
 type: "code"
-community: "전투 액션 행 해석"
+community: "MVActionComponent.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVActionComponentcpp
 ---
 
 # FDataTableRowHandle
 
 ## Connections
-- [[MVCombatRowHandleToString()]] - `references` [EXTRACTED]
-- [[UMVCombatComponentBuildSkillEntryFromRowHandle()]] - `references` [EXTRACTED]
-- [[UMVCombatComponentGetActionRowHandleFromChooserTable()]] - `references` [EXTRACTED]
-- [[UMVCombatComponentIsValidSkillActionRowHandle()]] - `references` [EXTRACTED]
-- [[UMVCombatComponentResetBasicAttackMap()]] - `calls` [EXTRACTED]
-- [[UMVCombatComponentResolveActionRowHandleFromChooserTable()]] - `references` [EXTRACTED]
-- [[UMVCombatComponentResolveHeavyChargeEarlyReleaseRow()]] - `references` [EXTRACTED]
-- [[UMVCombatComponentTryMakeFallbackAttackActionRowHandle()]] - `references` [EXTRACTED]
-- [[UMVCombatComponentTryStartActionWithAbility()]] - `references` [EXTRACTED]
-- [[UMVCombatComponentUpdateLastBasicAttackSwingDirection()]] - `references` [EXTRACTED]
+- [[UMVActionComponentFindActionRow()]] - `references` [EXTRACTED]
+- [[UMVActionComponentTryStartActionFromRowHandle()]] - `references` [EXTRACTED]
+- [[UMVActionComponentTryTransitionActionFromRowHandle()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVActionComponentcpp

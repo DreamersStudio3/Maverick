@@ -1,17 +1,17 @@
 ---
-source_file: "Source/Maverick/AI/MVAICombatTypes.h"
+source_file: "Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.h"
 type: "code"
-community: "AI 전투 액션 메타데이터"
-location: "L122"
+community: "FMVBackOffLaunchMontageTaskInstanceData"
+location: "L30"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVBackOffLaunchMontageTaskInstanceData
 ---
 
 # StartSection
 
 ## Connections
-- [[FMVAICombatResolvedAction]] - `defines` [EXTRACTED]
+- [[FMVBackOffLaunchMontageTaskInstanceData]] - `defines` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVBackOffLaunchMontageTaskInstanceData

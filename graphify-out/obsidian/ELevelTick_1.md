@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "종료 처리와 확장 틱"
+community: "Type"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/Type
 ---
 
 # ELevelTick
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[FLockOnTargetExtensionTickFunctionExecuteTick()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/Type

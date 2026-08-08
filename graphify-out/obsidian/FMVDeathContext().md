@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVStatComponent.h"
 type: "code"
-community: "캐릭터 사망 표현"
+community: "FMVDeathContext"
 location: "L30"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/FMVDeathContext
 ---
 
 # FMVDeathContext()
@@ -22,4 +22,4 @@ tags:
 - [[UMVDeathComponentTryDeferDeathPresentationUntilHitReactionEnds()]] - `references` [EXTRACTED]
 - [[UMVDeathComponentTryStartDeathAction()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/FMVDeathContext

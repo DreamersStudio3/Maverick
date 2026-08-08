@@ -11,7 +11,7 @@ members: 4
 - [[UMVPlayerInteractionDetectorFindCandidateIndex()]] - code - Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp
 - [[UMVPlayerInteractionDetectorSelectInteractableByOffset()]] - code - Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp
 - [[UMVPlayerInteractionDetectorSetSelectedCandidateIndex()]] - code - Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp
-- [[int32_12]] - code
+- [[int32_13]] - code
 
 ## Live Query (requires Dataview plugin)
 
@@ -21,8 +21,8 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 3 edges to [[_COMMUNITY_플레이어 상호작용 감지]]
-- 1 edge to [[_COMMUNITY_상호작용 가능성·포커스 판정]]
+- 3 edges to [[_COMMUNITY_MVPlayerInteractionDetector.cpp]]
+- 1 edge to [[_COMMUNITY_UObject]]
 
 ## Top bridge nodes
 - [[UMVPlayerInteractionDetectorFindCandidateIndex()]] - degree 3, connects to 2 communities

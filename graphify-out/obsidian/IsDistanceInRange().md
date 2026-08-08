@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/AI/MVAICombatTypes.h"
 type: "code"
-community: "AI 전투 액션 메타데이터"
-location: "L246"
+community: "MVAICombatTypes.h"
+location: "L260"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/MVAICombatTypesh
 ---
 
 # IsDistanceInRange()
@@ -16,4 +16,4 @@ tags:
 - [[FORCEINLINE]] - `references` [EXTRACTED]
 - [[MVAICombatTypes.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/MVAICombatTypesh

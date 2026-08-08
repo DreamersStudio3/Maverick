@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/Window/MVDeathOverlayWindow.cpp"
 type: "code"
-community: "사망 오버레이 페이드"
+community: "MVDeathOverlayWindow.cpp"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVDeathOverlayWindowcpp
 ---
 
 # MVDeathOverlayWindow.cpp
@@ -27,4 +27,4 @@ tags:
 - [[UMVDeathOverlayWindowStartMinimumDisplayTimer()]] - `contains` [EXTRACTED]
 - [[UMVDeathOverlayWindowUMVDeathOverlayWindow()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVDeathOverlayWindowcpp

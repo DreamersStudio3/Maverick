@@ -1,51 +1,55 @@
 # EMVEnemyDodgeTokenGrantReason
 
-> God node · 51 connections · `Source/Maverick/Components/MVEnemyDodgeTokenComponent.h`
+> 32 nodes
 
-**Community:** [적 회피 토큰 상태](%EC%A0%81_%ED%9A%8C%ED%94%BC_%ED%86%A0%ED%81%B0_%EC%83%81%ED%83%9C.md)
+## Key Concepts
 
-## Connections by Relation
+- **EMVEnemyDodgeTokenGrantReason** (51 connections) — `Source/Maverick/Components/MVEnemyDodgeTokenComponent.h`
+- **uint8** (1 connections)
+- **UMETA** (1 connections) — `Source/Maverick/Components/MVEnemyDodgeTokenComponent.h`
+- **LandedHitThreshold** (1 connections) — `Source/Maverick/Components/MVEnemyDodgeTokenComponent.h`
+- **UMVEnemyDodgeTokenComponent** (1 connections) — `Source/Maverick/Components/MVEnemyDodgeTokenComponent.h`
+- **BeginPlay** (1 connections) — `Source/Maverick/Components/MVEnemyDodgeTokenComponent.h`
+- **EndPlay** (1 connections) — `Source/Maverick/Components/MVEnemyDodgeTokenComponent.h`
+- **NotifyGroggyEndedByFinisher** (1 connections) — `Source/Maverick/Components/MVEnemyDodgeTokenComponent.h`
+- **ResetForFieldTransition** (1 connections) — `Source/Maverick/Components/MVEnemyDodgeTokenComponent.h`
+- **TryConsumeDodgeTokenForThreat** (1 connections) — `Source/Maverick/Components/MVEnemyDodgeTokenComponent.h`
+- **MaxDodgeTokens** (1 connections) — `Source/Maverick/Components/MVEnemyDodgeTokenComponent.h`
+- **ReceivedHitThreshold** (1 connections) — `Source/Maverick/Components/MVEnemyDodgeTokenComponent.h`
+- **SpendCooldown** (1 connections) — `Source/Maverick/Components/MVEnemyDodgeTokenComponent.h`
+- **bGrantOnGroggyRecovered** (1 connections) — `Source/Maverick/Components/MVEnemyDodgeTokenComponent.h`
+- **bGrantOnReceivedHitThreshold** (1 connections) — `Source/Maverick/Components/MVEnemyDodgeTokenComponent.h`
+- **bGrantOnLandedHitThreshold** (1 connections) — `Source/Maverick/Components/MVEnemyDodgeTokenComponent.h`
+- **bAutoBindPlayerDamage** (1 connections) — `Source/Maverick/Components/MVEnemyDodgeTokenComponent.h`
+- **LastGrantReason** (1 connections) — `Source/Maverick/Components/MVEnemyDodgeTokenComponent.h`
+- **HandleOwnerDamaged** (1 connections) — `Source/Maverick/Components/MVEnemyDodgeTokenComponent.h`
+- **HandleOwnerGroggyStarted** (1 connections) — `Source/Maverick/Components/MVEnemyDodgeTokenComponent.h`
+- **HandleOwnerGroggyEnded** (1 connections) — `Source/Maverick/Components/MVEnemyDodgeTokenComponent.h`
+- **HandleObservedTargetDamaged** (1 connections) — `Source/Maverick/Components/MVEnemyDodgeTokenComponent.h`
+- **UPROPERTY** (1 connections)
+- **TObjectPtr** (1 connections)
+- **OwnerEnemy** (1 connections) — `Source/Maverick/Components/MVEnemyDodgeTokenComponent.h`
+- *... and 7 more nodes in this community*
 
-### contains
-- MVEnemyDodgeTokenComponent.h `EXTRACTED`
+## Relationships
 
-### defines
-- GrantDodgeToken `EXTRACTED`
-- UnbindOwnerEvents `EXTRACTED`
-- BindOwnerEvents `EXTRACTED`
-- ResetCombatFlowCounters `EXTRACTED`
-- BindObservedTargetDamage `EXTRACTED`
-- CanSpendDodgeToken `EXTRACTED`
-- IsRelevantEnemyHitData `EXTRACTED`
-- IsRelevantLandedHitData `EXTRACTED`
-- NotifyEnemyDamaged `EXTRACTED`
-- NotifyEnemyLandedHit `EXTRACTED`
-- TrySpendDodgeToken `EXTRACTED`
-- UnbindObservedTargetDamage `EXTRACTED`
-- bAutoBindPlayerDamage `EXTRACTED`
-- BeginPlay `EXTRACTED`
-- bGrantOnGroggyRecovered `EXTRACTED`
-- bGrantOnLandedHitThreshold `EXTRACTED`
-- bGrantOnReceivedHitThreshold `EXTRACTED`
-- bGroggyActive `EXTRACTED`
-- bGroggyEndedByFinisher `EXTRACTED`
-- DodgeTokenCount `EXTRACTED`
+- [UMVPlayerConsumable::Initialize](UMVPlayerConsumable--Initialize.md) (4 shared connections)
+- [int32](int32.md) (4 shared connections)
+- [MVEnemyDodgeTokenComponent.cpp](MVEnemyDodgeTokenComponent.cpp.md) (3 shared connections)
+- [MVEnemyDodgeTokenComponent.h](MVEnemyDodgeTokenComponent.h.md) (3 shared connections)
+- [GrantDodgeToken](GrantDodgeToken.md) (3 shared connections)
+- [ResetCombatFlowCounters](ResetCombatFlowCounters.md) (2 shared connections)
+- [UMVEnemyDodgeTokenComponent::TryConsumeDodgeTokenForThreat](UMVEnemyDodgeTokenComponent--TryConsumeDodgeTokenForThreat.md) (1 shared connections)
 
-### inherits
-- uint8 `EXTRACTED`
+## Source Files
 
-### method
-- .GetDodgeTokenCount() `EXTRACTED`
-- .GetLandedHitCount() `EXTRACTED`
-- .GetReceivedHitCount() `EXTRACTED`
+- `Source/Maverick/Components/MVEnemyDodgeTokenComponent.h`
 
-### references
-- int32 `EXTRACTED`
-- UMVEnemyDodgeTokenComponent::GrantDodgeToken() `EXTRACTED`
-- AMVCharacterBase `EXTRACTED`
-- AMVEnemy `EXTRACTED`
-- TObjectPtr `EXTRACTED`
-- UPROPERTY `EXTRACTED`
+## Audit Trail
+
+- EXTRACTED: 82 (100%)
+- INFERRED: 0 (0%)
+- AMBIGUOUS: 0 (0%)
 
 ---
 

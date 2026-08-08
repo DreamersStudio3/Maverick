@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "쿨다운 액션 컷 노티파이"
+community: "UMVAnimNotify_ApplyHealingPotion::Notify"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/UMVAnimNotify_ApplyHealingPotionNotify
 ---
 
 # FString
 
 ## Connections
-- [[UMVAnimNotify_CooldownReadyActionCutGetNotifyName_Implementation()]] - `references` [EXTRACTED]
+- [[UMVAnimNotify_ApplyHealingPotionGetNotifyName_Implementation()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/UMVAnimNotify_ApplyHealingPotionNotify

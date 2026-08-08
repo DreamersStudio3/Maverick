@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 적 전투 액션"
+community: "FMVAttackTaskInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVAttackTaskInstanceData
 ---
 
 # TObjectPtr
 
 ## Connections
-- [[FMVEnemyCombatActionTaskInstanceData]] - `references` [EXTRACTED]
+- [[FMVAttackTaskInstanceData]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVAttackTaskInstanceData

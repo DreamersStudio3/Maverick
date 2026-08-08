@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTargetDev/Private/LockOnTargetDev.cpp"
 type: "code"
-community: "락온 디버거"
+community: "FGameplayDebuggerCategory_LockOnTarget"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/_
+  - community/FGameplayDebuggerCategory_LockOnTarget
 ---
 
 # LockOnTargetDev.cpp
@@ -17,4 +17,4 @@ tags:
 - [[ShutdownModule]] - `contains` [EXTRACTED]
 - [[StartupModule]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/_
+#graphify/code #graphify/EXTRACTED #community/FGameplayDebuggerCategory_LockOnTarget

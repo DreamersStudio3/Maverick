@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/Debug/MVPIEActionTestWidget.cpp"
 type: "code"
-community: "PIE 피격 판정 테스트"
+community: "MVPIEActionTestWidget.cpp"
 location: "L106"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/PIE___
+  - community/MVPIEActionTestWidgetcpp
 ---
 
 # PIEActionTestMakeDamageMultiplier()
@@ -15,4 +15,4 @@ tags:
 - [[MVPIEActionTestWidget.cpp]] - `contains` [EXTRACTED]
 - [[UMVPIEActionTestWidgetExecuteTestByIndex()]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/PIE___
+#graphify/code #graphify/EXTRACTED #community/MVPIEActionTestWidgetcpp

@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Public/Tables/MVTableAssetGenerator.h"
 type: "code"
-community: "JSON 테이블 생성·해시"
+community: "MVTableAssetGenerator.cpp"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/JSON__
+  - community/MVTableAssetGeneratorcpp
 ---
 
 # MVTableAssetGenerator.h
@@ -17,4 +17,4 @@ tags:
 - [[FMVTableManifestRow]] - `contains` [EXTRACTED]
 - [[UBlueprintFunctionLibrary()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/JSON__
+#graphify/code #graphify/EXTRACTED #community/MVTableAssetGeneratorcpp

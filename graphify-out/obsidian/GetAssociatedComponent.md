@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/TargetComponentDetails.h"
 type: "code"
-community: "대상 컴포넌트 디테일 편집"
+community: "TargetComponentDetails.cpp"
 location: "L33"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/TargetComponentDetailscpp
 ---
 
 # GetAssociatedComponent
@@ -18,4 +18,4 @@ tags:
 - [[TargetComponentDetails.cpp]] - `contains` [EXTRACTED]
 - [[USceneComponent_1]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/TargetComponentDetailscpp

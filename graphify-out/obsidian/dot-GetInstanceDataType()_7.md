@@ -1,18 +1,18 @@
 ---
-source_file: "Source/Maverick/AI/Task/MVAttackTask.h"
+source_file: "Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.h"
 type: "code"
-community: "AI 공격 StateTree 태스크"
-location: "L39"
+community: "FMVBackOffLaunchMontageTaskInstanceData"
+location: "L98"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI__StateTree_
+  - community/FMVBackOffLaunchMontageTaskInstanceData
 ---
 
 # .GetInstanceDataType()
 
 ## Connections
-- [[FMVAttackTask]] - `method` [EXTRACTED]
-- [[UStruct_7]] - `references` [EXTRACTED]
+- [[FMVBackOffLaunchMontageTask]] - `method` [EXTRACTED]
+- [[UStruct_13]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI__StateTree_
+#graphify/code #graphify/EXTRACTED #community/FMVBackOffLaunchMontageTaskInstanceData

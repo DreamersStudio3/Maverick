@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/HUD/MVQuickSlotWidget.h"
 type: "code"
-community: "회복 물약 퀵슬롯 데이터"
+community: "FMVQuickSlotViewData"
 location: "L9"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/FMVQuickSlotViewData
 ---
 
 # UTexture2D
@@ -15,4 +15,4 @@ tags:
 - [[FMVQuickSlotViewData]] - `references` [EXTRACTED]
 - [[MVQuickSlotWidget.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/FMVQuickSlotViewData

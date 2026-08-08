@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "락온 대상 네트워크 직렬화"
+community: "FTargetNetDeltaState"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/FTargetNetDeltaState
 ---
 
 # INetDeltaBaseState
@@ -14,4 +14,4 @@ tags:
 - [[dot-IsStateEqual()]] - `references` [EXTRACTED]
 - [[FTargetNetDeltaState]] - `inherits` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/FTargetNetDeltaState

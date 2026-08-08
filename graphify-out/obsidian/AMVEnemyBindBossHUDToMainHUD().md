@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Character/NPC/Enemy/MVEnemy.cpp"
 type: "code"
-community: "적 캐릭터 전투 실행"
+community: "MVEnemy.cpp"
 location: "L243"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVEnemycpp
 ---
 
 # AMVEnemy::BindBossHUDToMainHUD()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[MVEnemy.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVEnemycpp

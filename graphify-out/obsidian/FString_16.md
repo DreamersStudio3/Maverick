@@ -1,19 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "전투 액션 매핑"
+community: "MVPlayerCharacter.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVPlayerCharactercpp
 ---
 
 # FString
 
 ## Connections
-- [[MVCombatActionTypeToString()]] - `references` [EXTRACTED]
-- [[MVCombatIsDodgeContextualAttackRowName()]] - `references` [EXTRACTED]
-- [[MVCombatRowHandleToString()]] - `references` [EXTRACTED]
-- [[MVCombatSkillRowNamesToString()]] - `references` [EXTRACTED]
+- [[MVPlayerCharacterIndexCodeToTableToken()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVPlayerCharactercpp

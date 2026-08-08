@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVDeathComponent.cpp"
 type: "code"
-community: "사망 액션 행 이름 해석"
+community: "FName"
 location: "L702"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/____
+  - community/FName
 ---
 
 # UMVDeathComponent::MakeDeathActionRowName()
@@ -17,6 +17,6 @@ tags:
 - [[FGameplayTag_7]] - `references` [EXTRACTED]
 - [[FName_37]] - `references` [EXTRACTED]
 - [[MVDeathComponent.cpp]] - `contains` [EXTRACTED]
-- [[int32_17]] - `references` [EXTRACTED]
+- [[int32_18]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/____
+#graphify/code #graphify/EXTRACTED #community/FName

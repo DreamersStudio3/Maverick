@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp"
 type: "code"
-community: "테이블 에셋 매니페스트 관리"
+community: "MVTableAssetGenerator.cpp"
 location: "L1429"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVTableAssetGeneratorcpp
 ---
 
 # UMVTableAssetGenerator::SaveManifest()
@@ -14,7 +14,7 @@ tags:
 ## Connections
 - [[CreateOrResetDataTable()]] - `calls` [EXTRACTED]
 - [[FMVTableManifestRow]] - `references` [EXTRACTED]
-- [[FString_21]] - `references` [EXTRACTED]
+- [[FString_22]] - `references` [EXTRACTED]
 - [[FindExistingDataTable()]] - `calls` [EXTRACTED]
 - [[MVTableAssetGenerator.cpp]] - `contains` [EXTRACTED]
 - [[SaveDataTableAsset()]] - `calls` [EXTRACTED]
@@ -23,4 +23,4 @@ tags:
 - [[TableAssetGeneratorCanReuseDataTable()]] - `calls` [EXTRACTED]
 - [[TableAssetGeneratorWriteStoredSourceHash()]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVTableAssetGeneratorcpp

@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "피격 사망 전환 노티파이"
+community: "UMVAnimNotify_HitReactionDeathHandoff::Notify"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/UMVAnimNotify_HitReactionDeathHandoffNotify
 ---
 
 # USkeletalMeshComponent
@@ -14,4 +14,4 @@ tags:
 - [[FindHitReactionDeathHandoffComponent()]] - `references` [EXTRACTED]
 - [[UMVAnimNotify_HitReactionDeathHandoffNotify()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/UMVAnimNotify_HitReactionDeathHandoffNotify

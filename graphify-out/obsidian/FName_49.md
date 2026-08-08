@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "UI 팝업 메시지 데이터"
+community: "FMVPopupMessageData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/UI___
+  - community/FMVPopupMessageData
 ---
 
 # FName
@@ -14,4 +14,4 @@ tags:
 - [[FMVMenuEntryData]] - `references` [EXTRACTED]
 - [[FMVPopupMessageData]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/UI___
+#graphify/code #graphify/EXTRACTED #community/FMVPopupMessageData

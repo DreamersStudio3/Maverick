@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Public/AI/MVDodgeThreatEvaluatorLibrary.h"
 type: "code"
-community: "AI 회피 방향 결정"
+community: "FMVEnemyDodgeActionTask"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVEnemyDodgeActionTask
 ---
 
 # MVDodgeThreatEvaluatorLibrary.h
@@ -15,4 +15,4 @@ tags:
 - [[EMVDodgeThreatRejectReason]] - `contains` [EXTRACTED]
 - [[MVAIDodgeTypes.h]] - `imports` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVEnemyDodgeActionTask

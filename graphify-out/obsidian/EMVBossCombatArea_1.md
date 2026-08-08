@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 전투 컨텍스트"
+community: "FMVGlobalSensingTaskInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI__
+  - community/FMVGlobalSensingTaskInstanceData
 ---
 
 # EMVBossCombatArea
 
 ## Connections
-- [[FMVAICombatContext]] - `references` [EXTRACTED]
+- [[FMVGlobalSensingTaskInstanceData]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI__
+#graphify/code #graphify/EXTRACTED #community/FMVGlobalSensingTaskInstanceData

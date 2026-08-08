@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Animation/NotifyStates/MVAnimNotifyState_RecoveryEscapeWindow.h"
 type: "code"
-community: "회복 이탈 윈도우 노티파이"
+community: "MVAnimNotifyState_RecoveryEscapeWindow.h"
 location: "L15"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVAnimNotifyState_RecoveryEscapeWindowh
 ---
 
 # UMVAnimNotifyState_RecoveryEscapeWindow()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[MVAnimNotifyState_RecoveryEscapeWindow.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVAnimNotifyState_RecoveryEscapeWindowh

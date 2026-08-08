@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "전투 액션 행 해석"
+community: "FDataTableRowHandle"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/FDataTableRowHandle
 ---
 
 # UDataTable
@@ -15,4 +15,4 @@ tags:
 - [[UMVCombatComponentLoadFallbackAttackActionTable()]] - `references` [EXTRACTED]
 - [[UMVCombatComponentTryMakeFallbackAttackActionRowHandle()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/FDataTableRowHandle

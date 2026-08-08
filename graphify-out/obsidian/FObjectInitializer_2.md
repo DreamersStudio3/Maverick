@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "기본 위젯 페이드 수명주기"
+community: "MVWidgetBase.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVWidgetBasecpp
 ---
 
 # FObjectInitializer
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[UMVWidgetBaseUMVWidgetBase()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVWidgetBasecpp

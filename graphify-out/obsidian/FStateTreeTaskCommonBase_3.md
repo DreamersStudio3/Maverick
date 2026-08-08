@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 적 전투 액션"
+community: "EnterState"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/EnterState
 ---
 
 # FStateTreeTaskCommonBase
 
 ## Connections
-- [[FMVEnemyCombatActionTask]] - `inherits` [EXTRACTED]
+- [[FMVGlobalSensingTask]] - `inherits` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/EnterState

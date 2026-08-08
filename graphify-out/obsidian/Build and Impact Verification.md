@@ -1,17 +1,16 @@
 ---
 source_file: ".github/pull_request_template.md"
 type: "rationale"
-community: "문서·Graphify 거버넌스"
+community: "Build and Impact Verification"
 tags:
   - graphify/rationale
   - graphify/EXTRACTED
-  - community/Graphify_
+  - community/Build_and_Impact_Verification
 ---
 
 # Build and Impact Verification
 
 ## Connections
-- [[Pre-Push Wrap-Up Gate]] - `semantically_similar_to` [INFERRED]
 - [[Pull Request Checklist]] - `implements` [EXTRACTED]
 
-#graphify/rationale #graphify/EXTRACTED #community/Graphify_
+#graphify/rationale #graphify/EXTRACTED #community/Build_and_Impact_Verification

@@ -1,19 +1,18 @@
 ---
-source_file: "Source/Maverick/AI/Evaluator/MVTargetEvaluator.h"
+source_file: "Source/Maverick/AI/Task/MVAttackOpportunityTask.h"
 type: "code"
-community: "StateTree 타깃 평가기"
-location: "L27"
+community: "FMVAttackOpportunityTaskInstanceData"
+location: "L58"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/StateTree__
+  - community/FMVAttackOpportunityTaskInstanceData
 ---
 
 # .GetInstanceDataType()
 
 ## Connections
-- [[FMVTargetEvaluator]] - `method` [EXTRACTED]
-- [[FMVTargetEvaluatorData]] - `references` [EXTRACTED]
-- [[UScriptStruct]] - `references` [EXTRACTED]
+- [[FMVAttackOpportunityTask]] - `method` [EXTRACTED]
+- [[UStruct_11]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/StateTree__
+#graphify/code #graphify/EXTRACTED #community/FMVAttackOpportunityTaskInstanceData

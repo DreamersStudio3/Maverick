@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "사망 부활 오케스트레이션"
+community: "MVDeathRespawnFlow.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVDeathRespawnFlowcpp
 ---
 
 # UWorld
@@ -16,4 +16,4 @@ tags:
 - [[UMVDeathRespawnFlowHandleWorldInit()]] - `references` [EXTRACTED]
 - [[UMVDeathRespawnFlowResolvePlayerCharacter()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVDeathRespawnFlowcpp

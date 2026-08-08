@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "테이블 에셋 매니페스트 관리"
+community: "MVTableAssetGenerator.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVTableAssetGeneratorcpp
 ---
 
 # UDataTable
@@ -17,4 +17,4 @@ tags:
 - [[TableAssetGeneratorCanReuseDataTable()]] - `references` [EXTRACTED]
 - [[UMVTableAssetGeneratorBuildManifestRowForDataTable()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVTableAssetGeneratorcpp

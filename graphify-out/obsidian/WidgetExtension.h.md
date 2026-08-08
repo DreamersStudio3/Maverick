@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetExtensions/WidgetExtension.h"
 type: "code"
-community: "락온 위젯 확장"
+community: "WidgetExtension.h"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/WidgetExtensionh
 ---
 
 # WidgetExtension.h
@@ -17,4 +17,4 @@ tags:
 - [[UUserWidget_2]] - `contains` [EXTRACTED]
 - [[UWidgetComponent_2]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/WidgetExtensionh

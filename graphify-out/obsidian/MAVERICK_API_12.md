@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "피격 반응 행 조회"
+community: "MVHitReactionComponent.h"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVHitReactionComponenth
 ---
 
 # MAVERICK_API
@@ -14,4 +14,4 @@ tags:
 - [[FMVHitReactionActionRow()]] - `references` [EXTRACTED]
 - [[FMVHitReactionActionRowHandle()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVHitReactionComponenth

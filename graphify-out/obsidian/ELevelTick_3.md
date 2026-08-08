@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "피니셔 컴포넌트 틱"
+community: "UMVFinisherComponent::TickComponent"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/UMVFinisherComponentTickComponent
 ---
 
 # ELevelTick
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[UMVFinisherComponentTickComponent()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/UMVFinisherComponentTickComponent

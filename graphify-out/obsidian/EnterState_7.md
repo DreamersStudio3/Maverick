@@ -1,28 +1,22 @@
 ---
-source_file: "Source/Maverick/AI/Task/MVExecuteAttackTask.h"
+source_file: "Source/Maverick/AI/Task/MVStartActionCooldownTask.h"
 type: "code"
-community: "AI 공격 실행 로직"
-location: "L127"
+community: "FMVStartActionCooldownTaskInstanceData"
+location: "L41"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVStartActionCooldownTaskInstanceData
 ---
 
 # EnterState
 
 ## Connections
-- [[EStateTreeRunStatus_6]] - `references` [EXTRACTED]
-- [[ExecuteAttackResolveActionCandidate()]] - `calls` [EXTRACTED]
-- [[ExecuteAttackResolveActionRequest()]] - `calls` [EXTRACTED]
-- [[ExecuteAttackResolveOwner()]] - `calls` [EXTRACTED]
-- [[ExecuteAttackSelectCandidate()]] - `calls` [EXTRACTED]
-- [[ExecuteAttackStartCooldown()]] - `calls` [EXTRACTED]
-- [[ExecuteAttackTryStartAction()]] - `calls` [EXTRACTED]
-- [[FMVAICombatActionMetadata]] - `calls` [EXTRACTED]
-- [[FMVSelectAndExecuteAttackTask]] - `defines` [EXTRACTED]
-- [[FStateTreeExecutionContext_12]] - `references` [EXTRACTED]
-- [[FStateTreeTransitionResult_6]] - `references` [EXTRACTED]
-- [[MVExecuteAttackTask.cpp]] - `contains` [EXTRACTED]
+- [[EStateTreeRunStatus_11]] - `references` [EXTRACTED]
+- [[FMVStartActionCooldownTask]] - `defines` [EXTRACTED]
+- [[FStateTreeExecutionContext_17]] - `references` [EXTRACTED]
+- [[FStateTreeTransitionResult_11]] - `references` [EXTRACTED]
+- [[MVStartActionCooldownTask.cpp]] - `contains` [EXTRACTED]
+- [[ResolveStartCooldownOwner()]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVStartActionCooldownTaskInstanceData

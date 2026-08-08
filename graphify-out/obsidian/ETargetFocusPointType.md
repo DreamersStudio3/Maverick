@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h"
 type: "code"
-community: "락온 대상 포커스 설정"
+community: "ETargetFocusPointType"
 location: "L21"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/ETargetFocusPointType
 ---
 
 # ETargetFocusPointType
@@ -29,7 +29,7 @@ tags:
 - [[CustomWidgetClass]] - `defines` [EXTRACTED]
 - [[DispatchTargetException]] - `defines` [EXTRACTED]
 - [[EndPlay]] - `defines` [EXTRACTED]
-- [[FName_12]] - `references` [EXTRACTED]
+- [[FName_17]] - `references` [EXTRACTED]
 - [[FOnTargetComponentCaptured]] - `references` [EXTRACTED]
 - [[FOnTargetComponentReleased]] - `references` [EXTRACTED]
 - [[FVector_5]] - `references` [EXTRACTED]
@@ -57,7 +57,7 @@ tags:
 - [[SetCanBeCaptured]] - `defines` [EXTRACTED]
 - [[SetDefaultSocket]] - `defines` [EXTRACTED]
 - [[Sockets]] - `defines` [EXTRACTED]
-- [[TArray_2]] - `references` [EXTRACTED]
+- [[TArray_7]] - `references` [EXTRACTED]
 - [[TInlineAllocator_1]] - `references` [EXTRACTED]
 - [[TSoftClassPtr_1]] - `references` [EXTRACTED]
 - [[TWeakObjectPtr_3]] - `references` [EXTRACTED]
@@ -75,4 +75,4 @@ tags:
 - [[uint32_1]] - `references` [EXTRACTED]
 - [[uint8_2]] - `inherits` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/ETargetFocusPointType

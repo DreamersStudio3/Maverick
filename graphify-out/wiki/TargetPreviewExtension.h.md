@@ -1,0 +1,29 @@
+# TargetPreviewExtension.h
+
+> 5 nodes
+
+## Key Concepts
+
+- **TargetPreviewExtension.h** (4 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetExtensions/TargetPreviewExtension.h`
+- **UUserWidget** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetExtensions/TargetPreviewExtension.h`
+- **UWidgetComponent** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetExtensions/TargetPreviewExtension.h`
+- **FStreamableHandle** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetExtensions/TargetPreviewExtension.h`
+- **ULockOnTargetExtensionBase()** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetExtensions/TargetPreviewExtension.h`
+
+## Relationships
+
+- No strong cross-community connections detected
+
+## Source Files
+
+- `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetExtensions/TargetPreviewExtension.h`
+
+## Audit Trail
+
+- EXTRACTED: 8 (100%)
+- INFERRED: 0 (0%)
+- AMBIGUOUS: 0 (0%)
+
+---
+
+*Part of the graphify knowledge wiki. See [index](index.md) to navigate.*

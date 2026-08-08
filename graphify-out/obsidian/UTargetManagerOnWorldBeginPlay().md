@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetManager.cpp"
 type: "code"
-community: "락온 대상 관리자 수명주기"
+community: "TargetManager.cpp"
 location: "L17"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/TargetManagercpp
 ---
 
 # UTargetManager::OnWorldBeginPlay()
@@ -15,4 +15,4 @@ tags:
 - [[TargetManager.cpp]] - `contains` [EXTRACTED]
 - [[UWorld_1]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/TargetManagercpp

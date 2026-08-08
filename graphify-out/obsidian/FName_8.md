@@ -1,18 +1,17 @@
 ---
 source_file: ""
 type: "code"
-community: "락온 대상 위젯 확장"
+community: "CameraModifierExtension.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/CameraModifierExtensioncpp
 ---
 
 # FName
 
 ## Connections
-- [[UWidgetExtensionOnSocketChanged()]] - `references` [EXTRACTED]
-- [[UWidgetExtensionOnTargetLocked()]] - `references` [EXTRACTED]
-- [[UWidgetExtensionOnTargetUnlocked()]] - `references` [EXTRACTED]
+- [[UCameraModifierExtensionOnTargetLocked()]] - `references` [EXTRACTED]
+- [[UCameraModifierExtensionOnTargetUnlocked()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/CameraModifierExtensioncpp

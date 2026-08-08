@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "회복 물약 적용 노티파이"
+community: "UMVAnimNotify_ApplyHealingPotion::Notify"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/UMVAnimNotify_ApplyHealingPotionNotify
 ---
 
 # FAnimNotifyEventReference
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[UMVAnimNotify_ApplyHealingPotionNotify()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/UMVAnimNotify_ApplyHealingPotionNotify

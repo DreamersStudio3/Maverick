@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVCombatComponent.h"
 type: "code"
-community: "스킬 체인 런타임"
+community: "FMVSkillEntry"
 location: "L58"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/FMVSkillEntry
 ---
 
 # FMVSkillEntry
@@ -49,6 +49,6 @@ tags:
 - [[UMVCombatComponentTryStartActionWithAbility()]] - `references` [EXTRACTED]
 - [[bChainActive]] - `defines` [EXTRACTED]
 - [[bIsChained]] - `defines` [EXTRACTED]
-- [[int32_16]] - `references` [EXTRACTED]
+- [[int32_17]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/FMVSkillEntry

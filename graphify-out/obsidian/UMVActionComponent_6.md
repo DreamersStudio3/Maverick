@@ -1,17 +1,17 @@
 ---
-source_file: "Source/Maverick/Components/MVDeathComponent.h"
+source_file: "Source/Maverick/Components/MVHitReactionComponent.h"
 type: "code"
-community: "사망 컴포넌트 디졸브 연동"
-location: "L13"
+community: "MVHitReactionComponent.h"
+location: "L20"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVHitReactionComponenth
 ---
 
 # UMVActionComponent
 
 ## Connections
-- [[MVDeathComponent.h]] - `contains` [EXTRACTED]
+- [[MVHitReactionComponent.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVHitReactionComponenth

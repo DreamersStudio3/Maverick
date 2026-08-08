@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Animation/MVAnimInstanceBase.cpp"
 type: "code"
-community: "애니메이션 이동 상태 계산"
+community: "MVAnimInstanceBase.cpp"
 location: "L12"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVAnimInstanceBasecpp
 ---
 
 # UMVAnimInstanceBase::NativeInitializeAnimation()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[MVAnimInstanceBase.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVAnimInstanceBasecpp

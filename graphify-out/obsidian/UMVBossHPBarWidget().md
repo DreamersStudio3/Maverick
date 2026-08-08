@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/HUD/MVBossHPBarWidget.h"
 type: "code"
-community: "피격 시스템 공용 타입"
+community: "MVHitTypes.h"
 location: "L20"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVHitTypesh
 ---
 
 # UMVBossHPBarWidget()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[MVBossHPBarWidget.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVHitTypesh

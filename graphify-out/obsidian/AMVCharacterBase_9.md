@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/System/MVDeathRespawnFlow.h"
 type: "code"
-community: "사망 부활 UI 흐름"
+community: "MVDeathRespawnFlow.h"
 location: "L9"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__UI_
+  - community/MVDeathRespawnFlowh
 ---
 
 # AMVCharacterBase
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[MVDeathRespawnFlow.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__UI_
+#graphify/code #graphify/EXTRACTED #community/MVDeathRespawnFlowh

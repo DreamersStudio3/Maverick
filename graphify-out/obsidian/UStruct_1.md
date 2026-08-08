@@ -1,16 +1,17 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 쿨다운 준비 조건"
+community: "MVExecuteAttackTask.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/MVExecuteAttackTaskcpp
 ---
 
 # UStruct
 
 ## Connections
-- [[dot-GetInstanceDataType()]] - `references` [EXTRACTED]
+- [[dot-GetInstanceDataType()_14]] - `references` [EXTRACTED]
+- [[dot-GetInstanceDataType()_15]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/MVExecuteAttackTaskcpp

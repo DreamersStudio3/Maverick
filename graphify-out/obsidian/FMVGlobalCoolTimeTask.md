@@ -1,22 +1,22 @@
 ---
 source_file: "Source/Maverick/AI/Task/MVGlobalCoolTimeTask.h"
 type: "code"
-community: "AI 전역 쿨다운"
-location: "L40"
+community: "FMVGlobalCoolTimeTaskInstanceData"
+location: "L44"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI__
+  - community/FMVGlobalCoolTimeTaskInstanceData
 ---
 
 # FMVGlobalCoolTimeTask
 
 ## Connections
-- [[dot-GetInstanceDataType()_15]] - `method` [EXTRACTED]
-- [[EnterState_9]] - `defines` [EXTRACTED]
-- [[ExitState_7]] - `defines` [EXTRACTED]
-- [[FStateTreeTaskCommonBase_8]] - `inherits` [EXTRACTED]
+- [[dot-GetInstanceDataType()_17]] - `method` [EXTRACTED]
+- [[EnterState_11]] - `defines` [EXTRACTED]
+- [[ExitState_8]] - `defines` [EXTRACTED]
+- [[FStateTreeTaskCommonBase_2]] - `inherits` [EXTRACTED]
 - [[MVGlobalCoolTimeTask.h]] - `contains` [EXTRACTED]
-- [[Tick_10]] - `defines` [EXTRACTED]
+- [[Tick_11]] - `defines` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI__
+#graphify/code #graphify/EXTRACTED #community/FMVGlobalCoolTimeTaskInstanceData

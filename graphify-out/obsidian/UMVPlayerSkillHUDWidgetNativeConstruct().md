@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/HUD/MVPlayerSkillHUDWidget.cpp"
 type: "code"
-community: "플레이어 스킬 HUD"
+community: "MVPlayerSkillHUDWidget.cpp"
 location: "L62"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__HUD
+  - community/MVPlayerSkillHUDWidgetcpp
 ---
 
 # UMVPlayerSkillHUDWidget::NativeConstruct()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[MVPlayerSkillHUDWidget.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__HUD
+#graphify/code #graphify/EXTRACTED #community/MVPlayerSkillHUDWidgetcpp

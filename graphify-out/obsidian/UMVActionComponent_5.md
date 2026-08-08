@@ -1,17 +1,17 @@
 ---
-source_file: "Source/Maverick/Character/PC/Dodge/MVPlayerDodge.h"
+source_file: "Source/Maverick/Components/MVDeathComponent.h"
 type: "code"
-community: "회피·질주 액션 데이터"
-location: "L16"
+community: "MVDeathComponent.h"
+location: "L13"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVDeathComponenth
 ---
 
 # UMVActionComponent
 
 ## Connections
-- [[MVPlayerDodge.h]] - `contains` [EXTRACTED]
+- [[MVDeathComponent.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVDeathComponenth

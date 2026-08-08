@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Public/AI/MVDodgeThreatEvaluatorLibrary.h"
 type: "code"
-community: "AI 회피 위협 판정"
+community: "EMVDodgeThreatRejectReason"
 location: "L10"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/EMVDodgeThreatRejectReason
 ---
 
 # EMVDodgeThreatRejectReason
@@ -21,4 +21,4 @@ tags:
 - [[USTRUCT_19]] - `references` [EXTRACTED]
 - [[uint8_8]] - `inherits` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/EMVDodgeThreatRejectReason

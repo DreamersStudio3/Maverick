@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 전투 의사결정 로직"
+community: "FMVAICombatActionCondition"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVAICombatActionCondition
 ---
 
 # FStateTreeExecutionContext
 
 ## Connections
-- [[TestCondition_2]] - `references` [EXTRACTED]
+- [[TestCondition_4]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVAICombatActionCondition

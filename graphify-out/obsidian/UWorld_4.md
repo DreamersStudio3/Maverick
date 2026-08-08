@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "플레이어 회복약 액션"
+community: "MVPlayerConsumable.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVPlayerConsumablecpp
 ---
 
 # UWorld
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[UMVPlayerConsumableGetWorld()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVPlayerConsumablecpp

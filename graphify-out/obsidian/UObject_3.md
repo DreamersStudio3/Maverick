@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "상호작용 가능성·포커스 판정"
+community: "UObject"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/UObject
 ---
 
 # UObject
@@ -22,4 +22,4 @@ tags:
 - [[UMVPlayerInteractionDetectorSetFocusedInteractable()]] - `references` [EXTRACTED]
 - [[UMVPlayerInteractionDetectorTryShowPIEActionTestPanelForInteractable()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/UObject

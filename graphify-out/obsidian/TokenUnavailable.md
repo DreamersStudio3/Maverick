@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Public/AI/MVDodgeThreatEvaluatorLibrary.h"
 type: "code"
-community: "AI 회피 위협 판정"
+community: "EMVDodgeThreatRejectReason"
 location: "L22"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/EMVDodgeThreatRejectReason
 ---
 
 # TokenUnavailable
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[EMVDodgeThreatRejectReason]] - `defines` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/EMVDodgeThreatRejectReason

@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Character/PC/MVPlayerCharacter.cpp"
 type: "code"
-community: "회피·질주 액션 데이터"
+community: "MVMovementActionTableTypes.h"
 location: "L243"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVMovementActionTableTypesh
 ---
 
 # AMVPlayerCharacter::FindSprintActionRow()
@@ -16,4 +16,4 @@ tags:
 - [[MVPlayerCharacter.cpp]] - `contains` [EXTRACTED]
 - [[UMVTableManager]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVMovementActionTableTypesh

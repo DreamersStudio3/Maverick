@@ -1,20 +1,20 @@
 ---
-source_file: "Source/Maverick/AI/Task/MVGlobalSensingTask.h"
+source_file: "Source/Maverick/AI/Task/MVGlobalCoolTimeTask.h"
 type: "code"
-community: "전역 전투 센싱 태스크"
-location: "L166"
+community: "FMVGlobalCoolTimeTaskInstanceData"
+location: "L59"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/FMVGlobalCoolTimeTaskInstanceData
 ---
 
 # ExitState
 
 ## Connections
-- [[FMVGlobalSensingTask]] - `defines` [EXTRACTED]
-- [[FStateTreeExecutionContext_15]] - `references` [EXTRACTED]
-- [[FStateTreeTransitionResult_9]] - `references` [EXTRACTED]
-- [[MVGlobalSensingTask.cpp]] - `contains` [EXTRACTED]
+- [[FMVGlobalCoolTimeTask]] - `defines` [EXTRACTED]
+- [[FStateTreeExecutionContext_14]] - `references` [EXTRACTED]
+- [[FStateTreeTransitionResult_8]] - `references` [EXTRACTED]
+- [[MVGlobalCoolTimeTask.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/FMVGlobalCoolTimeTaskInstanceData

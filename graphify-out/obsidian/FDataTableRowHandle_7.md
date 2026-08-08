@@ -1,17 +1,25 @@
 ---
 source_file: ""
 type: "code"
-community: "전투 액션 런타임 상태"
+community: "FDataTableRowHandle"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/FDataTableRowHandle
 ---
 
 # FDataTableRowHandle
 
 ## Connections
-- [[dot-GetCurrentActionRowHandle()]] - `references` [EXTRACTED]
-- [[FMVCombatHeavyChargeAttackRuntimeState]] - `references` [EXTRACTED]
+- [[MVCombatRowHandleToString()]] - `references` [EXTRACTED]
+- [[UMVCombatComponentBuildSkillEntryFromRowHandle()]] - `references` [EXTRACTED]
+- [[UMVCombatComponentGetActionRowHandleFromChooserTable()]] - `references` [EXTRACTED]
+- [[UMVCombatComponentIsValidSkillActionRowHandle()]] - `references` [EXTRACTED]
+- [[UMVCombatComponentResetBasicAttackMap()]] - `calls` [EXTRACTED]
+- [[UMVCombatComponentResolveActionRowHandleFromChooserTable()]] - `references` [EXTRACTED]
+- [[UMVCombatComponentResolveHeavyChargeEarlyReleaseRow()]] - `references` [EXTRACTED]
+- [[UMVCombatComponentTryMakeFallbackAttackActionRowHandle()]] - `references` [EXTRACTED]
+- [[UMVCombatComponentTryStartActionWithAbility()]] - `references` [EXTRACTED]
+- [[UMVCombatComponentUpdateLastBasicAttackSwingDirection()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/FDataTableRowHandle

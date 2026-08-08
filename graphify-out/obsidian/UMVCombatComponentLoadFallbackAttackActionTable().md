@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVCombatComponent.cpp"
 type: "code"
-community: "전투 액션 행 해석"
+community: "FDataTableRowHandle"
 location: "L1264"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/FDataTableRowHandle
 ---
 
 # UMVCombatComponent::LoadFallbackAttackActionTable()
@@ -16,4 +16,4 @@ tags:
 - [[MVCombatComponent.cpp]] - `contains` [EXTRACTED]
 - [[UDataTable_4]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/FDataTableRowHandle

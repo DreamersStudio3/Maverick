@@ -1,19 +1,19 @@
 ---
 source_file: "Source/Maverick/AI/Task/MVExecuteAttackTask.cpp"
 type: "code"
-community: "AI 공격 실행 로직"
+community: "MVExecuteAttackTask.cpp"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/MVExecuteAttackTaskcpp
 ---
 
 # MVExecuteAttackTask.cpp
 
 ## Connections
-- [[EnterState_6]] - `contains` [EXTRACTED]
-- [[EnterState_7]] - `contains` [EXTRACTED]
+- [[EnterState_8]] - `contains` [EXTRACTED]
+- [[EnterState_9]] - `contains` [EXTRACTED]
 - [[ExecuteAttackActionTableNameFromDataTable()]] - `contains` [EXTRACTED]
 - [[ExecuteAttackCanSelectCandidate()]] - `contains` [EXTRACTED]
 - [[ExecuteAttackEvaluateChooserActionRowHandle()]] - `contains` [EXTRACTED]
@@ -26,12 +26,12 @@ tags:
 - [[ExecuteAttackSelectCandidate()]] - `contains` [EXTRACTED]
 - [[ExecuteAttackStartCooldown()]] - `contains` [EXTRACTED]
 - [[ExecuteAttackTryStartAction()]] - `contains` [EXTRACTED]
-- [[ExitState_4]] - `contains` [EXTRACTED]
 - [[ExitState_5]] - `contains` [EXTRACTED]
+- [[ExitState_6]] - `contains` [EXTRACTED]
 - [[FMVExecuteFixedAttackTaskFMVExecuteFixedAttackTask()]] - `contains` [EXTRACTED]
 - [[FMVSelectAndExecuteAttackTaskFMVSelectAndExecuteAttackTask()]] - `contains` [EXTRACTED]
 - [[MVCombatActionTableInput.h]] - `imports` [EXTRACTED]
-- [[Tick_7]] - `contains` [EXTRACTED]
 - [[Tick_8]] - `contains` [EXTRACTED]
+- [[Tick_9]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/MVExecuteAttackTaskcpp

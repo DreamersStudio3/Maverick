@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Animation/NotifyStates/MVAnimNotifyState_AirborneLandDetector.cpp"
 type: "code"
-community: "공중 착지 감지 노티파이"
+community: "FindAirborneLandDetectorHitReactionComponent"
 location: "L16"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/FindAirborneLandDetectorHitReactionComponent
 ---
 
 # UMVAnimNotifyState_AirborneLandDetector::NotifyBegin()
@@ -18,4 +18,4 @@ tags:
 - [[UAnimSequenceBase_7]] - `references` [EXTRACTED]
 - [[USkeletalMeshComponent_7]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/FindAirborneLandDetectorHitReactionComponent

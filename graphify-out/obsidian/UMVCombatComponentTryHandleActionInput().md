@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVCombatComponent.cpp"
 type: "code"
-community: "전투 액션 입력 처리"
+community: "FGameplayTag"
 location: "L420"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/FGameplayTag
 ---
 
 # UMVCombatComponent::TryHandleActionInput()
@@ -16,4 +16,4 @@ tags:
 - [[FVector2D_6]] - `references` [EXTRACTED]
 - [[MVCombatComponent.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/FGameplayTag

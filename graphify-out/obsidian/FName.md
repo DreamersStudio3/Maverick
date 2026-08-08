@@ -1,17 +1,19 @@
 ---
 source_file: ""
 type: "code"
-community: "락온 소켓 선택 에디터"
+community: "MVAICombatTypes.h"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVAICombatTypesh
 ---
 
 # FName
 
 ## Connections
-- [[OnSocketSelected]] - `references` [EXTRACTED]
-- [[OnTextBoxCommitted]] - `calls` [EXTRACTED]
+- [[FMVAICombatActionMetadata]] - `references` [EXTRACTED]
+- [[FMVAICombatContext]] - `references` [EXTRACTED]
+- [[FMVAICombatResolvedAction]] - `references` [EXTRACTED]
+- [[IsActionReady()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVAICombatTypesh

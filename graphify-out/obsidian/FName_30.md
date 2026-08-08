@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "적 캐릭터 전투 실행"
+community: "MVEnemy.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVEnemycpp
 ---
 
 # FName
@@ -17,4 +17,4 @@ tags:
 - [[AMVEnemyTryHeavyAttack_Implementation()]] - `references` [EXTRACTED]
 - [[AMVEnemyTrySkillAttack_Implementation()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVEnemycpp

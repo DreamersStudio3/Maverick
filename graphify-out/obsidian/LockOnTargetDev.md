@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTargetDev/LockOnTargetDev.build.cs"
 type: "code"
-community: "모듈 빌드 의존성"
+community: "ModuleRules"
 location: "L5"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/ModuleRules
 ---
 
 # LockOnTargetDev
@@ -15,4 +15,4 @@ tags:
 - [[LockOnTargetDev.build.cs]] - `contains` [EXTRACTED]
 - [[ModuleRules]] - `inherits` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/ModuleRules

@@ -1,16 +1,19 @@
 ---
 source_file: ""
 type: "code"
-community: "락온 컨트롤러 회전 확장"
+community: "FGameplayDebuggerCategory_LockOnTarget"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/FGameplayDebuggerCategory_LockOnTarget
 ---
 
 # FString
 
 ## Connections
-- [[FLockOnTargetExtensionTickFunctionDiagnosticMessage()]] - `references` [EXTRACTED]
+- [[CollectExtensionsInfo]] - `references` [EXTRACTED]
+- [[CollectInvadersInfo]] - `references` [EXTRACTED]
+- [[CollectTargetSocketsInfo]] - `references` [EXTRACTED]
+- [[GetClassNameSafe()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/FGameplayDebuggerCategory_LockOnTarget

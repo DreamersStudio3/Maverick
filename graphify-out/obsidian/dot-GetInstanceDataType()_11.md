@@ -1,18 +1,18 @@
 ---
-source_file: "Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h"
+source_file: "Source/Maverick/AI/Task/MVHitReactionTask.h"
 type: "code"
-community: "적 회피 액션 태스크"
-location: "L100"
+community: "FMVHitReactionTaskInstanceData"
+location: "L66"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/FMVHitReactionTaskInstanceData
 ---
 
 # .GetInstanceDataType()
 
 ## Connections
-- [[FMVEnemyDodgeActionTask]] - `method` [EXTRACTED]
-- [[UStruct_11]] - `references` [EXTRACTED]
+- [[FMVHitReactionTask]] - `method` [EXTRACTED]
+- [[UStruct_17]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/FMVHitReactionTaskInstanceData

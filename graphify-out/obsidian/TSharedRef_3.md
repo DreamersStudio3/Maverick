@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "대상 컴포넌트 디테일 편집"
+community: "TargetComponentDetails.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/TargetComponentDetailscpp
 ---
 
 # TSharedRef
@@ -14,4 +14,4 @@ tags:
 - [[GenerateArrayElementWidget]] - `references` [EXTRACTED]
 - [[OnGetMeshContent]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/TargetComponentDetailscpp

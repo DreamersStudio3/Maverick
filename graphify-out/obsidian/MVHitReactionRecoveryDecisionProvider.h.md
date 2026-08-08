@@ -12,7 +12,7 @@ tags:
 # MVHitReactionRecoveryDecisionProvider.h
 
 ## Connections
-- [[AActor_24]] - `contains` [EXTRACTED]
+- [[AActor_23]] - `contains` [EXTRACTED]
 - [[FMVHitReactionRecoveryDecision]] - `contains` [EXTRACTED]
 - [[FMVHitReactionRecoveryDecisionContext]] - `contains` [EXTRACTED]
 - [[MAVERICK_API_9]] - `contains` [EXTRACTED]

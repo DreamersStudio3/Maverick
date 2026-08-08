@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/LockOnComponentDetails.h"
 type: "code"
-community: "LockOnTarget 컴포넌트 상세 패널"
+community: "FLockOnComponentDetails"
 location: "L11"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/LockOnTarget___
+  - community/FLockOnComponentDetails
 ---
 
 # CustomizeDetails
@@ -16,4 +16,4 @@ tags:
 - [[IDetailLayoutBuilder]] - `references` [EXTRACTED]
 - [[LockOnComponentDetails.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/LockOnTarget___
+#graphify/code #graphify/EXTRACTED #community/FLockOnComponentDetails

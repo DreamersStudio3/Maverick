@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetExtensions/TargetPreviewExtension.cpp"
 type: "code"
-community: "락온 대상 미리보기 확장"
+community: "TargetPreviewExtension.cpp"
 location: "L64"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/TargetPreviewExtensioncpp
 ---
 
 # UTargetPreviewExtension::OnWidgetClassLoaded()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[TargetPreviewExtension.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/TargetPreviewExtensioncpp

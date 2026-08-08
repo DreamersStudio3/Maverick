@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Combat/MVAbilityBase.h"
 type: "code"
-community: "피격 시스템 공용 타입"
+community: "MVAbilityBase.h"
 location: "L32"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVAbilityBaseh
 ---
 
 # UCameraShakeBase
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[MVAbilityBase.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVAbilityBaseh

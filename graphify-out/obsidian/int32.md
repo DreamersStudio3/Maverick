@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "대상 컴포넌트 디테일 편집"
+community: "FMVAICombatContext"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/FMVAICombatContext
 ---
 
 # int32
 
 ## Connections
-- [[GenerateArrayElementWidget]] - `references` [EXTRACTED]
+- [[FMVAICombatContext]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/FMVAICombatContext

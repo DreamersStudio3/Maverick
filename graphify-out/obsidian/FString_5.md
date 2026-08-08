@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "사망 오버레이 노티파이"
+community: "UMVAnimNotify_DeathDissolve::Notify"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/UMVAnimNotify_DeathDissolveNotify
 ---
 
 # FString
 
 ## Connections
-- [[UMVAnimNotify_DeathOverlayGetNotifyName_Implementation()]] - `references` [EXTRACTED]
+- [[UMVAnimNotify_DeathDissolveGetNotifyName_Implementation()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/UMVAnimNotify_DeathDissolveNotify

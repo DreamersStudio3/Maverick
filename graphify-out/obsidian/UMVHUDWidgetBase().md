@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/Base/MVHUDWidgetBase.h"
 type: "code"
-community: "UI 창·팝업 스택 생성"
+community: "UMVUISubsystem::PushWindowByClass"
 location: "L8"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/UI___
+  - community/UMVUISubsystemPushWindowByClass
 ---
 
 # UMVHUDWidgetBase()
@@ -16,4 +16,4 @@ tags:
 - [[UMVUISubsystemShowDefaultHUD()]] - `references` [EXTRACTED]
 - [[UMVUISubsystemShowHUDByClass()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/UI___
+#graphify/code #graphify/EXTRACTED #community/UMVUISubsystemPushWindowByClass

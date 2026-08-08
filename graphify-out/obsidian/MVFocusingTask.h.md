@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/AI/Task/MVFocusingTask.h"
 type: "code"
-community: "AI 타겟 포커싱"
+community: "FMVFocusingTaskInstanceData"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI__
+  - community/FMVFocusingTaskInstanceData
 ---
 
 # MVFocusingTask.h
@@ -15,6 +15,5 @@ tags:
 - [[AAIController_2]] - `contains` [EXTRACTED]
 - [[FMVFocusingTask]] - `contains` [EXTRACTED]
 - [[FMVFocusingTaskInstanceData]] - `contains` [EXTRACTED]
-- [[MVFocusingTask.cpp]] - `imports` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI__
+#graphify/code #graphify/EXTRACTED #community/FMVFocusingTaskInstanceData

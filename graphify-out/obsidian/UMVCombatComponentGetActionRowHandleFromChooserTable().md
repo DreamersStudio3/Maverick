@@ -12,7 +12,7 @@ tags:
 # UMVCombatComponent::GetActionRowHandleFromChooserTable()
 
 ## Connections
-- [[FDataTableRowHandle_6]] - `references` [EXTRACTED]
+- [[FDataTableRowHandle_7]] - `references` [EXTRACTED]
 - [[FMVCombatActionTableInput]] - `references` [EXTRACTED]
 - [[FName_35]] - `references` [EXTRACTED]
 - [[MVCombatComponent.cpp]] - `contains` [EXTRACTED]

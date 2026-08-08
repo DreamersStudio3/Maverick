@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Public/Tables/MVMovementActionTableTypes.h"
 type: "code"
-community: "회피·질주 액션 데이터"
+community: "MVMovementActionTableTypes.h"
 location: "L57"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVMovementActionTableTypesh
 ---
 
 # FMVSprintActionRow()
@@ -15,4 +15,4 @@ tags:
 - [[AMVPlayerCharacterFindSprintActionRow()]] - `references` [EXTRACTED]
 - [[MVMovementActionTableTypes.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVMovementActionTableTypesh

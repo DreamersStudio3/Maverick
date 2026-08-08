@@ -1,17 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "보스 체력바 상태 연동"
+community: "MVFieldTransitionSubsystem.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVFieldTransitionSubsystemcpp
 ---
 
 # FText
 
 ## Connections
-- [[UMVBossHPBarWidgetBindToStatComponent()]] - `references` [EXTRACTED]
-- [[UMVBossHPBarWidgetInitializeBossBar()]] - `references` [EXTRACTED]
+- [[UMVFieldTransitionSubsystemUpdateTransitionProgress()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVFieldTransitionSubsystemcpp

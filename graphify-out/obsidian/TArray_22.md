@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "스킬 슬롯 런타임 표시"
+community: "MVSkillSlotWidget.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVSkillSlotWidgetcpp
 ---
 
 # TArray
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[UMVSkillSlotWidgetSetIconStack()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVSkillSlotWidgetcpp

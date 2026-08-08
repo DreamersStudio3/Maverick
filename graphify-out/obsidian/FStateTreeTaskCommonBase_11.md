@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 액션 쿨다운 시작"
+community: "FMVHitReactionTaskInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVHitReactionTaskInstanceData
 ---
 
 # FStateTreeTaskCommonBase
 
 ## Connections
-- [[FMVStartActionCooldownTask]] - `inherits` [EXTRACTED]
+- [[FMVHitReactionTask]] - `inherits` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVHitReactionTaskInstanceData

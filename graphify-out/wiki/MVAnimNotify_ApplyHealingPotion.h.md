@@ -1,0 +1,26 @@
+# MVAnimNotify_ApplyHealingPotion.h
+
+> 2 nodes
+
+## Key Concepts
+
+- **MVAnimNotify_ApplyHealingPotion.h** (1 connections) — `Source/Maverick/Animation/Notifies/MVAnimNotify_ApplyHealingPotion.h`
+- **UMVAnimNotify_ApplyHealingPotion()** (1 connections) — `Source/Maverick/Animation/Notifies/MVAnimNotify_ApplyHealingPotion.h`
+
+## Relationships
+
+- No strong cross-community connections detected
+
+## Source Files
+
+- `Source/Maverick/Animation/Notifies/MVAnimNotify_ApplyHealingPotion.h`
+
+## Audit Trail
+
+- EXTRACTED: 2 (100%)
+- INFERRED: 0 (0%)
+- AMBIGUOUS: 0 (0%)
+
+---
+
+*Part of the graphify knowledge wiki. See [index](index.md) to navigate.*

@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 전투 결정 설정"
+community: "FMVCombatDecisionConditionInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVCombatDecisionConditionInstanceData
 ---
 
 # EMVAICombatDecisionState
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[FMVCombatDecisionConditionInstanceData]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVCombatDecisionConditionInstanceData

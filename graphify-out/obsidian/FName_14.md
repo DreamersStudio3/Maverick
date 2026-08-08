@@ -1,16 +1,19 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 전투 진입 조건"
+community: "TargetComponent.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/TargetComponentcpp
 ---
 
 # FName
 
 ## Connections
-- [[FMVCombatActionEnterConditionInstanceData]] - `references` [EXTRACTED]
+- [[UTargetComponentAddSocket()]] - `references` [EXTRACTED]
+- [[UTargetComponentGetSocketLocation()]] - `references` [EXTRACTED]
+- [[UTargetComponentRemoveSocket()]] - `references` [EXTRACTED]
+- [[UTargetComponentSetDefaultSocket()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/TargetComponentcpp

@@ -1,17 +1,17 @@
 ---
 source_file: "Source/Maverick/UI/World/MVWorldWidgetBase.h"
 type: "code"
-community: "월드 위젯 베이스 선언"
+community: "MVWorldWidgetBase.h"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVWorldWidgetBaseh
 ---
 
 # MVWorldWidgetBase.h
 
 ## Connections
-- [[MAVERICK_API_17]] - `contains` [EXTRACTED]
+- [[MAVERICK_API_16]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVWorldWidgetBaseh

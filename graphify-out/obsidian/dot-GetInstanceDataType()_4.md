@@ -1,18 +1,19 @@
 ---
-source_file: "Source/Maverick/AI/Condition/MVHitReactionEnterCondition.h"
+source_file: "Source/Maverick/AI/Evaluator/MVTargetEvaluator.h"
 type: "code"
-community: "AI 피격 진입 조건"
-location: "L58"
+community: "StateTree 타깃 평가기"
+location: "L27"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/StateTree__
 ---
 
 # .GetInstanceDataType()
 
 ## Connections
-- [[FMVHitReactionEnterCondition]] - `method` [EXTRACTED]
-- [[UStruct_5]] - `references` [EXTRACTED]
+- [[FMVTargetEvaluator]] - `method` [EXTRACTED]
+- [[FMVTargetEvaluatorData]] - `references` [EXTRACTED]
+- [[UScriptStruct]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/StateTree__

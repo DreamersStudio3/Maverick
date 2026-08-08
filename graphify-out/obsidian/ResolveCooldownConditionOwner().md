@@ -1,21 +1,21 @@
 ---
 source_file: "Source/Maverick/AI/Condition/MVActionCooldownReadyCondition.cpp"
 type: "code"
-community: "AI 쿨다운 준비 조건"
+community: "FMVActionCooldownReadyConditionInstanceData"
 location: "L9"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVActionCooldownReadyConditionInstanceData
 ---
 
 # ResolveCooldownConditionOwner()
 
 ## Connections
-- [[APawn_3]] - `references` [EXTRACTED]
+- [[APawn_7]] - `references` [EXTRACTED]
 - [[FStateTreeExecutionContext]] - `references` [EXTRACTED]
 - [[MVActionCooldownReadyCondition.cpp]] - `contains` [EXTRACTED]
-- [[TObjectPtr]] - `references` [EXTRACTED]
+- [[TObjectPtr_4]] - `references` [EXTRACTED]
 - [[TestCondition]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVActionCooldownReadyConditionInstanceData

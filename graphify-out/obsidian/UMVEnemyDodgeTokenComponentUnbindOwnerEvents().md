@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVEnemyDodgeTokenComponent.cpp"
 type: "code"
-community: "적 회피 토큰 지급"
+community: "MVEnemyDodgeTokenComponent.cpp"
 location: "L157"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVEnemyDodgeTokenComponentcpp
 ---
 
 # UMVEnemyDodgeTokenComponent::UnbindOwnerEvents()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[MVEnemyDodgeTokenComponent.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVEnemyDodgeTokenComponentcpp

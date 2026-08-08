@@ -1,46 +1,50 @@
 # FMVBackOffLaunchMontageTaskInstanceData
 
-> God node · 33 connections · `Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.h`
+> 57 nodes
 
-**Community:** [AI 후퇴 Launch 몽타주](AI_%ED%9B%84%ED%87%B4_Launch_%EB%AA%BD%ED%83%80%EC%A3%BC.md)
+## Key Concepts
 
-## Connections by Relation
+- **FMVBackOffLaunchMontageTaskInstanceData** (33 connections) — `Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.h`
+- **MVBackOffLaunchMontageTask.cpp** (11 connections) — `Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.cpp`
+- **EnterState** (11 connections) — `Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.h`
+- **MVBackOffLaunchMontageTask.h** (6 connections) — `Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.h`
+- **FMVBackOffLaunchMontageTask** (6 connections) — `Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.h`
+- **BackOffLaunchMontageResolveOwner()** (5 connections) — `Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.cpp`
+- **BackOffLaunchMontageResolveTarget()** (5 connections) — `Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.cpp`
+- **BackOffLaunchMontagePlay()** (5 connections) — `Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.cpp`
+- **BackOffLaunchMontageLaunch()** (5 connections) — `Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.cpp`
+- **FStateTreeExecutionContext** (4 connections)
+- **BackOffLaunchMontageBuildAwayDirection()** (4 connections) — `Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.cpp`
+- **BackOffLaunchMontageFaceTarget()** (4 connections) — `Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.cpp`
+- **BackOffLaunchMontageGetAnimInstance()** (4 connections) — `Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.cpp`
+- **Tick** (4 connections) — `Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.h`
+- **ExitState** (4 connections) — `Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.h`
+- **APawn** (3 connections)
+- **FVector** (3 connections)
+- **ACharacter** (3 connections)
+- **TObjectPtr** (2 connections)
+- **AActor** (2 connections)
+- **EStateTreeRunStatus** (2 connections)
+- **FStateTreeTransitionResult** (2 connections)
+- **AActor** (2 connections) — `Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.h`
+- **APawn** (2 connections) — `Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.h`
+- **UAnimInstance** (2 connections) — `Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.h`
+- *... and 32 more nodes in this community*
 
-### contains
-- MVBackOffLaunchMontageTask.h `EXTRACTED`
+## Relationships
 
-### defines
-- ActiveMontage `EXTRACTED`
-- AnimInstance `EXTRACTED`
-- bFaceTargetBeforePlay `EXTRACTED`
-- bLaunched `EXTRACTED`
-- bOverrideXYVelocity `EXTRACTED`
-- bOverrideZVelocity `EXTRACTED`
-- bStartedMontage `EXTRACTED`
-- bStopMontageOnExit `EXTRACTED`
-- bStopMovementBeforeLaunch `EXTRACTED`
-- bWaitForMontageEnd `EXTRACTED`
-- ElapsedTime `EXTRACTED`
-- ExitBlendOutTime `EXTRACTED`
-- LaunchDistance `EXTRACTED`
-- LaunchDuration `EXTRACTED`
-- LaunchVerticalSpeed `EXTRACTED`
-- MaxWaitTime `EXTRACTED`
-- Montage `EXTRACTED`
-- Owner `EXTRACTED`
-- PlayRate `EXTRACTED`
-- ResolvedOwner `EXTRACTED`
+- No strong cross-community connections detected
 
-### references
-- BackOffLaunchMontagePlay() `EXTRACTED`
-- BackOffLaunchMontageLaunch() `EXTRACTED`
-- AActor `EXTRACTED`
-- APawn `EXTRACTED`
-- UAnimInstance `EXTRACTED`
-- UAnimMontage `EXTRACTED`
-- FName `EXTRACTED`
-- TObjectPtr `EXTRACTED`
-- UPROPERTY `EXTRACTED`
+## Source Files
+
+- `Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.cpp`
+- `Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.h`
+
+## Audit Trail
+
+- EXTRACTED: 168 (100%)
+- INFERRED: 0 (0%)
+- AMBIGUOUS: 0 (0%)
 
 ---
 

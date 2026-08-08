@@ -1,21 +1,21 @@
 ---
 source_file: "Source/Maverick/AI/Task/MVAttackOpportunityTask.h"
 type: "code"
-community: "AI 공격 기회 판단"
+community: "FMVAttackOpportunityTaskInstanceData"
 location: "L50"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVAttackOpportunityTaskInstanceData
 ---
 
 # FMVAttackOpportunityTask
 
 ## Connections
-- [[dot-GetInstanceDataType()_6]] - `method` [EXTRACTED]
+- [[dot-GetInstanceDataType()_5]] - `method` [EXTRACTED]
 - [[EnterState]] - `defines` [EXTRACTED]
-- [[FStateTreeTaskCommonBase]] - `inherits` [EXTRACTED]
+- [[FStateTreeTaskCommonBase_5]] - `inherits` [EXTRACTED]
 - [[MVAttackOpportunityTask.h]] - `contains` [EXTRACTED]
 - [[Tick_1]] - `defines` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVAttackOpportunityTaskInstanceData

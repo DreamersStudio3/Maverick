@@ -1,12 +1,12 @@
 ---
 source_file: "MaverickDesign/CsvToJsonConverter/CsvToJsonConverter.py"
 type: "code"
-community: "Graphify 최신성 Guard"
+community: "knowledge_guard.py"
 location: "L41"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Graphify__Guard
+  - community/knowledge_guardpy
 ---
 
 # get_base_dir()
@@ -16,4 +16,4 @@ tags:
 - [[Path]] - `references` [EXTRACTED]
 - [[main()]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Graphify__Guard
+#graphify/code #graphify/EXTRACTED #community/knowledge_guardpy

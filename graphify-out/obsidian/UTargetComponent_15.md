@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetTypes.h"
 type: "code"
-community: "락온 핵심 타입과 핸들러"
+community: "LockOnTargetTypes.h"
 location: "L9"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/LockOnTargetTypesh
 ---
 
 # UTargetComponent
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[LockOnTargetTypes.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/LockOnTargetTypesh

@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/Window/MVDialogueWindow.cpp"
 type: "code"
-community: "대화 창 페이드"
+community: "MVDialogueWindow.cpp"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVDialogueWindowcpp
 ---
 
 # MVDialogueWindow.cpp
@@ -33,4 +33,4 @@ tags:
 - [[UMVDialogueWindowStartMinimumSkipDelayTimer()]] - `contains` [EXTRACTED]
 - [[UMVDialogueWindowUMVDialogueWindow()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVDialogueWindowcpp

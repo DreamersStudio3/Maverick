@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/AI/Task/MVEnemyDodgeActionTask.cpp"
 type: "code"
-community: "AI 적 회피 실행"
+community: "MVEnemyDodgeActionTask.cpp"
 location: "L175"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/MVEnemyDodgeActionTaskcpp
 ---
 
 # EnemyDodgeActionTaskIsStartedActionRunning()
@@ -17,4 +17,4 @@ tags:
 - [[MVEnemyDodgeActionTask.cpp]] - `contains` [EXTRACTED]
 - [[Tick_6]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/MVEnemyDodgeActionTaskcpp

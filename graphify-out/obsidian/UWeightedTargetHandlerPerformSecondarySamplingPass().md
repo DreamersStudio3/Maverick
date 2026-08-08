@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetHandlers/WeightedTargetHandler.cpp"
 type: "code"
-community: "가중 대상 탐색 컨텍스트"
+community: "WeightedTargetHandler.cpp"
 location: "L279"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/WeightedTargetHandlercpp
 ---
 
 # UWeightedTargetHandler::PerformSecondarySamplingPass()
@@ -17,7 +17,7 @@ tags:
 - [[FTargetContext_1]] - `references` [EXTRACTED]
 - [[GenerateDetailedResponse]] - `calls` [INFERRED]
 - [[ShouldSkipTargetSecondaryPass]] - `calls` [INFERRED]
-- [[TArray_1]] - `references` [EXTRACTED]
+- [[TArray_6]] - `references` [EXTRACTED]
 - [[WeightedTargetHandler.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/WeightedTargetHandlercpp

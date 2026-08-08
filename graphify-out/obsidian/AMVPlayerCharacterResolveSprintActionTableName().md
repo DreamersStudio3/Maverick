@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Character/PC/MVPlayerCharacter.cpp"
 type: "code"
-community: "플레이어 캐릭터 전력질주"
+community: "MVPlayerCharacter.cpp"
 location: "L275"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVPlayerCharactercpp
 ---
 
 # AMVPlayerCharacter::ResolveSprintActionTableName()
@@ -15,4 +15,4 @@ tags:
 - [[FName_33]] - `references` [EXTRACTED]
 - [[MVPlayerCharacter.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVPlayerCharactercpp

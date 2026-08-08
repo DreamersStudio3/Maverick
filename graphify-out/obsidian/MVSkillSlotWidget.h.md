@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/HUD/MVSkillSlotWidget.h"
 type: "code"
-community: "스킬 슬롯 위젯 구성"
+community: "MVSkillSlotWidget.h"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVSkillSlotWidgeth
 ---
 
 # MVSkillSlotWidget.h
@@ -20,4 +20,4 @@ tags:
 - [[UTextBlock_5]] - `contains` [EXTRACTED]
 - [[UTexture2D_3]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVSkillSlotWidgeth

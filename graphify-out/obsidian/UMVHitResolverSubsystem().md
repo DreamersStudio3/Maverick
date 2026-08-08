@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Combat/MVHitResolverSubsystem.h"
 type: "code"
-community: "피격 시스템 공용 타입"
+community: "MVHitTypes.h"
 location: "L24"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVHitTypesh
 ---
 
 # UMVHitResolverSubsystem()
@@ -16,4 +16,4 @@ tags:
 - [[PIEActionTestResolveAttackPower()]] - `references` [EXTRACTED]
 - [[UMVHitResolverSubsystemGet()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVHitTypesh

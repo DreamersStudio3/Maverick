@@ -1,21 +1,18 @@
 ---
 source_file: ""
 type: "code"
-community: "대화창 표시 대기열 수명주기"
+community: "FMVPopupMessageData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/FMVPopupMessageData
 ---
 
 # FText
 
 ## Connections
-- [[UMVUISubsystemOpenDialogueWindowText()]] - `references` [EXTRACTED]
-- [[UMVUISubsystemQueueDialogueWindowText()]] - `references` [EXTRACTED]
-- [[UMVUISubsystemShowDialogueWindowText()]] - `references` [EXTRACTED]
-- [[UMVUISubsystemShowDialogueWindowTextWithTiming()]] - `references` [EXTRACTED]
-- [[UMVUISubsystemShowInteractionPromptText()]] - `references` [EXTRACTED]
-- [[UMVUISubsystemShowPopupMessageText()]] - `references` [EXTRACTED]
+- [[FMVInteractionPromptData]] - `references` [EXTRACTED]
+- [[FMVMenuEntryData]] - `references` [EXTRACTED]
+- [[FMVPopupMessageData]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/FMVPopupMessageData

@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "상태 바 위젯"
+community: "MVStatusBarWidget.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVStatusBarWidgetcpp
 ---
 
 # FLinearColor
@@ -14,4 +14,4 @@ tags:
 - [[UMVStatusBarWidgetBuildNativeWidgetTree()]] - `calls` [EXTRACTED]
 - [[UMVStatusBarWidgetSetFillColor()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVStatusBarWidgetcpp

@@ -1,17 +1,17 @@
 ---
-source_file: "Source/Maverick/Components/MVHitReactionComponent.h"
+source_file: "Source/Maverick/AI/MVAICombatTypes.h"
 type: "code"
-community: "피격 리액션 액션 데이터"
-location: "L35"
+community: "MVAICombatTypes.h"
+location: "L129"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVAICombatTypesh
 ---
 
 # StartSection
 
 ## Connections
-- [[FMVHitReactionActionData]] - `defines` [EXTRACTED]
+- [[FMVAICombatResolvedAction]] - `defines` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVAICombatTypesh

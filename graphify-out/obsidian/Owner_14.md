@@ -1,17 +1,17 @@
 ---
-source_file: "Source/Maverick/Public/Interface/MVHitReactionRecoveryDecisionProvider.h"
+source_file: "Source/Maverick/AI/Task/MVGlobalSensingTask.h"
 type: "code"
-community: "피격 리액션 회복 결정"
-location: "L34"
+community: "FMVGlobalSensingTaskInstanceData"
+location: "L21"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/FMVGlobalSensingTaskInstanceData
 ---
 
 # Owner
 
 ## Connections
-- [[FMVHitReactionRecoveryDecisionContext]] - `defines` [EXTRACTED]
+- [[FMVGlobalSensingTaskInstanceData]] - `defines` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/FMVGlobalSensingTaskInstanceData

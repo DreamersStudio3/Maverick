@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "회복 스탯 일시정지 노티파이"
+community: "FindInvincibleCharacter"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/FindInvincibleCharacter
 ---
 
 # FString
 
 ## Connections
-- [[UMVAnimNotifyState_PauseRecoverableStatRecoveryGetNotifyName_Implementation()]] - `references` [EXTRACTED]
+- [[UMVAnimNotifyState_InvincibleGetNotifyName_Implementation()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/FindInvincibleCharacter

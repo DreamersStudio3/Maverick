@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp"
 type: "code"
-community: "JSON 테이블 생성·해시"
+community: "MVTableAssetGenerator.cpp"
 location: "L1303"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/JSON__
+  - community/MVTableAssetGeneratorcpp
 ---
 
 # UMVTableAssetGenerator::BuildAndSaveDataTable()
@@ -16,7 +16,7 @@ tags:
 - [[FJsonValue]] - `references` [EXTRACTED]
 - [[FMVSheetSpec_1]] - `references` [EXTRACTED]
 - [[FMVTableManifestRow]] - `references` [EXTRACTED]
-- [[FString_21]] - `references` [EXTRACTED]
+- [[FString_22]] - `references` [EXTRACTED]
 - [[FindExistingDataTable()]] - `calls` [EXTRACTED]
 - [[JsonObjectToCompactString()]] - `calls` [EXTRACTED]
 - [[JsonValueToGeneratorString()]] - `calls` [EXTRACTED]
@@ -30,4 +30,4 @@ tags:
 - [[ToTableAssetName()]] - `calls` [EXTRACTED]
 - [[ToTablePackagePath()]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/JSON__
+#graphify/code #graphify/EXTRACTED #community/MVTableAssetGeneratorcpp

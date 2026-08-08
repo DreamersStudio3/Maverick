@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/System/MVWorldStateSubsystem.cpp"
 type: "code"
-community: "월드 상태 저장 레코드"
+community: "MVWorldStateTypes.h"
 location: "L169"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVWorldStateTypesh
 ---
 
 # UMVWorldStateSubsystem::TryGetLastCheckpoint()
@@ -15,4 +15,4 @@ tags:
 - [[FMVCheckpointSaveData()]] - `references` [EXTRACTED]
 - [[MVWorldStateSubsystem.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVWorldStateTypesh

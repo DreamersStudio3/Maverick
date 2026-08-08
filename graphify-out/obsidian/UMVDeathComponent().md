@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVDeathComponent.h"
 type: "code"
-community: "피격 사망 전환 노티파이"
+community: "MVDeathComponent.h"
 location: "L85"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVDeathComponenth
 ---
 
 # UMVDeathComponent()
@@ -15,4 +15,4 @@ tags:
 - [[FindHitReactionDeathHandoffComponent()]] - `references` [EXTRACTED]
 - [[MVDeathComponent.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVDeathComponenth

@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetHandlers/WeightedTargetHandler.cpp"
 type: "code"
-community: "가중 대상 탐색 컨텍스트"
+community: "WeightedTargetHandler.cpp"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/WeightedTargetHandlercpp
 ---
 
 # WeightedTargetHandler.cpp
@@ -39,4 +39,4 @@ tags:
 - [[UWeightedTargetHandlerTryFindTarget()]] - `contains` [EXTRACTED]
 - [[UWeightedTargetHandlerUWeightedTargetHandler()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/WeightedTargetHandlercpp

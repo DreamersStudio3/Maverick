@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Public/Interface/MVActionInputHandlerInterface.h"
 type: "code"
-community: "액션 입력 처리 계약"
+community: "MVActionInputHandlerInterface.h"
 location: "L30"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVActionInputHandlerInterfaceh
 ---
 
 # IMVActionInputHandlerInterface()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[MVActionInputHandlerInterface.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVActionInputHandlerInterfaceh

@@ -1,25 +1,24 @@
 ---
-source_file: "Source/Maverick/AI/Task/MVHitReactionTask.h"
+source_file: "Source/Maverick/AI/Task/MVGlobalCoolTimeTask.h"
 type: "code"
-community: "AI 피격 반응 태스크"
-location: "L71"
+community: "FMVGlobalCoolTimeTaskInstanceData"
+location: "L57"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVGlobalCoolTimeTaskInstanceData
 ---
 
 # EnterState
 
 ## Connections
-- [[EStateTreeRunStatus_10]] - `references` [EXTRACTED]
-- [[FMVHitReactionTask]] - `defines` [EXTRACTED]
-- [[FStateTreeExecutionContext_16]] - `references` [EXTRACTED]
-- [[FStateTreeTransitionResult_10]] - `references` [EXTRACTED]
-- [[HitReactionTaskIsHitReactionActionTableName()]] - `calls` [EXTRACTED]
-- [[HitReactionTaskIsStateTreeHandledType()]] - `calls` [EXTRACTED]
-- [[HitReactionTaskLogTrace()]] - `calls` [EXTRACTED]
-- [[HitReactionTaskResolveOwner()]] - `calls` [EXTRACTED]
-- [[MVHitReactionTask.cpp]] - `contains` [EXTRACTED]
+- [[EStateTreeRunStatus_8]] - `references` [EXTRACTED]
+- [[EnsureCooldownComponent()]] - `calls` [EXTRACTED]
+- [[FMVGlobalCoolTimeTask]] - `defines` [EXTRACTED]
+- [[FStateTreeExecutionContext_14]] - `references` [EXTRACTED]
+- [[FStateTreeTransitionResult_8]] - `references` [EXTRACTED]
+- [[MVGlobalCoolTimeTask.cpp]] - `contains` [EXTRACTED]
+- [[ResolveCooldownOwner()]] - `calls` [EXTRACTED]
+- [[UpdateQueryOutputs()]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVGlobalCoolTimeTaskInstanceData

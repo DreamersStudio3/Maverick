@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/Popup/MVBossClearPopup.cpp"
 type: "code"
-community: "보스 클리어 팝업 초기화"
+community: "UMVBossClearPopup::UMVBossClearPopup"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/UMVBossClearPopupUMVBossClearPopup
 ---
 
 # MVBossClearPopup.cpp
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[UMVBossClearPopupUMVBossClearPopup()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/UMVBossClearPopupUMVBossClearPopup

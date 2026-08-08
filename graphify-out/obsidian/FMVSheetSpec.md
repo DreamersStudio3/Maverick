@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "시트 레시피 사양 로더"
+community: "MVSheetSpecs.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVSheetSpecscpp
 ---
 
 # FMVSheetSpec
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[FMVSheetSpecsFind()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVSheetSpecscpp

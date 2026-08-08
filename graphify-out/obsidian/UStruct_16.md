@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 피격 반응 태스크"
+community: "FMVEnemyDodgeActionTask"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVEnemyDodgeActionTask
 ---
 
 # UStruct
 
 ## Connections
-- [[dot-GetInstanceDataType()_17]] - `references` [EXTRACTED]
+- [[dot-GetInstanceDataType()_10]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVEnemyDodgeActionTask

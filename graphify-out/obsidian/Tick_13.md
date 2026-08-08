@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/AI/Task/MVStrafeMoveTask.h"
 type: "code"
-community: "AI 스트레이프 이동"
-location: "L74"
+community: "FMVStrafeMoveTaskInstanceData"
+location: "L79"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI__
+  - community/FMVStrafeMoveTaskInstanceData
 ---
 
 # Tick
@@ -20,4 +20,4 @@ tags:
 - [[MVStrafeMoveTaskBuildMoveDirection()]] - `calls` [EXTRACTED]
 - [[MVStrafeMoveTaskIsMoveDirectionBlocked()]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI__
+#graphify/code #graphify/EXTRACTED #community/FMVStrafeMoveTaskInstanceData

@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "락온 대상 포커스 설정"
+community: "ETargetFocusPointType"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/ETargetFocusPointType
 ---
 
 # FOnTargetComponentCaptured
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[ETargetFocusPointType]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/ETargetFocusPointType

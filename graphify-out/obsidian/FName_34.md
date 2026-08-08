@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "액션 Row 몽타주 해석"
+community: "MVActionComponent.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/_Row__
+  - community/MVActionComponentcpp
 ---
 
 # FName
@@ -23,4 +23,4 @@ tags:
 - [[UMVActionComponentTryTransitionActionFromRowHandle()]] - `references` [EXTRACTED]
 - [[UMVActionComponentTryTransitionActionFromTable()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/_Row__
+#graphify/code #graphify/EXTRACTED #community/MVActionComponentcpp

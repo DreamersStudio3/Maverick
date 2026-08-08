@@ -1,20 +1,20 @@
 ---
 source_file: "Source/Maverick/Components/MVCombatComponent.cpp"
 type: "code"
-community: "전투 액션 행 해석"
+community: "FDataTableRowHandle"
 location: "L1969"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/FDataTableRowHandle
 ---
 
 # UMVCombatComponent::ResolveHeavyChargeEarlyReleaseRow()
 
 ## Connections
-- [[FDataTableRowHandle_6]] - `references` [EXTRACTED]
+- [[FDataTableRowHandle_7]] - `references` [EXTRACTED]
 - [[FMVSkillEntry]] - `references` [EXTRACTED]
 - [[MVCombatComponent.cpp]] - `contains` [EXTRACTED]
-- [[int32_15]] - `references` [EXTRACTED]
+- [[int32_16]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/FDataTableRowHandle

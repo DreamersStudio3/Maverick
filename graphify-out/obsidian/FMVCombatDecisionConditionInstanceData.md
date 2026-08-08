@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/AI/Condition/MVCombatDecisionCondition.h"
 type: "code"
-community: "AI 전투 결정 설정"
+community: "FMVCombatDecisionConditionInstanceData"
 location: "L9"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVCombatDecisionConditionInstanceData
 ---
 
 # FMVCombatDecisionConditionInstanceData
@@ -14,7 +14,7 @@ tags:
 ## Connections
 - [[AirborneChargeAttack]] - `defines` [EXTRACTED]
 - [[BasicAttacks]] - `defines` [EXTRACTED]
-- [[CombatContext_1]] - `defines` [EXTRACTED]
+- [[CombatContext_3]] - `defines` [EXTRACTED]
 - [[CombatDecisionCanAttackImmediately()]] - `references` [EXTRACTED]
 - [[CombatMaxDistance]] - `defines` [EXTRACTED]
 - [[CounterAttack]] - `defines` [EXTRACTED]
@@ -26,6 +26,6 @@ tags:
 - [[SkillAttacks]] - `defines` [EXTRACTED]
 - [[SprintAttack]] - `defines` [EXTRACTED]
 - [[SprintMaxReach]] - `defines` [EXTRACTED]
-- [[TArray_5]] - `references` [EXTRACTED]
+- [[TArray]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVCombatDecisionConditionInstanceData

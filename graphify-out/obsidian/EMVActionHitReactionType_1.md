@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 피격 반응 태스크"
+community: "FMVHitReactionTaskInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVHitReactionTaskInstanceData
 ---
 
 # EMVActionHitReactionType
@@ -14,4 +14,4 @@ tags:
 - [[HitReactionTaskIsHitReactionActionTableName()]] - `references` [EXTRACTED]
 - [[HitReactionTaskIsStateTreeHandledType()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVHitReactionTaskInstanceData

@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "대상 컴포넌트 디테일 편집"
+community: "SSocketSelector"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/SSocketSelector
 ---
 
 # FText
 
 ## Connections
-- [[OnCommitAssociatedComponentNameText]] - `references` [EXTRACTED]
+- [[OnTextBoxCommitted]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/SSocketSelector

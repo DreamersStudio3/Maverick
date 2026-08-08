@@ -1,17 +1,17 @@
 ---
-source_file: "Source/Maverick/Character/MVCharacterBase.h"
+source_file: "Source/Maverick/Character/PC/Dodge/MVPlayerDodge.h"
 type: "code"
-community: "공통 캐릭터 이동 선언"
-location: "L18"
+community: "MVPlayerDodge.h"
+location: "L16"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVPlayerDodgeh
 ---
 
 # UMVActionComponent
 
 ## Connections
-- [[MVCharacterBase.h]] - `contains` [EXTRACTED]
+- [[MVPlayerDodge.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVPlayerDodgeh

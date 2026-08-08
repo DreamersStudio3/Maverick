@@ -1,20 +1,20 @@
 ---
 source_file: "Source/Maverick/AI/Condition/MVGroggyEnterCondition.h"
 type: "code"
-community: "AI 그로기 진입 조건"
+community: "GroggyEnterResolveOwner"
 location: "L9"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/GroggyEnterResolveOwner
 ---
 
 # FMVGroggyEnterConditionInstanceData
 
 ## Connections
-- [[APawn_6]] - `references` [EXTRACTED]
+- [[APawn_10]] - `references` [EXTRACTED]
 - [[MVGroggyEnterCondition.h]] - `contains` [EXTRACTED]
 - [[Owner_1]] - `defines` [EXTRACTED]
-- [[TObjectPtr_3]] - `references` [EXTRACTED]
+- [[TObjectPtr_7]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/GroggyEnterResolveOwner

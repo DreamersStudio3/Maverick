@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVInputManagerComponent.cpp"
 type: "code"
-community: "입력 차단 회복 취소"
+community: "MVInputManagerComponent.cpp"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVInputManagerComponentcpp
 ---
 
 # MVInputManagerComponent.cpp
@@ -51,4 +51,4 @@ tags:
 - [[UMVInputManagerComponentUnregisterActionInputHandler()]] - `contains` [EXTRACTED]
 - [[UMVInputManagerComponentUpdateActionMovementInput()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVInputManagerComponentcpp

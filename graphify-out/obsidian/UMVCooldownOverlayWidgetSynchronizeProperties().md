@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/HUD/MVCooldownOverlayWidget.cpp"
 type: "code"
-community: "스킬 쿨다운 오버레이"
+community: "SMVCooldownOverlay"
 location: "L181"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/SMVCooldownOverlay
 ---
 
 # UMVCooldownOverlayWidget::SynchronizeProperties()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[MVCooldownOverlayWidget.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/SMVCooldownOverlay

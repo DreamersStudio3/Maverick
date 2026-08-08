@@ -12,10 +12,10 @@ tags:
 # FMVEnemyCombatActionTask
 
 ## Connections
-- [[dot-GetInstanceDataType()_9]] - `method` [EXTRACTED]
+- [[dot-GetInstanceDataType()_8]] - `method` [EXTRACTED]
 - [[EnterState_3]] - `defines` [EXTRACTED]
 - [[ExitState_2]] - `defines` [EXTRACTED]
-- [[FStateTreeTaskCommonBase_3]] - `inherits` [EXTRACTED]
+- [[FStateTreeTaskCommonBase_8]] - `inherits` [EXTRACTED]
 - [[MVEnemyCombatActionTask.h]] - `contains` [EXTRACTED]
 - [[Tick_4]] - `defines` [EXTRACTED]
 

@@ -1,16 +1,17 @@
 ---
 source_file: ""
 type: "code"
-community: "사망 액션 행 이름 해석"
+community: "FMVCombatActionEvent"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/____
+  - community/FMVCombatActionEvent
 ---
 
 # FDataTableRowHandle
 
 ## Connections
-- [[UMVDeathComponentResolveDeathActionRowHandle()]] - `references` [EXTRACTED]
+- [[dot-GetCurrentActionRowHandle()]] - `references` [EXTRACTED]
+- [[FMVCombatHeavyChargeAttackRuntimeState]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/____
+#graphify/code #graphify/EXTRACTED #community/FMVCombatActionEvent

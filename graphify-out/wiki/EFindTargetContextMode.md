@@ -1,47 +1,52 @@
 # EFindTargetContextMode
 
-> God node · 59 connections · `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h`
+> 45 nodes
 
-**Community:** [가중 대상 탐색 알고리즘](%EA%B0%80%EC%A4%91_%EB%8C%80%EC%83%81_%ED%83%90%EC%83%89_%EC%95%8C%EA%B3%A0%EB%A6%AC%EC%A6%98.md)
+## Key Concepts
 
-## Connections by Relation
+- **EFindTargetContextMode** (59 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h`
+- **UWeightedTargetHandler::FindTargetBatched()** (6 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetHandlers/WeightedTargetHandler.cpp`
+- **UWeightedTargetHandler::ShouldSkipTargetSecondaryPass()** (6 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetHandlers/WeightedTargetHandler.cpp`
+- **LineOfSightTrace** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h`
+- **PerformPrimarySamplingPass** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h`
+- **PerformSolverPass** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h`
+- **PerformSecondarySamplingPass** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h`
+- **ShouldSkipTargetCustom** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h`
+- **IsTargetOnScreen** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h`
+- **uint8** (1 connections)
+- **UMETA** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h`
+- **USTRUCT** (1 connections)
+- **.FFindTargetContext()** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h`
+- **UWeightedTargetHandler** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h`
+- **AutoFindTargetFlags** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h`
+- **DistanceWeight** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h`
+- **DeltaAngleWeight** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h`
+- **PlayerInputWeight** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h`
+- **TargetPriorityWeight** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h`
+- **PureDefaultWeight** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h`
+- **DistanceMaxFactor** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h`
+- **DeltaAngleMaxFactor** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h`
+- **MinimumFactorThreshold** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h`
+- **bDistanceCheck** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h`
+- **ViewConeAngle** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h`
+- *... and 20 more nodes in this community*
 
-### contains
-- WeightedTargetHandler.h `EXTRACTED`
+## Relationships
 
-### defines
-- HandleTargetUnlock `EXTRACTED`
-- CreateFindTargetContext `EXTRACTED`
-- CreateTargetContext `EXTRACTED`
-- FindTargetBatched `EXTRACTED`
-- GetPointOfView `EXTRACTED`
-- GetTargetCaptureRadius `EXTRACTED`
-- LineOfSightTrace `EXTRACTED`
-- StopLineOfSightTimer `EXTRACTED`
-- CalcDeltaAngle2D `EXTRACTED`
-- CalculateTargetWeight `EXTRACTED`
-- GenerateDetailedResponse `EXTRACTED`
-- IsTargetOnScreen `EXTRACTED`
-- PerformPrimarySamplingPass `EXTRACTED`
-- PerformSecondarySamplingPass `EXTRACTED`
-- PerformSolverPass `EXTRACTED`
-- ShouldSkipTargetCustom `EXTRACTED`
-- ShouldSkipTargetPrimaryPass `EXTRACTED`
-- ShouldSkipTargetSecondaryPass `EXTRACTED`
-- StartLineOfSightTimer `EXTRACTED`
-- TryFindTarget `EXTRACTED`
+- [WeightedTargetHandler.cpp](WeightedTargetHandler.cpp.md) (17 shared connections)
+- [WeightedTargetHandler.h](WeightedTargetHandler.h.md) (4 shared connections)
+- [FFindTargetRequestResponse](FFindTargetRequestResponse.md) (3 shared connections)
 
-### method
-- .ShouldSkipTargetCustom_Implementation() `EXTRACTED`
-- .FFindTargetContext() `EXTRACTED`
+## Source Files
 
-### references
-- UWeightedTargetHandler::CreateFindTargetContext() `EXTRACTED`
-- ECollisionChannel `EXTRACTED`
-- FTimerHandle `EXTRACTED`
-- uint8 `EXTRACTED`
-- USTRUCT `EXTRACTED`
-- TEnumAsByte `EXTRACTED`
+- `Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetHandlers/WeightedTargetHandler.cpp`
+- `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h`
+
+## Audit Trail
+
+- EXTRACTED: 107 (89%)
+- INFERRED: 13 (11%)
+- AMBIGUOUS: 0 (0%)
 
 ---
 

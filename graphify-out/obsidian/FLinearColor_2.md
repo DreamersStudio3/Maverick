@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "로딩 창 구성과 진행률"
+community: "UMVLoadingWindow::BuildNativeWidgetTree"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/UMVLoadingWindowBuildNativeWidgetTree
 ---
 
 # FLinearColor
@@ -14,4 +14,4 @@ tags:
 - [[MVLoadingWindowMakeText()]] - `references` [EXTRACTED]
 - [[UMVLoadingWindowBuildNativeWidgetTree()]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/UMVLoadingWindowBuildNativeWidgetTree

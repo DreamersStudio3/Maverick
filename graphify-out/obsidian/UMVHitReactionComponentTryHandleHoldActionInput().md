@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVHitReactionComponent.cpp"
 type: "code"
-community: "피격 리액션 입력·행 해석"
+community: "FName"
 location: "L2151"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/FName
 ---
 
 # UMVHitReactionComponent::TryHandleHoldActionInput()
@@ -18,4 +18,4 @@ tags:
 - [[MVHitReactionComponent.cpp]] - `contains` [EXTRACTED]
 - [[MVHitReactionLogRecoveryTrace()]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/FName

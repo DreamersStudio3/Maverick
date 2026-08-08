@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/AI/Task/MVEnemyDeadTask.cpp"
 type: "code"
-community: "AI 적 사망 처리"
+community: "FMVEnemyDeadTaskInstanceData"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVEnemyDeadTaskInstanceData
 ---
 
 # MVEnemyDeadTask.cpp
@@ -24,4 +24,4 @@ tags:
 - [[FMVEnemyDeadTaskFMVEnemyDeadTask()]] - `contains` [EXTRACTED]
 - [[Tick_5]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVEnemyDeadTaskInstanceData

@@ -1,19 +1,19 @@
 ---
 source_file: "Source/Maverick/Components/MVDeathComponent.cpp"
 type: "code"
-community: "사망 액션 행 이름 해석"
+community: "EMVDeathActionPose"
 location: "L775"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/____
+  - community/EMVDeathActionPose
 ---
 
 # UMVDeathComponent::DeathActionFacingToTableToken()
 
 ## Connections
 - [[EMVDeathActionFacing]] - `references` [EXTRACTED]
-- [[FString_17]] - `references` [EXTRACTED]
+- [[FString_18]] - `references` [EXTRACTED]
 - [[MVDeathComponent.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/____
+#graphify/code #graphify/EXTRACTED #community/EMVDeathActionPose

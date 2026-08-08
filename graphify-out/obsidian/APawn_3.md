@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 쿨다운 준비 조건"
+community: "FMVGlobalSensingTaskInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVGlobalSensingTaskInstanceData
 ---
 
 # APawn
 
 ## Connections
-- [[ResolveCooldownConditionOwner()]] - `references` [EXTRACTED]
+- [[FMVGlobalSensingTaskInstanceData]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVGlobalSensingTaskInstanceData

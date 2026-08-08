@@ -1,0 +1,42 @@
+---
+type: community
+members: 13
+---
+
+# TargetComponent.h
+
+**Members:** 13 nodes
+
+## Members
+- [[dot-GetAssociatedComponent()]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h
+- [[dot-GetInvaders()]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h
+- [[TArray_7]] - code
+- [[TargetComponent.h]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h
+- [[TargetManager.h]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetManager.h
+- [[ULockOnTargetComponent_11]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h
+- [[USceneComponent_4]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h
+- [[UTargetComponent_16]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h
+- [[UTargetComponent_19]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetManager.h
+- [[UTargetManager]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h
+- [[UUserWidget_3]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h
+- [[UWorld_2]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetManager.h
+- [[UWorldSubsystem()]] - code - Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetManager.h
+
+## Live Query (requires Dataview plugin)
+
+```dataview
+TABLE source_file, type FROM #community/TargetComponenth
+SORT file.name ASC
+```
+
+## Connections to other communities
+- 7 edges to [[_COMMUNITY_ETargetFocusPointType]]
+- 1 edge to [[_COMMUNITY_WeightedTargetHandler.cpp]]
+- 1 edge to [[_COMMUNITY_LockOnTargetTypes.h]]
+
+## Top bridge nodes
+- [[TargetComponent.h]] - degree 7, connects to 2 communities
+- [[ULockOnTargetComponent_11]] - degree 3, connects to 1 community
+- [[USceneComponent_4]] - degree 3, connects to 1 community
+- [[UTargetManager]] - degree 3, connects to 1 community
+- [[dot-GetInvaders()]] - degree 3, connects to 1 community

@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/System/MVUISubsystem.cpp"
 type: "code"
-community: "로딩 가이드 카드"
+community: "FMVLoadingGuideCard"
 location: "L466"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/FMVLoadingGuideCard
 ---
 
 # UMVUISubsystem::ShowLoadingWindowForTest()
@@ -15,4 +15,4 @@ tags:
 - [[MVUISubsystem.cpp]] - `contains` [EXTRACTED]
 - [[UMVLoadingWindow()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/FMVLoadingGuideCard

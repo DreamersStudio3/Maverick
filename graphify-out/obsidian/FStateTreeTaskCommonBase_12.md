@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 스트레이프 이동"
+community: "FMVStartActionCooldownTaskInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI__
+  - community/FMVStartActionCooldownTaskInstanceData
 ---
 
 # FStateTreeTaskCommonBase
 
 ## Connections
-- [[FMVStrafeMoveTask]] - `inherits` [EXTRACTED]
+- [[FMVStartActionCooldownTask]] - `inherits` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI__
+#graphify/code #graphify/EXTRACTED #community/FMVStartActionCooldownTaskInstanceData

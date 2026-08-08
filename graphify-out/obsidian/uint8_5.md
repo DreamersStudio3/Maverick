@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "적 회피 토큰 상태"
+community: "EMVEnemyDodgeTokenGrantReason"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/EMVEnemyDodgeTokenGrantReason
 ---
 
 # uint8
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[EMVEnemyDodgeTokenGrantReason]] - `inherits` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/EMVEnemyDodgeTokenGrantReason

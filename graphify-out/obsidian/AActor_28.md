@@ -1,16 +1,19 @@
 ---
-source_file: ""
+source_file: "Source/Maverick/Components/MVStatComponent.h"
 type: "code"
-community: "몬스터 체력바 바인딩"
+community: "MVStatComponent.h"
+location: "L10"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVStatComponenth
 ---
 
 # AActor
 
 ## Connections
-- [[UMVMonsterHPBarWidgetBindToActor()]] - `references` [EXTRACTED]
+- [[FMVFocusingTaskInstanceData]] - `references` [EXTRACTED]
+- [[FMVGlobalSensingTaskInstanceData]] - `references` [EXTRACTED]
+- [[MVStatComponent.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVStatComponenth

@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 회피 위협 평가"
+community: "UMVDodgeThreatEvaluatorLibrary::EvaluateDodgeThreat"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/UMVDodgeThreatEvaluatorLibraryEvaluateDodgeThreat
 ---
 
 # FVector
@@ -14,4 +14,4 @@ tags:
 - [[MVDodgeThreatResolveEscapeDirection()]] - `references` [EXTRACTED]
 - [[MVDodgeThreatResolveSignedAngle()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/UMVDodgeThreatEvaluatorLibraryEvaluateDodgeThreat

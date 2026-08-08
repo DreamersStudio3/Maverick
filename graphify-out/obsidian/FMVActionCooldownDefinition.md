@@ -1,24 +1,24 @@
 ---
 source_file: "Source/Maverick/AI/MVActionCooldownComponent.h"
 type: "code"
-community: "AI 전역 쿨다운"
+community: "FMVGlobalCoolTimeTaskInstanceData"
 location: "L8"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI__
+  - community/FMVGlobalCoolTimeTaskInstanceData
 ---
 
 # FMVActionCooldownDefinition
 
 ## Connections
-- [[ActionId]] - `defines` [EXTRACTED]
-- [[CooldownDuration]] - `defines` [EXTRACTED]
+- [[ActionId_1]] - `defines` [EXTRACTED]
+- [[CooldownDuration_2]] - `defines` [EXTRACTED]
 - [[FMVGlobalCoolTimeTaskInstanceData]] - `references` [EXTRACTED]
 - [[FMVGlobalSensingTaskInstanceData]] - `references` [EXTRACTED]
-- [[FName_17]] - `references` [EXTRACTED]
+- [[FName_1]] - `references` [EXTRACTED]
 - [[MVActionCooldownComponent.h]] - `contains` [EXTRACTED]
 - [[UMVActionCooldownComponentConfigureCooldowns()]] - `references` [EXTRACTED]
 - [[bStartReady]] - `defines` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI__
+#graphify/code #graphify/EXTRACTED #community/FMVGlobalCoolTimeTaskInstanceData

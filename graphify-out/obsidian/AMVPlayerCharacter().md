@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Character/PC/MVPlayerCharacter.h"
 type: "code"
-community: "플레이어 캐릭터 기능 연결"
+community: "AMVPlayerCharacter"
 location: "L35"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/AMVPlayerCharacter
 ---
 
 # AMVPlayerCharacter()
@@ -19,4 +19,4 @@ tags:
 - [[UMVPlayerInteractionDetectorGetPlayerCharacter()]] - `references` [EXTRACTED]
 - [[UMVPlayerInteractionDetectorInitialize()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/AMVPlayerCharacter

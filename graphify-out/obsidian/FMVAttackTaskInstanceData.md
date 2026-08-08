@@ -1,28 +1,28 @@
 ---
 source_file: "Source/Maverick/AI/Task/MVAttackTask.h"
 type: "code"
-community: "AI 기본 공격 태스크"
+community: "FMVAttackTaskInstanceData"
 location: "L12"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVAttackTaskInstanceData
 ---
 
 # FMVAttackTaskInstanceData
 
 ## Connections
 - [[AMVEnemy]] - `references` [EXTRACTED]
-- [[APawn_10]] - `references` [EXTRACTED]
+- [[APawn_14]] - `references` [EXTRACTED]
 - [[AttackDirection]] - `defines` [EXTRACTED]
 - [[AttackInstanceId]] - `defines` [EXTRACTED]
 - [[AttackMontageEndedHandle]] - `defines` [EXTRACTED]
-- [[EMVAttackDirection]] - `references` [EXTRACTED]
+- [[EMVAttackDirection_2]] - `references` [EXTRACTED]
 - [[Enemy]] - `defines` [EXTRACTED]
-- [[FDelegateHandle]] - `references` [EXTRACTED]
+- [[FDelegateHandle_1]] - `references` [EXTRACTED]
 - [[MVAttackTask.h]] - `contains` [EXTRACTED]
 - [[Pawn]] - `defines` [EXTRACTED]
-- [[TObjectPtr_7]] - `references` [EXTRACTED]
-- [[int32_3]] - `references` [EXTRACTED]
+- [[TObjectPtr_11]] - `references` [EXTRACTED]
+- [[int32_6]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVAttackTaskInstanceData

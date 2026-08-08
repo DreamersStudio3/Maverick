@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 적 회피 설정"
+community: "FMVEnemyDodgeActionTaskInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVEnemyDodgeActionTaskInstanceData
 ---
 
 # EMVActionInputDirection
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[FMVEnemyDodgeActionTaskInstanceData]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVEnemyDodgeActionTaskInstanceData

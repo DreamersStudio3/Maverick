@@ -1,17 +1,19 @@
 ---
-source_file: "Source/Maverick/Public/Struct/MVAIDodgeTypes.h"
+source_file: ""
 type: "code"
-community: "AI 회피 방향 결정"
-location: "L8"
+community: "MVDeathRespawnFlow.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/MVDeathRespawnFlowcpp
 ---
 
 # AActor
 
 ## Connections
-- [[MVAIDodgeTypes.h]] - `contains` [EXTRACTED]
+- [[UMVDeathRespawnFlowBeginDeathSequence()]] - `references` [EXTRACTED]
+- [[UMVDeathRespawnFlowHandlePlayerDeathOverlayRequested()]] - `references` [EXTRACTED]
+- [[UMVDeathRespawnFlowHandlePlayerDeathPresentationFinished()]] - `references` [EXTRACTED]
+- [[UMVDeathRespawnFlowHandlePlayerDeathPresentationStarted()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/MVDeathRespawnFlowcpp

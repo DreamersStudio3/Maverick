@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Character/MVCharacterBase.cpp"
 type: "code"
-community: "캐릭터 인덱스 코드 관리"
+community: "AMVCharacterBase::GetCharacterIndexCode"
 location: "L202"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/AMVCharacterBaseGetCharacterIndexCode
 ---
 
 # AMVCharacterBase::GetCharacterIndexCode()
@@ -15,4 +15,4 @@ tags:
 - [[FGameplayTag_1]] - `references` [EXTRACTED]
 - [[MVCharacterBase.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/AMVCharacterBaseGetCharacterIndexCode

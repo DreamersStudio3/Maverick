@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 쿨다운 준비 조건"
+community: "FMVFocusingTaskInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVFocusingTaskInstanceData
 ---
 
 # TObjectPtr
 
 ## Connections
-- [[FMVActionCooldownReadyConditionInstanceData]] - `references` [EXTRACTED]
+- [[FMVFocusingTaskInstanceData]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVFocusingTaskInstanceData

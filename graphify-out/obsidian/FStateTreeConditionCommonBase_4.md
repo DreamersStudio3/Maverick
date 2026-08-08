@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 피격 진입 조건"
+community: "GroggyEnterResolveOwner"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/GroggyEnterResolveOwner
 ---
 
 # FStateTreeConditionCommonBase
 
 ## Connections
-- [[FMVHitReactionEnterCondition]] - `inherits` [EXTRACTED]
+- [[FMVGroggyEnterCondition]] - `inherits` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/GroggyEnterResolveOwner

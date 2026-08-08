@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/HUD/MVMainHUDWidget.cpp"
 type: "code"
-community: "메인 HUD 위젯 구성"
+community: "MVMainHUDWidget.h"
 location: "L88"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/_HUD__
+  - community/MVMainHUDWidgeth
 ---
 
 # UMVMainHUDWidget::BuildNativeWidgetTree()
@@ -17,4 +17,4 @@ tags:
 - [[UMVPlayerStatusWidget]] - `references` [EXTRACTED]
 - [[UMVQuickSlotWidget]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/_HUD__
+#graphify/code #graphify/EXTRACTED #community/MVMainHUDWidgeth

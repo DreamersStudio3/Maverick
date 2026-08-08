@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/LockOnComponentDetails.h"
 type: "code"
-community: "LockOnTarget 컴포넌트 상세 패널"
+community: "FLockOnComponentDetails"
 location: "L7"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/LockOnTarget___
+  - community/FLockOnComponentDetails
 ---
 
 # FLockOnComponentDetails
@@ -18,4 +18,4 @@ tags:
 - [[MakeInstance]] - `defines` [EXTRACTED]
 - [[OnInitialSetupNavigate]] - `defines` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/LockOnTarget___
+#graphify/code #graphify/EXTRACTED #community/FLockOnComponentDetails

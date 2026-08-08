@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 전투 진입 조건"
+community: "FMVCombatActionEnterConditionInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVCombatActionEnterConditionInstanceData
 ---
 
 # EMVCombatContextEnterMode
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[FMVCombatActionEnterConditionInstanceData]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVCombatActionEnterConditionInstanceData

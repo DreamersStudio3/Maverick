@@ -1,17 +1,17 @@
 ---
 source_file: "Source/Maverick/UI/Window/MVEscapeWindow.h"
 type: "code"
-community: "MVEscapeWindow 클래스 선언"
+community: "MVEscapeWindow.h"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVEscapeWindow__
+  - community/MVEscapeWindowh
 ---
 
 # MVEscapeWindow.h
 
 ## Connections
-- [[MAVERICK_API_15]] - `contains` [EXTRACTED]
+- [[MAVERICK_API_14]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/MVEscapeWindow__
+#graphify/code #graphify/EXTRACTED #community/MVEscapeWindowh

@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVHitReactionComponent.cpp"
 type: "code"
-community: "피격 회복 방향 추적"
+community: "MVHitReactionLogRecoveryTrace"
 location: "L2190"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVHitReactionLogRecoveryTrace
 ---
 
 # UMVHitReactionComponent::TryHandleRecoveryWindowOpened()
@@ -15,4 +15,4 @@ tags:
 - [[MVHitReactionComponent.cpp]] - `contains` [EXTRACTED]
 - [[MVHitReactionLogRecoveryTrace()]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVHitReactionLogRecoveryTrace

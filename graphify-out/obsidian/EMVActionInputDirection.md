@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 회피 방향 결정"
+community: "UMVEnemyDodgeTokenComponent::TryConsumeDodgeTokenForThreat"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/UMVEnemyDodgeTokenComponentTryConsumeDodgeTokenForThreat
 ---
 
 # EMVActionInputDirection
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[EnemyDodgeActionTaskResolveDirection()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/UMVEnemyDodgeTokenComponentTryConsumeDodgeTokenForThreat

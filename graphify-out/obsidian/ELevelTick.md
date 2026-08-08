@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "락온 대상 컴포넌트"
+community: "LockOnTargetComponent.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/LockOnTargetComponentcpp
 ---
 
 # ELevelTick
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[ULockOnTargetComponentTickComponent()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/LockOnTargetComponentcpp

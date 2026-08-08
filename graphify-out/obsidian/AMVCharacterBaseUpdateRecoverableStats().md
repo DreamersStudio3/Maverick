@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Character/MVCharacterBase.cpp"
 type: "code"
-community: "공통 캐릭터 동작"
+community: "MVCharacterBase.cpp"
 location: "L478"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVCharacterBasecpp
 ---
 
 # AMVCharacterBase::UpdateRecoverableStats()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[MVCharacterBase.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVCharacterBasecpp

@@ -21,7 +21,7 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 1 edge to [[_COMMUNITY_피격 반응 상태 관리]]
+- 1 edge to [[_COMMUNITY_MVHitReactionComponent.cpp]]
 
 ## Top bridge nodes
 - [[UMVHitReactionComponentHandleOwnerMovementModeChanged()]] - degree 4, connects to 1 community

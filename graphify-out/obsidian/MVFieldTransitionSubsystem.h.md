@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/System/MVFieldTransitionSubsystem.h"
 type: "code"
-community: "필드 전환 서브시스템 계약"
+community: "MVFieldTransitionSubsystem.h"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVFieldTransitionSubsystemh
 ---
 
 # MVFieldTransitionSubsystem.h
@@ -14,11 +14,11 @@ tags:
 ## Connections
 - [[AMVCharacterBase_10]] - `contains` [EXTRACTED]
 - [[FMVFieldTransitionRequest()]] - `contains` [EXTRACTED]
-- [[UMVActionComponent_8]] - `contains` [EXTRACTED]
+- [[UMVActionComponent_7]] - `contains` [EXTRACTED]
 - [[UMVDeathRespawnFlow]] - `contains` [EXTRACTED]
 - [[UMVFieldTransitionSubsystem()]] - `contains` [EXTRACTED]
 - [[UMVLoadingWindow]] - `contains` [EXTRACTED]
 - [[UMVUISubsystem_3]] - `contains` [EXTRACTED]
-- [[UMVWorldStateSubsystem_1]] - `contains` [EXTRACTED]
+- [[UMVWorldStateSubsystem]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVFieldTransitionSubsystemh

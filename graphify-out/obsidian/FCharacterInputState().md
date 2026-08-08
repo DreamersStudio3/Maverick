@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Public/Struct/CharacterLocomotionStructs.h"
 type: "code"
-community: "공통 캐릭터 이동 선언"
+community: "MVCharacterBase.h"
 location: "L6"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVCharacterBaseh
 ---
 
 # FCharacterInputState()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[CharacterLocomotionStructs.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVCharacterBaseh

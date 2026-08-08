@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "상태 바 위젯"
+community: "MVSkillSlotWidget.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVSkillSlotWidgetcpp
 ---
 
 # FText
 
 ## Connections
-- [[UMVStatusBarWidgetSetLabel()]] - `references` [EXTRACTED]
+- [[UMVSkillSlotWidgetSetHotKeyText()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVSkillSlotWidgetcpp

@@ -1,17 +1,17 @@
 ---
-source_file: "Source/Maverick/AI/MVAICombatTypes.h"
+source_file: "Source/Maverick/Components/MVFinisherComponent.h"
 type: "code"
-community: "AI 전투 액션 메타데이터"
-location: "L50"
+community: "FMVFinisherChooserInput"
+location: "L34"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVFinisherChooserInput
 ---
 
 # .Reset()
 
 ## Connections
-- [[FMVAttackActionRowHandle]] - `method` [EXTRACTED]
+- [[FMVFinisherChooserInput]] - `method` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVFinisherChooserInput

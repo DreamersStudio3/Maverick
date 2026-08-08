@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Maverick.Build.cs"
 type: "code"
-community: "모듈 빌드 의존성"
+community: "ModuleRules"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/ModuleRules
 ---
 
 # Maverick.Build.cs
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[Maverick]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/ModuleRules

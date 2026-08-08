@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "회피 입력 방향 구성"
+community: "FVector"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/FVector
 ---
 
 # FRotator
@@ -19,4 +19,4 @@ tags:
 - [[ResolveDirectionVectorFromReferenceRotation()]] - `references` [EXTRACTED]
 - [[ResolveStrafeReferenceRotation()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/FVector

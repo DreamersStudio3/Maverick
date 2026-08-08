@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "스킬 트리 UI 탐색"
+community: "UWidget"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__UI_
+  - community/UWidget
 ---
 
 # EUINavigation
@@ -14,4 +14,4 @@ tags:
 - [[UMVUINavigationLibrarySetExplicitNavigation()]] - `references` [EXTRACTED]
 - [[UMVUINavigationLibrarySetNavigationStop()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__UI_
+#graphify/code #graphify/EXTRACTED #community/UWidget

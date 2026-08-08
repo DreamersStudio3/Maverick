@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetHandlers/WeightedTargetHandler.cpp"
 type: "code"
-community: "가중치 기반 타깃 선택"
+community: "FFindTargetRequestResponse"
 location: "L47"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/FFindTargetRequestResponse
 ---
 
 # UWeightedTargetHandler::FindTarget_Implementation()
@@ -18,4 +18,4 @@ tags:
 - [[FindTargetBatched]] - `calls` [INFERRED]
 - [[WeightedTargetHandler.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/FFindTargetRequestResponse

@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "테이블 시트 사양"
+community: "FMVSheetSpec"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/FMVSheetSpec
 ---
 
 # UScriptStruct
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[FMVSheetSpec_2]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/FMVSheetSpec

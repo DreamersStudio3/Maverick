@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 적 회피 설정"
+community: "MVEnemyDodgeActionTask.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/MVEnemyDodgeActionTaskcpp
 ---
 
 # FDataTableRowHandle
 
 ## Connections
-- [[FMVEnemyDodgeActionTaskInstanceData]] - `references` [EXTRACTED]
+- [[EnemyDodgeActionTaskFindActionRow()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/MVEnemyDodgeActionTaskcpp

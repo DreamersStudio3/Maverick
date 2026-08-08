@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 전역 감지 설정"
+community: "FMVAttackTaskInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVAttackTaskInstanceData
 ---
 
 # EMVAttackDirection
 
 ## Connections
-- [[FMVGlobalSensingTaskInstanceData]] - `references` [EXTRACTED]
+- [[FMVAttackTaskInstanceData]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVAttackTaskInstanceData

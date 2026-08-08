@@ -1,19 +1,19 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetComponent.cpp"
 type: "code"
-community: "LockOnTarget 포커스 지점 해석"
+community: "UTargetComponent::GetFocusPointLocation"
 location: "L140"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/LockOnTarget___
+  - community/UTargetComponentGetFocusPointLocation
 ---
 
 # UTargetComponent::GetSocketLocation()
 
 ## Connections
-- [[FName_9]] - `references` [EXTRACTED]
+- [[FName_14]] - `references` [EXTRACTED]
 - [[FVector_3]] - `references` [EXTRACTED]
 - [[TargetComponent.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/LockOnTarget___
+#graphify/code #graphify/EXTRACTED #community/UTargetComponentGetFocusPointLocation

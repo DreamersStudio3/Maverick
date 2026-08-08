@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Public/Tables/MVHitReactionActionTableTypes.h"
 type: "code"
-community: "피격 반응 행 조회"
+community: "MVHitReactionComponent.h"
 location: "L24"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVHitReactionComponenth
 ---
 
 # FMVHitReactionActionRowHandle()
@@ -18,4 +18,4 @@ tags:
 - [[UMVHitReactionComponentMakeHitReactionActionRowHandleFromNames()]] - `references` [EXTRACTED]
 - [[UMVHitReactionComponentResolveHitReactionActionRowHandle()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVHitReactionComponenth

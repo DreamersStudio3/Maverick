@@ -1,17 +1,22 @@
 ---
 source_file: ""
 type: "code"
-community: "캐릭터 스탯 관리"
+community: "MVHitReactionLogRecoveryTrace"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVHitReactionLogRecoveryTrace
 ---
 
 # FString
 
 ## Connections
-- [[UMVStatComponentMakeStatRowKey()]] - `references` [EXTRACTED]
-- [[UMVStatComponentSetStatTableReference()]] - `references` [EXTRACTED]
+- [[MVHitReactionBuildAvailableRowNameLog()]] - `references` [EXTRACTED]
+- [[MVHitReactionRecoveryDirectionToken()]] - `references` [EXTRACTED]
+- [[MVHitReactionRecoveryInputDirectionToken()]] - `references` [EXTRACTED]
+- [[UMVHitReactionComponentActionInputDirectionToTableToken()]] - `references` [EXTRACTED]
+- [[UMVHitReactionComponentCharacterIndexCodeToTableToken()]] - `references` [EXTRACTED]
+- [[UMVHitReactionComponentHitReactionDirectionToTableToken()]] - `references` [EXTRACTED]
+- [[UMVHitReactionComponentHitReactionTypeToTableToken()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVHitReactionLogRecoveryTrace

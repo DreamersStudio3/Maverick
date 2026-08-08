@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Private/AI/MVDodgeThreatEvaluatorLibrary.cpp"
 type: "code"
-community: "AI 회피 위협 평가"
+community: "UMVDodgeThreatEvaluatorLibrary::EvaluateDodgeThreat"
 location: "L65"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/UMVDodgeThreatEvaluatorLibraryEvaluateDodgeThreat
 ---
 
 # MVDodgeThreatResolveActionTag()
@@ -17,4 +17,4 @@ tags:
 - [[MVDodgeThreatEvaluatorLibrary.cpp]] - `contains` [EXTRACTED]
 - [[UMVDodgeThreatEvaluatorLibraryEvaluateDodgeThreat()]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/UMVDodgeThreatEvaluatorLibraryEvaluateDodgeThreat

@@ -1,0 +1,26 @@
+# MVFinisherTargetDataInterface.h
+
+> 2 nodes
+
+## Key Concepts
+
+- **MVFinisherTargetDataInterface.h** (1 connections) — `Source/Maverick/Public/Interface/MVFinisherTargetDataInterface.h`
+- **IMVFinisherTargetDataInterface()** (1 connections) — `Source/Maverick/Public/Interface/MVFinisherTargetDataInterface.h`
+
+## Relationships
+
+- No strong cross-community connections detected
+
+## Source Files
+
+- `Source/Maverick/Public/Interface/MVFinisherTargetDataInterface.h`
+
+## Audit Trail
+
+- EXTRACTED: 2 (100%)
+- INFERRED: 0 (0%)
+- AMBIGUOUS: 0 (0%)
+
+---
+
+*Part of the graphify knowledge wiki. See [index](index.md) to navigate.*

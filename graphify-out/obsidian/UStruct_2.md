@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 전투 진입 조건"
+community: "FMVFocusingTask"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVFocusingTask
 ---
 
 # UStruct
 
 ## Connections
-- [[dot-GetInstanceDataType()_1]] - `references` [EXTRACTED]
+- [[dot-GetInstanceDataType()_16]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVFocusingTask

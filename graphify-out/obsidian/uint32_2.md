@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "스킬 데이터와 비용"
+community: "FMVSkillDataTableColumn"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/FMVSkillDataTableColumn
 ---
 
 # uint32
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[FMVSkillDataTableColumn]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/FMVSkillDataTableColumn

@@ -1,0 +1,27 @@
+# MVInteractableInterface.h
+
+> 3 nodes
+
+## Key Concepts
+
+- **MVInteractableInterface.h** (2 connections) — `Source/Maverick/Interaction/MVInteractableInterface.h`
+- **MAVERICK_API** (1 connections) — `Source/Maverick/Interaction/MVInteractableInterface.h`
+- **IMVInteractableInterface()** (1 connections) — `Source/Maverick/Interaction/MVInteractableInterface.h`
+
+## Relationships
+
+- No strong cross-community connections detected
+
+## Source Files
+
+- `Source/Maverick/Interaction/MVInteractableInterface.h`
+
+## Audit Trail
+
+- EXTRACTED: 4 (100%)
+- INFERRED: 0 (0%)
+- AMBIGUOUS: 0 (0%)
+
+---
+
+*Part of the graphify knowledge wiki. See [index](index.md) to navigate.*

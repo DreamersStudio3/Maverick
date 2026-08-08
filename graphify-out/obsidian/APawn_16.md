@@ -1,16 +1,18 @@
 ---
-source_file: ""
+source_file: "Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.h"
 type: "code"
-community: "AI 적 사망 처리"
+community: "FMVBackOffLaunchMontageTaskInstanceData"
+location: "L8"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVBackOffLaunchMontageTaskInstanceData
 ---
 
 # APawn
 
 ## Connections
-- [[FMVEnemyDeadTaskInstanceData]] - `references` [EXTRACTED]
+- [[FMVBackOffLaunchMontageTaskInstanceData]] - `references` [EXTRACTED]
+- [[MVBackOffLaunchMontageTask.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVBackOffLaunchMontageTaskInstanceData

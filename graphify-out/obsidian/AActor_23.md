@@ -1,18 +1,18 @@
 ---
-source_file: ""
+source_file: "Source/Maverick/Public/Interface/MVHitReactionRecoveryDecisionProvider.h"
 type: "code"
-community: "AI 회피 위협 평가"
+community: "피격 리액션 회복 결정"
+location: "L9"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/___
 ---
 
 # AActor
 
 ## Connections
-- [[MVDodgeThreatResolveEscapeDirection()]] - `references` [EXTRACTED]
-- [[MVDodgeThreatResolveSignedAngle()]] - `references` [EXTRACTED]
-- [[UMVDodgeThreatEvaluatorLibraryEvaluateDodgeThreat()]] - `references` [EXTRACTED]
+- [[FMVHitReactionRecoveryDecisionContext]] - `references` [EXTRACTED]
+- [[MVHitReactionRecoveryDecisionProvider.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/___

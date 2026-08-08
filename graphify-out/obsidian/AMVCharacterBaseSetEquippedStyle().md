@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Character/MVCharacterBase.cpp"
 type: "code"
-community: "장착 스타일 상태 관리"
+community: "AMVCharacterBase::GetEquippedStyle"
 location: "L276"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/AMVCharacterBaseGetEquippedStyle
 ---
 
 # AMVCharacterBase::SetEquippedStyle()
@@ -15,4 +15,4 @@ tags:
 - [[EMVEquippedStyle]] - `references` [EXTRACTED]
 - [[MVCharacterBase.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/AMVCharacterBaseGetEquippedStyle

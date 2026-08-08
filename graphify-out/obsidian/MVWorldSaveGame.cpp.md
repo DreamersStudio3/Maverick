@@ -1,14 +1,14 @@
 ---
 source_file: "Source/Maverick/System/MVWorldSaveGame.cpp"
 type: "code"
-community: "월드 저장 구현 파일"
+community: "MVWorldSaveGame.cpp"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVWorldSaveGamecpp
 ---
 
 # MVWorldSaveGame.cpp
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVWorldSaveGamecpp

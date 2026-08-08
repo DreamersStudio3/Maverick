@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Public/Struct/MVHealingPotionTypes.h"
 type: "code"
-community: "회복 물약 런타임 상태"
+community: "MVPlayerConsumable.h"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVPlayerConsumableh
 ---
 
 # MVHealingPotionTypes.h
@@ -16,4 +16,4 @@ tags:
 - [[MVMainHUDWidget.h]] - `imports` [EXTRACTED]
 - [[MVPlayerConsumable.h]] - `imports` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVPlayerConsumableh

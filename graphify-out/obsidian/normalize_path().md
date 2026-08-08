@@ -1,12 +1,12 @@
 ---
 source_file: "Scripts/Graphify/knowledge_guard.py"
 type: "code"
-community: "Graphify 최신성 Guard"
+community: "knowledge_guard.py"
 location: "L96"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Graphify__Guard
+  - community/knowledge_guardpy
 ---
 
 # normalize_path()
@@ -24,4 +24,4 @@ tags:
 - [[validate_artifacts()]] - `calls` [EXTRACTED]
 - [[validate_manifest()]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Graphify__Guard
+#graphify/code #graphify/EXTRACTED #community/knowledge_guardpy

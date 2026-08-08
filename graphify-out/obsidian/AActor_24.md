@@ -1,18 +1,17 @@
 ---
-source_file: "Source/Maverick/Public/Interface/MVHitReactionRecoveryDecisionProvider.h"
+source_file: "Source/Maverick/Public/Struct/MVAIDodgeTypes.h"
 type: "code"
-community: "피격 리액션 회복 결정"
-location: "L9"
+community: "FMVEnemyDodgeActionTask"
+location: "L8"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/FMVEnemyDodgeActionTask
 ---
 
 # AActor
 
 ## Connections
-- [[FMVHitReactionRecoveryDecisionContext]] - `references` [EXTRACTED]
-- [[MVHitReactionRecoveryDecisionProvider.h]] - `contains` [EXTRACTED]
+- [[MVAIDodgeTypes.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/FMVEnemyDodgeActionTask

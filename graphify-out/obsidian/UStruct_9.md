@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 적 전투 액션"
+community: "GroggyEnterResolveOwner"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/GroggyEnterResolveOwner
 ---
 
 # UStruct
 
 ## Connections
-- [[dot-GetInstanceDataType()_9]] - `references` [EXTRACTED]
+- [[dot-GetInstanceDataType()_2]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/GroggyEnterResolveOwner

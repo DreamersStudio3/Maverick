@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/AI/Condition/MVCombatDecisionCondition.h"
 type: "code"
-community: "AI 전투 결정 설정"
+community: "FMVCombatDecisionConditionInstanceData"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVCombatDecisionConditionInstanceData
 ---
 
 # MVCombatDecisionCondition.h
@@ -16,4 +16,4 @@ tags:
 - [[FMVCombatDecisionConditionInstanceData]] - `contains` [EXTRACTED]
 - [[MVAICombatTypes.h]] - `imports` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVCombatDecisionConditionInstanceData

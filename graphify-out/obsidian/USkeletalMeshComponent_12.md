@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "적 무기 장착 구성"
+community: "MVEnemyWeapon.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVEnemyWeaponcpp
 ---
 
 # USkeletalMeshComponent
@@ -14,4 +14,4 @@ tags:
 - [[AMVEnemyWeaponAttachCombinedToHand()]] - `references` [EXTRACTED]
 - [[AMVEnemyWeaponAttachDualToHands()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVEnemyWeaponcpp

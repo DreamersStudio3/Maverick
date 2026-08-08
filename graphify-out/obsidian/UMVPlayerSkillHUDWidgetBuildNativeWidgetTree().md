@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/HUD/MVPlayerSkillHUDWidget.cpp"
 type: "code"
-community: "플레이어 스킬 HUD 구성"
+community: "MVPlayerSkillHUDWidget.h"
 location: "L82"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__HUD_
+  - community/MVPlayerSkillHUDWidgeth
 ---
 
 # UMVPlayerSkillHUDWidget::BuildNativeWidgetTree()
@@ -16,4 +16,4 @@ tags:
 - [[MVPlayerSkillHUDWidget.cpp]] - `contains` [EXTRACTED]
 - [[UMVSkillSlotWidget]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__HUD_
+#graphify/code #graphify/EXTRACTED #community/MVPlayerSkillHUDWidgeth

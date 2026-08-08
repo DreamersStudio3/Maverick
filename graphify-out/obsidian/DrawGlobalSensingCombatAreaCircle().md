@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/AI/Task/MVGlobalSensingTask.cpp"
 type: "code"
-community: "전역 센싱 전투영역 디버그"
+community: "DrawGlobalSensingCombatAreaDebug"
 location: "L31"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/DrawGlobalSensingCombatAreaDebug
 ---
 
 # DrawGlobalSensingCombatAreaCircle()
@@ -18,4 +18,4 @@ tags:
 - [[MVGlobalSensingTask.cpp]] - `contains` [EXTRACTED]
 - [[UWorld_3]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/DrawGlobalSensingCombatAreaDebug

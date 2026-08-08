@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "캐릭터 입력 컴포넌트 설정"
+community: "AMVCharacterBase::SetupPlayerInputComponent"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/AMVCharacterBaseSetupPlayerInputComponent
 ---
 
 # UInputComponent
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[AMVCharacterBaseSetupPlayerInputComponent()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/AMVCharacterBaseSetupPlayerInputComponent

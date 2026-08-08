@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetTypes.h"
 type: "code"
-community: "락온 대상 예외 처리"
+community: "WeightedTargetHandler.h"
 location: "L82"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/WeightedTargetHandlerh
 ---
 
 # ETargetExceptionType
@@ -22,4 +22,4 @@ tags:
 - [[UWeightedTargetHandlerHandleTargetException_Implementation()]] - `references` [EXTRACTED]
 - [[uint8_1]] - `inherits` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/WeightedTargetHandlerh

@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Public/Tables/MVItemTableTypes.h"
 type: "code"
-community: "무기 장착 시각화"
+community: "MVWeaponComponent.cpp"
 location: "L17"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVWeaponComponentcpp
 ---
 
 # FMVItemTableRow()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[MVItemTableTypes.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVWeaponComponentcpp

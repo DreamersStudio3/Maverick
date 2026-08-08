@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "락온 컨트롤러 회전 확장"
+community: "LockOnTargetExtensionBase.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/LockOnTargetExtensionBasecpp
 ---
 
 # UWorld
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[ULockOnTargetExtensionProxyGetWorld()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/LockOnTargetExtensionBasecpp

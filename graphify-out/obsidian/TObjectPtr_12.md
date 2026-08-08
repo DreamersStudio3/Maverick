@@ -1,16 +1,17 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 적 사망 처리"
+community: "FMVBackOffLaunchMontageTaskInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVBackOffLaunchMontageTaskInstanceData
 ---
 
 # TObjectPtr
 
 ## Connections
-- [[EnemyDeadTaskResolveOwner()]] - `references` [EXTRACTED]
+- [[BackOffLaunchMontageResolveOwner()]] - `references` [EXTRACTED]
+- [[BackOffLaunchMontageResolveTarget()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVBackOffLaunchMontageTaskInstanceData

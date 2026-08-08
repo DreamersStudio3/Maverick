@@ -1,17 +1,17 @@
 ---
-source_file: "Source/Maverick/AI/Task/MVGlobalSensingTask.h"
+source_file: "Source/Maverick/AI/Task/MVExecuteAttackTask.h"
 type: "code"
-community: "AI 전역 감지 설정"
-location: "L21"
+community: "FMVExecuteFixedAttackTaskInstanceData"
+location: "L88"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVExecuteFixedAttackTaskInstanceData
 ---
 
 # Owner
 
 ## Connections
-- [[FMVGlobalSensingTaskInstanceData]] - `defines` [EXTRACTED]
+- [[FMVSelectAndExecuteAttackTaskInstanceData]] - `defines` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVExecuteFixedAttackTaskInstanceData

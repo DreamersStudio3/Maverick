@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "회피 입력 컨텍스트"
+community: "FMVDodgeInputContext"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/FMVDodgeInputContext
 ---
 
 # ELocomotionDirection
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[FMVDodgeInputContext]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/FMVDodgeInputContext

@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/System/MVUISubsystem.cpp"
 type: "code"
-community: "UI 창·팝업 스택 생성"
+community: "UMVUISubsystem::PushWindowByClass"
 location: "L195"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/UI___
+  - community/UMVUISubsystemPushWindowByClass
 ---
 
 # UMVUISubsystem::PushWindowByClass()
@@ -17,4 +17,4 @@ tags:
 - [[UCommonActivatableWidget_2]] - `references` [EXTRACTED]
 - [[UMVWindowBase_1]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/UI___
+#graphify/code #graphify/EXTRACTED #community/UMVUISubsystemPushWindowByClass

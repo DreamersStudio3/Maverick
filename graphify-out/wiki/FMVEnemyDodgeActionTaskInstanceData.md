@@ -1,50 +1,52 @@
 # FMVEnemyDodgeActionTaskInstanceData
 
-> God node · 36 connections · `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
+> 29 nodes
 
-**Community:** [AI 적 회피 설정](AI_%EC%A0%81_%ED%9A%8C%ED%94%BC_%EC%84%A4%EC%A0%95.md)
+## Key Concepts
 
-## Connections by Relation
+- **FMVEnemyDodgeActionTaskInstanceData** (36 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
+- **TObjectPtr** (1 connections)
+- **Owner** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
+- **DodgeRequest** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
+- **EMVActionInputDirection** (1 connections)
+- **DefaultDirection** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
+- **FSoftObjectPath** (1 connections)
+- **DodgeChooserTable** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
+- **FallbackDodgeActionRow** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
+- **FDataTableRowHandle** (1 connections)
+- **ForwardDodgeActionRow** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
+- **BackDodgeActionRow** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
+- **LeftDodgeActionRow** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
+- **RightDodgeActionRow** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
+- **FName** (1 connections)
+- **StartSection** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
+- **bTransitionFromCurrentAction** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
+- **TransitionBlendOutTime** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
+- **bWaitForActionEnd** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
+- **bCancelActionOnExit** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
+- **ExitCancelBlendOutTime** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
+- **bStarted** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
+- **ResolvedDirection** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
+- **ResolvedDodgeActionRow** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
+- **ChooserDodgeActionRow** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
+- *... and 4 more nodes in this community*
 
-### contains
-- MVEnemyDodgeActionTask.h `EXTRACTED`
+## Relationships
 
-### defines
-- ActionComponent `EXTRACTED`
-- BackDodgeActionRow `EXTRACTED`
-- bCancelActionOnExit `EXTRACTED`
-- bStarted `EXTRACTED`
-- bTransitionFromCurrentAction `EXTRACTED`
-- bWaitForActionEnd `EXTRACTED`
-- ChooserDodgeActionRow `EXTRACTED`
-- DefaultDirection `EXTRACTED`
-- DodgeChooserTable `EXTRACTED`
-- DodgeRequest `EXTRACTED`
-- ExitCancelBlendOutTime `EXTRACTED`
-- FallbackDodgeActionRow `EXTRACTED`
-- ForwardDodgeActionRow `EXTRACTED`
-- LeftDodgeActionRow `EXTRACTED`
-- Owner `EXTRACTED`
-- ResolvedDirection `EXTRACTED`
-- ResolvedDodgeActionRow `EXTRACTED`
-- RightDodgeActionRow `EXTRACTED`
-- StartedActionRowName `EXTRACTED`
-- StartedActionTableName `EXTRACTED`
+- [MVEnemyDodgeActionTask.cpp](MVEnemyDodgeActionTask.cpp.md) (3 shared connections)
+- [FMVEnemyDodgeActionTask](FMVEnemyDodgeActionTask.md) (3 shared connections)
+- [UMVEnemyDodgeTokenComponent::TryConsumeDodgeTokenForThreat](UMVEnemyDodgeTokenComponent--TryConsumeDodgeTokenForThreat.md) (1 shared connections)
+- [FMVDodgeInputContext](FMVDodgeInputContext.md) (1 shared connections)
 
-### references
-- EnemyDodgeActionTaskEvaluateChooser() `EXTRACTED`
-- EnemyDodgeActionTaskResolveActionRowHandle() `EXTRACTED`
-- FMVDodgeActionRowHandle() `EXTRACTED`
-- EnemyDodgeActionTaskIsStartedActionRunning() `EXTRACTED`
-- FMVAIDodgeRequest() `EXTRACTED`
-- APawn `EXTRACTED`
-- UMVActionComponent `EXTRACTED`
-- EMVActionInputDirection `EXTRACTED`
-- FDataTableRowHandle `EXTRACTED`
-- FName `EXTRACTED`
-- FSoftObjectPath `EXTRACTED`
-- TObjectPtr `EXTRACTED`
-- UPROPERTY `EXTRACTED`
+## Source Files
+
+- `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
+
+## Audit Trail
+
+- EXTRACTED: 64 (100%)
+- INFERRED: 0 (0%)
+- AMBIGUOUS: 0 (0%)
 
 ---
 

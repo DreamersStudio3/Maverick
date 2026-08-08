@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Public/Tables/MVCharacterTableTypes.h"
 type: "code"
-community: "공통 캐릭터 이동 선언"
+community: "MVCharacterBase.h"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVCharacterBaseh
 ---
 
 # MVCharacterTableTypes.h
@@ -17,4 +17,4 @@ tags:
 - [[MVHitReactionComponent.cpp]] - `imports` [EXTRACTED]
 - [[MVTableTypes.h]] - `imports` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVCharacterBaseh

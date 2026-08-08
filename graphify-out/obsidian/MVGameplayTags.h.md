@@ -1,14 +1,14 @@
 ---
 source_file: "Source/Maverick/Public/Tags/MVGameplayTags.h"
 type: "code"
-community: "게임플레이 태그 선언"
+community: "MVGameplayTags.h"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVGameplayTagsh
 ---
 
 # MVGameplayTags.h
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVGameplayTagsh

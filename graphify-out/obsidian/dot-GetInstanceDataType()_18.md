@@ -1,18 +1,18 @@
 ---
-source_file: "Source/Maverick/AI/Task/MVStartActionCooldownTask.h"
+source_file: "Source/Maverick/AI/Task/MVGlobalSensingTask.h"
 type: "code"
-community: "AI 액션 쿨다운 시작"
-location: "L36"
+community: "EnterState"
+location: "L160"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/EnterState
 ---
 
 # .GetInstanceDataType()
 
 ## Connections
-- [[FMVStartActionCooldownTask]] - `method` [EXTRACTED]
-- [[UStruct_17]] - `references` [EXTRACTED]
+- [[FMVGlobalSensingTask]] - `method` [EXTRACTED]
+- [[UStruct_4]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/EnterState

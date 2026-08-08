@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "회복 물약 퀵슬롯 데이터"
+community: "FMVQuickSlotViewData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/FMVQuickSlotViewData
 ---
 
 # TObjectPtr
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[FMVQuickSlotViewData]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/FMVQuickSlotViewData

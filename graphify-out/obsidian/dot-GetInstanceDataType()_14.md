@@ -1,18 +1,18 @@
 ---
-source_file: "Source/Maverick/AI/Task/MVFocusingTask.h"
+source_file: "Source/Maverick/AI/Task/MVExecuteAttackTask.h"
 type: "code"
-community: "AI 타겟 포커싱"
-location: "L38"
+community: "MVExecuteAttackTask.cpp"
+location: "L72"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI__
+  - community/MVExecuteAttackTaskcpp
 ---
 
 # .GetInstanceDataType()
 
 ## Connections
-- [[FMVFocusingTask]] - `method` [EXTRACTED]
-- [[UStruct_13]] - `references` [EXTRACTED]
+- [[FMVExecuteFixedAttackTask]] - `method` [EXTRACTED]
+- [[UStruct_1]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI__
+#graphify/code #graphify/EXTRACTED #community/MVExecuteAttackTaskcpp

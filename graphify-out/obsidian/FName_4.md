@@ -1,18 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "락온 컨트롤러 회전 확장"
+community: "FMVGlobalSensingTaskInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/FMVGlobalSensingTaskInstanceData
 ---
 
 # FName
 
 ## Connections
-- [[UControllerRotationExtensionOnSocketChanged()]] - `references` [EXTRACTED]
-- [[UControllerRotationExtensionOnTargetLocked()]] - `references` [EXTRACTED]
-- [[UControllerRotationExtensionOnTargetUnlocked()]] - `references` [EXTRACTED]
+- [[FMVGlobalSensingTaskInstanceData]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/FMVGlobalSensingTaskInstanceData

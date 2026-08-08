@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "락온 소켓 선택 에디터"
+community: "FMVLoadingGuideCard"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/FMVLoadingGuideCard
 ---
 
 # FText
 
 ## Connections
-- [[OnTextBoxCommitted]] - `references` [EXTRACTED]
+- [[FMVLoadingGuideCard]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/FMVLoadingGuideCard

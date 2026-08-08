@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/AI/Task/MVGlobalSensingTask.cpp"
 type: "code"
-community: "AI 전역 감지 갱신"
+community: "MVGlobalSensingTask.cpp"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/MVGlobalSensingTaskcpp
 ---
 
 # MVGlobalSensingTask.cpp
@@ -14,8 +14,8 @@ tags:
 ## Connections
 - [[DrawGlobalSensingCombatAreaCircle()]] - `contains` [EXTRACTED]
 - [[DrawGlobalSensingCombatAreaDebug()]] - `contains` [EXTRACTED]
-- [[EnterState_10]] - `contains` [EXTRACTED]
-- [[ExitState_8]] - `contains` [EXTRACTED]
+- [[EnterState_12]] - `contains` [EXTRACTED]
+- [[ExitState_9]] - `contains` [EXTRACTED]
 - [[FMVGlobalSensingTaskFMVGlobalSensingTask()]] - `contains` [EXTRACTED]
 - [[GlobalSensingClearControllerTarget()]] - `contains` [EXTRACTED]
 - [[GlobalSensingClearTargetSnapshot()]] - `contains` [EXTRACTED]
@@ -24,11 +24,10 @@ tags:
 - [[GlobalSensingIsActorDead()]] - `contains` [EXTRACTED]
 - [[GlobalSensingLineOfSightClear()]] - `contains` [EXTRACTED]
 - [[GlobalSensingTraceClear()]] - `contains` [EXTRACTED]
-- [[MVGlobalSensingTask.h]] - `imports` [EXTRACTED]
-- [[Tick_11]] - `contains` [EXTRACTED]
+- [[Tick_12]] - `contains` [EXTRACTED]
 - [[UpdateGlobalSensingCombatContext()]] - `contains` [EXTRACTED]
 - [[UpdateGlobalSensingCooldownContext()]] - `contains` [EXTRACTED]
 - [[UpdateGlobalSensingLifeContext()]] - `contains` [EXTRACTED]
 - [[UpdateGlobalSensingSnapshot()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/MVGlobalSensingTaskcpp

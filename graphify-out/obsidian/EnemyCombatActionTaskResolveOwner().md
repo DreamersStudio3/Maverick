@@ -12,10 +12,10 @@ tags:
 # EnemyCombatActionTaskResolveOwner()
 
 ## Connections
-- [[APawn_13]] - `references` [EXTRACTED]
+- [[APawn_17]] - `references` [EXTRACTED]
 - [[EnterState_3]] - `calls` [EXTRACTED]
 - [[FStateTreeExecutionContext_9]] - `references` [EXTRACTED]
 - [[MVEnemyCombatActionTask.cpp]] - `contains` [EXTRACTED]
-- [[TObjectPtr_10]] - `references` [EXTRACTED]
+- [[TObjectPtr_14]] - `references` [EXTRACTED]
 
 #graphify/code #graphify/EXTRACTED #community/AI___

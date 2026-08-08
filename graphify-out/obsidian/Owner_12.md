@@ -1,17 +1,17 @@
 ---
-source_file: "Source/Maverick/AI/Task/MVHitReactionTask.h"
+source_file: "Source/Maverick/AI/Task/MVFocusingTask.h"
 type: "code"
-community: "AI 피격 반응 태스크"
-location: "L18"
+community: "FMVFocusingTaskInstanceData"
+location: "L19"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVFocusingTaskInstanceData
 ---
 
 # Owner
 
 ## Connections
-- [[FMVHitReactionTaskInstanceData]] - `defines` [EXTRACTED]
+- [[FMVFocusingTaskInstanceData]] - `defines` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVFocusingTaskInstanceData

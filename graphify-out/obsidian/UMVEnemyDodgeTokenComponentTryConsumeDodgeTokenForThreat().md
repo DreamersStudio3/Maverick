@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVEnemyDodgeTokenComponent.cpp"
 type: "code"
-community: "위협 기반 회피 토큰"
+community: "UMVEnemyDodgeTokenComponent::TryConsumeDodgeTokenForThreat"
 location: "L110"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/UMVEnemyDodgeTokenComponentTryConsumeDodgeTokenForThreat
 ---
 
 # UMVEnemyDodgeTokenComponent::TryConsumeDodgeTokenForThreat()
@@ -20,4 +20,4 @@ tags:
 - [[MVEnemyDodgeTokenComponent.cpp]] - `contains` [EXTRACTED]
 - [[TrySpendDodgeToken]] - `calls` [INFERRED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/UMVEnemyDodgeTokenComponentTryConsumeDodgeTokenForThreat

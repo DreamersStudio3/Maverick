@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVInteractableComponent.cpp"
 type: "code"
-community: "상호작용 가능 컴포넌트"
+community: "MVInteractableComponent.cpp"
 location: "L39"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVInteractableComponentcpp
 ---
 
 # UMVInteractableComponent::GetInteractionPriority_Implementation()
@@ -14,6 +14,6 @@ tags:
 ## Connections
 - [[AActor_20]] - `references` [EXTRACTED]
 - [[MVInteractableComponent.cpp]] - `contains` [EXTRACTED]
-- [[int32_21]] - `references` [EXTRACTED]
+- [[int32_22]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVInteractableComponentcpp

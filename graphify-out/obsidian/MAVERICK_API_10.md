@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "회복 물약 런타임 상태"
+community: "MVPlayerConsumable.h"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVPlayerConsumableh
 ---
 
 # MAVERICK_API
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[FMVHealingPotionRuntimeState()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVPlayerConsumableh

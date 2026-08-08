@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetHandlers/TargetHandlerBase.cpp"
 type: "code"
-community: "가중치 기반 타깃 선택"
+community: "FFindTargetRequestResponse"
 location: "L12"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/FFindTargetRequestResponse
 ---
 
 # UTargetHandlerBase::FindTarget_Implementation()
@@ -16,4 +16,4 @@ tags:
 - [[FFindTargetRequestResponse()]] - `references` [EXTRACTED]
 - [[TargetHandlerBase.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/FFindTargetRequestResponse

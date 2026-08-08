@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h"
 type: "code"
-community: "LockOnTarget 타깃 관리 구성요소"
+community: "TargetComponent.h"
 location: "L14"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/LockOnTarget___
+  - community/TargetComponenth
 ---
 
 # UUserWidget
@@ -15,4 +15,4 @@ tags:
 - [[ETargetFocusPointType]] - `references` [EXTRACTED]
 - [[TargetComponent.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/LockOnTarget___
+#graphify/code #graphify/EXTRACTED #community/TargetComponenth

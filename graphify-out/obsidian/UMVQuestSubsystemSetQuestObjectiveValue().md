@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/System/MVQuestSubsystem.cpp"
 type: "code"
-community: "퀘스트 상태 API"
+community: "MVQuestSubsystem.cpp"
 location: "L39"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__API
+  - community/MVQuestSubsystemcpp
 ---
 
 # UMVQuestSubsystem::SetQuestObjectiveValue()
@@ -14,6 +14,6 @@ tags:
 ## Connections
 - [[FName_46]] - `references` [EXTRACTED]
 - [[MVQuestSubsystem.cpp]] - `contains` [EXTRACTED]
-- [[int32_27]] - `references` [EXTRACTED]
+- [[int32_28]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__API
+#graphify/code #graphify/EXTRACTED #community/MVQuestSubsystemcpp

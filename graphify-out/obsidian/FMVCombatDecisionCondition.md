@@ -1,20 +1,20 @@
 ---
 source_file: "Source/Maverick/AI/Condition/MVCombatDecisionCondition.h"
 type: "code"
-community: "AI 전투 결정 설정"
-location: "L42"
+community: "FMVCombatDecisionConditionInstanceData"
+location: "L49"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVCombatDecisionConditionInstanceData
 ---
 
 # FMVCombatDecisionCondition
 
 ## Connections
-- [[dot-GetInstanceDataType()_2]] - `method` [EXTRACTED]
-- [[FStateTreeConditionCommonBase_2]] - `inherits` [EXTRACTED]
+- [[dot-GetInstanceDataType()_13]] - `method` [EXTRACTED]
+- [[FStateTreeConditionCommonBase]] - `inherits` [EXTRACTED]
 - [[MVCombatDecisionCondition.h]] - `contains` [EXTRACTED]
-- [[TestCondition_2]] - `defines` [EXTRACTED]
+- [[TestCondition_4]] - `defines` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVCombatDecisionConditionInstanceData

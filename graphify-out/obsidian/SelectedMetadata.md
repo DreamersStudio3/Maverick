@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/AI/Task/MVExecuteAttackTask.h"
 type: "code"
-community: "AI 공격 실행 데이터"
-location: "L98"
+community: "FMVExecuteFixedAttackTaskInstanceData"
+location: "L103"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVExecuteFixedAttackTaskInstanceData
 ---
 
 # SelectedMetadata
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[FMVSelectAndExecuteAttackTaskInstanceData]] - `defines` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVExecuteFixedAttackTaskInstanceData

@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 전투 결정 설정"
+community: "FMVCombatActionEnterConditionInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVCombatActionEnterConditionInstanceData
 ---
 
 # FStateTreeConditionCommonBase
 
 ## Connections
-- [[FMVCombatDecisionCondition]] - `inherits` [EXTRACTED]
+- [[FMVCombatActionEnterCondition]] - `inherits` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVCombatActionEnterConditionInstanceData

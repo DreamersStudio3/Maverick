@@ -1,18 +1,18 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h"
 type: "code"
-community: "LockOnTarget 타깃 캡처 상태"
+community: "UTargetComponent::DispatchTargetException"
 location: "L199"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/LockOnTarget___
+  - community/UTargetComponentDispatchTargetException
 ---
 
 # .GetDefaultSocket()
 
 ## Connections
 - [[ETargetFocusPointType]] - `method` [EXTRACTED]
-- [[FName_12]] - `references` [EXTRACTED]
+- [[FName_17]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/LockOnTarget___
+#graphify/code #graphify/EXTRACTED #community/UTargetComponentDispatchTargetException

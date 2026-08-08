@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 그로기 진입 조건"
+community: "FMVGlobalCoolTimeTaskInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVGlobalCoolTimeTaskInstanceData
 ---
 
 # TObjectPtr
 
 ## Connections
-- [[GroggyEnterResolveOwner()]] - `references` [EXTRACTED]
+- [[FMVGlobalCoolTimeTaskInstanceData]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVGlobalCoolTimeTaskInstanceData

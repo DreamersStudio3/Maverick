@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Animation/Notifies/MVAnimNotify_DeathDissolve.cpp"
 type: "code"
-community: "사망 디졸브 노티파이"
+community: "UMVAnimNotify_DeathDissolve::Notify"
 location: "L6"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/UMVAnimNotify_DeathDissolveNotify
 ---
 
 # UMVAnimNotify_DeathDissolve::Notify()
@@ -17,4 +17,4 @@ tags:
 - [[UAnimSequenceBase_2]] - `references` [EXTRACTED]
 - [[USkeletalMeshComponent_2]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/UMVAnimNotify_DeathDissolveNotify

@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Animation/NotifyStates/MVAnimNotifyState_PauseRecoverableStatRecovery.cpp"
 type: "code"
-community: "회복 스탯 일시정지 노티파이"
+community: "FindPauseRecoverableStatRecoveryStatComponent"
 location: "L9"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/FindPauseRecoverableStatRecoveryStatComponent
 ---
 
 # FindPauseRecoverableStatRecoveryStatComponent()
@@ -18,4 +18,4 @@ tags:
 - [[UMVStatComponent()]] - `references` [EXTRACTED]
 - [[USkeletalMeshComponent_10]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/FindPauseRecoverableStatRecoveryStatComponent

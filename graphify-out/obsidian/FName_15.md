@@ -1,19 +1,17 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 전투 액션 메타데이터"
+community: "WeightedTargetHandler.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/WeightedTargetHandlercpp
 ---
 
 # FName
 
 ## Connections
-- [[FMVAICombatActionMetadata]] - `references` [EXTRACTED]
-- [[FMVAICombatContext]] - `references` [EXTRACTED]
-- [[FMVAICombatResolvedAction]] - `references` [EXTRACTED]
-- [[IsActionReady()]] - `references` [EXTRACTED]
+- [[UWeightedTargetHandlerGenerateDetailedResponse()]] - `calls` [EXTRACTED]
+- [[UWeightedTargetHandlerOnTargetUnlocked()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/WeightedTargetHandlercpp

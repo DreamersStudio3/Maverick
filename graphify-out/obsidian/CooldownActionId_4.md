@@ -1,17 +1,17 @@
 ---
-source_file: "Source/Maverick/AI/Task/MVEnemyCombatActionTask.h"
+source_file: "Source/Maverick/AI/MVAICombatTypes.h"
 type: "code"
-community: "AI 적 전투 액션"
-location: "L40"
+community: "MVAICombatTypes.h"
+location: "L132"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/MVAICombatTypesh
 ---
 
 # CooldownActionId
 
 ## Connections
-- [[FMVEnemyCombatActionTaskInstanceData]] - `defines` [EXTRACTED]
+- [[FMVAICombatResolvedAction]] - `defines` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/MVAICombatTypesh

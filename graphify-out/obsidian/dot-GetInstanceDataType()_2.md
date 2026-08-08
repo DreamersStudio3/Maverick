@@ -1,18 +1,18 @@
 ---
-source_file: "Source/Maverick/AI/Condition/MVCombatDecisionCondition.h"
+source_file: "Source/Maverick/AI/Condition/MVGroggyEnterCondition.h"
 type: "code"
-community: "AI 전투 결정 설정"
-location: "L48"
+community: "GroggyEnterResolveOwner"
+location: "L31"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/GroggyEnterResolveOwner
 ---
 
 # .GetInstanceDataType()
 
 ## Connections
-- [[FMVCombatDecisionCondition]] - `method` [EXTRACTED]
-- [[UStruct_3]] - `references` [EXTRACTED]
+- [[FMVGroggyEnterCondition]] - `method` [EXTRACTED]
+- [[UStruct_9]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/GroggyEnterResolveOwner

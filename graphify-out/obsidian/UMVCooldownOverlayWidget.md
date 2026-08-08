@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/HUD/MVSkillSlotWidget.h"
 type: "code"
-community: "스킬 슬롯 위젯 구성"
+community: "MVSkillSlotWidget.h"
 location: "L9"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVSkillSlotWidgeth
 ---
 
 # UMVCooldownOverlayWidget
@@ -15,4 +15,4 @@ tags:
 - [[MVSkillSlotWidget.h]] - `contains` [EXTRACTED]
 - [[UMVSkillSlotWidgetBuildNativeWidgetTree()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVSkillSlotWidgeth

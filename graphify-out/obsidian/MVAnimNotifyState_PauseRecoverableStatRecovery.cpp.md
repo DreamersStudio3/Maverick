@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Animation/NotifyStates/MVAnimNotifyState_PauseRecoverableStatRecovery.cpp"
 type: "code"
-community: "회복 스탯 일시정지 노티파이"
+community: "FindPauseRecoverableStatRecoveryStatComponent"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/FindPauseRecoverableStatRecoveryStatComponent
 ---
 
 # MVAnimNotifyState_PauseRecoverableStatRecovery.cpp
@@ -17,4 +17,4 @@ tags:
 - [[UMVAnimNotifyState_PauseRecoverableStatRecoveryNotifyBegin()]] - `contains` [EXTRACTED]
 - [[UMVAnimNotifyState_PauseRecoverableStatRecoveryNotifyEnd()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/FindPauseRecoverableStatRecoveryStatComponent

@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 쿨다운 준비 조건"
+community: "FMVCombatDecisionConditionInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVCombatDecisionConditionInstanceData
 ---
 
 # FStateTreeConditionCommonBase
 
 ## Connections
-- [[FMVActionCooldownReadyCondition]] - `inherits` [EXTRACTED]
+- [[FMVCombatDecisionCondition]] - `inherits` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVCombatDecisionConditionInstanceData

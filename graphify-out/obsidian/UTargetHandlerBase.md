@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetComponent.h"
 type: "code"
-community: "락온 대상 컴포넌트"
+community: "LockOnTargetComponent.h"
 location: "L13"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/LockOnTargetComponenth
 ---
 
 # UTargetHandlerBase
@@ -17,4 +17,4 @@ tags:
 - [[ULockOnTargetComponentSetTargetHandlerByClass()]] - `references` [EXTRACTED]
 - [[ULockOnTargetExtensionProxy()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/LockOnTargetComponenth

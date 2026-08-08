@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Character/MVCharacterBase.cpp"
 type: "code"
-community: "공통 캐릭터 동작"
+community: "MVCharacterBase.cpp"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVCharacterBasecpp
 ---
 
 # MVCharacterBase.cpp
@@ -54,4 +54,4 @@ tags:
 - [[MVCharacterLogAirborneTrace()]] - `contains` [EXTRACTED]
 - [[ResolveCharacterEightWayDirection()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVCharacterBasecpp

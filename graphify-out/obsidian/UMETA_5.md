@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Public/Enum/MVActionInputPhase.h"
 type: "code"
-community: "액션 입력 버퍼링"
+community: "FVector2D"
 location: "L9"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/FVector2D
 ---
 
 # UMETA
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[EMVActionInputPhase]] - `defines` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/FVector2D

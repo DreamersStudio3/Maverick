@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetExtensions/CameraModifierExtension.cpp"
 type: "code"
-community: "LockOnTarget 카메라 모디파이어"
+community: "CameraModifierExtension.cpp"
 location: "L34"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/LockOnTarget__
+  - community/CameraModifierExtensioncpp
 ---
 
 # UCameraModifierExtension::Initialize()
@@ -15,4 +15,4 @@ tags:
 - [[CameraModifierExtension.cpp]] - `contains` [EXTRACTED]
 - [[ULockOnTargetComponent_2]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/LockOnTarget__
+#graphify/code #graphify/EXTRACTED #community/CameraModifierExtensioncpp

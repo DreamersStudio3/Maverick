@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "피격 리액션 기본 회복"
+community: "UMVAnimNotify_HitReactionDefaultRecovery::Notify"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/UMVAnimNotify_HitReactionDefaultRecoveryNotify
 ---
 
 # USkeletalMeshComponent
@@ -14,4 +14,4 @@ tags:
 - [[FindHitReactionStartGetupComponent()]] - `references` [EXTRACTED]
 - [[UMVAnimNotify_HitReactionDefaultRecoveryNotify()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/UMVAnimNotify_HitReactionDefaultRecoveryNotify

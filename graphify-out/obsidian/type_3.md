@@ -1,12 +1,12 @@
 ---
 source_file: "MaverickDesign/Schema/TableData.schema.json"
 type: "code"
-community: "JSON 스키마 값 타입"
+community: "type"
 location: "L18"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/JSON___
+  - community/type
 ---
 
 # type
@@ -22,4 +22,4 @@ tags:
 - [[object]] - `extends` [EXTRACTED]
 - [[string]] - `extends` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/JSON___
+#graphify/code #graphify/EXTRACTED #community/type

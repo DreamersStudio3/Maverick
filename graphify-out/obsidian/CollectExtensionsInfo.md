@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTargetDev/Private/GameplayDebugger/GameplayDebuggerCategory_LockOnTarget.h"
 type: "code"
-community: "락온 디버거"
+community: "FGameplayDebuggerCategory_LockOnTarget"
 location: "L59"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/_
+  - community/FGameplayDebuggerCategory_LockOnTarget
 ---
 
 # CollectExtensionsInfo
@@ -14,8 +14,8 @@ tags:
 ## Connections
 - [[DisplayDebugInfo]] - `calls` [INFERRED]
 - [[FGameplayDebuggerCategory_LockOnTarget]] - `defines` [EXTRACTED]
-- [[FString]] - `references` [EXTRACTED]
+- [[FString_1]] - `references` [EXTRACTED]
 - [[GameplayDebuggerCategory_LockOnTarget.cpp]] - `contains` [EXTRACTED]
 - [[GetClassNameSafe()]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/_
+#graphify/code #graphify/EXTRACTED #community/FGameplayDebuggerCategory_LockOnTarget

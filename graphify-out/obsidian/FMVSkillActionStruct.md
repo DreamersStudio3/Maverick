@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVCombatComponent.h"
 type: "code"
-community: "전투 액션 런타임 상태"
+community: "FMVCombatActionEvent"
 location: "L18"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/FMVCombatActionEvent
 ---
 
 # FMVSkillActionStruct
@@ -19,4 +19,4 @@ tags:
 - [[TObjectPtr_26]] - `references` [EXTRACTED]
 - [[UDataTable_5]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/FMVCombatActionEvent

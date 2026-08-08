@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 전투 진입 조건"
+community: "FMVAICombatContext"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVAICombatContext
 ---
 
 # EMVBossCombatArea
 
 ## Connections
-- [[FMVCombatActionEnterConditionInstanceData]] - `references` [EXTRACTED]
+- [[FMVAICombatContext]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVAICombatContext

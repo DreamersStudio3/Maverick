@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "피격 회복 방향 추적"
+community: "MVHitReactionLogRecoveryTrace"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVHitReactionLogRecoveryTrace
 ---
 
 # EMVActionHitReactionType
@@ -19,4 +19,4 @@ tags:
 - [[UMVHitReactionComponentResolveHitReactionActionRowHandle()]] - `references` [EXTRACTED]
 - [[UMVHitReactionComponentResolveSupportedHitReactionDirection()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVHitReactionLogRecoveryTrace

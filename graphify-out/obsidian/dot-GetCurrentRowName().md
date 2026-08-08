@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVCombatComponent.h"
 type: "code"
-community: "전투 액션 런타임 상태"
+community: "FMVCombatActionEvent"
 location: "L150"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/FMVCombatActionEvent
 ---
 
 # .GetCurrentRowName()
@@ -16,4 +16,4 @@ tags:
 - [[FMVSkillEntry]] - `method` [EXTRACTED]
 - [[FName_36]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/FMVCombatActionEvent

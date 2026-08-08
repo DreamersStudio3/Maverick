@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "활성 위젯 입력과 전환"
+community: "MVActivatableWidgetBase.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVActivatableWidgetBasecpp
 ---
 
 # FUIInputConfig
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[UMVActivatableWidgetBaseGetDesiredInputConfig()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVActivatableWidgetBasecpp

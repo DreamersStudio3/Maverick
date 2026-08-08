@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Public/Tables/MVActionTableTypes.h"
 type: "code"
-community: "AI 공격 실행 로직"
+community: "ExecuteAttackResolveActionCandidate"
 location: "L18"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/ExecuteAttackResolveActionCandidate
 ---
 
 # FMVActionRequest()
@@ -17,10 +17,6 @@ tags:
 - [[ExecuteAttackResolveActionCandidate()]] - `references` [EXTRACTED]
 - [[ExecuteAttackResolveActionRequest()]] - `references` [EXTRACTED]
 - [[ExecuteAttackResolveActionTypeTag()]] - `references` [EXTRACTED]
-- [[FMVAICombatActionCondition]] - `references` [EXTRACTED]
-- [[FMVExecuteFixedAttackTaskInstanceData]] - `references` [EXTRACTED]
-- [[FMVSelectAndExecuteAttackTaskInstanceData]] - `references` [EXTRACTED]
 - [[MVActionTableTypes.h]] - `contains` [EXTRACTED]
-- [[MakeCooldownActionId()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/ExecuteAttackResolveActionCandidate

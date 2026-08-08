@@ -1,20 +1,20 @@
 ---
 source_file: "Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp"
 type: "code"
-community: "회복 물약 기본값 해석"
+community: "ApplyMVPlayerConsumableHealingPotionDataRowDefaults"
 location: "L36"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/ApplyMVPlayerConsumableHealingPotionDataRowDefaults
 ---
 
 # ApplyMVPlayerConsumableHealingPotionDataRowDefaults()
 
 ## Connections
-- [[FDataTableRowHandle_3]] - `references` [EXTRACTED]
+- [[FDataTableRowHandle_4]] - `references` [EXTRACTED]
 - [[MVPlayerConsumable.cpp]] - `contains` [EXTRACTED]
 - [[UMVPlayerConsumableResolveHealingPotionData()]] - `calls` [EXTRACTED]
 - [[UMVPlayerConsumableUMVPlayerConsumable()]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/ApplyMVPlayerConsumableHealingPotionDataRowDefaults

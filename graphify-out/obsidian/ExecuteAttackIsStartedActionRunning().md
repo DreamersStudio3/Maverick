@@ -1,23 +1,23 @@
 ---
 source_file: "Source/Maverick/AI/Task/MVExecuteAttackTask.cpp"
 type: "code"
-community: "AI 공격 실행 로직"
+community: "MVExecuteAttackTask.cpp"
 location: "L243"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/MVExecuteAttackTaskcpp
 ---
 
 # ExecuteAttackIsStartedActionRunning()
 
 ## Connections
-- [[ExitState_4]] - `calls` [EXTRACTED]
 - [[ExitState_5]] - `calls` [EXTRACTED]
-- [[FName_23]] - `references` [EXTRACTED]
+- [[ExitState_6]] - `calls` [EXTRACTED]
+- [[FName_26]] - `references` [EXTRACTED]
 - [[MVExecuteAttackTask.cpp]] - `contains` [EXTRACTED]
-- [[Tick_7]] - `calls` [EXTRACTED]
 - [[Tick_8]] - `calls` [EXTRACTED]
+- [[Tick_9]] - `calls` [EXTRACTED]
 - [[UMVActionComponent()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/MVExecuteAttackTaskcpp

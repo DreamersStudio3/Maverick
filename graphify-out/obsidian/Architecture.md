@@ -1,12 +1,12 @@
 ---
 source_file: "docs/wiki/Architecture.md"
 type: "document"
-community: "Maverick 아키텍처 정본"
+community: "Maverick Architecture"
 location: "L1"
 tags:
   - graphify/document
   - graphify/EXTRACTED
-  - community/Maverick__
+  - community/Maverick_Architecture
 ---
 
 # Architecture.md
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[Maverick Architecture]] - `contains` [EXTRACTED]
 
-#graphify/document #graphify/EXTRACTED #community/Maverick__
+#graphify/document #graphify/EXTRACTED #community/Maverick_Architecture

@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/Debug/MVPIEActionTestWidget.h"
 type: "code"
-community: "PIE 액션 테스트 위젯"
+community: "MVPIEActionTestWidget.h"
 location: "L7"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/PIE___
+  - community/MVPIEActionTestWidgeth
 ---
 
 # AMVCharacterBase
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[MVPIEActionTestWidget.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/PIE___
+#graphify/code #graphify/EXTRACTED #community/MVPIEActionTestWidgeth

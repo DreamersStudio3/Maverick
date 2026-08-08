@@ -1,16 +1,29 @@
 ---
 source_file: ""
 type: "code"
-community: "테이블 시트 사양"
+community: "MVTableManager.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVTableManagercpp
 ---
 
 # FString
 
 ## Connections
-- [[FMVSheetSpec_2]] - `references` [EXTRACTED]
+- [[ExportPropertyToString()]] - `references` [EXTRACTED]
+- [[TableManagerJsonValueToString()]] - `references` [EXTRACTED]
+- [[TryParseBoolString()]] - `references` [EXTRACTED]
+- [[UMVTableManagerAddLoadError()]] - `references` [EXTRACTED]
+- [[UMVTableManagerFindProperty()]] - `references` [EXTRACTED]
+- [[UMVTableManagerFindRawRow()]] - `references` [EXTRACTED]
+- [[UMVTableManagerGetBool()]] - `references` [EXTRACTED]
+- [[UMVTableManagerGetFloat()]] - `references` [EXTRACTED]
+- [[UMVTableManagerGetInt()]] - `references` [EXTRACTED]
+- [[UMVTableManagerGetRowJson()]] - `references` [EXTRACTED]
+- [[UMVTableManagerGetRowKeys()]] - `references` [EXTRACTED]
+- [[UMVTableManagerGetString()]] - `references` [EXTRACTED]
+- [[UMVTableManagerHasRow()]] - `references` [EXTRACTED]
+- [[UMVTableManagerTryGetGenericField()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVTableManagercpp

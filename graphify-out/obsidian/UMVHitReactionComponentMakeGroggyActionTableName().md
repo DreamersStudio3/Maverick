@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVHitReactionComponent.cpp"
 type: "code"
-community: "피격 리액션 입력·행 해석"
+community: "FName"
 location: "L1835"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/FName
 ---
 
 # UMVHitReactionComponent::MakeGroggyActionTableName()
@@ -16,4 +16,4 @@ tags:
 - [[FName_39]] - `references` [EXTRACTED]
 - [[MVHitReactionComponent.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/FName

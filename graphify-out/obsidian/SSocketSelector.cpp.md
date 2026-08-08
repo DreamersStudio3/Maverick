@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/SSocketSelector.cpp"
 type: "code"
-community: "락온 소켓 선택 에디터"
+community: "SSocketSelector"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/SSocketSelector
 ---
 
 # SSocketSelector.cpp
@@ -19,4 +19,4 @@ tags:
 - [[OnTextBoxCommitted]] - `contains` [EXTRACTED]
 - [[SSocketSelector.h]] - `imports` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/SSocketSelector

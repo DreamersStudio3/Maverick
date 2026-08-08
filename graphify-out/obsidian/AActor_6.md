@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 컨트롤러 지각 갱신"
+community: "MVAIController.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/MVAIControllercpp
 ---
 
 # AActor
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[AMVAIControllerOnPerceptionUpdated()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/MVAIControllercpp

@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVFinisherComponent.h"
 type: "code"
-community: "피니셔 Chooser 입출력"
+community: "FMVFinisherChooserInput"
 location: "L24"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/_Chooser_
+  - community/FMVFinisherChooserInput
 ---
 
 # VictimTag
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[FMVFinisherChooserInput]] - `defines` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/_Chooser_
+#graphify/code #graphify/EXTRACTED #community/FMVFinisherChooserInput

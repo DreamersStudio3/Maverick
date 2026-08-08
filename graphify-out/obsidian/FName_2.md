@@ -1,17 +1,17 @@
 ---
 source_file: ""
 type: "code"
-community: "락온 대상 컴포넌트"
+community: "FMVExecuteFixedAttackTaskInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/FMVExecuteFixedAttackTaskInstanceData
 ---
 
 # FName
 
 ## Connections
-- [[ULockOnTargetComponentNotifyTargetSocketChanged()]] - `references` [EXTRACTED]
-- [[ULockOnTargetComponentSetLockOnTargetManual()]] - `references` [EXTRACTED]
+- [[FMVExecuteFixedAttackTaskInstanceData]] - `references` [EXTRACTED]
+- [[FMVSelectAndExecuteAttackTaskInstanceData]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/FMVExecuteFixedAttackTaskInstanceData

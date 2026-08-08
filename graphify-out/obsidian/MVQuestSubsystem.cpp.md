@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/System/MVQuestSubsystem.cpp"
 type: "code"
-community: "퀘스트 상태 API"
+community: "MVQuestSubsystem.cpp"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__API
+  - community/MVQuestSubsystemcpp
 ---
 
 # MVQuestSubsystem.cpp
@@ -24,4 +24,4 @@ tags:
 - [[UMVQuestSubsystemSetQuestObjectiveValue()]] - `contains` [EXTRACTED]
 - [[UMVQuestSubsystemSetQuestState()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__API
+#graphify/code #graphify/EXTRACTED #community/MVQuestSubsystemcpp

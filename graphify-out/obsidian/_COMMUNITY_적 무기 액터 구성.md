@@ -21,7 +21,7 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 1 edge to [[_COMMUNITY_적 캐릭터 전투 실행]]
+- 1 edge to [[_COMMUNITY_MVEnemy.cpp]]
 
 ## Top bridge nodes
 - [[AMVEnemyGetWeaponActor()]] - degree 2, connects to 1 community

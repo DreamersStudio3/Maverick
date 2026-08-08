@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/Window/MVLoadingWindow.cpp"
 type: "code"
-community: "로딩 가이드 카드"
+community: "FMVLoadingGuideCard"
 location: "L193"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/FMVLoadingGuideCard
 ---
 
 # UMVLoadingWindow::GetCurrentLoadingGuideCard()
@@ -15,4 +15,4 @@ tags:
 - [[FMVLoadingGuideCard]] - `references` [EXTRACTED]
 - [[MVLoadingWindow.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/FMVLoadingGuideCard

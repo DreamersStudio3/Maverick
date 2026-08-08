@@ -1,12 +1,12 @@
 ---
 source_file: "MaverickDesign/Schema/TableData.schema.json"
 type: "code"
-community: "JSON 스키마 값 타입"
+community: "MVTableAssetGenerator.cpp"
 location: "L15"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/JSON___
+  - community/MVTableAssetGeneratorcpp
 ---
 
 # source
@@ -18,4 +18,4 @@ tags:
 - [[properties]] - `contains` [EXTRACTED]
 - [[type_2]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/JSON___
+#graphify/code #graphify/EXTRACTED #community/MVTableAssetGeneratorcpp

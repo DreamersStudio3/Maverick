@@ -1,16 +1,17 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 쿨다운 준비 조건"
+community: "FMVExecuteFixedAttackTaskInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVExecuteFixedAttackTaskInstanceData
 ---
 
 # TObjectPtr
 
 ## Connections
-- [[ResolveCooldownConditionOwner()]] - `references` [EXTRACTED]
+- [[FMVExecuteFixedAttackTaskInstanceData]] - `references` [EXTRACTED]
+- [[FMVSelectAndExecuteAttackTaskInstanceData]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVExecuteFixedAttackTaskInstanceData

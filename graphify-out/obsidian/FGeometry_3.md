@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "상태 바 위젯"
+community: "MVStatusBarWidget.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVStatusBarWidgetcpp
 ---
 
 # FGeometry
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[UMVStatusBarWidgetNativeTick()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVStatusBarWidgetcpp

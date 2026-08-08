@@ -1,19 +1,17 @@
 ---
 source_file: ""
 type: "code"
-community: "락온 컨트롤러 회전 확장"
+community: "SSocketSelector"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/SSocketSelector
 ---
 
 # FName
 
 ## Connections
-- [[FLockOnTargetExtensionTickFunctionDiagnosticContext()]] - `references` [EXTRACTED]
-- [[ULockOnTargetExtensionProxyOnSocketChanged()]] - `references` [EXTRACTED]
-- [[ULockOnTargetExtensionProxyOnTargetLocked()]] - `references` [EXTRACTED]
-- [[ULockOnTargetExtensionProxyOnTargetUnlocked()]] - `references` [EXTRACTED]
+- [[OnSocketSelected]] - `references` [EXTRACTED]
+- [[OnTextBoxCommitted]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/SSocketSelector

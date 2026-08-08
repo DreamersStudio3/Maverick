@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h"
 type: "code"
-community: "LockOnTarget 타깃 캡처 상태"
+community: "UTargetComponent::DispatchTargetException"
 location: "L164"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/LockOnTarget___
+  - community/UTargetComponentDispatchTargetException
 ---
 
 # .GetInvadersNum()
@@ -14,6 +14,6 @@ tags:
 ## Connections
 - [[dot-IsCaptured()]] - `calls` [EXTRACTED]
 - [[ETargetFocusPointType]] - `method` [EXTRACTED]
-- [[int32_1]] - `references` [EXTRACTED]
+- [[int32_5]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/LockOnTarget___
+#graphify/code #graphify/EXTRACTED #community/UTargetComponentDispatchTargetException

@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Public/Enum/MVActionInputPhase.h"
 type: "code"
-community: "액션 입력 처리 계약"
+community: "MVActionInputHandlerInterface.h"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVActionInputHandlerInterfaceh
 ---
 
 # MVActionInputPhase.h
@@ -16,4 +16,4 @@ tags:
 - [[MVActionInputHandlerInterface.h]] - `imports` [EXTRACTED]
 - [[MVInputManagerComponent.h]] - `imports` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVActionInputHandlerInterfaceh

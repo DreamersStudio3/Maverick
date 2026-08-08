@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/System/MVFieldTransitionSubsystem.cpp"
 type: "code"
-community: "필드 전환 관리"
+community: "MVFieldTransitionSubsystem.cpp"
 location: "L423"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVFieldTransitionSubsystemcpp
 ---
 
 # UMVFieldTransitionSubsystem::ResetWorldActorsForTransition()
@@ -14,6 +14,6 @@ tags:
 ## Connections
 - [[FMVFieldTransitionRequest()]] - `references` [EXTRACTED]
 - [[MVFieldTransitionSubsystem.cpp]] - `contains` [EXTRACTED]
-- [[int32_26]] - `references` [EXTRACTED]
+- [[int32_27]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVFieldTransitionSubsystemcpp

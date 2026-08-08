@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "무기 장착 시각화"
+community: "MVWeaponComponent.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVWeaponComponentcpp
 ---
 
 # TObjectPtr
@@ -15,4 +15,4 @@ tags:
 - [[UMVWeaponComponentClearWeaponMeshVisual()]] - `references` [EXTRACTED]
 - [[UMVWeaponComponentEnsureWeaponMeshComponent()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVWeaponComponentcpp

@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 전역 쿨다운"
+community: "MVExecuteAttackTask.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI__
+  - community/MVExecuteAttackTaskcpp
 ---
 
 # TObjectPtr
 
 ## Connections
-- [[FMVGlobalCoolTimeTaskInstanceData]] - `references` [EXTRACTED]
+- [[ExecuteAttackResolveOwner()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI__
+#graphify/code #graphify/EXTRACTED #community/MVExecuteAttackTaskcpp

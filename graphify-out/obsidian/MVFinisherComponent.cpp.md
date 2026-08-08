@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVFinisherComponent.cpp"
 type: "code"
-community: "피니셔 실행과 워핑"
+community: "MVFinisherComponent.cpp"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVFinisherComponentcpp
 ---
 
 # MVFinisherComponent.cpp
@@ -31,4 +31,4 @@ tags:
 - [[UMVFinisherComponentTryHandleActionInput()]] - `contains` [EXTRACTED]
 - [[UMVFinisherComponentUMVFinisherComponent()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVFinisherComponentcpp

@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "피격 공중 상태 추적"
+community: "MVCharacterLogAirborneTrace"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVCharacterLogAirborneTrace
 ---
 
 # TCHAR
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[MVCharacterLogAirborneTrace()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVCharacterLogAirborneTrace

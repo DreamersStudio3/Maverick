@@ -1,11 +1,11 @@
 ---
 source_file: ".github/pull_request_template.md"
 type: "document"
-community: "문서·Graphify 거버넌스"
+community: "Build and Impact Verification"
 tags:
   - graphify/document
   - graphify/EXTRACTED
-  - community/Graphify_
+  - community/Build_and_Impact_Verification
 ---
 
 # Pull Request Checklist
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[Build and Impact Verification]] - `implements` [EXTRACTED]
 
-#graphify/document #graphify/EXTRACTED #community/Graphify_
+#graphify/document #graphify/EXTRACTED #community/Build_and_Impact_Verification

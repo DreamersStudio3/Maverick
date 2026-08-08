@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Public/Tables/MVDialogueTableTypes.h"
 type: "code"
-community: "테이블 Row 공통 타입"
+community: "MVTableTypes.h"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/_Row__
+  - community/MVTableTypesh
 ---
 
 # MVDialogueTableTypes.h
@@ -17,4 +17,4 @@ tags:
 - [[MVUISubsystem.cpp]] - `imports` [EXTRACTED]
 - [[USoundBase]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/_Row__
+#graphify/code #graphify/EXTRACTED #community/MVTableTypesh

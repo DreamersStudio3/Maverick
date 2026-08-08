@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "피격 판정 해석 파이프라인"
+community: "MVHitResolverSubsystem.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVHitResolverSubsystemcpp
 ---
 
 # FVector
@@ -15,4 +15,4 @@ tags:
 - [[MVHitResolverTryResolveAttackerToVictimDirection()]] - `references` [EXTRACTED]
 - [[UMVHitResolverSubsystemResolveHitDirection()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVHitResolverSubsystemcpp

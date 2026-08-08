@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVEnemyDodgeTokenComponent.h"
 type: "code"
-community: "회피 토큰 소모와 초기화"
+community: "ResetCombatFlowCounters"
 location: "L113"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/___
+  - community/ResetCombatFlowCounters
 ---
 
 # ResetCombatFlowCounters
@@ -16,4 +16,4 @@ tags:
 - [[UMVEnemyDodgeTokenComponentResetForFieldTransition()]] - `calls` [INFERRED]
 - [[UMVEnemyDodgeTokenComponentTrySpendDodgeToken()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/___
+#graphify/code #graphify/INFERRED #community/ResetCombatFlowCounters

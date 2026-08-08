@@ -1,16 +1,17 @@
 ---
 source_file: ""
 type: "code"
-community: "락온 핵심 타입과 핸들러"
+community: "PawnRotationExtension.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/PawnRotationExtensioncpp
 ---
 
 # FName
 
 ## Connections
-- [[FindComponentByName()]] - `references` [EXTRACTED]
+- [[UPawnRotationExtensionOnTargetLocked()]] - `references` [EXTRACTED]
+- [[UPawnRotationExtensionOnTargetUnlocked()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/PawnRotationExtensioncpp

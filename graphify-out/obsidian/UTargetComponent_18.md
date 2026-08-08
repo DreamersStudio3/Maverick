@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h"
 type: "code"
-community: "락온 대상 예외 처리"
+community: "WeightedTargetHandler.h"
 location: "L14"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/WeightedTargetHandlerh
 ---
 
 # UTargetComponent
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[WeightedTargetHandler.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/WeightedTargetHandlerh

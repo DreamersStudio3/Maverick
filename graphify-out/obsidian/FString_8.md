@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "어빌리티 애님 노티파이 상태"
+community: "UMVAnimNotify_HitReactionDefaultRecovery::Notify"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/UMVAnimNotify_HitReactionDefaultRecoveryNotify
 ---
 
 # FString
 
 ## Connections
-- [[UMVAnimNotifyState_AbilityGetNotifyName_Implementation()]] - `references` [EXTRACTED]
+- [[UMVAnimNotify_HitReactionDefaultRecoveryGetNotifyName_Implementation()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/UMVAnimNotify_HitReactionDefaultRecoveryNotify

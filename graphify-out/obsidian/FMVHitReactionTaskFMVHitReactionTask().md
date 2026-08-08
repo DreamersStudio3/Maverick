@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/AI/Task/MVHitReactionTask.cpp"
 type: "code"
-community: "AI 피격 반응 태스크"
+community: "FMVHitReactionTaskInstanceData"
 location: "L102"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVHitReactionTaskInstanceData
 ---
 
 # FMVHitReactionTask::FMVHitReactionTask()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[MVHitReactionTask.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVHitReactionTaskInstanceData

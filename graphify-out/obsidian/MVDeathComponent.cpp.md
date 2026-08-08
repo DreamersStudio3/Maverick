@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVDeathComponent.cpp"
 type: "code"
-community: "캐릭터 사망 표현"
+community: "MVDeathComponent.cpp"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVDeathComponentcpp
 ---
 
 # MVDeathComponent.cpp
@@ -54,4 +54,4 @@ tags:
 - [[UMVDeathComponentUMVDeathComponent()]] - `contains` [EXTRACTED]
 - [[UMVDeathComponentUnbindMovementModeChanged()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVDeathComponentcpp

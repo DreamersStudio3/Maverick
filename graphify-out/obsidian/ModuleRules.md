@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "모듈 빌드 의존성"
+community: "ModuleRules"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/ModuleRules
 ---
 
 # ModuleRules
@@ -16,4 +16,4 @@ tags:
 - [[LockOnTargetEditor]] - `inherits` [EXTRACTED]
 - [[Maverick]] - `inherits` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/ModuleRules

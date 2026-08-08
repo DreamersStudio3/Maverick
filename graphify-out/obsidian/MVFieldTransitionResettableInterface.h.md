@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/System/MVFieldTransitionResettableInterface.h"
 type: "code"
-community: "필드 전환 리셋 계약"
+community: "MVEnemy.h"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVEnemyh
 ---
 
 # MVFieldTransitionResettableInterface.h
@@ -14,9 +14,9 @@ tags:
 ## Connections
 - [[FMVFieldTransitionResetContext()]] - `contains` [EXTRACTED]
 - [[IMVFieldTransitionResettableInterface()]] - `contains` [EXTRACTED]
-- [[MAVERICK_API_13]] - `contains` [EXTRACTED]
+- [[MAVERICK_API_17]] - `contains` [EXTRACTED]
 - [[MVEnemy.h]] - `imports` [EXTRACTED]
 - [[MVFieldTransitionSubsystem.cpp]] - `imports` [EXTRACTED]
-- [[UMVWorldStateSubsystem]] - `contains` [EXTRACTED]
+- [[UMVWorldStateSubsystem_2]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVEnemyh

@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h"
 type: "code"
-community: "가중 대상 탐색 컨텍스트"
+community: "WeightedTargetHandler.cpp"
 location: "L383"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/___
+  - community/WeightedTargetHandlercpp
 ---
 
 # StartLineOfSightTimer
@@ -15,4 +15,4 @@ tags:
 - [[EFindTargetContextMode]] - `defines` [EXTRACTED]
 - [[UWeightedTargetHandlerCheckTargetState_Implementation()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/___
+#graphify/code #graphify/INFERRED #community/WeightedTargetHandlercpp

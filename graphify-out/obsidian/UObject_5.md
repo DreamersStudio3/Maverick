@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "피격 시스템 공용 타입"
+community: "MVHitTypes.h"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVHitTypesh
 ---
 
 # UObject
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[UMVHitResolverSubsystemGet()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVHitTypesh

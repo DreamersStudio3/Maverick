@@ -1,17 +1,17 @@
 ---
-source_file: "Source/Maverick/AI/MVActionCooldownComponent.h"
+source_file: "Source/Maverick/Components/MVCombatComponent.h"
 type: "code"
-community: "AI 전역 쿨다운"
-location: "L16"
+community: "FMVCombatActionEvent"
+location: "L325"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI__
+  - community/FMVCombatActionEvent
 ---
 
 # CooldownDuration
 
 ## Connections
-- [[FMVActionCooldownDefinition]] - `defines` [EXTRACTED]
+- [[FMVSkillSlotRuntimeState]] - `defines` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI__
+#graphify/code #graphify/EXTRACTED #community/FMVCombatActionEvent

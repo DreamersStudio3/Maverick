@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVCombatComponent.h"
 type: "code"
-community: "전투 액션 런타임 상태"
+community: "FMVCombatActionEvent"
 location: "L307"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/FMVCombatActionEvent
 ---
 
 # bAvailable
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[FMVSkillSlotRuntimeState]] - `defines` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/FMVCombatActionEvent

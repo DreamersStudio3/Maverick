@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h"
 type: "code"
-community: "적 회피 액션 태스크"
+community: "FMVEnemyDodgeActionTask"
 location: "L12"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/FMVEnemyDodgeActionTask
 ---
 
 # UMVActionComponent
@@ -15,4 +15,4 @@ tags:
 - [[FMVEnemyDodgeActionTaskInstanceData]] - `references` [EXTRACTED]
 - [[MVEnemyDodgeActionTask.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/FMVEnemyDodgeActionTask

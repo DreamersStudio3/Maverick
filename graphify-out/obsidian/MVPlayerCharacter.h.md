@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Character/PC/MVPlayerCharacter.h"
 type: "code"
-community: "플레이어 캐릭터 기능 구성"
+community: "MVMovementActionTableTypes.h"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVMovementActionTableTypesh
 ---
 
 # MVPlayerCharacter.h
@@ -20,4 +20,4 @@ tags:
 - [[UMVPlayerDodge]] - `contains` [EXTRACTED]
 - [[UMVPlayerInteractionDetector]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVMovementActionTableTypesh

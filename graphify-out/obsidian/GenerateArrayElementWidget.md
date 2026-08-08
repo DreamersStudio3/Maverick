@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/TargetComponentDetails.h"
 type: "code"
-community: "대상 컴포넌트 디테일 편집"
+community: "TargetComponentDetails.cpp"
 location: "L40"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/TargetComponentDetailscpp
 ---
 
 # GenerateArrayElementWidget
@@ -17,6 +17,6 @@ tags:
 - [[IPropertyHandle_1]] - `references` [EXTRACTED]
 - [[TSharedRef_3]] - `references` [EXTRACTED]
 - [[TargetComponentDetails.cpp]] - `contains` [EXTRACTED]
-- [[int32]] - `references` [EXTRACTED]
+- [[int32_4]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/TargetComponentDetailscpp

@@ -1,20 +1,21 @@
 ---
-source_file: "Source/Maverick/AI/Task/MVFocusingTask.h"
+source_file: "Source/Maverick/AI/Task/MVExecuteAttackTask.h"
 type: "code"
-community: "AI 타겟 포커싱"
-location: "L48"
+community: "MVExecuteAttackTask.cpp"
+location: "L140"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI__
+  - community/MVExecuteAttackTaskcpp
 ---
 
 # Tick
 
 ## Connections
-- [[EStateTreeRunStatus_7]] - `references` [EXTRACTED]
-- [[FMVFocusingTask]] - `defines` [EXTRACTED]
-- [[FStateTreeExecutionContext_13]] - `references` [EXTRACTED]
-- [[MVFocusingTask.cpp]] - `contains` [EXTRACTED]
+- [[EStateTreeRunStatus_6]] - `references` [EXTRACTED]
+- [[ExecuteAttackIsStartedActionRunning()]] - `calls` [EXTRACTED]
+- [[FMVSelectAndExecuteAttackTask]] - `defines` [EXTRACTED]
+- [[FStateTreeExecutionContext_12]] - `references` [EXTRACTED]
+- [[MVExecuteAttackTask.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI__
+#graphify/code #graphify/EXTRACTED #community/MVExecuteAttackTaskcpp

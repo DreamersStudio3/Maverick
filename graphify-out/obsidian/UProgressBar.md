@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/Window/MVLoadingWindow.h"
 type: "code"
-community: "상태 바 위젯"
+community: "MVStatusBarWidget.cpp"
 location: "L10"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVStatusBarWidgetcpp
 ---
 
 # UProgressBar
@@ -16,4 +16,4 @@ tags:
 - [[UMVLoadingWindowBuildNativeWidgetTree()]] - `references` [EXTRACTED]
 - [[UMVStatusBarWidgetBuildNativeWidgetTree()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVStatusBarWidgetcpp

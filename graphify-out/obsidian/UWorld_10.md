@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "사망 디졸브 효과 실행"
+community: "MVDeathDissolveEffect.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVDeathDissolveEffectcpp
 ---
 
 # UWorld
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[UMVDeathDissolveEffectGetWorld()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVDeathDissolveEffectcpp

@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "사망 디졸브 노티파이"
+community: "UMVAnimNotify_CooldownReadyActionCut::Notify"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/UMVAnimNotify_CooldownReadyActionCutNotify
 ---
 
 # FString
 
 ## Connections
-- [[UMVAnimNotify_DeathDissolveGetNotifyName_Implementation()]] - `references` [EXTRACTED]
+- [[UMVAnimNotify_CooldownReadyActionCutGetNotifyName_Implementation()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/UMVAnimNotify_CooldownReadyActionCutNotify

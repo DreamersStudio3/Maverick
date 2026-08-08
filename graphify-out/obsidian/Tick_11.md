@@ -1,21 +1,23 @@
 ---
-source_file: "Source/Maverick/AI/Task/MVGlobalSensingTask.h"
+source_file: "Source/Maverick/AI/Task/MVGlobalCoolTimeTask.h"
 type: "code"
-community: "AI 전역 감지 갱신"
-location: "L162"
+community: "FMVGlobalCoolTimeTaskInstanceData"
+location: "L58"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVGlobalCoolTimeTaskInstanceData
 ---
 
 # Tick
 
 ## Connections
-- [[EStateTreeRunStatus_9]] - `references` [EXTRACTED]
-- [[FMVGlobalSensingTask]] - `defines` [EXTRACTED]
-- [[FStateTreeExecutionContext_15]] - `references` [EXTRACTED]
-- [[MVGlobalSensingTask.cpp]] - `contains` [EXTRACTED]
-- [[UpdateGlobalSensingSnapshot()]] - `calls` [EXTRACTED]
+- [[EStateTreeRunStatus_8]] - `references` [EXTRACTED]
+- [[EnsureCooldownComponent()]] - `calls` [EXTRACTED]
+- [[FMVGlobalCoolTimeTask]] - `defines` [EXTRACTED]
+- [[FStateTreeExecutionContext_14]] - `references` [EXTRACTED]
+- [[MVGlobalCoolTimeTask.cpp]] - `contains` [EXTRACTED]
+- [[ResolveCooldownOwner()]] - `calls` [EXTRACTED]
+- [[UpdateQueryOutputs()]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVGlobalCoolTimeTaskInstanceData

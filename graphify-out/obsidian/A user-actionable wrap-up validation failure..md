@@ -1,12 +1,12 @@
 ---
 source_file: "Scripts/Graphify/knowledge_guard.py"
 type: "rationale"
-community: "Graphify 최신성 Guard"
+community: "knowledge_guard.py"
 location: "L61"
 tags:
   - graphify/rationale
   - graphify/EXTRACTED
-  - community/Graphify__Guard
+  - community/knowledge_guardpy
 ---
 
 # A user-actionable wrap-up validation failure.
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[GuardError]] - `rationale_for` [EXTRACTED]
 
-#graphify/rationale #graphify/EXTRACTED #community/Graphify__Guard
+#graphify/rationale #graphify/EXTRACTED #community/knowledge_guardpy

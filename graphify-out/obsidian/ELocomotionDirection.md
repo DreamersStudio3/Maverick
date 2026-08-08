@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "8방향 이동 방향 갱신"
+community: "ResolveCharacterEightWayDirection"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/8___
+  - community/ResolveCharacterEightWayDirection
 ---
 
 # ELocomotionDirection
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[ResolveCharacterEightWayDirection()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/8___
+#graphify/code #graphify/EXTRACTED #community/ResolveCharacterEightWayDirection

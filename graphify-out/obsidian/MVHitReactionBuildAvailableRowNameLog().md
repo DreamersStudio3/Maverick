@@ -1,18 +1,18 @@
 ---
 source_file: "Source/Maverick/Components/MVHitReactionComponent.cpp"
 type: "code"
-community: "피격·회복 액션 행 조회"
+community: "MVHitReactionBuildAvailableRowNameLog"
 location: "L259"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVHitReactionBuildAvailableRowNameLog
 ---
 
 # MVHitReactionBuildAvailableRowNameLog()
 
 ## Connections
-- [[FString_18]] - `references` [EXTRACTED]
+- [[FString_19]] - `references` [EXTRACTED]
 - [[MVHitReactionComponent.cpp]] - `contains` [EXTRACTED]
 - [[UDataTable_6]] - `references` [EXTRACTED]
 - [[UMVHitReactionComponentFindBaseActionRow()]] - `calls` [EXTRACTED]
@@ -20,4 +20,4 @@ tags:
 - [[UMVHitReactionComponentFindRecoveryActionRow()]] - `calls` [EXTRACTED]
 - [[UMVHitReactionComponentResolveRecoveryActionRowHandle()]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVHitReactionBuildAvailableRowNameLog

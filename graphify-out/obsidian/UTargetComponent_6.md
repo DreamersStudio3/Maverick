@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "락온 Pawn 회전 확장"
+community: "PawnRotationExtension.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/_Pawn__
+  - community/PawnRotationExtensioncpp
 ---
 
 # UTargetComponent
@@ -14,4 +14,4 @@ tags:
 - [[UPawnRotationExtensionOnTargetLocked()]] - `references` [EXTRACTED]
 - [[UPawnRotationExtensionOnTargetUnlocked()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/_Pawn__
+#graphify/code #graphify/EXTRACTED #community/PawnRotationExtensioncpp

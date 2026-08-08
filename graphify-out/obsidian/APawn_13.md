@@ -1,17 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 적 전투 액션"
+community: "StateTree 타깃 평가기"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/StateTree__
 ---
 
 # APawn
 
 ## Connections
-- [[EnemyCombatActionTaskResolveOwner()]] - `references` [EXTRACTED]
-- [[EnemyCombatActionTaskTryStartCooldown()]] - `references` [EXTRACTED]
+- [[FMVTargetEvaluatorData]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/StateTree__

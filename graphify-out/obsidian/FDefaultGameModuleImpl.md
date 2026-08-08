@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "Maverick 모듈 테이블 명령"
+community: "Maverick.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Maverick___
+  - community/Maverickcpp
 ---
 
 # FDefaultGameModuleImpl
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[FMaverickModule]] - `inherits` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Maverick___
+#graphify/code #graphify/EXTRACTED #community/Maverickcpp

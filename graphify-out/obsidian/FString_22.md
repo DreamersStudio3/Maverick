@@ -1,29 +1,59 @@
 ---
 source_file: ""
 type: "code"
-community: "런타임 테이블 조회"
+community: "MVTableAssetGenerator.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVTableAssetGeneratorcpp
 ---
 
 # FString
 
 ## Connections
-- [[ExportPropertyToString()]] - `references` [EXTRACTED]
-- [[TableManagerJsonValueToString()]] - `references` [EXTRACTED]
-- [[TryParseBoolString()]] - `references` [EXTRACTED]
-- [[UMVTableManagerAddLoadError()]] - `references` [EXTRACTED]
-- [[UMVTableManagerFindProperty()]] - `references` [EXTRACTED]
-- [[UMVTableManagerFindRawRow()]] - `references` [EXTRACTED]
-- [[UMVTableManagerGetBool()]] - `references` [EXTRACTED]
-- [[UMVTableManagerGetFloat()]] - `references` [EXTRACTED]
-- [[UMVTableManagerGetInt()]] - `references` [EXTRACTED]
-- [[UMVTableManagerGetRowJson()]] - `references` [EXTRACTED]
-- [[UMVTableManagerGetRowKeys()]] - `references` [EXTRACTED]
-- [[UMVTableManagerGetString()]] - `references` [EXTRACTED]
-- [[UMVTableManagerHasRow()]] - `references` [EXTRACTED]
-- [[UMVTableManagerTryGetGenericField()]] - `references` [EXTRACTED]
+- [[CreateOrResetDataTable()]] - `references` [EXTRACTED]
+- [[FindExistingDataTable()]] - `references` [EXTRACTED]
+- [[GetConverterDir()]] - `references` [EXTRACTED]
+- [[GetConverterExePath()]] - `references` [EXTRACTED]
+- [[GetConverterScriptPath()]] - `references` [EXTRACTED]
+- [[GetJsonDir()]] - `references` [EXTRACTED]
+- [[GetMaverickDesignDir()]] - `references` [EXTRACTED]
+- [[JsonObjectToCompactString()]] - `references` [EXTRACTED]
+- [[JsonValueToGeneratorString()]] - `references` [EXTRACTED]
+- [[SanitizeAssetName()]] - `references` [EXTRACTED]
+- [[SaveDataTableAsset()]] - `references` [EXTRACTED]
+- [[TableAssetGeneratorAddManifestRow()]] - `references` [EXTRACTED]
+- [[TableAssetGeneratorAppendJsonHashValue()]] - `references` [EXTRACTED]
+- [[TableAssetGeneratorBuildGeneratedTableHash()]] - `references` [EXTRACTED]
+- [[TableAssetGeneratorBuildManifestHash()]] - `references` [EXTRACTED]
+- [[TableAssetGeneratorCanReuseDataTable()]] - `references` [EXTRACTED]
+- [[TableAssetGeneratorHashSourceString()]] - `references` [EXTRACTED]
+- [[TableAssetGeneratorIsDirectManagedJsonPath()]] - `references` [EXTRACTED]
+- [[TableAssetGeneratorIsDirectManagedObjectPath()]] - `references` [EXTRACTED]
+- [[TableAssetGeneratorIsDirectManagedPackagePath()]] - `references` [EXTRACTED]
+- [[TableAssetGeneratorIsUnderPackageRoot()]] - `references` [EXTRACTED]
+- [[TableAssetGeneratorReadIntegerKeySet()]] - `references` [EXTRACTED]
+- [[TableAssetGeneratorReadStoredSourceHash()]] - `references` [EXTRACTED]
+- [[TableAssetGeneratorReadStringKeySet()]] - `references` [EXTRACTED]
+- [[TableAssetGeneratorResolveKeyColumnName()]] - `references` [EXTRACTED]
+- [[TableAssetGeneratorWriteStoredSourceHash()]] - `references` [EXTRACTED]
+- [[ToTableAssetName()]] - `references` [EXTRACTED]
+- [[ToTablePackagePath()]] - `references` [EXTRACTED]
+- [[TryGetArrayField()]] - `references` [EXTRACTED]
+- [[TryGetObjectField()]] - `references` [EXTRACTED]
+- [[TryGetStringField()]] - `references` [EXTRACTED]
+- [[UMVTableAssetGeneratorBuildAndSaveDataTable()]] - `references` [EXTRACTED]
+- [[UMVTableAssetGeneratorBuildCsvOriginManifestRows()]] - `references` [EXTRACTED]
+- [[UMVTableAssetGeneratorBuildCsvOriginManifestRowsFromJsonFile()]] - `references` [EXTRACTED]
+- [[UMVTableAssetGeneratorBuildManifestRowForDataTable()]] - `references` [EXTRACTED]
+- [[UMVTableAssetGeneratorDeleteStaleGeneratedAssets()]] - `references` [EXTRACTED]
+- [[UMVTableAssetGeneratorGenerateDataTables()]] - `references` [EXTRACTED]
+- [[UMVTableAssetGeneratorImportAllJsonFiles()]] - `references` [EXTRACTED]
+- [[UMVTableAssetGeneratorImportJsonFile()]] - `references` [EXTRACTED]
+- [[UMVTableAssetGeneratorRefreshTableManifest()]] - `references` [EXTRACTED]
+- [[UMVTableAssetGeneratorRunCsvConverter()]] - `references` [EXTRACTED]
+- [[UMVTableAssetGeneratorSaveManifest()]] - `references` [EXTRACTED]
+- [[UMVTableAssetGeneratorScanDirectManagedDataTables()]] - `references` [EXTRACTED]
+- [[UMVTableAssetGeneratorValidateCharacterStatMapping()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVTableAssetGeneratorcpp

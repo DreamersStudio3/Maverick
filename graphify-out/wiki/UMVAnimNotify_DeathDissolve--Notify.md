@@ -1,0 +1,31 @@
+# UMVAnimNotify_DeathDissolve::Notify
+
+> 7 nodes
+
+## Key Concepts
+
+- **UMVAnimNotify_DeathDissolve::Notify()** (4 connections) — `Source/Maverick/Animation/Notifies/MVAnimNotify_DeathDissolve.cpp`
+- **MVAnimNotify_DeathDissolve.cpp** (2 connections) — `Source/Maverick/Animation/Notifies/MVAnimNotify_DeathDissolve.cpp`
+- **UMVAnimNotify_DeathDissolve::GetNotifyName_Implementation()** (2 connections) — `Source/Maverick/Animation/Notifies/MVAnimNotify_DeathDissolve.cpp`
+- **USkeletalMeshComponent** (1 connections)
+- **UAnimSequenceBase** (1 connections)
+- **FAnimNotifyEventReference** (1 connections)
+- **FString** (1 connections)
+
+## Relationships
+
+- No strong cross-community connections detected
+
+## Source Files
+
+- `Source/Maverick/Animation/Notifies/MVAnimNotify_DeathDissolve.cpp`
+
+## Audit Trail
+
+- EXTRACTED: 12 (100%)
+- INFERRED: 0 (0%)
+- AMBIGUOUS: 0 (0%)
+
+---
+
+*Part of the graphify knowledge wiki. See [index](index.md) to navigate.*

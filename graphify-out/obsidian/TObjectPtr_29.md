@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "사망 디졸브 머티리얼 상태"
+community: "FMVDeathDissolveMeshState"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/FMVDeathDissolveMeshState
 ---
 
 # TObjectPtr
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[FMVDeathDissolveMeshState]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/FMVDeathDissolveMeshState

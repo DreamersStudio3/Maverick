@@ -1,22 +1,22 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/SSocketSelector.h"
 type: "code"
-community: "락온 소켓 선택 에디터"
+community: "SSocketSelector"
 location: "L36"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/SSocketSelector
 ---
 
 # OnTextBoxCommitted
 
 ## Connections
-- [[FName]] - `calls` [EXTRACTED]
-- [[FText]] - `references` [EXTRACTED]
+- [[FName_5]] - `calls` [EXTRACTED]
+- [[FText_1]] - `references` [EXTRACTED]
 - [[OnSocketSelected]] - `calls` [INFERRED]
 - [[SSocketSelector]] - `defines` [EXTRACTED]
 - [[SSocketSelector.cpp]] - `contains` [EXTRACTED]
 - [[Type_9]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/SSocketSelector

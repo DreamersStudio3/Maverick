@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVInteractableComponent.cpp"
 type: "code"
-community: "상호작용 가능 컴포넌트"
+community: "MVInteractableComponent.cpp"
 location: "L9"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVInteractableComponentcpp
 ---
 
 # UMVInteractableComponent::SetCanInteract()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[MVInteractableComponent.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVInteractableComponentcpp

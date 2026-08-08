@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/HUD/MVSkillSlotWidget.cpp"
 type: "code"
-community: "스킬 슬롯 런타임 표시"
+community: "MVSkillSlotWidget.cpp"
 location: "L69"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVSkillSlotWidgetcpp
 ---
 
 # UMVSkillSlotWidget::NativeOnInitialized()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[MVSkillSlotWidget.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVSkillSlotWidgetcpp

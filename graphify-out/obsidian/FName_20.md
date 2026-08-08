@@ -1,17 +1,19 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 적 전투 액션"
+community: "FMVGlobalCoolTimeTaskInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVGlobalCoolTimeTaskInstanceData
 ---
 
 # FName
 
 ## Connections
-- [[EnemyCombatActionTaskMakeActionTag()]] - `references` [EXTRACTED]
-- [[EnemyCombatActionTaskTryStartCooldown()]] - `references` [EXTRACTED]
+- [[UMVActionCooldownComponentGetReadyActionIds()]] - `references` [EXTRACTED]
+- [[UMVActionCooldownComponentGetRemainingTime()]] - `references` [EXTRACTED]
+- [[UMVActionCooldownComponentIsCooldownReady()]] - `references` [EXTRACTED]
+- [[UMVActionCooldownComponentStartCooldown()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVGlobalCoolTimeTaskInstanceData

@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/HUD/MVMainHUDWidget.cpp"
 type: "code"
-community: "메인 HUD 상태 바인딩"
+community: "MVMainHUDWidget.cpp"
 location: "L154"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/_HUD__
+  - community/MVMainHUDWidgetcpp
 ---
 
 # UMVMainHUDWidget::BindPlayerConsumable()
@@ -15,4 +15,4 @@ tags:
 - [[MVMainHUDWidget.cpp]] - `contains` [EXTRACTED]
 - [[UMVPlayerConsumable_2]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/_HUD__
+#graphify/code #graphify/EXTRACTED #community/MVMainHUDWidgetcpp

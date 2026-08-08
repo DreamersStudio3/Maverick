@@ -1,19 +1,19 @@
 ---
 source_file: "Source/Maverick/Components/MVStatComponent.cpp"
 type: "code"
-community: "캐릭터 스탯 관리"
+community: "MVStatComponent.cpp"
 location: "L45"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVStatComponentcpp
 ---
 
 # UMVStatComponent::SetStatTableReference()
 
 ## Connections
 - [[FName_41]] - `references` [EXTRACTED]
-- [[FString_19]] - `references` [EXTRACTED]
+- [[FString_20]] - `references` [EXTRACTED]
 - [[MVStatComponent.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVStatComponentcpp

@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/AI/Task/MVHitReactionTask.h"
 type: "code"
-community: "AI 피격 반응 태스크"
+community: "FMVHitReactionTaskInstanceData"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVHitReactionTaskInstanceData
 ---
 
 # MVHitReactionTask.h
@@ -15,7 +15,7 @@ tags:
 - [[FMVHitReactionTask]] - `contains` [EXTRACTED]
 - [[FMVHitReactionTaskInstanceData]] - `contains` [EXTRACTED]
 - [[MVHitTypes.h]] - `imports` [EXTRACTED]
-- [[UMVActionComponent_3]] - `contains` [EXTRACTED]
+- [[UMVActionComponent_2]] - `contains` [EXTRACTED]
 - [[UMVHitReactionComponent]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVHitReactionTaskInstanceData

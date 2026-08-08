@@ -1,19 +1,19 @@
 ---
 source_file: "Source/Maverick/UI/System/MVUISubsystem.cpp"
 type: "code"
-community: "UI 팝업 메시지 데이터"
+community: "FMVPopupMessageData"
 location: "L663"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/UI___
+  - community/FMVPopupMessageData
 ---
 
 # UMVUISubsystem::ShowPopupMessageText()
 
 ## Connections
-- [[FText_12]] - `references` [EXTRACTED]
+- [[FText_13]] - `references` [EXTRACTED]
 - [[MVUISubsystem.cpp]] - `contains` [EXTRACTED]
 - [[UMVMessagePopup()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/UI___
+#graphify/code #graphify/EXTRACTED #community/FMVPopupMessageData

@@ -1,16 +1,17 @@
 ---
-source_file: ""
+source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h"
 type: "code"
-community: "AI 그로기 진입 조건"
+community: "WeightedTargetHandler.h"
+location: "L17"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/WeightedTargetHandlerh
 ---
 
 # APawn
 
 ## Connections
-- [[FMVGroggyEnterConditionInstanceData]] - `references` [EXTRACTED]
+- [[WeightedTargetHandler.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/WeightedTargetHandlerh

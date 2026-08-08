@@ -1,18 +1,17 @@
 ---
-source_file: "Source/Maverick/AI/MVAICombatTypes.h"
+source_file: "Source/Maverick/Components/MVFinisherComponent.h"
 type: "code"
-community: "AI 적 사망 처리"
-location: "L45"
+community: "FMVFinisherChooserInput"
+location: "L29"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVFinisherChooserInput
 ---
 
 # .IsValid()
 
 ## Connections
-- [[EnemyDeadTaskScheduleDestroy()]] - `calls` [INFERRED]
-- [[FMVAttackActionRowHandle]] - `method` [EXTRACTED]
+- [[FMVFinisherChooserInput]] - `method` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVFinisherChooserInput

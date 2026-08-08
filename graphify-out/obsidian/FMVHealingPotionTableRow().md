@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Public/Tables/MVHealingPotionTableTypes.h"
 type: "code"
-community: "회복 물약 기본값 해석"
+community: "ApplyMVPlayerConsumableHealingPotionDataRowDefaults"
 location: "L15"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/ApplyMVPlayerConsumableHealingPotionDataRowDefaults
 ---
 
 # FMVHealingPotionTableRow()
@@ -16,4 +16,4 @@ tags:
 - [[MVHealingPotionTableTypes.h]] - `contains` [EXTRACTED]
 - [[MakeMVPlayerConsumableDefaultHealingPotionData()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/ApplyMVPlayerConsumableHealingPotionDataRowDefaults

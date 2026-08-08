@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/AI/Task/MVStrafeMoveTask.h"
 type: "code"
-community: "AI 스트레이프 이동"
+community: "FMVStrafeMoveTaskInstanceData"
 location: "L9"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI__
+  - community/FMVStrafeMoveTaskInstanceData
 ---
 
 # FMVStrafeMoveTaskInstanceData
@@ -32,4 +32,4 @@ tags:
 - [[bAppliedStrafeMoveSpeed]] - `defines` [EXTRACTED]
 - [[bStrafePathClear_2]] - `defines` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI__
+#graphify/code #graphify/EXTRACTED #community/FMVStrafeMoveTaskInstanceData

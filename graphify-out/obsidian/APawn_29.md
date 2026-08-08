@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 액션 쿨다운 시작"
+community: "FMVStartActionCooldownTaskInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVStartActionCooldownTaskInstanceData
 ---
 
 # APawn
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[ResolveStartCooldownOwner()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVStartActionCooldownTaskInstanceData

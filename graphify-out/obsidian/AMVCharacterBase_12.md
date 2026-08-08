@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/System/MVUISubsystem.h"
 type: "code"
-community: "UI 서브시스템 공용 선언"
+community: "MVUISubsystem.h"
 location: "L12"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/UI___
+  - community/MVUISubsystemh
 ---
 
 # AMVCharacterBase
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[MVUISubsystem.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/UI___
+#graphify/code #graphify/EXTRACTED #community/MVUISubsystemh

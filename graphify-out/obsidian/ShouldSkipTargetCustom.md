@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h"
 type: "code"
-community: "가중 대상 탐색 컨텍스트"
+community: "EFindTargetContextMode"
 location: "L346"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/___
+  - community/EFindTargetContextMode
 ---
 
 # ShouldSkipTargetCustom
@@ -15,4 +15,4 @@ tags:
 - [[EFindTargetContextMode]] - `defines` [EXTRACTED]
 - [[UWeightedTargetHandlerShouldSkipTargetSecondaryPass()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/___
+#graphify/code #graphify/INFERRED #community/EFindTargetContextMode

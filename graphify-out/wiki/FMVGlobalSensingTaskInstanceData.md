@@ -1,55 +1,54 @@
 # FMVGlobalSensingTaskInstanceData
 
-> God node · 61 connections · `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+> 51 nodes
 
-**Community:** [AI 전역 감지 설정](AI_%EC%A0%84%EC%97%AD_%EA%B0%90%EC%A7%80_%EC%84%A4%EC%A0%95.md)
+## Key Concepts
 
-## Connections by Relation
+- **FMVGlobalSensingTaskInstanceData** (61 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **TObjectPtr** (1 connections)
+- **APawn** (1 connections)
+- **TArray** (1 connections)
+- **FName** (1 connections)
+- **int32** (1 connections)
+- **EMVAttackDirection** (1 connections)
+- **EMVBossCombatArea** (1 connections)
+- **UPROPERTY** (1 connections)
+- **Target** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **Owner** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **DefensiveArea** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **OffensiveArea** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **SprintTriggerDistance** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **SprintMaxReach** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **SprintAttackAngle** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **AirborneChargeMaxReach** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **AirborneChargeAngle** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **BasicAttackMaxReach** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **AttackAngleTolerance** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **ForwardPathTraceDistance** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **BackwardPathTraceDistance** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **StrafePathTraceDistance** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **ActionCooldowns** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **AttackCadenceActionId** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- *... and 26 more nodes in this community*
 
-### contains
-- MVGlobalSensingTask.h `EXTRACTED`
+## Relationships
 
-### defines
-- ActionCooldowns `EXTRACTED`
-- AirborneChargeAngle `EXTRACTED`
-- AirborneChargeMaxReach `EXTRACTED`
-- AngleToTarget `EXTRACTED`
-- AttackAngleTolerance `EXTRACTED`
-- AttackCadenceActionId `EXTRACTED`
-- AttackDirection `EXTRACTED`
-- BackwardPathTraceDistance `EXTRACTED`
-- bActionRunning `EXTRACTED`
-- bAirborneChargePathClear `EXTRACTED`
-- BasicAttackMaxReach `EXTRACTED`
-- bAttackCadenceReady `EXTRACTED`
-- bCounterWindow `EXTRACTED`
-- bDrawCombatAreaDebug `EXTRACTED`
-- bHasLineOfSight `EXTRACTED`
-- bHasTarget `EXTRACTED`
-- bIsDead `EXTRACTED`
-- bNeedAttackAngle `EXTRACTED`
-- bNeedClearAttackPath `EXTRACTED`
-- bShouldUseAirborneCharge `EXTRACTED`
+- [MVGlobalSensingTask.cpp](MVGlobalSensingTask.cpp.md) (5 shared connections)
+- [FMVGlobalCoolTimeTaskInstanceData](FMVGlobalCoolTimeTaskInstanceData.md) (2 shared connections)
+- [DrawGlobalSensingCombatAreaDebug](DrawGlobalSensingCombatAreaDebug.md) (1 shared connections)
+- [FMVAICombatContext](FMVAICombatContext.md) (1 shared connections)
+- [MVAICombatTypes.h](MVAICombatTypes.h.md) (1 shared connections)
+- [MVStatComponent.h](MVStatComponent.h.md) (1 shared connections)
 
-### references
-- [FMVAICombatContext](FMVAICombatContext.md) `EXTRACTED`
-- UpdateGlobalSensingSnapshot() `EXTRACTED`
-- FMVActionCooldownDefinition `EXTRACTED`
-- DrawGlobalSensingCombatAreaDebug() `EXTRACTED`
-- UMVActionCooldownComponent() `EXTRACTED`
-- UpdateGlobalSensingCooldownContext() `EXTRACTED`
-- GlobalSensingClearTargetSnapshot() `EXTRACTED`
-- UpdateGlobalSensingLifeContext() `EXTRACTED`
-- UpdateGlobalSensingCombatContext() `EXTRACTED`
-- AActor `EXTRACTED`
-- APawn `EXTRACTED`
-- EMVAttackDirection `EXTRACTED`
-- EMVBossCombatArea `EXTRACTED`
-- FName `EXTRACTED`
-- int32 `EXTRACTED`
-- TArray `EXTRACTED`
-- TObjectPtr `EXTRACTED`
-- UPROPERTY `EXTRACTED`
+## Source Files
+
+- `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+
+## Audit Trail
+
+- EXTRACTED: 111 (100%)
+- INFERRED: 0 (0%)
+- AMBIGUOUS: 0 (0%)
 
 ---
 

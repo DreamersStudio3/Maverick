@@ -1,17 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 전역 쿨다운"
+community: "FMVCombatActionEnterConditionInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI__
+  - community/FMVCombatActionEnterConditionInstanceData
 ---
 
 # TArray
 
 ## Connections
-- [[UMVActionCooldownComponentConfigureCooldowns()]] - `references` [EXTRACTED]
-- [[UMVActionCooldownComponentGetReadyActionIds()]] - `references` [EXTRACTED]
+- [[FMVCombatActionEnterConditionInstanceData]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI__
+#graphify/code #graphify/EXTRACTED #community/FMVCombatActionEnterConditionInstanceData

@@ -1,20 +1,20 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h"
 type: "code"
-community: "LockOnTarget 타깃 캡처 상태"
+community: "UTargetComponent::DispatchTargetException"
 location: "L183"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/LockOnTarget___
+  - community/UTargetComponentDispatchTargetException
 ---
 
 # .IsSocketValid()
 
 ## Connections
 - [[ETargetFocusPointType]] - `method` [EXTRACTED]
-- [[FName_12]] - `references` [EXTRACTED]
+- [[FName_17]] - `references` [EXTRACTED]
 - [[UTargetComponentDispatchTargetException()]] - `calls` [INFERRED]
 - [[UTargetComponentNotifyTargetCaptured()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/LockOnTarget___
+#graphify/code #graphify/INFERRED #community/UTargetComponentDispatchTargetException

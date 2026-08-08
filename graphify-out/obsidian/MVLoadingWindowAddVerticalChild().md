@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/Window/MVLoadingWindow.cpp"
 type: "code"
-community: "로딩 창 구성과 진행률"
+community: "UMVLoadingWindow::BuildNativeWidgetTree"
 location: "L50"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/UMVLoadingWindowBuildNativeWidgetTree
 ---
 
 # MVLoadingWindowAddVerticalChild()
@@ -18,4 +18,4 @@ tags:
 - [[UVerticalBox_1]] - `references` [EXTRACTED]
 - [[UWidget]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/UMVLoadingWindowBuildNativeWidgetTree

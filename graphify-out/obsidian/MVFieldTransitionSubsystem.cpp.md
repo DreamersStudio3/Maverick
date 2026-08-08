@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/System/MVFieldTransitionSubsystem.cpp"
 type: "code"
-community: "필드 전환 관리"
+community: "MVFieldTransitionSubsystem.cpp"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVFieldTransitionSubsystemcpp
 ---
 
 # MVFieldTransitionSubsystem.cpp
@@ -46,4 +46,4 @@ tags:
 - [[UMVFieldTransitionSubsystemUnbindPreTransitionAction()]] - `contains` [EXTRACTED]
 - [[UMVFieldTransitionSubsystemUpdateTransitionProgress()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVFieldTransitionSubsystemcpp

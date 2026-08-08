@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/Window/MVDeathOverlayWindow.cpp"
 type: "code"
-community: "UI 레이어 오버레이 구성"
+community: "UOverlay"
 location: "L87"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/UI___
+  - community/UOverlay
 ---
 
 # UMVDeathOverlayWindow::BuildNativeWidgetTree()
@@ -16,4 +16,4 @@ tags:
 - [[MVDeathOverlayWindow.cpp]] - `contains` [EXTRACTED]
 - [[UOverlay]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/UI___
+#graphify/code #graphify/EXTRACTED #community/UOverlay

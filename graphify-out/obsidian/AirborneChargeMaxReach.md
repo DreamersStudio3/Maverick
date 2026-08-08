@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/AI/Task/MVGlobalSensingTask.h"
 type: "code"
-community: "AI 전역 감지 설정"
+community: "FMVGlobalSensingTaskInstanceData"
 location: "L39"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVGlobalSensingTaskInstanceData
 ---
 
 # AirborneChargeMaxReach
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[FMVGlobalSensingTaskInstanceData]] - `defines` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVGlobalSensingTaskInstanceData

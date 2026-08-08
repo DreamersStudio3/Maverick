@@ -1,16 +1,17 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 공격 기회 판단"
+community: "MVExecuteAttackTask.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/MVExecuteAttackTaskcpp
 ---
 
 # FStateTreeTaskCommonBase
 
 ## Connections
-- [[FMVAttackOpportunityTask]] - `inherits` [EXTRACTED]
+- [[FMVExecuteFixedAttackTask]] - `inherits` [EXTRACTED]
+- [[FMVSelectAndExecuteAttackTask]] - `inherits` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/MVExecuteAttackTaskcpp

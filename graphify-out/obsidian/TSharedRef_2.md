@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "타깃 디테일 커스터마이징"
+community: "SSocketSelector"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/SSocketSelector
 ---
 
 # TSharedRef
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[OnGetSocketContent]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/SSocketSelector

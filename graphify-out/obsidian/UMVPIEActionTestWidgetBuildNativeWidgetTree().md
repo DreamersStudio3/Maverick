@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/Debug/MVPIEActionTestWidget.cpp"
 type: "code"
-community: "PIE 액션 테스트 UI"
+community: "PIEActionTestAddButton"
 location: "L198"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/PIE___UI
+  - community/PIEActionTestAddButton
 ---
 
 # UMVPIEActionTestWidget::BuildNativeWidgetTree()
@@ -18,4 +18,4 @@ tags:
 - [[PIEActionTestMakeText()]] - `calls` [EXTRACTED]
 - [[UBorder]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/PIE___UI
+#graphify/code #graphify/EXTRACTED #community/PIEActionTestAddButton

@@ -1,17 +1,17 @@
 ---
-source_file: "Source/Maverick/AI/Task/MVHitReactionTask.h"
+source_file: "Source/Maverick/AI/Task/MVExecuteAttackTask.h"
 type: "code"
-community: "AI 피격 반응 태스크"
-location: "L42"
+community: "FMVExecuteFixedAttackTaskInstanceData"
+location: "L109"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVExecuteFixedAttackTaskInstanceData
 ---
 
 # ActionComponent
 
 ## Connections
-- [[FMVHitReactionTaskInstanceData]] - `defines` [EXTRACTED]
+- [[FMVSelectAndExecuteAttackTaskInstanceData]] - `defines` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVExecuteFixedAttackTaskInstanceData

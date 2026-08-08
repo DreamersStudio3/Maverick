@@ -1,20 +1,20 @@
 ---
-source_file: "Source/Maverick/AI/Task/MVGlobalCoolTimeTask.h"
+source_file: "Source/Maverick/AI/Task/MVFocusingTask.h"
 type: "code"
-community: "AI 전역 쿨다운"
-location: "L55"
+community: "FMVFocusingTask"
+location: "L58"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI__
+  - community/FMVFocusingTask
 ---
 
 # ExitState
 
 ## Connections
-- [[FMVGlobalCoolTimeTask]] - `defines` [EXTRACTED]
-- [[FStateTreeExecutionContext_14]] - `references` [EXTRACTED]
-- [[FStateTreeTransitionResult_8]] - `references` [EXTRACTED]
-- [[MVGlobalCoolTimeTask.cpp]] - `contains` [EXTRACTED]
+- [[FMVFocusingTask]] - `defines` [EXTRACTED]
+- [[FStateTreeExecutionContext_13]] - `references` [EXTRACTED]
+- [[FStateTreeTransitionResult_7]] - `references` [EXTRACTED]
+- [[MVFocusingTask.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI__
+#graphify/code #graphify/EXTRACTED #community/FMVFocusingTask

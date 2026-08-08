@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h"
 type: "code"
-community: "락온 대상 소켓 관리"
+community: "TargetComponent.cpp"
 location: "L148"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/___
+  - community/TargetComponentcpp
 ---
 
 # CanBeReferencedOverNetwork
@@ -15,4 +15,4 @@ tags:
 - [[ETargetFocusPointType]] - `defines` [EXTRACTED]
 - [[UTargetComponentCanBeCaptured()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/___
+#graphify/code #graphify/INFERRED #community/TargetComponentcpp

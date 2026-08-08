@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetExtensions/PawnRotationExtension.cpp"
 type: "code"
-community: "락온 Pawn 회전 확장"
+community: "PawnRotationExtension.cpp"
 location: "L77"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/_Pawn__
+  - community/PawnRotationExtensioncpp
 ---
 
 # UPawnRotationExtension::GetMovementComponent()
@@ -15,4 +15,4 @@ tags:
 - [[PawnRotationExtension.cpp]] - `contains` [EXTRACTED]
 - [[UPawnMovementComponent]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/_Pawn__
+#graphify/code #graphify/EXTRACTED #community/PawnRotationExtensioncpp

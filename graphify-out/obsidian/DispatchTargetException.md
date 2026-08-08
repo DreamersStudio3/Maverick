@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h"
 type: "code"
-community: "락온 대상 소켓 관리"
+community: "TargetComponent.cpp"
 location: "L237"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/___
+  - community/TargetComponentcpp
 ---
 
 # DispatchTargetException
@@ -18,4 +18,4 @@ tags:
 - [[UTargetComponentSetCanBeCaptured()]] - `calls` [INFERRED]
 - [[UTargetComponentSetDefaultSocket()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/___
+#graphify/code #graphify/INFERRED #community/TargetComponentcpp

@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVHitReactionComponent.cpp"
 type: "code"
-community: "피격 반응 행 조회"
+community: "MVHitReactionComponent.h"
 location: "L1903"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVHitReactionComponenth
 ---
 
 # UMVHitReactionComponent::MakeHitReactionActionRowHandleFromNames()
@@ -17,4 +17,4 @@ tags:
 - [[MVHitReactionComponent.cpp]] - `contains` [EXTRACTED]
 - [[UMVTableManager]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVHitReactionComponenth

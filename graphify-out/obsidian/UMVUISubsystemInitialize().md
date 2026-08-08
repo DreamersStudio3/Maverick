@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/System/MVUISubsystem.cpp"
 type: "code"
-community: "UI 서브시스템 팝업 관리"
+community: "MVUISubsystem.cpp"
 location: "L91"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/UI___
+  - community/MVUISubsystemcpp
 ---
 
 # UMVUISubsystem::Initialize()
@@ -15,4 +15,4 @@ tags:
 - [[FSubsystemCollectionBase_4]] - `references` [EXTRACTED]
 - [[MVUISubsystem.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/UI___
+#graphify/code #graphify/EXTRACTED #community/MVUISubsystemcpp

@@ -1,17 +1,17 @@
 ---
-source_file: "Source/Maverick/AI/Task/MVAttackOpportunityTask.h"
+source_file: "Source/Maverick/AI/MVAICombatTypes.h"
 type: "code"
-community: "AI 공격 기회 판단"
-location: "L17"
+community: "FMVAICombatActionCondition"
+location: "L93"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVAICombatActionCondition
 ---
 
 # MinDistance
 
 ## Connections
-- [[FMVAttackOpportunityTaskInstanceData]] - `defines` [EXTRACTED]
+- [[FMVAICombatActionCondition]] - `defines` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVAICombatActionCondition

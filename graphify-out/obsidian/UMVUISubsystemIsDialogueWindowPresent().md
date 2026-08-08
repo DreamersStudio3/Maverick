@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/System/MVUISubsystem.cpp"
 type: "code"
-community: "대화창 표시 대기열 수명주기"
+community: "UMVDialogueWindow"
 location: "L1101"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/UMVDialogueWindow
 ---
 
 # UMVUISubsystem::IsDialogueWindowPresent()
@@ -15,4 +15,4 @@ tags:
 - [[MVUISubsystem.cpp]] - `contains` [EXTRACTED]
 - [[UMVDialogueWindow_1]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/UMVDialogueWindow

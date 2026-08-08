@@ -1,17 +1,17 @@
 ---
-source_file: "Source/Maverick/AI/Task/MVStartActionCooldownTask.h"
+source_file: "Source/Maverick/AI/Task/MVGlobalCoolTimeTask.h"
 type: "code"
-community: "AI 액션 쿨다운 시작"
-location: "L14"
+community: "FMVGlobalCoolTimeTaskInstanceData"
+location: "L15"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVGlobalCoolTimeTaskInstanceData
 ---
 
 # Owner
 
 ## Connections
-- [[FMVStartActionCooldownTaskInstanceData]] - `defines` [EXTRACTED]
+- [[FMVGlobalCoolTimeTaskInstanceData]] - `defines` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVGlobalCoolTimeTaskInstanceData

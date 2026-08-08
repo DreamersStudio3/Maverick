@@ -1,18 +1,19 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 공격 실행 로직"
+community: "FMVEnemyDeadTaskInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVEnemyDeadTaskInstanceData
 ---
 
 # APawn
 
 ## Connections
-- [[ExecuteAttackResolveActionCandidate()]] - `references` [EXTRACTED]
-- [[ExecuteAttackResolveOwner()]] - `references` [EXTRACTED]
-- [[ExecuteAttackStartCooldown()]] - `references` [EXTRACTED]
+- [[EnemyDeadTaskClearPlayerLockOnTargetingOwner()]] - `references` [EXTRACTED]
+- [[EnemyDeadTaskDisableOwnerTargetCapture()]] - `references` [EXTRACTED]
+- [[EnemyDeadTaskReleaseLockOnForOwner()]] - `references` [EXTRACTED]
+- [[EnemyDeadTaskResolveOwner()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVEnemyDeadTaskInstanceData

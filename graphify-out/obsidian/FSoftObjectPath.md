@@ -1,16 +1,17 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 적 회피 설정"
+community: "FMVExecuteFixedAttackTaskInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVExecuteFixedAttackTaskInstanceData
 ---
 
 # FSoftObjectPath
 
 ## Connections
-- [[FMVEnemyDodgeActionTaskInstanceData]] - `references` [EXTRACTED]
+- [[FMVExecuteFixedAttackTaskInstanceData]] - `references` [EXTRACTED]
+- [[FMVSelectAndExecuteAttackTaskInstanceData]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVExecuteFixedAttackTaskInstanceData

@@ -1,17 +1,18 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 전역 쿨다운"
+community: "MVExecuteAttackTask.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI__
+  - community/MVExecuteAttackTaskcpp
 ---
 
 # APawn
 
 ## Connections
-- [[EnsureCooldownComponent()]] - `references` [EXTRACTED]
-- [[ResolveCooldownOwner()]] - `references` [EXTRACTED]
+- [[ExecuteAttackResolveActionCandidate()]] - `references` [EXTRACTED]
+- [[ExecuteAttackResolveOwner()]] - `references` [EXTRACTED]
+- [[ExecuteAttackStartCooldown()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI__
+#graphify/code #graphify/EXTRACTED #community/MVExecuteAttackTaskcpp

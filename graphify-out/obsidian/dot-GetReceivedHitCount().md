@@ -1,18 +1,18 @@
 ---
 source_file: "Source/Maverick/Components/MVEnemyDodgeTokenComponent.h"
 type: "code"
-community: "회피 전투 카운터 조회"
+community: "int32"
 location: "L76"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/int32
 ---
 
 # .GetReceivedHitCount()
 
 ## Connections
 - [[EMVEnemyDodgeTokenGrantReason]] - `method` [EXTRACTED]
-- [[int32_18]] - `references` [EXTRACTED]
+- [[int32_19]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/int32

@@ -1,19 +1,18 @@
 ---
 source_file: ""
 type: "code"
-community: "락온 대상 소켓 관리"
+community: "LockOnTargetExtensionBase.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/LockOnTargetExtensionBasecpp
 ---
 
 # FName
 
 ## Connections
-- [[UTargetComponentAddSocket()]] - `references` [EXTRACTED]
-- [[UTargetComponentGetSocketLocation()]] - `references` [EXTRACTED]
-- [[UTargetComponentRemoveSocket()]] - `references` [EXTRACTED]
-- [[UTargetComponentSetDefaultSocket()]] - `references` [EXTRACTED]
+- [[UControllerRotationExtensionOnSocketChanged()]] - `references` [EXTRACTED]
+- [[UControllerRotationExtensionOnTargetLocked()]] - `references` [EXTRACTED]
+- [[UControllerRotationExtensionOnTargetUnlocked()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/LockOnTargetExtensionBasecpp

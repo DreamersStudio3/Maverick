@@ -1,17 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "LockOnTarget 타깃 관리 구성요소"
+community: "FMVExecuteFixedAttackTaskInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/LockOnTarget___
+  - community/FMVExecuteFixedAttackTaskInstanceData
 ---
 
 # TArray
 
 ## Connections
-- [[dot-GetInvaders()]] - `references` [EXTRACTED]
-- [[ETargetFocusPointType]] - `references` [EXTRACTED]
+- [[FMVSelectAndExecuteAttackTaskInstanceData]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/LockOnTarget___
+#graphify/code #graphify/EXTRACTED #community/FMVExecuteFixedAttackTaskInstanceData

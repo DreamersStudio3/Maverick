@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "런타임 테이블 조회"
+community: "MVTableManager.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVTableManagercpp
 ---
 
 # FName
@@ -26,4 +26,4 @@ tags:
 - [[UMVTableManagerHasTable()]] - `references` [EXTRACTED]
 - [[UMVTableManagerTryGetGenericField()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVTableManagercpp

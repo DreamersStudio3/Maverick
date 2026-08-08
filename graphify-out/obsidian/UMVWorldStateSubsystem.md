@@ -1,17 +1,17 @@
 ---
-source_file: "Source/Maverick/System/MVFieldTransitionResettableInterface.h"
+source_file: "Source/Maverick/System/MVFieldTransitionSubsystem.h"
 type: "code"
-community: "필드 전환 리셋 계약"
-location: "L7"
+community: "MVFieldTransitionSubsystem.h"
+location: "L15"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVFieldTransitionSubsystemh
 ---
 
 # UMVWorldStateSubsystem
 
 ## Connections
-- [[MVFieldTransitionResettableInterface.h]] - `contains` [EXTRACTED]
+- [[MVFieldTransitionSubsystem.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVFieldTransitionSubsystemh

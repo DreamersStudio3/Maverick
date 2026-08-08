@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Character/MVCharacterBase.h"
 type: "code"
-community: "공통 캐릭터 이동 선언"
+community: "MVCharacterBase.h"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVCharacterBaseh
 ---
 
 # MVCharacterBase.h
@@ -19,7 +19,7 @@ tags:
 - [[MVEquipmentEnums.h]] - `imports` [EXTRACTED]
 - [[MVHitTypes.h]] - `imports` [EXTRACTED]
 - [[UCurveFloat]] - `contains` [EXTRACTED]
-- [[UMVActionComponent_4]] - `contains` [EXTRACTED]
+- [[UMVActionComponent_3]] - `contains` [EXTRACTED]
 - [[UMVCombatComponent_1]] - `contains` [EXTRACTED]
 - [[UMVDeathComponent_1]] - `contains` [EXTRACTED]
 - [[UMVHitReactionComponent_3]] - `contains` [EXTRACTED]
@@ -28,4 +28,4 @@ tags:
 - [[UMVWeaponComponent]] - `contains` [EXTRACTED]
 - [[UMotionWarpingComponent]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVCharacterBaseh

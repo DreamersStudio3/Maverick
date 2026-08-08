@@ -21,7 +21,7 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 1 edge to [[_COMMUNITY_캐릭터 사망 표현]]
+- 1 edge to [[_COMMUNITY_MVDeathComponent.cpp]]
 
 ## Top bridge nodes
 - [[UMVDeathComponentHandleOwnerMovementModeChanged()]] - degree 4, connects to 1 community

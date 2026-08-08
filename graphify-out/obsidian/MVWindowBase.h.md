@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/Base/MVWindowBase.h"
 type: "code"
-community: "윈도우 베이스 선언"
+community: "MVWindowBase.h"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVWindowBaseh
 ---
 
 # MVWindowBase.h
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[UMVActivatableWidgetBase()_1]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVWindowBaseh

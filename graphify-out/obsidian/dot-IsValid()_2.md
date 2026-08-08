@@ -1,17 +1,18 @@
 ---
-source_file: "Source/Maverick/Components/MVFinisherComponent.h"
+source_file: "Source/Maverick/AI/MVAICombatTypes.h"
 type: "code"
-community: "피니셔 Chooser 입출력"
-location: "L53"
+community: "FMVEnemyDeadTaskInstanceData"
+location: "L45"
 tags:
   - graphify/code
-  - graphify/EXTRACTED
-  - community/_Chooser_
+  - graphify/INFERRED
+  - community/FMVEnemyDeadTaskInstanceData
 ---
 
 # .IsValid()
 
 ## Connections
-- [[FMVFinisherChooserOutput]] - `method` [EXTRACTED]
+- [[EnemyDeadTaskScheduleDestroy()]] - `calls` [INFERRED]
+- [[FMVAttackActionRowHandle]] - `method` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/_Chooser_
+#graphify/code #graphify/INFERRED #community/FMVEnemyDeadTaskInstanceData

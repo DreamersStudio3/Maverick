@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/System/MVWorldStateSubsystem.cpp"
 type: "code"
-community: "월드 상태 서브시스템 접근"
+community: "UMVWorldStateSubsystem"
 location: "L37"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/UMVWorldStateSubsystem
 ---
 
 # UMVWorldStateSubsystem::Get()
@@ -16,4 +16,4 @@ tags:
 - [[UMVWorldStateSubsystem()]] - `references` [EXTRACTED]
 - [[UObject_17]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/UMVWorldStateSubsystem

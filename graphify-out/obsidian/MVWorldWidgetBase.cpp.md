@@ -1,14 +1,14 @@
 ---
 source_file: "Source/Maverick/UI/World/MVWorldWidgetBase.cpp"
 type: "code"
-community: "월드 위젯 베이스 구현"
+community: "MVWorldWidgetBase.cpp"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVWorldWidgetBasecpp
 ---
 
 # MVWorldWidgetBase.cpp
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVWorldWidgetBasecpp

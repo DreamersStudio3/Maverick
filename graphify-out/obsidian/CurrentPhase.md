@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/AI/MVAICombatTypes.h"
 type: "code"
-community: "AI 전투 컨텍스트"
-location: "L164"
+community: "FMVAICombatContext"
+location: "L178"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI__
+  - community/FMVAICombatContext
 ---
 
 # CurrentPhase
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[FMVAICombatContext]] - `defines` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI__
+#graphify/code #graphify/EXTRACTED #community/FMVAICombatContext

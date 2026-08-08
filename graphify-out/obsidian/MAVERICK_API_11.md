@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "피격 반응 행 조회"
+community: "MVActionRowTableTypes.h"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVActionRowTableTypesh
 ---
 
 # MAVERICK_API
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[FMVTableRowBase()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVActionRowTableTypesh

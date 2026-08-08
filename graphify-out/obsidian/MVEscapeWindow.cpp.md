@@ -1,14 +1,14 @@
 ---
 source_file: "Source/Maverick/UI/Window/MVEscapeWindow.cpp"
 type: "code"
-community: "MVEscapeWindow 구현 파일"
+community: "MVEscapeWindow.cpp"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/MVEscapeWindow__
+  - community/MVEscapeWindowcpp
 ---
 
 # MVEscapeWindow.cpp
 
-#graphify/code #graphify/EXTRACTED #community/MVEscapeWindow__
+#graphify/code #graphify/EXTRACTED #community/MVEscapeWindowcpp

@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVHitReactionComponent.cpp"
 type: "code"
-community: "피격 반응 상태 관리"
+community: "MVHitReactionComponent.cpp"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVHitReactionComponentcpp
 ---
 
 # MVHitReactionComponent.cpp
@@ -88,4 +88,4 @@ tags:
 - [[UMVHitReactionComponentUMVHitReactionComponent()]] - `contains` [EXTRACTED]
 - [[UMVHitReactionComponentUnbindAirborneMovementModeChanged()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVHitReactionComponentcpp

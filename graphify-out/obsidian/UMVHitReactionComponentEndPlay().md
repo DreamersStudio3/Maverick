@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVHitReactionComponent.cpp"
 type: "code"
-community: "종료 처리와 확장 틱"
+community: "Type"
 location: "L310"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/Type
 ---
 
 # UMVHitReactionComponent::EndPlay()
@@ -15,4 +15,4 @@ tags:
 - [[MVHitReactionComponent.cpp]] - `contains` [EXTRACTED]
 - [[Type_9]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/Type

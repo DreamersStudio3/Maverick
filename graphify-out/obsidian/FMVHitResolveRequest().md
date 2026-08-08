@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Public/Struct/MVHitTypes.h"
 type: "code"
-community: "피격 판정 해석 파이프라인"
+community: "MVHitResolverSubsystem.cpp"
 location: "L43"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVHitResolverSubsystemcpp
 ---
 
 # FMVHitResolveRequest()
@@ -21,4 +21,4 @@ tags:
 - [[UMVHitResolverSubsystemResolveAttackHit()]] - `references` [EXTRACTED]
 - [[UMVHitResolverSubsystemResolveHitDirection()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVHitResolverSubsystemcpp

@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "PIE 액션 테스트 UI"
+community: "PIEActionTestAddButton"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/PIE___UI
+  - community/PIEActionTestAddButton
 ---
 
 # UTextBlock
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[PIEActionTestMakeText()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/PIE___UI
+#graphify/code #graphify/EXTRACTED #community/PIEActionTestAddButton

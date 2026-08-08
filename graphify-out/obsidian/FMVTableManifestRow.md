@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Public/Tables/MVTableAssetGenerator.h"
 type: "code"
-community: "테이블 매니페스트 생성과 검증"
+community: "MVTableAssetGenerator.cpp"
 location: "L9"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVTableAssetGeneratorcpp
 ---
 
 # FMVTableManifestRow
@@ -28,4 +28,4 @@ tags:
 - [[UMVTableManagerFindManifestRow()]] - `references` [EXTRACTED]
 - [[UMVTableManagerLoadAllTables()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVTableAssetGeneratorcpp

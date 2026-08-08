@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Public/Enum/MVActionInputPhase.h"
 type: "code"
-community: "액션 입력 버퍼링"
+community: "FVector2D"
 location: "L7"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/FVector2D
 ---
 
 # EMVActionInputPhase
@@ -21,4 +21,4 @@ tags:
 - [[UMVInputManagerComponentTryRouteHoldActionInput()]] - `references` [EXTRACTED]
 - [[uint8_9]] - `inherits` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/FVector2D

@@ -1,23 +1,20 @@
 ---
-source_file: "Source/Maverick/AI/Task/MVHitReactionTask.h"
+source_file: "Source/Maverick/AI/Task/MVGlobalSensingTask.h"
 type: "code"
-community: "AI 피격 반응 태스크"
-location: "L79"
+community: "EnterState"
+location: "L173"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/EnterState
 ---
 
 # ExitState
 
 ## Connections
-- [[FMVHitReactionTask]] - `defines` [EXTRACTED]
-- [[FMVResolvedHitData()]] - `calls` [INFERRED]
-- [[FStateTreeExecutionContext_16]] - `references` [EXTRACTED]
-- [[FStateTreeTransitionResult_10]] - `references` [EXTRACTED]
-- [[HitReactionTaskIsStartedActionRunning()]] - `calls` [EXTRACTED]
-- [[HitReactionTaskLogTrace()]] - `calls` [EXTRACTED]
-- [[MVHitReactionTask.cpp]] - `contains` [EXTRACTED]
+- [[FMVGlobalSensingTask]] - `defines` [EXTRACTED]
+- [[FStateTreeExecutionContext_15]] - `references` [EXTRACTED]
+- [[FStateTreeTransitionResult_9]] - `references` [EXTRACTED]
+- [[MVGlobalSensingTask.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/EnterState

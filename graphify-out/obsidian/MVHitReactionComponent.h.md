@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVHitReactionComponent.h"
 type: "code"
-community: "피격 반응 행 조회"
+community: "MVHitReactionComponent.h"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVHitReactionComponenth
 ---
 
 # MVHitReactionComponent.h
@@ -22,6 +22,6 @@ tags:
 - [[MVHitReactionActionTableTypes.h]] - `imports` [EXTRACTED]
 - [[MVHitTypes.h]] - `imports` [EXTRACTED]
 - [[UDataTable_7]] - `contains` [EXTRACTED]
-- [[UMVActionComponent_7]] - `contains` [EXTRACTED]
+- [[UMVActionComponent_6]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVHitReactionComponenth

@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h"
 type: "code"
-community: "LockOnTarget 타깃 관리 구성요소"
+community: "TargetComponent.h"
 location: "L11"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/LockOnTarget___
+  - community/TargetComponenth
 ---
 
 # UTargetComponent
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[TargetComponent.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/LockOnTarget___
+#graphify/code #graphify/EXTRACTED #community/TargetComponenth

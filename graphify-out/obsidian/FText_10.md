@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "UI 팝업 메시지 데이터"
+community: "FMVInteractionPromptData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/UI___
+  - community/FMVInteractionPromptData
 ---
 
 # FText
 
 ## Connections
-- [[UMVMessagePopupSetMessageText()]] - `references` [EXTRACTED]
+- [[UMVInteractionPromptPopupSetPromptText()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/UI___
+#graphify/code #graphify/EXTRACTED #community/FMVInteractionPromptData

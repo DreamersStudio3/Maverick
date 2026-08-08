@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetComponent.cpp"
 type: "code"
-community: "가중치 기반 타깃 선택"
+community: "FFindTargetRequestResponse"
 location: "L174"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/FFindTargetRequestResponse
 ---
 
 # ULockOnTargetComponent::RequestFindTarget()
@@ -15,4 +15,4 @@ tags:
 - [[FFindTargetRequestParams]] - `references` [EXTRACTED]
 - [[LockOnTargetComponent.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/FFindTargetRequestResponse

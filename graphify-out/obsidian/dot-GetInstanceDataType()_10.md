@@ -1,18 +1,18 @@
 ---
-source_file: "Source/Maverick/AI/Task/MVEnemyDeadTask.h"
+source_file: "Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h"
 type: "code"
-community: "AI 적 사망 처리"
-location: "L89"
+community: "FMVEnemyDodgeActionTask"
+location: "L100"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVEnemyDodgeActionTask
 ---
 
 # .GetInstanceDataType()
 
 ## Connections
-- [[FMVEnemyDeadTask]] - `method` [EXTRACTED]
-- [[UStruct_10]] - `references` [EXTRACTED]
+- [[FMVEnemyDodgeActionTask]] - `method` [EXTRACTED]
+- [[UStruct_16]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVEnemyDodgeActionTask

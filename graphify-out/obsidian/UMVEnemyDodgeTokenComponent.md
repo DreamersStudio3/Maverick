@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Character/NPC/Enemy/MVEnemy.h"
 type: "code"
-community: "필드 전환 리셋 계약"
+community: "MVEnemy.h"
 location: "L16"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVEnemyh
 ---
 
 # UMVEnemyDodgeTokenComponent
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[MVEnemy.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVEnemyh

@@ -1,17 +1,16 @@
 ---
 source_file: "docs/wiki/Header-Documentation.md"
 type: "rationale"
-community: "문서·Graphify 거버넌스"
+community: "Graphify Doxygen Extraction Gap"
 tags:
   - graphify/rationale
   - graphify/EXTRACTED
-  - community/Graphify_
+  - community/Graphify_Doxygen_Extraction_Gap
 ---
 
 # Local Contract and Canonical Design Split
 
 ## Connections
 - [[Graphify Doxygen Extraction Gap]] - `rationale_for` [EXTRACTED]
-- [[Information Hierarchy]] - `semantically_similar_to` [INFERRED]
 
-#graphify/rationale #graphify/EXTRACTED #community/Graphify_
+#graphify/rationale #graphify/EXTRACTED #community/Graphify_Doxygen_Extraction_Gap

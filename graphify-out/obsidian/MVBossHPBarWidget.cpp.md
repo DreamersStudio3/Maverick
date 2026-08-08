@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/HUD/MVBossHPBarWidget.cpp"
 type: "code"
-community: "보스 체력바 상태 연동"
+community: "MVBossHPBarWidget.cpp"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVBossHPBarWidgetcpp
 ---
 
 # MVBossHPBarWidget.cpp
@@ -26,4 +26,4 @@ tags:
 - [[UMVBossHPBarWidgetUnbindStatComponent()]] - `contains` [EXTRACTED]
 - [[UMVBossHPBarWidgetUpdateBossHP()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVBossHPBarWidgetcpp

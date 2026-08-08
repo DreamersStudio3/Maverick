@@ -1,17 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "로딩 창 구성과 진행률"
+community: "MVDialogueWindow.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVDialogueWindowcpp
 ---
 
 # FText
 
 ## Connections
-- [[MVLoadingWindowMakeText()]] - `references` [EXTRACTED]
-- [[UMVLoadingWindowSetLoadingProgress()]] - `references` [EXTRACTED]
+- [[UMVDialogueWindowSetDialogueText()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVDialogueWindowcpp

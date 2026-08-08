@@ -1,19 +1,19 @@
 ---
 source_file: "Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp"
 type: "code"
-community: "DataTable 에셋 생성"
+community: "MVTableAssetGenerator.cpp"
 location: "L86"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/DataTable__
+  - community/MVTableAssetGeneratorcpp
 ---
 
 # SanitizeAssetName()
 
 ## Connections
-- [[FString_21]] - `references` [EXTRACTED]
+- [[FString_22]] - `references` [EXTRACTED]
 - [[MVTableAssetGenerator.cpp]] - `contains` [EXTRACTED]
 - [[ToTableAssetName()]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/DataTable__
+#graphify/code #graphify/EXTRACTED #community/MVTableAssetGeneratorcpp

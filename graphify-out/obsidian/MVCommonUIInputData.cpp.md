@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/System/MVCommonUIInputData.cpp"
 type: "code"
-community: "공통 UI 입력 데이터 초기화"
+community: "MVCommonUIInputData.cpp"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/_UI___
+  - community/MVCommonUIInputDatacpp
 ---
 
 # MVCommonUIInputData.cpp
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[UMVCommonUIInputDataUMVCommonUIInputData()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/_UI___
+#graphify/code #graphify/EXTRACTED #community/MVCommonUIInputDatacpp

@@ -1,17 +1,17 @@
 ---
-source_file: "Source/Maverick/AI/Task/MVStartActionCooldownTask.h"
+source_file: "Source/Maverick/AI/Task/MVExecuteAttackTask.h"
 type: "code"
-community: "AI 액션 쿨다운 시작"
-location: "L20"
+community: "FMVExecuteFixedAttackTaskInstanceData"
+location: "L114"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVExecuteFixedAttackTaskInstanceData
 ---
 
 # StartedActionTableName
 
 ## Connections
-- [[FMVStartActionCooldownTaskInstanceData]] - `defines` [EXTRACTED]
+- [[FMVSelectAndExecuteAttackTaskInstanceData]] - `defines` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVExecuteFixedAttackTaskInstanceData

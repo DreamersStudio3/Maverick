@@ -1,17 +1,17 @@
 ---
-source_file: "Source/Maverick/UI/Base/MVCommonButtonBase.h"
+source_file: "Source/Maverick/UI/Window/MVEscapeWindow.h"
 type: "code"
-community: "공통 버튼 베이스 선언"
+community: "MVEscapeWindow.h"
 location: "L8"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVEscapeWindowh
 ---
 
 # MAVERICK_API
 
 ## Connections
-- [[MVCommonButtonBase.h]] - `contains` [EXTRACTED]
+- [[MVEscapeWindow.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVEscapeWindowh

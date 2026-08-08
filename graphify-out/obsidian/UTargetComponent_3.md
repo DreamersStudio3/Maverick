@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "LockOnTarget 카메라 모디파이어"
+community: "CameraModifierExtension.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/LockOnTarget__
+  - community/CameraModifierExtensioncpp
 ---
 
 # UTargetComponent
@@ -14,4 +14,4 @@ tags:
 - [[UCameraModifierExtensionOnTargetLocked()]] - `references` [EXTRACTED]
 - [[UCameraModifierExtensionOnTargetUnlocked()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/LockOnTarget__
+#graphify/code #graphify/EXTRACTED #community/CameraModifierExtensioncpp

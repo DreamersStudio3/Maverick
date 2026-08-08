@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h"
 type: "code"
-community: "LockOnTarget 타깃 캡처 상태"
+community: "UTargetComponent::DispatchTargetException"
 location: "L227"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/LockOnTarget___
+  - community/UTargetComponentDispatchTargetException
 ---
 
 # K2_OnCaptured
@@ -15,4 +15,4 @@ tags:
 - [[ETargetFocusPointType]] - `defines` [EXTRACTED]
 - [[UTargetComponentNotifyTargetCaptured()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/LockOnTarget___
+#graphify/code #graphify/INFERRED #community/UTargetComponentDispatchTargetException

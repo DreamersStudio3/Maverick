@@ -1,17 +1,17 @@
 ---
-source_file: "Source/Maverick/System/MVQuestSubsystem.h"
+source_file: "Source/Maverick/System/MVFieldTransitionResettableInterface.h"
 type: "code"
-community: "퀘스트 월드 상태 연동"
+community: "MVEnemy.h"
 location: "L7"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/MVEnemyh
 ---
 
 # UMVWorldStateSubsystem
 
 ## Connections
-- [[MVQuestSubsystem.h]] - `contains` [EXTRACTED]
+- [[MVFieldTransitionResettableInterface.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/MVEnemyh

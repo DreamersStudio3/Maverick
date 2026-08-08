@@ -1,17 +1,16 @@
 ---
-source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetExtensions/LockOnTargetExtensionBase.h"
+source_file: ""
 type: "code"
-community: "락온 컨트롤러 회전 확장"
-location: "L16"
+community: "FMVFocusingTaskInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/FMVFocusingTaskInstanceData
 ---
 
 # APawn
 
 ## Connections
-- [[LockOnTargetExtensionBase.h]] - `contains` [EXTRACTED]
+- [[FMVFocusingTaskInstanceData]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/FMVFocusingTaskInstanceData

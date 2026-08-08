@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVCombatComponent.h"
 type: "code"
-community: "스킬 체인 런타임"
+community: "FMVSkillEntry"
 location: "L15"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/FMVSkillEntry
 ---
 
 # UMVAbilityBase
@@ -17,4 +17,4 @@ tags:
 - [[FMVSkillEntry]] - `references` [EXTRACTED]
 - [[MVCombatComponent.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/FMVSkillEntry

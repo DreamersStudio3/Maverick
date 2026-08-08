@@ -1,16 +1,21 @@
 ---
 source_file: ""
 type: "code"
-community: "대화 창 페이드"
+community: "UMVDialogueWindow"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/UMVDialogueWindow
 ---
 
 # FText
 
 ## Connections
-- [[UMVDialogueWindowSetDialogueText()]] - `references` [EXTRACTED]
+- [[UMVUISubsystemOpenDialogueWindowText()]] - `references` [EXTRACTED]
+- [[UMVUISubsystemQueueDialogueWindowText()]] - `references` [EXTRACTED]
+- [[UMVUISubsystemShowDialogueWindowText()]] - `references` [EXTRACTED]
+- [[UMVUISubsystemShowDialogueWindowTextWithTiming()]] - `references` [EXTRACTED]
+- [[UMVUISubsystemShowInteractionPromptText()]] - `references` [EXTRACTED]
+- [[UMVUISubsystemShowPopupMessageText()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/UMVDialogueWindow

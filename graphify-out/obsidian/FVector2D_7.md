@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "피니셔 액션 입력 처리"
+community: "UMVFinisherComponent::TryHandleActionInput"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/UMVFinisherComponentTryHandleActionInput
 ---
 
 # FVector2D
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[UMVFinisherComponentTryHandleActionInput()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/UMVFinisherComponentTryHandleActionInput

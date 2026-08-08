@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 스트레이프 이동"
+community: "FMVStrafeMoveTaskInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI__
+  - community/FMVStrafeMoveTaskInstanceData
 ---
 
 # EStateTreeRunStatus
@@ -14,4 +14,4 @@ tags:
 - [[EnterState_13]] - `references` [EXTRACTED]
 - [[Tick_13]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI__
+#graphify/code #graphify/EXTRACTED #community/FMVStrafeMoveTaskInstanceData

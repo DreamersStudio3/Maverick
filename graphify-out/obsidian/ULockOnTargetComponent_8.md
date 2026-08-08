@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "LockOnTarget 포커스 지점 해석"
+community: "UTargetComponent::GetFocusPointLocation"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/LockOnTarget___
+  - community/UTargetComponentGetFocusPointLocation
 ---
 
 # ULockOnTargetComponent
@@ -16,4 +16,4 @@ tags:
 - [[UTargetComponentNotifyTargetCaptured()]] - `references` [EXTRACTED]
 - [[UTargetComponentNotifyTargetReleased()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/LockOnTarget___
+#graphify/code #graphify/EXTRACTED #community/UTargetComponentGetFocusPointLocation

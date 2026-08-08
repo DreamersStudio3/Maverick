@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "전투 액션 매핑"
+community: "MVCombatComponent.cpp"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/MVCombatComponentcpp
 ---
 
 # UMVAbilityBase
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[UMVCombatComponentHandleAbilityEnded()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/MVCombatComponentcpp

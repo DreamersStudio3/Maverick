@@ -1,16 +1,16 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 공격 StateTree 태스크"
+community: "FMVActionCooldownReadyConditionInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI__StateTree_
+  - community/FMVActionCooldownReadyConditionInstanceData
 ---
 
 # UStruct
 
 ## Connections
-- [[dot-GetInstanceDataType()_7]] - `references` [EXTRACTED]
+- [[dot-GetInstanceDataType()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI__StateTree_
+#graphify/code #graphify/EXTRACTED #community/FMVActionCooldownReadyConditionInstanceData

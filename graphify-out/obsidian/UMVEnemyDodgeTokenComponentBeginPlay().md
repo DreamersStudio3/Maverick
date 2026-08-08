@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVEnemyDodgeTokenComponent.cpp"
 type: "code"
-community: "컴포넌트 이벤트 바인딩 수명주기"
+community: "UMVPlayerConsumable::Initialize"
 location: "L13"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/___
+  - community/UMVPlayerConsumableInitialize
 ---
 
 # UMVEnemyDodgeTokenComponent::BeginPlay()
@@ -16,4 +16,4 @@ tags:
 - [[BindOwnerEvents]] - `calls` [INFERRED]
 - [[MVEnemyDodgeTokenComponent.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/___
+#graphify/code #graphify/INFERRED #community/UMVPlayerConsumableInitialize

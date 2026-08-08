@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 회피 위협 판정"
+community: "EMVDodgeThreatRejectReason"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/EMVDodgeThreatRejectReason
 ---
 
 # uint8
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[EMVDodgeThreatRejectReason]] - `inherits` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/EMVDodgeThreatRejectReason

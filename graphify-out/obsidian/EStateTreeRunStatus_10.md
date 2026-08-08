@@ -1,17 +1,17 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 피격 반응 태스크"
+community: "FMVHitReactionTaskInstanceData"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/FMVHitReactionTaskInstanceData
 ---
 
 # EStateTreeRunStatus
 
 ## Connections
-- [[EnterState_11]] - `references` [EXTRACTED]
-- [[Tick_12]] - `references` [EXTRACTED]
+- [[EnterState_6]] - `references` [EXTRACTED]
+- [[Tick_7]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/FMVHitReactionTaskInstanceData
