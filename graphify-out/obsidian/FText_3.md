@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "필드 전환 진행 표시"
+community: "필드 전환 관리"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/__
 ---
 
 # FText
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[UMVFieldTransitionSubsystemUpdateTransitionProgress()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/__

@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "전투 액션 매핑"
+community: "전투 액션 입력 처리"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/___
 ---
 
 # EMVEquippedStyle
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[UMVCombatComponentChangeWeapon()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/___

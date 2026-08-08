@@ -1,7 +1,7 @@
 ---
 source_file: "Source/Maverick/Components/MVCombatComponent.cpp"
 type: "code"
-community: "전투 액션 매핑"
+community: "스킬 체인 런타임"
 location: "L1540"
 tags:
   - graphify/code

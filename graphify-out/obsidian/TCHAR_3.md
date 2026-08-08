@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "캐릭터 공중 피격 추적"
+community: "피격 방향과 Launch 처리"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/__Launch_
 ---
 
 # TCHAR
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[MVCharacterLogAirborneTrace()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/__Launch_

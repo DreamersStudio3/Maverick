@@ -1,13 +1,10 @@
 # AI 적 회피 설정
 
-> 32 nodes · cohesion 0.07
+> 29 nodes · cohesion 0.07
 
 ## Key Concepts
 
 - **FMVEnemyDodgeActionTaskInstanceData** (36 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
-- **MVEnemyDodgeActionTask.h** (6 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
-- **APawn** (2 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
-- **UMVActionComponent** (2 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
 - **ActionComponent** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
 - **BackDodgeActionRow** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
 - **bCancelActionOnExit** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
@@ -29,14 +26,17 @@
 - **StartedActionRowName** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
 - **StartedActionTableName** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
 - **StartSection** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
-- *... and 7 more nodes in this community*
+- **TransitionBlendOutTime** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
+- **EMVActionInputDirection** (1 connections)
+- **FDataTableRowHandle** (1 connections)
+- *... and 4 more nodes in this community*
 
 ## Relationships
 
-- [AI 적 회피 실행](AI_%EC%A0%81_%ED%9A%8C%ED%94%BC_%EC%8B%A4%ED%96%89.md) (4 shared connections)
-- [AI 회피 위협 판정](AI_%ED%9A%8C%ED%94%BC_%EC%9C%84%ED%98%91_%ED%8C%90%EC%A0%95.md) (2 shared connections)
-- [플레이어 회피 방향 해석](%ED%94%8C%EB%A0%88%EC%9D%B4%EC%96%B4_%ED%9A%8C%ED%94%BC_%EB%B0%A9%ED%96%A5_%ED%95%B4%EC%84%9D.md) (1 shared connections)
-- [플레이어 이동 액션 테이블](%ED%94%8C%EB%A0%88%EC%9D%B4%EC%96%B4_%EC%9D%B4%EB%8F%99_%EC%95%A1%EC%85%98_%ED%85%8C%EC%9D%B4%EB%B8%94.md) (1 shared connections)
+- [AI 적 회피 실행](AI_%EC%A0%81_%ED%9A%8C%ED%94%BC_%EC%8B%A4%ED%96%89.md) (3 shared connections)
+- [적 회피 StateTree 선언](%EC%A0%81_%ED%9A%8C%ED%94%BC_StateTree_%EC%84%A0%EC%96%B8.md) (3 shared connections)
+- [AI 회피 요청 타입](AI_%ED%9A%8C%ED%94%BC_%EC%9A%94%EC%B2%AD_%ED%83%80%EC%9E%85.md) (1 shared connections)
+- [회피 입력 컨텍스트](%ED%9A%8C%ED%94%BC_%EC%9E%85%EB%A0%A5_%EC%BB%A8%ED%85%8D%EC%8A%A4%ED%8A%B8.md) (1 shared connections)
 
 ## Source Files
 
@@ -44,7 +44,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 74 (100%)
+- EXTRACTED: 64 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

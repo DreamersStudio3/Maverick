@@ -1,7 +1,7 @@
 ---
 source_file: ""
 type: "code"
-community: "피니셔 틱 갱신"
+community: "피니셔 실행과 워핑"
 tags:
   - graphify/code
   - graphify/EXTRACTED

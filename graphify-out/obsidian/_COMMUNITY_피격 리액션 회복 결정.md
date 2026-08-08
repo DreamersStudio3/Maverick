@@ -36,8 +36,8 @@ SORT file.name ASC
 - 1 edge to [[_COMMUNITY_적 캐릭터 전투 실행]]
 - 1 edge to [[_COMMUNITY_필드 전환 리셋 계약]]
 - 1 edge to [[_COMMUNITY_피격 반응 상태 관리]]
-- 1 edge to [[_COMMUNITY_플레이어 이동 액션 테이블]]
-- 1 edge to [[_COMMUNITY_액터·컴포넌트 종료 정리]]
+- 1 edge to [[_COMMUNITY_피격 시스템 공용 타입]]
+- 1 edge to [[_COMMUNITY_피니셔 실행과 워핑]]
 
 ## Top bridge nodes
 - [[MVHitReactionRecoveryDecisionProvider.h]] - degree 7, connects to 3 communities

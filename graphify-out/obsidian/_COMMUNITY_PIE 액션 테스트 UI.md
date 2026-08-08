@@ -32,7 +32,7 @@ SORT file.name ASC
 ## Connections to other communities
 - 5 edges to [[_COMMUNITY_PIE 피격 판정 테스트]]
 - 2 edges to [[_COMMUNITY_스킬 슬롯 위젯 구성]]
-- 2 edges to [[_COMMUNITY_로딩 창 레이아웃·진행률]]
+- 2 edges to [[_COMMUNITY_로딩 화면 입력 처리]]
 - 1 edge to [[_COMMUNITY_플레이어 스킬 HUD]]
 - 1 edge to [[_COMMUNITY_상태 바 위젯]]
 - 1 edge to [[_COMMUNITY_UI 레이어와 사망 오버레이]]

@@ -27,7 +27,7 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 1 edge to [[_COMMUNITY_필드 전환 관리]]
+- 1 edge to [[_COMMUNITY_필드 전환 요청 실행]]
 
 ## Top bridge nodes
 - [[MVFieldTransitionSubsystem.h]] - degree 8, connects to 1 community

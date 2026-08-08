@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "LockOnTarget 월드 타깃 등록"
+community: "피니셔 실행과 워핑"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/LockOnTarget___
+  - community/__
 ---
 
 # UWorld
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[UTargetManagerOnWorldBeginPlay()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/LockOnTarget___
+#graphify/code #graphify/EXTRACTED #community/__

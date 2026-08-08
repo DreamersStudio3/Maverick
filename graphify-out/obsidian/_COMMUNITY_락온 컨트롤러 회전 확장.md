@@ -75,8 +75,8 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
+- 1 edge to [[_COMMUNITY_피니셔 실행과 워핑]]
 - 1 edge to [[_COMMUNITY_LockOnTarget 모듈·타깃 핸들러]]
-- 1 edge to [[_COMMUNITY_액터·컴포넌트 종료 정리]]
 
 ## Top bridge nodes
 - [[LockOnTargetExtensionBase.cpp]] - degree 18, connects to 2 communities

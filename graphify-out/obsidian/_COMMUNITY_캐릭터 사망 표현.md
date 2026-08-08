@@ -42,7 +42,7 @@ SORT file.name ASC
 - 5 edges to [[_COMMUNITY_사망 표현 보류·시작]]
 - 5 edges to [[_COMMUNITY_사망 액션 포즈 해석]]
 - 2 edges to [[_COMMUNITY_사망 컴포넌트 디졸브 연동]]
-- 1 edge to [[_COMMUNITY_액터·컴포넌트 종료 정리]]
+- 1 edge to [[_COMMUNITY_피니셔 실행과 워핑]]
 - 1 edge to [[_COMMUNITY_사망 이동 모드 처리]]
 
 ## Top bridge nodes

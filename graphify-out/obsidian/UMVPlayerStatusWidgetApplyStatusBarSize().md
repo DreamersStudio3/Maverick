@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/HUD/MVPlayerStatusWidget.cpp"
 type: "code"
-community: "HUD 스탯 회복 연동"
+community: "상태 바 위젯 선언"
 location: "L151"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/HUD___
+  - community/___
 ---
 
 # UMVPlayerStatusWidget::ApplyStatusBarSize()
@@ -15,4 +15,4 @@ tags:
 - [[MVPlayerStatusWidget.cpp]] - `contains` [EXTRACTED]
 - [[UMVStatusBarWidget()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/HUD___
+#graphify/code #graphify/EXTRACTED #community/___

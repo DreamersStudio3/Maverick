@@ -1,7 +1,7 @@
 ---
 source_file: "Source/Maverick/Components/MVFinisherComponent.cpp"
 type: "code"
-community: "피니셔 틱 갱신"
+community: "피니셔 실행과 워핑"
 location: "L66"
 tags:
   - graphify/code

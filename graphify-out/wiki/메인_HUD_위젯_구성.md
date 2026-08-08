@@ -1,12 +1,13 @@
 # 메인 HUD 위젯 구성
 
-> 11 nodes · cohesion 0.22
+> 12 nodes · cohesion 0.20
 
 ## Key Concepts
 
 - **MVMainHUDWidget.h** (10 connections) — `Source/Maverick/UI/HUD/MVMainHUDWidget.h`
 - **UMVMainHUDWidget::BuildNativeWidgetTree()** (4 connections) — `Source/Maverick/UI/HUD/MVMainHUDWidget.cpp`
 - **UMVPlayerSkillHUDWidget** (3 connections) — `Source/Maverick/UI/HUD/MVMainHUDWidget.h`
+- **UMVMainHUDWidget::EnsurePlayerSkillHUD()** (2 connections) — `Source/Maverick/UI/HUD/MVMainHUDWidget.cpp`
 - **UMVPlayerStatusWidget** (2 connections) — `Source/Maverick/UI/HUD/MVMainHUDWidget.h`
 - **UMVQuickSlotWidget** (2 connections) — `Source/Maverick/UI/HUD/MVMainHUDWidget.h`
 - **UMVBossHPBarWidget** (1 connections) — `Source/Maverick/UI/HUD/MVMainHUDWidget.h`
@@ -28,7 +29,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 27 (100%)
+- EXTRACTED: 29 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

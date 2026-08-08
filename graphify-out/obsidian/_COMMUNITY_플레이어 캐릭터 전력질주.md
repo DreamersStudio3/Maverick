@@ -49,7 +49,7 @@ SORT file.name ASC
 
 ## Connections to other communities
 - 2 edges to [[_COMMUNITY_플레이어 이동 액션 테이블]]
-- 1 edge to [[_COMMUNITY_액터·컴포넌트 종료 정리]]
+- 1 edge to [[_COMMUNITY_피니셔 실행과 워핑]]
 
 ## Top bridge nodes
 - [[MVPlayerCharacter.cpp]] - degree 28, connects to 2 communities

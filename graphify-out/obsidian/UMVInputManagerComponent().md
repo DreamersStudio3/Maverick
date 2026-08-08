@@ -1,7 +1,7 @@
 ---
 source_file: "Source/Maverick/Components/MVInputManagerComponent.h"
 type: "code"
-community: "이동 차단과 회복 탈출"
+community: "액션 전환 입력 관리"
 location: "L54"
 tags:
   - graphify/code

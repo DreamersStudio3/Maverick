@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/HUD/MVStatusBarWidget.h"
 type: "code"
-community: "HUD 스탯 회복 연동"
+community: "상태 바 위젯 선언"
 location: "L9"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/HUD___
+  - community/___
 ---
 
 # UTextBlock
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[MVStatusBarWidget.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/HUD___
+#graphify/code #graphify/EXTRACTED #community/___

@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "HUD 스탯 회복 연동"
+community: "스탯 회복 정지 Notify"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/HUD___
+  - community/___Notify
 ---
 
 # UAnimSequenceBase
@@ -14,4 +14,4 @@ tags:
 - [[UMVAnimNotifyState_PauseRecoverableStatRecoveryNotifyBegin()]] - `references` [EXTRACTED]
 - [[UMVAnimNotifyState_PauseRecoverableStatRecoveryNotifyEnd()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/HUD___
+#graphify/code #graphify/EXTRACTED #community/___Notify

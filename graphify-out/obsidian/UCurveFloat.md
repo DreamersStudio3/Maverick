@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Character/MVCharacterBase.h"
 type: "code"
-community: "AI 스트레이프 이동"
+community: "공통 캐릭터 선언"
 location: "L24"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI__
+  - community/__
 ---
 
 # UCurveFloat
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[MVCharacterBase.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI__
+#graphify/code #graphify/EXTRACTED #community/__

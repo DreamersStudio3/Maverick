@@ -1,16 +1,15 @@
 ---
 type: community
 cohesion: 0.07
-members: 32
+members: 29
 ---
 
 # AI 적 회피 설정
 
 **Cohesion:** 0.07 - loosely connected
-**Members:** 32 nodes
+**Members:** 29 nodes
 
 ## Members
-- [[APawn_18]] - code - Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h
 - [[ActionComponent_1]] - code - Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h
 - [[BackDodgeActionRow]] - code - Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h
 - [[ChooserDodgeActionRow]] - code - Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h
@@ -26,7 +25,6 @@ members: 32
 - [[FallbackDodgeActionRow]] - code - Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h
 - [[ForwardDodgeActionRow]] - code - Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h
 - [[LeftDodgeActionRow]] - code - Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h
-- [[MVEnemyDodgeActionTask.h]] - code - Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h
 - [[Owner_6]] - code - Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h
 - [[ResolvedDirection]] - code - Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h
 - [[ResolvedDodgeActionRow]] - code - Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h
@@ -36,7 +34,6 @@ members: 32
 - [[StartedActionTableName_1]] - code - Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h
 - [[TObjectPtr_15]] - code
 - [[TransitionBlendOutTime]] - code - Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h
-- [[UMVActionComponent_1]] - code - Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h
 - [[UPROPERTY_3]] - code
 - [[bCancelActionOnExit_1]] - code - Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h
 - [[bStarted]] - code - Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h
@@ -51,11 +48,10 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 4 edges to [[_COMMUNITY_AI 적 회피 실행]]
-- 2 edges to [[_COMMUNITY_AI 회피 위협 판정]]
-- 1 edge to [[_COMMUNITY_플레이어 이동 액션 테이블]]
-- 1 edge to [[_COMMUNITY_플레이어 회피 방향 해석]]
+- 3 edges to [[_COMMUNITY_AI 적 회피 실행]]
+- 3 edges to [[_COMMUNITY_적 회피 StateTree 선언]]
+- 1 edge to [[_COMMUNITY_AI 회피 요청 타입]]
+- 1 edge to [[_COMMUNITY_회피 입력 컨텍스트]]
 
 ## Top bridge nodes
-- [[FMVEnemyDodgeActionTaskInstanceData]] - degree 36, connects to 3 communities
-- [[MVEnemyDodgeActionTask.h]] - degree 6, connects to 3 communities
+- [[FMVEnemyDodgeActionTaskInstanceData]] - degree 36, connects to 4 communities

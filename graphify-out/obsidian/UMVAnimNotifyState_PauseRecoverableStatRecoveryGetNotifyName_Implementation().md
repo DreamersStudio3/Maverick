@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Animation/NotifyStates/MVAnimNotifyState_PauseRecoverableStatRecovery.cpp"
 type: "code"
-community: "HUD 스탯 회복 연동"
+community: "스탯 회복 정지 Notify"
 location: "L43"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/HUD___
+  - community/___Notify
 ---
 
 # UMVAnimNotifyState_PauseRecoverableStatRecovery::GetNotifyName_Implementation()
@@ -15,4 +15,4 @@ tags:
 - [[FString_12]] - `references` [EXTRACTED]
 - [[MVAnimNotifyState_PauseRecoverableStatRecovery.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/HUD___
+#graphify/code #graphify/EXTRACTED #community/___Notify

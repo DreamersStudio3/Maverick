@@ -23,8 +23,9 @@
 
 ## Relationships
 
-- [테이블 Row 공통 타입](%ED%85%8C%EC%9D%B4%EB%B8%94_Row_%EA%B3%B5%ED%86%B5_%ED%83%80%EC%9E%85.md) (2 shared connections)
 - [테이블 JSON 스키마](%ED%85%8C%EC%9D%B4%EB%B8%94_JSON_%EC%8A%A4%ED%82%A4%EB%A7%88.md) (2 shared connections)
+- [테이블 Row 공통 타입](%ED%85%8C%EC%9D%B4%EB%B8%94_Row_%EA%B3%B5%ED%86%B5_%ED%83%80%EC%9E%85.md) (1 shared connections)
+- [테이블 후처리 인터페이스](%ED%85%8C%EC%9D%B4%EB%B8%94_%ED%9B%84%EC%B2%98%EB%A6%AC_%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A4.md) (1 shared connections)
 
 ## Source Files
 

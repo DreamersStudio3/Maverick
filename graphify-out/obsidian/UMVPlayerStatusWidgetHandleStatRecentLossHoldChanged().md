@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/HUD/MVPlayerStatusWidget.cpp"
 type: "code"
-community: "HUD 스탯 회복 연동"
+community: "플레이어 상태 UI 생명주기"
 location: "L196"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/HUD___
+  - community/__UI_
 ---
 
 # UMVPlayerStatusWidget::HandleStatRecentLossHoldChanged()
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[MVPlayerStatusWidget.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/HUD___
+#graphify/code #graphify/EXTRACTED #community/__UI_

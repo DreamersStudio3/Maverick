@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/System/MVUISubsystem.cpp"
 type: "code"
-community: "PIE 전투 디버그 도구"
+community: "UI 서브시스템 팝업 관리"
 location: "L823"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/PIE___
+  - community/UI___
 ---
 
 # UMVUISubsystem::ResolvePIEActionTestPlayerController()
@@ -16,4 +16,4 @@ tags:
 - [[APlayerController_6]] - `references` [EXTRACTED]
 - [[MVUISubsystem.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/PIE___
+#graphify/code #graphify/EXTRACTED #community/UI___

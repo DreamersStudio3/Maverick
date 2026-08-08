@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Public/Tables/MVHitReactionActionTableTypes.h"
 type: "code"
-community: "피격 반응 Row 조회"
+community: "액션 행·몽타주 타입"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__Row_
+  - community/__
 ---
 
 # MVHitReactionActionTableTypes.h
@@ -18,4 +18,4 @@ tags:
 - [[MVHitReactionComponent.h]] - `imports` [EXTRACTED]
 - [[MVSheetSpecs.cpp]] - `imports` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__Row_
+#graphify/code #graphify/EXTRACTED #community/__

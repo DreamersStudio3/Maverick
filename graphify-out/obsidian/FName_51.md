@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "로딩 창 레이아웃·진행률"
+community: "로딩 화면 입력 처리"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/___
 ---
 
 # FName
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[MVLoadingWindowMakeText()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/___

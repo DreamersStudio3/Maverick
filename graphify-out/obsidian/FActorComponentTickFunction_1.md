@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "전투 액션 입력 처리"
+community: "전투 컴포넌트 Tick"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/__Tick
 ---
 
 # FActorComponentTickFunction
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[UMVCombatComponentTickComponent()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/__Tick

@@ -57,7 +57,7 @@ SORT file.name ASC
 - 2 edges to [[_COMMUNITY_AI 전투 컨텍스트]]
 - 2 edges to [[_COMMUNITY_AI 공격 실행 데이터]]
 - 1 edge to [[_COMMUNITY_무기 장착 시각화]]
-- 1 edge to [[_COMMUNITY_이동 차단과 회복 탈출]]
+- 1 edge to [[_COMMUNITY_액션 전환 입력 관리]]
 - 1 edge to [[_COMMUNITY_액션 행·몽타주 타입]]
 - 1 edge to [[_COMMUNITY_피격 회복 방향 추적]]
 

@@ -31,7 +31,7 @@ SORT file.name ASC
 - 2 edges to [[_COMMUNITY_플레이어 회복약 액션]]
 - 2 edges to [[_COMMUNITY_적 회피 토큰 지급]]
 - 1 edge to [[_COMMUNITY_플레이어 캐릭터 기능 연결]]
-- 1 edge to [[_COMMUNITY_액터·컴포넌트 종료 정리]]
+- 1 edge to [[_COMMUNITY_피니셔 실행과 워핑]]
 
 ## Top bridge nodes
 - [[UMVPlayerConsumableInitialize()]] - degree 4, connects to 2 communities

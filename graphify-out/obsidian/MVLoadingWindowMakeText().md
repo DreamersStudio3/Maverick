@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/Window/MVLoadingWindow.cpp"
 type: "code"
-community: "로딩 창 레이아웃·진행률"
+community: "로딩 화면 입력 처리"
 location: "L25"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/___
 ---
 
 # MVLoadingWindowMakeText()
@@ -20,4 +20,4 @@ tags:
 - [[UTextBlock_11]] - `references` [EXTRACTED]
 - [[UWidgetTree_1]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/___

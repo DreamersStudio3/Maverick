@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "플레이어 회복약 액션"
+community: "회복 물약 액션 식별"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/___
 ---
 
 # FName
@@ -18,4 +18,4 @@ tags:
 - [[UMVPlayerConsumableResolveHealingPotionActionTableName()]] - `references` [EXTRACTED]
 - [[UMVPlayerConsumableTryStartHealingPotionAction()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/___

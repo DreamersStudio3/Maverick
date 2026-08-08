@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/Popup/MVMessagePopup.cpp"
 type: "code"
-community: "메시지 팝업 텍스트 설정"
+community: "UI 팝업 메시지 데이터"
 location: "L5"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/UI___
 ---
 
 # UMVMessagePopup::SetMessageData()
@@ -15,4 +15,4 @@ tags:
 - [[FMVPopupMessageData]] - `references` [EXTRACTED]
 - [[MVMessagePopup.cpp]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/UI___

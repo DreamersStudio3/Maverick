@@ -73,14 +73,15 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 2 edges to [[_COMMUNITY_피격 시스템 공용 타입]]
 - 1 edge to [[_COMMUNITY_AI 공격 실행 로직]]
-- 1 edge to [[_COMMUNITY_AI 스트레이프 이동]]
-- 1 edge to [[_COMMUNITY_PIE 전투 디버그 도구]]
+- 1 edge to [[_COMMUNITY_공통 캐릭터 선언]]
+- 1 edge to [[_COMMUNITY_캐릭터 도메인 연동]]
 - 1 edge to [[_COMMUNITY_피격 판정 해석 파이프라인]]
 - 1 edge to [[_COMMUNITY_전투 액션 런타임 상태]]
+- 1 edge to [[_COMMUNITY_액션 행·몽타주 타입]]
 - 1 edge to [[_COMMUNITY_전투 액션 Chooser 입력]]
-- 1 edge to [[_COMMUNITY_회복 물약 런타임 상태]]
+- 1 edge to [[_COMMUNITY_피격 시스템 공용 타입]]
+- 1 edge to [[_COMMUNITY_회복 물약 기본값 해석]]
 - 1 edge to [[_COMMUNITY_테이블 Row 공통 타입]]
 
 ## Top bridge nodes

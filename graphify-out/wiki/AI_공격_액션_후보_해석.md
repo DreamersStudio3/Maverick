@@ -25,7 +25,7 @@
 - [전투 액션 Chooser 입력](%EC%A0%84%ED%88%AC_%EC%95%A1%EC%85%98_Chooser_%EC%9E%85%EB%A0%A5.md) (2 shared connections)
 - [AI 적 사망 처리](AI_%EC%A0%81_%EC%82%AC%EB%A7%9D_%EC%B2%98%EB%A6%AC.md) (1 shared connections)
 - [AI 전투 의사결정 로직](AI_%EC%A0%84%ED%88%AC_%EC%9D%98%EC%82%AC%EA%B2%B0%EC%A0%95_%EB%A1%9C%EC%A7%81.md) (1 shared connections)
-- [플레이어 이동 액션 테이블](%ED%94%8C%EB%A0%88%EC%9D%B4%EC%96%B4_%EC%9D%B4%EB%8F%99_%EC%95%A1%EC%85%98_%ED%85%8C%EC%9D%B4%EB%B8%94.md) (1 shared connections)
+- [피격 시스템 공용 타입](%ED%94%BC%EA%B2%A9_%EC%8B%9C%EC%8A%A4%ED%85%9C_%EA%B3%B5%EC%9A%A9_%ED%83%80%EC%9E%85.md) (1 shared connections)
 
 ## Source Files
 

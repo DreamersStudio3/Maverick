@@ -1,7 +1,7 @@
 ---
 source_file: ""
 type: "code"
-community: "캐릭터 인덱스 태그"
+community: "공통 캐릭터 생명주기"
 tags:
   - graphify/code
   - graphify/EXTRACTED

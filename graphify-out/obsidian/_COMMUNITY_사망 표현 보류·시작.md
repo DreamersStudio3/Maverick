@@ -28,7 +28,7 @@ SORT file.name ASC
 - 5 edges to [[_COMMUNITY_캐릭터 사망 표현]]
 - 2 edges to [[_COMMUNITY_사망 액션 행 이름 해석]]
 - 1 edge to [[_COMMUNITY_사망 액션 포즈 해석]]
-- 1 edge to [[_COMMUNITY_HUD 스탯 회복 연동]]
+- 1 edge to [[_COMMUNITY_스탯 컴포넌트 UI 연결]]
 
 ## Top bridge nodes
 - [[FMVDeathContext()]] - degree 9, connects to 3 communities

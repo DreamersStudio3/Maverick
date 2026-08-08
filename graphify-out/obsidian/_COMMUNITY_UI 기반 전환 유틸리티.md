@@ -56,7 +56,7 @@ SORT file.name ASC
 
 ## Connections to other communities
 - 1 edge to [[_COMMUNITY_UI 레이어와 사망 오버레이]]
-- 1 edge to [[_COMMUNITY_로딩 창 레이아웃·진행률]]
+- 1 edge to [[_COMMUNITY_로딩 화면 입력 처리]]
 
 ## Top bridge nodes
 - [[UWidget]] - degree 9, connects to 2 communities

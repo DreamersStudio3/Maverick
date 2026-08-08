@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "대상 컴포넌트 디테일 편집"
+community: "타깃 디테일 커스터마이징"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/__
 ---
 
 # IDetailCustomization
@@ -14,4 +14,4 @@ tags:
 - [[dot-MakeInstance()_1]] - `references` [EXTRACTED]
 - [[FTargetComponentDetails]] - `inherits` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/__

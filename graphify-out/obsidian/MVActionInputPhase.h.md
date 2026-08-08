@@ -1,7 +1,7 @@
 ---
 source_file: "Source/Maverick/Public/Enum/MVActionInputPhase.h"
 type: "code"
-community: "플레이어 회피 입력 계약"
+community: "액션 전환 입력 관리"
 location: "L1"
 tags:
   - graphify/code

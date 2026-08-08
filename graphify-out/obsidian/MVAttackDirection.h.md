@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/AI/Enum/MVAttackDirection.h"
 type: "code"
-community: "전역 전투 센싱 태스크"
+community: "AI 기본 공격 태스크"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/AI___
 ---
 
 # MVAttackDirection.h
@@ -17,4 +17,4 @@ tags:
 - [[MVExecuteAttackTask.h]] - `imports` [EXTRACTED]
 - [[MVGlobalSensingTask.h]] - `imports` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/AI___

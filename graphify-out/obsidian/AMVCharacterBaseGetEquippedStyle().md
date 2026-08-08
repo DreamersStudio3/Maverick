@@ -1,7 +1,7 @@
 ---
 source_file: "Source/Maverick/Character/MVCharacterBase.cpp"
 type: "code"
-community: "캐릭터 장비 스타일"
+community: "공통 캐릭터 생명주기"
 location: "L281"
 tags:
   - graphify/code

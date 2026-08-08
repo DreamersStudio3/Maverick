@@ -36,7 +36,7 @@ SORT file.name ASC
 ## Connections to other communities
 - 2 edges to [[_COMMUNITY_UI 팝업 메시지 데이터]]
 - 2 edges to [[_COMMUNITY_UI 서브시스템 팝업 관리]]
-- 1 edge to [[_COMMUNITY_필드 전환 리셋 계약]]
+- 1 edge to [[_COMMUNITY_사망 부활 UI 흐름]]
 - 1 edge to [[_COMMUNITY_대화창 표시 수명주기]]
 - 1 edge to [[_COMMUNITY_UI 서브시스템 공용 선언]]
 

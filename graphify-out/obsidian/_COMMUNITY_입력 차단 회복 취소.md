@@ -43,10 +43,10 @@ SORT file.name ASC
 
 ## Connections to other communities
 - 10 edges to [[_COMMUNITY_액션 입력 버퍼링]]
-- 3 edges to [[_COMMUNITY_컨트롤러 기준 이동 입력_1]]
+- 3 edges to [[_COMMUNITY_컨트롤러 기준 이동 입력]]
 - 2 edges to [[_COMMUNITY_액션 입력 핸들러 등록]]
-- 1 edge to [[_COMMUNITY_플레이어 회피 입력 계약]]
 - 1 edge to [[_COMMUNITY_액션 입력 방향 해석]]
+- 1 edge to [[_COMMUNITY_플레이어 회피 입력 계약]]
 
 ## Top bridge nodes
 - [[MVInputManagerComponent.cpp]] - degree 38, connects to 5 communities

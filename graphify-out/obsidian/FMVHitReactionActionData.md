@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVHitReactionComponent.h"
 type: "code"
-community: "피격 리액션 액션 데이터"
+community: "피격 반응 Row 조회"
 location: "L32"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/__Row_
 ---
 
 # FMVHitReactionActionData
@@ -23,4 +23,4 @@ tags:
 - [[StartSection_4]] - `defines` [EXTRACTED]
 - [[UMVHitReactionComponentGetActionData()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/__Row_

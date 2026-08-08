@@ -45,15 +45,15 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 15 edges to [[_COMMUNITY_피격 회복 방향 추적]]
+- 16 edges to [[_COMMUNITY_피격 회복 방향 추적]]
 - 11 edges to [[_COMMUNITY_피격 방향과 Launch 처리]]
-- 10 edges to [[_COMMUNITY_피격 반응 Row 조회]]
-- 10 edges to [[_COMMUNITY_피격 리액션 입력·행 해석]]
-- 1 edge to [[_COMMUNITY_AI 스트레이프 이동]]
-- 1 edge to [[_COMMUNITY_피격 리액션 회복 결정]]
-- 1 edge to [[_COMMUNITY_액터·컴포넌트 종료 정리]]
+- 11 edges to [[_COMMUNITY_피격 리액션 입력·행 해석]]
+- 8 edges to [[_COMMUNITY_피격 반응 Row 조회]]
+- 1 edge to [[_COMMUNITY_피니셔 실행과 워핑]]
 - 1 edge to [[_COMMUNITY_전투 액션 Chooser 입력]]
 - 1 edge to [[_COMMUNITY_피격 반응 이동 모드]]
+- 1 edge to [[_COMMUNITY_피격 리액션 회복 결정]]
+- 1 edge to [[_COMMUNITY_테이블 Row 공통 타입]]
 
 ## Top bridge nodes
 - [[MVHitReactionComponent.cpp]] - degree 75, connects to 9 communities

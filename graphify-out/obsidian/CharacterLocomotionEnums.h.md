@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Public/Enum/CharacterLocomotionEnums.h"
 type: "code"
-community: "AI 스트레이프 이동"
+community: "공통 캐릭터 선언"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI__
+  - community/__
 ---
 
 # CharacterLocomotionEnums.h
@@ -16,4 +16,4 @@ tags:
 - [[MVCharacterBase.h]] - `imports` [EXTRACTED]
 - [[MVPlayerDodge.h]] - `imports` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI__
+#graphify/code #graphify/EXTRACTED #community/__

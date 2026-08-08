@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVStatComponent.h"
 type: "code"
-community: "HUD 스탯 회복 연동"
+community: "스탯 컴포넌트 UI 연결"
 location: "L10"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/HUD___
+  - community/__UI_
 ---
 
 # AActor
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[MVStatComponent.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/HUD___
+#graphify/code #graphify/EXTRACTED #community/__UI_

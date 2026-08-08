@@ -38,8 +38,8 @@ SORT file.name ASC
 - 1 edge to [[_COMMUNITY_전투 액션 입력 처리]]
 - 1 edge to [[_COMMUNITY_피격 리액션 입력·행 해석]]
 - 1 edge to [[_COMMUNITY_액션 입력 방향 해석]]
-- 1 edge to [[_COMMUNITY_컨트롤러 기준 이동 입력_1]]
-- 1 edge to [[_COMMUNITY_플레이어 회피 입력 계약]]
+- 1 edge to [[_COMMUNITY_컨트롤러 기준 이동 입력]]
+- 1 edge to [[_COMMUNITY_액션 전환 입력 관리]]
 
 ## Top bridge nodes
 - [[EMVActionInputPhase]] - degree 8, connects to 3 communities

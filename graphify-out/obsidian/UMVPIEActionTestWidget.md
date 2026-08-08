@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/UI/System/MVUISubsystem.h"
 type: "code"
-community: "PIE 전투 디버그 도구"
+community: "UI 서브시스템 공용 선언"
 location: "L18"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/PIE___
+  - community/UI___
 ---
 
 # UMVPIEActionTestWidget
@@ -16,4 +16,4 @@ tags:
 - [[UMVUISubsystemOpenPIEActionTestPanel()]] - `references` [EXTRACTED]
 - [[UMVUISubsystemShowPIEActionTestPanel()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/PIE___
+#graphify/code #graphify/EXTRACTED #community/UI___

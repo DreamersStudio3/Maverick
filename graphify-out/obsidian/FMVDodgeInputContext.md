@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Character/PC/Dodge/MVPlayerDodge.h"
 type: "code"
-community: "플레이어 회피 방향 해석"
+community: "회피 입력 컨텍스트"
 location: "L70"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/__
 ---
 
 # FMVDodgeInputContext
@@ -30,4 +30,4 @@ tags:
 - [[bHasMovementInput]] - `defines` [EXTRACTED]
 - [[bUsesStep]] - `defines` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/__

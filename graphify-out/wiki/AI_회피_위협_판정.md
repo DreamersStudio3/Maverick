@@ -1,15 +1,10 @@
 # AI 회피 위협 판정
 
-> 14 nodes · cohesion 0.14
+> 8 nodes · cohesion 0.25
 
 ## Key Concepts
 
 - **EMVDodgeThreatRejectReason** (8 connections) — `Source/Maverick/Public/AI/MVDodgeThreatEvaluatorLibrary.h`
-- **EnemyDodgeActionTaskResolveDirection()** (4 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.cpp`
-- **MVAIDodgeTypes.h** (4 connections) — `Source/Maverick/Public/Struct/MVAIDodgeTypes.h`
-- **FMVAIDodgeRequest()** (4 connections) — `Source/Maverick/Public/Struct/MVAIDodgeTypes.h`
-- **MVDodgeThreatEvaluatorLibrary.h** (2 connections) — `Source/Maverick/Public/AI/MVDodgeThreatEvaluatorLibrary.h`
-- **EMVActionInputDirection** (1 connections)
 - **.FMVDodgeThreatConfig()** (1 connections) — `Source/Maverick/Public/AI/MVDodgeThreatEvaluatorLibrary.h`
 - **.FMVDodgeThreatDecision()** (1 connections) — `Source/Maverick/Public/AI/MVDodgeThreatEvaluatorLibrary.h`
 - **TokenUnavailable** (1 connections) — `Source/Maverick/Public/AI/MVDodgeThreatEvaluatorLibrary.h`
@@ -17,23 +12,18 @@
 - **UMVDodgeThreatEvaluatorLibrary** (1 connections) — `Source/Maverick/Public/AI/MVDodgeThreatEvaluatorLibrary.h`
 - **uint8** (1 connections)
 - **USTRUCT** (1 connections)
-- **AActor** (1 connections) — `Source/Maverick/Public/Struct/MVAIDodgeTypes.h`
 
 ## Relationships
 
-- [AI 적 회피 실행](AI_%EC%A0%81_%ED%9A%8C%ED%94%BC_%EC%8B%A4%ED%96%89.md) (2 shared connections)
-- [AI 적 회피 설정](AI_%EC%A0%81_%ED%9A%8C%ED%94%BC_%EC%84%A4%EC%A0%95.md) (2 shared connections)
-- [위협 기반 회피 토큰](%EC%9C%84%ED%98%91_%EA%B8%B0%EB%B0%98_%ED%9A%8C%ED%94%BC_%ED%86%A0%ED%81%B0.md) (1 shared connections)
+- [AI 회피 요청 타입](AI_%ED%9A%8C%ED%94%BC_%EC%9A%94%EC%B2%AD_%ED%83%80%EC%9E%85.md) (1 shared connections)
 
 ## Source Files
 
-- `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.cpp`
 - `Source/Maverick/Public/AI/MVDodgeThreatEvaluatorLibrary.h`
-- `Source/Maverick/Public/Struct/MVAIDodgeTypes.h`
 
 ## Audit Trail
 
-- EXTRACTED: 31 (100%)
+- EXTRACTED: 15 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

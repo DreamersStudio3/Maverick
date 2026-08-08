@@ -45,7 +45,7 @@ SORT file.name ASC
 - 1 edge to [[_COMMUNITY_스킬 슬롯 위젯 구성]]
 - 1 edge to [[_COMMUNITY_상태 바 위젯]]
 - 1 edge to [[_COMMUNITY_로딩 UI 테스트 명령]]
-- 1 edge to [[_COMMUNITY_로딩 창 레이아웃·진행률]]
+- 1 edge to [[_COMMUNITY_로딩 화면 입력 처리]]
 - 1 edge to [[_COMMUNITY_사망 오버레이 페이드]]
 - 1 edge to [[_COMMUNITY_PIE 액션 테스트 UI]]
 

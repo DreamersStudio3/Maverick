@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Character/MVCharacterBase.h"
 type: "code"
-community: "PIE 전투 디버그 도구"
+community: "캐릭터 도메인 연동"
 location: "L56"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/PIE___
+  - community/__
 ---
 
 # AMVCharacterBase()
@@ -41,4 +41,4 @@ tags:
 - [[UMVUISubsystemResolvePIEActionTestTargetCharacter()]] - `references` [EXTRACTED]
 - [[UMVUISubsystemShowPIEActionTestPanel()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/PIE___
+#graphify/code #graphify/EXTRACTED #community/__

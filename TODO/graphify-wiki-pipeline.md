@@ -21,7 +21,7 @@
 - [x] 전체 코퍼스 초기 그래프, wiki, Obsidian vault 생성
 - [x] `Architecture.md`와 헤더 문서화 기준 작성
 - [x] 커밋 갱신 및 pre-push 최신성 검증 구현·설치
-- [ ] 최종 Graphify wrap-up, 검증, 작업 보고서 작성
+- [x] 최종 Graphify wrap-up, 검증, 작업 보고서 작성
 
 ## 결정
 
@@ -49,3 +49,5 @@
 - guard는 stage된 Graphify corpus의 manifest/hash/semantic coverage, graph와 wiki·Obsidian 구조, outgoing commit의 source·artifact fingerprint를 검사한다.
 - 삭제 전용 ref push는 no-op으로 통과하고, wrap-up stamp가 없는 현재 commit은 의도대로 차단되는 것을 검증했다.
 - `.codex/hooks.json`의 `graphify hook-check`는 Graphify 0.9.36에서 호환용 no-op이므로 강제 장치로 오해되지 않게 제거했다.
+- 최종 코퍼스는 309개 파일, 약 121,631단어이며 3,905개 노드, 5,738개 관계, 11개 hyperedge, 281개 커뮤니티로 갱신됐다.
+- 최종 생성 위키는 index 포함 292개 Markdown, Obsidian vault는 4,186개 Markdown과 4,186-node canvas로 갱신됐다.

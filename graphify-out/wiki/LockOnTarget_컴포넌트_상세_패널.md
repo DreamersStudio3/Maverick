@@ -17,7 +17,7 @@
 
 ## Relationships
 
-- [타깃 컴포넌트 배열 편집기](%ED%83%80%EA%B9%83_%EC%BB%B4%ED%8F%AC%EB%84%8C%ED%8A%B8_%EB%B0%B0%EC%97%B4_%ED%8E%B8%EC%A7%91%EA%B8%B0.md) (2 shared connections)
+- [타깃 디테일 커스터마이징](%ED%83%80%EA%B9%83_%EB%94%94%ED%85%8C%EC%9D%BC_%EC%BB%A4%EC%8A%A4%ED%84%B0%EB%A7%88%EC%9D%B4%EC%A7%95.md) (2 shared connections)
 - [LockOnTarget 에디터 모듈](LockOnTarget_%EC%97%90%EB%94%94%ED%84%B0_%EB%AA%A8%EB%93%88.md) (1 shared connections)
 - [대상 컴포넌트 디테일 편집](%EB%8C%80%EC%83%81_%EC%BB%B4%ED%8F%AC%EB%84%8C%ED%8A%B8_%EB%94%94%ED%85%8C%EC%9D%BC_%ED%8E%B8%EC%A7%91.md) (1 shared connections)
 

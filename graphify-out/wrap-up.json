@@ -1,0 +1,18 @@
+{
+  "$schema": "maverick.graphify-wrap-up/v1",
+  "generated_at_utc": "2026-08-08T06:13:45.702399+00:00",
+  "head_at_stamp": "3aa79078e9d4274b956b03c2e378789055c00671",
+  "graphify_version": "0.9.36",
+  "source_fingerprint": "e59e3ddbe5f441b8bfed61c712ee59c2f93350d30a4d7d15da1e856258a0c681",
+  "source_files": 345,
+  "artifact_fingerprint": "dceb75842cbe4823d21f02829a81b2ef2c065b80350d8affe9f5abcbd4fde72f",
+  "artifact_files": 4488,
+  "semantic_documents": 13,
+  "graph": {
+    "nodes": 3905,
+    "edges": 5738,
+    "communities": 281,
+    "wiki_community_articles": 281,
+    "obsidian_notes": 3905
+  }
+}

@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "캐릭터 목표 보행 상태"
+community: "공통 캐릭터 생명주기"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/__
 ---
 
 # EGait
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[AMVCharacterBaseDesiredGait()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/__

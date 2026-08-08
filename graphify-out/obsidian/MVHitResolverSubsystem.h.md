@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Combat/MVHitResolverSubsystem.h"
 type: "code"
-community: "PIE 피격 판정 테스트"
+community: "피격 판정 서브시스템 선언"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/PIE___
+  - community/___
 ---
 
 # MVHitResolverSubsystem.h
@@ -16,4 +16,4 @@ tags:
 - [[UMVHitResolverSubsystem()]] - `contains` [EXTRACTED]
 - [[UMVStatComponent_1]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/PIE___
+#graphify/code #graphify/EXTRACTED #community/___

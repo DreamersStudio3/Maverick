@@ -1,24 +1,21 @@
 ---
 type: community
-cohesion: 0.07
-members: 61
+cohesion: 0.08
+members: 53
 ---
 
 # 전투 액션 매핑
 
-**Cohesion:** 0.07 - loosely connected
-**Members:** 61 nodes
+**Cohesion:** 0.08 - loosely connected
+**Members:** 53 nodes
 
 ## Members
-- [[EMVAttackSwingDirection]] - code
 - [[EMVCombatActionTypes_1]] - code
-- [[EMVEquippedStyle_2]] - code
 - [[FName_35]] - code
 - [[FString_16]] - code
 - [[MVCombatActionTypeToString()]] - code - Source/Maverick/Components/MVCombatComponent.cpp
 - [[MVCombatAppendRowCandidate()]] - code - Source/Maverick/Components/MVCombatComponent.cpp
 - [[MVCombatComponent.cpp]] - code - Source/Maverick/Components/MVCombatComponent.cpp
-- [[MVCombatGetOppositeSwingDirection()]] - code - Source/Maverick/Components/MVCombatComponent.cpp
 - [[MVCombatIsBasicAttackStartRowCandidate()]] - code - Source/Maverick/Components/MVCombatComponent.cpp
 - [[MVCombatIsDodgeContextualAttackRowName()]] - code - Source/Maverick/Components/MVCombatComponent.cpp
 - [[MVCombatIsDodgeContextualBasicAttackActionType()]] - code - Source/Maverick/Components/MVCombatComponent.cpp
@@ -31,15 +28,12 @@ members: 61
 - [[MVCombatRowHandleToString()]] - code - Source/Maverick/Components/MVCombatComponent.cpp
 - [[MVCombatSkillRowNamesToString()]] - code - Source/Maverick/Components/MVCombatComponent.cpp
 - [[TArray_13]] - code
-- [[UMVAbilityBase_2]] - code
 - [[UMVCombatComponentBeginPlay()]] - code - Source/Maverick/Components/MVCombatComponent.cpp
 - [[UMVCombatComponentBroadcastCombatActionStarted()]] - code - Source/Maverick/Components/MVCombatComponent.cpp
-- [[UMVCombatComponentChangeWeapon()]] - code - Source/Maverick/Components/MVCombatComponent.cpp
 - [[UMVCombatComponentClearLastBasicAttackSwingDirection()]] - code - Source/Maverick/Components/MVCombatComponent.cpp
 - [[UMVCombatComponentGetBasicAttackSkillDataAtStage()]] - code - Source/Maverick/Components/MVCombatComponent.cpp
 - [[UMVCombatComponentGetDodgeAttackContextInstanceId()]] - code - Source/Maverick/Components/MVCombatComponent.cpp
 - [[UMVCombatComponentGetSkillSlotRuntimeState()]] - code - Source/Maverick/Components/MVCombatComponent.cpp
-- [[UMVCombatComponentHandleAbilityEnded()]] - code - Source/Maverick/Components/MVCombatComponent.cpp
 - [[UMVCombatComponentHandleActionEnded()]] - code - Source/Maverick/Components/MVCombatComponent.cpp
 - [[UMVCombatComponentHasReachedSprintAttackSpeed()]] - code - Source/Maverick/Components/MVCombatComponent.cpp
 - [[UMVCombatComponentIsBasicAttackActionType()]] - code - Source/Maverick/Components/MVCombatComponent.cpp
@@ -57,9 +51,7 @@ members: 61
 - [[UMVCombatComponentResetOtherBasicAttackChains()]] - code - Source/Maverick/Components/MVCombatComponent.cpp
 - [[UMVCombatComponentResetSkillMap()]] - code - Source/Maverick/Components/MVCombatComponent.cpp
 - [[UMVCombatComponentResolveContextualBasicAttackActionType()]] - code - Source/Maverick/Components/MVCombatComponent.cpp
-- [[UMVCombatComponentResolveHeavyChargeEarlyReleaseChainStageIndex()]] - code - Source/Maverick/Components/MVCombatComponent.cpp
 - [[UMVCombatComponentResolveHeavyChargeStartChainStageIndex()]] - code - Source/Maverick/Components/MVCombatComponent.cpp
-- [[UMVCombatComponentSelectBasicAttackChainStageForSwing()]] - code - Source/Maverick/Components/MVCombatComponent.cpp
 - [[UMVCombatComponentShouldSuppressChargeAttackInputForSprint()]] - code - Source/Maverick/Components/MVCombatComponent.cpp
 - [[UMVCombatComponentTryBasicAttack()]] - code - Source/Maverick/Components/MVCombatComponent.cpp
 - [[UMVCombatComponentTryCombatAction()]] - code - Source/Maverick/Components/MVCombatComponent.cpp
@@ -81,17 +73,19 @@ SORT file.name ASC
 
 ## Connections to other communities
 - 19 edges to [[_COMMUNITY_전투 액션 행 해석]]
-- 9 edges to [[_COMMUNITY_전투 액션 입력 처리]]
-- 5 edges to [[_COMMUNITY_스킬 체인 런타임]]
+- 10 edges to [[_COMMUNITY_전투 액션 입력 처리]]
+- 8 edges to [[_COMMUNITY_스킬 체인 런타임]]
 - 4 edges to [[_COMMUNITY_스킬 데이터와 비용]]
 - 4 edges to [[_COMMUNITY_전투 액션 Chooser 입력]]
-- 2 edges to [[_COMMUNITY_전투 액션 런타임 상태]]
 - 1 edge to [[_COMMUNITY_AI 전투 액션 메타데이터]]
-- 1 edge to [[_COMMUNITY_액터·컴포넌트 종료 정리]]
+- 1 edge to [[_COMMUNITY_피니셔 실행과 워핑]]
+- 1 edge to [[_COMMUNITY_전투 액션 런타임 상태]]
+- 1 edge to [[_COMMUNITY_전투 컴포넌트 Tick]]
+- 1 edge to [[_COMMUNITY_스킬 슬롯 런타임 상태]]
 
 ## Top bridge nodes
-- [[MVCombatComponent.cpp]] - degree 76, connects to 7 communities
+- [[MVCombatComponent.cpp]] - degree 76, connects to 9 communities
 - [[FName_35]] - degree 23, connects to 2 communities
 - [[EMVCombatActionTypes_1]] - degree 16, connects to 2 communities
+- [[int32_15]] - degree 16, connects to 2 communities
 - [[UMVCombatComponentGetBasicAttackSkillDataAtStage()]] - degree 4, connects to 2 communities
-- [[int32_15]] - degree 16, connects to 1 community

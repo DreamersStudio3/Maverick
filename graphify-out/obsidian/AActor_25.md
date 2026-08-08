@@ -1,7 +1,7 @@
 ---
 source_file: "Source/Maverick/Public/Struct/MVAIDodgeTypes.h"
 type: "code"
-community: "AI 회피 위협 판정"
+community: "AI 회피 요청 타입"
 location: "L8"
 tags:
   - graphify/code

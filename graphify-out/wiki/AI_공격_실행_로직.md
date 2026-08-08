@@ -39,7 +39,7 @@
 - [AI 전투 컨텍스트](AI_%EC%A0%84%ED%88%AC_%EC%BB%A8%ED%85%8D%EC%8A%A4%ED%8A%B8.md) (2 shared connections)
 - [AI 공격 실행 데이터](AI_%EA%B3%B5%EA%B2%A9_%EC%8B%A4%ED%96%89_%EB%8D%B0%EC%9D%B4%ED%84%B0.md) (2 shared connections)
 - [무기 장착 시각화](%EB%AC%B4%EA%B8%B0_%EC%9E%A5%EC%B0%A9_%EC%8B%9C%EA%B0%81%ED%99%94.md) (1 shared connections)
-- [이동 차단과 회복 탈출](%EC%9D%B4%EB%8F%99_%EC%B0%A8%EB%8B%A8%EA%B3%BC_%ED%9A%8C%EB%B3%B5_%ED%83%88%EC%B6%9C.md) (1 shared connections)
+- [액션 전환 입력 관리](%EC%95%A1%EC%85%98_%EC%A0%84%ED%99%98_%EC%9E%85%EB%A0%A5_%EA%B4%80%EB%A6%AC.md) (1 shared connections)
 - [액션 행·몽타주 타입](%EC%95%A1%EC%85%98_%ED%96%89%C2%B7%EB%AA%BD%ED%83%80%EC%A3%BC_%ED%83%80%EC%9E%85.md) (1 shared connections)
 - [피격 회복 방향 추적](%ED%94%BC%EA%B2%A9_%ED%9A%8C%EB%B3%B5_%EB%B0%A9%ED%96%A5_%EC%B6%94%EC%A0%81.md) (1 shared connections)
 

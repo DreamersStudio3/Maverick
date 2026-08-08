@@ -28,7 +28,7 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 1 edge to [[_COMMUNITY_테이블 JSON 스키마]]
+- 1 edge to [[_COMMUNITY_테이블 JSON 스키마_1]]
 - 1 edge to [[_COMMUNITY_테이블 JSON 필드 제약]]
 
 ## Top bridge nodes

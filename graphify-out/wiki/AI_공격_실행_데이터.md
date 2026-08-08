@@ -38,8 +38,8 @@
 - [AI 공격 실행 로직](AI_%EA%B3%B5%EA%B2%A9_%EC%8B%A4%ED%96%89_%EB%A1%9C%EC%A7%81.md) (2 shared connections)
 - [AI 전투 의사결정 로직](AI_%EC%A0%84%ED%88%AC_%EC%9D%98%EC%82%AC%EA%B2%B0%EC%A0%95_%EB%A1%9C%EC%A7%81.md) (1 shared connections)
 - [AI 전투 컨텍스트](AI_%EC%A0%84%ED%88%AC_%EC%BB%A8%ED%85%8D%EC%8A%A4%ED%8A%B8.md) (1 shared connections)
-- [전역 전투 센싱 태스크](%EC%A0%84%EC%97%AD_%EC%A0%84%ED%88%AC_%EC%84%BC%EC%8B%B1_%ED%83%9C%EC%8A%A4%ED%81%AC.md) (1 shared connections)
-- [플레이어 이동 액션 테이블](%ED%94%8C%EB%A0%88%EC%9D%B4%EC%96%B4_%EC%9D%B4%EB%8F%99_%EC%95%A1%EC%85%98_%ED%85%8C%EC%9D%B4%EB%B8%94.md) (1 shared connections)
+- [AI 기본 공격 태스크](AI_%EA%B8%B0%EB%B3%B8_%EA%B3%B5%EA%B2%A9_%ED%83%9C%EC%8A%A4%ED%81%AC.md) (1 shared connections)
+- [피격 시스템 공용 타입](%ED%94%BC%EA%B2%A9_%EC%8B%9C%EC%8A%A4%ED%85%9C_%EA%B3%B5%EC%9A%A9_%ED%83%80%EC%9E%85.md) (1 shared connections)
 
 ## Source Files
 

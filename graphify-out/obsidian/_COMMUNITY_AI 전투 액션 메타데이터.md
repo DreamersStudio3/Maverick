@@ -47,7 +47,7 @@ SORT file.name ASC
 - 2 edges to [[_COMMUNITY_전역 전투 센싱 태스크]]
 - 2 edges to [[_COMMUNITY_AI 전투 의사결정 로직]]
 - 1 edge to [[_COMMUNITY_AI 전투 결정 설정]]
-- 1 edge to [[_COMMUNITY_플레이어 이동 액션 테이블]]
+- 1 edge to [[_COMMUNITY_피격 시스템 공용 타입]]
 - 1 edge to [[_COMMUNITY_AI 공격 기회 판단]]
 - 1 edge to [[_COMMUNITY_AI 적 전투 액션]]
 - 1 edge to [[_COMMUNITY_AI 스트레이프 이동]]

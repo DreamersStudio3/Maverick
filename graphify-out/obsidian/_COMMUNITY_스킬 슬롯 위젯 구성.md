@@ -31,7 +31,7 @@ SORT file.name ASC
 - 2 edges to [[_COMMUNITY_PIE 액션 테스트 UI]]
 - 1 edge to [[_COMMUNITY_스킬 슬롯 런타임 표시]]
 - 1 edge to [[_COMMUNITY_UI 레이어와 사망 오버레이]]
-- 1 edge to [[_COMMUNITY_로딩 창 레이아웃·진행률]]
+- 1 edge to [[_COMMUNITY_로딩 화면 입력 처리]]
 
 ## Top bridge nodes
 - [[UMVSkillSlotWidgetBuildNativeWidgetTree()]] - degree 5, connects to 3 communities

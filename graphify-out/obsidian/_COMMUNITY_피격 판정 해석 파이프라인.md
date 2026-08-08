@@ -32,10 +32,10 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 2 edges to [[_COMMUNITY_PIE 전투 디버그 도구]]
+- 2 edges to [[_COMMUNITY_캐릭터 도메인 연동]]
 - 2 edges to [[_COMMUNITY_피격 방향과 Launch 처리]]
 - 1 edge to [[_COMMUNITY_어빌리티 피격 Launch]]
-- 1 edge to [[_COMMUNITY_PIE 피격 판정 테스트]]
+- 1 edge to [[_COMMUNITY_피격 판정 서브시스템 선언]]
 - 1 edge to [[_COMMUNITY_무기 장착 시각화]]
 - 1 edge to [[_COMMUNITY_피격 시스템 공용 타입]]
 

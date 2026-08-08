@@ -31,7 +31,7 @@ SORT file.name ASC
 
 ## Connections to other communities
 - 1 edge to [[_COMMUNITY_LockOnTarget 컴포넌트 상세 패널]]
-- 1 edge to [[_COMMUNITY_타깃 컴포넌트 배열 편집기]]
+- 1 edge to [[_COMMUNITY_타깃 디테일 커스터마이징]]
 
 ## Top bridge nodes
 - [[LockOnTargetEditor.cpp]] - degree 7, connects to 2 communities

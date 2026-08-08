@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Components/MVHitReactionComponent.h"
 type: "code"
-community: "피격 시스템 공용 타입"
+community: "액션 행·몽타주 타입"
 location: "L58"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/__
 ---
 
 # MAVERICK_API
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[MVHitReactionComponent.h]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/__

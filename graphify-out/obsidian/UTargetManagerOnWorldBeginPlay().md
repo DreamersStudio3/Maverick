@@ -1,12 +1,12 @@
 ---
 source_file: "Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetManager.cpp"
 type: "code"
-community: "LockOnTarget 월드 타깃 등록"
+community: "피니셔 실행과 워핑"
 location: "L17"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/LockOnTarget___
+  - community/__
 ---
 
 # UTargetManager::OnWorldBeginPlay()
@@ -15,4 +15,4 @@ tags:
 - [[TargetManager.cpp]] - `contains` [EXTRACTED]
 - [[UWorld_1]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/LockOnTarget___
+#graphify/code #graphify/EXTRACTED #community/__

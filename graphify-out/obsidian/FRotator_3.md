@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "스트레이프 이동 기준 회전"
+community: "공통 캐릭터 생명주기"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/__
 ---
 
 # FRotator
@@ -14,4 +14,4 @@ tags:
 - [[AMVCharacterBaseResolveMovementInputReferenceRotation()]] - `references` [EXTRACTED]
 - [[AMVCharacterBaseSetStrafeMode()]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/__

@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "PIE 전투 디버그 도구"
+community: "UI 서브시스템 팝업 관리"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/PIE___
+  - community/UI___
 ---
 
 # APlayerController
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[UMVUISubsystemResolvePIEActionTestPlayerController()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/PIE___
+#graphify/code #graphify/EXTRACTED #community/UI___

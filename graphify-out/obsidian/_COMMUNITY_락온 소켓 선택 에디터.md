@@ -43,8 +43,8 @@ SORT file.name ASC
 
 ## Connections to other communities
 - 2 edges to [[_COMMUNITY_대상 컴포넌트 디테일 편집]]
-- 1 edge to [[_COMMUNITY_액터·컴포넌트 종료 정리]]
-- 1 edge to [[_COMMUNITY_타깃 컴포넌트 배열 편집기]]
+- 1 edge to [[_COMMUNITY_피니셔 실행과 워핑]]
+- 1 edge to [[_COMMUNITY_타깃 디테일 커스터마이징]]
 - 1 edge to [[_COMMUNITY_스킬 쿨다운 오버레이]]
 
 ## Top bridge nodes

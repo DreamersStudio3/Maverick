@@ -1,6 +1,6 @@
 # UI 팝업 메시지 데이터
 
-> 19 nodes · cohesion 0.12
+> 23 nodes · cohesion 0.10
 
 ## Key Concepts
 
@@ -13,9 +13,13 @@
 - **FText** (3 connections)
 - **UMVUISubsystem::ShowPopupMessage()** (3 connections) — `Source/Maverick/UI/System/MVUISubsystem.cpp`
 - **UMVUISubsystem::ShowPopupMessageText()** (3 connections) — `Source/Maverick/UI/System/MVUISubsystem.cpp`
+- **MVMessagePopup.cpp** (2 connections) — `Source/Maverick/UI/Popup/MVMessagePopup.cpp`
+- **UMVMessagePopup::SetMessageData()** (2 connections) — `Source/Maverick/UI/Popup/MVMessagePopup.cpp`
+- **UMVMessagePopup::SetMessageText()** (2 connections) — `Source/Maverick/UI/Popup/MVMessagePopup.cpp`
 - **FName** (2 connections)
 - **UMVInteractionPromptPopup()** (1 connections) — `Source/Maverick/UI/Popup/MVInteractionPromptPopup.h`
 - **UTextBlock** (1 connections) — `Source/Maverick/UI/Popup/MVInteractionPromptPopup.h`
+- **FText** (1 connections)
 - **UTextBlock** (1 connections) — `Source/Maverick/UI/Popup/MVMessagePopup.h`
 - **ActionName** (1 connections) — `Source/Maverick/UI/System/MVUIDataTypes.h`
 - **bEnabled** (1 connections) — `Source/Maverick/UI/System/MVUIDataTypes.h`
@@ -31,19 +35,19 @@
 - [테이블 기반 UI·스탯 조회](%ED%85%8C%EC%9D%B4%EB%B8%94_%EA%B8%B0%EB%B0%98_UI%C2%B7%EC%8A%A4%ED%83%AF_%EC%A1%B0%ED%9A%8C.md) (1 shared connections)
 - [플레이어 상호작용 감지](%ED%94%8C%EB%A0%88%EC%9D%B4%EC%96%B4_%EC%83%81%ED%98%B8%EC%9E%91%EC%9A%A9_%EA%B0%90%EC%A7%80.md) (1 shared connections)
 - [UI 서브시스템 공용 선언](UI_%EC%84%9C%EB%B8%8C%EC%8B%9C%EC%8A%A4%ED%85%9C_%EA%B3%B5%EC%9A%A9_%EC%84%A0%EC%96%B8.md) (1 shared connections)
-- [메시지 팝업 텍스트 설정](%EB%A9%94%EC%8B%9C%EC%A7%80_%ED%8C%9D%EC%97%85_%ED%85%8D%EC%8A%A4%ED%8A%B8_%EC%84%A4%EC%A0%95.md) (1 shared connections)
 - [대화창 표시 수명주기](%EB%8C%80%ED%99%94%EC%B0%BD_%ED%91%9C%EC%8B%9C_%EC%88%98%EB%AA%85%EC%A3%BC%EA%B8%B0.md) (1 shared connections)
 
 ## Source Files
 
 - `Source/Maverick/UI/Popup/MVInteractionPromptPopup.h`
+- `Source/Maverick/UI/Popup/MVMessagePopup.cpp`
 - `Source/Maverick/UI/Popup/MVMessagePopup.h`
 - `Source/Maverick/UI/System/MVUIDataTypes.h`
 - `Source/Maverick/UI/System/MVUISubsystem.cpp`
 
 ## Audit Trail
 
-- EXTRACTED: 51 (100%)
+- EXTRACTED: 58 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

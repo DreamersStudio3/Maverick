@@ -29,9 +29,8 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 1 edge to [[_COMMUNITY_액션 행·몽타주 타입]]
-- 1 edge to [[_COMMUNITY_피격 반응 Row 조회]]
+- 2 edges to [[_COMMUNITY_액션 행·몽타주 타입]]
 - 1 edge to [[_COMMUNITY_테이블 Row 공통 타입]]
 
 ## Top bridge nodes
-- [[MVSheetSpecs.cpp]] - degree 8, connects to 3 communities
+- [[MVSheetSpecs.cpp]] - degree 8, connects to 2 communities

@@ -61,10 +61,10 @@ SORT file.name ASC
 - 4 edges to [[_COMMUNITY_AI 공격 액션 후보 해석]]
 - 3 edges to [[_COMMUNITY_AI 전투 액션 메타데이터]]
 - 2 edges to [[_COMMUNITY_AI 공격 실행 로직]]
-- 1 edge to [[_COMMUNITY_전역 전투 센싱 태스크]]
+- 1 edge to [[_COMMUNITY_AI 기본 공격 태스크]]
 - 1 edge to [[_COMMUNITY_AI 전투 의사결정 로직]]
 - 1 edge to [[_COMMUNITY_AI 전투 컨텍스트]]
-- 1 edge to [[_COMMUNITY_플레이어 이동 액션 테이블]]
+- 1 edge to [[_COMMUNITY_피격 시스템 공용 타입]]
 
 ## Top bridge nodes
 - [[FMVSelectAndExecuteAttackTaskInstanceData]] - degree 24, connects to 4 communities

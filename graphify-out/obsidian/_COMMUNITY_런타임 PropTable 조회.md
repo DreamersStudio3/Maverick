@@ -36,8 +36,9 @@ SORT file.name ASC
 
 ## Connections to other communities
 - 2 edges to [[_COMMUNITY_테이블 JSON 스키마]]
-- 2 edges to [[_COMMUNITY_테이블 Row 공통 타입]]
+- 1 edge to [[_COMMUNITY_테이블 Row 공통 타입]]
+- 1 edge to [[_COMMUNITY_테이블 후처리 인터페이스]]
 
 ## Top bridge nodes
-- [[TMVPropTable]] - degree 17, connects to 2 communities
+- [[TMVPropTable]] - degree 17, connects to 3 communities
 - [[dot-Build()]] - degree 3, connects to 1 community

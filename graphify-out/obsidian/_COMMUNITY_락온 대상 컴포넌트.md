@@ -73,14 +73,14 @@ SORT file.name ASC
 
 ## Connections to other communities
 - 4 edges to [[_COMMUNITY_LockOnTarget 서브오브젝트 수명주기]]
-- 3 edges to [[_COMMUNITY_LockOnTarget 모듈·타깃 핸들러]]
 - 3 edges to [[_COMMUNITY_락온 대상 예외 처리]]
 - 3 edges to [[_COMMUNITY_락온 핵심 타입과 핸들러]]
+- 3 edges to [[_COMMUNITY_LockOnTarget 모듈·타깃 핸들러]]
 - 2 edges to [[_COMMUNITY_가중치 기반 타깃 선택]]
 - 2 edges to [[_COMMUNITY_락온 대상 미리보기 확장]]
 - 2 edges to [[_COMMUNITY_가중 대상 탐색 컨텍스트]]
 - 2 edges to [[_COMMUNITY_락온 대상 포커스 설정]]
-- 1 edge to [[_COMMUNITY_액터·컴포넌트 종료 정리]]
+- 1 edge to [[_COMMUNITY_피니셔 실행과 워핑]]
 
 ## Top bridge nodes
 - [[LockOnTargetComponent.cpp]] - degree 50, connects to 5 communities

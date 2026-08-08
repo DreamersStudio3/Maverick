@@ -1,13 +1,13 @@
 ---
 type: community
 cohesion: 0.05
-members: 60
+members: 59
 ---
 
 # 캐릭터 스탯 관리
 
 **Cohesion:** 0.05 - loosely connected
-**Members:** 60 nodes
+**Members:** 59 nodes
 
 ## Members
 - [[EMVDeathReason]] - code
@@ -39,7 +39,6 @@ members: 60
 - [[UMVStatComponentRecoverMP()]] - code - Source/Maverick/Components/MVStatComponent.cpp
 - [[UMVStatComponentRecoverStamina()]] - code - Source/Maverick/Components/MVStatComponent.cpp
 - [[UMVStatComponentResetDamageAccumulation()]] - code - Source/Maverick/Components/MVStatComponent.cpp
-- [[UMVStatComponentResetDeathState()]] - code - Source/Maverick/Components/MVStatComponent.cpp
 - [[UMVStatComponentResetGroggyState()]] - code - Source/Maverick/Components/MVStatComponent.cpp
 - [[UMVStatComponentRestartRecentDamageCooldown()]] - code - Source/Maverick/Components/MVStatComponent.cpp
 - [[UMVStatComponentSetAttackPower()]] - code - Source/Maverick/Components/MVStatComponent.cpp
@@ -80,11 +79,10 @@ SORT file.name ASC
 
 ## Connections to other communities
 - 3 edges to [[_COMMUNITY_피격 방향과 Launch 처리]]
-- 1 edge to [[_COMMUNITY_테이블 Row 공통 타입]]
 - 1 edge to [[_COMMUNITY_테이블 기반 UI·스탯 조회]]
+- 1 edge to [[_COMMUNITY_테이블 Row 공통 타입]]
 
 ## Top bridge nodes
-- [[MVStatComponent.cpp]] - degree 57, connects to 2 communities
+- [[MVStatComponent.cpp]] - degree 57, connects to 3 communities
 - [[UMVStatComponentHandleDamaged()]] - degree 3, connects to 1 community
 - [[UMVStatComponentWouldDieFromHit()]] - degree 3, connects to 1 community
-- [[UMVStatComponentResetDeathState()]] - degree 2, connects to 1 community

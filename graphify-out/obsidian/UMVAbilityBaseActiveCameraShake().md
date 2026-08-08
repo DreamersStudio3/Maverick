@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Combat/MVAbilityBase.cpp"
 type: "code"
-community: "PIE 전투 디버그 도구"
+community: "어빌리티 피격 Launch"
 location: "L136"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/PIE___
+  - community/__Launch
 ---
 
 # UMVAbilityBase::ActiveCameraShake()
@@ -17,4 +17,4 @@ tags:
 - [[TSubclassOf_2]] - `references` [EXTRACTED]
 - [[UCameraShakeBase_1]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/PIE___
+#graphify/code #graphify/EXTRACTED #community/__Launch

@@ -25,8 +25,8 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
-- 1 edge to [[_COMMUNITY_피격 시스템 공용 타입]]
 - 1 edge to [[_COMMUNITY_어빌리티 피격 Launch]]
+- 1 edge to [[_COMMUNITY_피격 시스템 공용 타입]]
 - 1 edge to [[_COMMUNITY_스킬 데이터와 비용]]
 
 ## Top bridge nodes

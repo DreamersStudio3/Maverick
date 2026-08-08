@@ -1,7 +1,7 @@
 ---
 source_file: ""
 type: "code"
-community: "플레이어 이동 액션 테이블"
+community: "피격 시스템 공용 타입"
 tags:
   - graphify/code
   - graphify/EXTRACTED

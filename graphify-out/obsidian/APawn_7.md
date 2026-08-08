@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "AI 피격 진입 조건"
+community: "피격 반응 진입 조건"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/AI___
+  - community/___
 ---
 
 # APawn
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[HitReactionEnterResolveOwner()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/AI___
+#graphify/code #graphify/EXTRACTED #community/___

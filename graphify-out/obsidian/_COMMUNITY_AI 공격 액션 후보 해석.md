@@ -37,7 +37,7 @@ SORT file.name ASC
 - 2 edges to [[_COMMUNITY_전투 액션 Chooser 입력]]
 - 1 edge to [[_COMMUNITY_AI 적 사망 처리]]
 - 1 edge to [[_COMMUNITY_AI 전투 의사결정 로직]]
-- 1 edge to [[_COMMUNITY_플레이어 이동 액션 테이블]]
+- 1 edge to [[_COMMUNITY_피격 시스템 공용 타입]]
 
 ## Top bridge nodes
 - [[FMVActionRequest()]] - degree 10, connects to 5 communities

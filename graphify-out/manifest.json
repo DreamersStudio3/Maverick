@@ -1470,9 +1470,9 @@
     "semantic_hash": "9f85c1b47ef0d8841de8c5817595a92b"
   },
   "AGENTS.md": {
-    "mtime": 1786156879.3772306,
-    "ast_hash": "d522f3661c5c85fc042e641a098ef78a",
-    "semantic_hash": "d522f3661c5c85fc042e641a098ef78a"
+    "mtime": 1786165415.7581065,
+    "ast_hash": "8c62504d451df1e984dfce520095281f",
+    "semantic_hash": "8c62504d451df1e984dfce520095281f"
   },
   "MaverickDesign/AICombatStateTree.md": {
     "mtime": 1782630951.5126288,
@@ -1505,13 +1505,43 @@
     "semantic_hash": "9e9c14d107a2ed1a7ea831cb7161dc4d"
   },
   "POLICY.md": {
-    "mtime": 1786156879.3777316,
-    "ast_hash": "2eb7f74b69e35f266ad85ad8ddf0c3bb",
-    "semantic_hash": "2eb7f74b69e35f266ad85ad8ddf0c3bb"
+    "mtime": 1786165415.7591739,
+    "ast_hash": "2a795f0572d466fd7642035493a92c42",
+    "semantic_hash": "2a795f0572d466fd7642035493a92c42"
   },
   "docs/wiki/Documentation-Workflow.md": {
-    "mtime": 1786156879.379935,
-    "ast_hash": "328c9d4644a281a1e9668e0707a4eca4",
-    "semantic_hash": "328c9d4644a281a1e9668e0707a4eca4"
+    "mtime": 1786166776.0513866,
+    "ast_hash": "8e3ef7afd151d68ed7e9943c1a5faaf2",
+    "semantic_hash": "8e3ef7afd151d68ed7e9943c1a5faaf2"
+  },
+  "docs/wiki/Architecture.md": {
+    "mtime": 1786164936.1158848,
+    "ast_hash": "d2c29bb72f863344a9f780cb3734bb80",
+    "semantic_hash": "d2c29bb72f863344a9f780cb3734bb80"
+  },
+  "docs/wiki/Header-Documentation.md": {
+    "mtime": 1786164998.4681935,
+    "ast_hash": "91cf47696ece35cc1df922f4078bad8f",
+    "semantic_hash": "91cf47696ece35cc1df922f4078bad8f"
+  },
+  "Scripts/Graphify/Install-Hooks.ps1": {
+    "mtime": 1786166330.3406446,
+    "ast_hash": "8ff91a2b84d3ab277a74c8ae2c2ce9f7",
+    "semantic_hash": "8ff91a2b84d3ab277a74c8ae2c2ce9f7"
+  },
+  "Scripts/Graphify/hooks/pre-push": {
+    "mtime": 1786166036.4127629,
+    "ast_hash": "efd23549322078a98a1a9a29426bab98",
+    "semantic_hash": "efd23549322078a98a1a9a29426bab98"
+  },
+  "Scripts/Graphify/knowledge_guard.py": {
+    "mtime": 1786166776.0507326,
+    "ast_hash": "51177040fc62ab2502b1e4f7607a14e0",
+    "semantic_hash": "51177040fc62ab2502b1e4f7607a14e0"
+  },
+  "docs/wiki/Graphify-Adoption-Report.md": {
+    "mtime": 1786168983.5374417,
+    "ast_hash": "c419344e466ef9fd5535d8b94951b4dc",
+    "semantic_hash": "c419344e466ef9fd5535d8b94951b4dc"
   }
 }

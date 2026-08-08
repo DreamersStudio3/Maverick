@@ -11,7 +11,7 @@ tags:
 # Build and Impact Verification
 
 ## Connections
-- [[Pre-Push Graphify Wrap-Up Gate]] - `semantically_similar_to` [INFERRED]
+- [[Pre-Push Wrap-Up Gate]] - `semantically_similar_to` [INFERRED]
 - [[Pull Request Checklist]] - `implements` [EXTRACTED]
 
 #graphify/rationale #graphify/EXTRACTED #community/Graphify_

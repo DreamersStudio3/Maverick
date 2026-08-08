@@ -1,12 +1,12 @@
 ---
 source_file: "Source/Maverick/Public/Tables/MVMovementActionTableTypes.h"
 type: "code"
-community: "플레이어 회피 방향 해석"
+community: "회피 입력 컨텍스트"
 location: "L33"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/___
+  - community/__
 ---
 
 # FMVDodgeActionRowHandle()
@@ -19,4 +19,4 @@ tags:
 - [[UMVPlayerDodgeEvaluateDodgeChooserActionRowHandle()]] - `references` [EXTRACTED]
 - [[UMVPlayerDodgeResolveDodgeActionRowHandle()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/___
+#graphify/code #graphify/EXTRACTED #community/__

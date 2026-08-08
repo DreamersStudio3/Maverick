@@ -11,9 +11,9 @@ tags:
 # Graphify Generated Read Models
 
 ## Connections
-- [[Commit-Time Incremental Graphify Update]] - `references` [EXTRACTED]
-- [[Documentation Information Hierarchy]] - `implements` [EXTRACTED]
-- [[Graphify Navigation and Freshness Lifecycle]] - `references` [EXTRACTED]
-- [[Prompt-Time Query-First Workflow]] - `references` [EXTRACTED]
+- [[Commit-Time Incremental Update]] - `implements` [EXTRACTED]
+- [[Information Hierarchy]] - `conceptually_related_to` [EXTRACTED]
+- [[Pre-Push Wrap-Up Gate]] - `implements` [EXTRACTED]
+- [[Prompt-Time Query-First]] - `references` [EXTRACTED]
 
 #graphify/rationale #graphify/EXTRACTED #community/Graphify_

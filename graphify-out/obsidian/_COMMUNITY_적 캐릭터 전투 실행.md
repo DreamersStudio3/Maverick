@@ -46,11 +46,11 @@ SORT file.name ASC
 
 ## Connections to other communities
 - 2 edges to [[_COMMUNITY_피격 회복 이탈 방향]]
-- 1 edge to [[_COMMUNITY_AI 전투 액션 메타데이터]]
-- 1 edge to [[_COMMUNITY_액터·컴포넌트 종료 정리]]
+- 1 edge to [[_COMMUNITY_피니셔 실행과 워핑]]
 - 1 edge to [[_COMMUNITY_적 무기 액터 구성]]
 - 1 edge to [[_COMMUNITY_필드 전환 리셋 계약]]
 - 1 edge to [[_COMMUNITY_피격 리액션 회복 결정]]
+- 1 edge to [[_COMMUNITY_AI 전투 액션 메타데이터]]
 - 1 edge to [[_COMMUNITY_피격 방향과 Launch 처리]]
 
 ## Top bridge nodes

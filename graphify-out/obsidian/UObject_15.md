@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "사망 부활 오케스트레이션"
+community: "필드 전환 사망 연동"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/__
+  - community/___
 ---
 
 # UObject
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[UMVFieldTransitionSubsystemGet()]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/__
+#graphify/code #graphify/EXTRACTED #community/___

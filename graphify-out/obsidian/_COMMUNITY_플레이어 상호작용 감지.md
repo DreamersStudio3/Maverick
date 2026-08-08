@@ -49,9 +49,9 @@ SORT file.name ASC
 - 3 edges to [[_COMMUNITY_플레이어 상호작용 탐지]]
 - 2 edges to [[_COMMUNITY_플레이어 캐릭터 기능 연결]]
 - 2 edges to [[_COMMUNITY_상호작용 후보 판정]]
-- 1 edge to [[_COMMUNITY_UI 팝업 메시지 데이터]]
 - 1 edge to [[_COMMUNITY_상호작용 월드 컨텍스트]]
 - 1 edge to [[_COMMUNITY_상호작용 대상 시각 갱신]]
+- 1 edge to [[_COMMUNITY_UI 팝업 메시지 데이터]]
 
 ## Top bridge nodes
 - [[MVPlayerInteractionDetector.cpp]] - degree 44, connects to 8 communities

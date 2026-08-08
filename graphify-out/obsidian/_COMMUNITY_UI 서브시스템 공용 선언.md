@@ -1,13 +1,13 @@
 ---
 type: community
-cohesion: 0.15
-members: 13
+cohesion: 0.12
+members: 16
 ---
 
 # UI 서브시스템 공용 선언
 
-**Cohesion:** 0.15 - loosely connected
-**Members:** 13 nodes
+**Cohesion:** 0.12 - loosely connected
+**Members:** 16 nodes
 
 ## Members
 - [[AMVCharacterBase_12]] - code - Source/Maverick/UI/System/MVUISubsystem.h
@@ -19,8 +19,11 @@ members: 13
 - [[UMVHUDWidgetBase_1]] - code - Source/Maverick/UI/System/MVUISubsystem.h
 - [[UMVLoadingWindow_1]] - code - Source/Maverick/UI/System/MVUISubsystem.h
 - [[UMVMessagePopup_1]] - code - Source/Maverick/UI/System/MVUISubsystem.h
+- [[UMVPIEActionTestWidget]] - code - Source/Maverick/UI/System/MVUISubsystem.h
 - [[UMVPopupBase_5]] - code - Source/Maverick/UI/System/MVUISubsystem.h
 - [[UMVUILayerBase_1]] - code - Source/Maverick/UI/System/MVUISubsystem.h
+- [[UMVUISubsystemOpenPIEActionTestPanel()]] - code - Source/Maverick/UI/System/MVUISubsystem.cpp
+- [[UMVUISubsystemShowPIEActionTestPanel()]] - code - Source/Maverick/UI/System/MVUISubsystem.cpp
 - [[UMVWindowBase_2]] - code - Source/Maverick/UI/System/MVUISubsystem.h
 - [[USpringArmComponent]] - code - Source/Maverick/UI/System/MVUISubsystem.h
 
@@ -32,9 +35,12 @@ SORT file.name ASC
 ```
 
 ## Connections to other communities
+- 2 edges to [[_COMMUNITY_캐릭터 도메인 연동]]
+- 2 edges to [[_COMMUNITY_UI 서브시스템 팝업 관리]]
 - 1 edge to [[_COMMUNITY_UI 팝업 메시지 데이터]]
 - 1 edge to [[_COMMUNITY_상호작용 프롬프트 UI]]
-- 1 edge to [[_COMMUNITY_PIE 전투 디버그 도구]]
 
 ## Top bridge nodes
-- [[MVUISubsystem.h]] - degree 15, connects to 3 communities
+- [[MVUISubsystem.h]] - degree 15, connects to 2 communities
+- [[UMVUISubsystemOpenPIEActionTestPanel()]] - degree 3, connects to 2 communities
+- [[UMVUISubsystemShowPIEActionTestPanel()]] - degree 3, connects to 2 communities
