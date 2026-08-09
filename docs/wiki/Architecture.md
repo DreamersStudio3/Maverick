@@ -21,7 +21,7 @@ Graphify 코퍼스는 `Content/`와 Unreal 생성 디렉터리, 작업용 `docs/
 
 ## 빌드와 모듈 경계
 
-Maverick은 게임과 에디터 Target이 같은 `Maverick` 런타임 모듈을 로드하는 단일 프로젝트 모듈 구조다.
+Maverick: Unreal Engine 5.8 기반, 게임과 에디터 Target이 같은 `Maverick` 런타임 모듈을 로드하는 단일 프로젝트 모듈 구조
 
 `FMaverickModule`의 startup은 런타임 서비스나 캐릭터 시스템을 조립하지 않는다. 현재 명시적인 startup 작업은 `WITH_EDITOR`의 메뉴 등록이며, 게임플레이 조립은 Actor와 Component가 담당한다.
 
@@ -223,9 +223,11 @@ Maverick은 플레이어 dodge suppression, sprint, Action 실행 중 rotation e
 ## 관련 문서
 
 - `docs/wiki/Documentation-Workflow.md`: 문서와 Graphify 갱신 절차.
-- `docs/wiki/Obsidian-Usage.md`: Graphify 위키를 Obsidian에서 연결하고 탐색하는 방법.
+- `docs/wiki/Obsidian-Usage.md`: 사람용 `docs/wiki/`를 Obsidian에서 연결하고 검토하는 방법.
 - `docs/wiki/Header-Documentation.md`: C++ 헤더 책임 문서화 기준.
 - `docs/wiki/Combat-Design-MDA.md`: 현재 전투와 목표 전투 계약, 구현 우선순위.
+- `docs/wiki/S1-Tempo-Charge.md`: S1 Charge와 연속기 런타임·HUD 계약.
+- `docs/wiki/Soulslike-Market-Research-2026.md`, `docs/wiki/Boss-Rush-Market-Analysis.md`: 제품 방향 판단을 위한 시장 조사.
 - `MaverickDesign/README.md`, `MaverickDesign/Schema/README.md`: 테이블 생성 및 schema 계약.
 
 ## 갱신 조건

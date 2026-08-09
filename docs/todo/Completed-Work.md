@@ -6,6 +6,7 @@
 
 - **입력과 액션:** GameplayTag 입력을 `UMVInputManagerComponent`에서 버퍼링하고 Dodge·Combat 같은 도메인 처리기로 전달하는 구조, recovery window 전환, hold/instant 입력, 오래된 montage 종료 이벤트 방지가 정리됐다. 현재 흐름은 [Architecture.md](../wiki/Architecture.md)의 입력·Action 절을 따른다.
 - **전투와 피격:** 공격 Ability, 무기 배율 기반 hit resolve, hit reaction·groggy·airborne·recovery 정책과 관련 회귀 수정이 반영됐다. 현재 구현 경계는 [Architecture.md](../wiki/Architecture.md), 목표 전투 계약은 [Combat-Design-MDA.md](../wiki/Combat-Design-MDA.md)에 모았다.
+- **전투 v0.3와 시장 조사:** 약/차지 Tap·Hold, S1 Tempo·S2 Area·S3 Response·S4 Signature, Perfect Dodge 수직 검증안의 전투 위키 통합. S1 상세 구현과 2026 소울라이크·보스러시 조사의 `docs/wiki/` 별도 문서 이관.
 - **AI:** StateTree의 sensing·focus·공격 기회·cooldown·dodge token·피격 회복·사망 상태와 필드 전환 reset 흐름을 구축했다. StateTree와 Blueprint 연결은 바이너리 에셋이므로 코드만 보고 확정하지 않는다.
 - **사망과 부활:** `UMVDeathComponent`가 사망 표현을, UI overlay와 loading gate가 화면 전환을, `UMVFieldTransitionSubsystem`이 reset을 맡도록 책임을 나눴다. dissolve, 입력 차단, HUD 정리, 적 reset 결과도 [Architecture.md](../wiki/Architecture.md)에 흡수했다.
 - **플레이어·무기·소모품:** Dodge·상호작용·lock-on·소모품을 플레이어 소유 하위 모듈로 정리하고, `UMVWeaponComponent`의 장착·소켓 검증·양손 mesh 흐름과 DataTable/manifest 연결을 보완했다.

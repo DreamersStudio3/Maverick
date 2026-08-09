@@ -474,7 +474,7 @@ bool UMVTableManager::TryGetGenericField(FName TableName, const FString& RowKey,
 		return false;
 	}
 
-	const TSharedPtr<FJsonValue>* Found = RowObject->Values.Find(FieldName);
+	const TSharedPtr<FJsonValue>* Found = RowObject->Values.Find(UE::FSharedString(FieldName));
 	if (!Found || !Found->IsValid())
 	{
 		return false;

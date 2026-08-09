@@ -2,7 +2,7 @@
 
 ## 요약
 
-Maverick의 사람용 내부 위키: `docs/wiki/`. 개발자가 Obsidian으로 읽고 직접 갱신하는 Markdown 문서
+Maverick의 사람용 내부 위키: `docs/wiki/`. 개발자와 작업 에이전트의 갱신, 사람의 Obsidian 최종 검토를 거치는 Markdown 문서
 
 Graphify: `graphify-out/`에 에이전트용 코드·문서 관계를 만드는 지식 그래프 도구. 사람이 읽을 설명문을 자동 작성하는 내부 위키 도구가 아니라, 에이전트의 탐색 범위와 토큰 사용을 줄이는 생성 지식창고
 

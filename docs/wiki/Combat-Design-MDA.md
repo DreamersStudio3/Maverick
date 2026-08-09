@@ -1,7 +1,7 @@
 # Maverick 전투 MDA와 목표 전투 계약
 
-> 상태: 팀 검토용 압축 위키
-> 분석 기준: 2026-07-24 작업 트리의 C++, DataTable, Montage, Blueprint 기본값과 플레이테스트 관찰
+> 상태: v0.3 팀 검토용 압축 위키
+> 분석 기준: 2026-07-26 `fc3620f` 전후의 C++, DataTable, Montage, Blueprint 기본값과 플레이테스트 관찰
 > 목적: 현재 전투의 Mechanics, 그로 인해 생기는 Dynamics, 목표 Aesthetics를 연결하고 구현 우선순위와 검증 계약을 보존한다.
 
 ## 1. 문서 사용법과 증거 범위
@@ -92,9 +92,9 @@ TestSword 공격력 50과 E1 방어력 1, 대상당 판정 1회 가정에서 약
 
 | 수준 | 내용 |
 | --- | --- |
-| **확정 방향** | 기본공격을 약공격과 차지공격으로 축소하고 강공격 카테고리를 제거한다. 전투의 중심을 스킬로 옮긴다. 슬롯별 스킬은 상위 호환이 아닌 sidegrade로 설계한다. 카타나 이후 석궁과 대형 낫으로 확장한다. 액션 전체 bCanBeInterrupted 판정을 폐기한다. |
-| **우선안** | 상시 S1~S3와 조건부 S4의 3+1 슬롯, Impact I1~I3와 Armor A0~A2, Q의 카타나 S1 이전, 회피 Damage Immunity, 그로기 임계치 자동 발동, 전투 밖 loadout 장착을 수직 검증한다. |
-| **미결정** | 최종 물리 키, 3+1 또는 총 3슬롯, MP와 무기 자원의 관계, S4 획득과 유지, 차지 Impact 단계, 실시간 무기 교체, 슬롯별 스킬 수와 성장 방식은 프로토타입 뒤 확정한다. |
+| **확정 방향** | 한 버튼의 약공격/차지공격과 강공격 카테고리 제거. S1 Tempo, S2 Area, S3 Response, S4 Signature 역할 고정. 시간 쿨다운 대신 유효 적중 기반 S4 게이지. 액션 전체 `bCanBeInterrupted` 판정 폐기. |
+| **우선안** | Impact I1~I3와 Armor A0~A2, 공통 S1 Charge, 실행 단위 HitConfirm, 락온과 무관한 Roll과 Hit 기반 Perfect Dodge Step, 카타나 3+1 수직 검증. |
+| **미결정** | S3 첫 유형, S1 Charge 수치, S4 교전 간 유지, Basic Commit 시간, 게임패드 직접 입력안, D-Pad hotkey 범위, Perfect Window, MP 재설계 시점. |
 
 목표안을 구현된 Mechanics처럼 문서화하지 않는다. 현재 강공격 코드와 자산은 목표 입력 문법과 대체 경로가 검증되기 전까지 보존한다.
 
@@ -104,11 +104,11 @@ TestSword 공격력 50과 E1 방어력 1, 대상당 판정 1회 가정에서 약
 
 **[설계 목표]**
 
-- **약공격**은 Press 즉시 발동하는 저위험 확인과 압박 유지 수단이다. 높은 Armor 관통, 최고 그로기 효율, 넓은 범위를 동시에 갖지 않는다.
-- **차지공격**은 읽어 낸 큰 빈틈을 높은 Impact, 그로기 또는 공간 변화로 결산한다. 빠른 중립 DPS나 안전한 범용 공격이 되어서는 안 된다.
+- **약공격**: 차지와 같은 버튼의 공통 LeadIn에서 `ChargeCommitTime` 전 Release로 확정되는 저위험 압박 수단. 높은 Armor 관통, 최고 그로기 효율, 넓은 범위의 동시 보유 금지.
+- **차지공격**: 같은 버튼을 Commit까지 Hold하면 확정, 이후 Release에도 유지. 높은 Impact, 그로기 또는 공간 변화로 큰 빈틈 결산. 빠른 중립 DPS나 안전한 범용 공격화 금지.
 - 회피와 전력질주 파생 공격은 별도 경제 카테고리가 아니라 약공격 또는 차지공격의 반격형, 추격형, 재진입형 모션으로 취급한다.
 - 강공격을 제거해도 약공격의 3~5단 모션은 하나의 입력 카테고리 안에서 리듬과 방향을 표현하는 콘텐츠로 유지할 수 있다.
-- Hold를 빨리 놓아 별도 강공격으로 전환하는 분기는 제거한다. 부분 차지가 필요하면 같은 역할 안에서 Impact, 범위, 피해가 단계적으로 커져야 한다.
+- Hold 조기 해제의 Heavy, 부분 차지, 무행동 분기 제거와 약공격 연결. Commit 경계 같은 프레임에서 `ReleaseTime < CommitTime`만 약공격으로 고정.
 
 ### 5.2 스킬은 3+1 역할 문법을 공유한다
 
@@ -116,10 +116,10 @@ TestSword 공격력 50과 E1 방어력 1, 대상당 판정 1회 가정에서 약
 
 | 슬롯 | 역할 | 주 질문 | 주 출력 |
 | --- | --- | --- | --- |
-| S1 Tempo / Engine | 흐름 생성 | 안전하게 스킬 순환을 시작할 수 있는가? | 빠른 적중, 토큰, 표식, 자원 생성 |
-| S2 Break / Converter | 조건을 우위로 전환 | 지금 이 Armor나 배치를 무너뜨릴 것인가? | 높은 Impact, 그로기, 범위, 제어 |
-| S3 Response / Utility | 위협 대응 | 피할지, 받아칠지, 거리를 바꿀지? | 패리, 회피 이동, 가드, 반격, 재장전 |
-| S4 Signature / Cash-out | 전투 국면 결산 | 쌓은 우위를 지금 어디에 쓸 것인가? | 큰 범위, 상태 변화, 피니시 |
+| S1 Tempo | 흐름 생성 | 기본공격 사이에 자주 섞을 수 있는가? | 공통 Charge, 연속기, 적중 기반 회복 가속 |
+| S2 Area | 공간 해결 | 다수전과 불리한 배치를 어떻게 정리할 것인가? | 범위, 모으기·밀기, 대상 수 보상과 상한 |
+| S3 Response | 위협 대응 | 읽은 공격에서 어떻게 주도권을 빼앗을 것인가? | 패리, 특수 회피, 가드, 반격 |
+| S4 Signature | 전투 결산 | 유효 적중으로 쌓은 성과를 언제 쓸 것인가? | 게이지 100%, 큰 범위·상태 변화·피니시 |
 
 같은 슬롯의 대안은 같은 문제를 다른 위험, 거리, 조건으로 해결한다. 피해, startup, 비용, 안전성은 같은데 범위와 제어까지 더 좋은 선택지는 sidegrade가 아니다. 한 스킬은 주 역할 하나와 눈에 띄는 보조 역할 하나로 제한한다.
 
@@ -136,7 +136,7 @@ TestSword 공격력 50과 E1 방어력 1, 대상당 판정 1회 가정에서 약
 5. 진행과 쿨다운은 시전 성공이 아니라 Commit 또는 ResolvedHitTransaction의 결과를 기준으로 한다.
 6. 한 스킬은 자원, 조건, 긴 쿨다운 중 하나를 주 제한으로 사용한다.
 
-공용 스태미나는 이동, 회피, 차지 같은 신체적 commitment를 담당한다. S1~S3는 MP 또는 무기 자원 하나를 사용하고, S4는 전투 행동으로 얻은 게이지나 스택을 결산한다. 석궁이 탄창을 사용한다면 열과 별도 MP를 동시에 추가하지 않는다.
+공용 스태미나: 이동, 회피, 차지 같은 신체적 commitment. S1~S3: MP, Charge, 무기 자원 중 주 gate 하나. S4: 실제 HP 피해가 적용된 최종 Hit 결과로 얻은 `SignatureGauge` 100의 결산. `ChainStage`, `AvailableCharges`, `ActiveRechargeRemaining`, `SignatureGauge`, `ActionCost`: 별도 상태와 HUD 이름 유지. 석궁의 탄창·열·별도 MP 중복 도입 금지.
 
 ### 5.4 무기는 전투 문법을 바꾼다
 
@@ -209,58 +209,60 @@ HitReaction 시작 시 source token으로 이동 잠금을 획득하고 Recovery
 
 그로기는 v1에서 유효 Hit이 최대치에 도달한 즉시 GroggyBreak를 만드는 안을 우선한다. 특정 Break 타격을 기다리는 구조를 원하면 숨은 조건 대신 GroggyPrimed 상태와 명확한 HUD를 별도로 설계한다.
 
+### 6.5 Roll과 Perfect Dodge Step
+
+기본 회피 모션 선택 기준: 락온 여부가 아닌 방향 입력과 실제 Hit 결과. 방향 입력이 있으면 Roll, 입력이 없으면 Backstep 또는 후방 Roll. Dodge 시작의 짧은 Perfect Window와 실제 피해 가능한 Contact가 교차한 경우에만 피해·그로기·Reaction 차단과 짧은 Step Recovery 분기. Perfect Window 밖의 일반 무적 회피는 Step 승격 없이 성공 회피로 처리.
+
+Perfect Dodge: 기본 회피와 같은 스태미나 비용, S4 게이지와 자동 반격의 직접 지급 없음. S3 Response: 별도 사용 제한과 무기별 후속 결과를 가진 고급 대응, 더 넓은 무적만 제공하는 상위 호환 금지. 첫 후보 Window: Dodge 시작 후 약 0.10초. 조정 근거: `DodgeAttemptId`, 입력·Contact 시각, 방향, 락온, 결과의 PIE 로그.
+
 ## 7. Q와 R의 목표 역할
 
-현재 Q는 카타나 S1 Tempo 후보로 이전한다.
+현재 Q의 목표 역할: 카타나 S1 Tempo. Charge의 의미: 연계 단계가 아닌 남은 사용권. 단일 쿨다운은 `MaxCharges = 1`, 복수 Charge는 빠진 사용권의 순차 회복. Commit 시 하나 소비, Commit 전 취소 시 예약 반환. 약/차지의 유효 적중은 회복 중인 다음 Charge 시간 단축 가능, S1 자체 적중의 자기 회복 가속은 기본값에서 제외. 상세 계약: [S1-Tempo-Charge.md](S1-Tempo-Charge.md).
 
-Q 시전 → 유효 HitConfirm → 다음 단계 token 획득 → 제한 시간 동안 다른 행동 혼합 → 다음 Q가 token을 Commit에서 소비 → Q3 결산
+현재 R의 목표 역할: 50초 시간 쿨다운과 분리한 카타나 S4 Signature. 기본·S1~S3 공격의 최종 HitConfirm에 획득값 부여, 무적·사망 대상·중복 Contact의 게이지 지급 제외. S4 시작 시 게이지 예약, 되돌릴 수 없는 Commit에서 100 소비, Commit 전 취소만 반환. S4 자체 게이지 생성 금지.
 
-기본 성공은 DirectDamage다. Guard chip, 무적, 잘못된 대상, 중복 필터는 실패이며 여러 적을 맞혀도 한 실행에서 단계는 한 번만 진행한다. Commit 전 취소는 비용 예약을 해제하고 token을 유지한다. Commit 후 Q2 또는 Q3가 실패하면 비용과 token을 잃고 Q1으로 돌아가는 안을 먼저 시험한다. Q3의 Airborne이 통하지 않는 중량 적과 보스에는 긴 Stagger, 큰 그로기 또는 전용 피드백으로 동등한 결산 가치를 준다.
-
-현재 R은 50초 시간 쿨다운에서 분리해 카타나 S4 후보로 재평가한다. S4는 전투 참여로 준비되고 매 전투 실제 사용되며, 전투 종료까지 보존하거나 준비 즉시 생각 없이 누르는 추가 DPS가 되지 않아야 한다.
-
-HUD는 장착 슬롯, Q 단계 token 획득, 유지 시간, 실패 이유, S4 준비를 사건 중심으로 표시한다.
+HUD 계약: S1 Charge와 연계 단계, S2/S3 사용 가능 상태, S4 게이지와 Ready의 사건·이름 분리.
 
 ## 8. 목표 Dynamics와 가드레일
 
 목표 교전은 다음 순환이다.
 
-약공격 또는 S1로 확인과 상태 생성 → 적이 Armor 공격으로 주도권 시도 → 맞는 Impact의 차지 또는 S2, 회피 또는 S3 선택 → Recovery punish → 그로기, token, Signature 결산 → 중립 복귀
+약공격·문맥공격으로 교전 → S1로 템포 유지 → 차지로 큰 빈틈 결산 / S2로 다수전 해결 / S3로 위협에 반응 → 유효 적중으로 S4 게이지 충전 → Signature로 절정 결산 → 중립 복귀
 
 가드레일:
 
 - 약공격은 자주 쓰여도 되지만 Armor, 거리, 다수전, 빠른 그로기 누적까지 모두 최고여서는 안 된다.
 - 차지는 피해만 높은 약공격이 아니라 최소 한 단계 높은 Impact 또는 명확한 공간 역할을 가진다.
 - S1은 S2와 S3의 문제까지 해결하지 않는다.
-- S2 Break는 대상 Armor와 조건을 요구하며 모든 적을 항상 넘어뜨리지 않는다.
+- S2 Area: 다수전과 배치 해결. 단일 대상 DPS, Armor 붕괴, 게이지 획득의 동시 최고 효율 금지.
 - S3는 최고의 안전성과 높은 DPS를 동시에 갖지 않는다.
-- S4는 보존품도 무조건 추가 DPS도 아니다.
+- S4: 시간 대기로 준비되는 보존품과 무조건 추가 DPS 역할 배제. 같은 실행의 다단·다수 적중에 획득 상한 적용.
 - UninterruptiblePhase와 강제 무적은 짧고 읽을 수 있으며 이후 확실한 대응 창을 제공한다.
 - 같은 슬롯의 한 스킬이 여러 상황에서 선택률과 성공 효율을 함께 압도하면 수치보다 역할 중복을 먼저 점검한다.
 
 ## 9. 구현 순서
 
-### P0. 현재 취소 경로 추적
+### M1. 적중 결과 수직 단면
 
-bCanBeInterrupted 사용처를 외부 피격, 자발적 취소, 강제 종료로 분류한다. 변경 전 HitTransactionTrace와 ActionPhaseTrace를 붙이고 PIE 재현 로그를 수집한다.
+`AttackExecutionId`와 최소 HitConfirm 결과 추가. 무적 중 HP·그로기·Reaction·게이지 차단 고정. 한 실행의 다단·다수 적중 지급 상한과 Impact·Armor 9조합 자동화 검증. 변경 전 HitTransactionTrace·ActionPhaseTrace와 PIE 재현 로그 수집.
 
 최소 로그는 Frame, HitId, ExecutionId, Attacker, Victim, Action, Phase, Impact, RequiredImpact, DamageResult, Groggy, Reaction, CancelReason, HitConfirmTags를 포함한다.
 
-### P1. 최소 전투 계약 수직 단면
+### M2. 기본공격 약/차지 전환
 
-Contact, ResolvedHit, HitConfirm을 분리하고 I1~I3와 A0~A2의 3×3 판정을 자동화 테스트로 고정한다. E1 공격 하나에 Startup A0, Active A1, Recovery A0를 적용하고 약공격 I1, 차지 I3으로 검증한다. 테스트 전용 Phase 강제 전환을 제공해 Startup에서 계속 끊기는 상황을 피한다. ArmoredHit, ArmorPierced, Invulnerable 피드백을 임시 색과 소리로 구분한다.
+enum, 입력 태그, `BasicAttackMap`, Chooser, DataTable row의 Heavy 의미 제거. LMB/RB 공통 LeadIn에서 Commit 전 Release는 약공격, Commit까지 Hold하면 차지공격으로 분기. Sprint/Dodge Heavy의 Charge 문맥 이전. 경계 프레임의 결정성 검증.
 
-### P2. 이동과 기본공격 문법
+### M3. 입력 배치와 Perfect Dodge 수직 단면
 
-HitReaction 이동 잠금을 생명주기 token으로 통합하고 공격 중 이동과 회전을 MovementPolicy로 정의한다. 목표 입력에서 강공격 진입을 제거하되 자산은 보존한다. 약공격과 차지의 반응성, startup, Impact, 비용 역할을 다시 측정한다. 회피와 전력질주 공격을 문맥형 변주로 재매핑한다.
+키보드·마우스 Shift chord와 게임패드 직접 S1~S4 입력의 별도 IA 구성. Space와 B의 Tap Dodge/Hold Sprint 검증. 사전 `bUsesStep` 결정 제거. Dodge Attempt와 Hit 결과 연결, Perfect Window 성공 시에만 Step Recovery 분기. chord와 기본 액션의 동시 실행 추적.
 
-### P3. 카타나 슬롯 수직 검증
+### M4. 네 슬롯 런타임과 HUD
 
-먼저 SlotRole, 장착 SkillId, HitConfirmPolicy, 주 gate, 비용 예약과 Commit을 데이터 계약에 추가한다. 현재 Q를 S1 적중 체인으로 이전하고 HUD에는 S1과 token만 표시한다. 다음으로 차지와 Q3와 겹치지 않는 S2 Break 하나, 패리 또는 회피형 S3 하나를 추가한다. 마지막으로 현재 R을 전투 중 획득하는 S4로 재평가한다.
+Q/R 인덱스 하드코딩의 S1~S4 역할 기반 등록 전환. `ChainStage`, `AvailableCharges`, `ActiveRechargeRemaining`, `SignatureGauge` 분리. HUD의 S1 Charge, S2/S3 사용 가능 상태, S4 게이지, 현재 입력 장치 표시.
 
-### P4. Sidegrade와 무기 확장
+### M5. 카타나 3+1 수직 검증
 
-카타나에서 슬롯당 두 선택지의 역할과 지표를 검증한 뒤 석궁의 거리와 재장전 리듬, 대형 낫의 범위와 commitment 리듬을 추가한다. 스킬 트리와 저장 구조에는 무기, 장착 SkillId, 해금 상태를 연결한다. 성장 선택은 단순 피해량 상승보다 다른 Dynamics를 선택하게 해야 한다.
+S1 Tempo, S2 Area, 패리형 또는 회피형 S3, 현재 R 애셋을 옮긴 S4 Signature를 각각 하나만 제작. 약공격 전용 전투와 역할 스킬 혼합 전투 비교. 각 슬롯의 상황별 선택 확인 후 sidegrade와 석궁·대형 낫 확장.
 
 ## 10. 검증 계약
 
@@ -275,6 +277,12 @@ HitReaction 이동 잠금을 생명주기 token으로 통합하고 공격 중 �
 - 한 공격 실행의 다중 판정창과 대상별 중복 적중
 - 비용 예약, Commit 전 취소, Commit 후 실패의 자원과 token 결과
 - 같은 프레임 상호 타격의 결정적 순서
+- Commit 전 Release와 Commit 도달 뒤 Release의 약/차지 분기, 경계 프레임 결정성
+- S1 Charge 소비·순차 회복·연계 단계 분리와 최대 Charge에서의 회복 정지
+- 한 실행의 다단·다수 적중에 대한 S4 게이지 지급 상한
+- 동일 방향과 타이밍에서 락온 여부와 무관한 Roll 결과
+- 실제 qualifying Hit이 Perfect Window와 교차한 경우에만 Step 분기
+- Shift chord와 게임패드 직접 스킬 입력의 기본 액션 동시 실행 방지
 
 ### 10.2 플레이테스트 이벤트
 
@@ -312,24 +320,14 @@ DataTable, Montage Notify, Blueprint, C++이 같은 필드에 다른 의미를 �
 
 ## 12. 구현 전 결정할 질문
 
-1. 3+1 슬롯을 확정할지 총 3슬롯으로 줄일지
-2. S1 Tempo, S2 Break, S3 Response, S4 Signature 역할을 모든 무기에 고정할지
-3. 약공격과 차지공격의 키와 Hold 규칙
-4. 차지를 I2와 완전 차지 I3로 나눌지 항상 I3로 둘지
-5. I1~I3와 A0~A2가 v1에 충분한지
-6. UninterruptiblePhase 허용 목록과 시각적 규칙
-7. 회피 i-frame을 Damage Immunity로 확정할지
-8. Reaction별 MovementPolicy와 token 해제 시점
-9. 그로기를 임계치 즉시 자동 발동으로 확정할지
-10. Q2와 Q3의 Commit 후 실패 시 Q1 초기화 여부
-11. Q 유지 시간과 보스 대체 결산
-12. MP 공용 자원 또는 무기별 자원 선택
-13. S4 획득 행동과 교전 사이 유지 여부
-14. 슬롯당 첫 sidegrade 제작 수
-15. 석궁의 탄창 또는 열 선택
-16. 무기와 loadout 교체 시점
-17. 스킬 트리의 sidegrade 해금과 수직 성장 범위
-18. 죽음을 손실 장치로 만들지 빠른 학습 리셋으로 유지할지
+1. S3 첫 수직 단면을 패리형과 회피형 중 무엇으로 시작할지
+2. 카타나 S1의 `MaxCharges`, Charge 회복 시간, Chain reset과 적중당 회복 단축값
+3. S4 게이지의 일반 전투 종료 후 유지와 보스 진입 사전 충전 정책
+4. 한 버튼 Basic의 `ChargeCommitTime`과 경계 프레임 우선순위
+5. 게임패드 `RT Area / LT Response / Y Signature` 직접 입력안 확정 여부
+6. D-Pad item hotkey layer를 첫 입력 마일스톤에 포함할지
+7. Perfect Dodge Window와 Step Recovery 이득
+8. 현재 MP를 S1~S3 공용 자원으로 유지할지, 슬롯 gate 검증 뒤로 재설계를 미룰지
 
 ## 13. 주요 근거
 
@@ -345,6 +343,9 @@ DataTable, Montage Notify, Blueprint, C++이 같은 필드에 다른 의미를 �
 - Source/Maverick/AI/Task/MVEnemyCombatActionTask.cpp
 - Source/Maverick/System/MVDeathRespawnFlow.cpp
 - Source/Maverick/UI/HUD/
+- docs/wiki/S1-Tempo-Charge.md
+- docs/wiki/Soulslike-Market-Research-2026.md
+- docs/wiki/Boss-Rush-Market-Analysis.md
 
 ### 에셋과 데이터
 

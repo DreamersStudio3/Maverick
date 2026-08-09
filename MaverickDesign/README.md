@@ -2,6 +2,8 @@
 
 이 폴더는 게임 데이터 테이블의 원본 CSV, JSON 중간 산출물, 변환 도구를 보관합니다.
 
+게임 설계와 시장 조사 Markdown 관리 위치: 사람용 위키 `docs/wiki/`. 이 폴더의 Markdown: 테이블 파이프라인 안내용 README만 유지.
+
 ## 전체 흐름
 
 1. `MaverickDesign/Csv`에 CSV 파일을 추가하거나 수정합니다.

@@ -1,6 +1,9 @@
 # Visual Studio 2015 user specific files
 .vs
 Maverick.sln
+Maverick.slnx
+Automation_Maverick.sln
+Automation_Maverick.slnx
 
 # Compiled Object files
 .slo
