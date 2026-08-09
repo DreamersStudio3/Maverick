@@ -1,51 +1,33 @@
-# Type
+# type
 
-> 11 nodes
+> 11 nodes · cohesion 0.18
 
 ## Key Concepts
 
-- **Type** (15 connections) — `Source/Maverick/Public/Interface/MVHitReactionRecoveryDecisionProvider.h`
-- **FLockOnTargetExtensionTickFunction::ExecuteTick()** (4 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetExtensions/LockOnTargetExtensionBase.cpp`
-- **AMVEnemy::EndPlay()** (2 connections) — `Source/Maverick/Character/NPC/Enemy/MVEnemy.cpp`
-- **AMVPlayerCharacter::EndPlay()** (2 connections) — `Source/Maverick/Character/PC/MVPlayerCharacter.cpp`
-- **UMVCombatComponent::EndPlay()** (2 connections) — `Source/Maverick/Components/MVCombatComponent.cpp`
-- **UMVDeathComponent::EndPlay()** (2 connections) — `Source/Maverick/Components/MVDeathComponent.cpp`
-- **UMVFinisherComponent::EndPlay()** (2 connections) — `Source/Maverick/Components/MVFinisherComponent.cpp`
-- **UMVHitReactionComponent::EndPlay()** (2 connections) — `Source/Maverick/Components/MVHitReactionComponent.cpp`
-- **UMVStatusBarWidget::SetBarFillType()** (2 connections) — `Source/Maverick/UI/HUD/MVStatusBarWidget.cpp`
-- **ELevelTick** (1 connections)
-- **FGraphEventRef** (1 connections)
+- **type** (9 connections) — `MaverickDesign/Schema/TableData.schema.json`
+- **source** (3 connections) — `MaverickDesign/Schema/TableData.schema.json`
+- **additionalProperties** (2 connections) — `MaverickDesign/Schema/TableData.schema.json`
+- **type** (1 connections) — `MaverickDesign/Schema/TableData.schema.json`
+- **array** (1 connections) — `MaverickDesign/Schema/TableData.schema.json`
+- **boolean** (1 connections) — `MaverickDesign/Schema/TableData.schema.json`
+- **integer** (1 connections) — `MaverickDesign/Schema/TableData.schema.json`
+- **null** (1 connections) — `MaverickDesign/Schema/TableData.schema.json`
+- **number** (1 connections) — `MaverickDesign/Schema/TableData.schema.json`
+- **object** (1 connections) — `MaverickDesign/Schema/TableData.schema.json`
+- **string** (1 connections) — `MaverickDesign/Schema/TableData.schema.json`
 
 ## Relationships
 
-- [LockOnTargetExtensionBase.cpp](LockOnTargetExtensionBase.cpp.md) (1 shared connections)
-- [MVEnemy.cpp](MVEnemy.cpp.md) (1 shared connections)
-- [MVPlayerCharacter.cpp](MVPlayerCharacter.cpp.md) (1 shared connections)
-- [MVCombatComponent.cpp](MVCombatComponent.cpp.md) (1 shared connections)
-- [MVDeathComponent.cpp](MVDeathComponent.cpp.md) (1 shared connections)
-- [MVFinisherComponent.cpp](MVFinisherComponent.cpp.md) (1 shared connections)
-- [MVHitReactionComponent.cpp](MVHitReactionComponent.cpp.md) (1 shared connections)
-- [SSocketSelector](SSocketSelector.md) (1 shared connections)
-- [TargetComponentDetails.cpp](TargetComponentDetails.cpp.md) (1 shared connections)
-- [LockOnTargetComponent.cpp](LockOnTargetComponent.cpp.md) (1 shared connections)
-- [TargetComponent.cpp](TargetComponent.cpp.md) (1 shared connections)
-- [TargetManager.cpp](TargetManager.cpp.md) (1 shared connections)
+- [table](table.md) (1 shared connections)
+- [properties](properties.md) (1 shared connections)
 
 ## Source Files
 
-- `Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetExtensions/LockOnTargetExtensionBase.cpp`
-- `Source/Maverick/Character/NPC/Enemy/MVEnemy.cpp`
-- `Source/Maverick/Character/PC/MVPlayerCharacter.cpp`
-- `Source/Maverick/Components/MVCombatComponent.cpp`
-- `Source/Maverick/Components/MVDeathComponent.cpp`
-- `Source/Maverick/Components/MVFinisherComponent.cpp`
-- `Source/Maverick/Components/MVHitReactionComponent.cpp`
-- `Source/Maverick/Public/Interface/MVHitReactionRecoveryDecisionProvider.h`
-- `Source/Maverick/UI/HUD/MVStatusBarWidget.cpp`
+- `MaverickDesign/Schema/TableData.schema.json`
 
 ## Audit Trail
 
-- EXTRACTED: 35 (100%)
+- EXTRACTED: 22 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

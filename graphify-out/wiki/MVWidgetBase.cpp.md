@@ -1,19 +1,19 @@
 # MVWidgetBase.cpp
 
-> 10 nodes
+> 10 nodes · cohesion 0.20
 
 ## Key Concepts
 
 - **MVWidgetBase.cpp** (8 connections) — `Source/Maverick/UI/Base/MVWidgetBase.cpp`
 - **UMVWidgetBase::UMVWidgetBase()** (2 connections) — `Source/Maverick/UI/Base/MVWidgetBase.cpp`
 - **FObjectInitializer** (1 connections)
+- **UMVWidgetBase::HandleFadeOutFinished()** (1 connections) — `Source/Maverick/UI/Base/MVWidgetBase.cpp`
+- **UMVWidgetBase::NativeConstruct()** (1 connections) — `Source/Maverick/UI/Base/MVWidgetBase.cpp`
+- **UMVWidgetBase::NativeDestruct()** (1 connections) — `Source/Maverick/UI/Base/MVWidgetBase.cpp`
 - **UMVWidgetBase::PlayFadeIn()** (1 connections) — `Source/Maverick/UI/Base/MVWidgetBase.cpp`
 - **UMVWidgetBase::PlayFadeOut()** (1 connections) — `Source/Maverick/UI/Base/MVWidgetBase.cpp`
 - **UMVWidgetBase::RemoveFromParentWithFade()** (1 connections) — `Source/Maverick/UI/Base/MVWidgetBase.cpp`
 - **UMVWidgetBase::SetUIFadeDurations()** (1 connections) — `Source/Maverick/UI/Base/MVWidgetBase.cpp`
-- **UMVWidgetBase::NativeConstruct()** (1 connections) — `Source/Maverick/UI/Base/MVWidgetBase.cpp`
-- **UMVWidgetBase::NativeDestruct()** (1 connections) — `Source/Maverick/UI/Base/MVWidgetBase.cpp`
-- **UMVWidgetBase::HandleFadeOutFinished()** (1 connections) — `Source/Maverick/UI/Base/MVWidgetBase.cpp`
 
 ## Relationships
 

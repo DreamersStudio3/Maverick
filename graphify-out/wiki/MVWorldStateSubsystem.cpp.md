@@ -1,30 +1,30 @@
 # MVWorldStateSubsystem.cpp
 
-> 21 nodes
+> 21 nodes · cohesion 0.15
 
 ## Key Concepts
 
 - **MVWorldStateSubsystem.cpp** (32 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
 - **FName** (16 connections)
+- **UMVWorldStateSubsystem::GetQuestObjectiveValue()** (3 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
 - **UMVWorldStateSubsystem::SetLastCheckpoint()** (3 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
 - **UMVWorldStateSubsystem::SetQuestObjectiveValue()** (3 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
-- **UMVWorldStateSubsystem::GetQuestObjectiveValue()** (3 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
-- **UMVWorldStateSubsystem::SetFieldObjectState()** (2 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
-- **UMVWorldStateSubsystem::MarkOneTimeSpawnConsumed()** (2 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
-- **UMVWorldStateSubsystem::IsOneTimeSpawnConsumed()** (2 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
-- **UMVWorldStateSubsystem::SetWorldFlag()** (2 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
-- **UMVWorldStateSubsystem::GetWorldFlag()** (2 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
-- **UMVWorldStateSubsystem::SetQuestState()** (2 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
-- **UMVWorldStateSubsystem::GetQuestState()** (2 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
 - **UMVWorldStateSubsystem::CompleteQuest()** (2 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
+- **UMVWorldStateSubsystem::GetQuestState()** (2 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
+- **UMVWorldStateSubsystem::GetWorldFlag()** (2 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
+- **UMVWorldStateSubsystem::IsOneTimeSpawnConsumed()** (2 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
 - **UMVWorldStateSubsystem::IsQuestCompleted()** (2 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
+- **UMVWorldStateSubsystem::MarkOneTimeSpawnConsumed()** (2 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
 - **UMVWorldStateSubsystem::ResolveCurrentMapName()** (2 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
+- **UMVWorldStateSubsystem::SetFieldObjectState()** (2 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
+- **UMVWorldStateSubsystem::SetQuestState()** (2 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
+- **UMVWorldStateSubsystem::SetWorldFlag()** (2 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
+- **FTransform** (1 connections)
 - **UMVWorldStateSubsystem::Deinitialize()** (1 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
-- **UMVWorldStateSubsystem::SaveToDefaultSlot()** (1 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
 - **UMVWorldStateSubsystem::LoadDefaultSlot()** (1 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
 - **UMVWorldStateSubsystem::LoadOrCreateDefaultSlot()** (1 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
-- **FTransform** (1 connections)
 - **UMVWorldStateSubsystem::MarkSaveDataDirty()** (1 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
+- **UMVWorldStateSubsystem::SaveToDefaultSlot()** (1 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
 
 ## Relationships
 

@@ -1,12 +1,12 @@
 # MVInteractableInterface.h
 
-> 3 nodes
+> 3 nodes · cohesion 0.67
 
 ## Key Concepts
 
 - **MVInteractableInterface.h** (2 connections) — `Source/Maverick/Interaction/MVInteractableInterface.h`
-- **MAVERICK_API** (1 connections) — `Source/Maverick/Interaction/MVInteractableInterface.h`
 - **IMVInteractableInterface()** (1 connections) — `Source/Maverick/Interaction/MVInteractableInterface.h`
+- **MAVERICK_API** (1 connections) — `Source/Maverick/Interaction/MVInteractableInterface.h`
 
 ## Relationships
 

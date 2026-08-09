@@ -1,6 +1,6 @@
 # MVEnemy.h
 
-> 14 nodes
+> 14 nodes · cohesion 0.14
 
 ## Key Concepts
 
@@ -11,13 +11,13 @@
 - **UMVMainHUDWidget** (2 connections) — `Source/Maverick/Character/NPC/Enemy/MVEnemy.h`
 - **UMVDeathOverlayWindow** (2 connections) — `Source/Maverick/System/MVDeathRespawnFlow.h`
 - **FMVFieldTransitionResetContext()** (2 connections) — `Source/Maverick/System/MVFieldTransitionResettableInterface.h`
+- **MAVERICK_API** (1 connections) — `Source/Maverick/Character/NPC/Enemy/MVEnemy.h`
 - **UAnimMontage** (1 connections) — `Source/Maverick/Character/NPC/Enemy/MVEnemy.h`
 - **UMVEnemyDodgeTokenComponent** (1 connections) — `Source/Maverick/Character/NPC/Enemy/MVEnemy.h`
-- **MAVERICK_API** (1 connections) — `Source/Maverick/Character/NPC/Enemy/MVEnemy.h`
-- **MVUISettings.cpp** (1 connections) — `Source/Maverick/UI/System/MVUISettings.cpp`
-- **UMVWorldStateSubsystem** (1 connections) — `Source/Maverick/System/MVFieldTransitionResettableInterface.h`
-- **MAVERICK_API** (1 connections) — `Source/Maverick/System/MVFieldTransitionResettableInterface.h`
 - **IMVFieldTransitionResettableInterface()** (1 connections) — `Source/Maverick/System/MVFieldTransitionResettableInterface.h`
+- **MAVERICK_API** (1 connections) — `Source/Maverick/System/MVFieldTransitionResettableInterface.h`
+- **UMVWorldStateSubsystem** (1 connections) — `Source/Maverick/System/MVFieldTransitionResettableInterface.h`
+- **MVUISettings.cpp** (1 connections) — `Source/Maverick/UI/System/MVUISettings.cpp`
 
 ## Relationships
 
@@ -25,8 +25,8 @@
 - [FMVAttackTaskInstanceData](FMVAttackTaskInstanceData.md) (1 shared connections)
 - [FMVHitReactionRecoveryDecisionContext](FMVHitReactionRecoveryDecisionContext.md) (1 shared connections)
 - [MVDeathRespawnFlow.h](MVDeathRespawnFlow.h.md) (1 shared connections)
-- [FMVInteractionPromptData](FMVInteractionPromptData.md) (1 shared connections)
 - [MVFieldTransitionSubsystem.cpp](MVFieldTransitionSubsystem.cpp.md) (1 shared connections)
+- [FMVInteractionPromptData](FMVInteractionPromptData.md) (1 shared connections)
 
 ## Source Files
 

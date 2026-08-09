@@ -1,15 +1,15 @@
 # MVMonsterHPBarWidget.cpp
 
-> 6 nodes
+> 6 nodes · cohesion 0.33
 
 ## Key Concepts
 
 - **MVMonsterHPBarWidget.cpp** (4 connections) — `Source/Maverick/UI/World/MVMonsterHPBarWidget.cpp`
 - **UMVMonsterHPBarWidget::BindToActor()** (2 connections) — `Source/Maverick/UI/World/MVMonsterHPBarWidget.cpp`
 - **AActor** (1 connections)
-- **UMVMonsterHPBarWidget::UnbindStatComponent()** (1 connections) — `Source/Maverick/UI/World/MVMonsterHPBarWidget.cpp`
-- **UMVMonsterHPBarWidget::NativeDestruct()** (1 connections) — `Source/Maverick/UI/World/MVMonsterHPBarWidget.cpp`
 - **UMVMonsterHPBarWidget::HandleHPChanged()** (1 connections) — `Source/Maverick/UI/World/MVMonsterHPBarWidget.cpp`
+- **UMVMonsterHPBarWidget::NativeDestruct()** (1 connections) — `Source/Maverick/UI/World/MVMonsterHPBarWidget.cpp`
+- **UMVMonsterHPBarWidget::UnbindStatComponent()** (1 connections) — `Source/Maverick/UI/World/MVMonsterHPBarWidget.cpp`
 
 ## Relationships
 

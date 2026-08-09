@@ -1,12 +1,12 @@
 # Maverick 빌드 타깃 규칙
 
-> 5 nodes
+> 5 nodes · cohesion 0.40
 
 ## Key Concepts
 
 - **MaverickTarget** (2 connections) — `Source/Maverick.Target.cs`
-- **TargetRules** (2 connections)
 - **MaverickEditorTarget** (2 connections) — `Source/MaverickEditor.Target.cs`
+- **TargetRules** (2 connections)
 - **Maverick.Target.cs** (1 connections) — `Source/Maverick.Target.cs`
 - **MaverickEditor.Target.cs** (1 connections) — `Source/MaverickEditor.Target.cs`
 

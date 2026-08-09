@@ -1,34 +1,34 @@
 # FMVBackOffLaunchMontageTaskInstanceData
 
-> 57 nodes
+> 57 nodes · cohesion 0.05
 
 ## Key Concepts
 
 - **FMVBackOffLaunchMontageTaskInstanceData** (33 connections) — `Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.h`
 - **MVBackOffLaunchMontageTask.cpp** (11 connections) — `Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.cpp`
 - **EnterState** (11 connections) — `Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.h`
-- **MVBackOffLaunchMontageTask.h** (6 connections) — `Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.h`
 - **FMVBackOffLaunchMontageTask** (6 connections) — `Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.h`
+- **MVBackOffLaunchMontageTask.h** (6 connections) — `Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.h`
+- **BackOffLaunchMontageLaunch()** (5 connections) — `Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.cpp`
+- **BackOffLaunchMontagePlay()** (5 connections) — `Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.cpp`
 - **BackOffLaunchMontageResolveOwner()** (5 connections) — `Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.cpp`
 - **BackOffLaunchMontageResolveTarget()** (5 connections) — `Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.cpp`
-- **BackOffLaunchMontagePlay()** (5 connections) — `Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.cpp`
-- **BackOffLaunchMontageLaunch()** (5 connections) — `Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.cpp`
-- **FStateTreeExecutionContext** (4 connections)
 - **BackOffLaunchMontageBuildAwayDirection()** (4 connections) — `Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.cpp`
 - **BackOffLaunchMontageFaceTarget()** (4 connections) — `Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.cpp`
 - **BackOffLaunchMontageGetAnimInstance()** (4 connections) — `Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.cpp`
-- **Tick** (4 connections) — `Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.h`
+- **FStateTreeExecutionContext** (4 connections)
 - **ExitState** (4 connections) — `Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.h`
+- **Tick** (4 connections) — `Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.h`
+- **ACharacter** (3 connections)
 - **APawn** (3 connections)
 - **FVector** (3 connections)
-- **ACharacter** (3 connections)
-- **TObjectPtr** (2 connections)
+- **AActor** (2 connections) — `Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.h`
+- **APawn** (2 connections) — `Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.h`
 - **AActor** (2 connections)
 - **EStateTreeRunStatus** (2 connections)
 - **FStateTreeTransitionResult** (2 connections)
-- **AActor** (2 connections) — `Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.h`
-- **APawn** (2 connections) — `Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.h`
-- **UAnimInstance** (2 connections) — `Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.h`
+- **TObjectPtr** (2 connections)
+- **.GetInstanceDataType()** (2 connections) — `Source/Maverick/AI/Task/MVBackOffLaunchMontageTask.h`
 - *... and 32 more nodes in this community*
 
 ## Relationships

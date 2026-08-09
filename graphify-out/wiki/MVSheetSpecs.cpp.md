@@ -1,23 +1,24 @@
 # MVSheetSpecs.cpp
 
-> 10 nodes
+> 10 nodes · cohesion 0.29
 
 ## Key Concepts
 
 - **MVSheetSpecs.cpp** (8 connections) — `Source/Maverick/Private/Tables/MVSheetSpecs.cpp`
 - **FString** (4 connections)
 - **LoadRecipe()** (4 connections) — `Source/Maverick/Private/Tables/MVSheetSpecs.cpp`
-- **GetRecipePath()** (3 connections) — `Source/Maverick/Private/Tables/MVSheetSpecs.cpp`
 - **FMVSheetSpecs::Find()** (3 connections) — `Source/Maverick/Private/Tables/MVSheetSpecs.cpp`
 - **FMVSheetSpecs::GetAllSheetNames()** (3 connections) — `Source/Maverick/Private/Tables/MVSheetSpecs.cpp`
-- **TMap** (1 connections)
+- **GetRecipePath()** (3 connections) — `Source/Maverick/Private/Tables/MVSheetSpecs.cpp`
 - **FMVSheetSpec** (1 connections)
 - **TArray** (1 connections)
+- **TMap** (1 connections)
 - **FMVSheetSpecs::Invalidate()** (1 connections) — `Source/Maverick/Private/Tables/MVSheetSpecs.cpp`
 
 ## Relationships
 
-- [MVHitReactionComponent.h](MVHitReactionComponent.h.md) (2 shared connections)
+- [MVActionRowTableTypes.h](MVActionRowTableTypes.h.md) (1 shared connections)
+- [MVHitReactionComponent.h](MVHitReactionComponent.h.md) (1 shared connections)
 - [MVTableTypes.h](MVTableTypes.h.md) (1 shared connections)
 
 ## Source Files

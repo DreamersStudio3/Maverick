@@ -1,6 +1,6 @@
 # FindInvincibleCharacter
 
-> 9 nodes
+> 9 nodes · cohesion 0.39
 
 ## Key Concepts
 
@@ -9,8 +9,8 @@
 - **UMVAnimNotifyState_Invincible::NotifyEnd()** (5 connections) — `Source/Maverick/Animation/NotifyStates/MVAnimNotifyState_Invincible.cpp`
 - **MVAnimNotifyState_Invincible.cpp** (4 connections) — `Source/Maverick/Animation/NotifyStates/MVAnimNotifyState_Invincible.cpp`
 - **USkeletalMeshComponent** (3 connections)
-- **UAnimSequenceBase** (2 connections)
 - **FAnimNotifyEventReference** (2 connections)
+- **UAnimSequenceBase** (2 connections)
 - **UMVAnimNotifyState_Invincible::GetNotifyName_Implementation()** (2 connections) — `Source/Maverick/Animation/NotifyStates/MVAnimNotifyState_Invincible.cpp`
 - **FString** (1 connections)
 

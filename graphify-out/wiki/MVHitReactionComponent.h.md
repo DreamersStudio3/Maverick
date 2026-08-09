@@ -1,47 +1,56 @@
 # MVHitReactionComponent.h
 
-> 13 nodes
+> 22 nodes · cohesion 0.10
 
 ## Key Concepts
 
 - **MVHitReactionComponent.h** (11 connections) — `Source/Maverick/Components/MVHitReactionComponent.h`
-- **MVActionRowTableTypes.h** (9 connections) — `Source/Maverick/Public/Tables/MVActionRowTableTypes.h`
+- **FMVHitReactionActionData** (10 connections) — `Source/Maverick/Components/MVHitReactionComponent.h`
+- **UMVHitReactionComponent::GetActionData()** (5 connections) — `Source/Maverick/Components/MVHitReactionComponent.cpp`
 - **MVHitReactionActionTableTypes.h** (5 connections) — `Source/Maverick/Public/Tables/MVHitReactionActionTableTypes.h`
-- **MVActionComponent.h** (4 connections) — `Source/Maverick/Components/MVActionComponent.h`
-- **FMVTableRowBase()** (2 connections) — `Source/Maverick/Public/Tables/MVActionRowTableTypes.h`
-- **UAnimInstance** (1 connections) — `Source/Maverick/Components/MVActionComponent.h`
-- **UAnimMontage** (1 connections) — `Source/Maverick/Components/MVActionComponent.h`
-- **AMVCharacterBase** (1 connections) — `Source/Maverick/Components/MVHitReactionComponent.h`
+- **FMVHitReactionActionRow()** (5 connections) — `Source/Maverick/Public/Tables/MVHitReactionActionTableTypes.h`
+- **FMVHitReactionActionRowHandle()** (5 connections) — `Source/Maverick/Public/Tables/MVHitReactionActionTableTypes.h`
+- **MVHitReactionCopyBaseActionRow()** (4 connections) — `Source/Maverick/Components/MVHitReactionComponent.cpp`
+- **UMVHitReactionComponent::MakeHitReactionActionRowHandleFromNames()** (4 connections) — `Source/Maverick/Components/MVHitReactionComponent.cpp`
+- **UMVHitReactionComponent::ResolveHitReactionActionRowHandle()** (4 connections) — `Source/Maverick/Components/MVHitReactionComponent.cpp`
+- **MAVERICK_API** (2 connections)
 - **ACharacter** (1 connections) — `Source/Maverick/Components/MVHitReactionComponent.h`
-- **UMVActionComponent** (1 connections) — `Source/Maverick/Components/MVHitReactionComponent.h`
-- **UDataTable** (1 connections) — `Source/Maverick/Components/MVHitReactionComponent.h`
+- **AMVCharacterBase** (1 connections) — `Source/Maverick/Components/MVHitReactionComponent.h`
+- **ActionRow** (1 connections) — `Source/Maverick/Components/MVHitReactionComponent.h`
+- **ActionRowHandle** (1 connections) — `Source/Maverick/Components/MVHitReactionComponent.h`
+- **Direction** (1 connections) — `Source/Maverick/Components/MVHitReactionComponent.h`
+- **StartSection** (1 connections) — `Source/Maverick/Components/MVHitReactionComponent.h`
+- **EMVHitReactionDirection** (1 connections)
+- **FDataTableRowHandle** (1 connections)
+- **FName** (1 connections)
 - **MAVERICK_API** (1 connections) — `Source/Maverick/Components/MVHitReactionComponent.h`
-- **MAVERICK_API** (1 connections)
+- **UDataTable** (1 connections) — `Source/Maverick/Components/MVHitReactionComponent.h`
+- **UMVActionComponent** (1 connections) — `Source/Maverick/Components/MVHitReactionComponent.h`
 
 ## Relationships
 
-- [FMVHitReactionActionData](FMVHitReactionActionData.md) (2 shared connections)
-- [MVSheetSpecs.cpp](MVSheetSpecs.cpp.md) (2 shared connections)
-- [MVExecuteAttackTask.cpp](MVExecuteAttackTask.cpp.md) (1 shared connections)
+- [MVHitReactionComponent.cpp](MVHitReactionComponent.cpp.md) (4 shared connections)
+- [MVActionRowTableTypes.h](MVActionRowTableTypes.h.md) (2 shared connections)
+- [MVHitReactionBuildAvailableRowNameLog](MVHitReactionBuildAvailableRowNameLog.md) (2 shared connections)
+- [FMVResolvedHitData](FMVResolvedHitData.md) (2 shared connections)
+- [EMVHitReactionDirection](EMVHitReactionDirection.md) (2 shared connections)
 - [MVWeaponComponent.cpp](MVWeaponComponent.cpp.md) (1 shared connections)
 - [MVActionInputHandlerInterface.h](MVActionInputHandlerInterface.h.md) (1 shared connections)
 - [MVHitTypes.h](MVHitTypes.h.md) (1 shared connections)
-- [MVTableAssetGenerator.cpp](MVTableAssetGenerator.cpp.md) (1 shared connections)
-- [MVTableTypes.h](MVTableTypes.h.md) (1 shared connections)
-- [MVMovementActionTableTypes.h](MVMovementActionTableTypes.h.md) (1 shared connections)
-- [FMVSkillDataTableColumn](FMVSkillDataTableColumn.md) (1 shared connections)
-- [EMVHitReactionDirection](EMVHitReactionDirection.md) (1 shared connections)
+- [FName](FName.md) (1 shared connections)
+- [UMVTableManager](UMVTableManager.md) (1 shared connections)
+- [MVSheetSpecs.cpp](MVSheetSpecs.cpp.md) (1 shared connections)
+- [FMVCombatActionTableInput](FMVCombatActionTableInput.md) (1 shared connections)
 
 ## Source Files
 
-- `Source/Maverick/Components/MVActionComponent.h`
+- `Source/Maverick/Components/MVHitReactionComponent.cpp`
 - `Source/Maverick/Components/MVHitReactionComponent.h`
-- `Source/Maverick/Public/Tables/MVActionRowTableTypes.h`
 - `Source/Maverick/Public/Tables/MVHitReactionActionTableTypes.h`
 
 ## Audit Trail
 
-- EXTRACTED: 39 (100%)
+- EXTRACTED: 67 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

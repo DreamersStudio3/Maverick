@@ -1,6 +1,6 @@
 # FMVActionCooldownDefinition
 
-> 11 nodes
+> 11 nodes · cohesion 0.18
 
 ## Key Concepts
 
@@ -8,13 +8,13 @@
 - **UMVActionCooldownComponent()** (5 connections) — `Source/Maverick/AI/MVActionCooldownComponent.h`
 - **FMVActionCooldownState** (4 connections) — `Source/Maverick/AI/MVActionCooldownComponent.h`
 - **MVActionCooldownComponent.h** (3 connections) — `Source/Maverick/AI/MVActionCooldownComponent.h`
-- **FName** (1 connections)
 - **ActionId** (1 connections) — `Source/Maverick/AI/MVActionCooldownComponent.h`
-- **CooldownDuration** (1 connections) — `Source/Maverick/AI/MVActionCooldownComponent.h`
 - **bStartReady** (1 connections) — `Source/Maverick/AI/MVActionCooldownComponent.h`
 - **CooldownDuration** (1 connections) — `Source/Maverick/AI/MVActionCooldownComponent.h`
-- **RemainingTime** (1 connections) — `Source/Maverick/AI/MVActionCooldownComponent.h`
 - **bIsReady** (1 connections) — `Source/Maverick/AI/MVActionCooldownComponent.h`
+- **CooldownDuration** (1 connections) — `Source/Maverick/AI/MVActionCooldownComponent.h`
+- **RemainingTime** (1 connections) — `Source/Maverick/AI/MVActionCooldownComponent.h`
+- **FName** (1 connections)
 
 ## Relationships
 

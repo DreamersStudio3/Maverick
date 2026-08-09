@@ -1,54 +1,26 @@
 # FMVAICombatContext
 
-> God node · 38 connections · `Source/Maverick/AI/MVAICombatTypes.h`
+> 3 nodes · cohesion 0.67
 
-**Community:** [FMVAICombatContext](FMVAICombatContext.md)
+## Key Concepts
 
-## Connections by Relation
+- **FMVAICombatContext** (2 connections) — `docs/wiki/Architecture.md`
+- **FMVCombatDecisionCondition** (1 connections) — `docs/wiki/Architecture.md`
+- **FMVGlobalSensingTask** (1 connections) — `docs/wiki/Architecture.md`
 
-### contains
-- [MVAICombatTypes.h](MVAICombatTypes.h.md) `EXTRACTED`
+## Relationships
 
-### defines
-- AngleToTarget `EXTRACTED`
-- bActionRunning `EXTRACTED`
-- bAirborneChargePathClear `EXTRACTED`
-- bAttackCadenceReady `EXTRACTED`
-- bCounterWindow `EXTRACTED`
-- bHasLineOfSight `EXTRACTED`
-- bHasTarget `EXTRACTED`
-- bIsDead `EXTRACTED`
-- bNeedAttackAngle `EXTRACTED`
-- bNeedClearAttackPath `EXTRACTED`
-- bShouldUseAirborneCharge `EXTRACTED`
-- bSprintPathClear `EXTRACTED`
-- bStrafePathClear `EXTRACTED`
-- bTargetCanBeAirborne `EXTRACTED`
-- bTargetIsAirborne `EXTRACTED`
-- CurrentArea `EXTRACTED`
-- CurrentPhase `EXTRACTED`
-- DistanceToTarget `EXTRACTED`
-- LastAttackTag `EXTRACTED`
-- ReadyActionIds `EXTRACTED`
+- No strong cross-community connections detected
 
-### references
-- [FMVGlobalSensingTaskInstanceData](FMVGlobalSensingTaskInstanceData.md) `EXTRACTED`
-- [FMVEnemyCombatActionTaskInstanceData](FMVEnemyCombatActionTaskInstanceData.md) `EXTRACTED`
-- [FMVCombatActionEnterConditionInstanceData](FMVCombatActionEnterConditionInstanceData.md) `EXTRACTED`
-- FMVSelectAndExecuteAttackTaskInstanceData `EXTRACTED`
-- [FMVStrafeMoveTaskInstanceData](FMVStrafeMoveTaskInstanceData.md) `EXTRACTED`
-- [FMVAttackOpportunityTaskInstanceData](FMVAttackOpportunityTaskInstanceData.md) `EXTRACTED`
-- [FMVCombatDecisionConditionInstanceData](FMVCombatDecisionConditionInstanceData.md) `EXTRACTED`
-- CombatDecisionHasReadyCandidate() `EXTRACTED`
-- CombatDecisionIsCandidateReady() `EXTRACTED`
-- ExecuteAttackSelectCandidate() `EXTRACTED`
-- ExecuteAttackCanSelectCandidate() `EXTRACTED`
-- [FName](FName.md) `EXTRACTED`
-- IsActionReady() `EXTRACTED`
-- IsDistanceInRange() `EXTRACTED`
-- EMVBossCombatArea `EXTRACTED`
-- TArray `EXTRACTED`
-- [int32](int32.md) `EXTRACTED`
+## Source Files
+
+- `docs/wiki/Architecture.md`
+
+## Audit Trail
+
+- EXTRACTED: 4 (100%)
+- INFERRED: 0 (0%)
+- AMBIGUOUS: 0 (0%)
 
 ---
 

@@ -1,40 +1,48 @@
 # FName
 
-> 13 nodes
+> 22 nodes · cohesion 0.12
 
 ## Key Concepts
 
-- **FName** (12 connections)
-- **FGameplayTag** (8 connections)
-- **UMVHitReactionComponent::TryHandleHoldActionInput()** (5 connections) — `Source/Maverick/Components/MVHitReactionComponent.cpp`
-- **FVector2D** (4 connections)
-- **UMVHitReactionComponent::TryHandleActionInput()** (4 connections) — `Source/Maverick/Components/MVHitReactionComponent.cpp`
-- **UMVHitReactionComponent::TryConsumeRecoveryInput()** (3 connections) — `Source/Maverick/Components/MVHitReactionComponent.cpp`
-- **UMVHitReactionComponent::MakeHitReactionActionTableName()** (3 connections) — `Source/Maverick/Components/MVHitReactionComponent.cpp`
-- **UMVHitReactionComponent::MakeGroggyActionTableName()** (3 connections) — `Source/Maverick/Components/MVHitReactionComponent.cpp`
-- **UMVHitReactionComponent::MakeGroggyActionRowName()** (3 connections) — `Source/Maverick/Components/MVHitReactionComponent.cpp`
-- **UMVHitReactionComponent::TryConsumeRecoveryMovementInput()** (2 connections) — `Source/Maverick/Components/MVHitReactionComponent.cpp`
-- **UMVHitReactionComponent::ResolveHitReactionActionTableName()** (2 connections) — `Source/Maverick/Components/MVHitReactionComponent.cpp`
-- **UMVHitReactionComponent::ResolveCharacterIndexCode()** (2 connections) — `Source/Maverick/Components/MVHitReactionComponent.cpp`
-- **UMVHitReactionComponent::HandleActionEnded()** (2 connections) — `Source/Maverick/Components/MVHitReactionComponent.cpp`
+- **FName** (23 connections)
+- **FDataTableRowHandle** (10 connections)
+- **MVCombatMakeFallbackAttackRowCandidates()** (7 connections) — `Source/Maverick/Components/MVCombatComponent.cpp`
+- **MVCombatActionTableNameFromDataTable()** (5 connections) — `Source/Maverick/Components/MVCombatComponent.cpp`
+- **MVCombatAppendRowCandidate()** (5 connections) — `Source/Maverick/Components/MVCombatComponent.cpp`
+- **UMVCombatComponent::TryMakeFallbackAttackActionRowHandle()** (5 connections) — `Source/Maverick/Components/MVCombatComponent.cpp`
+- **UMVCombatComponent::TryStartActionWithAbility()** (5 connections) — `Source/Maverick/Components/MVCombatComponent.cpp`
+- **UMVCombatComponent::IsValidSkillActionRowHandle()** (4 connections) — `Source/Maverick/Components/MVCombatComponent.cpp`
+- **UMVCombatComponent::ResolveActionRowHandleFromChooserTable()** (4 connections) — `Source/Maverick/Components/MVCombatComponent.cpp`
+- **UMVCombatComponent::ResolveHeavyChargeEarlyReleaseRow()** (4 connections) — `Source/Maverick/Components/MVCombatComponent.cpp`
+- **TArray** (3 connections)
+- **UDataTable** (3 connections)
+- **UMVCombatComponent::BuildSkillEntryFromRowHandle()** (3 connections) — `Source/Maverick/Components/MVCombatComponent.cpp`
+- **UMVCombatComponent::LoadFallbackAttackActionTable()** (3 connections) — `Source/Maverick/Components/MVCombatComponent.cpp`
+- **UMVCombatComponent::TryBeginHeavyChargeAttack()** (3 connections) — `Source/Maverick/Components/MVCombatComponent.cpp`
+- **TCHAR** (2 connections)
+- **UMVCombatComponent::HandleActionEnded()** (2 connections) — `Source/Maverick/Components/MVCombatComponent.cpp`
+- **UMVCombatComponent::IsCurrentAbilityAction()** (2 connections) — `Source/Maverick/Components/MVCombatComponent.cpp`
+- **UMVCombatComponent::IsHeavyChargeBasicAttackMapKey()** (2 connections) — `Source/Maverick/Components/MVCombatComponent.cpp`
+- **UMVCombatComponent::ResetOtherBasicAttackChains()** (2 connections) — `Source/Maverick/Components/MVCombatComponent.cpp`
+- **UMVCombatComponent::TryEarlyReleaseHeavyChargeAttack()** (2 connections) — `Source/Maverick/Components/MVCombatComponent.cpp`
+- **UMVCombatComponent::UpdateLastBasicAttackSwingDirection()** (2 connections) — `Source/Maverick/Components/MVCombatComponent.cpp`
 
 ## Relationships
 
-- [MVHitReactionComponent.cpp](MVHitReactionComponent.cpp.md) (10 shared connections)
-- [MVHitReactionLogRecoveryTrace](MVHitReactionLogRecoveryTrace.md) (5 shared connections)
-- [EMVHitReactionDirection](EMVHitReactionDirection.md) (3 shared connections)
-- [FMVHitReactionActionData](FMVHitReactionActionData.md) (1 shared connections)
-- [FMVResolvedHitData](FMVResolvedHitData.md) (1 shared connections)
-- [FVector2D](FVector2D.md) (1 shared connections)
+- [MVCombatComponent.cpp](MVCombatComponent.cpp.md) (35 shared connections)
+- [FMVCombatActionTableInput](FMVCombatActionTableInput.md) (4 shared connections)
+- [FMVSkillEntry](FMVSkillEntry.md) (3 shared connections)
+- [FMVSkillDataTableColumn](FMVSkillDataTableColumn.md) (2 shared connections)
+- [FMVCombatHeavyChargeAttackRuntimeState](FMVCombatHeavyChargeAttackRuntimeState.md) (1 shared connections)
 
 ## Source Files
 
-- `Source/Maverick/Components/MVHitReactionComponent.cpp`
+- `Source/Maverick/Components/MVCombatComponent.cpp`
 
 ## Audit Trail
 
-- EXTRACTED: 53 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 100 (99%)
+- INFERRED: 1 (1%)
 - AMBIGUOUS: 0 (0%)
 
 ---

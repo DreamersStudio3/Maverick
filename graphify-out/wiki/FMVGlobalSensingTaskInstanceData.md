@@ -1,34 +1,34 @@
 # FMVGlobalSensingTaskInstanceData
 
-> 51 nodes
+> 51 nodes · cohesion 0.04
 
 ## Key Concepts
 
 - **FMVGlobalSensingTaskInstanceData** (61 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
-- **TObjectPtr** (1 connections)
-- **APawn** (1 connections)
-- **TArray** (1 connections)
-- **FName** (1 connections)
-- **int32** (1 connections)
-- **EMVAttackDirection** (1 connections)
-- **EMVBossCombatArea** (1 connections)
-- **UPROPERTY** (1 connections)
-- **Target** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
-- **Owner** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
-- **DefensiveArea** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
-- **OffensiveArea** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
-- **SprintTriggerDistance** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
-- **SprintMaxReach** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
-- **SprintAttackAngle** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
-- **AirborneChargeMaxReach** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
-- **AirborneChargeAngle** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
-- **BasicAttackMaxReach** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
-- **AttackAngleTolerance** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
-- **ForwardPathTraceDistance** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
-- **BackwardPathTraceDistance** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
-- **StrafePathTraceDistance** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
 - **ActionCooldowns** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **AirborneChargeAngle** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **AirborneChargeMaxReach** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **AngleToTarget** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **AttackAngleTolerance** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
 - **AttackCadenceActionId** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **AttackDirection** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **BackwardPathTraceDistance** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **bActionRunning** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **bAirborneChargePathClear** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **BasicAttackMaxReach** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **bAttackCadenceReady** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **bCounterWindow** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **bDrawCombatAreaDebug** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **bHasLineOfSight** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **bHasTarget** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **bIsDead** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **bNeedAttackAngle** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **bNeedClearAttackPath** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **bShouldUseAirborneCharge** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **bSprintPathClear** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **bStrafePathClear** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **bTargetCanBeAirborne** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
+- **bTargetIsAirborne** (1 connections) — `Source/Maverick/AI/Task/MVGlobalSensingTask.h`
 - *... and 26 more nodes in this community*
 
 ## Relationships
@@ -37,7 +37,7 @@
 - [FMVActionCooldownDefinition](FMVActionCooldownDefinition.md) (2 shared connections)
 - [FMVAICombatContext](FMVAICombatContext.md) (1 shared connections)
 - [MVAICombatTypes.h](MVAICombatTypes.h.md) (1 shared connections)
-- [FindPauseRecoverableStatRecoveryStatComponent](FindPauseRecoverableStatRecoveryStatComponent.md) (1 shared connections)
+- [FMVFocusingTaskInstanceData](FMVFocusingTaskInstanceData.md) (1 shared connections)
 
 ## Source Files
 

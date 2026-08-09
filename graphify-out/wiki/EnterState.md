@@ -1,26 +1,26 @@
 # EnterState
 
-> 17 nodes
+> 17 nodes · cohesion 0.22
 
 ## Key Concepts
 
 - **EnterState** (8 connections) — `Source/Maverick/AI/Task/MVGlobalCoolTimeTask.h`
 - **MVGlobalCoolTimeTask.cpp** (7 connections) — `Source/Maverick/AI/Task/MVGlobalCoolTimeTask.cpp`
 - **Tick** (7 connections) — `Source/Maverick/AI/Task/MVGlobalCoolTimeTask.h`
-- **ResolveCooldownOwner()** (6 connections) — `Source/Maverick/AI/Task/MVGlobalCoolTimeTask.cpp`
 - **FMVGlobalCoolTimeTask** (6 connections) — `Source/Maverick/AI/Task/MVGlobalCoolTimeTask.h`
+- **ResolveCooldownOwner()** (6 connections) — `Source/Maverick/AI/Task/MVGlobalCoolTimeTask.cpp`
 - **EnsureCooldownComponent()** (5 connections) — `Source/Maverick/AI/Task/MVGlobalCoolTimeTask.cpp`
 - **FStateTreeExecutionContext** (4 connections)
-- **UpdateQueryOutputs()** (4 connections) — `Source/Maverick/AI/Task/MVGlobalCoolTimeTask.cpp`
 - **ExitState** (4 connections) — `Source/Maverick/AI/Task/MVGlobalCoolTimeTask.h`
+- **UpdateQueryOutputs()** (4 connections) — `Source/Maverick/AI/Task/MVGlobalCoolTimeTask.cpp`
 - **APawn** (2 connections)
 - **EStateTreeRunStatus** (2 connections)
 - **FStateTreeTransitionResult** (2 connections)
 - **.GetInstanceDataType()** (2 connections) — `Source/Maverick/AI/Task/MVGlobalCoolTimeTask.h`
-- **FStateTreeTaskCommonBase** (1 connections)
-- **UStruct** (1 connections)
 - **TObjectPtr** (1 connections)
 - **FMVGlobalCoolTimeTask::FMVGlobalCoolTimeTask()** (1 connections) — `Source/Maverick/AI/Task/MVGlobalCoolTimeTask.cpp`
+- **FStateTreeTaskCommonBase** (1 connections)
+- **UStruct** (1 connections)
 
 ## Relationships
 

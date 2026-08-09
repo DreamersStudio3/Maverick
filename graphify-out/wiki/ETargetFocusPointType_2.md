@@ -32,7 +32,7 @@
 - CustomWidgetClass `EXTRACTED`
 
 ### inherits
-- uint8 `EXTRACTED`
+- [uint8](uint8.md) `EXTRACTED`
 
 ### method
 - .IsSocketValid() `EXTRACTED`

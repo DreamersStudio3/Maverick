@@ -1,18 +1,18 @@
 # UMVUISubsystem::PushWindowByClass
 
-> 11 nodes
+> 11 nodes · cohesion 0.18
 
 ## Key Concepts
 
 - **UMVUISubsystem::PushWindowByClass()** (4 connections) — `Source/Maverick/UI/System/MVUISubsystem.cpp`
 - **UMVHUDWidgetBase()** (3 connections) — `Source/Maverick/UI/Base/MVHUDWidgetBase.h`
-- **UCommonActivatableWidget** (3 connections)
 - **TSubclassOf** (3 connections)
+- **UCommonActivatableWidget** (3 connections)
 - **UMVUISubsystem::PushPopupByClass()** (3 connections) — `Source/Maverick/UI/System/MVUISubsystem.cpp`
 - **UMVUISubsystem::ShowHUDByClass()** (3 connections) — `Source/Maverick/UI/System/MVUISubsystem.cpp`
+- **UMVUISubsystem::ShowDeathOverlay()** (2 connections) — `Source/Maverick/UI/System/MVUISubsystem.cpp`
 - **UMVUISubsystem::ShowDefaultHUD()** (2 connections) — `Source/Maverick/UI/System/MVUISubsystem.cpp`
 - **UMVUISubsystem::ShowLoadingWindow()** (2 connections) — `Source/Maverick/UI/System/MVUISubsystem.cpp`
-- **UMVUISubsystem::ShowDeathOverlay()** (2 connections) — `Source/Maverick/UI/System/MVUISubsystem.cpp`
 - **MVHUDWidgetBase.h** (1 connections) — `Source/Maverick/UI/Base/MVHUDWidgetBase.h`
 - **UMVWindowBase** (1 connections)
 

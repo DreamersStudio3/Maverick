@@ -1,36 +1,42 @@
 # AGENTS.md
 
-> 10 nodes
+> 15 nodes · cohesion 0.14
 
 ## Key Concepts
 
 - **AGENTS.md** (9 connections) — `AGENTS.md`
-- **Maverick Project** (3 connections) — `AGENTS.md`
-- **CharacterBase Responsibility Boundary** (3 connections) — `AGENTS.md`
-- **Domain Policy Separation** (3 connections) — `AGENTS.md`
-- **Task Progress Management** (2 connections) — `AGENTS.md`
-- **C++ Header Documentation** (2 connections) — `AGENTS.md`
-- **C++ Header Doxygen Contract** (2 connections) — `POLICY.md`
-- **Unreal Engine 5.6** (1 connections) — `AGENTS.md`
-- **Third-Person Soulslike** (1 connections) — `AGENTS.md`
-- **Short-Lived TODO Records** (1 connections) — `AGENTS.md`
+- **Human Internal Wiki** (5 connections) — `AGENTS.md`
+- **Editor Tool Plugins** (4 connections) — `docs/wiki/Architecture.md`
+- **Single Runtime Module** (4 connections) — `docs/wiki/Architecture.md`
+- **Architecture-First Navigation** (2 connections) — `AGENTS.md`
+- **CharacterBase Boundary** (2 connections) — `AGENTS.md`
+- **Maverick Project** (2 connections) — `AGENTS.md`
+- **Unreal Engine 5.8** (2 connections) — `AGENTS.md`
+- **Actor and Component Assembly** (2 connections) — `docs/wiki/Architecture.md`
+- **AMVCharacterBase** (2 connections) — `docs/wiki/Architecture.md`
+- **FMaverickModule** (2 connections) — `docs/wiki/Architecture.md`
+- **Short-Lived Task Tracking** (1 connections) — `AGENTS.md`
+- **EditorToolset** (1 connections) — `docs/wiki/Architecture.md`
+- **ModelContextProtocol** (1 connections) — `docs/wiki/Architecture.md`
+- **Terminal** (1 connections) — `docs/wiki/Architecture.md`
 
 ## Relationships
 
-- [Documentation and Knowledge Graph Operations](Documentation_and_Knowledge_Graph_Operations.md) (2 shared connections)
-- [Unreal Engine Unity Build Compatibility](Unreal_Engine_Unity_Build_Compatibility.md) (2 shared connections)
-- [AMVCharacterBase](AMVCharacterBase.md) (2 shared connections)
-- [Graphify Generated Knowledge Store](Graphify_Generated_Knowledge_Store.md) (1 shared connections)
+- [Maverick Architecture](Maverick_Architecture.md) (3 shared connections)
+- [Graphify Adoption Report](Graphify_Adoption_Report.md) (2 shared connections)
+- [Documentation and Graphify Workflow](Documentation_and_Graphify_Workflow.md) (2 shared connections)
+- [Documentation and Graph Operations](Documentation_and_Graph_Operations.md) (2 shared connections)
+- [Obsidian Usage Guide](Obsidian_Usage_Guide.md) (1 shared connections)
 
 ## Source Files
 
 - `AGENTS.md`
-- `POLICY.md`
+- `docs/wiki/Architecture.md`
 
 ## Audit Trail
 
-- EXTRACTED: 23 (85%)
-- INFERRED: 4 (15%)
+- EXTRACTED: 38 (95%)
+- INFERRED: 2 (5%)
 - AMBIGUOUS: 0 (0%)
 
 ---

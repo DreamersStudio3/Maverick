@@ -1,6 +1,6 @@
 # MVSkillSlotWidget.cpp
 
-> 15 nodes
+> 15 nodes · cohesion 0.13
 
 ## Key Concepts
 
@@ -8,21 +8,21 @@
 - **UMVSkillSlotWidget::SetIconStack()** (3 connections) — `Source/Maverick/UI/HUD/MVSkillSlotWidget.cpp`
 - **UMVSkillSlotWidget::SetHotKeyText()** (2 connections) — `Source/Maverick/UI/HUD/MVSkillSlotWidget.cpp`
 - **UMVSkillSlotWidget::SetRuntimeState()** (2 connections) — `Source/Maverick/UI/HUD/MVSkillSlotWidget.cpp`
-- **TArray** (1 connections)
-- **UTexture2D** (1 connections)
 - **FText** (1 connections)
 - **int32** (1 connections)
-- **UMVSkillSlotWidget::SetSlotSize()** (1 connections) — `Source/Maverick/UI/HUD/MVSkillSlotWidget.cpp`
+- **TArray** (1 connections)
+- **UMVSkillSlotWidget::ApplyHotKeyText()** (1 connections) — `Source/Maverick/UI/HUD/MVSkillSlotWidget.cpp`
+- **UMVSkillSlotWidget::ApplyIcon()** (1 connections) — `Source/Maverick/UI/HUD/MVSkillSlotWidget.cpp`
+- **UMVSkillSlotWidget::ApplyNativeFrameStyle()** (1 connections) — `Source/Maverick/UI/HUD/MVSkillSlotWidget.cpp`
+- **UMVSkillSlotWidget::ApplySlotSize()** (1 connections) — `Source/Maverick/UI/HUD/MVSkillSlotWidget.cpp`
 - **UMVSkillSlotWidget::NativeOnInitialized()** (1 connections) — `Source/Maverick/UI/HUD/MVSkillSlotWidget.cpp`
 - **UMVSkillSlotWidget::NativePreConstruct()** (1 connections) — `Source/Maverick/UI/HUD/MVSkillSlotWidget.cpp`
-- **UMVSkillSlotWidget::ApplyNativeFrameStyle()** (1 connections) — `Source/Maverick/UI/HUD/MVSkillSlotWidget.cpp`
-- **UMVSkillSlotWidget::ApplyIcon()** (1 connections) — `Source/Maverick/UI/HUD/MVSkillSlotWidget.cpp`
-- **UMVSkillSlotWidget::ApplyHotKeyText()** (1 connections) — `Source/Maverick/UI/HUD/MVSkillSlotWidget.cpp`
-- **UMVSkillSlotWidget::ApplySlotSize()** (1 connections) — `Source/Maverick/UI/HUD/MVSkillSlotWidget.cpp`
+- **UMVSkillSlotWidget::SetSlotSize()** (1 connections) — `Source/Maverick/UI/HUD/MVSkillSlotWidget.cpp`
+- **UTexture2D** (1 connections)
 
 ## Relationships
 
-- [PIEActionTestAddButton](PIEActionTestAddButton.md) (1 shared connections)
+- [MVSkillSlotWidget.h](MVSkillSlotWidget.h.md) (1 shared connections)
 
 ## Source Files
 

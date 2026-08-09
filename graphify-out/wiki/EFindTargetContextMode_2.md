@@ -39,7 +39,7 @@
 - UWeightedTargetHandler::CreateFindTargetContext() `EXTRACTED`
 - ECollisionChannel `EXTRACTED`
 - FTimerHandle `EXTRACTED`
-- uint8 `EXTRACTED`
+- [uint8](uint8.md) `EXTRACTED`
 - USTRUCT `EXTRACTED`
 - TEnumAsByte `EXTRACTED`
 

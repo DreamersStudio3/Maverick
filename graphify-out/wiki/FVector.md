@@ -1,16 +1,16 @@
 # FVector
 
-> 10 nodes
+> 10 nodes · cohesion 0.27
 
 ## Key Concepts
 
 - **FVector** (5 connections)
+- **AMVCharacterBase::ResolveControllerSpaceMovementInput()** (4 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
 - **ClampCharacterControllerSpaceInput()** (4 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
 - **FVector2D** (4 connections)
-- **AMVCharacterBase::ResolveControllerSpaceMovementInput()** (4 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
-- **AMVCharacterBase::TryGetControllerSpaceMovementInput()** (3 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
-- **AMVCharacterBase::ResolveWorldDirectionFromControllerSpaceInput()** (3 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
 - **AMVCharacterBase::CacheControllerSpaceMovementInput()** (3 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
+- **AMVCharacterBase::ResolveWorldDirectionFromControllerSpaceInput()** (3 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
+- **AMVCharacterBase::TryGetControllerSpaceMovementInput()** (3 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
 - **AMVCharacterBase::AddMovementInput()** (2 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
 - **AMVCharacterBase::ApplyLocomotionDirectionSnapshot()** (2 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
 - **int32** (1 connections)

@@ -1,16 +1,16 @@
 # UMVAnimNotify_DeathOverlay::Notify
 
-> 7 nodes
+> 7 nodes · cohesion 0.29
 
 ## Key Concepts
 
 - **UMVAnimNotify_DeathOverlay::Notify()** (4 connections) — `Source/Maverick/Animation/Notifies/MVAnimNotify_DeathOverlay.cpp`
 - **MVAnimNotify_DeathOverlay.cpp** (2 connections) — `Source/Maverick/Animation/Notifies/MVAnimNotify_DeathOverlay.cpp`
 - **UMVAnimNotify_DeathOverlay::GetNotifyName_Implementation()** (2 connections) — `Source/Maverick/Animation/Notifies/MVAnimNotify_DeathOverlay.cpp`
-- **USkeletalMeshComponent** (1 connections)
-- **UAnimSequenceBase** (1 connections)
 - **FAnimNotifyEventReference** (1 connections)
 - **FString** (1 connections)
+- **UAnimSequenceBase** (1 connections)
+- **USkeletalMeshComponent** (1 connections)
 
 ## Relationships
 

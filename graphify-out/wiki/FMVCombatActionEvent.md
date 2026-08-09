@@ -1,58 +1,56 @@
 # FMVCombatActionEvent
 
-> 41 nodes
+> 23 nodes · cohesion 0.09
 
 ## Key Concepts
 
 - **FMVCombatActionEvent** (14 connections) — `Source/Maverick/Components/MVCombatComponent.h`
-- **FMVCombatHeavyChargeAttackRuntimeState** (14 connections) — `Source/Maverick/Components/MVCombatComponent.h`
 - **MVCombatComponent.h** (13 connections) — `Source/Maverick/Components/MVCombatComponent.h`
 - **FMVSkillSlotRuntimeState** (12 connections) — `Source/Maverick/Components/MVCombatComponent.h`
-- **FMVSkillActionStruct** (6 connections) — `Source/Maverick/Components/MVCombatComponent.h`
-- **FName** (5 connections)
 - **int32** (4 connections)
-- **TObjectPtr** (3 connections)
-- **.GetCurrentRowName()** (3 connections) — `Source/Maverick/Components/MVCombatComponent.h`
-- **.GetCurrentActionRowHandle()** (3 connections) — `Source/Maverick/Components/MVCombatComponent.h`
-- **UMVCombatComponent::ResetHeavyChargeAttackState()** (2 connections) — `Source/Maverick/Components/MVCombatComponent.cpp`
-- **UDataTable** (2 connections)
-- **FDataTableRowHandle** (2 connections)
-- **DataTable** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
-- **RowName** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
-- **AActor** (1 connections)
-- **Instigator** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
-- **EMVCombatActionTypes** (1 connections)
-- **ActionType** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **MVCombatActionTypes.h** (3 connections) — `Source/Maverick/Public/Enum/MVCombatActionTypes.h`
 - **ActionIndex** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
-- **ActionTableName** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
 - **ActionRowName** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **ActionTableName** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **ActionType** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **Instigator** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **ActiveStackIndex** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
 - **bAvailable** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
 - **bChainActive** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
 - **bOnCooldown** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
-- *... and 16 more nodes in this community*
+- **ChainWindowDuration** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **ChainWindowRemaining** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **CooldownDuration** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **CooldownRemaining** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **StackSize** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **AActor** (1 connections)
+- **EMVCombatActionTypes** (1 connections)
+- **MAVERICK_API** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
+- **UMVStatComponent** (1 connections) — `Source/Maverick/Components/MVCombatComponent.h`
 
 ## Relationships
 
-- [FMVSkillEntry](FMVSkillEntry.md) (8 shared connections)
-- [MVCombatComponent.cpp](MVCombatComponent.cpp.md) (2 shared connections)
+- [FMVSkillEntry](FMVSkillEntry.md) (6 shared connections)
 - [UMVDodgeThreatEvaluatorLibrary::EvaluateDodgeThreat](UMVDodgeThreatEvaluatorLibrary--EvaluateDodgeThreat.md) (2 shared connections)
+- [FMVCombatHeavyChargeAttackRuntimeState](FMVCombatHeavyChargeAttackRuntimeState.md) (2 shared connections)
+- [UMVEnemyDodgeTokenComponent::TryConsumeDodgeTokenForThreat](UMVEnemyDodgeTokenComponent--TryConsumeDodgeTokenForThreat.md) (1 shared connections)
+- [MVCombatComponent.cpp](MVCombatComponent.cpp.md) (1 shared connections)
 - [FMVCombatActionTableInput](FMVCombatActionTableInput.md) (1 shared connections)
-- [MVAICombatTypes.h](MVAICombatTypes.h.md) (1 shared connections)
 - [MVActionInputHandlerInterface.h](MVActionInputHandlerInterface.h.md) (1 shared connections)
 - [MVWeaponComponent.cpp](MVWeaponComponent.cpp.md) (1 shared connections)
 - [FMVSkillDataTableColumn](FMVSkillDataTableColumn.md) (1 shared connections)
-- [UMVEnemyDodgeTokenComponent::TryConsumeDodgeTokenForThreat](UMVEnemyDodgeTokenComponent--TryConsumeDodgeTokenForThreat.md) (1 shared connections)
-- [FDataTableRowHandle](FDataTableRowHandle.md) (1 shared connections)
+- [MVAICombatTypes.h](MVAICombatTypes.h.md) (1 shared connections)
+- [MVEnemy.cpp](MVEnemy.cpp.md) (1 shared connections)
 
 ## Source Files
 
-- `Source/Maverick/Components/MVCombatComponent.cpp`
 - `Source/Maverick/Components/MVCombatComponent.h`
+- `Source/Maverick/Public/Enum/MVCombatActionTypes.h`
 
 ## Audit Trail
 
-- EXTRACTED: 108 (97%)
-- INFERRED: 3 (3%)
+- EXTRACTED: 64 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

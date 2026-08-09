@@ -1,6 +1,6 @@
 # WeightedTargetHandler.h
 
-> 25 nodes
+> 25 nodes · cohesion 0.09
 
 ## Key Concepts
 
@@ -8,26 +8,26 @@
 - **ETargetExceptionType** (9 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetTypes.h`
 - **UWeightedTargetHandler::HandleTargetException_Implementation()** (5 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetHandlers/WeightedTargetHandler.cpp`
 - **UWeightedTargetHandler::HandleTargetUnlock()** (4 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetHandlers/WeightedTargetHandler.cpp`
-- **IsAnyUnlockReasonSet()** (4 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h`
 - **ConvertTargetExceptionToUnlockReason()** (4 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h`
 - **HandleTargetUnlock** (4 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h`
+- **IsAnyUnlockReasonSet()** (4 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h`
 - **.ShouldSkipTargetCustom_Implementation()** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h`
 - **ULockOnTargetComponent::ReceiveTargetException()** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetComponent.cpp`
 - **UWeightedTargetHandler::OnLineOfSightTimerExpired()** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetHandlers/WeightedTargetHandler.cpp`
-- **FTargetContext** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h`
-- **FFindTargetContext** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h`
-- **ETargetUnlockReason** (2 connections)
 - **TryFindTarget** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h`
+- **FFindTargetContext** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h`
+- **FTargetContext** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h`
+- **ETargetUnlockReason** (2 connections)
 - **UWeightedTargetHandlerDetailedResponse()** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h`
 - **ETargetUnlockReason** (1 connections)
-- **uint8** (1 connections)
-- **UMETA** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetTypes.h`
 - **SocketInvalidation** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetTypes.h`
-- **UWeightedTargetHandler** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h`
-- **UTargetComponent** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h`
-- **ULockOnTargetComponent** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h`
-- **APlayerController** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h`
+- **UMETA** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetTypes.h`
+- **uint8** (1 connections)
 - **APawn** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h`
+- **APlayerController** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h`
+- **ULockOnTargetComponent** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h`
+- **UTargetComponent** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h`
+- **UWeightedTargetHandler** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h`
 - **underlying_type_t** (1 connections)
 
 ## Relationships

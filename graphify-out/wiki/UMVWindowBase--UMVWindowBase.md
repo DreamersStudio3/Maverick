@@ -1,12 +1,12 @@
 # UMVWindowBase::UMVWindowBase
 
-> 3 nodes
+> 3 nodes · cohesion 0.67
 
 ## Key Concepts
 
 - **UMVWindowBase::UMVWindowBase()** (2 connections) — `Source/Maverick/UI/Base/MVWindowBase.cpp`
-- **MVWindowBase.cpp** (1 connections) — `Source/Maverick/UI/Base/MVWindowBase.cpp`
 - **FObjectInitializer** (1 connections)
+- **MVWindowBase.cpp** (1 connections) — `Source/Maverick/UI/Base/MVWindowBase.cpp`
 
 ## Relationships
 

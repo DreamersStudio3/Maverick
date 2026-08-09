@@ -1,14 +1,14 @@
 # WidgetExtension.h
 
-> 5 nodes
+> 5 nodes · cohesion 0.40
 
 ## Key Concepts
 
 - **WidgetExtension.h** (4 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetExtensions/WidgetExtension.h`
-- **UWidgetComponent** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetExtensions/WidgetExtension.h`
-- **UUserWidget** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetExtensions/WidgetExtension.h`
 - **FStreamableHandle** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetExtensions/WidgetExtension.h`
 - **ULockOnTargetExtensionBase()** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetExtensions/WidgetExtension.h`
+- **UUserWidget** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetExtensions/WidgetExtension.h`
+- **UWidgetComponent** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetExtensions/WidgetExtension.h`
 
 ## Relationships
 

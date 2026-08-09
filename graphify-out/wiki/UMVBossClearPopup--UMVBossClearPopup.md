@@ -1,12 +1,12 @@
 # UMVBossClearPopup::UMVBossClearPopup
 
-> 3 nodes
+> 3 nodes · cohesion 0.67
 
 ## Key Concepts
 
 - **UMVBossClearPopup::UMVBossClearPopup()** (2 connections) — `Source/Maverick/UI/Popup/MVBossClearPopup.cpp`
-- **MVBossClearPopup.cpp** (1 connections) — `Source/Maverick/UI/Popup/MVBossClearPopup.cpp`
 - **FObjectInitializer** (1 connections)
+- **MVBossClearPopup.cpp** (1 connections) — `Source/Maverick/UI/Popup/MVBossClearPopup.cpp`
 
 ## Relationships
 

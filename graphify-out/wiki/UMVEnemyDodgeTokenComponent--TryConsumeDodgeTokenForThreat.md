@@ -1,6 +1,6 @@
 # UMVEnemyDodgeTokenComponent::TryConsumeDodgeTokenForThreat
 
-> 5 nodes
+> 5 nodes · cohesion 0.40
 
 ## Key Concepts
 
@@ -12,10 +12,10 @@
 
 ## Relationships
 
+- [EMVEnemyDodgeTokenGrantReason](EMVEnemyDodgeTokenGrantReason.md) (1 shared connections)
 - [FMVCombatActionEvent](FMVCombatActionEvent.md) (1 shared connections)
 - [MVEnemyDodgeTokenComponent.cpp](MVEnemyDodgeTokenComponent.cpp.md) (1 shared connections)
 - [EnemyDodgeActionTaskResolveDirection](EnemyDodgeActionTaskResolveDirection.md) (1 shared connections)
-- [EMVEnemyDodgeTokenGrantReason](EMVEnemyDodgeTokenGrantReason.md) (1 shared connections)
 
 ## Source Files
 

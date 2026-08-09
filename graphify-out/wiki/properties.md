@@ -1,6 +1,6 @@
 # properties
 
-> 9 nodes
+> 9 nodes · cohesion 0.22
 
 ## Key Concepts
 
@@ -8,16 +8,16 @@
 - **tables** (4 connections) — `MaverickDesign/Schema/TableData.schema.json`
 - **version** (3 connections) — `MaverickDesign/Schema/TableData.schema.json`
 - **additionalProperties** (2 connections) — `MaverickDesign/Schema/TableData.schema.json`
+- **$ref** (1 connections) — `MaverickDesign/Schema/TableData.schema.json`
+- **minProperties** (1 connections) — `MaverickDesign/Schema/TableData.schema.json`
 - **type** (1 connections) — `MaverickDesign/Schema/TableData.schema.json`
 - **const** (1 connections) — `MaverickDesign/Schema/TableData.schema.json`
 - **type** (1 connections) — `MaverickDesign/Schema/TableData.schema.json`
-- **minProperties** (1 connections) — `MaverickDesign/Schema/TableData.schema.json`
-- **$ref** (1 connections) — `MaverickDesign/Schema/TableData.schema.json`
 
 ## Relationships
 
 - [TableData.schema.json](TableData.schema.json.md) (1 shared connections)
-- [MVTableAssetGenerator.cpp](MVTableAssetGenerator.cpp.md) (1 shared connections)
+- [type](type_2.md) (1 shared connections)
 
 ## Source Files
 

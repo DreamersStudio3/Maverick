@@ -1,6 +1,6 @@
 # FMVHitReactionTaskInstanceData
 
-> 42 nodes
+> 42 nodes · cohesion 0.07
 
 ## Key Concepts
 
@@ -8,11 +8,11 @@
 - **MVHitReactionTask.cpp** (9 connections) — `Source/Maverick/AI/Task/MVHitReactionTask.cpp`
 - **EnterState** (9 connections) — `Source/Maverick/AI/Task/MVHitReactionTask.h`
 - **ExitState** (7 connections) — `Source/Maverick/AI/Task/MVHitReactionTask.h`
-- **HitReactionTaskLogTrace()** (6 connections) — `Source/Maverick/AI/Task/MVHitReactionTask.cpp`
 - **FMVHitReactionTask** (6 connections) — `Source/Maverick/AI/Task/MVHitReactionTask.h`
 - **Tick** (6 connections) — `Source/Maverick/AI/Task/MVHitReactionTask.h`
-- **HitReactionTaskResolveOwner()** (5 connections) — `Source/Maverick/AI/Task/MVHitReactionTask.cpp`
+- **HitReactionTaskLogTrace()** (6 connections) — `Source/Maverick/AI/Task/MVHitReactionTask.cpp`
 - **MVHitReactionTask.h** (5 connections) — `Source/Maverick/AI/Task/MVHitReactionTask.h`
+- **HitReactionTaskResolveOwner()** (5 connections) — `Source/Maverick/AI/Task/MVHitReactionTask.cpp`
 - **FStateTreeExecutionContext** (4 connections)
 - **HitReactionTaskIsHitReactionActionTableName()** (4 connections) — `Source/Maverick/AI/Task/MVHitReactionTask.cpp`
 - **HitReactionTaskIsStartedActionRunning()** (4 connections) — `Source/Maverick/AI/Task/MVHitReactionTask.cpp`
@@ -20,15 +20,15 @@
 - **EMVActionHitReactionType** (2 connections)
 - **EStateTreeRunStatus** (2 connections)
 - **FStateTreeTransitionResult** (2 connections)
+- **.GetInstanceDataType()** (2 connections) — `Source/Maverick/AI/Task/MVHitReactionTask.h`
 - **UMVActionComponent** (2 connections) — `Source/Maverick/AI/Task/MVHitReactionTask.h`
 - **UMVHitReactionComponent** (2 connections) — `Source/Maverick/AI/Task/MVHitReactionTask.h`
-- **.GetInstanceDataType()** (2 connections) — `Source/Maverick/AI/Task/MVHitReactionTask.h`
 - **APawn** (1 connections)
-- **TObjectPtr** (1 connections)
 - **FName** (1 connections)
 - **TCHAR** (1 connections)
-- **FMVHitReactionTask::FMVHitReactionTask()** (1 connections) — `Source/Maverick/AI/Task/MVHitReactionTask.cpp`
 - **TObjectPtr** (1 connections)
+- **FMVHitReactionTask::FMVHitReactionTask()** (1 connections) — `Source/Maverick/AI/Task/MVHitReactionTask.cpp`
+- **ActionComponent** (1 connections) — `Source/Maverick/AI/Task/MVHitReactionTask.h`
 - *... and 17 more nodes in this community*
 
 ## Relationships

@@ -1,31 +1,38 @@
 # FName
 
-> 10 nodes
+> 14 nodes · cohesion 0.20
 
 ## Key Concepts
 
-- **FName** (5 connections)
-- **MVFieldTransitionActionTableNameFromDataTable()** (4 connections) — `Source/Maverick/System/MVFieldTransitionSubsystem.cpp`
-- **UMVFieldTransitionSubsystem::StartCheckpointTravelToTransform()** (3 connections) — `Source/Maverick/System/MVFieldTransitionSubsystem.cpp`
-- **UMVFieldTransitionSubsystem::SetLastCheckpointFromActor()** (3 connections) — `Source/Maverick/System/MVFieldTransitionSubsystem.cpp`
-- **UMVFieldTransitionSubsystem::HandlePreTransitionActionEnded()** (3 connections) — `Source/Maverick/System/MVFieldTransitionSubsystem.cpp`
-- **UMVFieldTransitionSubsystem::ResolveTransitionResetFieldId()** (3 connections) — `Source/Maverick/System/MVFieldTransitionSubsystem.cpp`
-- **UMVFieldTransitionSubsystem::StartDeathRespawnTransition()** (2 connections) — `Source/Maverick/System/MVFieldTransitionSubsystem.cpp`
-- **AActor** (2 connections)
-- **UDataTable** (1 connections)
-- **FTransform** (1 connections)
+- **FName** (7 connections)
+- **UMVDeathComponent::MakeDeathActionRowName()** (6 connections) — `Source/Maverick/Components/MVDeathComponent.cpp`
+- **UMVDeathComponent::ResolveDeathActionRowHandle()** (6 connections) — `Source/Maverick/Components/MVDeathComponent.cpp`
+- **FGameplayTag** (5 connections)
+- **UMVDeathComponent::MakeLegacyDeathActionRowName()** (5 connections) — `Source/Maverick/Components/MVDeathComponent.cpp`
+- **EMVDeathActionFacing** (4 connections)
+- **UMVDeathComponent::CharacterIndexCodeToTableToken()** (3 connections) — `Source/Maverick/Components/MVDeathComponent.cpp`
+- **UMVDeathComponent::MakeDeathActionTableName()** (3 connections) — `Source/Maverick/Components/MVDeathComponent.cpp`
+- **UMVDeathComponent::ResolveDeathActionFacing()** (3 connections) — `Source/Maverick/Components/MVDeathComponent.cpp`
+- **int32** (2 connections)
+- **UMVDeathComponent::HandleActionEnded()** (2 connections) — `Source/Maverick/Components/MVDeathComponent.cpp`
+- **UMVDeathComponent::ResolveDeathActionTableName()** (2 connections) — `Source/Maverick/Components/MVDeathComponent.cpp`
+- **UMVDeathComponent::TryBeginDeferredDeathPresentation()** (2 connections) — `Source/Maverick/Components/MVDeathComponent.cpp`
+- **FDataTableRowHandle** (1 connections)
 
 ## Relationships
 
-- [MVFieldTransitionSubsystem.cpp](MVFieldTransitionSubsystem.cpp.md) (7 shared connections)
+- [MVDeathComponent.cpp](MVDeathComponent.cpp.md) (9 shared connections)
+- [EMVDeathActionPose](EMVDeathActionPose.md) (3 shared connections)
+- [FMVDeathContext](FMVDeathContext.md) (2 shared connections)
+- [UMVTableManager](UMVTableManager.md) (1 shared connections)
 
 ## Source Files
 
-- `Source/Maverick/System/MVFieldTransitionSubsystem.cpp`
+- `Source/Maverick/Components/MVDeathComponent.cpp`
 
 ## Audit Trail
 
-- EXTRACTED: 27 (100%)
+- EXTRACTED: 51 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

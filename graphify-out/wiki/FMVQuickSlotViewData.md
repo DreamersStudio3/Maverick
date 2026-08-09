@@ -1,6 +1,6 @@
 # FMVQuickSlotViewData
 
-> 14 nodes
+> 14 nodes · cohesion 0.15
 
 ## Key Concepts
 
@@ -8,16 +8,16 @@
 - **MVQuickSlotWidget.h** (5 connections) — `Source/Maverick/UI/HUD/MVQuickSlotWidget.h`
 - **UMVPlayerConsumable::BuildHealingPotionQuickSlotViewData()** (2 connections) — `Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp`
 - **UTexture2D** (2 connections) — `Source/Maverick/UI/HUD/MVQuickSlotWidget.h`
-- **UImage** (1 connections) — `Source/Maverick/UI/HUD/MVQuickSlotWidget.h`
-- **UTextBlock** (1 connections) — `Source/Maverick/UI/HUD/MVQuickSlotWidget.h`
-- **TObjectPtr** (1 connections)
+- **bLocked** (1 connections) — `Source/Maverick/UI/HUD/MVQuickSlotWidget.h`
+- **Count** (1 connections) — `Source/Maverick/UI/HUD/MVQuickSlotWidget.h`
+- **HotKeyText** (1 connections) — `Source/Maverick/UI/HUD/MVQuickSlotWidget.h`
 - **Icon** (1 connections) — `Source/Maverick/UI/HUD/MVQuickSlotWidget.h`
 - **FText** (1 connections)
-- **HotKeyText** (1 connections) — `Source/Maverick/UI/HUD/MVQuickSlotWidget.h`
 - **int32** (1 connections)
-- **Count** (1 connections) — `Source/Maverick/UI/HUD/MVQuickSlotWidget.h`
-- **bLocked** (1 connections) — `Source/Maverick/UI/HUD/MVQuickSlotWidget.h`
+- **TObjectPtr** (1 connections)
+- **UImage** (1 connections) — `Source/Maverick/UI/HUD/MVQuickSlotWidget.h`
 - **UMVQuickSlotWidget()** (1 connections) — `Source/Maverick/UI/HUD/MVQuickSlotWidget.h`
+- **UTextBlock** (1 connections) — `Source/Maverick/UI/HUD/MVQuickSlotWidget.h`
 
 ## Relationships
 

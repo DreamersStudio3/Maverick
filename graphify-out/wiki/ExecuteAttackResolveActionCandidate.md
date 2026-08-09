@@ -1,6 +1,6 @@
 # ExecuteAttackResolveActionCandidate
 
-> 12 nodes
+> 12 nodes · cohesion 0.26
 
 ## Key Concepts
 
@@ -11,20 +11,20 @@
 - **FMVActionRequest()** (6 connections) — `Source/Maverick/Public/Tables/MVActionTableTypes.h`
 - **ExecuteAttackResolveActionTypeTag()** (4 connections) — `Source/Maverick/AI/Task/MVExecuteAttackTask.cpp`
 - **FDataTableRowHandle** (2 connections)
-- **UObject** (2 connections)
 - **FSoftObjectPath** (2 connections)
-- **FGameplayTag** (1 connections)
+- **UObject** (2 connections)
 - **ActionRow** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
 - **.Reset()** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
+- **FGameplayTag** (1 connections)
 
 ## Relationships
 
 - [MVExecuteAttackTask.cpp](MVExecuteAttackTask.cpp.md) (8 shared connections)
 - [MVAICombatTypes.h](MVAICombatTypes.h.md) (4 shared connections)
-- [FMVCombatActionTableInput](FMVCombatActionTableInput.md) (2 shared connections)
 - [FMVExecuteFixedAttackTaskInstanceData](FMVExecuteFixedAttackTaskInstanceData.md) (2 shared connections)
-- [MVHitTypes.h](MVHitTypes.h.md) (1 shared connections)
+- [FMVCombatActionTableInput](FMVCombatActionTableInput.md) (2 shared connections)
 - [FMVEnemyDeadTaskInstanceData](FMVEnemyDeadTaskInstanceData.md) (1 shared connections)
+- [MVHitTypes.h](MVHitTypes.h.md) (1 shared connections)
 
 ## Source Files
 

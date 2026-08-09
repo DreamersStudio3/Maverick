@@ -1,6 +1,6 @@
 # MVDeathRespawnFlow.h
 
-> 9 nodes
+> 9 nodes · cohesion 0.22
 
 ## Key Concepts
 
@@ -10,14 +10,14 @@
 - **UMVDeathRespawnFlow::Initialize()** (2 connections) — `Source/Maverick/System/MVDeathRespawnFlow.cpp`
 - **AMVCharacterBase** (1 connections) — `Source/Maverick/System/MVDeathRespawnFlow.h`
 - **UMVDeathComponent** (1 connections) — `Source/Maverick/System/MVDeathRespawnFlow.h`
-- **UMVUISubsystem** (1 connections) — `Source/Maverick/System/MVDeathRespawnFlow.h`
 - **UMVDeathRespawnFlow()** (1 connections) — `Source/Maverick/System/MVDeathRespawnFlow.h`
+- **UMVUISubsystem** (1 connections) — `Source/Maverick/System/MVDeathRespawnFlow.h`
 - **UObject** (1 connections)
 
 ## Relationships
 
-- [MVDeathRespawnFlow.cpp](MVDeathRespawnFlow.cpp.md) (1 shared connections)
 - [MVEnemy.h](MVEnemy.h.md) (1 shared connections)
+- [MVDeathRespawnFlow.cpp](MVDeathRespawnFlow.cpp.md) (1 shared connections)
 - [MVFieldTransitionSubsystem.cpp](MVFieldTransitionSubsystem.cpp.md) (1 shared connections)
 
 ## Source Files

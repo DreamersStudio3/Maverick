@@ -1,12 +1,12 @@
 # Doxygen 책임 블록 정책
 
-> 3 nodes
+> 3 nodes · cohesion 0.67
 
 ## Key Concepts
 
 - **Doxygen Responsibility Blocks** (2 connections) — `docs/wiki/Header-Documentation.md`
-- **Selective Documentation Policy** (1 connections) — `docs/wiki/Header-Documentation.md`
 - **Responsibility Block Contract** (1 connections) — `docs/wiki/Header-Documentation.md`
+- **Selective Documentation Policy** (1 connections) — `docs/wiki/Header-Documentation.md`
 
 ## Relationships
 

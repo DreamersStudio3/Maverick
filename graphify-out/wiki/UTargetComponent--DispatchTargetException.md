@@ -1,15 +1,15 @@
 # UTargetComponent::DispatchTargetException
 
-> 9 nodes
+> 9 nodes · cohesion 0.22
 
 ## Key Concepts
 
-- **UTargetComponent::NotifyTargetCaptured()** (4 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetComponent.cpp`
 - **UTargetComponent::DispatchTargetException()** (4 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetComponent.cpp`
+- **UTargetComponent::NotifyTargetCaptured()** (4 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetComponent.cpp`
 - **.IsSocketValid()** (4 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h`
-- **FName** (3 connections)
-- **.IsCaptured()** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h`
 - **.GetInvadersNum()** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h`
+- **.IsCaptured()** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h`
+- **FName** (3 connections)
 - **.GetDefaultSocket()** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h`
 - **K2_OnCaptured** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h`
 - **int32** (1 connections)
@@ -18,8 +18,8 @@
 
 - [ETargetFocusPointType](ETargetFocusPointType.md) (6 shared connections)
 - [TargetComponent.cpp](TargetComponent.cpp.md) (2 shared connections)
-- [UTargetComponent::GetFocusPointLocation](UTargetComponent--GetFocusPointLocation.md) (1 shared connections)
 - [WeightedTargetHandler.h](WeightedTargetHandler.h.md) (1 shared connections)
+- [UTargetComponent::GetFocusPointLocation](UTargetComponent--GetFocusPointLocation.md) (1 shared connections)
 
 ## Source Files
 

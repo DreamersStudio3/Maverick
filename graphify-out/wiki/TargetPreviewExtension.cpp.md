@@ -1,25 +1,25 @@
 # TargetPreviewExtension.cpp
 
-> 16 nodes
+> 16 nodes · cohesion 0.15
 
 ## Key Concepts
 
 - **TargetPreviewExtension.cpp** (13 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetExtensions/TargetPreviewExtension.cpp`
 - **UTargetPreviewExtension::OnTargetLocked()** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetExtensions/TargetPreviewExtension.cpp`
 - **UTargetPreviewExtension::OnTargetUnlocked()** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetExtensions/TargetPreviewExtension.cpp`
-- **UTargetPreviewExtension::Initialize()** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetExtensions/TargetPreviewExtension.cpp`
-- **ULockOnTargetComponent** (2 connections)
-- **UTargetPreviewExtension::Deinitialize()** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetExtensions/TargetPreviewExtension.cpp`
-- **UTargetComponent** (2 connections)
 - **FName** (2 connections)
+- **ULockOnTargetComponent** (2 connections)
+- **UTargetComponent** (2 connections)
 - **UTargetPreviewExtension::BeginTargetPreview()** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetExtensions/TargetPreviewExtension.cpp`
+- **UTargetPreviewExtension::Deinitialize()** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetExtensions/TargetPreviewExtension.cpp`
+- **UTargetPreviewExtension::Initialize()** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetExtensions/TargetPreviewExtension.cpp`
 - **UTargetPreviewExtension::StopTargetPreview()** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetExtensions/TargetPreviewExtension.cpp`
-- **UTargetPreviewExtension::UTargetPreviewExtension()** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetExtensions/TargetPreviewExtension.cpp`
-- **UTargetPreviewExtension::OnWidgetClassLoaded()** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetExtensions/TargetPreviewExtension.cpp`
 - **UTargetPreviewExtension::IsWidgetInitialized()** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetExtensions/TargetPreviewExtension.cpp`
+- **UTargetPreviewExtension::OnWidgetClassLoaded()** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetExtensions/TargetPreviewExtension.cpp`
 - **UTargetPreviewExtension::SetPreviewActive()** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetExtensions/TargetPreviewExtension.cpp`
 - **UTargetPreviewExtension::Update()** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetExtensions/TargetPreviewExtension.cpp`
 - **UTargetPreviewExtension::UpdateTargetPreview()** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetExtensions/TargetPreviewExtension.cpp`
+- **UTargetPreviewExtension::UTargetPreviewExtension()** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetExtensions/TargetPreviewExtension.cpp`
 
 ## Relationships
 

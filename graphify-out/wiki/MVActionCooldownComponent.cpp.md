@@ -1,6 +1,6 @@
 # MVActionCooldownComponent.cpp
 
-> 10 nodes
+> 10 nodes · cohesion 0.29
 
 ## Key Concepts
 
@@ -9,11 +9,11 @@
 - **UMVActionCooldownComponent::ConfigureCooldowns()** (3 connections) — `Source/Maverick/AI/MVActionCooldownComponent.cpp`
 - **UMVActionCooldownComponent::GetReadyActionIds()** (3 connections) — `Source/Maverick/AI/MVActionCooldownComponent.cpp`
 - **TArray** (2 connections)
-- **UMVActionCooldownComponent::StartCooldown()** (2 connections) — `Source/Maverick/AI/MVActionCooldownComponent.cpp`
-- **UMVActionCooldownComponent::IsCooldownReady()** (2 connections) — `Source/Maverick/AI/MVActionCooldownComponent.cpp`
 - **UMVActionCooldownComponent::GetRemainingTime()** (2 connections) — `Source/Maverick/AI/MVActionCooldownComponent.cpp`
-- **UMVActionCooldownComponent::UMVActionCooldownComponent()** (1 connections) — `Source/Maverick/AI/MVActionCooldownComponent.cpp`
+- **UMVActionCooldownComponent::IsCooldownReady()** (2 connections) — `Source/Maverick/AI/MVActionCooldownComponent.cpp`
+- **UMVActionCooldownComponent::StartCooldown()** (2 connections) — `Source/Maverick/AI/MVActionCooldownComponent.cpp`
 - **UMVActionCooldownComponent::TickCooldowns()** (1 connections) — `Source/Maverick/AI/MVActionCooldownComponent.cpp`
+- **UMVActionCooldownComponent::UMVActionCooldownComponent()** (1 connections) — `Source/Maverick/AI/MVActionCooldownComponent.cpp`
 
 ## Relationships
 

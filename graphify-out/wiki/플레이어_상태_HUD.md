@@ -1,13 +1,13 @@
 # 플레이어 상태 HUD
 
-> 4 nodes
+> 4 nodes · cohesion 0.50
 
 ## Key Concepts
 
 - **MVPlayerStatusWidget.h** (3 connections) — `Source/Maverick/UI/HUD/MVPlayerStatusWidget.h`
+- **UMVPlayerStatusWidget()** (1 connections) — `Source/Maverick/UI/HUD/MVPlayerStatusWidget.h`
 - **UMVStatComponent** (1 connections) — `Source/Maverick/UI/HUD/MVPlayerStatusWidget.h`
 - **UMVStatusBarWidget** (1 connections) — `Source/Maverick/UI/HUD/MVPlayerStatusWidget.h`
-- **UMVPlayerStatusWidget()** (1 connections) — `Source/Maverick/UI/HUD/MVPlayerStatusWidget.h`
 
 ## Relationships
 

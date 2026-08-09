@@ -1,6 +1,6 @@
 # MVFieldTransitionSubsystem.h
 
-> 8 nodes
+> 8 nodes · cohesion 0.25
 
 ## Key Concepts
 
@@ -8,10 +8,10 @@
 - **AMVCharacterBase** (1 connections) — `Source/Maverick/System/MVFieldTransitionSubsystem.h`
 - **UMVActionComponent** (1 connections) — `Source/Maverick/System/MVFieldTransitionSubsystem.h`
 - **UMVDeathRespawnFlow** (1 connections) — `Source/Maverick/System/MVFieldTransitionSubsystem.h`
+- **UMVFieldTransitionSubsystem()** (1 connections) — `Source/Maverick/System/MVFieldTransitionSubsystem.h`
 - **UMVLoadingWindow** (1 connections) — `Source/Maverick/System/MVFieldTransitionSubsystem.h`
 - **UMVUISubsystem** (1 connections) — `Source/Maverick/System/MVFieldTransitionSubsystem.h`
 - **UMVWorldStateSubsystem** (1 connections) — `Source/Maverick/System/MVFieldTransitionSubsystem.h`
-- **UMVFieldTransitionSubsystem()** (1 connections) — `Source/Maverick/System/MVFieldTransitionSubsystem.h`
 
 ## Relationships
 

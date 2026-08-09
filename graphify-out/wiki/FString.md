@@ -1,17 +1,17 @@
 # FString
 
-> 8 nodes
+> 8 nodes · cohesion 0.39
 
 ## Key Concepts
 
 - **FString** (6 connections)
 - **int32** (6 connections)
-- **WorldStateResolveFallbackSlotName()** (3 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
-- **UMVWorldStateSubsystem::SaveToSlot()** (3 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
-- **UMVWorldStateSubsystem::LoadFromSlot()** (3 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
 - **UMVWorldStateSubsystem::DeleteSaveSlot()** (3 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
 - **UMVWorldStateSubsystem::DoesSaveSlotExist()** (3 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
+- **UMVWorldStateSubsystem::LoadFromSlot()** (3 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
 - **UMVWorldStateSubsystem::ResolveSlotName()** (3 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
+- **UMVWorldStateSubsystem::SaveToSlot()** (3 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
+- **WorldStateResolveFallbackSlotName()** (3 connections) — `Source/Maverick/System/MVWorldStateSubsystem.cpp`
 
 ## Relationships
 

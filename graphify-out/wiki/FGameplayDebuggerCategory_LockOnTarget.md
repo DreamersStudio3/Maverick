@@ -1,6 +1,6 @@
 # FGameplayDebuggerCategory_LockOnTarget
 
-> 48 nodes
+> 48 nodes · cohesion 0.08
 
 ## Key Concepts
 
@@ -9,26 +9,26 @@
 - **GameplayDebuggerCategory_LockOnTarget.h** (9 connections) — `Plugins/LockOnTarget/Source/LockOnTargetDev/Private/GameplayDebugger/GameplayDebuggerCategory_LockOnTarget.h`
 - **DisplayDebugInfo** (8 connections) — `Plugins/LockOnTarget/Source/LockOnTargetDev/Private/GameplayDebugger/GameplayDebuggerCategory_LockOnTarget.h`
 - **DrawData** (7 connections) — `Plugins/LockOnTarget/Source/LockOnTargetDev/Private/GameplayDebugger/GameplayDebuggerCategory_LockOnTarget.h`
-- **SimulateTargetHandler** (7 connections) — `Plugins/LockOnTarget/Source/LockOnTargetDev/Private/GameplayDebugger/GameplayDebuggerCategory_LockOnTarget.h`
 - **DrawPlayerInput** (7 connections) — `Plugins/LockOnTarget/Source/LockOnTargetDev/Private/GameplayDebugger/GameplayDebuggerCategory_LockOnTarget.h`
+- **SimulateTargetHandler** (7 connections) — `Plugins/LockOnTarget/Source/LockOnTargetDev/Private/GameplayDebugger/GameplayDebuggerCategory_LockOnTarget.h`
 - **FGameplayDebuggerCanvasContext** (6 connections)
 - **CollectTargetSocketsInfo** (6 connections) — `Plugins/LockOnTarget/Source/LockOnTargetDev/Private/GameplayDebugger/GameplayDebuggerCategory_LockOnTarget.h`
-- **GetClassNameSafe()** (5 connections) — `Plugins/LockOnTarget/Source/LockOnTargetDev/Private/GameplayDebugger/GameplayDebuggerCategory_LockOnTarget.cpp`
 - **DecomposeAngle()** (5 connections) — `Plugins/LockOnTarget/Source/LockOnTargetDev/Private/GameplayDebugger/GameplayDebuggerCategory_LockOnTarget.cpp`
 - **CollectExtensionsInfo** (5 connections) — `Plugins/LockOnTarget/Source/LockOnTargetDev/Private/GameplayDebugger/GameplayDebuggerCategory_LockOnTarget.h`
 - **CollectInvadersInfo** (5 connections) — `Plugins/LockOnTarget/Source/LockOnTargetDev/Private/GameplayDebugger/GameplayDebuggerCategory_LockOnTarget.h`
 - **DrawWeights** (5 connections) — `Plugins/LockOnTarget/Source/LockOnTargetDev/Private/GameplayDebugger/GameplayDebuggerCategory_LockOnTarget.h`
+- **GetClassNameSafe()** (5 connections) — `Plugins/LockOnTarget/Source/LockOnTargetDev/Private/GameplayDebugger/GameplayDebuggerCategory_LockOnTarget.cpp`
 - **FString** (4 connections)
 - **DisplayCurrentTarget** (4 connections) — `Plugins/LockOnTarget/Source/LockOnTargetDev/Private/GameplayDebugger/GameplayDebuggerCategory_LockOnTarget.h`
 - **LockOnTargetDev.cpp** (4 connections) — `Plugins/LockOnTarget/Source/LockOnTargetDev/Private/LockOnTargetDev.cpp`
 - **FLockOnTargetDevModule** (4 connections) — `Plugins/LockOnTarget/Source/LockOnTargetDev/Private/LockOnTargetDev.h`
 - **.MakeInstance()** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTargetDev/Private/GameplayDebugger/GameplayDebuggerCategory_LockOnTarget.h`
 - **OnKeyPressedSwitchTarget** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTargetDev/Private/GameplayDebugger/GameplayDebuggerCategory_LockOnTarget.h`
-- **FVector2D** (2 connections)
-- **ULockOnTargetComponent** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTargetDev/Private/GameplayDebugger/GameplayDebuggerCategory_LockOnTarget.h`
 - **FGameplayDebuggerCategory** (2 connections)
+- **FVector2D** (2 connections)
 - **OnKeyPressedChangeDebugActor** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTargetDev/Private/GameplayDebugger/GameplayDebuggerCategory_LockOnTarget.h`
 - **OnKeyPressedSimulateTargetHandler** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTargetDev/Private/GameplayDebugger/GameplayDebuggerCategory_LockOnTarget.h`
+- **OnRotateGuidanceLineDown** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTargetDev/Private/GameplayDebugger/GameplayDebuggerCategory_LockOnTarget.h`
 - *... and 23 more nodes in this community*
 
 ## Relationships
