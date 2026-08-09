@@ -1,6 +1,6 @@
 # FMVSkillDataTableColumn
 
-> 25 nodes · cohesion 0.08
+> 25 nodes
 
 ## Key Concepts
 
@@ -9,37 +9,38 @@
 - **UMVCombatComponent::CanConsumeActionCost()** (2 connections) — `Source/Maverick/Components/MVCombatComponent.cpp`
 - **UMVCombatComponent::ResolveHeavyChargeCommitTime()** (2 connections) — `Source/Maverick/Components/MVCombatComponent.cpp`
 - **UMVAbilityBase** (2 connections) — `Source/Maverick/Public/Tables/MVSkillDataTableColumn.h`
-- **AbilityReference** (1 connections) — `Source/Maverick/Public/Tables/MVSkillDataTableColumn.h`
-- **bIsChained** (1 connections) — `Source/Maverick/Public/Tables/MVSkillDataTableColumn.h`
-- **ChargeCommitTime** (1 connections) — `Source/Maverick/Public/Tables/MVSkillDataTableColumn.h`
-- **CooldownDuration** (1 connections) — `Source/Maverick/Public/Tables/MVSkillDataTableColumn.h`
-- **DamageMultiplier** (1 connections) — `Source/Maverick/Public/Tables/MVSkillDataTableColumn.h`
-- **EarlyReleaseBlendOutTime** (1 connections) — `Source/Maverick/Public/Tables/MVSkillDataTableColumn.h`
-- **EarlyReleaseStartSection** (1 connections) — `Source/Maverick/Public/Tables/MVSkillDataTableColumn.h`
-- **.FMVSkillDataTableColumn()** (1 connections) — `Source/Maverick/Public/Tables/MVSkillDataTableColumn.h`
-- **GroggyDamageMultiplier** (1 connections) — `Source/Maverick/Public/Tables/MVSkillDataTableColumn.h`
-- **InputWindowDuration** (1 connections) — `Source/Maverick/Public/Tables/MVSkillDataTableColumn.h`
-- **InterStageCooldown** (1 connections) — `Source/Maverick/Public/Tables/MVSkillDataTableColumn.h`
-- **MpCost** (1 connections) — `Source/Maverick/Public/Tables/MVSkillDataTableColumn.h`
-- **NextChainName** (1 connections) — `Source/Maverick/Public/Tables/MVSkillDataTableColumn.h`
-- **StaminaCost** (1 connections) — `Source/Maverick/Public/Tables/MVSkillDataTableColumn.h`
-- **SwingDirection** (1 connections) — `Source/Maverick/Public/Tables/MVSkillDataTableColumn.h`
-- **EMVAttackSwingDirection** (1 connections)
 - **FMVActionRow** (1 connections)
-- **FName** (1 connections)
+- **.FMVSkillDataTableColumn()** (1 connections) — `Source/Maverick/Public/Tables/MVSkillDataTableColumn.h`
 - **TSubclassOf** (1 connections)
+- **AbilityReference** (1 connections) — `Source/Maverick/Public/Tables/MVSkillDataTableColumn.h`
+- **DamageMultiplier** (1 connections) — `Source/Maverick/Public/Tables/MVSkillDataTableColumn.h`
+- **StaminaCost** (1 connections) — `Source/Maverick/Public/Tables/MVSkillDataTableColumn.h`
+- **MpCost** (1 connections) — `Source/Maverick/Public/Tables/MVSkillDataTableColumn.h`
+- **GroggyDamageMultiplier** (1 connections) — `Source/Maverick/Public/Tables/MVSkillDataTableColumn.h`
+- **EMVAttackSwingDirection** (1 connections)
+- **SwingDirection** (1 connections) — `Source/Maverick/Public/Tables/MVSkillDataTableColumn.h`
+- **ChargeCommitTime** (1 connections) — `Source/Maverick/Public/Tables/MVSkillDataTableColumn.h`
+- **FName** (1 connections)
+- **EarlyReleaseStartSection** (1 connections) — `Source/Maverick/Public/Tables/MVSkillDataTableColumn.h`
+- **EarlyReleaseBlendOutTime** (1 connections) — `Source/Maverick/Public/Tables/MVSkillDataTableColumn.h`
+- **CooldownDuration** (1 connections) — `Source/Maverick/Public/Tables/MVSkillDataTableColumn.h`
 - **uint32** (1 connections)
+- **bIsChained** (1 connections) — `Source/Maverick/Public/Tables/MVSkillDataTableColumn.h`
+- **NextChainName** (1 connections) — `Source/Maverick/Public/Tables/MVSkillDataTableColumn.h`
+- **InterStageCooldown** (1 connections) — `Source/Maverick/Public/Tables/MVSkillDataTableColumn.h`
+- **InputWindowDuration** (1 connections) — `Source/Maverick/Public/Tables/MVSkillDataTableColumn.h`
 
 ## Relationships
 
 - [MVCombatComponent.cpp](MVCombatComponent.cpp.md) (4 shared connections)
-- [FMVSkillEntry](FMVSkillEntry.md) (2 shared connections)
-- [int32](int32.md) (2 shared connections)
+- [FDataTableRowHandle](FDataTableRowHandle.md) (2 shared connections)
 - [MVHitTypes.h](MVHitTypes.h.md) (1 shared connections)
+- [FMVCombatActionEvent](FMVCombatActionEvent.md) (1 shared connections)
 - [MVFinisherComponent.cpp](MVFinisherComponent.cpp.md) (1 shared connections)
 - [MVHitReactionComponent.h](MVHitReactionComponent.h.md) (1 shared connections)
 - [MVAbilityBase.cpp](MVAbilityBase.cpp.md) (1 shared connections)
-- [전투 액션 Chooser 입력](%EC%A0%84%ED%88%AC_%EC%95%A1%EC%85%98_Chooser_%EC%9E%85%EB%A0%A5.md) (1 shared connections)
+- [FMVCombatActionTableInput](FMVCombatActionTableInput.md) (1 shared connections)
+- [FMVSkillEntry](FMVSkillEntry.md) (1 shared connections)
 
 ## Source Files
 

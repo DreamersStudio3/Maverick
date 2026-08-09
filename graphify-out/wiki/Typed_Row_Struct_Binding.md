@@ -1,6 +1,6 @@
 # Typed Row Struct Binding
 
-> 1 nodes · cohesion 1.00
+> 1 nodes
 
 ## Key Concepts
 

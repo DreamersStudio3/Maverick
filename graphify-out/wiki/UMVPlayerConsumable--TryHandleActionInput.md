@@ -1,6 +1,6 @@
 # UMVPlayerConsumable::TryHandleActionInput
 
-> 3 nodes · cohesion 0.67
+> 3 nodes
 
 ## Key Concepts
 

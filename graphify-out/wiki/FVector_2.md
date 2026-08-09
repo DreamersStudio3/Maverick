@@ -1,31 +1,26 @@
 # FVector
 
-> 10 nodes · cohesion 0.27
+> 4 nodes
 
 ## Key Concepts
 
-- **FVector** (5 connections)
-- **AMVCharacterBase::ResolveControllerSpaceMovementInput()** (4 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
-- **ClampCharacterControllerSpaceInput()** (4 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
-- **FVector2D** (4 connections)
-- **AMVCharacterBase::CacheControllerSpaceMovementInput()** (3 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
-- **AMVCharacterBase::ResolveWorldDirectionFromControllerSpaceInput()** (3 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
-- **AMVCharacterBase::TryGetControllerSpaceMovementInput()** (3 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
-- **AMVCharacterBase::AddMovementInput()** (2 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
-- **AMVCharacterBase::ApplyLocomotionDirectionSnapshot()** (2 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
-- **int32** (1 connections)
+- **FVector** (3 connections)
+- **UMVInputManagerComponent::ResolveControllerSpaceInputFromWorldDirection()** (3 connections) — `Source/Maverick/Components/MVInputManagerComponent.cpp`
+- **UMVInputManagerComponent::UpdateActionMovementInput()** (2 connections) — `Source/Maverick/Components/MVInputManagerComponent.cpp`
+- **UMVInputManagerComponent::HandleOwnerMovementInput()** (2 connections) — `Source/Maverick/Components/MVInputManagerComponent.cpp`
 
 ## Relationships
 
-- [MVCharacterBase.cpp](MVCharacterBase.cpp.md) (7 shared connections)
+- [MVInputManagerComponent.cpp](MVInputManagerComponent.cpp.md) (3 shared connections)
+- [FVector2D](FVector2D.md) (1 shared connections)
 
 ## Source Files
 
-- `Source/Maverick/Character/MVCharacterBase.cpp`
+- `Source/Maverick/Components/MVInputManagerComponent.cpp`
 
 ## Audit Trail
 
-- EXTRACTED: 31 (100%)
+- EXTRACTED: 10 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

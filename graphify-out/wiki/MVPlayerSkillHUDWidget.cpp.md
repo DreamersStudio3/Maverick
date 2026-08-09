@@ -1,28 +1,28 @@
 # MVPlayerSkillHUDWidget.cpp
 
-> 19 nodes · cohesion 0.11
+> 19 nodes
 
 ## Key Concepts
 
 - **MVPlayerSkillHUDWidget.cpp** (10 connections) — `Source/Maverick/UI/HUD/MVPlayerSkillHUDWidget.cpp`
 - **MVPlayerSkillHUDWidget.h** (4 connections) — `Source/Maverick/UI/HUD/MVPlayerSkillHUDWidget.h`
 - **UMVPlayerSkillHUDWidget::BuildNativeWidgetTree()** (3 connections) — `Source/Maverick/UI/HUD/MVPlayerSkillHUDWidget.cpp`
+- **UMVPlayerSkillHUDWidget::UMVPlayerSkillHUDWidget()** (2 connections) — `Source/Maverick/UI/HUD/MVPlayerSkillHUDWidget.cpp`
 - **UMVPlayerSkillHUDWidget::BindToCombatComponent()** (2 connections) — `Source/Maverick/UI/HUD/MVPlayerSkillHUDWidget.cpp`
 - **UMVPlayerSkillHUDWidget::NativeTick()** (2 connections) — `Source/Maverick/UI/HUD/MVPlayerSkillHUDWidget.cpp`
-- **UMVPlayerSkillHUDWidget::UMVPlayerSkillHUDWidget()** (2 connections) — `Source/Maverick/UI/HUD/MVPlayerSkillHUDWidget.cpp`
 - **UMVSkillSlotWidget** (2 connections) — `Source/Maverick/UI/HUD/MVPlayerSkillHUDWidget.h`
-- **FGeometry** (1 connections)
 - **FObjectInitializer** (1 connections)
 - **UMVCombatComponent** (1 connections)
-- **UMVCombatComponent** (1 connections) — `Source/Maverick/UI/HUD/MVPlayerSkillHUDWidget.h`
-- **UMVPlayerSkillHUDWidget()** (1 connections) — `Source/Maverick/UI/HUD/MVPlayerSkillHUDWidget.h`
+- **UMVPlayerSkillHUDWidget::UnbindCombatComponent()** (1 connections) — `Source/Maverick/UI/HUD/MVPlayerSkillHUDWidget.cpp`
+- **UMVPlayerSkillHUDWidget::NativeOnInitialized()** (1 connections) — `Source/Maverick/UI/HUD/MVPlayerSkillHUDWidget.cpp`
 - **UMVPlayerSkillHUDWidget::NativeConstruct()** (1 connections) — `Source/Maverick/UI/HUD/MVPlayerSkillHUDWidget.cpp`
 - **UMVPlayerSkillHUDWidget::NativeDestruct()** (1 connections) — `Source/Maverick/UI/HUD/MVPlayerSkillHUDWidget.cpp`
-- **UMVPlayerSkillHUDWidget::NativeOnInitialized()** (1 connections) — `Source/Maverick/UI/HUD/MVPlayerSkillHUDWidget.cpp`
-- **UMVPlayerSkillHUDWidget::RefreshSkillSlots()** (1 connections) — `Source/Maverick/UI/HUD/MVPlayerSkillHUDWidget.cpp`
+- **FGeometry** (1 connections)
 - **UMVPlayerSkillHUDWidget::ResolveIconAssets()** (1 connections) — `Source/Maverick/UI/HUD/MVPlayerSkillHUDWidget.cpp`
-- **UMVPlayerSkillHUDWidget::UnbindCombatComponent()** (1 connections) — `Source/Maverick/UI/HUD/MVPlayerSkillHUDWidget.cpp`
+- **UMVPlayerSkillHUDWidget::RefreshSkillSlots()** (1 connections) — `Source/Maverick/UI/HUD/MVPlayerSkillHUDWidget.cpp`
+- **UMVCombatComponent** (1 connections) — `Source/Maverick/UI/HUD/MVPlayerSkillHUDWidget.h`
 - **UTexture2D** (1 connections) — `Source/Maverick/UI/HUD/MVPlayerSkillHUDWidget.h`
+- **UMVPlayerSkillHUDWidget()** (1 connections) — `Source/Maverick/UI/HUD/MVPlayerSkillHUDWidget.h`
 
 ## Relationships
 

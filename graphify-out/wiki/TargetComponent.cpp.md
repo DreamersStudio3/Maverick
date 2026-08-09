@@ -1,6 +1,6 @@
 # TargetComponent.cpp
 
-> 16 nodes · cohesion 0.17
+> 16 nodes
 
 ## Key Concepts
 
@@ -8,18 +8,18 @@
 - **DispatchTargetException** (5 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h`
 - **FName** (4 connections)
 - **UTargetComponent::EndPlay()** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetComponent.cpp`
-- **UTargetComponent::RemoveSocket()** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetComponent.cpp`
 - **UTargetComponent::SetDefaultSocket()** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetComponent.cpp`
-- **UTargetComponent::AddSocket()** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetComponent.cpp`
-- **UTargetComponent::CanBeCaptured()** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetComponent.cpp`
+- **UTargetComponent::RemoveSocket()** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetComponent.cpp`
 - **UTargetComponent::SetAssociatedComponent()** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetComponent.cpp`
+- **UTargetComponent::CanBeCaptured()** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetComponent.cpp`
 - **UTargetComponent::SetCanBeCaptured()** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetComponent.cpp`
+- **UTargetComponent::AddSocket()** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetComponent.cpp`
 - **CanBeReferencedOverNetwork** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetComponent.h`
+- **UTargetComponent::UTargetComponent()** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetComponent.cpp`
+- **UTargetComponent::InitializeComponent()** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetComponent.cpp`
 - **USceneComponent** (1 connections)
 - **UTargetComponent::BeginPlay()** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetComponent.cpp`
 - **UTargetComponent::CanBeReferencedOverNetwork()** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetComponent.cpp`
-- **UTargetComponent::InitializeComponent()** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetComponent.cpp`
-- **UTargetComponent::UTargetComponent()** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetComponent.cpp`
 
 ## Relationships
 
@@ -27,7 +27,7 @@
 - [UTargetComponent::DispatchTargetException](UTargetComponent--DispatchTargetException.md) (2 shared connections)
 - [ETargetFocusPointType](ETargetFocusPointType.md) (2 shared connections)
 - [LockOnTargetDefines.h](LockOnTargetDefines.h.md) (1 shared connections)
-- [Type](Type.md) (1 shared connections)
+- [Type](Type_2.md) (1 shared connections)
 
 ## Source Files
 

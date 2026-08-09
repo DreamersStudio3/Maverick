@@ -1,6 +1,6 @@
 # UObject
 
-> 8 nodes · cohesion 0.25
+> 8 nodes
 
 ## Key Concepts
 
@@ -10,8 +10,8 @@
 - **UMVPlayerInteractionDetector::IsInteractableWithinDetectionRange()** (2 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
 - **UMVPlayerInteractionDetector::IsInteractableWithinDialogueEscapeRange()** (2 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
 - **UMVPlayerInteractionDetector::IsPIEActionTestInteractable()** (2 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
-- **UMVPlayerInteractionDetector::SetFocusedInteractable()** (2 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
 - **UMVPlayerInteractionDetector::TryShowPIEActionTestPanelForInteractable()** (2 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
+- **UMVPlayerInteractionDetector::SetFocusedInteractable()** (2 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
 
 ## Relationships
 

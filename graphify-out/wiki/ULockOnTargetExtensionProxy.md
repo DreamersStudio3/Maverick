@@ -1,6 +1,6 @@
 # ULockOnTargetExtensionProxy
 
-> 10 nodes · cohesion 0.22
+> 10 nodes
 
 ## Key Concepts
 
@@ -9,8 +9,8 @@
 - **ULockOnTargetComponent::GetLifetimeReplicatedProps()** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetComponent.cpp`
 - **TargetHandlerBase.h** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/TargetHandlerBase.h`
 - **TArray** (2 connections)
-- **ULockOnTargetComponent::DestroySubobject()** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetComponent.cpp`
 - **ULockOnTargetComponent::InitializeSubobject()** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetComponent.cpp`
+- **ULockOnTargetComponent::DestroySubobject()** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetComponent.cpp`
 - **FFindTargetRequestParams()** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/TargetHandlerBase.h`
 - **FLifetimeProperty** (1 connections)
 - **TInlineAllocator** (1 connections)

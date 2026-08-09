@@ -1,12 +1,12 @@
 # MVQuestSubsystem.h
 
-> 3 nodes · cohesion 0.67
+> 3 nodes
 
 ## Key Concepts
 
 - **MVQuestSubsystem.h** (2 connections) — `Source/Maverick/System/MVQuestSubsystem.h`
-- **UGameInstanceSubsystem()** (1 connections) — `Source/Maverick/System/MVQuestSubsystem.h`
 - **UMVWorldStateSubsystem** (1 connections) — `Source/Maverick/System/MVQuestSubsystem.h`
+- **UGameInstanceSubsystem()** (1 connections) — `Source/Maverick/System/MVQuestSubsystem.h`
 
 ## Relationships
 

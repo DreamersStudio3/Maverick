@@ -1,6 +1,6 @@
 # UMVAnimNotify_HitReactionDefaultRecovery::Notify
 
-> 9 nodes · cohesion 0.28
+> 9 nodes
 
 ## Key Concepts
 
@@ -9,10 +9,10 @@
 - **MVAnimNotify_HitReactionDefaultRecovery.cpp** (3 connections) — `Source/Maverick/Animation/Notifies/MVAnimNotify_HitReactionDefaultRecovery.cpp`
 - **USkeletalMeshComponent** (2 connections)
 - **UMVAnimNotify_HitReactionDefaultRecovery::GetNotifyName_Implementation()** (2 connections) — `Source/Maverick/Animation/Notifies/MVAnimNotify_HitReactionDefaultRecovery.cpp`
+- **UMVHitReactionComponent** (1 connections)
+- **UAnimSequenceBase** (1 connections)
 - **FAnimNotifyEventReference** (1 connections)
 - **FString** (1 connections)
-- **UAnimSequenceBase** (1 connections)
-- **UMVHitReactionComponent** (1 connections)
 
 ## Relationships
 

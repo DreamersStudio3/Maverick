@@ -1,6 +1,6 @@
 # FMVEnemyDeadTaskInstanceData
 
-> 51 nodes · cohesion 0.06
+> 51 nodes
 
 ## Key Concepts
 
@@ -9,26 +9,26 @@
 - **EnterState** (7 connections) — `Source/Maverick/AI/Task/MVEnemyDeadTask.h`
 - **Tick** (7 connections) — `Source/Maverick/AI/Task/MVEnemyDeadTask.h`
 - **MVEnemyDeadTask.h** (6 connections) — `Source/Maverick/AI/Task/MVEnemyDeadTask.h`
-- **EnemyDeadTaskApplyCleanup()** (5 connections) — `Source/Maverick/AI/Task/MVEnemyDeadTask.cpp`
-- **EnemyDeadTaskReleaseLockOnForOwner()** (5 connections) — `Source/Maverick/AI/Task/MVEnemyDeadTask.cpp`
 - **EnemyDeadTaskResolveOwner()** (5 connections) — `Source/Maverick/AI/Task/MVEnemyDeadTask.cpp`
+- **EnemyDeadTaskReleaseLockOnForOwner()** (5 connections) — `Source/Maverick/AI/Task/MVEnemyDeadTask.cpp`
+- **EnemyDeadTaskApplyCleanup()** (5 connections) — `Source/Maverick/AI/Task/MVEnemyDeadTask.cpp`
 - **FMVEnemyDeadTask** (5 connections) — `Source/Maverick/AI/Task/MVEnemyDeadTask.h`
 - **APawn** (4 connections)
 - **EnemyDeadTaskScheduleDestroy()** (4 connections) — `Source/Maverick/AI/Task/MVEnemyDeadTask.cpp`
 - **FStateTreeExecutionContext** (3 connections)
+- **EnemyDeadTaskIsDeathPresentationFinished()** (3 connections) — `Source/Maverick/AI/Task/MVEnemyDeadTask.cpp`
 - **EnemyDeadTaskClearPlayerLockOnTargetingOwner()** (3 connections) — `Source/Maverick/AI/Task/MVEnemyDeadTask.cpp`
 - **EnemyDeadTaskDisableOwnerTargetCapture()** (3 connections) — `Source/Maverick/AI/Task/MVEnemyDeadTask.cpp`
 - **EnemyDeadTaskGetEffectiveCleanupDelaySeconds()** (3 connections) — `Source/Maverick/AI/Task/MVEnemyDeadTask.cpp`
-- **EnemyDeadTaskIsDeathPresentationFinished()** (3 connections) — `Source/Maverick/AI/Task/MVEnemyDeadTask.cpp`
-- **.IsValid()** (2 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
+- **EStateTreeRunStatus** (2 connections)
 - **AAIController** (2 connections) — `Source/Maverick/AI/Task/MVEnemyDeadTask.h`
 - **AMVCharacterBase** (2 connections) — `Source/Maverick/AI/Task/MVEnemyDeadTask.h`
-- **EStateTreeRunStatus** (2 connections)
-- **.GetInstanceDataType()** (2 connections) — `Source/Maverick/AI/Task/MVEnemyDeadTask.h`
 - **UMVDeathComponent** (2 connections) — `Source/Maverick/AI/Task/MVEnemyDeadTask.h`
-- **EMVEnemyDeadCleanupMode** (1 connections)
+- **.GetInstanceDataType()** (2 connections) — `Source/Maverick/AI/Task/MVEnemyDeadTask.h`
+- **.IsValid()** (2 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
+- **TObjectPtr** (1 connections)
+- **AActor** (1 connections)
 - **EMVEnemyDeadTaskCleanupResult** (1 connections)
-- **AMVEnemy** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDeadTask.h`
 - *... and 26 more nodes in this community*
 
 ## Relationships

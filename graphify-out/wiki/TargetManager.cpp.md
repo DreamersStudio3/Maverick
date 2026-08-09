@@ -1,21 +1,21 @@
 # TargetManager.cpp
 
-> 8 nodes · cohesion 0.29
+> 8 nodes
 
 ## Key Concepts
 
 - **TargetManager.cpp** (5 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetManager.cpp`
-- **UTargetComponent** (2 connections)
-- **UTargetManager::DoesSupportWorldType()** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetManager.cpp`
 - **UTargetManager::OnWorldBeginPlay()** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetManager.cpp`
+- **UTargetManager::DoesSupportWorldType()** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetManager.cpp`
 - **UTargetManager::RegisterTarget()** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetManager.cpp`
+- **UTargetComponent** (2 connections)
 - **UTargetManager::UnregisterTarget()** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetManager.cpp`
-- **UWorld** (1 connections)
 - **UTargetManager::UTargetManager()** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetManager.cpp`
+- **UWorld** (1 connections)
 
 ## Relationships
 
-- [Type](Type.md) (1 shared connections)
+- [Type](Type_2.md) (1 shared connections)
 
 ## Source Files
 

@@ -1,39 +1,37 @@
 # FMVGlobalCoolTimeTaskInstanceData
 
-> 17 nodes · cohesion 0.22
+> 15 nodes
 
 ## Key Concepts
 
-- **EnterState** (8 connections) — `Source/Maverick/AI/Task/MVGlobalCoolTimeTask.h`
-- **MVGlobalCoolTimeTask.cpp** (7 connections) — `Source/Maverick/AI/Task/MVGlobalCoolTimeTask.cpp`
-- **Tick** (7 connections) — `Source/Maverick/AI/Task/MVGlobalCoolTimeTask.h`
-- **FMVGlobalCoolTimeTask** (6 connections) — `Source/Maverick/AI/Task/MVGlobalCoolTimeTask.h`
-- **ResolveCooldownOwner()** (6 connections) — `Source/Maverick/AI/Task/MVGlobalCoolTimeTask.cpp`
-- **EnsureCooldownComponent()** (5 connections) — `Source/Maverick/AI/Task/MVGlobalCoolTimeTask.cpp`
-- **FStateTreeExecutionContext** (4 connections)
-- **ExitState** (4 connections) — `Source/Maverick/AI/Task/MVGlobalCoolTimeTask.h`
-- **UpdateQueryOutputs()** (4 connections) — `Source/Maverick/AI/Task/MVGlobalCoolTimeTask.cpp`
-- **APawn** (2 connections)
-- **EStateTreeRunStatus** (2 connections)
-- **FStateTreeTransitionResult** (2 connections)
-- **.GetInstanceDataType()** (2 connections) — `Source/Maverick/AI/Task/MVGlobalCoolTimeTask.h`
+- **FMVGlobalCoolTimeTaskInstanceData** (17 connections) — `Source/Maverick/AI/Task/MVGlobalCoolTimeTask.h`
+- **MVGlobalCoolTimeTask.h** (2 connections) — `Source/Maverick/AI/Task/MVGlobalCoolTimeTask.h`
 - **TObjectPtr** (1 connections)
-- **FMVGlobalCoolTimeTask::FMVGlobalCoolTimeTask()** (1 connections) — `Source/Maverick/AI/Task/MVGlobalCoolTimeTask.cpp`
-- **FStateTreeTaskCommonBase** (1 connections)
-- **UStruct** (1 connections)
+- **APawn** (1 connections)
+- **TArray** (1 connections)
+- **FName** (1 connections)
+- **UPROPERTY** (1 connections)
+- **Owner** (1 connections) — `Source/Maverick/AI/Task/MVGlobalCoolTimeTask.h`
+- **ActionCooldowns** (1 connections) — `Source/Maverick/AI/Task/MVGlobalCoolTimeTask.h`
+- **QueryActionId** (1 connections) — `Source/Maverick/AI/Task/MVGlobalCoolTimeTask.h`
+- **bIsQueryActionReady** (1 connections) — `Source/Maverick/AI/Task/MVGlobalCoolTimeTask.h`
+- **QueryActionRemainingTime** (1 connections) — `Source/Maverick/AI/Task/MVGlobalCoolTimeTask.h`
+- **ReadyActionIds** (1 connections) — `Source/Maverick/AI/Task/MVGlobalCoolTimeTask.h`
+- **bAttackCadenceReady** (1 connections) — `Source/Maverick/AI/Task/MVGlobalCoolTimeTask.h`
+- **CooldownComponent** (1 connections) — `Source/Maverick/AI/Task/MVGlobalCoolTimeTask.h`
 
 ## Relationships
 
-- [FMVGlobalCoolTimeTaskInstanceData](FMVGlobalCoolTimeTaskInstanceData.md) (3 shared connections)
+- [EnterState](EnterState.md) (2 shared connections)
+- [FMVActionCooldownDefinition](FMVActionCooldownDefinition.md) (2 shared connections)
 
 ## Source Files
 
-- `Source/Maverick/AI/Task/MVGlobalCoolTimeTask.cpp`
 - `Source/Maverick/AI/Task/MVGlobalCoolTimeTask.h`
 
 ## Audit Trail
 
-- EXTRACTED: 63 (100%)
+- EXTRACTED: 32 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

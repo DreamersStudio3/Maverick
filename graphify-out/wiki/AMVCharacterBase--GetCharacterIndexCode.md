@@ -1,12 +1,12 @@
 # AMVCharacterBase::GetCharacterIndexCode
 
-> 3 nodes · cohesion 0.67
+> 3 nodes
 
 ## Key Concepts
 
-- **AMVCharacterBase::GetCharacterIndexCode()** (2 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
 - **AMVCharacterBase::SetCharacterIndexCode()** (2 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
 - **FGameplayTag** (2 connections)
+- **AMVCharacterBase::GetCharacterIndexCode()** (2 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
 
 ## Relationships
 

@@ -1,16 +1,16 @@
 # MVUIFadeController.cpp
 
-> 7 nodes · cohesion 0.29
+> 7 nodes
 
 ## Key Concepts
 
 - **MVUIFadeController.cpp** (5 connections) — `Source/Maverick/UI/Base/MVUIFadeController.cpp`
 - **FMVUIFadeController::Play()** (3 connections) — `Source/Maverick/UI/Base/MVUIFadeController.cpp`
-- **FOnFadeFinished** (1 connections)
-- **FMVUIFadeController::FinishFade()** (1 connections) — `Source/Maverick/UI/Base/MVUIFadeController.cpp`
 - **FMVUIFadeController::~FMVUIFadeController()** (1 connections) — `Source/Maverick/UI/Base/MVUIFadeController.cpp`
+- **FOnFadeFinished** (1 connections)
 - **FMVUIFadeController::Stop()** (1 connections) — `Source/Maverick/UI/Base/MVUIFadeController.cpp`
 - **FMVUIFadeController::UpdateFade()** (1 connections) — `Source/Maverick/UI/Base/MVUIFadeController.cpp`
+- **FMVUIFadeController::FinishFade()** (1 connections) — `Source/Maverick/UI/Base/MVUIFadeController.cpp`
 
 ## Relationships
 

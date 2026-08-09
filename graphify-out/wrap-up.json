@@ -1,18 +1,21 @@
 {
-  "$schema": "maverick.graphify-wrap-up/v1",
-  "generated_at_utc": "2026-08-08T08:58:46.731593+00:00",
-  "head_at_stamp": "7169efdf7cc17ab3d74086ab1e64ccb21e877444",
+  "$schema": "maverick.graphify-wrap-up/v2",
+  "generated_at_utc": "2026-08-09T13:01:06.388905+00:00",
+  "head_at_stamp": "419e6dec827045653c3add2c866b11ba06703ff7",
   "graphify_version": "0.9.36",
-  "source_fingerprint": "a014c9bc5bdb915c0e6fb1864deae299f4c8a39be652a4784b3658ec187080f2",
+  "wiki_review": {
+    "result": "updated",
+    "note": "docs/wiki/Architecture.md, docs/wiki/Documentation-Workflow.md, docs/wiki/Graphify-Adoption-Report.md, docs/wiki/Obsidian-Usage.md 갱신"
+  },
+  "source_fingerprint": "29a4dbdfbb0051905cfc36c77aae85a7019c4e9013a42634612e12bd744c6ce9",
   "source_files": 343,
-  "artifact_fingerprint": "156a022017b00f3bbee93aad9a56d91836fa226ba6da0e2eeb9f92f30346cf07",
-  "artifact_files": 4533,
+  "artifact_fingerprint": "0192d67b18d17ab53bea8d80693c459b55097e9297ab4c0571bb96aaea71ab9a",
+  "artifact_files": 332,
   "semantic_documents": 11,
   "graph": {
-    "nodes": 3902,
-    "edges": 5693,
-    "communities": 303,
-    "wiki_community_articles": 303,
-    "obsidian_notes": 3902
+    "nodes": 4049,
+    "edges": 5917,
+    "communities": 310,
+    "wiki_community_articles": 310
   }
 }

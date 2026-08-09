@@ -1,6 +1,6 @@
 # MVSkillNodeButton.cpp
 
-> 8 nodes · cohesion 0.25
+> 8 nodes
 
 ## Key Concepts
 
@@ -8,9 +8,9 @@
 - **UMVSkillNodeButton::SetExplicitSkillNavigation()** (2 connections) — `Source/Maverick/UI/Window/MVSkillNodeButton.cpp`
 - **MVSkillTreeWindow.h** (2 connections) — `Source/Maverick/UI/Window/MVSkillTreeWindow.h`
 - **UMVSkillNodeButton** (2 connections) — `Source/Maverick/UI/Window/MVSkillTreeWindow.h`
-- **UMVSkillNodeButton::ApplyExplicitNavigation()** (1 connections) — `Source/Maverick/UI/Window/MVSkillNodeButton.cpp`
 - **UMVSkillNodeButton::NativeConstruct()** (1 connections) — `Source/Maverick/UI/Window/MVSkillNodeButton.cpp`
 - **UMVSkillNodeButton::NativeOnClicked()** (1 connections) — `Source/Maverick/UI/Window/MVSkillNodeButton.cpp`
+- **UMVSkillNodeButton::ApplyExplicitNavigation()** (1 connections) — `Source/Maverick/UI/Window/MVSkillNodeButton.cpp`
 - **UMVSkillTreeWindow()** (1 connections) — `Source/Maverick/UI/Window/MVSkillTreeWindow.h`
 
 ## Relationships

@@ -1,42 +1,42 @@
 # FMVEnemyDodgeActionTaskInstanceData
 
-> 29 nodes · cohesion 0.07
+> 29 nodes
 
 ## Key Concepts
 
 - **FMVEnemyDodgeActionTaskInstanceData** (36 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
-- **ActionComponent** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
-- **BackDodgeActionRow** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
-- **bCancelActionOnExit** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
-- **bStarted** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
-- **bTransitionFromCurrentAction** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
-- **bWaitForActionEnd** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
-- **ChooserDodgeActionRow** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
-- **DefaultDirection** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
-- **DodgeChooserTable** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
-- **DodgeRequest** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
-- **ExitCancelBlendOutTime** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
-- **FallbackDodgeActionRow** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
-- **ForwardDodgeActionRow** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
-- **LeftDodgeActionRow** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
+- **TObjectPtr** (1 connections)
 - **Owner** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
+- **DodgeRequest** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
+- **EMVActionInputDirection** (1 connections)
+- **DefaultDirection** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
+- **FSoftObjectPath** (1 connections)
+- **DodgeChooserTable** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
+- **FallbackDodgeActionRow** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
+- **FDataTableRowHandle** (1 connections)
+- **ForwardDodgeActionRow** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
+- **BackDodgeActionRow** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
+- **LeftDodgeActionRow** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
+- **RightDodgeActionRow** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
+- **FName** (1 connections)
+- **StartSection** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
+- **bTransitionFromCurrentAction** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
+- **TransitionBlendOutTime** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
+- **bWaitForActionEnd** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
+- **bCancelActionOnExit** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
+- **ExitCancelBlendOutTime** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
+- **bStarted** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
 - **ResolvedDirection** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
 - **ResolvedDodgeActionRow** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
-- **RightDodgeActionRow** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
-- **StartedActionRowName** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
-- **StartedActionTableName** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
-- **StartSection** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
-- **TransitionBlendOutTime** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
-- **EMVActionInputDirection** (1 connections)
-- **FDataTableRowHandle** (1 connections)
+- **ChooserDodgeActionRow** (1 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
 - *... and 4 more nodes in this community*
 
 ## Relationships
 
-- [UMVEnemyDodgeTokenComponent::TryConsumeDodgeTokenForThreat](UMVEnemyDodgeTokenComponent--TryConsumeDodgeTokenForThreat.md) (4 shared connections)
-- [EnemyDodgeActionTaskEvaluateChooser](EnemyDodgeActionTaskEvaluateChooser.md) (2 shared connections)
-- [MVEnemyDodgeActionTask.cpp](MVEnemyDodgeActionTask.cpp.md) (1 shared connections)
-- [FVector](FVector.md) (1 shared connections)
+- [MVEnemyDodgeActionTask.cpp](MVEnemyDodgeActionTask.cpp.md) (3 shared connections)
+- [FMVEnemyDodgeActionTask](FMVEnemyDodgeActionTask.md) (3 shared connections)
+- [EnemyDodgeActionTaskResolveDirection](EnemyDodgeActionTaskResolveDirection.md) (1 shared connections)
+- [MVPlayerDodge.cpp](MVPlayerDodge.cpp.md) (1 shared connections)
 
 ## Source Files
 

@@ -1,6 +1,6 @@
 # LockOnTargetDefines.h
 
-> 13 nodes · cohesion 0.17
+> 13 nodes
 
 ## Key Concepts
 
@@ -9,14 +9,14 @@
 - **FLockOnTargetModule** (4 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/LockOnTarget.h`
 - **LockOnTarget.cpp** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/LockOnTarget.cpp`
 - **UTargetHandlerBase::HandleTargetException_Implementation()** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetHandlers/TargetHandlerBase.cpp`
-- **StartupModule** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/LockOnTarget.h`
 - **LockOnTarget.h** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/LockOnTarget.h`
+- **StartupModule** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/LockOnTarget.h`
 - **UTargetHandlerBase::CheckTargetState_Implementation()** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetHandlers/TargetHandlerBase.cpp`
 - **UTargetHandlerBase::IsTargetValid()** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetHandlers/TargetHandlerBase.cpp`
-- **.IsAvailable()** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/LockOnTarget.h`
 - **IModuleInterface** (1 connections)
-- **UTargetComponent** (1 connections)
+- **.IsAvailable()** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/LockOnTarget.h`
 - **UTargetHandlerBase::UTargetHandlerBase()** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetHandlers/TargetHandlerBase.cpp`
+- **UTargetComponent** (1 connections)
 
 ## Relationships
 

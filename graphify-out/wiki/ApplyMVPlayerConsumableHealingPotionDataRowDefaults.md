@@ -1,14 +1,14 @@
 # ApplyMVPlayerConsumableHealingPotionDataRowDefaults
 
-> 6 nodes · cohesion 0.53
+> 6 nodes
 
 ## Key Concepts
 
+- **MakeMVPlayerConsumableDefaultHealingPotionData()** (4 connections) — `Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp`
 - **ApplyMVPlayerConsumableHealingPotionDataRowDefaults()** (4 connections) — `Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp`
 - **ApplyMVPlayerConsumableHealingPotionDefaults()** (4 connections) — `Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp`
-- **MakeMVPlayerConsumableDefaultHealingPotionData()** (4 connections) — `Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp`
-- **UMVPlayerConsumable::ResolveHealingPotionData()** (4 connections) — `Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp`
 - **UMVPlayerConsumable::UMVPlayerConsumable()** (4 connections) — `Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp`
+- **UMVPlayerConsumable::ResolveHealingPotionData()** (4 connections) — `Source/Maverick/Character/PC/Consumable/MVPlayerConsumable.cpp`
 - **FMVHealingPotionTableRow()** (3 connections) — `Source/Maverick/Public/Tables/MVHealingPotionTableTypes.h`
 
 ## Relationships

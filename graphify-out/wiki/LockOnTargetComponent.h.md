@@ -1,6 +1,6 @@
 # LockOnTargetComponent.h
 
-> 19 nodes · cohesion 0.12
+> 19 nodes
 
 ## Key Concepts
 
@@ -8,21 +8,21 @@
 - **LockOnTargetTypes.h** (8 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetTypes.h`
 - **UTargetHandlerBase** (4 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetComponent.h`
 - **ULockOnTargetComponent::SetTargetHandlerByClass()** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetComponent.cpp`
-- **FindComponentByName()** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetTypes.h`
 - **FTargetInfo()** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetTypes.h`
 - **TStructOpsTypeTraits<FTargetInfo>** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetTypes.h`
+- **FindComponentByName()** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetTypes.h`
 - **ULockOnTargetComponent::SetDefaultTargetHandler()** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetComponent.cpp`
 - **operator==()** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetTypes.h`
-- **AActor** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetComponent.h`
-- **FFindTargetRequestResponse** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetComponent.h`
 - **ULockOnTargetComponent** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetComponent.h`
+- **UTargetComponent** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetComponent.h`
+- **AActor** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetComponent.h`
 - **ULockOnTargetExtensionBase** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetComponent.h`
 - **ULockOnTargetExtensionProxy** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetComponent.h`
-- **UTargetComponent** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetComponent.h`
+- **FFindTargetRequestResponse** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetComponent.h`
+- **UTargetComponent** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetTypes.h`
+- **TStructOpsTypeTraitsBase2** (1 connections)
 - **AActor** (1 connections)
 - **FName** (1 connections)
-- **TStructOpsTypeTraitsBase2** (1 connections)
-- **UTargetComponent** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetTypes.h`
 
 ## Relationships
 

@@ -1,17 +1,17 @@
 # FMVSheetSpec
 
-> 8 nodes · cohesion 0.25
+> 8 nodes
 
 ## Key Concepts
 
 - **FMVSheetSpec** (6 connections) — `Source/Maverick/Public/Tables/MVSheetSpecs.h`
 - **MVSheetSpecs.h** (2 connections) — `Source/Maverick/Public/Tables/MVSheetSpecs.h`
-- **bGenericFallback** (1 connections) — `Source/Maverick/Public/Tables/MVSheetSpecs.h`
-- **KeyColumnName** (1 connections) — `Source/Maverick/Public/Tables/MVSheetSpecs.h`
-- **RowStruct** (1 connections) — `Source/Maverick/Public/Tables/MVSheetSpecs.h`
-- **FMVSheetSpecs()** (1 connections) — `Source/Maverick/Public/Tables/MVSheetSpecs.h`
-- **FString** (1 connections)
 - **UScriptStruct** (1 connections)
+- **RowStruct** (1 connections) — `Source/Maverick/Public/Tables/MVSheetSpecs.h`
+- **FString** (1 connections)
+- **KeyColumnName** (1 connections) — `Source/Maverick/Public/Tables/MVSheetSpecs.h`
+- **bGenericFallback** (1 connections) — `Source/Maverick/Public/Tables/MVSheetSpecs.h`
+- **FMVSheetSpecs()** (1 connections) — `Source/Maverick/Public/Tables/MVSheetSpecs.h`
 
 ## Relationships
 

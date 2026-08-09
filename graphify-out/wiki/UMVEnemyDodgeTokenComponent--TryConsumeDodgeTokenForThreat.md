@@ -1,38 +1,31 @@
 # UMVEnemyDodgeTokenComponent::TryConsumeDodgeTokenForThreat
 
-> 9 nodes · cohesion 0.22
+> 5 nodes
 
 ## Key Concepts
 
-- **MVEnemyDodgeActionTask.h** (6 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
-- **EnemyDodgeActionTaskResolveDirection()** (4 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.cpp`
-- **MVAIDodgeTypes.h** (4 connections) — `Source/Maverick/Public/Struct/MVAIDodgeTypes.h`
-- **FMVAIDodgeRequest()** (4 connections) — `Source/Maverick/Public/Struct/MVAIDodgeTypes.h`
-- **APawn** (2 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
-- **UMVActionComponent** (2 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
-- **MVDodgeThreatEvaluatorLibrary.h** (2 connections) — `Source/Maverick/Public/AI/MVDodgeThreatEvaluatorLibrary.h`
-- **EMVActionInputDirection** (1 connections)
-- **AActor** (1 connections) — `Source/Maverick/Public/Struct/MVAIDodgeTypes.h`
+- **UMVEnemyDodgeTokenComponent::TryConsumeDodgeTokenForThreat()** (7 connections) — `Source/Maverick/Components/MVEnemyDodgeTokenComponent.cpp`
+- **TrySpendDodgeToken** (2 connections) — `Source/Maverick/Components/MVEnemyDodgeTokenComponent.h`
+- **AActor** (1 connections)
+- **FMVDodgeThreatConfig** (1 connections)
+- **FMVDodgeThreatDecision** (1 connections)
 
 ## Relationships
 
-- [FMVEnemyDodgeActionTaskInstanceData](FMVEnemyDodgeActionTaskInstanceData.md) (4 shared connections)
-- [MVEnemyDodgeActionTask.cpp](MVEnemyDodgeActionTask.cpp.md) (3 shared connections)
-- [FVector](FVector.md) (1 shared connections)
-- [EMVDodgeThreatRejectReason](EMVDodgeThreatRejectReason.md) (1 shared connections)
-- [UMVEnemyDodgeTokenComponent::TryConsumeDodgeTokenForThreat](UMVEnemyDodgeTokenComponent--TryConsumeDodgeTokenForThreat.md) (1 shared connections)
+- [FMVCombatActionEvent](FMVCombatActionEvent.md) (1 shared connections)
+- [MVEnemyDodgeTokenComponent.cpp](MVEnemyDodgeTokenComponent.cpp.md) (1 shared connections)
+- [EnemyDodgeActionTaskResolveDirection](EnemyDodgeActionTaskResolveDirection.md) (1 shared connections)
+- [EMVEnemyDodgeTokenGrantReason](EMVEnemyDodgeTokenGrantReason.md) (1 shared connections)
 
 ## Source Files
 
-- `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.cpp`
-- `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
-- `Source/Maverick/Public/AI/MVDodgeThreatEvaluatorLibrary.h`
-- `Source/Maverick/Public/Struct/MVAIDodgeTypes.h`
+- `Source/Maverick/Components/MVEnemyDodgeTokenComponent.cpp`
+- `Source/Maverick/Components/MVEnemyDodgeTokenComponent.h`
 
 ## Audit Trail
 
-- EXTRACTED: 26 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 10 (83%)
+- INFERRED: 2 (17%)
 - AMBIGUOUS: 0 (0%)
 
 ---

@@ -34,7 +34,7 @@
 ### references
 - [FMVAICombatContext](FMVAICombatContext.md) `EXTRACTED`
 - UpdateGlobalSensingSnapshot() `EXTRACTED`
-- FMVActionCooldownDefinition `EXTRACTED`
+- [FMVActionCooldownDefinition](FMVActionCooldownDefinition.md) `EXTRACTED`
 - DrawGlobalSensingCombatAreaDebug() `EXTRACTED`
 - UMVActionCooldownComponent() `EXTRACTED`
 - UpdateGlobalSensingCooldownContext() `EXTRACTED`

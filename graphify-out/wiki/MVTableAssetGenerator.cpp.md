@@ -1,6 +1,6 @@
 # MVTableAssetGenerator.cpp
 
-> 64 nodes · cohesion 0.11
+> 64 nodes
 
 ## Key Concepts
 
@@ -14,21 +14,21 @@
 - **UMVTableAssetGenerator::SaveManifest()** (10 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
 - **TryGetArrayField()** (9 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
 - **UMVTableAssetGenerator::ImportJsonFile()** (9 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
+- **TryGetObjectField()** (8 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
 - **TSharedPtr** (8 connections)
 - **JsonValueToGeneratorString()** (8 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
 - **TableAssetGeneratorReadStringKeySet()** (8 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
-- **TryGetObjectField()** (8 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
 - **FJsonValue** (8 connections) — `Source/Maverick/Public/Tables/MVTableAssetGenerator.h`
 - **GetJsonDir()** (7 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
 - **TableAssetGeneratorAddManifestRow()** (7 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
 - **TableAssetGeneratorBuildManifestHash()** (7 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
 - **TableAssetGeneratorCanReuseDataTable()** (7 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
 - **TableAssetGeneratorReadIntegerKeySet()** (7 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
-- **UMVTableAssetGenerator::BuildCsvOriginManifestRows()** (7 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
 - **UMVTableAssetGenerator::ImportAllJsonFiles()** (7 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
-- **CreateOrResetDataTable()** (6 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
+- **UMVTableAssetGenerator::BuildCsvOriginManifestRows()** (7 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
 - **GetConverterDir()** (6 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
-- **TableAssetGeneratorAppendJsonHashValue()** (6 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
+- **ToTableAssetName()** (6 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
+- **TableAssetGeneratorSortManifestRows()** (6 connections) — `Source/Maverick/Private/Tables/MVTableAssetGenerator.cpp`
 - *... and 39 more nodes in this community*
 
 ## Relationships
@@ -36,7 +36,7 @@
 - [MVTableManager.cpp](MVTableManager.cpp.md) (4 shared connections)
 - [UMVTableManager](UMVTableManager.md) (2 shared connections)
 - [properties](properties.md) (1 shared connections)
-- [type](type_2.md) (1 shared connections)
+- [type](type.md) (1 shared connections)
 - [MVHitReactionComponent.h](MVHitReactionComponent.h.md) (1 shared connections)
 - [MVTableTypes.h](MVTableTypes.h.md) (1 shared connections)
 - [rows](rows.md) (1 shared connections)

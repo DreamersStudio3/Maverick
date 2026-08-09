@@ -1,6 +1,6 @@
 # SSocketSelector
 
-> 23 nodes · cohesion 0.14
+> 23 nodes
 
 ## Key Concepts
 
@@ -14,24 +14,24 @@
 - **OnPropertyUpdated** (4 connections) — `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/SSocketSelector.h`
 - **SWidget** (4 connections) — `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/TargetComponentDetails.h`
 - **FName** (2 connections)
-- **IPropertyHandle** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/SSocketSelector.h`
 - **SEditableTextBox** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/SSocketSelector.h`
 - **USceneComponent** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/SSocketSelector.h`
+- **IPropertyHandle** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/SSocketSelector.h`
 - **SCompoundWidget** (2 connections)
 - **FArguments** (1 connections)
-- **FText** (1 connections)
 - **TSharedRef** (1 connections)
+- **FText** (1 connections)
+- **.SLATE_BEGIN_ARGS()** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/SSocketSelector.h`
 - **TSharedPtr** (1 connections)
 - **PropertyHandle** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/SSocketSelector.h`
-- **SceneComponent** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/SSocketSelector.h`
-- **.SLATE_BEGIN_ARGS()** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/SSocketSelector.h`
-- **TextBox** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/SSocketSelector.h`
 - **TAttribute** (1 connections)
+- **SceneComponent** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/SSocketSelector.h`
+- **TextBox** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/SSocketSelector.h`
 
 ## Relationships
 
 - [TargetComponentDetails.cpp](TargetComponentDetails.cpp.md) (2 shared connections)
-- [Type](Type.md) (1 shared connections)
+- [Type](Type_2.md) (1 shared connections)
 - [FTargetComponentDetails](FTargetComponentDetails.md) (1 shared connections)
 - [SMVCooldownOverlay](SMVCooldownOverlay.md) (1 shared connections)
 

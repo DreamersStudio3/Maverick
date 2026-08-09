@@ -1,32 +1,32 @@
 # MVCharacterBase.cpp
 
-> 23 nodes · cohesion 0.09
+> 23 nodes
 
 ## Key Concepts
 
 - **MVCharacterBase.cpp** (41 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
-- **AMVCharacterBase::ActiveHitstop()** (1 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
 - **AMVCharacterBase::AMVCharacterBase()** (1 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
-- **AMVCharacterBase::ApplyCharacterIndexCodeToComponents()** (1 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
-- **AMVCharacterBase::AttemptCrouch()** (1 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
-- **AMVCharacterBase::BeginInvincibility()** (1 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
-- **AMVCharacterBase::BeginPlay()** (1 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
-- **AMVCharacterBase::BindDamageHandlers()** (1 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
-- **AMVCharacterBase::CalculateCharacterMovementSpeed()** (1 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
-- **AMVCharacterBase::CanSprint()** (1 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
-- **AMVCharacterBase::CanUseSprint()** (1 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
-- **AMVCharacterBase::EndInvincibility()** (1 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
-- **AMVCharacterBase::HasDodgeMovementInput()** (1 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
-- **AMVCharacterBase::IsInvincible()** (1 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
-- **AMVCharacterBase::IsMovementInputBlocked()** (1 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
 - **AMVCharacterBase::PostInitializeComponents()** (1 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
-- **AMVCharacterBase::ResetHitStop()** (1 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
-- **AMVCharacterBase::ShouldForceWalkGait()** (1 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
+- **AMVCharacterBase::BeginPlay()** (1 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
 - **AMVCharacterBase::Tick()** (1 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
+- **AMVCharacterBase::AttemptCrouch()** (1 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
+- **AMVCharacterBase::HasDodgeMovementInput()** (1 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
+- **AMVCharacterBase::IsMovementInputBlocked()** (1 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
+- **AMVCharacterBase::BeginInvincibility()** (1 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
+- **AMVCharacterBase::EndInvincibility()** (1 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
+- **AMVCharacterBase::IsInvincible()** (1 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
+- **AMVCharacterBase::ApplyCharacterIndexCodeToComponents()** (1 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
+- **AMVCharacterBase::BindDamageHandlers()** (1 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
 - **AMVCharacterBase::UpdateCharacterValue()** (1 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
+- **AMVCharacterBase::UpdateRotation()** (1 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
 - **AMVCharacterBase::UpdateMovement()** (1 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
 - **AMVCharacterBase::UpdateRecoverableStats()** (1 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
-- **AMVCharacterBase::UpdateRotation()** (1 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
+- **AMVCharacterBase::CanSprint()** (1 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
+- **AMVCharacterBase::CanUseSprint()** (1 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
+- **AMVCharacterBase::ShouldForceWalkGait()** (1 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
+- **AMVCharacterBase::CalculateCharacterMovementSpeed()** (1 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
+- **AMVCharacterBase::ActiveHitstop()** (1 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
+- **AMVCharacterBase::ResetHitStop()** (1 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
 
 ## Relationships
 

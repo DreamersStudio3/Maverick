@@ -1,25 +1,25 @@
 # FTargetComponentDetails
 
-> 16 nodes · cohesion 0.16
+> 16 nodes
 
 ## Key Concepts
 
 - **FTargetComponentDetails** (21 connections) — `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/TargetComponentDetails.h`
 - **TargetComponentDetails.h** (12 connections) — `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/TargetComponentDetails.h`
 - **.MakeInstance()** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/TargetComponentDetails.h`
-- **IDetailCustomization** (2 connections)
+- **UTargetComponent** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/TargetComponentDetails.h`
 - **IPropertyHandle** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/TargetComponentDetails.h`
 - **SEditableTextBox** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/TargetComponentDetails.h`
-- **UTargetComponent** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/TargetComponentDetails.h`
+- **IDetailCustomization** (2 connections)
 - **AActor** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/TargetComponentDetails.h`
-- **AssociatedComponentNamePropertyHandle** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/TargetComponentDetails.h`
-- **AssociatedComponentNameTextBox** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/TargetComponentDetails.h`
-- **EditedComponent** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/TargetComponentDetails.h`
-- **SocketsPropertyHandle** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/TargetComponentDetails.h`
-- **TSharedPtr** (1 connections)
+- **USceneComponent** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/TargetComponentDetails.h`
 - **TSharedRef** (1 connections)
 - **TWeakObjectPtr** (1 connections)
-- **USceneComponent** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/TargetComponentDetails.h`
+- **EditedComponent** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/TargetComponentDetails.h`
+- **TSharedPtr** (1 connections)
+- **AssociatedComponentNamePropertyHandle** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/TargetComponentDetails.h`
+- **SocketsPropertyHandle** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/TargetComponentDetails.h`
+- **AssociatedComponentNameTextBox** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTargetEditor/Private/TargetComponentDetails.h`
 
 ## Relationships
 

@@ -10,7 +10,7 @@
 - **사망과 부활:** `UMVDeathComponent`가 사망 표현을, UI overlay와 loading gate가 화면 전환을, `UMVFieldTransitionSubsystem`이 reset을 맡도록 책임을 나눴다. dissolve, 입력 차단, HUD 정리, 적 reset 결과도 [Architecture.md](../wiki/Architecture.md)에 흡수했다.
 - **플레이어·무기·소모품:** Dodge·상호작용·lock-on·소모품을 플레이어 소유 하위 모듈로 정리하고, `UMVWeaponComponent`의 장착·소켓 검증·양손 mesh 흐름과 DataTable/manifest 연결을 보완했다.
 - **UI와 조작:** CommonUI 창·popup 소유권, 상호작용 후보, stamina/boss damage/skill cooldown HUD, 게임패드와 키보드 입력 구성을 정리했다. 실제 IMC·WBP 연결은 Unreal Editor 에셋에서 확인한다.
-- **문서 운영:** Graphify query-first 탐색, commit·checkout·pre-push 갱신, Architecture와 헤더 문서 책임을 도입했다. 현재 절차는 [Documentation-Workflow.md](../wiki/Documentation-Workflow.md) 하나를 기준으로 삼는다.
+- **문서 운영:** 사람용 내부 위키는 `docs/wiki/`, 에이전트용 생성 지식창고는 `graphify-out/`으로 분리했다. 작업마다 push 전 위키 영향과 갱신 문서 또는 변경 불필요 사유를 TODO·PR·wrap-up에 남기며, 현재 절차는 [Documentation-Workflow.md](../wiki/Documentation-Workflow.md) 하나를 기준으로 삼는다.
 
 ## 별도 조사 결론
 

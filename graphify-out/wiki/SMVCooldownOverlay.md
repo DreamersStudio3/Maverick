@@ -1,6 +1,6 @@
 # SMVCooldownOverlay
 
-> 30 nodes · cohesion 0.09
+> 30 nodes
 
 ## Key Concepts
 
@@ -11,24 +11,24 @@
 - **FLinearColor** (3 connections)
 - **int32** (3 connections)
 - **SLeafWidget** (2 connections)
-- **MVCooldownOverlayWidget.h** (2 connections) — `Source/Maverick/UI/HUD/MVCooldownOverlayWidget.h`
-- **.ComputeDesiredSize()** (2 connections) — `Source/Maverick/UI/HUD/MVCooldownOverlayWidget.cpp`
 - **.Construct()** (2 connections) — `Source/Maverick/UI/HUD/MVCooldownOverlayWidget.cpp`
+- **.SetOverlayColor()** (2 connections) — `Source/Maverick/UI/HUD/MVCooldownOverlayWidget.cpp`
+- **.SetSegmentCount()** (2 connections) — `Source/Maverick/UI/HUD/MVCooldownOverlayWidget.cpp`
+- **.ComputeDesiredSize()** (2 connections) — `Source/Maverick/UI/HUD/MVCooldownOverlayWidget.cpp`
 - **CooldownPercent** (2 connections) — `Source/Maverick/UI/HUD/MVCooldownOverlayWidget.cpp`
 - **OverlayColor** (2 connections) — `Source/Maverick/UI/HUD/MVCooldownOverlayWidget.cpp`
 - **SegmentCount** (2 connections) — `Source/Maverick/UI/HUD/MVCooldownOverlayWidget.cpp`
-- **.SetOverlayColor()** (2 connections) — `Source/Maverick/UI/HUD/MVCooldownOverlayWidget.cpp`
-- **.SetSegmentCount()** (2 connections) — `Source/Maverick/UI/HUD/MVCooldownOverlayWidget.cpp`
 - **UMVCooldownOverlayWidget::SetOverlayColor()** (2 connections) — `Source/Maverick/UI/HUD/MVCooldownOverlayWidget.cpp`
+- **MVCooldownOverlayWidget.h** (2 connections) — `Source/Maverick/UI/HUD/MVCooldownOverlayWidget.h`
+- **.SLATE_BEGIN_ARGS()** (1 connections) — `Source/Maverick/UI/HUD/MVCooldownOverlayWidget.cpp`
+- **FArguments** (1 connections)
+- **.SetCooldownPercent()** (1 connections) — `Source/Maverick/UI/HUD/MVCooldownOverlayWidget.cpp`
+- **FVector2D** (1 connections)
 - **FPaintArgs** (1 connections)
+- **FGeometry** (1 connections)
 - **FSlateRect** (1 connections)
 - **FSlateWindowElementList** (1 connections)
 - **FWidgetStyle** (1 connections)
-- **FArguments** (1 connections)
-- **FGeometry** (1 connections)
-- **FVector2D** (1 connections)
-- **TSharedRef** (1 connections)
-- **.SetCooldownPercent()** (1 connections) — `Source/Maverick/UI/HUD/MVCooldownOverlayWidget.cpp`
 - *... and 5 more nodes in this community*
 
 ## Relationships

@@ -1,21 +1,21 @@
 # EMVDodgeThreatRejectReason
 
-> 8 nodes · cohesion 0.25
+> 8 nodes
 
 ## Key Concepts
 
 - **EMVDodgeThreatRejectReason** (8 connections) — `Source/Maverick/Public/AI/MVDodgeThreatEvaluatorLibrary.h`
+- **uint8** (1 connections)
+- **UMETA** (1 connections) — `Source/Maverick/Public/AI/MVDodgeThreatEvaluatorLibrary.h`
+- **TokenUnavailable** (1 connections) — `Source/Maverick/Public/AI/MVDodgeThreatEvaluatorLibrary.h`
+- **USTRUCT** (1 connections)
 - **.FMVDodgeThreatConfig()** (1 connections) — `Source/Maverick/Public/AI/MVDodgeThreatEvaluatorLibrary.h`
 - **.FMVDodgeThreatDecision()** (1 connections) — `Source/Maverick/Public/AI/MVDodgeThreatEvaluatorLibrary.h`
-- **TokenUnavailable** (1 connections) — `Source/Maverick/Public/AI/MVDodgeThreatEvaluatorLibrary.h`
-- **UMETA** (1 connections) — `Source/Maverick/Public/AI/MVDodgeThreatEvaluatorLibrary.h`
 - **UMVDodgeThreatEvaluatorLibrary** (1 connections) — `Source/Maverick/Public/AI/MVDodgeThreatEvaluatorLibrary.h`
-- **uint8** (1 connections)
-- **USTRUCT** (1 connections)
 
 ## Relationships
 
-- [UMVEnemyDodgeTokenComponent::TryConsumeDodgeTokenForThreat](UMVEnemyDodgeTokenComponent--TryConsumeDodgeTokenForThreat.md) (1 shared connections)
+- [EnemyDodgeActionTaskResolveDirection](EnemyDodgeActionTaskResolveDirection.md) (1 shared connections)
 
 ## Source Files
 

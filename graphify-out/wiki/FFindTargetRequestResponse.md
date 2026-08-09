@@ -1,6 +1,6 @@
 # FFindTargetRequestResponse
 
-> 9 nodes · cohesion 0.28
+> 9 nodes
 
 ## Key Concepts
 
@@ -9,10 +9,10 @@
 - **FFindTargetRequestParams** (5 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/LockOnTargetComponent.h`
 - **UTargetHandlerBase::FindTarget_Implementation()** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetHandlers/TargetHandlerBase.cpp`
 - **UWeightedTargetHandler::TryFindTarget()** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/TargetHandlers/WeightedTargetHandler.cpp`
-- **CreateFindTargetContext** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h`
 - **FindTargetBatched** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h`
-- **ULockOnTargetComponent::ProcessTargetHandlerResponse()** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetComponent.cpp`
+- **CreateFindTargetContext** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Public/TargetHandlers/WeightedTargetHandler.h`
 - **ULockOnTargetComponent::RequestFindTarget()** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetComponent.cpp`
+- **ULockOnTargetComponent::ProcessTargetHandlerResponse()** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetComponent.cpp`
 
 ## Relationships
 

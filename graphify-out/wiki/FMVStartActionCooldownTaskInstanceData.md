@@ -1,6 +1,6 @@
 # FMVStartActionCooldownTaskInstanceData
 
-> 22 nodes · cohesion 0.10
+> 22 nodes
 
 ## Key Concepts
 
@@ -13,18 +13,18 @@
 - **FStateTreeExecutionContext** (2 connections)
 - **.GetInstanceDataType()** (2 connections) — `Source/Maverick/AI/Task/MVStartActionCooldownTask.h`
 - **APawn** (1 connections)
+- **TObjectPtr** (1 connections)
 - **EStateTreeRunStatus** (1 connections)
 - **FStateTreeTransitionResult** (1 connections)
 - **TObjectPtr** (1 connections)
-- **ActionId** (1 connections) — `Source/Maverick/AI/Task/MVStartActionCooldownTask.h`
-- **bRequireStartedAction** (1 connections) — `Source/Maverick/AI/Task/MVStartActionCooldownTask.h`
-- **Owner** (1 connections) — `Source/Maverick/AI/Task/MVStartActionCooldownTask.h`
-- **StartedActionRowName** (1 connections) — `Source/Maverick/AI/Task/MVStartActionCooldownTask.h`
-- **StartedActionTableName** (1 connections) — `Source/Maverick/AI/Task/MVStartActionCooldownTask.h`
 - **APawn** (1 connections)
+- **Owner** (1 connections) — `Source/Maverick/AI/Task/MVStartActionCooldownTask.h`
 - **FName** (1 connections)
+- **ActionId** (1 connections) — `Source/Maverick/AI/Task/MVStartActionCooldownTask.h`
+- **StartedActionTableName** (1 connections) — `Source/Maverick/AI/Task/MVStartActionCooldownTask.h`
+- **StartedActionRowName** (1 connections) — `Source/Maverick/AI/Task/MVStartActionCooldownTask.h`
+- **bRequireStartedAction** (1 connections) — `Source/Maverick/AI/Task/MVStartActionCooldownTask.h`
 - **FStateTreeTaskCommonBase** (1 connections)
-- **TObjectPtr** (1 connections)
 - **UStruct** (1 connections)
 
 ## Relationships

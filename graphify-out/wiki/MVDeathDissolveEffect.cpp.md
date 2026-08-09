@@ -1,20 +1,20 @@
 # MVDeathDissolveEffect.cpp
 
-> 11 nodes · cohesion 0.20
+> 11 nodes
 
 ## Key Concepts
 
 - **MVDeathDissolveEffect.cpp** (8 connections) — `Source/Maverick/Effects/MVDeathDissolveEffect.cpp`
-- **AActor** (2 connections)
 - **UMVDeathDissolveEffect::GetWorld()** (2 connections) — `Source/Maverick/Effects/MVDeathDissolveEffect.cpp`
 - **UMVDeathDissolveEffect::InitializeEffect()** (2 connections) — `Source/Maverick/Effects/MVDeathDissolveEffect.cpp`
+- **AActor** (2 connections)
 - **UMVDeathDissolveEffect::StartDeathDissolve_Implementation()** (2 connections) — `Source/Maverick/Effects/MVDeathDissolveEffect.cpp`
 - **UWorld** (1 connections)
-- **UMVDeathDissolveEffect::ApplyDeathDissolveAmount()** (1 connections) — `Source/Maverick/Effects/MVDeathDissolveEffect.cpp`
-- **UMVDeathDissolveEffect::FinishDeathDissolve()** (1 connections) — `Source/Maverick/Effects/MVDeathDissolveEffect.cpp`
-- **UMVDeathDissolveEffect::MigrateLegacyDurationIfNeeded()** (1 connections) — `Source/Maverick/Effects/MVDeathDissolveEffect.cpp`
 - **UMVDeathDissolveEffect::ResetDeathDissolveVisuals_Implementation()** (1 connections) — `Source/Maverick/Effects/MVDeathDissolveEffect.cpp`
+- **UMVDeathDissolveEffect::ApplyDeathDissolveAmount()** (1 connections) — `Source/Maverick/Effects/MVDeathDissolveEffect.cpp`
+- **UMVDeathDissolveEffect::MigrateLegacyDurationIfNeeded()** (1 connections) — `Source/Maverick/Effects/MVDeathDissolveEffect.cpp`
 - **UMVDeathDissolveEffect::UpdateDeathDissolve()** (1 connections) — `Source/Maverick/Effects/MVDeathDissolveEffect.cpp`
+- **UMVDeathDissolveEffect::FinishDeathDissolve()** (1 connections) — `Source/Maverick/Effects/MVDeathDissolveEffect.cpp`
 
 ## Relationships
 

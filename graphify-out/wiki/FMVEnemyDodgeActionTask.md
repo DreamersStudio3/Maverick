@@ -1,15 +1,23 @@
 # FMVEnemyDodgeActionTask
 
-> 2 nodes · cohesion 1.00
+> 7 nodes
 
 ## Key Concepts
 
+- **MVEnemyDodgeActionTask.h** (6 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
+- **FMVEnemyDodgeActionTask** (6 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
+- **APawn** (2 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
+- **UMVActionComponent** (2 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
 - **.GetInstanceDataType()** (2 connections) — `Source/Maverick/AI/Task/MVEnemyDodgeActionTask.h`
+- **FStateTreeTaskCommonBase** (1 connections)
 - **UStruct** (1 connections)
 
 ## Relationships
 
-- [MVEnemyDodgeActionTask.cpp](MVEnemyDodgeActionTask.cpp.md) (1 shared connections)
+- [FMVEnemyDodgeActionTaskInstanceData](FMVEnemyDodgeActionTaskInstanceData.md) (3 shared connections)
+- [MVEnemyDodgeActionTask.cpp](MVEnemyDodgeActionTask.cpp.md) (3 shared connections)
+- [EnemyDodgeActionTaskResolveDirection](EnemyDodgeActionTaskResolveDirection.md) (1 shared connections)
+- [MVMovementActionTableTypes.h](MVMovementActionTableTypes.h.md) (1 shared connections)
 
 ## Source Files
 
@@ -17,7 +25,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 3 (100%)
+- EXTRACTED: 20 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

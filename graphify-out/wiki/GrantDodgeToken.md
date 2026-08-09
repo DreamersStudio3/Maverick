@@ -1,20 +1,20 @@
 # GrantDodgeToken
 
-> 6 nodes · cohesion 0.33
+> 6 nodes
 
 ## Key Concepts
 
-- **GrantDodgeToken** (4 connections) — `Source/Maverick/Components/MVEnemyDodgeTokenComponent.h`
 - **UMVEnemyDodgeTokenComponent::NotifyEnemyDamaged()** (4 connections) — `Source/Maverick/Components/MVEnemyDodgeTokenComponent.cpp`
 - **UMVEnemyDodgeTokenComponent::NotifyEnemyLandedHit()** (4 connections) — `Source/Maverick/Components/MVEnemyDodgeTokenComponent.cpp`
+- **GrantDodgeToken** (4 connections) — `Source/Maverick/Components/MVEnemyDodgeTokenComponent.h`
+- **UMVEnemyDodgeTokenComponent::HandleOwnerGroggyEnded()** (2 connections) — `Source/Maverick/Components/MVEnemyDodgeTokenComponent.cpp`
 - **IsRelevantEnemyHitData** (2 connections) — `Source/Maverick/Components/MVEnemyDodgeTokenComponent.h`
 - **IsRelevantLandedHitData** (2 connections) — `Source/Maverick/Components/MVEnemyDodgeTokenComponent.h`
-- **UMVEnemyDodgeTokenComponent::HandleOwnerGroggyEnded()** (2 connections) — `Source/Maverick/Components/MVEnemyDodgeTokenComponent.cpp`
 
 ## Relationships
 
-- [EMVEnemyDodgeTokenGrantReason](EMVEnemyDodgeTokenGrantReason.md) (3 shared connections)
 - [MVEnemyDodgeTokenComponent.cpp](MVEnemyDodgeTokenComponent.cpp.md) (3 shared connections)
+- [EMVEnemyDodgeTokenGrantReason](EMVEnemyDodgeTokenGrantReason.md) (3 shared connections)
 - [FMVResolvedHitData](FMVResolvedHitData.md) (2 shared connections)
 
 ## Source Files

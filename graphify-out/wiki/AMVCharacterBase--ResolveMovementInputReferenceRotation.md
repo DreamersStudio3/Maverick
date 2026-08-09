@@ -1,12 +1,12 @@
 # AMVCharacterBase::ResolveMovementInputReferenceRotation
 
-> 3 nodes · cohesion 0.67
+> 3 nodes
 
 ## Key Concepts
 
 - **AMVCharacterBase::ResolveMovementInputReferenceRotation()** (2 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
-- **AMVCharacterBase::SetStrafeMode()** (2 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
 - **FRotator** (2 connections)
+- **AMVCharacterBase::SetStrafeMode()** (2 connections) — `Source/Maverick/Character/MVCharacterBase.cpp`
 
 ## Relationships
 

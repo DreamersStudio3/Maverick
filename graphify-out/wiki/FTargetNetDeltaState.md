@@ -1,6 +1,6 @@
 # FTargetNetDeltaState
 
-> 15 nodes · cohesion 0.16
+> 15 nodes
 
 ## Key Concepts
 
@@ -8,17 +8,17 @@
 - **LockOnTargetTypes.cpp** (4 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetTypes.cpp`
 - **FTargetInfo::NetSerialize()** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetTypes.cpp`
 - **.FTargetNetDeltaState()** (3 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetTypes.cpp`
+- **FTargetInfo::GetSocketIndex()** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetTypes.cpp`
 - **INetDeltaBaseState** (2 connections)
 - **TWeakObjectPtr** (2 connections)
 - **UTargetComponent** (2 connections)
-- **FTargetInfo::GetSocketIndex()** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetTypes.cpp`
-- **FTargetInfo::NetDeltaSerialize()** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetTypes.cpp`
 - **.IsStateEqual()** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetTypes.cpp`
+- **FTargetInfo::NetDeltaSerialize()** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetTypes.cpp`
 - **FArchive** (1 connections)
-- **FNetDeltaSerializeInfo** (1 connections)
+- **UPackageMap** (1 connections)
 - **uint32** (1 connections)
 - **Target** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/Private/LockOnTargetTypes.cpp`
-- **UPackageMap** (1 connections)
+- **FNetDeltaSerializeInfo** (1 connections)
 
 ## Relationships
 

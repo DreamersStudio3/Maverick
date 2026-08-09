@@ -1,6 +1,6 @@
 # FMVAICombatActionCondition
 
-> 20 nodes · cohesion 0.14
+> 21 nodes
 
 ## Key Concepts
 
@@ -10,25 +10,26 @@
 - **TestCondition** (6 connections) — `Source/Maverick/AI/Condition/MVCombatDecisionCondition.h`
 - **CombatDecisionCanAttackImmediately()** (5 connections) — `Source/Maverick/AI/Condition/MVCombatDecisionCondition.cpp`
 - **MVCombatDecisionCondition.cpp** (4 connections) — `Source/Maverick/AI/Condition/MVCombatDecisionCondition.cpp`
-- **FStateTreeExecutionContext** (1 connections)
+- **FMVActionRequest** (2 connections)
 - **TArray** (1 connections)
-- **ActionRequest** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
-- **bRequiresAirbornePattern** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
-- **bRequiresBackwardPathClear** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
-- **bRequiresForwardPathClear** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
-- **bRequiresLineOfSight** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
-- **bRequiresTargetCanBeAirborne** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
-- **bRequiresTargetNotAirborne** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
+- **FStateTreeExecutionContext** (1 connections)
 - **.FMVAICombatActionCondition()** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
-- **MaxAbsAngle** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
-- **MaxDistance** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
+- **ActionRequest** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
 - **Metadata** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
 - **MinDistance** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
+- **MaxDistance** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
+- **MaxAbsAngle** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
+- **bRequiresLineOfSight** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
+- **bRequiresForwardPathClear** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
+- **bRequiresBackwardPathClear** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
+- **bRequiresTargetCanBeAirborne** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
+- **bRequiresTargetNotAirborne** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
+- **bRequiresAirbornePattern** (1 connections) — `Source/Maverick/AI/MVAICombatTypes.h`
 
 ## Relationships
 
-- [FMVCombatDecisionConditionInstanceData](FMVCombatDecisionConditionInstanceData.md) (3 shared connections)
 - [MVAICombatTypes.h](MVAICombatTypes.h.md) (3 shared connections)
+- [FMVCombatDecisionConditionInstanceData](FMVCombatDecisionConditionInstanceData.md) (3 shared connections)
 - [FMVAICombatContext](FMVAICombatContext.md) (2 shared connections)
 - [MVExecuteAttackTask.cpp](MVExecuteAttackTask.cpp.md) (2 shared connections)
 - [FMVExecuteFixedAttackTaskInstanceData](FMVExecuteFixedAttackTaskInstanceData.md) (1 shared connections)
@@ -41,7 +42,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 63 (100%)
+- EXTRACTED: 65 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

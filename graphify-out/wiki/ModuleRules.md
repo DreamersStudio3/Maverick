@@ -1,17 +1,17 @@
 # ModuleRules
 
-> 9 nodes · cohesion 0.22
+> 9 nodes
 
 ## Key Concepts
 
 - **ModuleRules** (4 connections)
-- **LockOnTarget** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/LockOnTarget.Build.cs`
 - **LockOnTargetDev** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTargetDev/LockOnTargetDev.build.cs`
 - **LockOnTargetEditor** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTargetEditor/LockOnTargetEditor.Build.cs`
+- **LockOnTarget** (2 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/LockOnTarget.Build.cs`
 - **Maverick** (2 connections) — `Source/Maverick/Maverick.Build.cs`
-- **LockOnTarget.Build.cs** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/LockOnTarget.Build.cs`
 - **LockOnTargetDev.build.cs** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTargetDev/LockOnTargetDev.build.cs`
 - **LockOnTargetEditor.Build.cs** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTargetEditor/LockOnTargetEditor.Build.cs`
+- **LockOnTarget.Build.cs** (1 connections) — `Plugins/LockOnTarget/Source/LockOnTarget/LockOnTarget.Build.cs`
 - **Maverick.Build.cs** (1 connections) — `Source/Maverick/Maverick.Build.cs`
 
 ## Relationships

@@ -1,33 +1,33 @@
 # MVPlayerInteractionDetector.cpp
 
-> 25 nodes · cohesion 0.08
+> 25 nodes
 
 ## Key Concepts
 
 - **MVPlayerInteractionDetector.cpp** (44 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
-- **UMVPlayerInteractionDetector::ClearFocusedInteractable()** (1 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
+- **UMVPlayerInteractionDetector::UMVPlayerInteractionDetector()** (1 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
 - **UMVPlayerInteractionDetector::Deinitialize()** (1 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
-- **UMVPlayerInteractionDetector::HideActiveDialogueWindow()** (1 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
-- **UMVPlayerInteractionDetector::HideInteractionPrompt()** (1 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
-- **UMVPlayerInteractionDetector::HidePIEActionTestPanel()** (1 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
-- **UMVPlayerInteractionDetector::IsDialogueInteractionBlocked()** (1 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
-- **UMVPlayerInteractionDetector::IsDialogueWindowActive()** (1 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
-- **UMVPlayerInteractionDetector::IsInteractionInputHeld()** (1 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
-- **UMVPlayerInteractionDetector::IsOwnerDead()** (1 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
-- **UMVPlayerInteractionDetector::IsPIEActionTestPanelActiveOrPending()** (1 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
-- **UMVPlayerInteractionDetector::LockInteractionUntilInputReleased()** (1 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
-- **UMVPlayerInteractionDetector::ReleaseSuppressedInteractable()** (1 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
-- **UMVPlayerInteractionDetector::RestoreDialogueCameraZoom()** (1 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
+- **UMVPlayerInteractionDetector::Tick()** (1 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
+- **UMVPlayerInteractionDetector::SetInteractionDetectionEnabled()** (1 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
+- **UMVPlayerInteractionDetector::ClearFocusedInteractable()** (1 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
+- **UMVPlayerInteractionDetector::TryInteract()** (1 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
 - **UMVPlayerInteractionDetector::SelectNextInteractable()** (1 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
 - **UMVPlayerInteractionDetector::SelectPreviousInteractable()** (1 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
-- **UMVPlayerInteractionDetector::SetInteractionDetectionEnabled()** (1 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
 - **UMVPlayerInteractionDetector::ShouldRunDetection()** (1 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
+- **UMVPlayerInteractionDetector::IsDialogueWindowActive()** (1 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
+- **UMVPlayerInteractionDetector::IsDialogueInteractionBlocked()** (1 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
+- **UMVPlayerInteractionDetector::IsOwnerDead()** (1 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
+- **UMVPlayerInteractionDetector::IsPIEActionTestPanelActiveOrPending()** (1 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
 - **UMVPlayerInteractionDetector::SkipActiveDialogueWindow()** (1 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
-- **UMVPlayerInteractionDetector::Tick()** (1 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
-- **UMVPlayerInteractionDetector::TryInteract()** (1 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
-- **UMVPlayerInteractionDetector::UMVPlayerInteractionDetector()** (1 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
+- **UMVPlayerInteractionDetector::HideInteractionPrompt()** (1 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
+- **UMVPlayerInteractionDetector::HideActiveDialogueWindow()** (1 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
+- **UMVPlayerInteractionDetector::HidePIEActionTestPanel()** (1 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
+- **UMVPlayerInteractionDetector::RestoreDialogueCameraZoom()** (1 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
+- **UMVPlayerInteractionDetector::ReleaseSuppressedInteractable()** (1 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
 - **UMVPlayerInteractionDetector::UpdateDialogueEscapeState()** (1 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
+- **UMVPlayerInteractionDetector::LockInteractionUntilInputReleased()** (1 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
 - **UMVPlayerInteractionDetector::UpdateInteractionInputReleaseGate()** (1 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
+- **UMVPlayerInteractionDetector::IsInteractionInputHeld()** (1 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
 - **UMVPlayerInteractionDetector::UpdateInteractionPrompt()** (1 connections) — `Source/Maverick/Character/PC/InteractionDetector/MVPlayerInteractionDetector.cpp`
 
 ## Relationships

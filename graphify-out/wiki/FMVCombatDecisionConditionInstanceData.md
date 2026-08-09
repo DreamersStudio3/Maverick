@@ -1,6 +1,6 @@
 # FMVCombatDecisionConditionInstanceData
 
-> 17 nodes · cohesion 0.12
+> 17 nodes
 
 ## Key Concepts
 
@@ -9,18 +9,18 @@
 - **MVCombatDecisionCondition.h** (3 connections) — `Source/Maverick/AI/Condition/MVCombatDecisionCondition.h`
 - **.GetInstanceDataType()** (2 connections) — `Source/Maverick/AI/Condition/MVCombatDecisionCondition.h`
 - **EMVAICombatDecisionState** (1 connections)
-- **FStateTreeConditionCommonBase** (1 connections)
-- **AirborneChargeAttack** (1 connections) — `Source/Maverick/AI/Condition/MVCombatDecisionCondition.h`
-- **BasicAttacks** (1 connections) — `Source/Maverick/AI/Condition/MVCombatDecisionCondition.h`
-- **CombatContext** (1 connections) — `Source/Maverick/AI/Condition/MVCombatDecisionCondition.h`
-- **CombatMaxDistance** (1 connections) — `Source/Maverick/AI/Condition/MVCombatDecisionCondition.h`
-- **CounterAttack** (1 connections) — `Source/Maverick/AI/Condition/MVCombatDecisionCondition.h`
-- **DesiredState** (1 connections) — `Source/Maverick/AI/Condition/MVCombatDecisionCondition.h`
-- **SkillAttacks** (1 connections) — `Source/Maverick/AI/Condition/MVCombatDecisionCondition.h`
-- **SprintAttack** (1 connections) — `Source/Maverick/AI/Condition/MVCombatDecisionCondition.h`
-- **SprintMaxReach** (1 connections) — `Source/Maverick/AI/Condition/MVCombatDecisionCondition.h`
 - **TArray** (1 connections)
+- **FStateTreeConditionCommonBase** (1 connections)
 - **UStruct** (1 connections)
+- **CombatContext** (1 connections) — `Source/Maverick/AI/Condition/MVCombatDecisionCondition.h`
+- **DesiredState** (1 connections) — `Source/Maverick/AI/Condition/MVCombatDecisionCondition.h`
+- **CounterAttack** (1 connections) — `Source/Maverick/AI/Condition/MVCombatDecisionCondition.h`
+- **SprintAttack** (1 connections) — `Source/Maverick/AI/Condition/MVCombatDecisionCondition.h`
+- **AirborneChargeAttack** (1 connections) — `Source/Maverick/AI/Condition/MVCombatDecisionCondition.h`
+- **SkillAttacks** (1 connections) — `Source/Maverick/AI/Condition/MVCombatDecisionCondition.h`
+- **BasicAttacks** (1 connections) — `Source/Maverick/AI/Condition/MVCombatDecisionCondition.h`
+- **SprintMaxReach** (1 connections) — `Source/Maverick/AI/Condition/MVCombatDecisionCondition.h`
+- **CombatMaxDistance** (1 connections) — `Source/Maverick/AI/Condition/MVCombatDecisionCondition.h`
 
 ## Relationships
 

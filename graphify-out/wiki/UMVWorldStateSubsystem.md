@@ -1,6 +1,6 @@
 # UMVWorldStateSubsystem
 
-> 6 nodes · cohesion 0.33
+> 6 nodes
 
 ## Key Concepts
 
@@ -15,8 +15,8 @@
 
 - [MVFieldTransitionSubsystem.cpp](MVFieldTransitionSubsystem.cpp.md) (1 shared connections)
 - [MVQuestSubsystem.cpp](MVQuestSubsystem.cpp.md) (1 shared connections)
-- [MVWorldStateTypes.h](MVWorldStateTypes.h.md) (1 shared connections)
 - [MVWorldStateSubsystem.cpp](MVWorldStateSubsystem.cpp.md) (1 shared connections)
+- [MVWorldStateTypes.h](MVWorldStateTypes.h.md) (1 shared connections)
 
 ## Source Files
 
