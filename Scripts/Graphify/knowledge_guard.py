@@ -17,8 +17,8 @@ from typing import Iterable, Sequence
 from urllib.parse import unquote
 
 
-SCHEMA = "maverick.graphify-wrap-up/v1"
-EXPORT_SCHEMA = "maverick.graphify-export/v1"
+SCHEMA = "maverick.graphify-wrap-up/v2"
+EXPORT_SCHEMA = "maverick.graphify-export/v2"
 STAMP_PATH = "graphify-out/wrap-up.json"
 EXPORT_PROVENANCE_PATH = "graphify-out/export-provenance.json"
 ZERO_OID = re.compile(r"^0+$")
@@ -51,10 +51,10 @@ REQUIRED_ARTIFACTS = {
     "graphify-out/graph.html",
     "graphify-out/graph.json",
     "graphify-out/manifest.json",
-    "graphify-out/obsidian/.graphify_obsidian_manifest.json",
-    "graphify-out/obsidian/graph.canvas",
     "graphify-out/wiki/index.md",
 }
+
+WIKI_REVIEW_RESULTS = {"updated", "not-needed"}
 
 
 class GuardError(RuntimeError):
@@ -141,17 +141,7 @@ def is_artifact_path(path: str) -> bool:
     normalized = normalize_path(path)
     if normalized in REQUIRED_ARTIFACTS:
         return True
-    if normalized.startswith("graphify-out/wiki/"):
-        return True
-    if not normalized.startswith("graphify-out/obsidian/"):
-        return False
-
-    # Obsidian writes per-user UI state into the vault when it opens. Only the
-    # files Graphify owns are wrap-up artifacts; workspace/app state must remain
-    # local and must not make a valid push fail.
-    return normalized.endswith(".md") or normalized == (
-        "graphify-out/obsidian/.obsidian/graph.json"
-    )
+    return normalized.startswith("graphify-out/wiki/")
 
 
 def _parse_index_entries(raw: bytes) -> list[tuple[str, str, str]]:
@@ -290,48 +280,6 @@ def content_tree_fingerprint(root: Path) -> tuple[str, int]:
     return digest.hexdigest(), len(files)
 
 
-def selected_tree_fingerprint(root: Path, relative_paths: Iterable[str]) -> tuple[str, int]:
-    normalized_paths = sorted({normalize_path(path) for path in relative_paths})
-    digest = hashlib.sha256()
-    for relative in normalized_paths:
-        path = root / Path(relative)
-        if not path.is_file():
-            raise GuardError(f"Graphify export 파일이 없습니다: {path}")
-        digest.update(relative.encode("utf-8", errors="surrogateescape"))
-        digest.update(b"\0")
-        digest.update(_sha256(path).encode("ascii"))
-        digest.update(b"\n")
-    return digest.hexdigest(), len(normalized_paths)
-
-
-def obsidian_owned_paths(root: Path) -> set[str]:
-    manifest_path = root / "graphify-out/obsidian/.graphify_obsidian_manifest.json"
-    try:
-        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:
-        raise GuardError(f"Obsidian manifest를 읽을 수 없습니다: {exc}") from exc
-
-    raw_files = manifest.get("files")
-    if not isinstance(raw_files, list):
-        raise GuardError("Obsidian manifest의 files가 배열이 아닙니다.")
-
-    owned: set[str] = set()
-    for raw_path in raw_files:
-        if not isinstance(raw_path, str):
-            raise GuardError("Obsidian manifest에 문자열이 아닌 파일 경로가 있습니다.")
-        normalized = normalize_path(raw_path)
-        parts = Path(normalized).parts
-        if (
-            not normalized
-            or normalized.startswith("/")
-            or re.match(r"^[A-Za-z]:/", normalized)
-            or ".." in parts
-        ):
-            raise GuardError(f"Obsidian manifest 경로가 vault 밖을 가리킵니다: {raw_path}")
-        owned.add(normalized)
-    return owned
-
-
 def validate_manifest(root: Path, corpus: dict[str, str]) -> int:
     manifest_path = root / "graphify-out/manifest.json"
     if not manifest_path.is_file():
@@ -407,45 +355,6 @@ def validate_artifacts(root: Path, entries: Sequence[tuple[str, str, str]]) -> d
         if isinstance(node, dict) and node.get("community") is not None
     }
 
-    obsidian_root = root / "graphify-out/obsidian"
-    try:
-        canvas = json.loads((obsidian_root / "graph.canvas").read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:
-        raise GuardError(f"Obsidian export를 읽을 수 없습니다: {exc}") from exc
-
-    declared_obsidian = obsidian_owned_paths(root)
-    missing_obsidian = sorted(
-        path for path in declared_obsidian if not (obsidian_root / Path(path)).is_file()
-    )
-    if missing_obsidian:
-        raise GuardError(
-            "Obsidian manifest가 존재하지 않는 Graphify 파일을 선언합니다: "
-            + ", ".join(missing_obsidian[:10])
-        )
-    declared_index_paths = {
-        f"graphify-out/obsidian/{path}" for path in declared_obsidian
-    }
-    missing_indexed_obsidian = sorted(declared_index_paths.difference(indexed_paths))
-    if missing_indexed_obsidian:
-        raise GuardError(
-            "Graphify가 생성한 Obsidian 파일이 Git index에 없습니다: "
-            + ", ".join(missing_indexed_obsidian[:10])
-        )
-
-    canvas_nodes = canvas.get("nodes", [])
-    canvas_groups = sum(node.get("type") == "group" for node in canvas_nodes)
-    canvas_files = [node for node in canvas_nodes if node.get("type") == "file"]
-    if canvas_groups != len(communities) or len(canvas_files) != len(nodes):
-        raise GuardError("Obsidian canvas가 현재 graph의 node/community 수와 다릅니다.")
-    missing_canvas_notes = [
-        node.get("file")
-        for node in canvas_files
-        if not isinstance(node.get("file"), str)
-        or normalize_path(node["file"]) not in declared_obsidian
-    ]
-    if missing_canvas_notes:
-        raise GuardError("Obsidian canvas가 존재하지 않는 note를 참조합니다.")
-
     wiki_root = root / "graphify-out/wiki"
     try:
         wiki_index = (wiki_root / "index.md").read_text(encoding="utf-8")
@@ -477,21 +386,11 @@ def validate_artifacts(root: Path, entries: Sequence[tuple[str, str, str]]) -> d
         "edges": len(links),
         "communities": len(communities),
         "wiki_community_articles": len(community_links),
-        "obsidian_notes": len(canvas_files),
     }
 
 
 def export_provenance_payload(root: Path) -> dict:
     wiki_hash, wiki_files = content_tree_fingerprint(root / "graphify-out/wiki")
-    obsidian_owned = obsidian_owned_paths(root)
-    obsidian_hash, obsidian_files = selected_tree_fingerprint(
-        root / "graphify-out/obsidian",
-        obsidian_owned
-        | {
-            ".graphify_obsidian_manifest.json",
-            "graph.canvas",
-        },
-    )
     return {
         "$schema": EXPORT_SCHEMA,
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
@@ -504,8 +403,6 @@ def export_provenance_payload(root: Path) -> dict:
         "graph_html_sha256": _sha256(root / "graphify-out/graph.html"),
         "wiki_tree_sha256": wiki_hash,
         "wiki_files": wiki_files,
-        "obsidian_tree_sha256": obsidian_hash,
-        "obsidian_files": obsidian_files,
     }
 
 
@@ -527,8 +424,6 @@ def validate_export_provenance(root: Path) -> None:
         "graph_html_sha256",
         "wiki_tree_sha256",
         "wiki_files",
-        "obsidian_tree_sha256",
-        "obsidian_files",
     )
     mismatched = [key for key in compared_keys if recorded.get(key) != current.get(key)]
     if mismatched:
@@ -542,7 +437,6 @@ def validate_export_provenance(root: Path) -> None:
 def export_views(root: Path) -> None:
     commands = (
         ("wiki",),
-        ("obsidian", "--dir", "graphify-out/obsidian"),
         ("html",),
     )
     for arguments in commands:
@@ -576,7 +470,13 @@ def graphify_version() -> str:
     return "unknown"
 
 
-def write_stamp(root: Path) -> None:
+def write_stamp(root: Path, wiki_review: str, wiki_note: str) -> None:
+    note = wiki_note.strip()
+    if wiki_review not in WIKI_REVIEW_RESULTS:
+        raise GuardError("wiki review 결과가 올바르지 않습니다.")
+    if not note:
+        raise GuardError("wiki review 대상 문서 또는 변경 불필요 사유가 필요합니다.")
+
     corpus = scan_graphify_corpus(root)
     ensure_relevant_files_are_staged(root, corpus)
     entries = index_entries(root)
@@ -591,6 +491,10 @@ def write_stamp(root: Path) -> None:
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "head_at_stamp": head,
         "graphify_version": graphify_version(),
+        "wiki_review": {
+            "result": wiki_review,
+            "note": note,
+        },
         "source_fingerprint": source_fingerprint,
         "source_files": source_files,
         "artifact_fingerprint": artifact_fingerprint,
@@ -633,6 +537,15 @@ def verify_commit(root: Path, revision: str) -> str:
     stamp = load_stamp_from_commit(root, commit)
     if stamp.get("$schema") != SCHEMA:
         raise GuardError(f"{commit[:12]}의 wrap-up schema가 현재 버전과 다릅니다.")
+
+    wiki_review = stamp.get("wiki_review")
+    if (
+        not isinstance(wiki_review, dict)
+        or wiki_review.get("result") not in WIKI_REVIEW_RESULTS
+        or not isinstance(wiki_review.get("note"), str)
+        or not wiki_review["note"].strip()
+    ):
+        raise GuardError(f"{commit[:12]}에 유효한 wiki review 기록이 없습니다.")
 
     entries = commit_entries(root, commit)
     indexed_paths = {path for path, _, _ in entries}
@@ -687,8 +600,21 @@ def check_commits(root: Path, revisions: Sequence[str], *, default_head: bool) -
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     subparsers = parser.add_subparsers(dest="command", required=True)
-    subparsers.add_parser("stamp", help="staged 위키·코드와 산출물의 wrap-up stamp 생성")
-    subparsers.add_parser("export", help="wiki·Obsidian·HTML export와 provenance 생성")
+    stamp_parser = subparsers.add_parser(
+        "stamp", help="위키 검토 결과와 staged snapshot의 wrap-up stamp 생성"
+    )
+    stamp_parser.add_argument(
+        "--wiki-review",
+        choices=sorted(WIKI_REVIEW_RESULTS),
+        required=True,
+        help="updated: 위키 갱신, not-needed: 변경 불필요",
+    )
+    stamp_parser.add_argument(
+        "--wiki-note",
+        required=True,
+        help="갱신한 위키 경로 또는 변경 불필요 사유",
+    )
+    subparsers.add_parser("export", help="wiki·HTML export와 provenance 생성")
     check_parser = subparsers.add_parser("check", help="커밋의 wrap-up stamp 검증")
     check_parser.add_argument("--stdin", action="store_true", help="pre-push stdin 읽기")
     check_parser.add_argument(
@@ -702,7 +628,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     try:
         root = find_repo_root()
         if args.command == "stamp":
-            write_stamp(root)
+            write_stamp(root, args.wiki_review, args.wiki_note)
         elif args.command == "export":
             export_views(root)
         else:
