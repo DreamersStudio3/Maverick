@@ -1,63 +1,85 @@
-# Graphify 위키를 Obsidian에서 보는 방법
+# 사람용 위키를 Obsidian에서 사용하는 방법
 
-Graphify가 만든 코드·문서 연결 지도를 Obsidian에서 찾아보는 방법을 설명한다. Obsidian에서 여는 폴더는 `graphify-out/obsidian/`이며, Obsidian에서 하나의 작업 공간으로 여는 폴더를 **vault**라고 부른다.
+Maverick의 내부 위키: `docs/wiki/`의 Markdown 문서
 
-`graphify-out/obsidian/`은 Graphify가 다시 만드는 조회용 문서다. 직접 고쳐야 할 설명은 원본 코드나 `docs/wiki/`에 작성한다.
+Obsidian의 역할: 위키 열람·검색·링크 편집을 위한 편집기
+
+Graphify의 역할: `graphify-out/`에 에이전트용 코드 관계 자료 생성
 
 ## 처음 한 번 연결하기
 
-1. **Obsidian을 설치한다.** [공식 설치 안내](https://obsidian.md/help/Getting%2Bstarted/Download%2Band%2Binstall%2BObsidian)에서 운영체제에 맞는 설치 파일을 받는다. Windows에서는 `Universal` 설치 파일을 선택하면 된다.
-2. **Graphify 결과가 있는지 확인한다.** Maverick 저장소의 `graphify-out/obsidian/` 아래에 `graph.canvas`, `_COMMUNITY_`로 시작하는 Markdown 문서, 그 밖의 노트가 있어야 한다. 폴더가 없다면 먼저 최신 브랜치를 받고, 그래도 없다면 아래의 [문제 해결](#문제-해결)을 확인한다.
-3. **생성 폴더를 vault로 연다.** Obsidian을 실행하고 `Open folder as vault`의 `Open`을 누른 다음 `Maverick/graphify-out/obsidian/` 폴더를 선택한다. 이미 다른 vault가 열려 있다면 왼쪽 아래의 `Vault profile` → `Manage Vaults...` → `Open folder as vault` 순서로 연다. 저장소 루트나 `docs/wiki/`가 아니라 **`graphify-out/obsidian/` 자체**를 선택해야 한다. 화면 구성이 달라졌다면 [공식 vault 관리 안내](https://obsidian.md/help/manage-vaults)를 참고한다.
-4. **`graph.canvas`를 연다.** 왼쪽 파일 목록에서 `graph.canvas`를 선택하면 전체 노트와 연결을 한 화면에서 볼 수 있다. `Space`를 누른 채 빈 공간을 드래그해 이동하고, `Ctrl`을 누른 채 마우스 휠을 움직여 확대·축소한다. `Shift+1`을 누르면 전체가 화면에 맞춰진다. 자세한 조작법은 [공식 Canvas 안내](https://obsidian.md/help/plugins/canvas)에 있다.
-5. **필요한 항목을 검색한다.** Windows와 Linux에서는 `Ctrl+O`로 파일명을 빠르게 찾고 `Ctrl+Shift+F`로 모든 노트의 본문을 검색한다. macOS에서는 각각 `Cmd+O`, `Cmd+Shift+F`를 사용한다. 예를 들어 `MVActionComponent`, `DeathRespawnFlow`, `AI StateTree`처럼 타입이나 기능 이름을 입력한다. 검색 범위를 좁힐 때는 `file:MVActionComponent`, `content:"Death and Field Transition"` 같은 [검색 연산자](https://obsidian.md/help/plugins/search)를 사용할 수 있다.
+1. [Obsidian 공식 설치 안내](https://obsidian.md/help/getting-started/download-and-install-obsidian)에서 운영체제용 설치 파일 다운로드 및 설치
+2. Maverick 저장소를 최신 상태로 받은 뒤 `docs/wiki/Architecture.md` 존재 여부 확인
+3. Obsidian 실행 후 `Open folder as vault` 선택
+4. Maverick 저장소의 **`docs/wiki/` 폴더 선택**
+5. 왼쪽 파일 목록에서 `Architecture.md`를 열어 vault 연결 확인
 
-## 평소에는 이렇게 찾아본다
+이미 다른 vault가 열린 상태라면 왼쪽 아래 vault 메뉴에서 `Manage vaults`를 선택한 뒤 `Open folder as vault` 사용. 화면 문구가 달라진 경우 [공식 vault 관리 안내](https://obsidian.md/help/manage-vaults) 참고
 
-1. 전체 영역을 훑을 때는 `graph.canvas`를 연다.
-2. 관심 있는 묶음을 찾았으면 `_COMMUNITY_`로 시작하는 요약 노트를 연다. 이 노트는 서로 관련된 타입, 함수, 문서를 한곳에 모아 보여준다.
-3. 요약 노트의 링크를 따라 개별 노트로 들어간다. 개별 노트에는 코드 심볼이나 문서 개념, 연결된 항목, 원본 파일 위치가 담겨 있다.
-4. 실행 순서나 소유권처럼 Graphify만으로 판단하기 어려운 내용은 `docs/wiki/Architecture.md`를 함께 읽는다. 이 파일은 생성 vault 밖에 있으므로 저장소의 코드 편집기나 Git 뷰어에서 별도로 연다.
-5. 실제 변경 전에는 노트가 가리키는 원본 코드와 Unreal Editor 에셋을 확인한다. Graphify 노트는 탐색을 돕는 지도이지 원본을 대신하지 않는다.
+## 권장 읽기 순서
 
-`Ctrl+O` 사용법은 [Quick switcher 안내](https://obsidian.md/help/plugins/quick-switcher), 전체 검색 방법은 [Search 안내](https://obsidian.md/help/plugins/search)에서 더 자세히 볼 수 있다.
+1. `Architecture.md`: 전체 구조, 책임 경계, 주요 실행 흐름
+2. 작업 도메인 문서: 전투 설계, 문서 운영, 헤더 문서화 등
+3. 문서의 링크가 가리키는 원본 코드와 Unreal Editor 에셋
 
-## 생성 폴더 안의 파일
+코드 심볼의 호출 관계나 관련 파일 탐색은 Obsidian 대신 에이전트의 `graphify query`, `path`, `explain` 사용
 
-| 파일 | 용도 |
-| --- | --- |
-| `graph.canvas` | 전체 노트와 연결을 배치한 Canvas |
-| `_COMMUNITY_*.md` | 관련 항목을 묶은 영역별 요약 |
-| 그 밖의 `*.md` | 코드 심볼, 파일, 문서 개념을 나타내는 개별 노트 |
-| `.obsidian/graph.json` | 팀에서 함께 쓰는 그래프 보기 설정 |
+## 평소 작업 순서
 
-## Graphify가 갱신된 뒤
+1. 작업 시작 시 관련 위키 문서 확인
+2. `docs/todo/<task>.md`의 `위키 검토` 항목에 예상 영향 기록
+3. 구현 완료 후 기존 위키와 실제 코드·에셋 대조
+4. 오래 남을 책임, 흐름, 설계 이유, 에셋 연결에 변화가 있으면 기존 문서 갱신
+5. 기존 문서로 다루기 어려운 독립 주제만 새 문서로 추가
+6. push 전 TODO에 `갱신: docs/wiki/<문서>.md` 또는 `변경 불필요: <이유>` 기록
+7. PR 생성 시 같은 결과를 PR 설명의 `위키 검토` 항목으로 이동
 
-1. 최신 커밋을 받은 뒤 기존 vault를 그대로 연다. Obsidian은 폴더 밖에서 바뀐 파일도 자동으로 다시 읽는다.
-2. Graphify가 노트를 합치거나 이름을 바꾸면 열려 있던 탭의 파일이 사라질 수 있다. 이때 `Ctrl+O` 또는 `Cmd+O`로 새 이름을 다시 찾는다.
-3. 파일 목록이 계속 예전 상태라면 vault를 닫았다가 다시 열어 본다. 그래도 해결되지 않으면 Obsidian의 `Settings` → `Files and links`에서 `Rebuild vault cache`를 실행한다.
-4. 갱신된 구조가 이상하다면 생성 노트를 직접 고치지 말고 원본 코드·`docs/wiki/`와 Graphify wrap-up 결과를 확인한다.
+모든 작업에서 위키 **검토**는 필수. 문서 의미가 달라지지 않은 작업까지 억지로 문장을 바꾸는 규칙은 없음
 
-## 수정과 공유 원칙
+## 자주 쓰는 기능
 
-- `graphify-out/obsidian/`의 Markdown과 `graph.canvas`는 직접 수정하지 않는다. 다음 Graphify 갱신 때 덮어써진다.
-- 오래 남겨야 할 구조 설명과 결정은 `docs/wiki/`에, 타입 가까이에서 볼 책임과 계약은 C++ 헤더 문서 블록에 적는다.
-- 개인 메모가 필요하면 생성 vault 밖의 별도 vault를 사용한다. 생성 폴더 안에 개인 문서를 두면 다음 갱신 때 없어질 수 있다.
-- Graphify가 관리하는 노트, Canvas, `.obsidian/graph.json`은 공유한다. `workspace*.json`, `app.json` 같은 개인 화면 상태는 Git과 wrap-up 검사 대상에서 제외한다.
+- 빠른 문서 열기: Windows/Linux `Ctrl+O`, macOS `Cmd+O`
+- 전체 내용 검색: Windows/Linux `Ctrl+Shift+F`, macOS `Cmd+Shift+F`
+- 내부 링크: `[[Architecture]]`, `[[Documentation-Workflow#원격 push 전]]`
+- 현재 문서를 가리키는 문서 확인: `Backlinks`
+- 위키 문서 관계 확인: `Local graph`
+
+검색과 링크 세부 사용법: [공식 Search 안내](https://obsidian.md/help/plugins/search), [공식 내부 링크 안내](https://obsidian.md/help/links)
+
+## 편집과 공유 원칙
+
+- 사람이 직접 편집하는 위치: `docs/wiki/`
+- Graphify가 자동 생성하는 위치: `graphify-out/`
+- 위키 문장 갱신 방식: 변경 이력 누적보다 현재 상태에 맞춘 기존 문단 재작성
+- `.obsidian/` 설정: 개인 화면 상태이므로 Git 제외
+- 새 문서 기준: 여러 타입·모듈·에셋을 가로지르는 장기 지식
+- 타입 가까이 둘 내용: C++ 헤더의 Doxygen 문서 블록
+- 작업 중 임시 판단: `docs/todo/`
+
+## `graphify-out/obsidian/`을 열지 않는 이유
+
+Graphify의 Obsidian export는 코드 노드마다 Markdown 파일을 만드는 기술 탐색 화면. 사람을 위한 설명문이 아니라 에이전트가 읽는 그래프를 노트 형태로 펼친 결과
+
+Maverick의 기본 파이프라인에서는 해당 export를 생성하거나 Git으로 공유하지 않음. 필요할 때 개인 로컬 탐색용으로 직접 생성 가능하지만 팀 내부 위키로 편집 금지
+
+```powershell
+python -m graphify export obsidian --dir graphify-out/obsidian
+```
+
+위 명령의 결과는 `.gitignore` 대상. 공식 작업 지식은 계속 `docs/wiki/`에 기록
 
 ## 문제 해결
 
-| 증상 | 확인할 내용 |
+| 증상 | 확인 항목 |
 | --- | --- |
-| `graphify-out/obsidian/`이 없다 | 먼저 Graphify 결과가 포함된 최신 커밋을 받았는지 확인한다. 프로젝트에 결과를 처음 만들 때는 `Documentation-Workflow.md`의 **초기화와 조회 명령**을, 기존 결과를 갱신할 때는 **원격 push 전** 절차를 따른다. |
-| `graph.canvas`가 보이지 않는다 | vault로 연 폴더가 저장소 루트가 아니라 `graphify-out/obsidian/`인지 확인한다. |
-| 검색 결과가 코드와 맞지 않는다 | 최신 커밋을 받은 뒤 vault를 다시 열어 본다. 그래도 낡았다면 최신 push에 Graphify wrap-up이 포함됐는지 확인한다. |
-| 직접 고친 문장이 사라졌다 | 생성 문서는 재생성되므로 정상이다. 보존할 내용은 원본 코드나 `docs/wiki/`로 옮긴다. |
-| Canvas가 너무 커서 보기 어렵다 | `Shift+1`로 전체를 맞춘 뒤 관심 영역을 확대하거나, `Ctrl+O`/`Cmd+O`로 `_COMMUNITY_` 요약부터 연다. |
+| 코드 심볼별 기계적인 문서 수천 개 노출 | 잘못된 vault 선택. `graphify-out/obsidian/`이 아닌 `docs/wiki/`를 새 vault로 열기 |
+| 위키 문서 미노출 | 선택한 폴더가 Maverick 저장소의 `docs/wiki/`인지 확인 |
+| 다른 PC에서 화면 배치나 플러그인 설정 차이 | `.obsidian/`은 개인 설정이므로 정상. Markdown 내용만 팀 공유 |
+| 코드와 문서 내용 불일치 | 원본 코드·에셋 확인 후 `docs/wiki/` 갱신, 이어서 push 전 Graphify wrap-up 수행 |
+| 새 문서 필요 여부 불명확 | [Documentation-Workflow.md](Documentation-Workflow.md)의 디렉터리별 문서 원칙 확인 |
 
 ## 관련 문서
 
-- [Documentation-Workflow.md](Documentation-Workflow.md): 작업 중 문서 관리와 push 전 Graphify 갱신 절차
-- [Architecture.md](Architecture.md): 프로젝트 책임 경계와 주요 실행 흐름
-- [Graphify-Adoption-Report.md](Graphify-Adoption-Report.md): Graphify 도입 결정과 검증 결과
-- [Obsidian 데이터 저장 방식](https://obsidian.md/help/data-storage): 외부 파일 변경 감지와 `.obsidian/` 설정 파일 설명
+- [Architecture.md](Architecture.md): 프로젝트 구조와 주요 흐름
+- [Documentation-Workflow.md](Documentation-Workflow.md): 작업별 위키 검토와 Graphify 갱신 절차
+- [Header-Documentation.md](Header-Documentation.md): C++ 타입 가까이 둘 문서 기준

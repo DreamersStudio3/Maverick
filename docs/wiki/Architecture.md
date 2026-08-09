@@ -1,6 +1,6 @@
 # Maverick Architecture
 
-이 문서는 Maverick의 현재 C++ 책임 경계와 주요 런타임 흐름을 빠르게 파악하기 위한 안정적인 진입점이다. 세부 심볼 관계는 `graphify-out/graph.json`, 커뮤니티 탐색은 `graphify-out/wiki/index.md`, 타입 단위 탐색은 `graphify-out/obsidian/`을 사용한다.
+이 문서의 역할: Maverick의 현재 C++ 책임 경계와 주요 런타임 흐름을 파악하는 첫 진입점. 세부 심볼 관계는 `graphify query`와 `path`, 타입 단위 탐색은 `graphify explain`, 커뮤니티 탐색은 `graphify-out/wiki/index.md` 사용
 
 ## 읽는 순서
 

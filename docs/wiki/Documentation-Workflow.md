@@ -2,23 +2,26 @@
 
 ## 목적
 
-Maverick의 문서는 사람이 빠르게 의도를 이해하고, 에이전트가 전체 코드를 다시 읽지 않고도 안전하게 작업을 시작할 수 있게 한다. 자동 생성 그래프와 사람이 관리하는 문서는 서로 대체하지 않고 각자 잘하는 정보를 맡는다.
+Maverick의 문서 체계는 사람이 축적하는 내부 위키와 에이전트가 조회하는 생성 지식창고의 분리 운영을 전제로 한다. `docs/wiki/`는 사람이 Obsidian으로 읽고 고치는 프로젝트 지식, `graphify-out/`은 에이전트가 코드 관계를 빠르게 좁히는 자동 생성 자료
 
 ## 정보 계층과 책임
 
 | 위치 | 역할 | 편집 방식 |
 | --- | --- | --- |
-| `docs/todo/<task>.md` | 진행 중인 작업의 목표, 상태, 결정, 검증 | 작업자가 직접 갱신하고 완료하면 삭제하는 단기 기록 |
+| `docs/todo/<task>.md` | 진행 중인 작업의 목표, 상태, 결정, 위키 검토, 검증 | 작업자가 직접 갱신하고 완료하면 삭제하는 단기 기록 |
 | C++ 헤더의 `/** ... */` | 타입과 가까운 책임, 라이프사이클, 불변조건 | 해당 코드를 바꾼 작업자가 함께 갱신 |
 | `docs/wiki/Architecture.md` | 현재 구조, 책임 경계, 주요 흐름과 바이너리 에셋 공백 | 구조 변경 시 사람이 검토해 갱신 |
 | `docs/wiki/`의 나머지 문서 | 설계 의도, 운영 규칙, 장기 결정을 담는 위키 | 사람이 검토해 직접 갱신 |
 | `MaverickDesign/` | 테이블 원본, JSON 중간 산출물, 변환 도구와 schema 안내 | 테이블 파이프라인 변경 시 두 README를 갱신 |
-| `graphify-out/graph.json` | 코드와 문서 관계를 질의하는 지식 그래프 | Graphify로만 생성 |
-| `graphify-out/wiki/` | 커뮤니티 단위의 에이전트 탐색용 위키 | Graphify로만 생성 |
-| `graphify-out/obsidian/` | 노드 단위의 Obsidian 탐색 vault | Graphify로만 생성 |
+| `graphify-out/graph.json` | 에이전트가 코드와 문서 관계를 질의하는 지식 그래프 | Graphify로만 생성 |
+| `graphify-out/wiki/` | 에이전트가 탐색하는 커뮤니티·노드 단위 생성 문서 | Graphify로만 생성 |
 | `graphify-out/GRAPH_REPORT.md` | 그래프 상태, 중심 노드, 연결, 질문의 감사 보고서 | Graphify로만 생성 |
 
-`docs/wiki/`는 "왜 이 경계가 존재하는가"를 설명하고, Graphify는 "현재 어떤 선언과 파일이 실제로 연결되는가"를 계산한다. 생성 산출물을 손으로 고치면 다음 갱신 때 사라지므로 정정은 원본 코드나 `docs/wiki/`에 반영한다.
+`docs/wiki/`: 사람용 내부 위키. 책임, 흐름, 설계 이유, 에셋 연결, 운영 규칙의 기록 위치
+
+`graphify-out/`: AI 에이전트용 지식창고. 현재 선언과 파일의 관계를 계산한 재생성 가능 자료
+
+Graphify가 `docs/wiki/`를 자동으로 작성하거나 문서 품질을 관리하지는 않음. 사람이 위키를 고친 뒤 Graphify가 그 내용을 에이전트용 그래프에 다시 반영하는 단방향 흐름
 
 ## 갱신 타이밍
 
@@ -27,7 +30,7 @@ Maverick의 문서는 사람이 빠르게 의도를 이해하고, 에이전트�
 이 시점에는 Graphify를 재생성하지 않는다.
 
 1. `POLICY.md`와 관련 지침을 확인한다.
-2. `docs/todo/<task>.md`에 목표와 초기 체크리스트를 만든다.
+2. `docs/todo/<task>.md`에 목표와 초기 체크리스트를 만들고 `위키 검토` 항목을 둔다.
 3. 기존 `graphify-out/graph.json`이 있으면 `graphify query`로 관련 구조를 먼저 좁힌다.
 4. 그래프 근거가 부족하거나 stale 가능성이 있을 때만 원본 코드를 추가로 읽는다.
 
@@ -39,10 +42,10 @@ Maverick의 문서는 사람이 빠르게 의도를 이해하고, 에이전트�
 
 1. 먼저 코드와 사람이 관리하는 위키 문서를 하나의 일관된 작업 단위로 커밋한다.
 2. 공식 훅이 `graphify update`를 실행해 로컬 질의용 graph와 manifest를 따라오게 한다.
-3. 훅이 바꾼 graph만으로 wiki·Obsidian을 갱신하거나 커밋하지 않는다. 문서 의미 노드와 생성 뷰가 아직 이전 상태일 수 있기 때문이다.
+3. 훅이 바꾼 graph만으로 생성 wiki를 갱신하거나 커밋하지 않는다. 문서 의미 노드와 생성 뷰가 아직 이전 상태일 수 있기 때문이다.
 4. 다음 일반 커밋에서는 `graphify-out/` 중간 변경을 stage하지 않고, push 전 wrap-up에서 한 번에 정리한다.
 
-이 선택은 프롬프트마다 전체 그래프를 만드는 비용을 피하면서 긴 작업 중 로컬 코드 관계가 지나치게 낡는 것도 막는다. `docs/wiki/`나 설계 문서 의미 추출, 커뮤니티 이름 갱신, wiki·Obsidian export는 최종 pre-push 단계로 모은다.
+이 선택은 프롬프트마다 전체 그래프를 만드는 비용을 피하면서 긴 작업 중 로컬 코드 관계가 지나치게 낡는 것도 막는다. `docs/wiki/`나 설계 문서 의미 추출, 커뮤니티 이름 갱신, wiki·HTML export는 최종 pre-push 단계로 모은다.
 
 C++ `/** ... */`만 바뀐 경우 공식 훅이 파일 hash와 AST를 갱신하지만 Graphify 0.9.36은 주석 내용을 의미 노드로 추출하지 않는다. 여러 타입에 걸친 중요한 의도는 `docs/wiki/`에도 반영한다.
 
@@ -54,7 +57,7 @@ C++ `/** ... */`만 바뀐 경우 공식 훅이 파일 hash와 AST를 갱신하�
 2. 훅은 Git의 checkout 구분 인자가 `1`일 때만 실행하며, 전환된 snapshot의 전체 코드 corpus를 백그라운드에서 다시 추출한다. 일반 커밋의 변경 파일 증분 추출보다 범위가 넓다.
 3. 전환 직후 graph를 질의해야 하면 로그에서 **현재 전환 뒤 새로 추가된** 결과를 확인한다. 성공 시 `[graphify watch] Rebuilt:` 또는 변경 없음 메시지가 기록되고, 실패 시 `Rebuild failed`가 기록된다. 로그에는 branch나 commit SHA가 없으므로 과거 성공 줄을 현재 결과로 오인하지 않는다. 특히 Windows에서는 rebuild 잠금이 no-op fallback이므로 현재 재구축이 끝나기 전에 다시 전환하거나 질의하지 않는다.
 4. 대상 브랜치에 `graphify-out/`이 없거나 현재 디렉터리가 Git linked worktree이면 0.9.36 훅은 실행하지 않는다. 로그에서 현재 전환 결과를 구분할 수 없거나 훅이 건너뛴 일반 코드 graph를 즉시 써야 하면 `graphify-out/`이 있는 상태에서 동기식 `python -m graphify update .`를 실행한다. 결과 디렉터리 자체가 없으면 초기 Graphify 구축 절차를 먼저 수행한다.
-5. 이 단계도 문서·미디어 의미 재추출이나 wiki·Obsidian export를 완료하지 않는다. 기존 semantic 문서 노드는 보존될 수 있으므로 문서에 관한 판단은 원본과 대조한다. 훅이 만든 중간 `graphify-out/`만 stage하지 않고, 최종 생성 뷰는 push 전 wrap-up에서 동기화한다.
+5. 이 단계도 문서·미디어 의미 재추출이나 wiki·HTML export를 완료하지 않는다. 기존 semantic 문서 노드는 보존될 수 있으므로 문서에 관한 판단은 원본과 대조한다. 훅이 만든 중간 `graphify-out/`만 stage하지 않고, 최종 생성 뷰는 push 전 wrap-up에서 동기화한다.
 
 ```powershell
 $graphifyLog = Join-Path $HOME ".cache/graphify-rebuild.log"
@@ -70,25 +73,43 @@ if (Test-Path $graphifyLog) {
 
 ### 4. 원격 push 전
 
-pre-push는 누락을 막는 최종 게이트다. push할 커밋에 지식 원본 변경이 있으면 다음 wrap-up을 수행한다.
+pre-push는 위키 검토 누락과 에이전트용 생성물의 오래된 상태를 막는 최종 게이트다. 작업 단위마다 다음 wrap-up을 수행한다.
 
-1. `docs/todo/`의 작업 상태와 미해결 항목을 확인한다. 완료한 작업 파일은 장기 지식을 위키나 헤더에 옮긴 뒤 삭제한다.
-2. 구조적 책임이나 경계가 달라졌으면 `docs/wiki/Architecture.md`를 갱신한다.
-3. Codex에서 `$graphify . --update`를 실행해 코드 구조 추출과 문서·미디어 의미 추출을 모두 반영한다.
-4. 그래프 진단과 커뮤니티 이름을 확인하고 wiki, Obsidian, HTML을 다시 내보낸다.
-5. 위키·코드와 생성 산출물을 검토한 뒤 함께 stage한다.
-6. `python Scripts/Graphify/knowledge_guard.py stamp`로 결정론적 최신성 표식을 만든다.
-7. `graphify-out/wrap-up.json`까지 stage하고, 공식 비동기 post-commit 재실행을 막기 위해 해당 wrap-up 커밋에만 `GRAPHIFY_SKIP_HOOK=1`을 설정한다.
-8. 커밋 직후 수동 guard 검증을 통과시킨 뒤 push를 다시 실행한다.
+1. `docs/wiki/`를 Obsidian으로 열고 작업 결과가 기존 설명에 미친 영향 검토
+2. 장기 지식 변경 시 관련 위키 갱신. 구조적 책임·경계·에셋 흐름 변경 시 `Architecture.md` 갱신
+3. `docs/todo/<task>.md`에 `갱신: docs/wiki/<문서>.md` 또는 `변경 불필요: <이유>` 기록
+4. Codex에서 `$graphify . --update`를 실행해 코드 구조 추출과 문서·미디어 의미 추출 반영
+5. 그래프 진단과 커뮤니티 이름 확인 후 에이전트용 wiki와 HTML 재생성
+6. 위키·코드와 생성 산출물 검토 후 함께 stage
+7. 위키 검토 결과를 인자로 넘겨 wrap-up 최신성 표식 생성
+8. `graphify-out/wrap-up.json`까지 stage하고, 공식 비동기 post-commit 재실행을 막기 위해 해당 wrap-up 커밋에만 `GRAPHIFY_SKIP_HOOK=1` 설정
+9. 커밋 직후 수동 guard 검증 통과 후 push
+10. PR 생성 시 TODO의 위키 검토 결과를 PR 설명으로 이동하고 완료 TODO 삭제
 
-훅은 위키 문서의 품질을 대신 판단하지 않는다. 대신 마지막 wrap-up 이후 코드나 위키 문서가 달라졌는지를 결정론적으로 검사하고, stale 상태라면 push를 중단한다.
+```powershell
+python Scripts/Graphify/knowledge_guard.py stamp `
+  --wiki-review updated `
+  --wiki-note "docs/wiki/Architecture.md 갱신"
+```
+
+위키 변경이 필요 없는 작업의 예시
+
+```powershell
+python Scripts/Graphify/knowledge_guard.py stamp `
+  --wiki-review not-needed `
+  --wiki-note "내부 구현 교체만 포함하며 책임·흐름·운영 계약 변화 없음"
+```
+
+guard가 보장하는 범위: 위키 검토 결과의 명시, 마지막 wrap-up 이후 코드·위키·생성물의 동일 Git snapshot
+
+guard가 보장하지 않는 범위: 위키 설명의 정확성·충분성. 해당 판단은 작업자와 리뷰어의 책임
 
 ## 초기화와 조회 명령
 
 Codex에서 프로젝트 전체를 처음 구축할 때 사용한다.
 
 ```text
-$graphify . --wiki --obsidian
+$graphify . --wiki
 ```
 
 PowerShell에서 CLI를 직접 호출할 때는 선행 `/`를 쓰지 않는다.
@@ -101,7 +122,7 @@ graphify explain "MVActionComponent"
 
 현재 셸처럼 실행 파일이 PATH에 없으면 `graphify`를 `python -m graphify`로 바꾼다.
 
-생성 wiki와 Obsidian vault는 `update`나 공식 Git 훅이 자동으로 다시 만들지 않으므로 wrap-up에서 전용 wrapper를 명시적으로 실행한다. wrapper는 세 export를 모두 실행하고 현재 `graph.json` 및 생성 뷰의 exact hash를 `graphify-out/export-provenance.json`에 기록한다.
+에이전트용 생성 wiki와 HTML은 `update`나 공식 Git 훅이 자동으로 다시 만들지 않으므로 wrap-up에서 전용 wrapper를 명시적으로 실행한다. wrapper는 두 export를 실행하고 현재 `graph.json` 및 생성 뷰의 exact hash를 `graphify-out/export-provenance.json`에 기록한다.
 
 ```powershell
 python Scripts/Graphify/knowledge_guard.py export
@@ -126,7 +147,7 @@ gate는 LLM이나 Graphify 생성 작업을 훅 안에서 실행하지 않는다
 python Scripts/Graphify/knowledge_guard.py check --commit HEAD
 ```
 
-stamp는 stage된 스냅샷을 기준으로 생성한다. 따라서 위키·코드와 생성 산출물에 stage되지 않은 변경이 있거나, Graphify corpus와 manifest hash가 다르거나, 문서·미디어 `semantic_hash`가 최신이 아니거나, graph와 wiki·Obsidian 구조가 맞지 않으면 생성을 거부한다. 이 성질 때문에 단순 `graphify update`만 실행하고 의미 추출·export를 생략한 상태는 정상 push 경로를 통과할 수 없다.
+stamp는 stage된 스냅샷을 기준으로 생성한다. 따라서 위키 검토 인자가 없거나, 위키·코드와 생성 산출물에 stage되지 않은 변경이 있거나, Graphify corpus와 manifest hash가 다르거나, 문서·미디어 `semantic_hash`가 최신이 아니거나, graph와 생성 wiki 구조가 맞지 않으면 생성을 거부한다. 이 성질 때문에 단순 `graphify update`만 실행하고 의미 추출·export를 생략한 상태는 정상 push 경로를 통과할 수 없다.
 
 이 gate는 installer를 실행한 clone에서의 로컬 필수 장치이며 `git push --no-verify`로 우회할 수 있다. 팀 정책을 기술적으로 강제해야 하면 CI에서 `python Scripts/Graphify/knowledge_guard.py check --commit <검사 SHA>`를 실행하고 branch protection의 필수 check로 등록한다.
 
@@ -141,7 +162,11 @@ python Scripts/Graphify/knowledge_guard.py check --commit HEAD
 
 ## Obsidian 사용
 
-설치, vault 연결, 탐색, 갱신 후 확인과 문제 해결은 [Obsidian-Usage.md](Obsidian-Usage.md)를 따른다. `graphify-out/obsidian/`은 Graphify가 다시 만드는 조회용 문서이며, 사람이 작성하는 장기 문서는 `docs/wiki/`에 둔다.
+사람용 vault: `docs/wiki/`
+
+설치, vault 연결, 탐색, 갱신과 문제 해결: [Obsidian-Usage.md](Obsidian-Usage.md)
+
+`graphify-out/obsidian/`: 기본 생성·공유 대상이 아닌 선택형 기술 탐색 결과. 사람용 내부 위키로 사용 금지
 
 ## 디렉터리별 문서 원칙
 

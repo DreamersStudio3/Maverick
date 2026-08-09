@@ -36,15 +36,16 @@ ProjectBA에서 사용하던 방식처럼 주요 C++ 타입의 선언 바로 앞
 
 회피, 액션 버퍼, 전투, UI처럼 특정 도메인에 종속적인 정책은 해당 컴포넌트나 도메인 파일로 분리한다. 새 코드를 작성할 때는 확장성을 먼저 검토하고, 파일의 최소 책임을 넘어서는 편의성 코드를 방만하게 추가하지 않는다.
 
-## Graphify와 내부 위키
+## 내부 위키와 Graphify
 
-이 프로젝트의 지식 그래프와 생성 위키는 `graphify-out/`에 둔다. 세부 행동강령과 명령은 `docs/wiki/Documentation-Workflow.md`를 따른다.
+사람이 읽고 갱신하는 내부 위키는 `docs/wiki/`, 에이전트의 코드 탐색을 위한 생성 지식창고는 `graphify-out/`에 둔다. 세부 행동강령과 명령은 `docs/wiki/Documentation-Workflow.md`를 따른다.
 
 - 프로젝트 전체 구조나 책임 경계를 파악할 때는 `docs/wiki/Architecture.md`를 먼저 읽는다.
+- 작업마다 push 전에 `docs/wiki/`를 Obsidian으로 열어 변경 영향을 검토하고, TODO와 PR 설명에 갱신 문서 또는 변경 불필요 사유를 남긴다.
 - 코드베이스 질문을 받으면 `graphify-out/graph.json`이 있는지 확인하고, 원본 파일을 넓게 읽기 전에 `graphify query "<질문>"`으로 세부 관계를 좁힌다. 관계 추적은 `graphify path`, 단일 개념 조사는 `graphify explain`을 사용한다.
 - 질의 결과가 부족할 때 `graphify-out/wiki/index.md`, `graphify-out/GRAPH_REPORT.md`, 관련 원본 코드 순으로 확인한다.
 - `graphify-out/`은 생성 산출물이므로 직접 편집하지 않는다. 코드와 위키 문서를 수정한 뒤 Graphify로 다시 생성한다.
 - 각 커밋 뒤 공식 Graphify `post-commit` 훅의 저비용 AST 갱신을 안전망으로 사용하되, 이 중간 생성물만 따로 커밋하지 않는다.
 - `git switch`나 `git checkout <branch|commit>`으로 브랜치 또는 커밋을 전환하면 공식 `post-checkout` 훅의 백그라운드 코드 그래프 재구축을 확인한 뒤 질의한다. 훅이 실행되지 않는 조건과 수동 갱신법은 `docs/wiki/Documentation-Workflow.md`를 따른다. 전환 뒤 생긴 중간 `graphify-out/` 변경도 따로 커밋하지 않는다.
-- 원격 push 전에는 문서 의미 추출과 생성 뷰를 포함한 Graphify wrap-up을 커밋하고 pre-push 최신성 검증을 반드시 통과한다.
+- 원격 push 전에는 사람용 위키 검토를 마치고, 문서 의미 추출과 에이전트용 생성 뷰를 포함한 Graphify wrap-up을 커밋한 뒤 pre-push 최신성 검증을 반드시 통과한다.
 - `graphify` 실행 파일이 PATH에 없고 Python 패키지만 설치된 환경에서는 같은 명령을 `python -m graphify`로 실행한다.
