@@ -30,6 +30,7 @@ Maverick: Unreal Engine 5.8 기반, 게임과 에디터 Target이 같은 `Maveri
 | `Maverick` runtime module | Character, Components, Combat, AI, Animation, System, UI, table runtime을 포함한다. |
 | Editor 전용 의존성 | `UnrealEd`, `AssetRegistry`, `KismetCompiler`, `BlueprintGraph`, `ToolMenus` 등을 에디터 Target에서만 추가한다. |
 | 엔진/플러그인 의존성 | EnhancedInput, StateTree, GameplayTags, Chooser, CommonUI/CommonInput, MotionWarping, LockOnTarget을 직접 사용한다. |
+| 에디터 도구 플러그인 | Unreal 5.8 전환과 함께 `ModelContextProtocol`, `EditorToolset`, `Terminal` 활성화. 패키징 런타임 책임과 분리된 에디터 작업 도구. |
 | `LockOnTarget` plugin | runtime, developer tool, editor 모듈을 별도로 제공한다. Maverick 빌드에는 runtime 모듈이 필수 의존성이다. |
 
 근거 진입점: `Source/Maverick/Maverick.Build.cs`, `Source/Maverick.Target.cs`, `Source/MaverickEditor.Target.cs`, `Maverick.uproject`, `Plugins/LockOnTarget/LockOnTarget.uplugin`.
