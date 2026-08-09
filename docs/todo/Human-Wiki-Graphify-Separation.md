@@ -7,4 +7,5 @@
   - 위키 갱신 또는 갱신 불필요 사유를 TODO와 PR 설명에 기록
   - 사람용 Obsidian vault는 `docs/wiki/`
   - 생성 Obsidian vault는 기본 export와 Git 추적 대상에서 제외
-- 검증: 문서·guard·ignore 수정, 생성물 재구축, pre-push 검사, 원격 push 예정
+  - Aigent Hive 실행 환경은 프로젝트 구조 그래프의 입력에서 제외
+- 검증: 문서·guard·ignore 수정 완료, 생성물 재구축·pre-push 검사·원격 push 예정

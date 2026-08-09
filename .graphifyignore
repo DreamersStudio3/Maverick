@@ -1,9 +1,13 @@
 # Generated and local state
 .git/
+.agents/
 .codex/
+.hive/
 .idea/
 .vs/
 graphify-out/
+CLAUDE.md
+GEMINI.md
 
 # Unreal generated data and binary assets
 Binaries/
