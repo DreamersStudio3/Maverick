@@ -82,13 +82,18 @@ PluginsIntermediate
 # Cache files for the editor to use
 DerivedDataCache
 
-# Graphify local runtime state
-graphify-out/.graphify_python
-graphify-out/.graphify_root
-graphify-out/cost.json
-graphify-out/cache/
-graphify-out/20??-??-??/
+# Agent 도구와 로컬 생성 상태
+.agent-tools/
+graphify-out/
+.hive/index/
+.hive/runtime/
+.hive/backups/
+.hive/cache/
 
-# Local Obsidian state and optional Graphify node vault
-docs/wiki/.obsidian/
-graphify-out/obsidian/
+# Local Obsidian state; Templater 공유 설정만 추적
+docs/wiki/.obsidian/*
+!docs/wiki/.obsidian/plugins/
+docs/wiki/.obsidian/plugins/*
+!docs/wiki/.obsidian/plugins/templater-obsidian/
+docs/wiki/.obsidian/plugins/templater-obsidian/*
+!docs/wiki/.obsidian/plugins/templater-obsidian/data.json

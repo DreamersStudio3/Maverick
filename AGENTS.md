@@ -28,7 +28,7 @@ ProjectBA에서 사용하던 방식처럼 주요 C++ 타입의 선언 바로 앞
 
 문서화 이후 변경사항이 생기면 단순히 문장을 누적하지 않는다. 기존 문서와 실제 책임을 함께 검토해 전체 내용을 다시 압축하고, 문서 길이가 무작정 늘어나지 않게 관리한다.
 
-문서 블록의 필수 대상과 작성 기준은 `docs/wiki/Header-Documentation.md`를 따른다. 모든 헤더의 형식적 보유율을 목표로 삼지 않으며, 빈 블록과 Unreal 템플릿 주석은 문서화로 인정하지 않는다.
+문서 블록의 필수 대상과 작성 기준은 `docs/wiki/Convention/Header-Documentation/document.md`를 따른다. 모든 헤더의 형식적 보유율을 목표로 삼지 않으며, 빈 블록과 Unreal 템플릿 주석은 문서화로 인정하지 않는다.
 
 ## 코드 책임 분리
 
@@ -36,16 +36,75 @@ ProjectBA에서 사용하던 방식처럼 주요 C++ 타입의 선언 바로 앞
 
 회피, 액션 버퍼, 전투, UI처럼 특정 도메인에 종속적인 정책은 해당 컴포넌트나 도메인 파일로 분리한다. 새 코드를 작성할 때는 확장성을 먼저 검토하고, 파일의 최소 책임을 넘어서는 편의성 코드를 방만하게 추가하지 않는다.
 
+## Agent 의존성
+
+프로젝트 고정 의존성: Aigent Hive `0.8.0`, Graphify `0.9.38`. 버전 기준: `Config/AgentDependencies.json`.
+
+- 단순 질문을 제외한 첫 작업 전에 `./Scripts/Agent/Ensure-AgentDependencies.ps1 -HostName <codex|claude|antigravity>` 실행
+- 원격 push 직전 동일 명령 재실행
+- 누락 의존성 자동 설치 허용 범위: Hive 공식 npm 패키지, 프로젝트 로컬 Graphify 가상환경, 사용자 범위 Graphify agent skill
+- `.hive/config/harness.toml` 누락 또는 설치·검증 실패 시 작업·push 중단과 실패 원인 보고
+- `.agent-tools/`, `graphify-out/`: 로컬 생성 상태, Git 추가 금지
+
 ## 내부 위키와 Graphify
 
-사람이 읽고 갱신하는 내부 위키는 `docs/wiki/`, 에이전트의 코드 탐색을 위한 생성 지식창고는 `graphify-out/`에 둔다. 세부 행동강령과 명령은 `docs/wiki/Documentation-Workflow.md`를 따른다.
+사람용 내부 위키: `docs/wiki/`. 에이전트용 Graphify 코드 그래프: 로컬 `graphify-out/`. 문서 분류·frontmatter·첨부 구조 기준: `docs/wiki/README.md`.
 
-- 프로젝트 전체 구조나 책임 경계를 파악할 때는 `docs/wiki/Architecture.md`를 먼저 읽는다.
-- 작업마다 push 전에 `docs/wiki/`를 Obsidian으로 열어 변경 영향을 검토하고, TODO와 PR 설명에 갱신 문서 또는 변경 불필요 사유를 남긴다.
-- 코드베이스 질문을 받으면 `graphify-out/graph.json`이 있는지 확인하고, 원본 파일을 넓게 읽기 전에 `graphify query "<질문>"`으로 세부 관계를 좁힌다. 관계 추적은 `graphify path`, 단일 개념 조사는 `graphify explain`을 사용한다.
-- 질의 결과가 부족할 때 `graphify-out/wiki/index.md`, `graphify-out/GRAPH_REPORT.md`, 관련 원본 코드 순으로 확인한다.
-- `graphify-out/`은 생성 산출물이므로 직접 편집하지 않는다. 코드와 위키 문서를 수정한 뒤 Graphify로 다시 생성한다.
-- 각 커밋 뒤 공식 Graphify `post-commit` 훅의 저비용 AST 갱신을 안전망으로 사용하되, 이 중간 생성물만 따로 커밋하지 않는다.
-- `git switch`나 `git checkout <branch|commit>`으로 브랜치 또는 커밋을 전환하면 공식 `post-checkout` 훅의 백그라운드 코드 그래프 재구축을 확인한 뒤 질의한다. 훅이 실행되지 않는 조건과 수동 갱신법은 `docs/wiki/Documentation-Workflow.md`를 따른다. 전환 뒤 생긴 중간 `graphify-out/` 변경도 따로 커밋하지 않는다.
-- 원격 push 전에는 사람용 위키 검토를 마치고, 문서 의미 추출과 에이전트용 생성 뷰를 포함한 Graphify wrap-up을 커밋한 뒤 pre-push 최신성 검증을 반드시 통과한다.
-- `graphify` 실행 파일이 PATH에 없고 Python 패키지만 설치된 환경에서는 같은 명령을 `python -m graphify`로 실행한다.
+- 전체 구조와 책임 경계 조사 시작점: `docs/wiki/Architecture/document.md`
+- 구조·호출·관계 질문: 원본 파일의 광범위 탐색 전에 `./Scripts/Graphify/Invoke-Graphify.ps1 query "<질문>"` 실행
+- 관계 경로: `./Scripts/Graphify/Invoke-Graphify.ps1 path "<시작 심볼>" "<도착 심볼>"`
+- 단일 개념: `./Scripts/Graphify/Invoke-Graphify.ps1 explain "<심볼>"`
+- 질의 직전 스크립트가 로컬 그래프 초기화 또는 코드 AST 증분 갱신 수행
+- 일반 커밋·브랜치 전환·push에 따른 Graphify 자동 갱신 없음
+- Graphify 결과 부족 또는 stale 의심 시 관련 원본 코드 확인, Unreal 에셋 연결은 Editor 검증
+- 구현과 검증 완료 후 원격 반영 전에 에이전트가 실제 변경 근거를 바탕으로 `docs/wiki/` 문서 초안 생성 또는 갱신
+- 새 문서: `<분류>/<문서명>/document.md`, 문서별 자료: 같은 폴더의 `attachments/`
+- 문서 frontmatter: 제목·부제목·최근 수정·관련 문서 유지
+- 사람의 수동 문서 생성: `template/document.md`와 Templater 폴더 템플릿 사용, 장치별 자동 실행 활성화 필요
+- 개발자가 Obsidian 편집 완료를 알리면 승인 표식·초안 비교·내용 해시 확인 없이 현재 위키를 최종본으로 취급
+- 사용자의 push 요청 또는 위키 편집 완료 전달 후 위키 변경을 별도 `문서 수정` 커밋으로 남기고 관련 코드 커밋과 함께 push
+- PR 설명의 작업 세부사항에 위키 커밋과 해당 커밋에서 변경한 `docs/wiki/` 문서 링크 추가
+- 위키 변경 불필요 작업은 TODO와 PR에 근거 기록, 위키 커밋 생략
+
+<!-- AIGENT-HIVE:START -->
+# Aigent Hive
+
+Project: `Maverick`
+Profile: `general`
+Setup mode: `expedited`
+Preference provenance: `global-inherited`
+Interface language: `ko`
+Wiki: `enabled` (`ko`)
+Persona: `strict`
+Primary host: `codex`
+Resolved orchestration owner: `host-native`
+Resolution evidence: `sha256:70b8da8772791c175efaaa867a88143f840cb5135521bd6ee59eb57befe1c4fb`
+
+- Read canonical Hive configuration from `.hive/config/harness.toml`.
+- Before editing anything, read `.hive/directives/00-editing-discipline.md` in full. Apply all four sections as the highest-priority editing discipline within the Hive contract; never compact, summarize, omit, or substitute any part. Its literal `# CLAUDE.md` heading is original text, not Claude-only scope: the directive applies identically on Codex, Claude, and Gemini Antigravity. Higher-priority instructions and Hive security, ownership, credential, and production boundaries still control.
+- Usage guard: disabled by installed preference. Do not run `hive usage enforce` or call a native/CodexBar sensor automatically. Automatic resume must report `data.usage_guard.enforced=false`, `outcome=disabled`, one authorization ID, and exactly one dispatch brief.
+- Load only the directives and knowledge required by the current request.
+- For a simple question, do not load project memory, spawn agents, or edit files.
+- Route explicit prompt authoring or improvement intent to `hive-prompt-refine` in `refine-only` mode unless the same request explicitly asks to execute the result.
+- If an ordinary work prompt materially lacks a goal, scope, constraints, acceptance criteria, or output contract, offer one concise optional refinement suggestion without rewriting the prompt, loading the Skill, or executing the suggestion. Do not interrupt sufficiently clear ordinary work or a simple question.
+- Before presenting pending actions or a user handoff, complete every safe, in-scope, automatable action that does not require new user authority, credentials, a protected external mutation, or a materially different product decision. Then give only the genuinely user-owned actions as a concise ordered guide with each exact location, command or operation, expected result or return evidence, and reason user authority is required. List failed or impossible work separately with its cause and recovery path.
+- Keep durable role identity in `.hive/team/roles/`; the active host owns sessions and subagents.
+- Keep durable knowledge in Markdown. Treat `.hive/index/*.sqlite*` as disposable.
+- When this marker reports Wiki enabled, run agent-reviewed task-fact autocapture before the final response for material work. Record the bounded outcome, tool or project, criteria, and originating request summary from current authorized artifacts; never ingest a raw transcript, hook payload, tool output, hidden prompt, or runtime state.
+- Keep the selected interface language consistent throughout every question and response. In Korean, keep English only for proper nouns, product or package names, commands, code identifiers, paths, schema keys, exact UI labels, and terms without a clear Korean equivalent; replace ordinary English nouns with Korean. In English, write the full passage in English except for exact Korean names, literals, quotations, or text the user explicitly asks to preserve.
+- Write human-readable project documents in concise Korean unless the user explicitly requests another language. Prefer short headings, bullets, tables, checklists, and semantic noun phrases.
+- Do not end authored explanatory Korean prose with declarative or conversational forms. `~다`, `~한다`, `~된다`, `~이다`, `~있다`, `~없다`, `~않는다`, `~했다`, `~됐다`, `~합니다`, `~됩니다`, and `~해요` are non-exhaustive prohibited examples.
+- Do not mechanically change those endings to `~음` or the attached `~ㅁ` form. This includes Korean stems, mixed English-Korean forms, state labels followed by a copula, and possibility clauses. Rewrite the full clause: avoid `Release 계약이 구현됐다.` and `Release 계약이 구현됐음.`; use `Release 계약 구현 완료`. Avoid `API key를 요청하거나 저장하지 않는다.` and `API key를 요청하거나 저장하지 않음.`; use `API key 요청·저장 없음`.
+- Exact bad → good examples (not exhaustive): `Aigent Hive는 provider-neutral 로컬 agent harness다.` → `Aigent Hive: provider-neutral 로컬 agent harness`; `Product version은 0.7.0이다.` → `Product version: 0.7.0`; `Release 계약이 구현됐다.` → `Release 계약 구현 완료`; `API key를 요청하거나 저장하지 않는다.` → `API key 요청·저장 없음`; `이 기능을 사용합니다.` → `기능 사용`; `다음 단계에서 검증해요.` → `다음 단계: 검증`; `검증이 필요합니다.` → `검증 필요`; `업데이트가 완료되었습니다.` → `업데이트 완료`; `Release 계약이 구현됐음.` → `Release 계약 구현 완료`; `API key를 요청하거나 저장하지 않음.` → `API key 요청·저장 없음`.
+- Mechanical nounization examples (not exhaustive): `Status는 INDETERMINATE다.` → `Status: INDETERMINATE`; `문서를 읽음.` → `문서 확인`; `작업이 끝남.` → `작업 완료`; `연결이 닫힘.` → `연결 종료`; `설정 값을 가짐.` → `설정 값 보유`; `정책을 따름.` → `정책 준수`; `compile됨.` → `compile 완료`; `검증할 수 있음.` → `검증 가능`; `검증할 수 없음.` → `검증 불가`.
+- Do not use conversational imperative endings such as standalone `~줘` or attached `~해` in authored explanation. Exact user-prompt or UI-prompt samples require the path, line, reason, and exact line digest exception. Examples: `문서를 보여 줘.` → `문서 확인 요청`; `기능을 사용해.` → `기능 사용 요청`.
+- Never gain brevity by removing a qualifier needed to interpret a result. For every passed, failed, skipped, deferred, unverified, or unsupported item, name the affected scope, exact reason, relationship to the current host or platform, whether it actually ran, and what the result does and does not prove. Do not use a platform adjective such as "Windows-only" or "Unix-only" without stating whether the current platform ran or skipped that item and why.
+- Apply the same rule to authored callouts and blockquotes. Blockquote syntax is not proof of an exact quotation. Preserve narrative-form text only for an exact external quote, UI prompt, protocol sample, fixture payload, or another byte-sensitive literal with an explicit path, line, reason, and exact line digest.
+- Do not call model-provider APIs or request provider API credentials.
+- Require explicit approval before activating optional Skills.
+- Resolve compatible OMX on Codex and compatible OMC on Claude before host-native capability; never ask the user to select an owner or switch owners mid-run.
+- Treat OMX/OMC cancellation output as auxiliary evidence only; it never substitutes for the bound usage halt marker or durable goal/task state.
+- Treat fallback hooks as optional data-integrity guards only. They require conclusive external capability absence plus exact capability, event, path, command, and digest consent.
+- Never use a fallback hook for prompt classification or rewriting, Skill activation, memory ingestion, subagent orchestration, or continuation. A `Stop` hook always returns a neutral allow result.
+- Preserve user text and third-party marker blocks outside this Hive block.
+<!-- AIGENT-HIVE:END -->

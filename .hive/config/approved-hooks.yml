@@ -1,0 +1,40 @@
+# Generated only from explicit fallback-hook approvals after conclusive external capability absence.
+schema_version: 1
+detection: absent
+resolution_evidence_digest: "sha256:70b8da8772791c175efaaa867a88143f840cb5135521bd6ee59eb57befe1c4fb"
+hooks:
+  -   approved_at: '2026-08-10T00:33:20Z'
+      capability: protect-hive-owned-state
+      command: hive hook --capability protect-hive-owned-state --event PreToolUse --capabilities .hive/runtime/current-capability-resolution.json --output
+          json
+      consent_digest: sha256:1f97ab53db957befaf6851f68c38e66307b1decd52f5af4294ec0b2b5bd58ab4
+      consent_version: 1
+      content_digest: sha256:1d17c439cf4ae17d2a3ea6a58e3fb51942e5330dbdbe0bb4b1e9d516c01987fa
+      event: PreToolUse
+      path: .hive/hooks/protect-hive-owned-state
+  -   approved_at: '2026-08-10T00:33:20Z'
+      capability: update-integrity-guard
+      command: hive hook --capability update-integrity-guard --event PreToolUse --capabilities .hive/runtime/current-capability-resolution.json --output
+          json
+      consent_digest: sha256:d90c42f451024c8a3dc0c66ed4cc7c3c714ff0e25fd04ca026d12d711546b483
+      consent_version: 1
+      content_digest: sha256:0258324deee2c1e24d056088ad070a11321148f43f25edfdd5e3399ab2908ed6
+      event: PreToolUse
+      path: .hive/hooks/update-integrity-guard
+  -   approved_at: '2026-08-10T00:33:20Z'
+      capability: derived-state-invalidation
+      command: hive hook --capability derived-state-invalidation --event PostToolUse --capabilities .hive/runtime/current-capability-resolution.json
+          --output json
+      consent_digest: sha256:f98876ddca3fdf01b408c96fd8cd28cc17c3c5ee83f40e1fb9248060efd87ac0
+      consent_version: 1
+      content_digest: sha256:22b0b230621504cc77e5183cd57b1409412d50761d8d635dfd18c51c3ff06007
+      event: PostToolUse
+      path: .hive/hooks/derived-state-invalidation
+  -   approved_at: '2026-08-10T00:33:20Z'
+      capability: checkpoint-reminder
+      command: hive hook --capability checkpoint-reminder --event PreCompact --capabilities .hive/runtime/current-capability-resolution.json --output json
+      consent_digest: sha256:d0bc6f54166251ef539df7beed41d5b3b24e102f561397a08c6c29ebef423edd
+      consent_version: 1
+      content_digest: sha256:d001c9adb5bf9ad92b2c64b29b461e3127df179c6de0b6f5b4c6afcb748ccdb9
+      event: PreCompact
+      path: .hive/hooks/checkpoint-reminder

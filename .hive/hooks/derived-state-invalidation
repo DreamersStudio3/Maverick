@@ -1,0 +1,1 @@
+{"capability":"derived-state-invalidation","command":"hive hook --capability derived-state-invalidation --event PostToolUse --capabilities .hive/runtime/current-capability-resolution.json --output json","event":"PostToolUse","path":".hive/hooks/derived-state-invalidation","schema_version":1}

@@ -80,13 +80,16 @@
 
 ## 문서와 지식 그래프 운영
 
-- 문서의 역할과 갱신 시점, Graphify 명령, pre-push 절차는 `docs/wiki/Documentation-Workflow.md`를 단일 운영 기준으로 삼는다.
-- `docs/wiki/`: 사람이 Obsidian으로 읽고 최종 검토하는 내부 위키. 작업 에이전트의 변경 기반 초안 작성·갱신 허용. push 전 사람의 확인·승인 필수, Graphify 생성물 대체 금지.
-- `docs/todo/`는 진행 중인 작업의 단기 상태와 검증 기록만 보관한다. push 전 위키 검토 결과를 `갱신: <문서>` 또는 `변경 불필요: <이유>`로 기록하고, 완료하면 작업 파일을 삭제한다. 장기 구조, 설계 의도, 팀 공통 지식은 `docs/wiki/`에 반영한다.
-- PR 설명에도 TODO의 위키 검토 결과를 옮겨 리뷰어가 문서 영향을 확인할 수 있게 한다.
-- 주요 C++ 타입의 책임·라이프사이클·불변조건은 선언과 가장 가까운 헤더의 Doxygen 형식 문서 블록에 유지한다. 필수 대상, 품질 기준, 생략 조건은 `docs/wiki/Header-Documentation.md`를 따른다.
-- `/** ... */` 존재 여부 자체를 목표로 삼지 않는다. 빈 블록, Unreal 템플릿 주석, 미래 계획만 적은 블록은 문서화로 인정하지 않는다.
-- `graphify-out/`은 에이전트의 코드 탐색을 위한 생성 지식창고다. 그래프, 리포트, 에이전트용 생성 위키는 직접 수정하지 않고 Graphify로 재생성한다.
-- 각 커밋 뒤 공식 Graphify 훅의 AST 증분 갱신을 안전망으로 사용한다. 이 훅은 문서 의미 추출과 생성 뷰를 갱신하지 않으므로 중간 산출물만 독립적으로 커밋하지 않는다.
-- 초기화된 일반 작업 트리에서 `git switch`나 `git checkout <branch|commit>`으로 브랜치 또는 커밋을 전환하면 공식 `post-checkout` 훅이 새 snapshot의 전체 코드 corpus를 백그라운드에서 다시 추출한다. 즉시 graph를 질의할 때는 현재 전환의 재구축 완료를 먼저 확인한다. 경로 단위 checkout·`git restore`·`git reset`, merge·rebase·cherry-pick 중, `graphify-out/`이 없는 브랜치와 linked worktree에서는 이 훅을 갱신 보장으로 간주하지 않는다.
-- 원격 push 전에는 사람용 위키 검토, 위키 문서의 의미 추출, 에이전트용 wiki·HTML 재생성, wrap-up stamp 커밋을 완료하고 저장소의 pre-push 최신성 검사를 통과해야 한다.
+- 단일 운영 기준: `docs/wiki/README.md`
+- `docs/wiki/`: 사람이 Obsidian으로 읽고 최종 검토하는 내부 위키, push 전 영향 검토 필수
+- `docs/todo/`: 진행 중 작업의 단기 상태·검증 기록, 완료 후 삭제
+- TODO와 PR 설명: `갱신: <문서>` 또는 `변경 불필요: <이유>` 기록
+- 에이전트: 구현·검증 완료 후 원격 반영 전 실제 변경 근거 기반 위키 초안 생성 또는 갱신
+- 개발자: Obsidian 편집 후 완료 전달, 별도 승인 상태·초안 비교·내용 해시 없음
+- 에이전트: 완료 전달 또는 명시적 push 요청 후 현재 위키를 별도 `문서 수정` 커밋으로 기록하고 관련 코드 커밋과 함께 push
+- PR 작업 세부사항: 위키 커밋과 해당 커밋에서 변경한 위키 문서 링크 포함
+- 주요 C++ 타입: 선언 인접 Doxygen 책임·라이프사이클·불변조건 유지, 세부 기준 `docs/wiki/Convention/Header-Documentation/document.md`
+- `graphify-out/`: 로컬 재생성 캐시, 직접 편집·stage·commit·push 금지
+- Graphify 갱신 기준: 커밋 시점이 아닌 관련 질의 직전의 초기화 또는 증분 갱신
+- post-commit·post-checkout Graphify 훅과 생성물 pre-push guard 사용 금지
+- 원격 push 전 필수 항목: Agent 의존성 검증, 위키 초안 또는 변경 불필요 근거, 사람 편집 완료 여부, 관련 빌드·테스트 검증
