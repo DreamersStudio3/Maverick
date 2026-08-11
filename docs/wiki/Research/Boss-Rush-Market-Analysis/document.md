@@ -1,3 +1,14 @@
+---
+제목: 10시간 내외 3인칭 보스러시 액션 RPG 시장 분석
+부제목: 10시간 완결형 3인칭 보스러시 액션 RPG의 시장성 검토
+최근수정일: 2026-08-11
+최근수정자: 곽민규
+관련문서:
+  - "[[Architecture/document|Maverick Architecture]]"
+  - "[[Research/Combat-Design-MDA/document|Maverick 전투 MDA와 목표 전투 계약]]"
+  - "[[Research/Soulslike-Market-Research-2026/document|2026 소울라이크 게임 시장 조사]]"
+---
+
 # 10시간 내외 3인칭 보스러시 액션 RPG 시장 분석
 
 > 기준일: 2026-07-26

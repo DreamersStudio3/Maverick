@@ -1,3 +1,15 @@
+---
+제목: Maverick 전투 MDA와 목표 전투 계약
+부제목: 현재 전투 분석과 목표 전투 구현·검증 계약
+최근수정일: 2026-08-11
+최근수정자: 곽민규
+관련문서:
+  - "[[Architecture/document|Maverick Architecture]]"
+  - "[[Features/Combat/S1-Tempo-Charge/document|S1 Tempo 공통 Charge·연속기 구현안]]"
+  - "[[Research/Boss-Rush-Market-Analysis/document|10시간 내외 3인칭 보스러시 액션 RPG 시장 분석]]"
+  - "[[Research/Soulslike-Market-Research-2026/document|2026 소울라이크 게임 시장 조사]]"
+---
+
 # Maverick 전투 MDA와 목표 전투 계약
 
 > 상태: v0.3 팀 검토용 압축 위키
@@ -217,7 +229,7 @@ Perfect Dodge: 기본 회피와 같은 스태미나 비용, S4 게이지와 자�
 
 ## 7. Q와 R의 목표 역할
 
-현재 Q의 목표 역할: 카타나 S1 Tempo. Charge의 의미: 연계 단계가 아닌 남은 사용권. 단일 쿨다운은 `MaxCharges = 1`, 복수 Charge는 빠진 사용권의 순차 회복. Commit 시 하나 소비, Commit 전 취소 시 예약 반환. 약/차지의 유효 적중은 회복 중인 다음 Charge 시간 단축 가능, S1 자체 적중의 자기 회복 가속은 기본값에서 제외. 상세 계약: [S1-Tempo-Charge.md](S1-Tempo-Charge.md).
+현재 Q의 목표 역할: 카타나 S1 Tempo. Charge의 의미: 연계 단계가 아닌 남은 사용권. 단일 쿨다운은 `MaxCharges = 1`, 복수 Charge는 빠진 사용권의 순차 회복. Commit 시 하나 소비, Commit 전 취소 시 예약 반환. 약/차지의 유효 적중은 회복 중인 다음 Charge 시간 단축 가능, S1 자체 적중의 자기 회복 가속은 기본값에서 제외. 상세 계약: [S1 Tempo 공통 Charge·연속기 구현안](../../Features/Combat/S1-Tempo-Charge/document.md).
 
 현재 R의 목표 역할: 50초 시간 쿨다운과 분리한 카타나 S4 Signature. 기본·S1~S3 공격의 최종 HitConfirm에 획득값 부여, 무적·사망 대상·중복 Contact의 게이지 지급 제외. S4 시작 시 게이지 예약, 되돌릴 수 없는 Commit에서 100 소비, Commit 전 취소만 반환. S4 자체 게이지 생성 금지.
 
@@ -343,9 +355,9 @@ DataTable, Montage Notify, Blueprint, C++이 같은 필드에 다른 의미를 �
 - Source/Maverick/AI/Task/MVEnemyCombatActionTask.cpp
 - Source/Maverick/System/MVDeathRespawnFlow.cpp
 - Source/Maverick/UI/HUD/
-- docs/wiki/S1-Tempo-Charge.md
-- docs/wiki/Soulslike-Market-Research-2026.md
-- docs/wiki/Boss-Rush-Market-Analysis.md
+- docs/wiki/Features/Combat/S1-Tempo-Charge/document.md
+- docs/wiki/Research/Soulslike-Market-Research-2026/document.md
+- docs/wiki/Research/Boss-Rush-Market-Analysis/document.md
 
 ### 에셋과 데이터
 

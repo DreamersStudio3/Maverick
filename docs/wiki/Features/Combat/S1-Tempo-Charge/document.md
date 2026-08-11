@@ -1,8 +1,18 @@
+---
+제목: S1 Tempo 공통 Charge·연속기 구현안 v0.1
+부제목: 공통 Charge 기반 사용권과 연속기 실행 계약
+최근수정일: 2026-08-11
+최근수정자: 곽민규
+관련문서:
+  - "[[Architecture/document|Maverick Architecture]]"
+  - "[[Research/Combat-Design-MDA/document|Maverick 전투 MDA와 목표 전투 계약]]"
+---
+
 # S1 Tempo 공통 Charge·연속기 구현안 v0.1
 
 > 작성일: 2026-07-26
 > 상태: v0.3 구현 검토안
-> 상위 문서: [Maverick 전투 MDA와 목표 전투 계약](./Combat-Design-MDA.md)
+> 상위 문서: [Maverick 전투 MDA와 목표 전투 계약](../../../Research/Combat-Design-MDA/document.md)
 > 범위: 단일 쿨다운·복수 Charge·연속기를 무기별 코드 분기 없이 처리하는 방법
 
 ## 0. 결론

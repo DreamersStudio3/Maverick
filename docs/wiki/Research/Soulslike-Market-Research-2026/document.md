@@ -1,12 +1,23 @@
+---
+제목: 2026 소울라이크 게임 시장 조사
+부제목: 2026년 글로벌 PC·콘솔 프리미엄 시장 조사
+최근수정일: 2026-08-11
+최근수정자: 곽민규
+관련문서:
+  - "[[Architecture/document|Maverick Architecture]]"
+  - "[[Research/Boss-Rush-Market-Analysis/document|10시간 내외 3인칭 보스러시 액션 RPG 시장 분석]]"
+  - "[[Research/Combat-Design-MDA/document|Maverick 전투 MDA와 목표 전투 계약]]"
+---
+
 # 2026 소울라이크 게임 시장 조사
 
 > 조사 기준일: 2026-07-26
 >
 > 조사 범위: 글로벌 PC·콘솔 프리미엄 게임 시장
 >
-> 목적: [Maverick 전투 MDA와 목표 전투 계약](./Combat-Design-MDA.md)의 시장 배경과 제품 포지셔닝 참고
+> 목적: [Maverick 전투 MDA와 목표 전투 계약](../Combat-Design-MDA/document.md)의 시장 배경과 제품 포지셔닝 참고
 >
-> 세부 시장 참고: [10시간 내외 3인칭 보스러시 액션 RPG 시장 분석](./Boss-Rush-Market-Analysis.md)
+> 세부 시장 참고: [10시간 내외 3인칭 보스러시 액션 RPG 시장 분석](../Boss-Rush-Market-Analysis/document.md)
 >
 > 주의: 소울라이크만을 독립 집계한 공인 시장 통계는 없다. 이 문서는 **관측값, 제3자 추정값, 기획용 시나리오**를 구분한다.
 
