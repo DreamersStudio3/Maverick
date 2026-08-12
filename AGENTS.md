@@ -50,6 +50,9 @@ ProjectBA에서 사용하던 방식처럼 주요 C++ 타입의 선언 바로 앞
 
 사람용 내부 위키: `docs/wiki/`. 에이전트용 Graphify 코드 그래프: 로컬 `graphify-out/`. 문서 분류·frontmatter·첨부 구조 기준: `docs/wiki/README.md`.
 
+- 활성 지식 체계: 구조·관계 탐색용 Graphify와 설계 의도·운영 지식 정본인 `docs/wiki/`
+- Hive Knowledge: 자동 포착·질의 비활성, 기존 Raw·Wiki 기록 삭제, 신규 생성 금지
+
 - 전체 구조와 책임 경계 조사 시작점: `docs/wiki/Architecture/document.md`
 - 구조·호출·관계 질문: 원본 파일의 광범위 탐색 전에 `./Scripts/Graphify/Invoke-Graphify.ps1 query "<질문>"` 실행
 - 관계 경로: `./Scripts/Graphify/Invoke-Graphify.ps1 path "<시작 심볼>" "<도착 심볼>"`
@@ -71,10 +74,10 @@ ProjectBA에서 사용하던 방식처럼 주요 C++ 타입의 선언 바로 앞
 
 Project: `Maverick`
 Profile: `general`
-Setup mode: `expedited`
-Preference provenance: `global-inherited`
+Setup mode: `custom`
+Preference provenance: `project-custom`
 Interface language: `ko`
-Wiki: `enabled` (`ko`)
+Wiki: `disabled` (`ko`)
 Persona: `strict`
 Primary host: `codex`
 Resolved orchestration owner: `host-native`

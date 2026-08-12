@@ -2,12 +2,34 @@
 schema_version: 1
 project_name: "Maverick"
 project_identity: "maverick"
-setup_mode: "expedited"
+setup_mode: "custom"
 project_kind: "general"
 primary_host: "codex"
 usage_stop_remaining_percent: 20
 elevated_judge_quorum: "2/3"
 critical_judge_quorum: "3/3+human"
+interface_language:
+  ko
+wiki:
+  enabled: false
+  language: ko
+persona:
+  id: strict
+skills:
+  mode: individual
+  selected:
+  - auto-setup-harness
+  - hive-judge-package
+  - hive-migrate
+  - hive-project-upgrade
+  - hive-prompt-refine
+  - hive-role-handoff
+  - hive-run-checkpoint
+  - hive-run-resume
+  - hive-simple-question
+  - hive-update
+  - hive-usage-guard
+  - setup-harness
 persistent_roles:
   []
 knowledge_include_paths:
