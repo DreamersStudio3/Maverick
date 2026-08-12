@@ -55,6 +55,11 @@ struct FMVExecuteFixedAttackTaskInstanceData
 	FDelegateHandle AttackMontageEndedHandle;
 };
 
+/**
+ * 단일 `ActionRequest`를 Chooser와 DataTable Row로 해석해 ActionComponent에서 실행하는 StateTree Task.
+ * 실행에 성공하면 후보 쿨다운을 시작하고 RowName 기반 `LastAttackTag`를 출력하며, 시작한 Action이 끝날 때까지
+ * Running을 유지한다.
+ */
 USTRUCT(meta = (DisplayName = "Execute Fixed Attack Task"))
 struct FMVExecuteFixedAttackTask : public FStateTreeTaskCommonBase
 {
@@ -110,6 +115,13 @@ struct FMVSelectAndExecuteAttackTaskInstanceData
 	FName StartedActionRowName = NAME_None;
 };
 
+/**
+ * 여러 공격 후보 중 현재 snapshot에 맞는 첫 후보를 골라 실행하는 StateTree Task.
+ *
+ * 후보 배열 순서를 유지하되 첫 번째 탐색에서는 `LastAttackTag`와 같은 RowName을 피하고, 선택지가 없을 때만
+ * 두 번째 탐색에서 반복을 허용한다. 빈 배열이나 실행 가능한 후보가 없으면 실패하며, 실행·쿨다운·완료
+ * lifecycle은 Fixed Task와 같은 ActionComponent 경로를 사용한다.
+ */
 USTRUCT(meta = (DisplayName = "Select And Execute Attack Task"))
 struct FMVSelectAndExecuteAttackTask : public FStateTreeTaskCommonBase
 {

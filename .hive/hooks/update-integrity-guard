@@ -1,0 +1,1 @@
+{"capability":"update-integrity-guard","command":"hive hook --capability update-integrity-guard --event PreToolUse --capabilities .hive/runtime/current-capability-resolution.json --output json","event":"PreToolUse","path":".hive/hooks/update-integrity-guard","schema_version":1}

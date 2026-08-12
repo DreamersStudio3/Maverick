@@ -1,0 +1,37 @@
+schema_version: 1
+include:
+  - AGENTS.md
+  - POLICY.md
+  - Maverick.uproject
+  - Config/**
+  - Source/**
+  - Plugins/LockOnTarget/Source/**
+  - Plugins/LockOnTarget/LockOnTarget.uplugin
+  - MaverickDesign/**
+  - docs/wiki/**
+exclude:
+  - .env*
+  - '**/.env*'
+  - '**/*.pem'
+  - '**/*.key'
+  - .git/**
+  - .idea/**
+  - .vs/**
+  - .omx/**
+  - .omc/**
+  - Binaries/**
+  - DerivedDataCache/**
+  - Intermediate/**
+  - Saved/**
+  - Content/**
+  - graphify-out/**
+  - docs/todo/**
+  - TODO/**
+root_promotion_categories:
+  []
+confidential_categories:
+  - fact
+  - preference
+  - workflow
+project_identity: "maverick"
+user_store_binding: "sha256:6600e9264f9f11ce58bd63caf7a2ae1f56bee1cda6f13410faf84bf30a80ae3e"

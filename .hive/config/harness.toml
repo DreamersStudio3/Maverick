@@ -1,0 +1,28 @@
+schema_version = 1
+harness_version = "0.8.0"
+source_release_version = "0.8.0"
+project_name = "Maverick"
+project_kind = "general"
+primary_host = "codex"
+external_capability_detection = "absent"
+resolved_owner = "host-native"
+resolution_evidence_digest = "sha256:70b8da8772791c175efaaa867a88143f840cb5135521bd6ee59eb57befe1c4fb"
+usage_stop_remaining_percent = 20
+elevated_judge_quorum = "2/3"
+critical_judge_quorum = "3/3+human"
+
+# Optional Skills are inert until each entry is explicitly approved.
+approved_optional_skills_file = ".hive/config/approved-skills.yml"
+capability_resolution_file = ".hive/config/capability-resolution.yml"
+setup_mode = "custom"
+preference_provenance = "project-custom"
+interface_language = "ko"
+wiki_enabled = false
+wiki_language = "ko"
+persona_id = "strict"
+usage_guard_enabled = false
+codexbar_fallback_enabled = false
+selected_project_skills = ["auto-setup-harness", "hive-judge-package", "hive-migrate", "hive-project-upgrade", "hive-prompt-refine", "hive-role-handoff", "hive-run-checkpoint", "hive-run-resume", "hive-simple-question", "hive-update", "hive-usage-guard", "setup-harness"]
+approved_fallback_hooks_file = ".hive/config/approved-hooks.yml"
+role_seed_file = ".hive/config/role-seeds.yml"
+knowledge_scope_file = ".hive/config/knowledge-scope.yml"

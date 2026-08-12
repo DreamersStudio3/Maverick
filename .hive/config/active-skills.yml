@@ -1,0 +1,103 @@
+schema_version: 1
+skills:
+- name: auto-setup-harness
+  source_type: built-in
+  content_digest: sha256:d97042cc39f36f8a966b068b7ef765ad1fcd88b152698a9b8106ed2add88a2e0
+  side_effect_class: project-write
+  capabilities:
+  - filesystem-read
+  - filesystem-write
+  - shell
+  consent_digest: null
+- name: hive-judge-package
+  source_type: built-in
+  content_digest: sha256:a87f46c6a21f94944fc465d85b74bf5e8aef308bfbc1b7a08df56e6078f3890c
+  side_effect_class: read-only
+  capabilities:
+  - filesystem-read
+  - run-state
+  consent_digest: null
+- name: hive-migrate
+  source_type: built-in
+  content_digest: sha256:a48df71fcc1d5eb901487f86e807f6acdebf62e0250a564d99fa734f9512ea32
+  side_effect_class: project-write
+  capabilities:
+  - filesystem-read
+  - filesystem-write
+  - shell
+  consent_digest: null
+- name: hive-project-upgrade
+  source_type: built-in
+  content_digest: sha256:c673f3fca88085c25d044944bd17e692eafa0105d0eaf31ac53f14737a15ace4
+  side_effect_class: project-write
+  capabilities:
+  - filesystem-read
+  - filesystem-write
+  - shell
+  consent_digest: null
+- name: hive-prompt-refine
+  source_type: built-in
+  content_digest: sha256:581153b0d07539345372f0e87ab48c51b969dfe57a8e279353e35d000c4d8f76
+  side_effect_class: none
+  capabilities: []
+  consent_digest: null
+- name: hive-role-handoff
+  source_type: built-in
+  content_digest: sha256:d59b0866ed27c85bd16f8a8cb9fb8a278df0d4cd5f9ca9262b676f4b513b2eaa
+  side_effect_class: project-write
+  capabilities:
+  - filesystem-read
+  - filesystem-write
+  - run-state
+  consent_digest: null
+- name: hive-run-checkpoint
+  source_type: built-in
+  content_digest: sha256:e44b6b4456bc02996c44cdab64c25fd4335f360509685f592248e2c342401383
+  side_effect_class: project-write
+  capabilities:
+  - filesystem-read
+  - filesystem-write
+  - run-state
+  consent_digest: null
+- name: hive-run-resume
+  source_type: built-in
+  content_digest: sha256:fbec4961baef77e9e33a73f2f6caa47d46f093133fe142005067dde8143389b7
+  side_effect_class: read-only
+  capabilities:
+  - filesystem-read
+  - run-state
+  consent_digest: null
+- name: hive-simple-question
+  source_type: built-in
+  content_digest: sha256:c8c39db30d086cfda9f1989b50fade83523a23c2354d3713d84b707318b36fe6
+  side_effect_class: none
+  capabilities: []
+  consent_digest: null
+- name: hive-update
+  source_type: built-in
+  content_digest: sha256:7dd9e9c32d99aa05185ef25d1e6fa09195c5a70e721fa4eab87bc1cc522f3703
+  side_effect_class: project-write
+  capabilities:
+  - filesystem-read
+  - filesystem-write
+  - shell
+  consent_digest: null
+- name: hive-usage-guard
+  source_type: built-in
+  content_digest: sha256:4e21eab317f03fdf3afe4b0553514d3998846d972ab7d8a3aafaee115bfdfc27
+  side_effect_class: project-write
+  capabilities:
+  - filesystem-read
+  - filesystem-write
+  - run-state
+  - shell
+  consent_digest: null
+- name: setup-harness
+  source_type: built-in
+  content_digest: sha256:3a97227617ad0115ed59288d3ea4e909bd4a6167255d3ff433f6d765ba319790
+  side_effect_class: project-write
+  capabilities:
+  - filesystem-read
+  - filesystem-write
+  - shell
+  consent_digest: null

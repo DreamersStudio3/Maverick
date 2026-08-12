@@ -81,3 +81,28 @@ PluginsIntermediate
 
 # Cache files for the editor to use
 DerivedDataCache
+
+# Agent 도구와 로컬 생성 상태
+.agent-tools/
+graphify-out/
+.hive/index/
+.hive/runtime/
+.hive/backups/
+.hive/cache/
+
+# Obsidian 팀 공통 설정과 플러그인 배포 파일만 추적; 개인 작업공간 제외
+docs/wiki/.obsidian/*
+!docs/wiki/.obsidian/app.json
+!docs/wiki/.obsidian/community-plugins.json
+!docs/wiki/.obsidian/templates.json
+!docs/wiki/.obsidian/plugins/
+docs/wiki/.obsidian/plugins/*
+!docs/wiki/.obsidian/plugins/*/
+docs/wiki/.obsidian/plugins/*/*
+!docs/wiki/.obsidian/plugins/*/manifest.json
+!docs/wiki/.obsidian/plugins/*/main.js
+!docs/wiki/.obsidian/plugins/*/styles.css
+!docs/wiki/.obsidian/plugins/templater-obsidian/data.json
+!docs/wiki/.obsidian/plugins/dragger/data.json
+!docs/wiki/.obsidian/plugins/obsidian-kanban/data.json
+!docs/wiki/.obsidian/plugins/obsidian-excalidraw-plugin/data.json

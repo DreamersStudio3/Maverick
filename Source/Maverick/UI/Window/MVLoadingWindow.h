@@ -35,6 +35,7 @@ struct FMVLoadingGuideCard
  *
  * FieldTransitionSubsystem이 넘기는 progress/step text를 표시하고,
  * GameGuide 테이블에서 로딩 노출이 허용된 항목을 카드/캐러셀로 렌더링한다.
+ * 창이 받는 입력은 도움말 카드 전환에만 사용하며, 창 종료와 게임 UI·입력 복원은 FieldTransitionSubsystem이 맡는다.
  */
 UCLASS(Blueprintable)
 class MAVERICK_API UMVLoadingWindow : public UMVWindowBase

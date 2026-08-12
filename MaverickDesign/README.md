@@ -1,6 +1,10 @@
 # Maverick 테이블 시스템 사용법
 
+관련 아키텍처: [Maverick Architecture](../docs/wiki/Architecture/document.md)
+
 이 폴더는 게임 데이터 테이블의 원본 CSV, JSON 중간 산출물, 변환 도구를 보관합니다.
+
+게임 설계와 시장 조사 Markdown 관리 위치: 사람용 위키 `docs/wiki/`. 이 폴더의 Markdown: 테이블 파이프라인 안내용 README만 유지.
 
 ## 전체 흐름
 
@@ -55,6 +59,8 @@ Client,1,1,1,0,0
 ## 수동 CSV 변환
 
 에디터 생성 명령은 CSV 변환을 자동으로 실행합니다. 변환만 따로 확인하려면 프로젝트 루트에서 실행합니다.
+
+변환기는 Python 표준 라이브러리만 사용하므로 별도 패키지 설치가 필요하지 않습니다.
 
 ```powershell
 python MaverickDesign\CsvToJsonConverter\CsvToJsonConverter.py

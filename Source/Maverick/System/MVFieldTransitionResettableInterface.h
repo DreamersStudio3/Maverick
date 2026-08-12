@@ -6,6 +6,14 @@
 
 class UMVWorldStateSubsystem;
 
+/**
+ * 필드 전환 때 actor가 자신의 상태를 복원하는 방식.
+ *
+ * `ResetEveryTransition`은 매 전환마다 초기 상태로 되돌리고, `PersistIfConsumed`는 WorldState에 소비 기록이
+ * 있으면 다시 나타나지 않게 한다. `PersistState`는 저장된 영구 상태를 유지하며, `TransientOnly`는 임시
+ * actor를 제거하되 다시 만들지 않는다. 저장할 사실은 WorldState가, 실제 숨김·복원·제거는 actor가 소유한다.
+ * 현재 C++ 적용이 확인된 정책은 `AMVEnemy`의 `ResetEveryTransition`이며 나머지는 구현 시 검증이 필요하다.
+ */
 UENUM(BlueprintType)
 enum class EMVFieldTransitionResetPolicy : uint8
 {

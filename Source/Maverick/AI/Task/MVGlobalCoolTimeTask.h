@@ -36,6 +36,10 @@ struct FMVGlobalCoolTimeTaskInstanceData
 	TObjectPtr<UMVActionCooldownComponent> CooldownComponent = nullptr;
 };
 
+/**
+ * `UMVActionCooldownComponent`를 구성하고 시간 경과와 ready 목록을 갱신하는 독립 StateTree Task.
+ * GlobalSensing Task도 같은 cooldown tick을 소유할 수 있으므로 한 StateTree에서 둘을 동시에 배치하지 않는다.
+ */
 USTRUCT(meta = (DisplayName = "Global Action Cooldown Task"))
 struct FMVGlobalCoolTimeTask : public FStateTreeTaskCommonBase
 {
