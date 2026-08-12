@@ -1,19 +1,40 @@
 ---
 제목: Hit, Stat, HitReaction
 부제목: 적중 계산·수치 피해·피격 표현의 책임 분리
-최근수정일: 2026-08-11
+최근수정일: 2026-08-12
 최근수정자: 곽민규
 관련문서:
   - "[[Architecture/document|Maverick Architecture]]"
-  - "[[Research/Combat-Design-MDA/document|Maverick 전투 MDA와 목표 전투 계약]]"
+  - "[[Features/Combat/Combat-System/document|Maverick 전투 시스템]]"
 ---
+
 # Hit, Stat, HitReaction
 
-1. Collision/Ability/Blueprint 계층이 필터링된 `FMVHitResolveRequest`를 `UMVHitResolverSubsystem`에 전달한다. production 호출부는 `에셋 확인 필요`.
-2. Resolver가 공격자·피격자 스탯, 공격 배율, 무기 snapshot으로 `FMVResolvedHitData`를 만든다.
-3. Resolver가 피해자 `AMVCharacterBase::OnHitResolved`를 호출한다.
-4. CharacterBase가 CharacterIndex를 확인하고 `OnDamaged`를 broadcast한다.
-5. StatComponent는 수치 피해, groggy, lethal latch와 `OnDeathStarted`를 소유한다.
-6. HitReactionComponent는 row/section, interrupt, 무적, KD/AB recovery 표현만 소유한다.
+## 실행 흐름
 
-현재 native 코드 기준 무적 검사는 HitReaction 경로에 있고 Resolver/Stat의 피해 적용 경로에는 없다. 따라서 무적이 피해 자체를 막는다는 전제는 별도 검증 없이 사용하지 않는다.
+```mermaid
+flowchart TD
+    HitSource["Collision / Ability / Blueprint"] --> Request["FMVHitResolveRequest"]
+    Request --> Resolver["UMVHitResolverSubsystem"]
+    Resolver --> Resolved["FMVResolvedHitData"]
+    Resolved --> Character["AMVCharacterBase::OnHitResolved"]
+    Character --> Damaged["OnDamaged"]
+    Damaged --> Stat["StatComponent"]
+    Damaged --> Reaction["HitReactionComponent"]
+    Stat --> Death["OnDeathStarted"]
+```
+
+## 책임
+
+| 계층 | 책임 |
+|---|---|
+| Collision·Ability·Blueprint | 필터링된 `FMVHitResolveRequest` 생성 |
+| `UMVHitResolverSubsystem` | 공격자·피격자 Stat, 공격 배율, 무기 Snapshot 기반 `FMVResolvedHitData` 계산 |
+| `AMVCharacterBase::OnHitResolved` | CharacterIndex 확인과 `OnDamaged` 방송 |
+| StatComponent | 수치 피해, Groggy, Lethal Latch, `OnDeathStarted` 소유 |
+| HitReactionComponent | Row·Section, Interrupt, 무적, KD·AB Recovery 표현 |
+
+## 무적 적용 범위
+
+- 무적 검사: HitReaction 경로
+- Resolver·Stat 피해 적용: 무적 검사와 분리

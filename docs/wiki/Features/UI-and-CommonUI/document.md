@@ -1,25 +1,38 @@
 ---
 제목: UI와 CommonUI
 부제목: UI 계층과 사망·필드 전환 화면 오케스트레이션
-최근수정일: 2026-08-11
+최근수정일: 2026-08-12
 최근수정자: 곽민규
 관련문서:
   - "[[Architecture/document|Maverick Architecture]]"
+  - "[[Features/Interaction-Flow/document|상호작용 흐름]]"
 ---
+
 # UI와 CommonUI
 
-`UMVUISubsystem`은 GameInstance 수명의 UI 진입점이다.
+`UMVUISubsystem`: GameInstance 수명의 UI 진입점
 
-```text
-Viewport
-  -> UMVUILayerBase
-       -> WindowStack : CommonActivatableWidgetStack
-       -> HUDLayer    : Overlay
-       -> PopupLayer  : Overlay
-       -> WidgetLayer : Overlay
+## 계층
+
+```mermaid
+flowchart TD
+    Viewport["Viewport"] --> Layer["UMVUILayerBase"]
+    Layer --> Window["WindowStack<br/>CommonActivatableWidgetStack"]
+    Layer --> HUD["HUDLayer<br/>Overlay"]
+    Layer --> Popup["PopupLayer<br/>Overlay"]
+    Layer --> Widget["WidgetLayer<br/>Overlay"]
 ```
 
-- Window만 CommonUI activatable stack과 modal/back/focus/input lifecycle에 참여한다.
-- Popup과 HUD는 단일 overlay이며 stack activation을 소유하지 않는다.
-- DeathRespawnFlow가 death overlay를 표시한다. FieldTransition은 loading window와 전환 전후 `ClearAllUI`, `ResetToDefaultUI`를 사용해 화면 전환을 오케스트레이션한다.
-- WBP 내부 widget tree, animation, Blueprint binding은 `에셋 확인 필요`다.
+## 책임
+
+| 계층 | 책임 |
+|---|---|
+| Window | CommonUI Activatable Stack, Modal, Back, Focus, Input 수명주기 |
+| Popup·HUD | 단일 Overlay, Stack Activation 비소유 |
+| WBP Blueprint | Widget Tree, Animation, 화면 Binding |
+
+## 사망과 필드 전환
+
+- DeathRespawnFlow: Death Overlay 표시
+- FieldTransition: Loading Window와 화면 전환 오케스트레이션
+- 전환 전후 `ClearAllUI`, `ResetToDefaultUI` 사용
