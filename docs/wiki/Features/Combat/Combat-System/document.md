@@ -1,12 +1,13 @@
 ---
 제목: "Maverick 전투 시스템"
 부제목: "현재 공격 실행 흐름과 공격·스킬 구성"
-최근수정일: 2026-08-12
-최근수정자: "곽민규"
+최근수정일: 2026-08-17
+최근수정자: "No-Jyun"
 관련문서:
   - "[[Architecture/document|Maverick Architecture]]"
   - "[[Features/Input-to-Action/document|입력에서 Action 실행까지]]"
   - "[[Features/Hit-Stat-HitReaction/document|Hit, Stat, HitReaction]]"
+  - "[[Features/Combat/Skill/document|Q 스킬 적중 연계]]"
 ---
 
 # Maverick 전투 시스템
@@ -44,6 +45,8 @@ flowchart TD
 - `Q`는 `Skill0`, `R`은 `Skill1`로 처리
 - 현재 무기와 입력 태그를 기준으로 Chooser 또는 DataTable Row 선택
 - `NextChainName`으로 단일 스킬과 연속 스킬 구성
+- `ChainAdvancePolicy`: Row별 `Immediate`·`OnHitConfirmed` 단계 전진 정책
 - 주 쿨다운·단계 간격·입력 창으로 연속 단계 제어
 - Ability Notify 최초 시작 시 비용 차감, 종료 시 체인·쿨다운 갱신
 - HUD에 사용 가능 상태·연속 단계·입력 창·남은 쿨다운 투영
+- Q 스킬 단계별 적중 연계·시간 기준·HUD·지연 적중 계약: [[Features/Combat/Skill/document|Q 스킬 적중 연계]]

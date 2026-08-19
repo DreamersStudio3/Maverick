@@ -1,8 +1,8 @@
 ---
 제목: Maverick 아키텍처
 부제목: 런타임 흐름과 도메인 책임 경계
-최근수정일: 2026-08-12
-최근수정자: 곽민규
+최근수정일: 2026-08-17
+최근수정자: No-Jyun
 관련문서:
   - "[[Convention/Header-Documentation/document|C++ 헤더 책임 문서화]]"
   - "[[Features/Combat/Combat-System/document|Maverick 전투 시스템]]"
@@ -27,6 +27,7 @@ flowchart TD
     Montage --> Ability["UMVAbilityBase / 도메인 상태"]
     Ability -. "공격 활성 구간" .-> HitSource["Collision / Blueprint"]
     HitSource -. "FMVHitResolveRequest" .-> HitResolver["UMVHitResolverSubsystem"]
+    HitResolver -. "OnHitResolved / AttackInstanceId" .-> Combat
     HitResolver --> CharacterBridge["AMVCharacterBase::OnHitResolved"]
     CharacterBridge --> OnDamaged["OnDamaged delegate"]
     OnDamaged --> Stat["UMVStatComponent"]
@@ -102,6 +103,7 @@ flowchart TD
 - Action 선택: 도메인 컴포넌트
 - Montage 실행: ActionComponent
 - 최종 적중 계산: HitResolver
+- 스킬 체인의 적중 확인과 단계 전진: CombatComponent
 - 피해·사망 판정: Stat
 - 피격·사망 표현: HitReaction·Death
 - GameInstance·Engine 수명 상태의 Actor·Widget 저장 금지
