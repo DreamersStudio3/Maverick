@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
+#include "Public/Enum/MVChainAdvancePolicy.h"
 #include "Public/Tables/MVActionRowTableTypes.h"
 
 #include "MVSkillDataTableColumn.generated.h"
@@ -84,5 +85,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skill|Chain|Skill")
 	float InputWindowDuration;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skill|Chain|Skill")
+	EMVChainAdvancePolicy ChainAdvancePolicy = EMVChainAdvancePolicy::Immediate;
 
 };

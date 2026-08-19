@@ -50,6 +50,9 @@ struct MAVERICK_API FMVHitResolveRequest
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Hit")
 	TObjectPtr<AMVCharacterBase> Victim = nullptr;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Hit")
+	int32 AttackInstanceId = INDEX_NONE;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Hit|Damage", meta = (ClampMin = "0.0"))
 	float DamageMultiplier = 1.0f;
 
@@ -87,6 +90,9 @@ struct MAVERICK_API FMVResolvedHitData
 
 	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Hit")
 	TObjectPtr<AMVCharacterBase> Victim = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Hit")
+	int32 AttackInstanceId = INDEX_NONE;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Hit", meta = (Categories = "Character"))
 	FGameplayTag AttackerCharacterIndexCode;

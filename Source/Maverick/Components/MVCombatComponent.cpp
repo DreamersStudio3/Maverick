@@ -9,6 +9,7 @@
 #include "Combat/MVAbilityBase.h"
 #include "Components/MVActionComponent.h"
 #include "Character/MVCharacterBase.h"
+#include "Combat/MVHitResolverSubsystem.h"
 #include "Components/MVStatComponent.h"
 #include "Engine/DataTable.h"
 #include "Public/Interface/MVAbilityInterface.h"
@@ -222,6 +223,12 @@ void UMVCombatComponent::BeginPlay()
 		InputManager->RegisterActionInputHandler(this, MVActionInputHandlerPriorities::Combat);
 	}
 
+	if (UMVHitResolverSubsystem* HitResolver = UMVHitResolverSubsystem::Get(this))
+	{
+		HitResolver->OnHitResolved.RemoveDynamic(this, &UMVCombatComponent::HandleHitResolved);
+		HitResolver->OnHitResolved.AddUniqueDynamic(this, &UMVCombatComponent::HandleHitResolved);
+	}
+
 	if (UMVActionComponent* ActionComponent = OwnerCharacter->ActionComponent)
 	{
 		ActionComponent->OnActionEnded.RemoveDynamic(this, &UMVCombatComponent::HandleActionEnded);
@@ -243,6 +250,11 @@ void UMVCombatComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 		if (UMVInputManagerComponent* InputManager = OwnerCharacter->InputManagerComponent)
 		{
 			InputManager->UnregisterActionInputHandler(this);
+		}
+
+		if (UMVHitResolverSubsystem* HitResolver = UMVHitResolverSubsystem::Get(this))
+		{
+			HitResolver->OnHitResolved.RemoveDynamic(this, &UMVCombatComponent::HandleHitResolved);
 		}
 
 		if (UMVActionComponent* ActionComponent = OwnerCharacter->ActionComponent)
@@ -278,15 +290,21 @@ bool UMVCombatComponent::GetSkillSlotRuntimeState(
 	}
 
 	const float CurrentTime = World->GetTimeSeconds();
-	const bool bInputWindowActive = SkillEntry->bChainActive
-		&& SkillEntry->IsInputWindowValid(CurrentTime);
+	const bool bChainRuntimeActive = SkillEntry->bChainActive;
+	const bool bInputWindowActive = bChainRuntimeActive	&& SkillEntry->IsInputWindowValid(CurrentTime);
 
 	OutState.bAvailable = SkillEntry->SkillRowNames.Num() > 0;
 	OutState.bChainActive = bInputWindowActive;
+	OutState.bChainTimerVisible =
+		bInputWindowActive
+		&& SkillEntry->CurrentChainStageIndex > 0;
 	OutState.StackSize = SkillEntry->SkillRowNames.Num();
 	OutState.ActiveStackIndex = bInputWindowActive
 		? FMath::Clamp(SkillEntry->CurrentChainStageIndex, 0, FMath::Max(0, OutState.StackSize - 1))
 		: 0;
+
+	OutState.ChainTimerIconIndex = SkillEntry->CurrentChainStageIndex > 0 ?
+		FMath::Clamp(SkillEntry->CurrentChainStageIndex - 1, 0, FMath::Max(0, OutState.StackSize - 1)) : 0;
 
 	const bool bSlotAbilityRunning = bCurrentAbilityAwaitingCompletion
 		&& CurrentAbilityInstance
@@ -303,7 +321,7 @@ bool UMVCombatComponent::GetSkillSlotRuntimeState(
 		}
 	}
 
-	if (bInputWindowActive)
+	if (bChainRuntimeActive)
 	{
 		const FMVSkillDataTableColumn* CurrentStageData = SkillEntry->GetCurrentSkillData();
 		OutState.CooldownDuration = CurrentStageData
@@ -318,10 +336,11 @@ bool UMVCombatComponent::GetSkillSlotRuntimeState(
 				OutState.CooldownDuration);
 		}
 
-		const float ChainWindowStartTime = SkillEntry->LastStageActivationTime + OutState.CooldownDuration;
-		if (!bSlotAbilityRunning && CurrentStageData && CurrentTime >= ChainWindowStartTime)
+		if (CurrentStageData && bInputWindowActive)
 		{
-			OutState.ChainWindowDuration = FMath::Max(0.0f, CurrentStageData->InputWindowDuration);
+			OutState.ChainWindowDuration = FMath::Max(0.0f, CurrentStageData->InterStageCooldown) +
+				FMath::Max(0.0f, CurrentStageData->InputWindowDuration);
+
 			OutState.ChainWindowRemaining = FMath::Clamp(
 				SkillEntry->GetRemainingInputWindowTime(CurrentTime),
 				0.0f,
@@ -662,6 +681,11 @@ bool UMVCombatComponent::TrySkill(
 	// Chain Is Active --> doing chaining actions
 	if (ActionEntry->bChainActive)
 	{
+		if (!ActionEntry->IsInterStageCooldownValid(CurrentTime))
+		{
+			return false;
+		}
+
 		// Input Window is expired
 		if (!ActionEntry->IsInputWindowValid(CurrentTime))
 		{
@@ -675,7 +699,13 @@ bool UMVCombatComponent::TrySkill(
 			{
 				ClearLastBasicAttackSwingDirection();
 				ActionEntry->ActivateChain(CurrentTime);
-				ActionEntry->TryAdvanceChainStage(CurrentTime);
+
+				const FMVSkillDataTableColumn* RestartedSkillData = ActionEntry->GetCurrentSkillData();
+
+				if (RestartedSkillData && RestartedSkillData->ChainAdvancePolicy == EMVChainAdvancePolicy::Immediate)
+				{
+					ActionEntry->TryAdvanceChainStage(CurrentTime);
+				}
 				return true;
 			}
 			else
@@ -696,7 +726,13 @@ bool UMVCombatComponent::TrySkill(
 			if (TryStartActionWithAbility(*ActionEntry, ActionEntry->GetCurrentActionRowHandle(), StartSection))
 			{
 				ClearLastBasicAttackSwingDirection();
-				ActionEntry->TryAdvanceChainStage(CurrentTime);
+
+				const FMVSkillDataTableColumn* CurrentSkillData = ActionEntry->GetCurrentSkillData();
+
+				if (CurrentSkillData && CurrentSkillData->ChainAdvancePolicy == EMVChainAdvancePolicy::Immediate)
+				{
+					ActionEntry->TryAdvanceChainStage(CurrentTime);
+				}
 				return true;
 			}
 			else
@@ -717,7 +753,13 @@ bool UMVCombatComponent::TrySkill(
 		{
 			ClearLastBasicAttackSwingDirection();
 			ActionEntry->ActivateChain(CurrentTime);
-			ActionEntry->TryAdvanceChainStage(CurrentTime);
+
+			const FMVSkillDataTableColumn* CurrentSkillData = ActionEntry->GetCurrentSkillData();
+
+			if (CurrentSkillData && CurrentSkillData->ChainAdvancePolicy == EMVChainAdvancePolicy::Immediate)
+			{
+				ActionEntry->TryAdvanceChainStage(CurrentTime);
+			}
 			return true;
 		}
 		else
@@ -768,6 +810,69 @@ void UMVCombatComponent::HandleAbilityEnded(const UMVAbilityBase* EndedAbility)
 		bCurrentAbilityAwaitingCompletion = false;
 	}
 
+}
+
+void UMVCombatComponent::HandleHitResolved(const FMVResolvedHitData& HitData)
+{
+	AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
+
+	if (!OwnerCharacter)
+	{
+		return;
+	}
+
+	if (HitData.Attacker != OwnerCharacter)
+	{
+		return;
+	}
+
+	if (!bCurrentAbilityAwaitingCompletion || !CurrentAbilityInstance)
+	{
+		return;
+	}
+
+	if (!CurrentAbilityInstance->bAbilityActive)
+	{
+		return;
+	}
+
+	if (HitData.AttackInstanceId == INDEX_NONE || HitData.AttackInstanceId != CurrentAttackInstanceId)
+	{
+		return;
+	}
+
+	const float CurrentTime = GetWorld()->GetTimeSeconds();
+
+	for (TPair<FName, FMVSkillEntry>& Pair : SkillMap)
+	{
+		FMVSkillEntry& SkillEntry = Pair.Value;
+
+		if (SkillEntry.GetCurrentAbility() != CurrentAbilityInstance)
+		{
+			continue;
+		}
+
+		const FMVSkillDataTableColumn* CurrentSkillData = SkillEntry.GetCurrentSkillData();
+
+		if (!CurrentSkillData)
+		{
+			return;
+		}
+
+		if (CurrentSkillData->ChainAdvancePolicy != EMVChainAdvancePolicy::OnHitConfirmed)
+		{
+			return;
+		}
+
+		if (SkillEntry.bCurrentStageHitConfirmed)
+		{
+			return;
+		}
+
+		SkillEntry.bCurrentStageHitConfirmed = true;
+		SkillEntry.TryAdvanceChainStage(CurrentTime);
+		return;
+	}
 }
 
 void UMVCombatComponent::HandleActionEnded(
@@ -1448,6 +1553,8 @@ bool UMVCombatComponent::TryStartActionWithAbility(
 			CurrentAbilityActionRowName = RowHandle.RowName;
 			if (CurrentAbilityInstance)
 			{
+				CurrentAttackInstanceId = ++NextAttackInstanceId;
+				CurrentAbilityInstance->SetAttackInstanceId(CurrentAttackInstanceId);
 				CurrentAbilityInstance->PrepareAbilityExecution();
 			}
 
@@ -1462,6 +1569,7 @@ bool UMVCombatComponent::TryStartActionWithAbility(
 				CurrentAbilityInstance = nullptr;
 				CurrentAbilityActionTableName = NAME_None;
 				CurrentAbilityActionRowName = NAME_None;
+				CurrentAttackInstanceId = INDEX_NONE;
 				bCurrentAbilityAwaitingCompletion = false;
 			}
 		};

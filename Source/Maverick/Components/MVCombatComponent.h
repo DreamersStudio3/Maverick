@@ -9,6 +9,7 @@
 #include "Public/Enum/MVCombatActionTypes.h"
 #include "Components/MVInputManagerComponent.h"
 #include "Interface/MVActionInputHandlerInterface.h"
+#include "Struct/MVHitTypes.h"
 
 #include "MVCombatComponent.generated.h"
 
@@ -101,6 +102,9 @@ public:
 	// For chained skills: when input window closes for current stage
 	UPROPERTY(BlueprintReadOnly, Category = "Skill")
 	float InputWindowCloseTime = 0.0f;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Skill")
+	bool bCurrentStageHitConfirmed = false;
 
 public:
 	// Get current ability (for simple skills or current chain stage)
@@ -215,6 +219,7 @@ public:
 	{
 		CurrentChainStageIndex = 0;
 		bChainActive = false;
+		bCurrentStageHitConfirmed = false;
 		LastStageActivationTime = 0.0f;
 		InputWindowCloseTime = 0.0f;
 	}
@@ -228,6 +233,7 @@ public:
 			CurrentChainStageIndex = 0;
 			bChainActive = true;
 			LastStageActivationTime = CurrentTime;
+			bCurrentStageHitConfirmed = false;
 
 			const FMVSkillDataTableColumn* CurrentData = GetCurrentSkillData();
 			if (CurrentData)
@@ -242,6 +248,7 @@ public:
 		{
 			bChainActive = false;
 			LastUsedTime = CurrentTime;
+			bCurrentStageHitConfirmed = false;
 			return;
 		}
 	}
@@ -250,9 +257,20 @@ public:
 	{
 		if (bChainActive)
 		{
+			const FMVSkillDataTableColumn* CurrentData = GetCurrentSkillData();
+
+			if (!CurrentData)
+			{
+				return;
+			}
+
 			LastStageActivationTime = CurrentTime;
 
-			const FMVSkillDataTableColumn* CurrentData = GetCurrentSkillData();
+			if (CurrentData->ChainAdvancePolicy == EMVChainAdvancePolicy::OnHitConfirmed)
+			{
+				return;
+			}
+
 			if (CurrentData)
 			{
 				InputWindowCloseTime = CurrentTime
@@ -277,6 +295,7 @@ public:
 		if (CurrentChainStageIndex >= AbilityInstances.Num() - 1)
 		{
 			bChainActive = false;
+			bCurrentStageHitConfirmed = false;
 			LastUsedTime = CurrentTime;
 			CurrentChainStageIndex = 0;
 			return false; // Chain complete
@@ -284,6 +303,7 @@ public:
 
 		CurrentChainStageIndex++;
 		LastStageActivationTime = CurrentTime;
+		bCurrentStageHitConfirmed = false;
 
 		const FMVSkillDataTableColumn* CurrentData = GetCurrentSkillData();
 		if (CurrentData)
@@ -313,10 +333,16 @@ struct FMVSkillSlotRuntimeState
 	bool bOnCooldown = false;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Combat|Skill UI")
+	bool bChainTimerVisible = false;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Combat|Skill UI")
 	int32 ActiveStackIndex = 0;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Combat|Skill UI")
 	int32 StackSize = 0;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Combat|Skill UI")
+	int32 ChainTimerIconIndex = 0;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Combat|Skill UI")
 	float CooldownRemaining = 0.0f;
@@ -387,6 +413,9 @@ public:
 	bool GetSkillSlotRuntimeState(int32 SkillIndex, FMVSkillSlotRuntimeState& OutState) const;
 
 	void HandleAbilityEnded(const UMVAbilityBase* EndedAbility);
+
+	UFUNCTION()
+	void HandleHitResolved(const FMVResolvedHitData& HitData);
 
 	// Call When Character Change Weapon --> have to receive Event from Character
 	UFUNCTION(BlueprintCallable, Category = "Combat|Weapon")
@@ -529,6 +558,9 @@ public:
 	FName CurrentAbilityActionTableName = NAME_None;
 	FName CurrentAbilityActionRowName = NAME_None;
 	bool bCurrentAbilityAwaitingCompletion = false;
+
+	int32 NextAttackInstanceId = 0;
+	int32 CurrentAttackInstanceId = INDEX_NONE;
 
 private:
 	double LastBasicAttackedTime = 0.0;

@@ -35,15 +35,14 @@ UCLASS(Blueprintable, meta = (ShowWorldContextPin))
 class MAVERICK_API UMVAbilityBase : public UObject, public IMVAbilityInterface
 {
 	GENERATED_BODY()
-	
 
 public:
 	UFUNCTION(BlueprintCallable)
 	void SetOwner(UActorComponent* Owner);
-	
+
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	UActorComponent* GetOwner();
-	
+
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	AMVCharacterBase* GetOwnerCharacter();
 
@@ -53,6 +52,12 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, BlueprintPure, Category = "Maverick|Ability|Launch")
 	FMVHitLaunchData GetHitLaunchData() const;
 	virtual FMVHitLaunchData GetHitLaunchData_Implementation() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Ability|Attack")
+	void SetAttackInstanceId(int32 InAttackInstanceId) { AttackInstanceId = InAttackInstanceId; }
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|Ability|Attack")
+	int32 GetAttackInstanceId() const { return AttackInstanceId; }
 
 	// Ability에 설정한 Launch 값을 HitRequest에 복사한다. HitReaction row에서 bUseLaunch를 켜면 이 값으로 밀림이 걸린다.
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Ability|Hit")
@@ -86,6 +91,9 @@ public:
 
 	UPROPERTY(Transient)
 	bool bAbilityCostConsumed = false;
+
+	UPROPERTY(Transient)
+	int32 AttackInstanceId = INDEX_NONE;
 
 private:
 	bool TryConsumeAbilityCost();
