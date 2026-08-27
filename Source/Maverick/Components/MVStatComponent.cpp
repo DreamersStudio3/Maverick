@@ -104,6 +104,7 @@ bool UMVStatComponent::LoadStatsFromTable()
 	SetCurrentGroggy(StatRow->CurrentGroggy);
 	SetGroggyRecoveryPerSecond(StatRow->GroggyRecoveryPerSecond);
 	SetRecentDamageResetDelay(StatRow->GetRecentDamageResetDelay());
+	SetInitialPoise(StatRow->InitialCharacterPoise);
 
 	return true;
 }
@@ -159,6 +160,8 @@ void UMVStatComponent::HandleDamaged(const FMVResolvedHitData& HitData)
 	{
 		SetCurrentGroggy(CurrentGroggy + GroggyDamage);
 		RestartRecentDamageCooldown();
+		UpdatePoise(MVStatNonNegative(HitData.PoiseDamage));
+
 		if (HitData.HitReactionType == EMVActionHitReactionType::Groggy)
 		{
 			TryStartGroggy();
@@ -579,6 +582,81 @@ void UMVStatComponent::SetGroggyRecoveryDelay(float InGroggyRecoveryDelay)
 	SetRecentDamageResetDelay(InGroggyRecoveryDelay);
 }
 
+void UMVStatComponent::SetInitialPoise(float InitialPoise)
+{
+	InitialCharacterPoise = InitialPoise;
+	ConstantPoise = InitialCharacterPoise;
+}
+
+void UMVStatComponent::PoiseActionStart(float WeaponPoise, float Multiplier)
+{
+	SetAdditionalPoise(WeaponPoise, Multiplier);
+	AdjustMinPoise();
+}
+
+void UMVStatComponent::PoiseActionEnd()
+{
+	SetAdditionalPoise();
+}
+
+void UMVStatComponent::UpdatePoise(float PoiseDamageAmount)
+{
+	// 피격 등으로 인해 포이즈가 감소하는 경우, ConstantPoise를 감소시킵니다.
+
+	// 강인도 감소량이 0 이하인 경우, 아무 작업도 수행하지 않습니다.
+	if(PoiseDamageAmount <= 0.0f)
+	{
+		return;
+	}
+
+	// Poise Reset Timer 새로 시작 -> 피격 등으로 강인도 변화가 생기면 해당 시간 기준으로 일정 시간 이후 강인도 초기화
+	UWorld* World = GetWorld();
+	if (World)
+	{
+		if(PoiseRecoveryTimerHandle.IsValid())
+		{
+			World->GetTimerManager().ClearTimer(PoiseRecoveryTimerHandle);
+		}
+		World->GetTimerManager().SetTimer(PoiseRecoveryTimerHandle, this, &UMVStatComponent::ResetPoise, PoiseRecoveryTime, false);
+	}
+
+	ConstantPoise = ConstantPoise - PoiseDamageAmount;
+	if(ConstantPoise + AdditionalPoise <= 0.0f)
+	{
+		// 포이즈가 0 이하로 떨어진 경우, 강인도를 초기화, HitReaction을 Play
+		// HitReaction Play를 위한 flag는 HitResolverSubsystem에서 처리하도록 함
+		ResetPoise();
+	}
+
+}
+
+void UMVStatComponent::ResetPoise()
+{
+	UWorld* World = GetWorld();
+	if (World && PoiseRecoveryTimerHandle.IsValid())
+	{
+		World->GetTimerManager().ClearTimer(PoiseRecoveryTimerHandle);
+	}
+
+	if(ConstantPoise < InitialCharacterPoise)
+	{
+		ConstantPoise = InitialCharacterPoise;
+	}
+}
+
+bool UMVStatComponent::PredictPoiseBreak(float PoiseDamageAmount) const
+{
+	if(PoiseDamageAmount <= 0.0f)
+	{
+		return false;
+	}
+
+	float PredictedPoise = ConstantPoise + AdditionalPoise - PoiseDamageAmount;
+	bool Result = PredictedPoise > 0.0f;
+
+	return Result;
+}
+
 void UMVStatComponent::RestartRecentDamageCooldown()
 {
 	RecentDamageCooldownRemaining = RecentDamageResetDelay;
@@ -605,6 +683,7 @@ bool UMVStatComponent::TryStartGroggy()
 
 	bIsGroggy = true;
 	RestartRecentDamageCooldown();
+	ResetPoise();
 	OnGroggyStarted.Broadcast();
 	return true;
 }
@@ -647,3 +726,26 @@ void UMVStatComponent::BroadcastGroggyEnded()
 	RecentDamageCooldownRemaining = 0.0f;
 	OnGroggyEnded.Broadcast();
 }
+
+void UMVStatComponent::SetAdditionalPoise(float WeaponPoise, float Multiplier)
+{
+	if(WeaponPoise <= 0.0f || Multiplier <= 0.0f)
+	{
+		AdditionalPoise = 0.0f;
+		return;
+	}
+
+	AdditionalPoise = WeaponPoise * Multiplier;
+}
+
+void UMVStatComponent::AdjustMinPoise()
+{
+	float currentPoise = ConstantPoise + AdditionalPoise;
+	float comparePoise = (InitialCharacterPoise + AdditionalPoise) * MinPoiseRecoveryRatio;
+
+	if (currentPoise < comparePoise)
+	{
+		ConstantPoise = comparePoise - AdditionalPoise;
+	}
+}
+
