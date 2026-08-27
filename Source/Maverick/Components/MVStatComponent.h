@@ -256,6 +256,27 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Groggy", meta = (DeprecatedFunction, DeprecationMessage = "Use SetRecentDamageResetDelay."))
 	void SetGroggyRecoveryDelay(float InGroggyRecoveryDelay);
 
+	// Poise
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Poise")
+	void SetInitialPoise(float InitialPoise);
+	
+	// 행동 시작/종료 시 상시 강인도, 무기 강인도 조정
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Poise")
+	void PoiseActionStart(float WeaponPoise, float Multiplier);
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Poise")
+	void PoiseActionEnd();
+	
+	// 강인도 수치 변화 함수(강인도 수치를 변화시키고 Poise Break를 판정)
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Poise")
+	void UpdatePoise(float PoiseDamageAmount);
+
+	// 강인도 수치 초기화 함수(강인도 수치를 초기값으로 되돌림)
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Poise")
+	void ResetPoise();
+
+	// 강인도 수치가 Poise Break를 일으킬지 예측하는 함수 -> HitResolverSubsystem에서 사용
+	bool PredictPoiseBreak(float PoiseDamageAmount) const;
+
 private:
 	FString MakeStatRowKey() const;
 	void TickRecentDamageCooldown(float DeltaTime);
@@ -266,6 +287,12 @@ private:
 	void ResetDamageAccumulation();
 	bool TryStartGroggy();
 	void BroadcastGroggyEnded();
+
+	// 추가 강인도 설정(무기, 행동 등)
+	void SetAdditionalPoise(float WeaponPoise = 0, float Multiplier = 0);
+	
+	// 행동 시작 시, 상시 강인도의 최저 하한선 체크, 조정
+	void AdjustMinPoise();
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Table")
@@ -333,6 +360,26 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Damage")
 	float AccumulatedRecentDamage = 0.0f;
+	
+	// Poise는 피격 시 경직을 얼마나 잘 버티는지에 대한 수치로, 공격자에게 밀려나거나 넘어지는 피격 반응을 결정하는 데 사용된다.
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Poise")
+	float InitialCharacterPoise = 0.0f;
+	
+	// 상시 강인도
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Poise")
+	float ConstantPoise = 0.0f;
+
+	// 무기, 행동의 강인도
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Poise")
+	float AdditionalPoise = 0.0f;
+	
+	// 행동(공격) 시 최저 하한선 강인도 비율, 이 비율보다 낮으면 행동 시 상시강인도를 조정
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Poise")
+	float MinPoiseRecoveryRatio = 0.8f;
+	
+	// 강인도 초기화 기준 시간
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Poise")
+	float PoiseRecoveryTime = 30.0f;
 
 private:
 	float RecentDamageCooldownRemaining = 0.0f;
@@ -342,4 +389,7 @@ private:
 	bool bHasRecentDamageAccumulation = false;
 	bool bIsDead = false;
 	bool bIsGroggy = false;
+
+	// Poise
+	FTimerHandle PoiseRecoveryTimerHandle;
 };

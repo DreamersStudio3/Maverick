@@ -55,6 +55,9 @@ struct MAVERICK_API FMVHitResolveRequest
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Hit|Damage", meta = (ClampMin = "0.0"))
 	float GroggyDamageMultiplier = 1.0f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Hit|Damage", meta = (ClampMin = "0.0"))
+	float PoiseDamage = 0.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Hit|Reaction")
 	EMVActionHitReactionType HitReactionType = EMVActionHitReactionType::None;
@@ -136,6 +139,16 @@ struct MAVERICK_API FMVResolvedHitData
 	// HitResolver가 확정한 월드 밀림 방향. 피격자 위치에서 공격자 위치를 뺀 값이라 Actor forward와 상관없이 같은 방향을 쓴다.
 	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Hit|Context")
 	FVector HitDirection = FVector::ZeroVector;
+	
+	// Poise 감소량
+	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Hit|Poise")
+	float PoiseDamage = 0.0f;
+	
+	// 피격자의 강인도 수치를 예측하여 Hit Reaction을 Play할 지 판단할 flag
+	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Hit|Poise")
+	bool PoiseBreak = false;
+
+
 };
 
 /**

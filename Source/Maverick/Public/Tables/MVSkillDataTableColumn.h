@@ -78,6 +78,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Chain")
 	FName NextChainName;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Poise")
+	float PoiseAmountMultiplier = 0.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skill|Chain|Skill")
 	float InterStageCooldown;

@@ -153,7 +153,7 @@ bool UMVHitResolverSubsystem::BuildResolvedHitData(
 
 	AMVCharacterBase* Attacker = Request.Attacker.Get();
 	AMVCharacterBase* Victim = Request.Victim.Get();
-	if (!Attacker || !Victim || Attacker == Victim)
+	if (!Attacker || !Victim /*|| Attacker == Victim*/)
 	{
 		MVHitResolverLogAirborneTrace(TEXT("BuildRejected_InvalidParticipants"), Request);
 		return false;
@@ -199,6 +199,8 @@ bool UMVHitResolverSubsystem::BuildResolvedHitData(
 		? FVector::ZeroVector
 		: Request.ImpactNormal.GetSafeNormal();
 	OutHitData.HitDirection = ResolveHitDirection(Request, *Attacker, *Victim);
+	OutHitData.PoiseDamage = ResolveNonNegativeStat(Request.PoiseDamage);
+	OutHitData.PoiseBreak = VictimStat->PredictPoiseBreak(Request.PoiseDamage);
 
 	const UMVHitReactionComponent* HitReactionComponent = Victim->FindComponentByClass<UMVHitReactionComponent>();
 	const bool bCanTriggerGroggy = HitReactionComponent && HitReactionComponent->CanTriggerGroggy(OutHitData);
