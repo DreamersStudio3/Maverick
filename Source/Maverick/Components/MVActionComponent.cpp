@@ -100,6 +100,51 @@ bool UMVActionComponent::TryStartActionFromRowHandle(const FDataTableRowHandle A
 	return TryStartResolvedAction(ActionTableName, ActionRowName, *ActionRow, StartSection);
 }
 
+bool UMVActionComponent::TryAdditiveFromRowHandle(FDataTableRowHandle ActionRowHandle, FName StartSection, const float BlendoutTime)
+{
+	FName ActionTableName = NAME_None;
+	FName ActionRowName = NAME_None;
+	const FMVActionRow* ActionRow = FindActionRow(ActionRowHandle, ActionTableName, ActionRowName);
+
+	if (!ActionRow)
+	{
+		return false;
+	}
+
+	const float PlayRate = ActionRow->PlayRate > 0.0f ? ActionRow->PlayRate : 1.0f;
+
+	UObject* MontageObject = ActionRow->Montage.TryLoad();
+	UAnimMontage* ActionMontage = Cast<UAnimMontage>(MontageObject);
+	if (!ActionMontage)
+	{
+		return false;
+	}
+
+	UAnimInstance* AnimInstance = GetOwnerAnimInstance();
+	if (!AnimInstance)
+	{
+		return false;
+	}
+
+	const float MontageDuration = AnimInstance->Montage_Play(ActionMontage, PlayRate);
+	if (MontageDuration < 0.0f)
+	{
+		return false;
+	}
+
+	if (StartSection.IsNone())
+	{
+		StartSection = ActionRow->DefaultStartSection;
+	}
+
+	if (!StartSection.IsNone())
+	{
+		AnimInstance->Montage_JumpToSection(StartSection, ActionMontage);
+	}
+
+	return true;
+}
+
 bool UMVActionComponent::PauseActiveAction()
 {
 	UAnimInstance* AnimInstance = GetOwnerAnimInstance();

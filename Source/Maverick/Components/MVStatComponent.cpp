@@ -145,6 +145,12 @@ void UMVStatComponent::HandleDamaged(const FMVResolvedHitData& HitData)
 		}
 	}
 
+	const float PoiseDamage = MVStatNonNegative(HitData.PoiseDamage);
+	if (PoiseDamage > 0.0f)
+	{
+		UpdatePoise(MVStatNonNegative(HitData.PoiseDamage));
+	}
+
 	if (bIsDead)
 	{
 		return;
@@ -160,11 +166,11 @@ void UMVStatComponent::HandleDamaged(const FMVResolvedHitData& HitData)
 	{
 		SetCurrentGroggy(CurrentGroggy + GroggyDamage);
 		RestartRecentDamageCooldown();
-		UpdatePoise(MVStatNonNegative(HitData.PoiseDamage));
 
 		if (HitData.HitReactionType == EMVActionHitReactionType::Groggy)
 		{
 			TryStartGroggy();
+			ResetPoise();
 		}
 	}
 }
@@ -652,7 +658,7 @@ bool UMVStatComponent::PredictPoiseBreak(float PoiseDamageAmount) const
 	}
 
 	float PredictedPoise = ConstantPoise + AdditionalPoise - PoiseDamageAmount;
-	bool Result = PredictedPoise > 0.0f;
+	bool Result = PredictedPoise <= 0.0f;
 
 	return Result;
 }
@@ -683,7 +689,6 @@ bool UMVStatComponent::TryStartGroggy()
 
 	bIsGroggy = true;
 	RestartRecentDamageCooldown();
-	ResetPoise();
 	OnGroggyStarted.Broadcast();
 	return true;
 }
