@@ -301,8 +301,8 @@ void AMVPlayerCharacter::BindDamageHandlers()
 	
 	if (HitReactionComponent)
 	{
-		OnDamaged.RemoveDynamic(HitReactionComponent, &UMVHitReactionComponent::HandleDamaged);
-		OnDamaged.AddUniqueDynamic(HitReactionComponent, &UMVHitReactionComponent::HandleDamaged);
+		//OnDamaged.RemoveDynamic(HitReactionComponent, &UMVHitReactionComponent::HandleDamaged);
+		//OnDamaged.AddUniqueDynamic(HitReactionComponent, &UMVHitReactionComponent::HandleDamaged);
 	}
 }
 

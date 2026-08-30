@@ -6,10 +6,11 @@
 #include "Components/MVActionComponent.h"
 #include "Components/MVCombatComponent.h"
 #include "Components/MVDeathComponent.h"
-#include "Components/MVHitReactionComponent.h"
+//#include "Components/MVHitReactionComponent.h"
 #include "Components/MVInputManagerComponent.h"
 #include "Components/MVStatComponent.h"
 #include "Components/MVWeaponComponent.h"
+#include "Components/MVHitReaction.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "KismetAnimationLibrary.h"
@@ -103,7 +104,7 @@ AMVCharacterBase::AMVCharacterBase()
 	ActionComponent = CreateDefaultSubobject<UMVActionComponent>(TEXT("ActionComponent"));
 	CombatComponent = CreateDefaultSubobject<UMVCombatComponent>(TEXT("CombatComponent"));
 	DeathComponent = CreateDefaultSubobject<UMVDeathComponent>(TEXT("DeathComponent"));
-	HitReactionComponent = CreateDefaultSubobject<UMVHitReactionComponent>(TEXT("HitReactionComponent"));
+	HitReactionComponent = CreateDefaultSubobject<UMVHitReaction>(TEXT("HitReactionComponent"));
 	InputManagerComponent = CreateDefaultSubobject<UMVInputManagerComponent>(TEXT("InputManagerComponent"));
 	WeaponComponent = CreateDefaultSubobject<UMVWeaponComponent>(TEXT("WeaponComponent"));
 	MotionWarpingComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarpingComponent"));
@@ -337,6 +338,12 @@ void AMVCharacterBase::BindDamageHandlers()
 	{
 		OnDamaged.RemoveDynamic(StatComponent, &UMVStatComponent::HandleDamaged);
 		OnDamaged.AddUniqueDynamic(StatComponent, &UMVStatComponent::HandleDamaged);
+		
+	}
+	if (HitReactionComponent)
+	{
+		OnDamaged.RemoveDynamic(HitReactionComponent, &UMVHitReaction::HandleHitEvent);
+		OnDamaged.AddUniqueDynamic(HitReactionComponent, &UMVHitReaction::HandleHitEvent);
 	}
 }
 

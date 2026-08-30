@@ -25,7 +25,7 @@ bool MVHitResolverTryResolveAttackerToVictimDirection(
 	const AMVCharacterBase& Victim,
 	FVector& OutDirection)
 {
-	return MVHitResolverTryNormalize2D(Victim.GetActorLocation() - Attacker.GetActorLocation(), OutDirection);
+	return MVHitResolverTryNormalize2D(Attacker.GetActorLocation() - Victim.GetActorLocation(), OutDirection);
 }
 
 void MVHitResolverLogHitLaunchTrace(
@@ -153,6 +153,8 @@ bool UMVHitResolverSubsystem::BuildResolvedHitData(
 
 	AMVCharacterBase* Attacker = Request.Attacker.Get();
 	AMVCharacterBase* Victim = Request.Victim.Get();
+
+	// Todo: 테스트 후 공격자와 피격자가 동일한 경우 예외처리 추가
 	if (!Attacker || !Victim /*|| Attacker == Victim*/)
 	{
 		MVHitResolverLogAirborneTrace(TEXT("BuildRejected_InvalidParticipants"), Request);

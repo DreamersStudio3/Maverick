@@ -18,11 +18,12 @@ class UMVStatComponent;
 class UMVActionComponent;
 class UMVCombatComponent;
 class UMVDeathComponent;
-class UMVHitReactionComponent;
+//class UMVHitReactionComponent;
 class UMVInputManagerComponent;
 class UMVWeaponComponent;
 class UCurveFloat;
 class UMotionWarpingComponent;
+class UMVHitReaction;
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FMVOnMovementInputReceived, const FVector&);
 
@@ -134,7 +135,7 @@ public:
 	TObjectPtr<UMVDeathComponent> DeathComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	TObjectPtr<UMVHitReactionComponent> HitReactionComponent;
+	TObjectPtr<UMVHitReaction> HitReactionComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UMVInputManagerComponent> InputManagerComponent;
