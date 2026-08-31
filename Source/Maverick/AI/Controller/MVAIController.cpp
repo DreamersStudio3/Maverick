@@ -20,6 +20,8 @@ void AMVAIController::BeginPlay()
 {
 	Super::BeginPlay();
 	InitializeBossDebugGate();
+
+	UE_LOG(LogTemp, Log, TEXT("보스 플레이어 상태 : %s"), BossPlayStart ? TEXT("true") : TEXT("false"));
 }
 
 void AMVAIController::OnPossess(APawn* InPawn)
