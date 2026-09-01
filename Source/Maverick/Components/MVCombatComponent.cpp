@@ -841,6 +841,8 @@ void UMVCombatComponent::HandleHitResolved(const FMVResolvedHitData& HitData)
 		return;
 	}
 
+	CurrentAbilityInstance->ApplyOnHitStatusEffect(HitData);
+
 	const float CurrentTime = GetWorld()->GetTimeSeconds();
 
 	for (TPair<FName, FMVSkillEntry>& Pair : SkillMap)

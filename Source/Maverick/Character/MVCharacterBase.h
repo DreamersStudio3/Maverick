@@ -23,6 +23,7 @@ class UMVInputManagerComponent;
 class UMVWeaponComponent;
 class UCurveFloat;
 class UMotionWarpingComponent;
+class UMVStatusEffectComponent;
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FMVOnMovementInputReceived, const FVector&);
 
@@ -145,7 +146,8 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UMotionWarpingComponent> MotionWarpingComponent;
 
-
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<UMVStatusEffectComponent> StatusEffectComponent;
 
 private:
 	void ApplyCharacterIndexCodeToComponents();

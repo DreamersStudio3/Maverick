@@ -75,6 +75,49 @@ struct MAVERICK_API FMVHitResolveRequest
 };
 
 /**
+ * 공격력 공식이 아닌 외부 로직에서 최종 계산한 피해를
+ * 기존 피격 처리 경로로 전달하기 위한 요청 데이터.
+ *
+ * 대표 사용처:
+ * - 대상 최대 체력 비례 피해
+ * - 지속 피해
+ * - 고정 피해
+ * - 상태 효과에 의한 추가 피해
+ */
+USTRUCT(BlueprintType)
+struct MAVERICK_API FMVDirectDamageRequest
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
+	TObjectPtr<AMVCharacterBase> Attacker = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
+	TObjectPtr<AMVCharacterBase> Victim = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
+	int32 AttackInstanceId = INDEX_NONE;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage", meta = (ClampMin = "0.0"))
+	float FinalDamage = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage", meta = (ClampMin = "0.0"))
+	float GroggyDamage = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
+	EMVActionHitReactionType HitReactionType = EMVActionHitReactionType::None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
+	FMVHitLaunchData HitLaunchData;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
+	FVector HitLocation = FVector::ZeroVector;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
+	FVector ImpactNormal = FVector::ZeroVector;
+};
+
+/**
  * HitResolver가 계산해 피격자에게 넘기는 최종 타격 결과.
  *
  * 무기 스냅샷, 스탯, 대미지 계수, 충돌 정보를 조합해 채운다.

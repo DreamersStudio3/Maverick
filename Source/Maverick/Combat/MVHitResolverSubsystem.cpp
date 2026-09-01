@@ -134,15 +134,22 @@ bool UMVHitResolverSubsystem::ResolveAttackHit(
 	MVHitResolverLogHitLaunchTrace(TEXT("ResolverResolved"), Request, &OutHitData);
 	MVHitResolverLogAirborneTrace(TEXT("ResolverResolved"), Request, &OutHitData);
 
-	OnHitResolved.Broadcast(OutHitData); // VFX, UI 등 후속 처리용 이벤트 브로드캐스트
-
 	if (AMVCharacterBase* Victim = OutHitData.Victim.Get())
 	{
 		MVHitResolverLogAirborneTrace(TEXT("ResolverDispatchVictim"), Request, &OutHitData);
-		Victim->OnHitResolved(OutHitData); // 피격자에게 피해 처리를 명령하는 곳
 	}
 
-	return true;
+	return DispatchResolvedHit(OutHitData);
+}
+
+bool UMVHitResolverSubsystem::ResolveDirectDamage(const FMVDirectDamageRequest& Request, FMVResolvedHitData& OutHitData)
+{
+	if (!BuildDirectDamageHitData(Request, OutHitData))
+	{
+		return false;
+	}
+
+	return DispatchResolvedHit(OutHitData);
 }
 
 bool UMVHitResolverSubsystem::BuildResolvedHitData(
@@ -256,4 +263,86 @@ FVector UMVHitResolverSubsystem::ResolveHitDirection(
 		*Request.ImpactNormal.ToString(),
 		*Direction.ToString());
 	return Direction;
+}
+
+bool UMVHitResolverSubsystem::BuildDirectDamageHitData(const FMVDirectDamageRequest& Request,
+	FMVResolvedHitData& OutHitData) const
+{
+	OutHitData = FMVResolvedHitData();
+
+	AMVCharacterBase* Attacker = Request.Attacker.Get();
+	AMVCharacterBase* Victim = Request.Victim.Get();
+
+	if (!IsValid(Attacker) || !IsValid(Victim))
+	{
+		return false;
+	}
+
+	const UMVStatComponent* AttackerStatComponent =	Attacker->FindComponentByClass<UMVStatComponent>();
+
+	const UMVStatComponent* VictimStatComponent = Victim->FindComponentByClass<UMVStatComponent>();
+
+	if (!IsValid(AttackerStatComponent) || !IsValid(VictimStatComponent))
+	{
+		return false;
+	}
+
+	if (VictimStatComponent->IsDead())
+	{
+		return false;
+	}
+
+	const float FinalDamage = FMath::Max(0.0f, Request.FinalDamage);
+	const float GroggyDamage = FMath::Max(0.0f, Request.GroggyDamage);
+
+	if (FinalDamage <= 0.0f && GroggyDamage <= 0.0f)
+	{
+		return false;
+	}
+
+	OutHitData.Attacker = Attacker;
+	OutHitData.Victim = Victim;
+
+	OutHitData.AttackerCharacterIndexCode =	Attacker->GetCharacterIndexCode();
+	OutHitData.VictimCharacterIndexCode = Victim->GetCharacterIndexCode();
+
+	OutHitData.AttackInstanceId = Request.AttackInstanceId;
+
+	const float AttackerAttackPower = ResolveNonNegativeStat(AttackerStatComponent->AttackPower);
+	const float BaseAttackPower = AttackerAttackPower > 0.0f ? AttackerAttackPower : ResolveNonNegativeStat(FallbackAttackPower);
+
+	OutHitData.CharacterAttackPower = BaseAttackPower;
+	OutHitData.VictimDefence = ResolveNonNegativeStat(VictimStatComponent->Defence);
+
+	OutHitData.DamageMultiplier = 1.0f;
+	OutHitData.GroggyDamageMultiplier = 1.0f;
+
+	OutHitData.FinalDamage = FinalDamage;
+	OutHitData.GroggyDamage = GroggyDamage;
+
+	OutHitData.HitReactionType = Request.HitReactionType;
+	OutHitData.HitLaunchData = Request.HitLaunchData;
+	OutHitData.HitLocation = Request.HitLocation;
+
+	OutHitData.ImpactNormal = Request.ImpactNormal.IsNearlyZero() ? FVector::ZeroVector	: Request.ImpactNormal.GetSafeNormal();
+	MVHitResolverTryResolveAttackerToVictimDirection(
+		*Attacker,
+		*Victim,
+		OutHitData.HitDirection);
+
+	return true;
+}
+
+bool UMVHitResolverSubsystem::DispatchResolvedHit(const FMVResolvedHitData& HitData)
+{
+	AMVCharacterBase* Victim = HitData.Victim.Get();
+	if (!IsValid(Victim))
+	{
+		return false;
+	}
+
+	OnHitResolved.Broadcast(HitData);
+	Victim->OnHitResolved(HitData);
+
+	return true;
 }

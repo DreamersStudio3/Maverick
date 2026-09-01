@@ -37,4 +37,13 @@ namespace MVGameplayTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StateTreeEvent_Enemy_DodgeThreatDetected);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StateTreeEvent_Enemy_Groggy);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StateTreeEvent_Enemy_GroggyEnd);
+
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StatusEffect_Skill_ThirdHitMark);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StatusEffect_Skill_Burn);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StatusEffect_Skill_BurnBurstCooldown);
+
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StatusEffect_Type_Debuff);
+
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StatusEffect_Mechanic_Mark);
+
 }

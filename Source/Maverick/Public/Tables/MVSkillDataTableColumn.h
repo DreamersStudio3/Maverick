@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
+#include "Public/Struct/MVStatusEffectTypes.h"
 #include "Public/Enum/MVChainAdvancePolicy.h"
 #include "Public/Tables/MVActionRowTableTypes.h"
 
@@ -57,6 +58,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Common", meta = (ClampMin = "0.0"))
 	float GroggyDamageMultiplier;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Status Effect")
+	TArray<FMVStatusEffectApplication> OnHitStatusEffects;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Basic")
 	EMVAttackSwingDirection SwingDirection = EMVAttackSwingDirection::None;

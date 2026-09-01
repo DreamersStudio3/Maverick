@@ -63,6 +63,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Ability|Hit")
 	void ApplyHitLaunchDataToResolveRequest(UPARAM(ref) FMVHitResolveRequest& Request) const;
 
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Ability|Status Effect")
+	void ApplyOnHitStatusEffect(const FMVResolvedHitData& HitData);
+
 	void PrepareAbilityExecution();
 	
 	virtual void StartAbility_Implementation(int32 AbilityIndex) override;

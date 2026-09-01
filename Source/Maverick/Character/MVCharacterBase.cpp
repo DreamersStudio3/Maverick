@@ -17,6 +17,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "MotionWarpingComponent.h"
 #include "TimerManager.h"
+#include "Components/MVStatusEffectComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogMVCharacterBase, Log, All);
 
@@ -107,6 +108,7 @@ AMVCharacterBase::AMVCharacterBase()
 	InputManagerComponent = CreateDefaultSubobject<UMVInputManagerComponent>(TEXT("InputManagerComponent"));
 	WeaponComponent = CreateDefaultSubobject<UMVWeaponComponent>(TEXT("WeaponComponent"));
 	MotionWarpingComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarpingComponent"));
+	StatusEffectComponent = CreateDefaultSubobject<UMVStatusEffectComponent>(TEXT("StatusEffectComponent"));
 	ApplyCharacterIndexCodeToComponents();
 	bHasDodgeMovementInput = false;
 	LocomotionDirection = ELocomotionDirection::F;
