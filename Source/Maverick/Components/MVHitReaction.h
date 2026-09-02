@@ -67,6 +67,7 @@ private:
 	EMVHitReactionDir CalculateHitDirection(const FVector& ImpactNormal);
 	bool PlayHitReaction(const FDataTableRowHandle& HitReactionRowHandle, const FMHitReactionChooserInput& ChooserInput);
 	void AdjustActionRotation(const FMHitReactionChooserInput& ChooserInput, const AActor* Attacker);
+	bool ApplyHitReactionLaunch(const FVector& HitDirection, const FMVHitLaunchData& HitLaunchData);
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
