@@ -25,7 +25,7 @@ bool MVHitResolverTryResolveAttackerToVictimDirection(
 	const AMVCharacterBase& Victim,
 	FVector& OutDirection)
 {
-	return MVHitResolverTryNormalize2D(Attacker.GetActorLocation() - Victim.GetActorLocation(), OutDirection);
+	return MVHitResolverTryNormalize2D(Victim.GetActorLocation() - Attacker.GetActorLocation(), OutDirection);
 }
 
 void MVHitResolverLogHitLaunchTrace(

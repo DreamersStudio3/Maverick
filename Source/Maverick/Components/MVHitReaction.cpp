@@ -125,11 +125,17 @@ void UMVHitReaction::HandleHitEvent(const FMVResolvedHitData& HitData)
 		return;
 	}
 
-	// 후처리
-	// Action Rotate
-	AdjustActionRotation(ChooserInput, Cast<AActor>(HitData.Attacker));
+	if (HitData.PoiseBreak == true)
+	{
+		// 후처리
+		// Action Rotate
+		AdjustActionRotation(ChooserInput, Cast<AActor>(HitData.Attacker));
 
-	// KnockBack || Airborne
+		// Launch Data가 있는 경우
+		// Todo: 테스트로 방향에 고정 값 넣음
+		ApplyHitReactionLaunch(/*HitData.HitDirection*/ FVector(1, 0, 0), HitData.HitLaunchData);
+	}
+	
 
 }
 
@@ -216,5 +222,40 @@ void UMVHitReaction::AdjustActionRotation(const FMHitReactionChooserInput& Choos
 
 	GetOwner()->SetActorRotation(NewRotation);
 
+}
+
+bool UMVHitReaction::ApplyHitReactionLaunch(const FVector& HitDirection, const FMVHitLaunchData& HitLaunchData)
+{
+	if (HitDirection.IsNearlyZero())
+	{
+		return false;
+	}
+
+	if (HitLaunchData.LaunchDuration < KINDA_SMALL_NUMBER &&
+		HitLaunchData.LaunchDistance < KINDA_SMALL_NUMBER &&
+		HitLaunchData.LaunchVerticalSpeed < KINDA_SMALL_NUMBER)
+	{
+		return false;
+	}
+	
+	FVector NormalizedDirection = HitDirection.GetSafeNormal2D();
+	
+	const float LaunchDuration = FMath::Max(0.0f, HitLaunchData.LaunchDuration);
+	const float HorizontalSpeed = LaunchDuration > KINDA_SMALL_NUMBER
+		? FMath::Max(0.0f, HitLaunchData.LaunchDistance) / LaunchDuration
+		: 0.0f;
+
+	// HitDirection은 피격자 위치에서 공격자 위치를 뺀 월드 방향이다. Actor yaw가 바뀌어도 Launch 방향은 이 값 그대로 간다.
+	FVector LaunchVelocity = NormalizedDirection * HorizontalSpeed;
+	LaunchVelocity.Z = FMath::Max(0.0f, HitLaunchData.LaunchVerticalSpeed);
+
+	if (!OwnerCharacter)
+	{
+		return false;
+	}
+
+	OwnerCharacter->LaunchCharacter(LaunchVelocity, true, false);
+
+	return true;
 }
 
