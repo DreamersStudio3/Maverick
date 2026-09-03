@@ -31,31 +31,26 @@ public:
 	virtual void OnPossess(APawn* InPawn) override;
 	virtual void Tick(float DeltaSeconds) override;
 
-	void SetBossPlayStartForDebug(bool bInBossPlayStart);
-	void SetBossAttackTargetForDebug(AActor* InAttackTarget);
-	bool IsBossDebugController() const;
-	
-
 protected:
 	UFUNCTION()
 	void OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors);
-	
 
 public:
-	//인지한 타겟
 	UPROPERTY(BlueprintReadOnly, Category = "AI")
 	AActor* TargetActor;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI|Boss Debug")
 	bool BossPlayStart = false;
-	
-	
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI|Boss Debug")
 	TObjectPtr<UAIPerceptionComponent> AIPerceptionComponent;
 
 private:
 	void InitializeBossDebugGate();
+	void SetBossPlayStartForDebug(bool bInBossPlayStart);
+	void SetBossAttackTargetForDebug(AActor* InAttackTarget);
+	bool IsBossDebugController() const;
 	UStateTreeAIComponent* FindBossStateTreeComponent() const;
 	bool WriteBossAttackTarget(AActor* InAttackTarget) const;
 	bool bBossDebugGateInitialized = false;
