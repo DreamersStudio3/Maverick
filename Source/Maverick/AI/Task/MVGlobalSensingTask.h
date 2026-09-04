@@ -59,6 +59,9 @@ struct FMVGlobalSensingTaskInstanceData
 	UPROPERTY(EditAnywhere, Category = "Input|Cooldown")
 	TArray<FMVActionCooldownDefinition> ActionCooldowns;
 
+	UPROPERTY(EditAnywhere, Category = "Input|Cooldown", meta = (ClampMin = "0.0"))
+	float AttackCooldownSeconds = 1.5f;
+
 	UPROPERTY(EditAnywhere, Category = "Input|Cooldown")
 	FName AttackCadenceActionId = NAME_None;
 

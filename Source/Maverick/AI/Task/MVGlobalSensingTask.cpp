@@ -12,6 +12,36 @@ namespace
 {
 constexpr int32 GlobalSensingCombatAreaDebugSegments = 96;
 constexpr float GlobalSensingCombatAreaDebugThickness = 2.0f;
+const FName GlobalSensingDefaultAttackCadenceActionId(TEXT("AttackCadence"));
+
+TArray<FMVActionCooldownDefinition> GlobalSensingBuildCooldownDefinitions(
+	const FMVGlobalSensingTaskInstanceData& InstanceData)
+{
+	TArray<FMVActionCooldownDefinition> Definitions = InstanceData.ActionCooldowns;
+	if (InstanceData.AttackCooldownSeconds <= 0.0f)
+	{
+		return Definitions;
+	}
+
+	const FName CadenceActionId = InstanceData.AttackCadenceActionId.IsNone()
+		? GlobalSensingDefaultAttackCadenceActionId
+		: InstanceData.AttackCadenceActionId;
+	FMVActionCooldownDefinition* ExistingDefinition = Definitions.FindByPredicate(
+		[CadenceActionId](const FMVActionCooldownDefinition& Definition)
+		{
+			return Definition.ActionId == CadenceActionId;
+		});
+
+	if (!ExistingDefinition)
+	{
+		ExistingDefinition = &Definitions.AddDefaulted_GetRef();
+		ExistingDefinition->ActionId = CadenceActionId;
+		ExistingDefinition->bStartReady = true;
+	}
+
+	ExistingDefinition->CooldownDuration = InstanceData.AttackCooldownSeconds;
+	return Definitions;
+}
 
 const TCHAR* GlobalSensingCombatAreaText(const EMVBossCombatArea Area)
 {
@@ -160,7 +190,7 @@ void UpdateGlobalSensingCooldownContext(FMVGlobalSensingTaskInstanceData& Instan
 		InstanceData.CooldownComponent = GlobalSensingEnsureCooldownComponent(*InstanceData.Owner);
 		if (InstanceData.CooldownComponent)
 		{
-			InstanceData.CooldownComponent->ConfigureCooldowns(InstanceData.ActionCooldowns);
+			InstanceData.CooldownComponent->ConfigureCooldowns(GlobalSensingBuildCooldownDefinitions(InstanceData));
 		}
 	}
 
@@ -171,8 +201,11 @@ void UpdateGlobalSensingCooldownContext(FMVGlobalSensingTaskInstanceData& Instan
 
 	InstanceData.CooldownComponent->TickCooldowns(DeltaTime);
 	InstanceData.CooldownComponent->GetReadyActionIds(InstanceData.ReadyActionIds);
-	InstanceData.bAttackCadenceReady = InstanceData.AttackCadenceActionId.IsNone()
-		|| InstanceData.CooldownComponent->IsCooldownReady(InstanceData.AttackCadenceActionId);
+	const FName CadenceActionId = InstanceData.AttackCadenceActionId.IsNone()
+		? GlobalSensingDefaultAttackCadenceActionId
+		: InstanceData.AttackCadenceActionId;
+	InstanceData.bAttackCadenceReady = InstanceData.AttackCooldownSeconds <= 0.0f
+		|| InstanceData.CooldownComponent->IsCooldownReady(CadenceActionId);
 }
 
 void UpdateGlobalSensingLifeContext(FMVGlobalSensingTaskInstanceData& InstanceData)
@@ -395,7 +428,7 @@ EStateTreeRunStatus FMVGlobalSensingTask::EnterState(
 	InstanceData.CooldownComponent = GlobalSensingEnsureCooldownComponent(*InstanceData.Owner);
 	if (InstanceData.CooldownComponent)
 	{
-		InstanceData.CooldownComponent->ConfigureCooldowns(InstanceData.ActionCooldowns);
+		InstanceData.CooldownComponent->ConfigureCooldowns(GlobalSensingBuildCooldownDefinitions(InstanceData));
 	}
 
 	UWorld* World = InstanceData.Owner->GetWorld();
