@@ -482,6 +482,11 @@ bool UMVCombatComponent::ChooseTryCombatAction(const FGameplayTag ActionInputTag
 
 	if (ActionInputTag.MatchesTag(MVGameplayTags::Action_Input_Skill))
 	{
+		if (CurrentWeaponStyle == EMVEquippedStyle::DualWield)
+		{
+			return true;
+		}
+		
 		const int32 SkillIndex = ActionInputTag.MatchesTagExact(MVGameplayTags::Action_Input_Skill_R)
 			? 1
 			: 0;

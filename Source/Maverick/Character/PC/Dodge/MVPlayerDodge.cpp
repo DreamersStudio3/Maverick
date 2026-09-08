@@ -68,9 +68,13 @@ FString DodgeEquippedStyleToRowToken(const EMVEquippedStyle EquippedStyle)
 	case EMVEquippedStyle::OneHand:
 		return TEXT("1H");
 	case EMVEquippedStyle::BareHand:
-	default:
 		return TEXT("BH");
+	case EMVEquippedStyle::TwoHand:
+		return TEXT("2H");
+	case EMVEquippedStyle::DualWield:
+		return TEXT("DW");
 	}
+	return FString();
 }
 
 FString DodgeDirectionToRowToken(const ELocomotionDirection Direction)
@@ -777,6 +781,12 @@ FName UMVPlayerDodge::MakeDodgeActionRowName(
 	}
 
 	const FString EquippedStyleToken = DodgeEquippedStyleToRowToken(OwnerCharacter.GetEquippedStyle());
+	
+	if (EquippedStyleToken.IsEmpty())
+	{
+		return NAME_None;
+	}
+	
 	const int32 ClampedIndex = FMath::Max(1, Index);
 	if (!DodgeInput.bHasMovementInput)
 	{
