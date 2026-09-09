@@ -6,6 +6,7 @@
 #include "Character/MVCharacterBase.h"
 #include "Components/MVStatComponent.h"
 #include "Components/MVCombatComponent.h"
+#include "Components/MVStatusEffectComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogMVAbilityBase, Log, All);
 
@@ -77,6 +78,65 @@ void UMVAbilityBase::ApplyHitLaunchDataToResolveRequest(FMVHitResolveRequest& Re
 {
 	Request.HitLaunchData = GetHitLaunchData();
 	MVAbilityLogHitLaunchTrace(this, TEXT("AbilityApplyToRequest"), Request.HitLaunchData);
+}
+
+void UMVAbilityBase::ApplyOnHitStatusEffect(const FMVResolvedHitData& HitData)
+{
+	if (AbilityData.OnHitStatusEffects.IsEmpty())
+	{
+		return;
+	}
+
+	AMVCharacterBase* SourceCharacter = GetOwnerCharacter();
+	AMVCharacterBase* EventTargetCharacter = HitData.Victim.Get();
+
+	if (!IsValid(SourceCharacter) || HitData.Attacker.Get() != SourceCharacter || !IsValid(EventTargetCharacter))
+	{
+		return;
+	}
+
+	for (const FMVStatusEffectApplication& Application : AbilityData.OnHitStatusEffects)
+	{
+		if (!Application.IsValid())
+		{
+			continue;
+		}
+
+		AMVCharacterBase* RecipientCharacter = nullptr;
+
+		switch (Application.ApplicationTarget)
+		{
+		case EMVStatusEffectApplicationTarget::EventTarget:
+			RecipientCharacter = EventTargetCharacter;
+			break;
+
+		case EMVStatusEffectApplicationTarget::SourceActor:
+			RecipientCharacter = SourceCharacter;
+			break;
+
+		default:
+			continue;
+		}
+
+		if (!IsValid(RecipientCharacter))
+		{
+			continue;
+		}
+
+		UMVStatusEffectComponent* StatusEffectComponent = RecipientCharacter->StatusEffectComponent.Get();
+
+		if (!IsValid(StatusEffectComponent))
+		{
+			continue;
+		}
+
+		FMVStatusEffectSpec Spec;
+		Spec.Definition = Application.Definition;
+		Spec.SourceActor = SourceCharacter;
+		Spec.StackDelta = Application.StackDelta;
+
+		StatusEffectComponent->ApplyStatusEffect(Spec);
+	}
 }
 
 void UMVAbilityBase::PrepareAbilityExecution()

@@ -5,6 +5,7 @@
 #include "Engine/DataTable.h"
 #include "Struct/MVWeaponTypes.h"
 #include "Tables/MVWeaponTableTypes.h"
+#include "Interface/MVActionInputHandlerInterface.h"
 #include "MVWeaponComponent.generated.h"
 
 class UMeshComponent;
@@ -28,7 +29,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnEquippedWeaponChanged, const FM
  *   4) HitResolver가 타격 확정 시점에 CaptureWeaponHitSnapshot으로 히트 전용 사본을 만든다.
  */
 UCLASS(ClassGroup = (Maverick), meta = (BlueprintSpawnableComponent))
-class MAVERICK_API UMVWeaponComponent : public UActorComponent
+class MAVERICK_API UMVWeaponComponent : public UActorComponent, public IMVActionInputHandlerInterface
 {
 	GENERATED_BODY()
 
@@ -37,8 +38,15 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 public:
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Weapon|Loadout")
+	bool CycleWeapon();
+	
+	virtual bool TryHandleActionInput(FGameplayTag ActionInputTag, FVector2D ControllerSpaceInput, bool bHasMovementInput) override;
+	
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Weapon")
 	bool EquipWeaponFromRow(const FMVWeaponTableRow& WeaponRow);
 
@@ -68,11 +76,18 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Weapon|Default")
 	FDataTableRowHandle DefaultWeaponRow;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Weapon|Loadout")
+	TArray<FDataTableRowHandle> WeaponLoadoutRows;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Weapon|Visual")
 	bool bManageWeaponMesh = true;
 
 private:
+	bool TryEquipWeaponRow(const FMVWeaponTableRow& WeaponRow, int32 LoadoutIndex);
+	const FMVWeaponTableRow* ResolveWeaponLoadoutRow(const FDataTableRowHandle& RowHandle) const;
+	int32 FindLoadoutIndexForHandle(const FDataTableRowHandle& RowHandle) const;
+	int32 FindLoadoutIndexForItemTag(const FGameplayTag& ItemTag) const;
 	void ApplyEquippedWeaponState(const FMVEquippedWeaponState& NewState);
 	static FMVEquippedWeaponState MakeStateFromWeaponRow(const FMVWeaponTableRow& WeaponRow);
 	static FMVWeaponHitSnapshot MakeHitSnapshotFromState(const FMVEquippedWeaponState& WeaponState);
@@ -99,6 +114,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Weapon", meta = (AllowPrivateAccess = "true"))
 	FMVEquippedWeaponState CurrentWeaponState;
+	
+	UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Weapon|Loadout", meta = (AllowPrivateAccess = "true"))
+	int32 ActiveLoadoutIndex = INDEX_NONE;
 
 	UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Weapon|Visual", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UMeshComponent> WeaponMeshComponent;

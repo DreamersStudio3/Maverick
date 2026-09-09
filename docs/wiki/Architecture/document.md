@@ -1,8 +1,8 @@
 ---
 제목: Maverick 아키텍처
 부제목: 런타임 흐름과 도메인 책임 경계
-최근수정일: 2026-08-12
-최근수정자: 곽민규
+최근수정일: 2026-09-08
+최근수정자: No-Jyun
 관련문서:
   - "[[Convention/Header-Documentation/document|C++ 헤더 책임 문서화]]"
   - "[[Features/Combat/Combat-System/document|Maverick 전투 시스템]]"
@@ -20,6 +20,9 @@ flowchart TD
     AITasks -->|SelectAndExecute| Action["UMVActionComponent"]
     AITasks -->|EnemyCombatAction| Combat["UMVCombatComponent"]
     Handlers --> Combat
+    Handlers --> Weapon["UMVWeaponComponent<br/>장비 순환·장착 검증"]
+    Weapon -->|ChangeWeapon| Combat
+    Weapon --> WeaponVisual["무기 메시·장착 변경 이벤트<br/>스타일별 Anim Layer"]
     Handlers --> PlayerDomains["Dodge / Consumable / Finisher"]
     Combat --> Action
     PlayerDomains --> Action
@@ -27,6 +30,7 @@ flowchart TD
     Montage --> Ability["UMVAbilityBase / 도메인 상태"]
     Ability -. "공격 활성 구간" .-> HitSource["Collision / Blueprint"]
     HitSource -. "FMVHitResolveRequest" .-> HitResolver["UMVHitResolverSubsystem"]
+    HitResolver -. "OnHitResolved / AttackInstanceId" .-> Combat
     HitResolver --> CharacterBridge["AMVCharacterBase::OnHitResolved"]
     CharacterBridge --> OnDamaged["OnDamaged delegate"]
     OnDamaged --> Stat["UMVStatComponent"]
@@ -69,7 +73,7 @@ flowchart TD
 | `UMVDeathComponent` | Actor 단위 사망 표현 |
 | `UMVHitReactionComponent` | 피격 Row, Interrupt, Groggy, Recovery 표현 |
 | `UMVInputManagerComponent` | 입력 Snapshot, 짧은 Buffer, 우선순위 처리기 배분 |
-| `UMVWeaponComponent` | 현재 장착 무기와 적중 Snapshot 원천 |
+| `UMVWeaponComponent` | 교체 입력·장비 목록·장착 상태·무기 메시와 적중 Snapshot 원천 |
 | `UMotionWarpingComponent` | Action·Montage 공간 보정 |
 
 ### 플레이어
@@ -85,6 +89,8 @@ flowchart TD
 - `MVHitReactionTask` 실행 시 `HandleDamaged` 호출
 
 ## 핵심 런타임 흐름
+
+- [[Features/Combat/Weapon-Swap/document|플레이어 무기 교체]]
 
 - [[Features/Input-to-Action/document|입력에서 Action 실행까지]]
 - [[Features/Hit-Stat-HitReaction/document|Hit, Stat, HitReaction]]
@@ -102,6 +108,7 @@ flowchart TD
 - Action 선택: 도메인 컴포넌트
 - Montage 실행: ActionComponent
 - 최종 적중 계산: HitResolver
+- 스킬 체인의 적중 확인과 단계 전진: CombatComponent
 - 피해·사망 판정: Stat
 - 피격·사망 표현: HitReaction·Death
 - GameInstance·Engine 수명 상태의 Actor·Widget 저장 금지

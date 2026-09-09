@@ -8,6 +8,7 @@ namespace MVGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Character_NPC_Neutral_N1, "Character.NPC.Neutral.N1");
 	UE_DEFINE_GAMEPLAY_TAG(Item_Weapon_BareHand, "Item.Weapon.BareHand");
 	UE_DEFINE_GAMEPLAY_TAG(Item_Weapon_OneHand_TestSword, "Item.Weapon.OneHand.TestSword");
+	UE_DEFINE_GAMEPLAY_TAG(Item_Weapon_DualSword_TestSword, "Item.Weapon.DualSword.TestSword");
 	UE_DEFINE_GAMEPLAY_TAG(Item_HealingPotion_Basic, "Item.HealingPotion.Basic");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Input_LightAttack, "Action.Input.LightAttack");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Input_HeavyAttack, "Action.Input.HeavyAttack");
@@ -20,6 +21,7 @@ namespace MVGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Action_Input_Sprint, "Action.Input.Sprint");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Input_Dodge, "Action.Input.Dodge");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Input_UseConsumable, "Action.Input.UseConsumable");
+	UE_DEFINE_GAMEPLAY_TAG(Action_Input_WeaponSwap, "Action.Input.WeaponSwap");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Combat, "Action.Combat");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Combat_LightAttack, "Action.Combat.LightAttack");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Combat_HeavyAttack, "Action.Combat.HeavyAttack");
@@ -35,4 +37,12 @@ namespace MVGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(StateTreeEvent_Enemy_DodgeThreatDetected, "StateTreeEvent.Enemy.DodgeThreatDetected");
 	UE_DEFINE_GAMEPLAY_TAG(StateTreeEvent_Enemy_Groggy, "StateTreeEvent.Enemy.Groggy");
 	UE_DEFINE_GAMEPLAY_TAG(StateTreeEvent_Enemy_GroggyEnd, "StateTreeEvent.Enemy.GroggyEnd");
+
+	UE_DEFINE_GAMEPLAY_TAG(StatusEffect_Skill_ThirdHitMark, "StatusEffect.Skill.ThirdHitMark");
+	UE_DEFINE_GAMEPLAY_TAG(StatusEffect_Skill_Burn, "StatusEffect.Skill.Burn");
+	UE_DEFINE_GAMEPLAY_TAG(StatusEffect_Skill_BurnBurstCooldown, "StatusEffect.Skill.BurnBurstCooldown");
+
+	UE_DEFINE_GAMEPLAY_TAG(StatusEffect_Type_Debuff, "StatusEffect.Type.Debuff");
+
+	UE_DEFINE_GAMEPLAY_TAG(StatusEffect_Mechanic_Mark, "StatusEffect.Mechanic.Mark");
 }

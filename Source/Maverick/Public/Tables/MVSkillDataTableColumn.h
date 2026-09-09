@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
+#include "Public/Struct/MVStatusEffectTypes.h"
+#include "Public/Enum/MVChainAdvancePolicy.h"
 #include "Public/Tables/MVActionRowTableTypes.h"
 
 #include "MVSkillDataTableColumn.generated.h"
@@ -57,6 +59,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Common", meta = (ClampMin = "0.0"))
 	float GroggyDamageMultiplier;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Status Effect")
+	TArray<FMVStatusEffectApplication> OnHitStatusEffects;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Basic")
 	EMVAttackSwingDirection SwingDirection = EMVAttackSwingDirection::None;
 
@@ -84,5 +89,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skill|Chain|Skill")
 	float InputWindowDuration;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skill|Chain|Skill")
+	EMVChainAdvancePolicy ChainAdvancePolicy = EMVChainAdvancePolicy::Immediate;
 
 };

@@ -31,6 +31,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Hit")
 	bool ResolveAttackHit(const FMVHitResolveRequest& Request, FMVResolvedHitData& OutHitData);
 
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Combat")
+	bool ResolveDirectDamage(const FMVDirectDamageRequest& Request, FMVResolvedHitData& OutHitData);
+
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|Hit|Event")
 	FMVOnHitResolvedSignature OnHitResolved;
 
@@ -45,4 +48,7 @@ private:
 		const FMVHitResolveRequest& Request,
 		const AMVCharacterBase& Attacker,
 		const AMVCharacterBase& Victim);
+
+	bool BuildDirectDamageHitData(const FMVDirectDamageRequest& Request, FMVResolvedHitData& OutHitData) const;
+	bool DispatchResolvedHit(const FMVResolvedHitData& HitData);
 };

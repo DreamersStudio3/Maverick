@@ -10,6 +10,7 @@ namespace MVGameplayTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Character_NPC_Neutral_N1);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Item_Weapon_BareHand);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Item_Weapon_OneHand_TestSword);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Item_Weapon_DualSword_TestSword);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Item_HealingPotion_Basic);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_LightAttack);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_HeavyAttack);
@@ -22,6 +23,7 @@ namespace MVGameplayTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_Sprint);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_Dodge);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_UseConsumable);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_WeaponSwap);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Combat);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Combat_LightAttack);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Combat_HeavyAttack);
@@ -37,4 +39,13 @@ namespace MVGameplayTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StateTreeEvent_Enemy_DodgeThreatDetected);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StateTreeEvent_Enemy_Groggy);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StateTreeEvent_Enemy_GroggyEnd);
+
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StatusEffect_Skill_ThirdHitMark);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StatusEffect_Skill_Burn);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StatusEffect_Skill_BurnBurstCooldown);
+
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StatusEffect_Type_Debuff);
+
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StatusEffect_Mechanic_Mark);
+
 }

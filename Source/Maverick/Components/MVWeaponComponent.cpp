@@ -1,5 +1,7 @@
 #include "Components/MVWeaponComponent.h"
 
+#include "MVActionComponent.h"
+#include "Components/MVInputManagerComponent.h"
 #include "Character/MVCharacterBase.h"
 #include "Components/MVCombatComponent.h"
 #include "Components/MeshComponent.h"
@@ -50,28 +52,109 @@ void UMVWeaponComponent::BeginPlay()
 			EquipBareHand();
 		}
 	}
+	
+	if (const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner()))
+	{
+		if (UMVInputManagerComponent* InputManager = OwnerCharacter->InputManagerComponent)
+		{
+			InputManager->RegisterActionInputHandler(this, MVActionInputHandlerPriorities::Weapon);
+		}
+	}
+}
+
+void UMVWeaponComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	if (const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner()))
+	{
+		if (UMVInputManagerComponent* InputManager = OwnerCharacter->InputManagerComponent)
+		{
+			InputManager->UnregisterActionInputHandler(this);
+		}
+	}
+	
+	Super::EndPlay(EndPlayReason);
+}
+
+bool UMVWeaponComponent::CycleWeapon()
+{
+	const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
+	if (OwnerCharacter && OwnerCharacter->ActionComponent && OwnerCharacter->ActionComponent->IsActionRunning())
+	{
+		return false;
+	}
+
+	const int32 LoadoutCount = WeaponLoadoutRows.Num();
+	if (LoadoutCount == 0)
+	{
+		return false;
+	}
+
+	int32 CurrentIndex = ActiveLoadoutIndex;
+	if (!WeaponLoadoutRows.IsValidIndex(CurrentIndex))
+	{
+		CurrentIndex = FindLoadoutIndexForItemTag(CurrentWeaponState.ItemTag);
+	}
+
+	const bool bHasCurrentIndex = WeaponLoadoutRows.IsValidIndex(CurrentIndex);
+	const int32 CandidateCount = bHasCurrentIndex ? LoadoutCount - 1 : LoadoutCount;
+
+	for (int32 Step = 0; Step < CandidateCount; ++Step)
+	{
+		const int32 CandidateIndex = bHasCurrentIndex ? (CurrentIndex + Step + 1) % LoadoutCount : Step;
+
+		const FMVWeaponTableRow* WeaponRow = ResolveWeaponLoadoutRow(WeaponLoadoutRows[CandidateIndex]);
+		if (!WeaponRow)
+		{
+			continue;
+		}
+
+		if (TryEquipWeaponRow(*WeaponRow, CandidateIndex))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool UMVWeaponComponent::TryHandleActionInput(FGameplayTag ActionInputTag, FVector2D ControllerSpaceInput,
+	bool bHasMovementInput)
+{
+	if (!ActionInputTag.MatchesTagExact(MVGameplayTags::Action_Input_WeaponSwap))
+	{
+		return false;
+	}
+	
+	CycleWeapon();
+	
+	return true;
 }
 
 bool UMVWeaponComponent::EquipWeaponFromRow(const FMVWeaponTableRow& WeaponRow)
 {
-	FMVEquippedWeaponState NewState = MakeStateFromWeaponRow(WeaponRow);
-	if (!NewState.bValid)
-	{
-		return false;
-	}
-	if (!CanEquipWeaponState(NewState))
-	{
-		return false;
-	}
-
-	ApplyEquippedWeaponState(NewState);
-	return true;
+	// FMVEquippedWeaponState NewState = MakeStateFromWeaponRow(WeaponRow);
+	// if (!NewState.bValid)
+	// {
+	// 	return false;
+	// }
+	// if (!CanEquipWeaponState(NewState))
+	// {
+	// 	return false;
+	// }
+	//
+	// ApplyEquippedWeaponState(NewState);
+	// return true;
+	
+	return TryEquipWeaponRow(WeaponRow, FindLoadoutIndexForItemTag(WeaponRow.ItemTag));
 }
 
 void UMVWeaponComponent::EquipBareHand()
 {
 	FMVEquippedWeaponState NewState = MakeStateFromWeaponRow(BareHandWeapon);
 	NewState.bValid = true;
+	
+	ActiveLoadoutIndex = FindLoadoutIndexForItemTag(NewState.ItemTag);
+	
 	ApplyEquippedWeaponState(NewState);
 }
 
@@ -98,6 +181,83 @@ EMVEquippedStyle UMVWeaponComponent::GetEquippedStyle() const
 EMVWeaponRangeType UMVWeaponComponent::GetWeaponRangeType() const
 {
 	return CurrentWeaponState.RangeType;
+}
+
+bool UMVWeaponComponent::TryEquipWeaponRow(const FMVWeaponTableRow& WeaponRow, int32 LoadoutIndex)
+{
+	FMVEquippedWeaponState NewState = MakeStateFromWeaponRow(WeaponRow);
+	if (!NewState.bValid || !CanEquipWeaponState(NewState))
+	{
+		return false;
+	}
+
+	ActiveLoadoutIndex = WeaponLoadoutRows.IsValidIndex(LoadoutIndex) ? LoadoutIndex : INDEX_NONE;
+
+	ApplyEquippedWeaponState(NewState);
+	return true;
+}
+
+const FMVWeaponTableRow* UMVWeaponComponent::ResolveWeaponLoadoutRow(const FDataTableRowHandle& RowHandle) const
+{
+	if (!RowHandle.DataTable || RowHandle.RowName.IsNone())
+	{
+		UE_LOG(
+			LogTemp,
+			Warning,
+			TEXT("Weapon loadout row handle is invalid. DataTable=%s Row=%s."),
+			*GetNameSafe(RowHandle.DataTable),
+			*RowHandle.RowName.ToString());
+		return nullptr;
+	}
+
+	return RowHandle.DataTable->FindRow<FMVWeaponTableRow>(
+		RowHandle.RowName,
+		TEXT("UMVWeaponComponent::ResolveWeaponLoadoutRow"),
+		true);
+}
+
+int32 UMVWeaponComponent::FindLoadoutIndexForHandle(const FDataTableRowHandle& RowHandle) const
+{
+	for (int32 Index = 0; Index < WeaponLoadoutRows.Num(); ++Index)
+	{
+		const FDataTableRowHandle& Candidate = WeaponLoadoutRows[Index];
+		if (Candidate.DataTable == RowHandle.DataTable && Candidate.RowName == RowHandle.RowName)
+		{
+			return Index;
+		}
+	}
+
+	return INDEX_NONE;
+}
+
+int32 UMVWeaponComponent::FindLoadoutIndexForItemTag(const FGameplayTag& ItemTag) const
+{
+	if (!ItemTag.IsValid())
+	{
+		return INDEX_NONE;
+	}
+
+	for (int32 Index = 0; Index < WeaponLoadoutRows.Num(); ++Index)
+	{
+		const FDataTableRowHandle& Candidate = WeaponLoadoutRows[Index];
+		if (!Candidate.DataTable || Candidate.RowName.IsNone())
+		{
+			continue;
+		}
+
+		const FMVWeaponTableRow* CandidateRow =
+			Candidate.DataTable->FindRow<FMVWeaponTableRow>(
+				Candidate.RowName,
+				TEXT("UMVWeaponComponent::FindLoadoutIndexForItemTag"),
+				false);
+
+		if (CandidateRow && CandidateRow->ItemTag.MatchesTagExact(ItemTag))
+		{
+			return Index;
+		}
+	}
+
+	return INDEX_NONE;
 }
 
 void UMVWeaponComponent::ApplyEquippedWeaponState(const FMVEquippedWeaponState& NewState)
@@ -218,7 +378,8 @@ bool UMVWeaponComponent::TryEquipDefaultWeapon()
 		return false;
 	}
 
-	return EquipWeaponFromRow(*WeaponRow);
+	//return EquipWeaponFromRow(*WeaponRow);
+	return TryEquipWeaponRow(*WeaponRow, FindLoadoutIndexForHandle(DefaultWeaponRow));
 }
 
 bool UMVWeaponComponent::ValidateWeaponMesh(const UObject& WeaponMesh, const FGameplayTag& ItemTag) const

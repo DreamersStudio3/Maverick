@@ -166,9 +166,7 @@ void UMVPlayerSkillHUDWidget::ResolveIconAssets()
 
 		if (QChainTimer && !QIcons.IsEmpty())
 		{
-			TArray<UTexture2D*> ChainTimerIcons;
-			ChainTimerIcons.Add(QIcons[0]);
-			QChainTimer->SetIconStack(ChainTimerIcons);
+			QChainTimer->SetIconStack(QIcons);
 		}
 	}
 
@@ -200,12 +198,12 @@ void UMVPlayerSkillHUDWidget::RefreshSkillSlots()
 	if (QChainTimer)
 	{
 		const bool bShowChainTimer = bQAvailable
-			&& QState.bChainActive
+			&& QState.bChainTimerVisible
 			&& QState.ChainWindowRemaining > KINDA_SMALL_NUMBER;
 		QChainTimer->SetVisibility(
 			bShowChainTimer ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
 		QChainTimer->SetRuntimeState(
-			0,
+			QState.ChainTimerIconIndex,
 			QState.ChainWindowRemaining,
 			QState.ChainWindowDuration,
 			bQAvailable);
