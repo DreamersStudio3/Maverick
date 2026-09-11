@@ -10,7 +10,7 @@
 #include "Struct/CharacterLocomotionStructs.h"
 #include "Struct/MVHitTypes.h"
 #include "Tables/MVCharacterTableTypes.h"
-
+#include "Enum/MVHitReactionEnums.h"
 
 #include "MVCharacterBase.generated.h"
 
@@ -26,6 +26,8 @@ class UMotionWarpingComponent;
 class UMVStatusEffectComponent;
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FMVOnMovementInputReceived, const FVector&);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnChangedCharacterIsLying, bool, bIsLying);
 
 /**
  * 공통 캐릭터 런타임 본체.
@@ -96,6 +98,8 @@ public:
 
 	void ApplyLocomotionDirectionSnapshot(const FVector& MovementDirection);
 
+	void SetLyingFaceDirection(EMVHitReactionDir HitReactionDir);
+
 	UFUNCTION(BlueprintCallable, Category = "LocomotionData|Equipment")
 	void SetEquippedStyle(EMVEquippedStyle NewEquippedStyle);
 
@@ -116,6 +120,15 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Character|Damage")
 	bool OnHitResolved(const FMVResolvedHitData& HitData);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Character|Damage")
+	void SetCharacterMovementRotationActive(bool bMovementActive, bool bRotationActive);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Character|State")
+	void SetCharacterIsLying(bool bNewIsLying);
+	
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Character|State")
+	bool GetCharacterIsLying() const { return bIsLying; }
 
 	FMVOnMovementInputReceived OnMovementInputReceived;
 
@@ -152,8 +165,8 @@ public:
 private:
 	void ApplyCharacterIndexCodeToComponents();
 	void UpdateCharacterValue();
-	void UpdateRotation();
-	void UpdateMovement(float DeltaTime);
+	void UpdateRotation(bool bIsActive = true);
+	void UpdateMovement(float DeltaTime, bool bIsActive = true);
 	void UpdateLocomotionDirection();
 	void CacheControllerSpaceMovementInput(const FVector& WorldDirection, float ScaleValue);
 	FVector2D ResolveControllerSpaceMovementInput(const FVector& WorldDirection, float ScaleValue) const;
@@ -170,10 +183,13 @@ private:
 	EGait DesiredGait();
 	bool CanSprint() const;
 	float CalculateCharacterMovementSpeed(float WalkSpeed, float RunSpeed, float SprintSpeed);
+	
+private:
 	int32 InvincibilityCount = 0;
 	FVector2D ControllerSpaceMovementInput = FVector2D::ZeroVector;
 	uint64 ControllerSpaceMovementInputFrame = 0;
-	
+	bool bIsMovementActive = true;
+	bool bIsRotationActive = true;
 
 public:
 
@@ -213,6 +229,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LocomotionData")
 	TObjectPtr<UCurveFloat> SpeedDirectionCurve;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Character|State")
+	FMVOnChangedCharacterIsLying OnChangedCharacterIsLying;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Character|State")
+	bool bIsLying = false;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Character|State")
+	EMVLyingFaceDirection LyingFaceDirection = EMVLyingFaceDirection::Front;
+
+
 	// Utility Function
 public:
 	void ActiveHitstop(float Duration, float DilationAmount);
@@ -222,5 +248,6 @@ private:
 
 private:
 	FTimerHandle HitStopTimerHandle;
+	
 
 };

@@ -151,8 +151,8 @@ void AMVCharacterBase::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	
 	UpdateCharacterValue();
-	UpdateMovement(DeltaTime);
-	UpdateRotation();
+	UpdateMovement(DeltaTime, bIsMovementActive);
+	UpdateRotation(bIsRotationActive);
 
 
 }
@@ -276,6 +276,25 @@ void AMVCharacterBase::ApplyLocomotionDirectionSnapshot(const FVector& MovementD
 	UpdateLocomotionDirection();
 }
 
+void AMVCharacterBase::SetLyingFaceDirection(EMVHitReactionDir HitReactionDir)
+{
+	switch (HitReactionDir)
+	{
+	case EMVHitReactionDir::Back:
+		LyingFaceDirection = EMVLyingFaceDirection::Back;
+		break;
+	case EMVHitReactionDir::Right:
+		LyingFaceDirection = EMVLyingFaceDirection::Right;
+		break;
+	case EMVHitReactionDir::Left:
+		LyingFaceDirection = EMVLyingFaceDirection::Left;
+		break;
+	default:
+		LyingFaceDirection = EMVLyingFaceDirection::Front;
+		break;
+	}
+}
+
 void AMVCharacterBase::SetEquippedStyle(const EMVEquippedStyle NewEquippedStyle)
 {
 	EquippedStyle = NewEquippedStyle;
@@ -319,6 +338,21 @@ bool AMVCharacterBase::OnHitResolved(const FMVResolvedHitData& HitData)
 	MVCharacterLogAirborneTrace(TEXT("CharacterOnHitResolvedBroadcast"), this, HitData, OnDamaged.IsBound());
 	OnDamaged.Broadcast(HitData);
 	return true;
+}
+
+void AMVCharacterBase::SetCharacterMovementRotationActive(bool bMovementActive, bool bRotationActive)
+{
+	bIsMovementActive = bMovementActive;
+	bIsRotationActive = bRotationActive;
+}
+
+void AMVCharacterBase::SetCharacterIsLying(bool bNewIsLying)
+{
+	if(bIsLying != bNewIsLying)
+	{
+		OnChangedCharacterIsLying.Broadcast(bNewIsLying);
+		bIsLying = bNewIsLying;
+	}
 }
 
 void AMVCharacterBase::ApplyCharacterIndexCodeToComponents()
@@ -436,8 +470,14 @@ FVector2D AMVCharacterBase::ResolveControllerSpaceMovementInput(
 		FVector::DotProduct(ScaledWorldInput, RightVector)));
 }
 
-void AMVCharacterBase::UpdateRotation()
+void AMVCharacterBase::UpdateRotation(bool bIsActive)
 {
+	if (bIsActive == false)
+	{
+		GetCharacterMovement()->RotationRate = FRotator(0.0f, 0.0f, 0.0f);
+		return;
+	}
+
 	if (Gait == EGait::Sprinting)
 	{
 		SetStrafeMode(false);
@@ -453,8 +493,15 @@ void AMVCharacterBase::UpdateRotation()
 	}
 }
 
-void AMVCharacterBase::UpdateMovement(float DeltaTime)
+void AMVCharacterBase::UpdateMovement(float DeltaTime, bool bIsActive)
 {
+	if (bIsActive == false)
+	{
+		GetCharacterMovement()->MaxWalkSpeed = 0.0f;
+		GetCharacterMovement()->MaxAcceleration = 0.0f;
+		return;
+	}
+
 	// Decide Gait
 	Gait = DesiredGait();
 	UpdateRecoverableStats(DeltaTime);

@@ -11,6 +11,8 @@
 #include "Tables/MVTableManager.h"
 #include "Tags/MVGameplayTags.h"
 
+
+
 DEFINE_LOG_CATEGORY_STATIC(LogMVPlayerDodge, Log, All);
 
 namespace
@@ -392,11 +394,11 @@ UMVPlayerDodge::FMVDodgeInputContext UMVPlayerDodge::MakeDodgeInputContext(
 	}
 
 	DodgeInput.bHasMovementInput = !DodgeInput.ControllerSpaceInput.IsNearlyZero();
-	const bool bFreeDodge = DodgeInput.bHasMovementInput
-		&& !OwnerCharacter->CharacterInputState.WantsToStrafe
-		&& !OwnerCharacter->CharacterInputState.WantsToAim;
-	const bool bStrafeDodge = !bFreeDodge
-		&& (OwnerCharacter->CharacterInputState.WantsToStrafe || OwnerCharacter->CharacterInputState.WantsToAim);
+
+	// Todo: IsLying을 고려해서 StrafeMode 시 Dodge와 같은 DodgeInput을 만들 수 있도록 해야함. (현재는 IsLying일 때 DodgeInput이 만들어지지 않음)
+	//const bool bIsLying = OwnerCharacter->GetCharacterIsLying();
+	const bool bFreeDodge = (DodgeInput.bHasMovementInput && !OwnerCharacter->CharacterInputState.WantsToStrafe && !OwnerCharacter->CharacterInputState.WantsToAim) /*|| bIsLying*/;
+	const bool bStrafeDodge = (!bFreeDodge && (OwnerCharacter->CharacterInputState.WantsToStrafe || OwnerCharacter->CharacterInputState.WantsToAim)) /*|| bIsLying*/;
 	const FRotator StrafeReferenceRotation = ResolveStrafeReferenceRotation(*OwnerCharacter);
 	const FVector RawMovementDirection = DodgeResolveWorldDirectionFromControllerSpaceInput(
 		DodgeInput.ControllerSpaceInput,
@@ -431,7 +433,13 @@ void UMVPlayerDodge::ApplyDodgeInputContext(
 	if (!DodgeInput.FacingDirection.IsNearlyZero())
 	{
 		BeginLockOnPawnRotationSuppressionForDodge(OwnerCharacter);
-		OwnerCharacter.SetActorRotation(MakeYawRotationFromDirection(DodgeInput.FacingDirection));
+		// Todo: MakeDodgeInputContext에서 bIsLying을 고려해서 StrafeMode 시 Dodge와 같은 DodgeInput을 만들 수 있도록 해야함. (현재는 IsLying일 때 DodgeInput이 만들어지지 않음)
+		// 현재는 임시로 bIsLying일 때는 SetActorRotation을 하지 않도록 처리함.
+		if(!OwnerCharacter.GetCharacterIsLying())
+		{
+			OwnerCharacter.SetActorRotation(MakeYawRotationFromDirection(DodgeInput.FacingDirection));
+		}
+		
 		if (UCharacterMovementComponent* MovementComponent = OwnerCharacter.GetCharacterMovement())
 		{
 			MovementComponent->bUseControllerDesiredRotation = false;
@@ -547,12 +555,16 @@ bool UMVPlayerDodge::TryStartDodgeAction(const FMVDodgeInputContext& DodgeInput)
 
 
 	const bool bActionRunning = ActionComponent->IsActionRunning();
-	const bool bCanTransitionCurrentAction = bActionRunning && CanTransitionCurrentAction(*InputManager, *ActionComponent);
+	const bool bIsLying = OwnerCharacter->GetCharacterIsLying();
+	const bool bCanTransitionCurrentAction = bIsLying || (bActionRunning && CanTransitionCurrentAction(*InputManager, *ActionComponent));
+
+	// bIsLying == true 이면 Escape Dodge 상황 -> 누워있는 상태는 Montage가 실행되고 있는 상태이므로 뒷 조건을 무시해야 Escape Dodge가 실행될 수 있음
+	// bIsLying == false 이면 일반 Dodge 상황 -> Montage가 실행되고 있는 상태이면 Dodge를 실행할 수 없음
 	if (bActionRunning && !bCanTransitionCurrentAction)
 	{
 		return false;
 	}
-
+	
 	ApplyDodgeInputContext(*OwnerCharacter, DodgeInput);
 
 	FMVDodgeActionRowHandle ActionRowHandle;
@@ -582,11 +594,7 @@ bool UMVPlayerDodge::TryStartDodgeAction(const FMVDodgeInputContext& DodgeInput)
 	const FName StartSection = ActionRowHandle.StartSection.IsNone()
 		? DodgeActionRow->DefaultStartSection
 		: ActionRowHandle.StartSection;
-	const bool bStarted = bCanTransitionCurrentAction
-		? ActionComponent->TryTransitionActionFromRowHandle(
-			ActionRowHandle.ActionRow,
-			StartSection,
-			RecoveryDodgeTransitionBlendOutTime)
+	const bool bStarted = bCanTransitionCurrentAction ? ActionComponent->TryTransitionActionFromRowHandle(ActionRowHandle.ActionRow,StartSection, RecoveryDodgeTransitionBlendOutTime)
 		: ActionComponent->TryStartActionFromRowHandle(ActionRowHandle.ActionRow, StartSection);
 	if (!bStarted)
 	{
@@ -726,6 +734,11 @@ bool UMVPlayerDodge::EvaluateDodgeChooserActionRowHandle(
 			OutActionRowHandle.ActionRow.RowName = MakeDodgeActionRowName(*OwnerCharacter, DodgeInput, DefaultDodgeRowIndex);
 			OutActionRowHandle.StartSection = NAME_None;
 		}
+
+		// 누워있는 상태에서 구르기 시, 캐릭터 이동 Active && 캐릭터 bIsLying을 false
+		OwnerCharacter->SetCharacterMovementRotationActive(true, true);
+		OwnerCharacter->SetCharacterIsLying(false);
+
 		return true;
 	}
 
