@@ -111,14 +111,7 @@ void UMVHitReaction::HandleHitEvent(const FMVResolvedHitData& HitData)
 		return;
 	}
 	
-	if(OwnerCharacter)
-	{
-		/*if (OwnerCharacter->IsInvincible())
-		{
-			return;
-		}*/
-		OwnerCharacter->SetCharacterIsLying(false);
-	}
+	
 	
 
 	// Chooser Table에 사용할 Input 생성
@@ -177,7 +170,11 @@ void UMVHitReaction::HandleHitEvent(const FMVResolvedHitData& HitData)
 	}
 
 	// HitReaction에 맞는 Getup RowHandle을 저장 -> 추후에 Getup Action을 Play할 때 사용
-	SelectedGetupRowHandle = GetupRowHandle;
+	// AdditiveCondition이 true인 경우에는 Getup RowHandle을 저장하지 않음 -> 가장 최근 HitReaction의 Getup RowHandle을 저장해야함
+	if (GetupRowHandle.IsNull() == false)
+	{
+		SelectedGetupRowHandle = GetupRowHandle;
+	}
 
 
 	// AdditiveCondition은 Additive Play를 해야하는 조건을 의미함
@@ -187,6 +184,15 @@ void UMVHitReaction::HandleHitEvent(const FMVResolvedHitData& HitData)
 	// PoiseBreak이 true인 경우에는 후처리 추가	-> Action Rotate, Launch, HitSequence(KnockDown, Airborne)
 	if (!AdditiveCondition)
 	{
+		if (OwnerCharacter)
+		{
+			/*if (OwnerCharacter->IsInvincible())
+			{
+				return;
+			}*/
+			OwnerCharacter->SetCharacterIsLying(false);
+		}
+
 		// 후처리
 		// Action Rotate
 		AdjustActionRotation(ChooserInput, Cast<AActor>(HitData.Attacker), AdditiveCondition);
