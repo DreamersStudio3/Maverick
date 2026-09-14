@@ -34,6 +34,9 @@ public:
 	void SetRuntimeState(int32 InActiveStackIndex, float CooldownRemaining, float CooldownDuration, bool bInAvailable);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Skill")
+	void SetGaugeRuntimeState(int32 InActiveStackIndex, float GaugeRatio, bool bInDisplayAvailable);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Skill")
 	void SetSlotSize(float InSlotSize);
 
 protected:

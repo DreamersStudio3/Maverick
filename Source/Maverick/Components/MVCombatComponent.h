@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/MVStatComponent.h"
 #include "Components/ActorComponent.h"
 #include "Public/Tables/MVSkillDataTableColumn.h"
 #include "Public/Struct/MVCombatActionTableInput.h"
@@ -14,6 +15,12 @@
 #include "MVCombatComponent.generated.h"
 
 class UMVAbilityBase;
+
+namespace MVCombatSkillSlots
+{
+	inline constexpr int32 Q = 0;
+	inline constexpr int32 R = 1;
+}
 
 USTRUCT(BlueprintType)
 struct FMVSkillActionStruct
@@ -327,6 +334,18 @@ struct FMVSkillSlotRuntimeState
 	bool bAvailable = false;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Combat|Skill UI")
+	bool bLoadoutAvailable = false;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Combat|Skill UI")
+	bool bGaugeControlled = false;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Combat|Skill UI")
+	bool bGaugeReady = false;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Combat|Skill UI")
+	bool bUsable = false;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Combat|Skill UI")
 	bool bChainActive = false;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Combat|Skill UI")
@@ -355,6 +374,15 @@ struct FMVSkillSlotRuntimeState
 
 	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Combat|Skill UI")
 	float ChainWindowDuration = 0.0f;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Combat|Skill UI")
+	float GaugeCurrent = 0.0f;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Combat|Skill UI")
+	float GaugeMax = 0.0f;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Combat|Skill UI")
+	float GaugeRatio = 0.0f;
 };
 
 /*
@@ -481,6 +509,13 @@ private:
 		FName StartSection = NAME_None,
 		bool bForceTransition = false,
 		float TransitionBlendOutTime = 0.25f);
+	bool IsRSkillGaugeReady() const;
+	bool IsCurrentAbilityRSkill() const;
+	void AddRSkillGauge(float GainMultiplier);
+	void ResetRSkillGauge();
+
+	UFUNCTION()
+	void HandleOwnerDeathStarted(const FMVDeathContext& DeathContext);
 	bool CanConsumeActionCost(const FMVSkillDataTableColumn* SkillData) const;
 	bool IsBasicAttackActionType(EMVCombatActionTypes ActionType) const;
 	int32 SelectBasicAttackChainStageForSwing(const FMVSkillEntry& ActionEntry) const;
@@ -551,6 +586,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Chooser")
 	FSoftObjectPath FallbackAttackActionTable;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat|R Skill Gauge")
+	bool bUseRSkillGauge = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat|R Skill Gauge", meta = (ClampMin = "0.01"))
+	float RSkillGaugeMax = 100.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat|R Skill Gauge", meta = (ClampMin = "0.0"))
+	float RSkillGaugeGainPerHit = 10.0f;
+
 	UPROPERTY(Transient)
 	TObjectPtr<UMVAbilityBase> PreviousAbilityInstance;
 	UPROPERTY(BlueprintReadOnly)
@@ -566,6 +610,10 @@ private:
 	double LastBasicAttackedTime = 0.0;
 	FName ActiveBasicAttackMapKey = NAME_None;
 	TObjectPtr<UMVStatComponent> StatComponent;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Combat|R Skill Gauge", meta = (AllowPrivateAccess = "true"))
+	float CurrentRSkillGauge = 0.0f;
+
 	bool bSprintContextualBasicAttackConsumed = false;
 	bool bWasSprintAttackContextActive = false;
 	int32 ConsumedDodgeContextActionInstanceId = INDEX_NONE;

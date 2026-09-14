@@ -49,6 +49,10 @@ AMVPlayerCharacter::AMVPlayerCharacter()
 	{
 		CombatComponent->AttackChooserTable = TEXT("/Game/Table/Attack/Player/CHT_Attack_Player.CHT_Attack_Player");
 		CombatComponent->FallbackAttackActionTable = TEXT("/Game/Table/Attack/Player/Yone_Attack.Yone_Attack");
+
+		CombatComponent->bUseRSkillGauge = true;
+		CombatComponent->RSkillGaugeMax = 100.0f;
+		CombatComponent->RSkillGaugeGainPerHit = 10.0f;
 	}
 	bIsSprintBlockedByStamina = false;
 }

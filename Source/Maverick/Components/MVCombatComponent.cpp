@@ -14,6 +14,7 @@
 #include "Engine/DataTable.h"
 #include "Public/Interface/MVAbilityInterface.h"
 #include "Tags/MVGameplayTags.h"
+#include "Character/NPC/Enemy/MVEnemy.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogMVCombatComponent, Log, All);
 
@@ -139,9 +140,9 @@ FGameplayTag MVCombatMakeSkillActionTypeGameplayTag(const int32 SkillIndex)
 {
 	switch (SkillIndex)
 	{
-	case 0:
+	case MVCombatSkillSlots::Q:
 		return MVGameplayTags::Action_Combat_Skill_Q;
-	case 1:
+	case MVCombatSkillSlots::R:
 		return MVGameplayTags::Action_Combat_Skill_R;
 	default:
 		return FGameplayTag();
@@ -152,9 +153,9 @@ FName MVCombatMakeSkillFallbackRowName(const int32 SkillIndex)
 {
 	switch (SkillIndex)
 	{
-	case 0:
+	case MVCombatSkillSlots::Q:
 		return TEXT("SkillQ");
-	case 1:
+	case MVCombatSkillSlots::R:
 		return TEXT("SkillR");
 	default:
 		return NAME_None;
@@ -241,6 +242,9 @@ void UMVCombatComponent::BeginPlay()
 		return;
 	}
 	
+	StatComponent->OnDeathStarted.RemoveDynamic(this, &UMVCombatComponent::HandleOwnerDeathStarted);
+	StatComponent->OnDeathStarted.AddUniqueDynamic(this, &UMVCombatComponent::HandleOwnerDeathStarted);
+	ResetRSkillGauge();
 }
 
 void UMVCombatComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -263,6 +267,11 @@ void UMVCombatComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 		}
 	}
 
+	if (StatComponent)
+	{
+		StatComponent->OnDeathStarted.RemoveDynamic(this, &UMVCombatComponent::HandleOwnerDeathStarted);
+	}
+
 	Super::EndPlay(EndPlayReason);
 }
 
@@ -281,6 +290,18 @@ bool UMVCombatComponent::GetSkillSlotRuntimeState(
 	FMVSkillSlotRuntimeState& OutState) const
 {
 	OutState = FMVSkillSlotRuntimeState();
+
+	const bool bRSkillGaugeSlot = bUseRSkillGauge && SkillIndex == MVCombatSkillSlots::R;
+
+	OutState.bGaugeControlled = bRSkillGaugeSlot;
+
+	if (bRSkillGaugeSlot)
+	{
+		OutState.GaugeCurrent = CurrentRSkillGauge;
+		OutState.GaugeMax = FMath::Max(RSkillGaugeMax, KINDA_SMALL_NUMBER);
+		OutState.GaugeRatio = FMath::Clamp(OutState.GaugeCurrent / OutState.GaugeMax, 0.0f, 1.0f);
+		OutState.bGaugeReady = IsRSkillGaugeReady();
+	}
 
 	const FMVSkillEntry* SkillEntry = SkillMap.Find(MVCombatMakeSkillMapKey(FMath::Max(0, SkillIndex)));
 	const UWorld* World = GetWorld();
@@ -366,6 +387,16 @@ bool UMVCombatComponent::GetSkillSlotRuntimeState(
 	}
 
 	OutState.bOnCooldown = OutState.CooldownRemaining > KINDA_SMALL_NUMBER;
+
+	OutState.bLoadoutAvailable =
+		OutState.bAvailable
+		&& CurrentWeaponStyle != EMVEquippedStyle::DualWield;
+
+	OutState.bUsable =
+		OutState.bLoadoutAvailable
+		&& !OutState.bOnCooldown
+		&& (!OutState.bGaugeControlled || OutState.bGaugeReady);
+
 	return OutState.bAvailable;
 }
 
@@ -423,10 +454,17 @@ bool UMVCombatComponent::TryCombatAction(
 		else if (ResolvedActionType == EMVCombatActionTypes::Skill)
 		{
 			const bool bStarted = TrySkill(ResolvedActionType, ResolvedActionIndex, StartSection);
+
 			if (bStarted)
 			{
+				if (ResolvedActionIndex == MVCombatSkillSlots::R && bUseRSkillGauge)
+				{
+					ResetRSkillGauge();
+				}
+
 				BroadcastCombatActionStarted(ResolvedActionType, ResolvedActionIndex);
 			}
+
 			return bStarted;
 		}
 
@@ -482,14 +520,21 @@ bool UMVCombatComponent::ChooseTryCombatAction(const FGameplayTag ActionInputTag
 
 	if (ActionInputTag.MatchesTag(MVGameplayTags::Action_Input_Skill))
 	{
+		const bool bRSkillInput = ActionInputTag.MatchesTagExact(MVGameplayTags::Action_Input_Skill_R);
+
+		// 실행 실패가 아니라 입력 소비
+		// false 반환 시 입력 버퍼에 남아 나중에 자동 발사될 수 있음
+		if (bRSkillInput && bUseRSkillGauge && !IsRSkillGaugeReady())
+		{
+			return true;
+		}
+
 		if (CurrentWeaponStyle == EMVEquippedStyle::DualWield)
 		{
 			return true;
 		}
-		
-		const int32 SkillIndex = ActionInputTag.MatchesTagExact(MVGameplayTags::Action_Input_Skill_R)
-			? 1
-			: 0;
+
+		const int32 SkillIndex = bRSkillInput ? MVCombatSkillSlots::R : MVCombatSkillSlots::Q;
 		return TryCombatAction(EMVCombatActionTypes::Skill, SkillIndex);
 	}
 	// Basic attack - Light attack, Heavy Attack, Charge Attack
@@ -676,6 +721,11 @@ bool UMVCombatComponent::TrySkill(
 		return false;
 	}
 
+	if (SkillIndex == MVCombatSkillSlots::R && bUseRSkillGauge && !IsRSkillGaugeReady())
+	{
+		return false;
+	}
+
 	if (!CanConsumeActionCost(ActionEntry->GetCurrentSkillData()))
 	{
 		return false;
@@ -844,6 +894,13 @@ void UMVCombatComponent::HandleHitResolved(const FMVResolvedHitData& HitData)
 	if (HitData.AttackInstanceId == INDEX_NONE || HitData.AttackInstanceId != CurrentAttackInstanceId)
 	{
 		return;
+	}
+
+	AMVEnemy* HitEnemy = Cast<AMVEnemy>(HitData.Victim.Get());
+
+	if (bUseRSkillGauge && IsValid(HitEnemy) && !IsCurrentAbilityRSkill())
+	{
+		AddRSkillGauge(CurrentAbilityInstance->AbilityData.RSkillGaugeGainMultiplier);
 	}
 
 	CurrentAbilityInstance->ApplyOnHitStatusEffect(HitData);
@@ -1614,6 +1671,47 @@ bool UMVCombatComponent::TryStartActionWithAbility(
 		}
 		return bStarted;
 	}
+}
+
+bool UMVCombatComponent::IsRSkillGaugeReady() const
+{
+	return bUseRSkillGauge
+	&& RSkillGaugeMax > KINDA_SMALL_NUMBER
+	&& CurrentRSkillGauge >= RSkillGaugeMax - KINDA_SMALL_NUMBER;
+}
+
+bool UMVCombatComponent::IsCurrentAbilityRSkill() const
+{
+	if (!CurrentAbilityInstance)
+	{
+		return false;
+	}
+
+	const FMVSkillEntry* RSkillEntry = SkillMap.Find(MVCombatMakeSkillMapKey(MVCombatSkillSlots::R));
+
+	return RSkillEntry && RSkillEntry->ContainsAbility(CurrentAbilityInstance);
+}
+
+void UMVCombatComponent::AddRSkillGauge(float GainMultiplier)
+{
+	if (!bUseRSkillGauge || RSkillGaugeMax <= KINDA_SMALL_NUMBER || GainMultiplier <= 0.0f)
+	{
+		return;
+	}
+
+	const float GainAmount = FMath::Max(0.0f, RSkillGaugeGainPerHit) * GainMultiplier;
+
+	CurrentRSkillGauge = FMath::Clamp(CurrentRSkillGauge + GainAmount, 0.0f, RSkillGaugeMax);
+}
+
+void UMVCombatComponent::ResetRSkillGauge()
+{
+	CurrentRSkillGauge = 0.0f;
+}
+
+void UMVCombatComponent::HandleOwnerDeathStarted(const FMVDeathContext& /*DeathContext*/)
+{
+	ResetRSkillGauge();
 }
 
 bool UMVCombatComponent::CanConsumeActionCost(const FMVSkillDataTableColumn* SkillData) const

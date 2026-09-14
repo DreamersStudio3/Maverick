@@ -59,6 +59,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Common", meta = (ClampMin = "0.0"))
 	float GroggyDamageMultiplier;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Gauge", meta = (ClampMin = "0.0"))
+	float RSkillGaugeGainMultiplier = 1.0f;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Status Effect")
 	TArray<FMVStatusEffectApplication> OnHitStatusEffects;
 
