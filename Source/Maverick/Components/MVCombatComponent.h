@@ -20,6 +20,9 @@ namespace MVCombatSkillSlots
 {
 	inline constexpr int32 Q = 0;
 	inline constexpr int32 R = 1;
+	inline constexpr int32 W = 2;
+	inline constexpr int32 E = 3;
+	inline constexpr int32 Count = 4;
 }
 
 USTRUCT(BlueprintType)

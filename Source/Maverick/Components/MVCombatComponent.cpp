@@ -136,6 +136,31 @@ FName MVCombatMakeSkillMapKey(const int32 SkillIndex)
 	return FName(*FString::Printf(TEXT("Skill%d"), SkillIndex));
 }
 
+int32 MVCombatResolveSkillIndexFromInputTag(const FGameplayTag ActionInputTag)
+{
+	if (ActionInputTag.MatchesTagExact(MVGameplayTags::Action_Input_Skill_Q))
+	{
+		return MVCombatSkillSlots::Q;
+	}
+
+	if (ActionInputTag.MatchesTagExact(MVGameplayTags::Action_Input_Skill_R))
+	{
+		return MVCombatSkillSlots::R;
+	}
+
+	if (ActionInputTag.MatchesTagExact(MVGameplayTags::Action_Input_Skill_W))
+	{
+		return MVCombatSkillSlots::W;
+	}
+
+	if (ActionInputTag.MatchesTagExact(MVGameplayTags::Action_Input_Skill_E))
+	{
+		return MVCombatSkillSlots::E;
+	}
+
+	return INDEX_NONE;
+}
+
 FGameplayTag MVCombatMakeSkillActionTypeGameplayTag(const int32 SkillIndex)
 {
 	switch (SkillIndex)
@@ -144,6 +169,10 @@ FGameplayTag MVCombatMakeSkillActionTypeGameplayTag(const int32 SkillIndex)
 		return MVGameplayTags::Action_Combat_Skill_Q;
 	case MVCombatSkillSlots::R:
 		return MVGameplayTags::Action_Combat_Skill_R;
+	case MVCombatSkillSlots::W:
+		return MVGameplayTags::Action_Combat_Skill_W;
+	case MVCombatSkillSlots::E:
+		return MVGameplayTags::Action_Combat_Skill_E;
 	default:
 		return FGameplayTag();
 	}
@@ -157,6 +186,10 @@ FName MVCombatMakeSkillFallbackRowName(const int32 SkillIndex)
 		return TEXT("SkillQ");
 	case MVCombatSkillSlots::R:
 		return TEXT("SkillR");
+	case MVCombatSkillSlots::W:
+		return TEXT("SkillW");
+	case MVCombatSkillSlots::E:
+		return TEXT("SkillE");
 	default:
 		return NAME_None;
 	}
@@ -520,21 +553,34 @@ bool UMVCombatComponent::ChooseTryCombatAction(const FGameplayTag ActionInputTag
 
 	if (ActionInputTag.MatchesTag(MVGameplayTags::Action_Input_Skill))
 	{
-		const bool bRSkillInput = ActionInputTag.MatchesTagExact(MVGameplayTags::Action_Input_Skill_R);
-
-		// 실행 실패가 아니라 입력 소비
-		// false 반환 시 입력 버퍼에 남아 나중에 자동 발사될 수 있음
-		if (bRSkillInput && bUseRSkillGauge && !IsRSkillGaugeReady())
+		const int32 SkillIndex = MVCombatResolveSkillIndexFromInputTag(ActionInputTag);
+		if (SkillIndex == INDEX_NONE)
 		{
+			// 알 수 없는 스킬 입력은 실행 대상이 아니므로 즉시 소비
 			return true;
 		}
 
+		// 현재 듀얼 소드 전용 스킬 미지원
+		// 입력 버퍼에 남겨 무기 교체 후 실행되는 현상 방지
 		if (CurrentWeaponStyle == EMVEquippedStyle::DualWield)
 		{
 			return true;
 		}
 
-		const int32 SkillIndex = bRSkillInput ? MVCombatSkillSlots::R : MVCombatSkillSlots::Q;
+		const FName SkillMapKey = MVCombatMakeSkillMapKey(SkillIndex);
+		if (!SkillMap.Contains(SkillMapKey))
+		{
+			// 현재 장비에 등록되지 않은 스킬 입력 즉시 소비
+			return true;
+		}
+
+		const bool bRSkillInput = SkillIndex == MVCombatSkillSlots::R;
+		if (bRSkillInput && bUseRSkillGauge && !IsRSkillGaugeReady())
+		{
+			// 게이지 미충전 상태의 R 입력 즉시 소비
+			return true;
+		}
+
 		return TryCombatAction(EMVCombatActionTypes::Skill, SkillIndex);
 	}
 	// Basic attack - Light attack, Heavy Attack, Charge Attack
@@ -1128,7 +1174,7 @@ void UMVCombatComponent::ResetSkillMap()
 			return true;
 		};
 
-	for (int32 SkillIndex = 0; SkillIndex < 2; ++SkillIndex)
+	for (int32 SkillIndex = 0; SkillIndex < MVCombatSkillSlots::Count; ++SkillIndex)
 	{
 		const FGameplayTag SkillActionType = MVCombatMakeSkillActionTypeGameplayTag(SkillIndex);
 		if (!SkillActionType.IsValid())
