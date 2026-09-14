@@ -186,7 +186,7 @@ void UMVPlayerSkillHUDWidget::RefreshSkillSlots()
 {
 	FMVSkillSlotRuntimeState QState;
 	const bool bQAvailable = BoundCombatComponent
-		&& BoundCombatComponent->GetSkillSlotRuntimeState(0, QState);
+		&& BoundCombatComponent->GetSkillSlotRuntimeState(MVCombatSkillSlots::Q, QState);
 	if (QSkillSlot)
 	{
 		QSkillSlot->SetRuntimeState(
@@ -210,14 +210,13 @@ void UMVPlayerSkillHUDWidget::RefreshSkillSlots()
 	}
 
 	FMVSkillSlotRuntimeState RState;
-	const bool bRAvailable = BoundCombatComponent
-		&& BoundCombatComponent->GetSkillSlotRuntimeState(1, RState);
+	if (BoundCombatComponent)
+	{
+		BoundCombatComponent->GetSkillSlotRuntimeState(MVCombatSkillSlots::R, RState);
+	}
+
 	if (RSkillSlot)
 	{
-		RSkillSlot->SetRuntimeState(
-			RState.ActiveStackIndex,
-			RState.CooldownRemaining,
-			RState.CooldownDuration,
-			bRAvailable);
+		RSkillSlot->SetGaugeRuntimeState(RState.ActiveStackIndex, RState.GaugeRatio, RState.bLoadoutAvailable);
 	}
 }

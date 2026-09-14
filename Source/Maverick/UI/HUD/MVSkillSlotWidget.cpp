@@ -60,6 +60,16 @@ void UMVSkillSlotWidget::SetRuntimeState(
 	}
 }
 
+void UMVSkillSlotWidget::SetGaugeRuntimeState(
+	const int32 InActiveStackIndex,
+	const float GaugeRatio,
+	const bool bInDisplayAvailable)
+{
+	const float MissingGaugeRatio = 1.0f - FMath::Clamp(GaugeRatio, 0.0f, 1.0f);
+
+	SetRuntimeState(InActiveStackIndex, MissingGaugeRatio, 1.0f, bInDisplayAvailable);
+}
+
 void UMVSkillSlotWidget::SetSlotSize(const float InSlotSize)
 {
 	DesiredSlotSize = FMath::Max(1.0f, InSlotSize);
