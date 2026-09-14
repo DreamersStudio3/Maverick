@@ -1,6 +1,6 @@
 ---
 제목: "플레이어 스킬 구조"
-부제목: "Q 적중 연계와 R 적중 충전형 게이지의 실행·HUD 계약"
+부제목: "Q 적중 연계, R 적중 충전형 게이지, W·E 조합 입력의 실행 계약"
 최근수정일: 2026-09-14
 최근수정자: "No-Jyun"
 관련문서:
@@ -10,6 +10,23 @@
 ---
 
 # 플레이어 스킬 구조
+
+## 스킬 슬롯과 조합 입력
+
+| 논리 스킬 | 입력 태그 | 런타임 슬롯 | 실제 입력 |
+|---|---|---:|---|
+| Q | `Action.Input.Skill.Q` | `Skill0` | Q |
+| R | `Action.Input.Skill.R` | `Skill1` | R |
+| W | `Action.Input.Skill.W` | `Skill2` | Shift+좌클릭 |
+| E | `Action.Input.Skill.E` | `Skill3` | Shift+우클릭 |
+
+- `Action.Combat.Skill.W`·`Action.Combat.Skill.E`: One Hand Chooser에서 `SkillW`·`SkillE` 시작 행 선택
+- `IA_SkillModifier`: `Started`에서 활성화, `Completed`·`Canceled`에서 해제
+- 좌클릭: 시작 시점의 Modifier 상태에 따라 약공격과 W 중 하나 제출
+- 우클릭: 시작 시점에 `HeavyCharge`·`SkillE` 경로를 고정하고 이후 입력 phase는 선택한 경로로만 전달
+- 미등록·미지원 스킬 입력: 즉시 소비하여 무기 교체나 Action 종료 후 지연 실행 차단
+- 플레이어 사망 시작: Modifier 상태, 우클릭 경로, Action 입력 버퍼 초기화
+- 현재 범위: W·E 전용 HUD 제외, Ability·애니메이션·비용·쿨다운 데이터 후속 조정
 
 ## Q 스킬 적중 연계
 
