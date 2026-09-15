@@ -14,6 +14,7 @@
 class UAnimMontage;
 class UMVMainHUDWidget;
 class UMVEnemyDodgeTokenComponent;
+struct FMVAIDodgeRequest;
 
 /**
  * Enemy character bridge for AI-driven combat.
@@ -50,6 +51,9 @@ public:
 	virtual void BeginPlay() override;
 	bool Attack(EMVAttackDirection AttackDirection);
 	bool Attack(EMVAttackDirection AttackDirection, int32& OutAttackInstanceId);
+
+	// 실행 중인 AI StateTree 하나에 위협 정보 전달, 회피 판단은 StateTree 소유
+	bool ReceiveAttackNotice(const FMVAIDodgeRequest& Notice);
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Maverick|Enemy|Combat")
 	bool TryHeavyAttack(int32 ActionIndex = 0, FName StartSection = NAME_None);

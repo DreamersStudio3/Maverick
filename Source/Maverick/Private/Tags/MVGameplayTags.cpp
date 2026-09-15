@@ -2,6 +2,7 @@
 
 namespace MVGameplayTags
 {
+	UE_DEFINE_GAMEPLAY_TAG(AI_Event_AttackNotice, "AI.Event.AttackNotice");
 	UE_DEFINE_GAMEPLAY_TAG(Character_Player_P1, "Character.Player.P1");
 	UE_DEFINE_GAMEPLAY_TAG(Character_NPC_Enemy_E1, "Character.NPC.Enemy.E1");
 	UE_DEFINE_GAMEPLAY_TAG(Character_NPC_Enemy_NamelessPuppet, "Character.NPC.Enemy.NamelessPuppet");
