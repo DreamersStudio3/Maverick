@@ -29,6 +29,9 @@ struct MAVERICK_API FMVWeaponTableRow : public FMVItemTableRow
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Item|Weapon", meta = (ClampMin = "0.0"))
 	float AttackPower = 0.0f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Item|Weapon", meta = (ClampMin = "0.0"))
+	float WeaponPoise = 0.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Item|Weapon")
 	EMVWeaponRangeType RangeType = EMVWeaponRangeType::Melee;

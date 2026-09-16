@@ -424,7 +424,7 @@ void AMVEnemy::BindDamageHandlers()
 
 	if (HitReactionComponent)
 	{
-		OnDamaged.RemoveDynamic(HitReactionComponent, &UMVHitReactionComponent::HandleDamaged);
+		//OnDamaged.RemoveDynamic(HitReactionComponent, &UMVHitReactionComponent::HandleDamaged);
 	}
 
 	OnDamaged.RemoveDynamic(this, &AMVEnemy::HandleEnemyDamaged);

@@ -59,6 +59,9 @@ public:
 	bool TryStartActionFromRowHandle(FDataTableRowHandle ActionRowHandle, FName StartSection = NAME_None, const float BlendoutTime = 0.1f);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Action")
+	bool TryAdditiveFromRowHandle(FDataTableRowHandle ActionRowHandle, FName StartSection = NAME_None, const float BlendoutTime = 0.1f);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Action")
 	bool PauseActiveAction();
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Action")

@@ -683,7 +683,7 @@ void UMVInputManagerComponent::BuildActionInputSnapshot(
 	bool bHasCurrentMovementInput = false;
 	if (const AMVCharacterBase* Character = OwnerCharacter.Get())
 	{
-		bHasCurrentMovementInput = Character->TryGetControllerSpaceMovementInput(OutControllerSpaceInput, 0);
+		bHasCurrentMovementInput = Character->TryGetControllerSpaceMovementInput(OutControllerSpaceInput, 1);
 	}
 
 	const uint64 CurrentFrame = GFrameCounter;

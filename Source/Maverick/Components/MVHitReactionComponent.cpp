@@ -221,7 +221,7 @@ FVector MVHitReactionResolveHitSourceDirection(
 
 	return HitDirection.IsNearlyZero()
 		? FVector::ZeroVector
-		: -HitDirection;
+		: HitDirection;
 }
 
 bool MVHitReactionShouldLogDirectionTrace(const EMVActionHitReactionType HitReactionType)
