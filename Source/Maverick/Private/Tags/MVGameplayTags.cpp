@@ -18,6 +18,8 @@ namespace MVGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Action_Input_Skill, "Action.Input.Skill");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Input_Skill_Q, "Action.Input.Skill.Q");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Input_Skill_R, "Action.Input.Skill.R");
+	UE_DEFINE_GAMEPLAY_TAG(Action_Input_Skill_W, "Action.Input.Skill.W");
+	UE_DEFINE_GAMEPLAY_TAG(Action_Input_Skill_E, "Action.Input.Skill.E");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Input_Guard, "Action.Input.Guard");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Input_Sprint, "Action.Input.Sprint");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Input_Dodge, "Action.Input.Dodge");
@@ -30,6 +32,8 @@ namespace MVGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Action_Combat_Skill, "Action.Combat.Skill");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Combat_Skill_Q, "Action.Combat.Skill.Q");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Combat_Skill_R, "Action.Combat.Skill.R");
+	UE_DEFINE_GAMEPLAY_TAG(Action_Combat_Skill_W, "Action.Combat.Skill.W");
+	UE_DEFINE_GAMEPLAY_TAG(Action_Combat_Skill_E, "Action.Combat.Skill.E");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Combat_SprintLightAttack, "Action.Combat.SprintLightAttack");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Combat_SprintHeavyAttack, "Action.Combat.SprintHeavyAttack");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Combat_DodgeLightAttack, "Action.Combat.DodgeLightAttack");

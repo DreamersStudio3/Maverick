@@ -20,6 +20,8 @@ namespace MVGameplayTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_Skill);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_Skill_Q);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_Skill_R);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_Skill_W);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_Skill_E);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_Guard);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_Sprint);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_Dodge);
@@ -32,6 +34,8 @@ namespace MVGameplayTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Combat_Skill);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Combat_Skill_Q);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Combat_Skill_R);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Combat_Skill_W);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Combat_Skill_E);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Combat_SprintLightAttack);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Combat_SprintHeavyAttack);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Combat_DodgeLightAttack);
