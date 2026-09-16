@@ -44,10 +44,10 @@ void UMVAnimNotify_AttackNotice::Notify(USkeletalMeshComponent* MeshComp, UAnimS
 		FCollisionObjectQueryParams::AllDynamicObjects,
 		FCollisionShape::MakeBox(HalfExtent), QueryParams);
 
-	TSet<ACharacter*> NotifiedEnemies;
+	TSet<AMVEnemy*> NotifiedEnemies;
 	for (const FOverlapResult& Overlap : Overlaps)
 	{
-		ACharacter* Enemy = Cast<ACharacter>(Overlap.GetActor());
+		AMVEnemy* Enemy = Cast<AMVEnemy>(Overlap.GetActor());
 		if (!IsValid(Enemy) || NotifiedEnemies.Contains(Enemy))
 		{
 			continue;
