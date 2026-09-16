@@ -1,7 +1,7 @@
 ---
 제목: AI StateTree
 부제목: StateTree 감지·판단·Action 실행 경계
-최근수정일: 2026-08-12
+최근수정일: 2026-09-15
 최근수정자: 곽민규
 관련문서:
   - "[[Architecture/document|Maverick Architecture]]"
@@ -34,6 +34,18 @@ flowchart TD
 - 탐색 순서: Controller BrainComponent → 기타 Controller Component → Pawn Component
 
 ## StateTree 계약
+
+### 공격 예고 이벤트
+
+- `UMVAnimNotify_AttackNotice`: 전방 박스와 겹치는 `AMVEnemy`에 호출당 한 번 예고 전달, 게임 월드에서만 실행
+- `AMVEnemy::ReceiveAttackNotice`: Controller Brain → Controller 컴포넌트 → Pawn 컴포넌트 순서의 첫 실행 중 StateTree에 전송
+- 이벤트 태그: `AI.Event.AttackNotice`, 데이터: `FMVAIDodgeRequest`
+- 전달 값: `ThreatActor`, `ThreatLocation`, `DistanceToThreat`, `AngleToThreat`; 각도는 적 로컬 전방 기준 부호 있는 도 단위
+- `Direction`: 기본 `Back`, `ThreatActionType`: 미지정; 실제 회피 판단·방향 선택은 StateTree 책임
+- 로그 `EventSent=1`: 이벤트 전달 경로 호출 완료; 전환 선택이나 회피 동작 성공의 증거와 구분
+- 예고 박스 검출은 실제 피해 적중과 별도, 적의 충돌 쿼리 활성화 필요
+
+### 상태 선택
 
 - 상위 상태 우선 성립 시 하위 MoveToTarget·Strafe 차단
 - 상태 순서와 후보 범위의 동시 설계
