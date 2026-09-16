@@ -9,10 +9,10 @@
 namespace MVActionInputHandlerPriorities
 {
 	inline constexpr int32 HitReaction = 300;
+	inline constexpr int32 Finisher = 250;
 	inline constexpr int32 Dodge = 200;
 	inline constexpr int32 Consumable = 150;
 	inline constexpr int32 Combat = 100;
-	inline constexpr int32 Finisher = 250;
 	inline constexpr int32 Weapon = 50;
 }
 

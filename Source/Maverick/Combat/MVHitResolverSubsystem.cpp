@@ -25,7 +25,14 @@ bool MVHitResolverTryResolveAttackerToVictimDirection(
 	const AMVCharacterBase& Victim,
 	FVector& OutDirection)
 {
-	return MVHitResolverTryNormalize2D(Victim.GetActorLocation() - Attacker.GetActorLocation(), OutDirection);
+	FVector HitDirection = Victim.GetActorLocation() - Attacker.GetActorLocation();
+	if (HitDirection.IsNearlyZero())
+	{
+		// 공격자와 피해자가 같은 위치에 있는 경우, 피격자의 정면 방향의 반대를 사용
+		HitDirection = -Victim.GetActorForwardVector();
+	}
+
+	return MVHitResolverTryNormalize2D(HitDirection, OutDirection);
 }
 
 void MVHitResolverLogHitLaunchTrace(
@@ -160,7 +167,9 @@ bool UMVHitResolverSubsystem::BuildResolvedHitData(
 
 	AMVCharacterBase* Attacker = Request.Attacker.Get();
 	AMVCharacterBase* Victim = Request.Victim.Get();
-	if (!Attacker || !Victim || Attacker == Victim)
+
+	// Todo: 자기 자신의 체력을 깎는 공격을 허용할지 여부를 결정해야 함
+	if (!Attacker || !Victim /*|| Attacker == Victim*/)
 	{
 		MVHitResolverLogAirborneTrace(TEXT("BuildRejected_InvalidParticipants"), Request);
 		return false;
@@ -207,6 +216,8 @@ bool UMVHitResolverSubsystem::BuildResolvedHitData(
 		? FVector::ZeroVector
 		: Request.ImpactNormal.GetSafeNormal();
 	OutHitData.HitDirection = ResolveHitDirection(Request, *Attacker, *Victim);
+	OutHitData.PoiseDamage = ResolveNonNegativeStat(Request.PoiseDamage);
+	OutHitData.PoiseBreak = VictimStat->PredictPoiseBreak(Request.PoiseDamage);
 
 	const UMVHitReactionComponent* HitReactionComponent = Victim->FindComponentByClass<UMVHitReactionComponent>();
 	const bool bCanTriggerGroggy = HitReactionComponent && HitReactionComponent->CanTriggerGroggy(OutHitData);

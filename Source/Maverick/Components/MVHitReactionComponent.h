@@ -72,7 +72,7 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Maverick|HitReaction|Groggy")
 	bool CanTriggerGroggy(const FMVResolvedHitData& HitData) const;
-
+	
 	UFUNCTION(BlueprintPure, Category = "Maverick|HitReaction")
 	EMVHitReactionDirection ResolveHitReactionDirection(const FMVResolvedHitData& HitData) const;
 
