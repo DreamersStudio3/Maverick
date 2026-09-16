@@ -6,7 +6,6 @@
 #include "Components/MVActionComponent.h"
 #include "Components/MVCombatComponent.h"
 #include "Components/MVDeathComponent.h"
-//#include "Components/MVHitReactionComponent.h"
 #include "Components/MVInputManagerComponent.h"
 #include "Components/MVStatComponent.h"
 #include "Components/MVWeaponComponent.h"
