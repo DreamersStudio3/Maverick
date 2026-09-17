@@ -27,6 +27,7 @@ enum class EMVActionInputDirection : uint8;
  *   - 입력 버퍼 구간의 Dodge 이동 의도를 controller-space raw 2D로 저장하고 소비 시점에 재사용한다.
  *   - Roll과 대각 Step은 root motion 재생 전에 캐릭터 yaw를 입력 방향으로 보정한다.
  *   - 대각 Step chooser에는 앞대각 F, 뒤대각 B 문맥을 제공해 축 방향 root motion row를 재사용할 수 있게 한다.
+ *   - StatComponent의 Exhaustion 상태에서는 일반 Dodge와 recovery Dodge 요청 거부.
  *
  * 라이프사이클:
  *   1) PlayerCharacter BeginPlay -> Initialize로 이동 입력 이벤트와 InputManager 액션 입력을 바인딩한다.

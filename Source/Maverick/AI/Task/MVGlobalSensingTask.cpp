@@ -4,6 +4,7 @@
 #include "AIController.h"
 #include "Components/MVActionComponent.h"
 #include "Components/MVStatComponent.h"
+#include "Components/MVCombatStateComponent.h"
 #include "DrawDebugHelpers.h"
 #include "Kismet/GameplayStatics.h"
 #include "StateTreeExecutionContext.h"
@@ -150,6 +151,19 @@ bool GlobalSensingIsActorDead(const AActor& Actor)
 	return StatComponent && StatComponent->IsDead();
 }
 
+void GlobalSensingSetTargetAggroThreat(APawn& Owner, AActor* Target, const bool bActive)
+{
+	if (!Target)
+	{
+		return;
+	}
+
+	if (UMVCombatStateComponent* CombatStateComponent = Target->FindComponentByClass<UMVCombatStateComponent>())
+	{
+		CombatStateComponent->SetAggroThreatActive(&Owner, bActive);
+	}
+}
+
 void GlobalSensingClearControllerTarget(const APawn& Owner)
 {
 	if (AMVAIController* AIController = Cast<AMVAIController>(Owner.GetController()))
@@ -160,6 +174,11 @@ void GlobalSensingClearControllerTarget(const APawn& Owner)
 
 void GlobalSensingClearTargetSnapshot(FMVGlobalSensingTaskInstanceData& InstanceData)
 {
+	if (InstanceData.Owner && InstanceData.Target)
+	{
+		GlobalSensingSetTargetAggroThreat(*InstanceData.Owner, InstanceData.Target, false);
+	}
+
 	InstanceData.Target = nullptr;
 	InstanceData.bHasTarget = false;
 	InstanceData.DistanceToTarget = 0.0f;
@@ -325,6 +344,16 @@ EStateTreeRunStatus UpdateGlobalSensingSnapshot(
 	FVector TargetDirection = TargetLocation - OwnerLocation;
 	TargetDirection.Z = 0.0f;
 
+	const bool bWithinAggroExitRadius =
+		!InstanceData.bIsDead
+		&& InstanceData.DistanceToTarget
+			<= FMath::Max(0.0f, InstanceData.AggroExitRadius);
+
+	GlobalSensingSetTargetAggroThreat(
+		*InstanceData.Owner,
+		InstanceData.Target,
+		bWithinAggroExitRadius);
+
 	if (TargetDirection.IsNearlyZero())
 	{
 		InstanceData.bHasTarget = true;
@@ -451,5 +480,12 @@ void FMVGlobalSensingTask::ExitState(
 	FStateTreeExecutionContext& Context,
 	const FStateTreeTransitionResult& Transition) const
 {
+	FInstanceDataType& InstanceData = Context.GetInstanceData(*this);
+
+	if (InstanceData.Owner && InstanceData.Target)
+	{
+		GlobalSensingSetTargetAggroThreat(*InstanceData.Owner, InstanceData.Target, false);
+	}
+
 	FStateTreeTaskCommonBase::ExitState(Context, Transition);
 }

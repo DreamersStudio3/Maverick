@@ -50,11 +50,17 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Common", meta = (ClampMin = "0.0"))
 	float DamageMultiplier;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Common", meta = (ClampMin = "0.0"))
+	float HpCost = 0.0f;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Common")
 	float StaminaCost = 0.0f;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Common")
 	float MpCost = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Resource", meta = (ClampMin = "0.0"))
+	float MpRecoveryPerHit = 2.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Common", meta = (ClampMin = "0.0"))
 	float GroggyDamageMultiplier;

@@ -8,6 +8,7 @@
 #include "Components/MVActionComponent.h"
 #include "Components/MVCombatComponent.h"
 #include "Components/MVHitReactionComponent.h"
+#include "Components/MVCombatStateComponent.h"
 #include "Components/MVStatComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "LockOnTargetComponent.h"
@@ -18,6 +19,8 @@
 
 namespace
 {
+constexpr float MVPlayerOutOfCombatHPRecoveryRatioPerSecond = 0.02f;
+
 FString MVPlayerCharacterIndexCodeToTableToken(const FGameplayTag CharacterIndexCode)
 {
 	if (!CharacterIndexCode.IsValid())
@@ -119,6 +122,7 @@ void AMVPlayerCharacter::UpdateRecoverableStats(const float DeltaTime)
 	}
 
 	const bool bShouldConsumeStamina = SprintStaminaCostPerSecond > 0.0f
+		&& IsCharacterMovementActive()
 		&& Gait == EGait::Sprinting
 		&& bHasMovementInput
 		&& !ShouldPauseSprintStaminaDrain();
@@ -131,10 +135,21 @@ void AMVPlayerCharacter::UpdateRecoverableStats(const float DeltaTime)
 			StatComponent->SetCurrentStamina(0.0f);
 			bIsSprintBlockedByStamina = true;
 		}
-		return;
 	}
 
-	StatComponent->TickRecoverableStats(DeltaTime);
+	Super::UpdateRecoverableStats(DeltaTime);
+
+	if (CombatStateComponent
+		&& CombatStateComponent->IsOutOfCombat()
+		&& StatComponent->CurrentHP < StatComponent->MaxHP)
+	{
+		const float HPRecoveryAmount =
+			StatComponent->MaxHP
+			* MVPlayerOutOfCombatHPRecoveryRatioPerSecond
+			* DeltaTime;
+
+		StatComponent->RecoverHP(HPRecoveryAmount);
+	}
 
 	const float ResumeThreshold = StatComponent->MaxStamina * ResolveSprintResumeStaminaRatio();
 	if (bIsSprintBlockedByStamina && StatComponent->CurrentStamina >= ResumeThreshold)
@@ -145,6 +160,11 @@ void AMVPlayerCharacter::UpdateRecoverableStats(const float DeltaTime)
 
 bool AMVPlayerCharacter::CanUseSprint() const
 {
+	if (ActionComponent && ActionComponent->IsActionRunning())
+	{
+		return false;
+	}
+
 	if (PlayerConsumable && PlayerConsumable->IsHealingPotionUseActionRunning())
 	{
 		return false;
@@ -153,6 +173,11 @@ bool AMVPlayerCharacter::CanUseSprint() const
 	if (!StatComponent)
 	{
 		return true;
+	}
+
+	if (StatComponent->IsStaminaExhausted())
+	{
+		return false;
 	}
 
 	if (bIsSprintBlockedByStamina)

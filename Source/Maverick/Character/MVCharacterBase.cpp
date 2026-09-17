@@ -18,6 +18,7 @@
 #include "MotionWarpingComponent.h"
 #include "TimerManager.h"
 #include "Components/MVStatusEffectComponent.h"
+#include "Components/MVCombatStateComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogMVCharacterBase, Log, All);
 
@@ -103,6 +104,7 @@ AMVCharacterBase::AMVCharacterBase()
 	StatComponent = CreateDefaultSubobject<UMVStatComponent>(TEXT("StatComponent"));
 	ActionComponent = CreateDefaultSubobject<UMVActionComponent>(TEXT("ActionComponent"));
 	CombatComponent = CreateDefaultSubobject<UMVCombatComponent>(TEXT("CombatComponent"));
+	CombatStateComponent = CreateDefaultSubobject<UMVCombatStateComponent>(TEXT("CombatStateComponent"));
 	DeathComponent = CreateDefaultSubobject<UMVDeathComponent>(TEXT("DeathComponent"));
 	HitReactionComponent = CreateDefaultSubobject<UMVHitReaction>(TEXT("HitReactionComponent"));
 	InputManagerComponent = CreateDefaultSubobject<UMVInputManagerComponent>(TEXT("InputManagerComponent"));
@@ -150,10 +152,12 @@ void AMVCharacterBase::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	
 	UpdateCharacterValue();
-	UpdateMovement(DeltaTime, bIsMovementActive);
+
+	Gait = DesiredGait();
+	UpdateRecoverableStats(DeltaTime);
+
+	UpdateMovement(bIsMovementActive);
 	UpdateRotation(bIsRotationActive);
-
-
 }
 
 // Called to bind functionality to input
@@ -492,7 +496,7 @@ void AMVCharacterBase::UpdateRotation(bool bIsActive)
 	}
 }
 
-void AMVCharacterBase::UpdateMovement(float DeltaTime, bool bIsActive)
+void AMVCharacterBase::UpdateMovement(bool bIsActive)
 {
 	if (bIsActive == false)
 	{
@@ -500,10 +504,6 @@ void AMVCharacterBase::UpdateMovement(float DeltaTime, bool bIsActive)
 		GetCharacterMovement()->MaxAcceleration = 0.0f;
 		return;
 	}
-
-	// Decide Gait
-	Gait = DesiredGait();
-	UpdateRecoverableStats(DeltaTime);
 
 	// Movement Speed
 	const float WalkSpeed = StatComponent ? StatComponent->WalkSpeed : 200.0f;
@@ -542,7 +542,11 @@ void AMVCharacterBase::UpdateRecoverableStats(float DeltaTime)
 		return;
 	}
 
-	StatComponent->TickRecoverableStats(DeltaTime);
+	const bool bActionRunning = ActionComponent && ActionComponent->IsActionRunning();
+	const bool bIsActivelySprinting = Gait == EGait::Sprinting && bHasMovementInput;
+	const bool bAllowStaminaRecovery = !bActionRunning && !bIsActivelySprinting;
+
+	StatComponent->TickRecoverableStats(DeltaTime, bAllowStaminaRecovery);
 }
 
 void AMVCharacterBase::SetStrafeMode(bool StrafeModeOn)

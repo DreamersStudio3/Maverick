@@ -22,9 +22,10 @@ class UCameraShakeBase;
  * 책임:
  *   - 플레이어 CharacterIndex와 공격 Chooser/fallback 기본 경로를 설정한다.
  *   - Dodge, 회복약, InteractionDetector 서브모듈을 생성하고 BeginPlay/Tick/EndPlay 수명주기를 전달한다.
- *   - 전력질주 스태미너 비용과 고갈 후 재개 조건을 플레이어 액션 데이터 기준으로 관리한다.
+ *   - 전력질주 스태미너 비용, Exhaustion 차단, 고갈 후 재개 조건의 플레이어 액션 데이터 기준 관리.
  *   - 플레이어 피격 리액션 핸들러를 공통 피격 이벤트에 연결한다.
  *   - 락온 대상이 있을 때 질주/회피 구간의 pawn rotation extension tick 억제를 관리한다.
+ *   - 비전투 상태의 플레이어 MaxHP 기준 초당 2% 자연 회복 연결.
  *
  * 라이프사이클:
  *   1) 생성자 -> 플레이어 전용 서브모듈 기본 서브오브젝트를 생성한다.

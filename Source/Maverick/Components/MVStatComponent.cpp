@@ -91,6 +91,7 @@ bool UMVStatComponent::LoadStatsFromTable()
 	SetMaxStamina(StatRow->MaxStamina);
 	SetCurrentStamina(StatRow->CurrentStamina);
 	SetStaminaRecoveryPerSecond(StatRow->StaminaRecoveryPerSecond);
+	SetStaminaRecoveryDelay(StatRow->StaminaRecoveryDelay);
 	SetMaxMP(StatRow->MaxMP);
 	SetCurrentMP(StatRow->CurrentMP);
 	SetMPRecoveryPerSecond(StatRow->MPRecoveryPerSecond);
@@ -191,19 +192,23 @@ bool UMVStatComponent::WouldDieFromHit(const FMVResolvedHitData& HitData) const
 	return HPDamage > 0.0f && CurrentHP > 0.0f && CurrentHP - HPDamage <= 0.0f;
 }
 
-void UMVStatComponent::TickRecoverableStats(float DeltaTime)
+void UMVStatComponent::TickRecoverableStats(float DeltaTime, bool bAllowStaminaRecovery)
 {
 	if (DeltaTime <= 0.0f)
 	{
 		return;
 	}
 
-	// MP recovers regardless of whether an action pauses stamina recovery.
+	// MP는 전투 및 행동 상태와 무관하게 상시 회복
 	RecoverMP(MPRecoveryPerSecond * DeltaTime);
+
 	TickRecentDamageCooldown(DeltaTime);
 	TickGroggyRecovery(DeltaTime);
+	TickStaminaExhaustion(DeltaTime);
 
-	if (!IsRecoverableStatRecoveryPaused())
+	if (bAllowStaminaRecovery
+		&& !IsStaminaExhausted()
+		&& !IsRecoverableStatRecoveryPaused())
 	{
 		TickRecoverableResourceRecovery(DeltaTime);
 	}
@@ -250,6 +255,21 @@ void UMVStatComponent::TickGroggyRecovery(float DeltaTime)
 void UMVStatComponent::TickRecoverableResourceRecovery(float DeltaTime)
 {
 	RecoverStamina(StaminaRecoveryPerSecond * DeltaTime);
+}
+
+void UMVStatComponent::BeginStaminaExhaustion()
+{
+	StaminaExhaustionRemaining = FMath::Max(StaminaExhaustionRemaining, StaminaRecoveryDelay);
+}
+
+void UMVStatComponent::TickStaminaExhaustion(float DeltaTime)
+{
+	if (StaminaExhaustionRemaining <= 0.0f)
+	{
+		return;
+	}
+
+	StaminaExhaustionRemaining = FMath::Max(0.0f, StaminaExhaustionRemaining - DeltaTime);
 }
 
 void UMVStatComponent::BeginRecoverableStatRecoveryPause()
@@ -337,6 +357,34 @@ void UMVStatComponent::RecoverHP(const float Amount)
 	SetCurrentHP(CurrentHP + RecoveryAmount);
 }
 
+bool UMVStatComponent::CanConsumeHP(float Amount) const
+{
+	const float NormalizedAmount = MVStatNonNegative(Amount);
+	if (NormalizedAmount <= 0.0f)
+	{
+		return true;
+	}
+
+	return !bIsDead && CurrentHP - NormalizedAmount >= 1.0f;
+}
+
+bool UMVStatComponent::ConsumeHP(float Amount)
+{
+	const float NormalizedAmount = MVStatNonNegative(Amount);
+	if (NormalizedAmount <= 0.0f)
+	{
+		return true;
+	}
+
+	if (!CanConsumeHP(NormalizedAmount))
+	{
+		return false;
+	}
+
+	SetCurrentHP(FMath::Max(1.0f, CurrentHP - NormalizedAmount));
+	return true;
+}
+
 void UMVStatComponent::SetMaxStamina(float InMaxStamina)
 {
 	const float PreviousMaxStamina = MaxStamina;
@@ -355,6 +403,12 @@ void UMVStatComponent::SetCurrentStamina(float InCurrentStamina)
 	const float PreviousCurrentStamina = CurrentStamina;
 	CurrentStamina = MVStatClampCurrent(InCurrentStamina, MaxStamina);
 
+	// 필드 전환, 디버그 리셋 등 강제 양수 설정 시 Exhaustion 해제
+	if (CurrentStamina > 0.0f)
+	{
+		StaminaExhaustionRemaining = 0.0f;
+	}
+
 	if (!FMath::IsNearlyEqual(PreviousCurrentStamina, CurrentStamina))
 	{
 		OnStaminaChanged.Broadcast(CurrentStamina, MaxStamina);
@@ -364,6 +418,16 @@ void UMVStatComponent::SetCurrentStamina(float InCurrentStamina)
 void UMVStatComponent::SetStaminaRecoveryPerSecond(float InStaminaRecoveryPerSecond)
 {
 	StaminaRecoveryPerSecond = MVStatNonNegative(InStaminaRecoveryPerSecond);
+}
+
+void UMVStatComponent::SetStaminaRecoveryDelay(float InStaminaRecoveryDelay)
+{
+	StaminaRecoveryDelay = MVStatNonNegative(InStaminaRecoveryDelay);
+}
+
+bool UMVStatComponent::IsStaminaExhausted() const
+{
+	return StaminaExhaustionRemaining > 0.0f;
 }
 
 bool UMVStatComponent::HasStamina(float RequiredAmount) const
@@ -388,8 +452,16 @@ bool UMVStatComponent::ConsumeStamina(float Amount)
 		return true;
 	}
 
+	const float PreviousStamina = CurrentStamina;
 	const bool bHadEnoughStamina = CurrentStamina >= NormalizedAmount;
+
 	SetCurrentStamina(CurrentStamina - NormalizedAmount);
+
+	if (PreviousStamina > 0.0f && CurrentStamina <= 0.0f)
+	{
+		BeginStaminaExhaustion();
+	}
+
 	return bHadEnoughStamina;
 }
 
@@ -406,14 +478,22 @@ bool UMVStatComponent::ConsumeStaminaAllowPartial(float Amount)
 		return false;
 	}
 
+	const float PreviousStamina = CurrentStamina;
+
 	SetCurrentStamina(CurrentStamina - FMath::Min(CurrentStamina, NormalizedAmount));
+
+	if (PreviousStamina > 0.0f && CurrentStamina <= 0.0f)
+	{
+		BeginStaminaExhaustion();
+	}
+
 	return true;
 }
 
 void UMVStatComponent::RecoverStamina(float Amount)
 {
 	const float NormalizedAmount = MVStatNonNegative(Amount);
-	if (NormalizedAmount <= 0.0f)
+	if (NormalizedAmount <= 0.0f || IsStaminaExhausted())
 	{
 		return;
 	}
