@@ -7,12 +7,9 @@
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimMontage.h"
 #include "Components/CapsuleComponent.h"
-#include "Character/NPC/Enemy/MVEnemyWeapon.h"
 #include "Components/MVActionComponent.h"
 #include "Components/MVCombatComponent.h"
 #include "Components/MVDeathComponent.h"
-#include "Components/MVEnemyDodgeTokenComponent.h"
-#include "Components/MVHitReactionComponent.h"
 #include "Components/MVStatComponent.h"
 #include "Engine/World.h"
 #include "Enum/MVCombatActionTypes.h"
@@ -27,7 +24,7 @@
 
 AMVEnemy::AMVEnemy()
 {
-	EnemyDodgeTokenComponent = CreateDefaultSubobject<UMVEnemyDodgeTokenComponent>(TEXT("EnemyDodgeTokenComponent"));
+	CreateDefaultSubobject<UTargetComponent>(TEXT("TargetComponent"));
 	CharacterIndexCode = MVGameplayTags::Character_NPC_Enemy_E1;
 }
 
@@ -108,20 +105,6 @@ bool AMVEnemy::TrySkillAttack_Implementation(const int32 SkillIndex, const FName
 		&& EnemyCombatComponent->TryCombatAction(EMVCombatActionTypes::Skill, SkillIndex, StartSection);
 }
 
-AMVEnemyWeapon* AMVEnemy::GetWeaponActor() const
-{
-	return WeaponActor;
-}
-
-void AMVEnemy::DestroyWeaponActor()
-{
-	if (WeaponActor)
-	{
-		WeaponActor->Destroy();
-		WeaponActor = nullptr;
-	}
-}
-
 void AMVEnemy::HideBoundBossHUD()
 {
 	BossHUDBindAttemptsRemaining = 0;
@@ -144,64 +127,6 @@ void AMVEnemy::HideBoundBossHUD()
 	}
 
 	BoundBossHUD.Reset();
-}
-
-bool AMVEnemy::TryChooseHitReactionRecovery(
-	const FMVHitReactionRecoveryDecisionContext& Context,
-	FMVHitReactionRecoveryDecision& OutDecision)
-{
-	OutDecision = FMVHitReactionRecoveryDecision();
-
-	if (!bUseAirborneRecoveryDecision
-		|| Context.Owner != this
-		|| Context.HitReactionType != EMVActionHitReactionType::Airborne)
-	{
-		return false;
-	}
-
-	const AActor* Target = ResolveHitReactionRecoveryTarget();
-	if (!Target)
-	{
-		OutDecision.Type = EMVHitReactionRecoveryDecisionType::Getup;
-		return true;
-	}
-
-	const float DistanceSquared = FVector::DistSquared2D(GetActorLocation(), Target->GetActorLocation());
-	if (DistanceSquared > FMath::Square(AirborneEscapeDodgeDistance))
-	{
-		OutDecision.Type = EMVHitReactionRecoveryDecisionType::Getup;
-		return true;
-	}
-
-	OutDecision.Type = EMVHitReactionRecoveryDecisionType::EscapeDodge;
-	OutDecision.EscapeDirection = ResolveEscapeDirectionAwayFromTarget(*Target);
-	return true;
-}
-
-EMVFieldTransitionResetPolicy AMVEnemy::GetFieldTransitionResetPolicy_Implementation() const
-{
-	return EMVFieldTransitionResetPolicy::ResetEveryTransition;
-}
-
-FName AMVEnemy::GetFieldTransitionResetFieldId_Implementation() const
-{
-	return NAME_None;
-}
-
-FName AMVEnemy::GetFieldTransitionResetObjectId_Implementation() const
-{
-	return NAME_None;
-}
-
-void AMVEnemy::HandleFieldTransitionReset_Implementation(
-	const FMVFieldTransitionResetContext& ResetContext)
-{
-	if (ResetContext.bIsConsumed)
-	{
-		return;
-	}
-
-	ResetEnemyForFieldTransition();
 }
 
 void AMVEnemy::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -265,7 +190,7 @@ void AMVEnemy::BindBossHUDToMainHUD()
 	}
 }
 
-void AMVEnemy::ResetEnemyForFieldTransition()
+void AMVEnemy::ResetForFieldTransition()
 {
 	if (UMVActionComponent* EnemyActionComponent = FindComponentByClass<UMVActionComponent>())
 	{
@@ -284,11 +209,6 @@ void AMVEnemy::ResetEnemyForFieldTransition()
 		StatComponent->SetCurrentHP(StatComponent->MaxHP);
 		StatComponent->SetCurrentStamina(StatComponent->MaxStamina);
 		StatComponent->SetCurrentMP(StatComponent->MaxMP);
-	}
-
-	if (EnemyDodgeTokenComponent)
-	{
-		EnemyDodgeTokenComponent->ResetForFieldTransition();
 	}
 
 	if (UTargetComponent* TargetComponent = FindComponentByClass<UTargetComponent>())
@@ -318,46 +238,9 @@ void AMVEnemy::ResetEnemyForFieldTransition()
 	}
 
 	BindDamageHandlers();
-	RestoreWeaponActor();
 	RestartStateTreeLogicForFieldTransition();
 	BossHUDBindAttemptsRemaining = 20;
 	ScheduleBossHUDBindRetry(0.0f);
-}
-
-void AMVEnemy::RestoreWeaponActor()
-{
-	if (IsValid(WeaponActor) || !WeaponClass)
-	{
-		return;
-	}
-
-	UWorld* World = GetWorld();
-	USkeletalMeshComponent* MeshComponent = GetMesh();
-	if (!World || !MeshComponent)
-	{
-		return;
-	}
-
-	FActorSpawnParameters SpawnParameters;
-	SpawnParameters.Owner = this;
-	SpawnParameters.Instigator = this;
-	WeaponActor = World->SpawnActor<AMVEnemyWeapon>(
-		WeaponClass,
-		GetActorTransform(),
-		SpawnParameters);
-	if (!WeaponActor)
-	{
-		return;
-	}
-
-	if (bUseDualWeapon)
-	{
-		WeaponActor->AttachDualToHands(MeshComponent);
-	}
-	else
-	{
-		WeaponActor->AttachCombinedToHand(MeshComponent);
-	}
 }
 
 void AMVEnemy::RestartStateTreeLogicForFieldTransition()
@@ -420,11 +303,6 @@ void AMVEnemy::BindDamageHandlers()
 		StatComponent->OnGroggyStarted.AddUniqueDynamic(this, &AMVEnemy::HandleEnemyGroggyStarted);
 		StatComponent->OnGroggyEnded.RemoveDynamic(this, &AMVEnemy::HandleEnemyGroggyEnded);
 		StatComponent->OnGroggyEnded.AddUniqueDynamic(this, &AMVEnemy::HandleEnemyGroggyEnded);
-	}
-
-	if (HitReactionComponent)
-	{
-		//OnDamaged.RemoveDynamic(HitReactionComponent, &UMVHitReactionComponent::HandleDamaged);
 	}
 
 	OnDamaged.RemoveDynamic(this, &AMVEnemy::HandleEnemyDamaged);

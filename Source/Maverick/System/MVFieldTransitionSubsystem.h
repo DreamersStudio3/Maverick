@@ -160,7 +160,6 @@ private:
 	void StartAutomaticLoadingCompletion();
 	void ResetTransitionState();
 	int32 ResetWorldActorsForTransition(const FMVFieldTransitionRequest& Request);
-	FName ResolveTransitionResetFieldId(const FMVFieldTransitionRequest& Request) const;
 	bool ApplyTransitionDestination(const FMVFieldTransitionRequest& Request);
 	void ResetPlayerStatsForTransition(AMVCharacterBase& Character) const;
 	void ResetUIToDefaultAfterTransition();
