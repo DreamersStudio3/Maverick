@@ -1,15 +1,22 @@
 ---
 제목: "플레이어 스킬 구조"
 부제목: "Q 적중 연계, R 적중 충전형 게이지, W·E 조합 입력의 실행 계약"
-최근수정일: 2026-09-14
+최근수정일: 2026-09-18
 최근수정자: "No-Jyun"
 관련문서:
   - "[[Features/Combat/Combat-System/document|Maverick 전투 시스템]]"
   - "[[Features/Hit-Stat-HitReaction/document|Hit, Stat, HitReaction]]"
   - "[[Features/Input-to-Action/document|입력에서 Action 실행까지]]"
+  - "[[Features/Resource-Recovery/document|기본 재화 회복과 소비]]"
 ---
 
 # 플레이어 스킬 구조
+
+## 재화 비용과 적중 회복
+
+- `HpCost`: 소비 후 HP 최소 1 보장, 비용 부족 시 실행 차단
+- `MpRecoveryPerHit`: 현재 공격의 유효 적중당 MP 회복, 기본값 2·행별 조정
+- 행동 중 스태미나 회복 차단과 비용 판정 세부 기준: [[Features/Resource-Recovery/document|기본 재화 회복과 소비]]
 
 ## 스킬 슬롯과 조합 입력
 

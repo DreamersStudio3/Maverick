@@ -1,11 +1,12 @@
 ---
 제목: Maverick 아키텍처
 부제목: 런타임 흐름과 도메인 책임 경계
-최근수정일: 2026-09-08
+최근수정일: 2026-09-18
 최근수정자: No-Jyun
 관련문서:
   - "[[Convention/Header-Documentation/document|C++ 헤더 책임 문서화]]"
   - "[[Features/Combat/Combat-System/document|Maverick 전투 시스템]]"
+  - "[[Features/Resource-Recovery/document|기본 재화 회복과 소비]]"
 ---
 
 # Maverick 아키텍처
@@ -68,6 +69,7 @@ flowchart TD
 | 기본 서브오브젝트 | 책임 |
 |---|---|
 | `UMVStatComponent` | HP, Stamina, MP, Groggy와 피해·사망 판정의 권위 계층 |
+| `UMVCombatStateComponent` | 전투 활동 시각·추적 위협·비전투 판정 |
 | `UMVActionComponent` | 선택된 Action Row와 Montage 실행 |
 | `UMVCombatComponent` | 공격·스킬 후보, Chooser·Fallback, Chain, Ability 인스턴스 선택 |
 | `UMVDeathComponent` | Actor 단위 사망 표현 |
@@ -80,6 +82,7 @@ flowchart TD
 
 - `AMVPlayerCharacter`: Dodge, Consumable, InteractionDetector 소유
 - 플레이어 전용 Stamina·Lock-on 정책 추가
+- 플레이어 비전투 HP 회복 정책: [[Features/Resource-Recovery/document|기본 재화 회복과 소비]]
 
 ### 적
 
@@ -94,6 +97,7 @@ flowchart TD
 
 - [[Features/Input-to-Action/document|입력에서 Action 실행까지]]
 - [[Features/Hit-Stat-HitReaction/document|Hit, Stat, HitReaction]]
+- [[Features/Resource-Recovery/document|기본 재화 회복과 소비]]
 - [[Features/Death-and-Field-Transition/document|사망과 필드 전환]]
 - [[Features/AI-StateTree/document|AI StateTree]]
 - [[Features/UI-and-CommonUI/document|UI와 CommonUI]]
