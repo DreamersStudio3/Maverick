@@ -2,14 +2,12 @@
 
 #include "CoreMinimal.h"
 #include "AI/MVAICombatTypes.h"
-#include "AI/Enum/MVAttackDirection.h"
 #include "GameFramework/Pawn.h"
 #include "StateTreeTaskBase.h"
 #include "Tables/MVActionTableTypes.h"
 #include "UObject/SoftObjectPath.h"
 #include "MVExecuteAttackTask.generated.h"
 
-class AMVEnemy;
 class UMVActionComponent;
 
 USTRUCT()
@@ -34,9 +32,6 @@ struct FMVExecuteFixedAttackTaskInstanceData
 	UPROPERTY(EditAnywhere, Category = "Input|Attack|Chooser")
 	FSoftObjectPath AttackChooserTable;
 
-	UPROPERTY(EditAnywhere, Category = "Input|Attack")
-	EMVAttackDirection FallbackAttackDirection = EMVAttackDirection::Forward;
-
 	UPROPERTY(EditAnywhere, Category = "Output")
 	FName LastAttackTag = NAME_None;
 
@@ -44,15 +39,10 @@ struct FMVExecuteFixedAttackTaskInstanceData
 	TObjectPtr<UMVActionComponent> ActionComponent = nullptr;
 
 	UPROPERTY(Transient)
-	TObjectPtr<AMVEnemy> Enemy = nullptr;
-
-	UPROPERTY(Transient)
 	FMVAttackActionRowHandle ChooserAttackActionRowHandle;
 
 	FName StartedActionTableName = NAME_None;
 	FName StartedActionRowName = NAME_None;
-	int32 AttackInstanceId = INDEX_NONE;
-	FDelegateHandle AttackMontageEndedHandle;
 };
 
 /**

@@ -6,7 +6,6 @@
 #include "Components/MVActionComponent.h"
 #include "Components/MVDeathComponent.h"
 #include "Components/MVStatComponent.h"
-#include "EngineUtils.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Pawn.h"
 #include "GameFramework/PlayerController.h"
@@ -16,7 +15,6 @@
 #include "System/MVWorldStateTypes.h"
 #include "UI/System/MVUISubsystem.h"
 #include "UI/Window/MVLoadingWindow.h"
-#include "Character/NPC/Enemy/MVEnemy.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogMVFieldTransitionSubsystem, Log, All);
 
@@ -101,14 +99,7 @@ void UMVFieldTransitionSubsystem::BeginLoadingReset()
 		: nullptr;
 
 	UpdateTransitionProgress(0.15f, NSLOCTEXT("MaverickFieldTransition", "LoadingPrepare", "필드 전환 준비 중"));
-	const int32 ResetActorCount = ActiveTransitionRequest.bResetFieldActors
-		? ResetWorldActorsForTransition(ActiveTransitionRequest)
-		: 0;
-	UpdateTransitionProgress(
-		0.45f,
-		FText::Format(
-			NSLOCTEXT("MaverickFieldTransition", "FieldReset", "필드 상태 초기화 대상 {0}개 적용"),
-			FText::AsNumber(ResetActorCount)));
+	UpdateTransitionProgress(0.45f, NSLOCTEXT("MaverickFieldTransition", "FieldReset", "필드 상태 초기화 생략"));
 	UpdateTransitionProgress(0.75f, NSLOCTEXT("MaverickFieldTransition", "WorldState", "저장 상태 적용 준비"));
 	StartAutomaticLoadingCompletion();
 }
@@ -119,7 +110,6 @@ bool UMVFieldTransitionSubsystem::StartDeathRespawnTransition(AActor* DeadActor)
 	Request.Reason = EMVFieldTransitionReason::DeathRespawn;
 	Request.SourceActor = DeadActor;
 	Request.bUseLastCheckpoint = true;
-	Request.bResetFieldActors = true;
 	Request.bResetDeathPresentation = true;
 	Request.bRestorePlayerStats = true;
 	Request.bClearUIBeforeLoading = false;
@@ -157,7 +147,6 @@ bool UMVFieldTransitionSubsystem::StartCheckpointTravelToTransform(
 	Request.TargetTransform = TargetTransform;
 	Request.bHasTargetTransform = true;
 	Request.bUseLastCheckpoint = false;
-	Request.bResetFieldActors = true;
 	Request.bResetDeathPresentation = false;
 	Request.bRestorePlayerStats = false;
 	Request.bClearUIBeforeLoading = true;
@@ -418,31 +407,6 @@ void UMVFieldTransitionSubsystem::ResetTransitionState()
 	ActiveTransitionRequest = FMVFieldTransitionRequest();
 	ActiveLoadingWindow = nullptr;
 	bClearedUIBeforeLoading = false;
-}
-
-int32 UMVFieldTransitionSubsystem::ResetWorldActorsForTransition(const FMVFieldTransitionRequest& Request)
-{
-	UWorld* World = GetWorld();
-	if (!World)
-	{
-		return 0;
-	}
-
-	int32 ResetActorCount = 0;
-
-	for (TActorIterator<AMVEnemy> It(World); It; ++It)
-	{
-		AMVEnemy* Enemy = *It;
-		if (!IsValid(Enemy) || Enemy == Request.SourceActor)
-		{
-			continue;
-		}
-
-		Enemy->ResetForFieldTransition();
-		++ResetActorCount;
-	}
-
-	return ResetActorCount;
 }
 
 bool UMVFieldTransitionSubsystem::ApplyTransitionDestination(const FMVFieldTransitionRequest& Request)
