@@ -59,6 +59,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_FiveParams(
 	float, CurrentHP,
 	const FMVResolvedHitData&, HitData);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMVOnDamageAccumulationReset);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnBaseStatsReady, int32, Revision);
 
 /**
  * 캐릭터 스탯 값과 회복 정책을 관리하는 컴포넌트.
@@ -121,6 +122,9 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|Stat|Event")
 	FMVOnDeathStarted OnDeathStarted;
 
+	UPROPERTY(BlueprintAssignable, Category = "Maverick|Stat|Event")
+	FMVOnBaseStatsReady OnBaseStatsReady;
+	
 protected:
 	virtual void BeginPlay() override;
 
@@ -137,6 +141,31 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Table")
 	bool LoadStatsFromTable();
 
+	UFUNCTION(BlueprintPure, Category = "Maverick|Stat|Progression")
+	bool IsBaseStatsReady() const { return bBaseStatsReady; }
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|Stat|Progression")
+	int32 GetBaseStatsRevision() const { return BaseStatsRevision; }
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|Stat|Progression")
+	float GetBaseMaxHP() const { return BaseMaxHP; }
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|Stat|Progression")
+	float GetBaseMaxStamina() const { return BaseMaxStamina; }
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|Stat|Progression")
+	float GetBaseMaxMP() const { return BaseMaxMP; }
+	
+	bool ReplaceProgressionStatBonuses(const TMap<FGameplayTag, float>& InBonuses);
+
+	bool TryGetProgressionStatValues(
+		const FGameplayTag& StatId,
+		float& OutBaseValue,
+		float& OutBonus,
+		float& OutEffectiveValue) const;
+
+	int32 GetStatCalculationRevision() const { return StatCalculationRevision; }
+	
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Damage")
 	void HandleDamaged(const FMVResolvedHitData& HitData);
 
@@ -301,6 +330,7 @@ private:
 	void ResetDamageAccumulation();
 	bool TryStartGroggy();
 	void BroadcastGroggyEnded();
+	void ApplyProgressionStatBonuses();
 
 	// 추가 강인도 설정(무기, 행동 등)
 	void SetAdditionalPoise(float WeaponPoise = 0, float Multiplier = 0);
@@ -410,4 +440,13 @@ private:
 
 	// Poise
 	FTimerHandle PoiseRecoveryTimerHandle;
+	
+	TMap<FGameplayTag, float> ProgressionStatBonuses;
+	int32 StatCalculationRevision = 0;
+	
+	float BaseMaxHP = 100.0f;
+	float BaseMaxStamina = 100.0f;
+	float BaseMaxMP = 100.0f;
+	int32 BaseStatsRevision = 0;
+	bool bBaseStatsReady = false;
 };

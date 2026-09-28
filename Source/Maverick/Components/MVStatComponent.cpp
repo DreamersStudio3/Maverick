@@ -5,6 +5,7 @@
 #include "Tags/MVGameplayTags.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "System/Progression/MVProgressionStatBinding.h"
 
 namespace
 {
@@ -86,13 +87,16 @@ bool UMVStatComponent::LoadStatsFromTable()
 		return false;
 	}
 
-	SetMaxHP(StatRow->MaxHP);
+	BaseMaxHP = MVStatClampMaxHP(StatRow->MaxHP);
+	BaseMaxStamina = MVStatNonNegative(StatRow->MaxStamina);
+	BaseMaxMP = MVStatNonNegative(StatRow->MaxMP);
+
+	ApplyProgressionStatBonuses();
+
 	SetCurrentHP(StatRow->CurrentHP);
-	SetMaxStamina(StatRow->MaxStamina);
 	SetCurrentStamina(StatRow->CurrentStamina);
 	SetStaminaRecoveryPerSecond(StatRow->StaminaRecoveryPerSecond);
 	SetStaminaRecoveryDelay(StatRow->StaminaRecoveryDelay);
-	SetMaxMP(StatRow->MaxMP);
 	SetCurrentMP(StatRow->CurrentMP);
 	SetMPRecoveryPerSecond(StatRow->MPRecoveryPerSecond);
 	SetAttackPower(StatRow->AttackPower);
@@ -107,6 +111,74 @@ bool UMVStatComponent::LoadStatsFromTable()
 	SetRecentDamageResetDelay(StatRow->GetRecentDamageResetDelay());
 	SetInitialPoise(StatRow->InitialCharacterPoise);
 
+	bBaseStatsReady = true;
+	++BaseStatsRevision;
+	++StatCalculationRevision;
+	OnBaseStatsReady.Broadcast(BaseStatsRevision);
+
+	return true;
+}
+
+bool UMVStatComponent::ReplaceProgressionStatBonuses(const TMap<FGameplayTag, float>& InBonuses)
+{
+	for (const TPair<FGameplayTag, float>& Pair : InBonuses)
+	{
+		if (!Pair.Key.IsValid()
+			|| !FMVProgressionStatBinding::IsSupportedStat(Pair.Key)
+			|| !FMath::IsFinite(Pair.Value))
+		{
+			return false;
+		}
+	}
+
+	bool bMatchesCurrentBonuses = ProgressionStatBonuses.Num() == InBonuses.Num();
+
+	if (bMatchesCurrentBonuses)
+	{
+		for (const TPair<FGameplayTag, float>& Pair : InBonuses)
+		{
+			const float* CurrentBonus = ProgressionStatBonuses.Find(Pair.Key);
+
+			if (!CurrentBonus || !FMath::IsNearlyEqual(*CurrentBonus, Pair.Value))
+			{
+				bMatchesCurrentBonuses = false;
+				break;
+			}
+		}
+	}
+
+	if (bMatchesCurrentBonuses)
+	{
+		return true;
+	}
+
+	ProgressionStatBonuses = InBonuses;
+	ApplyProgressionStatBonuses();
+	++StatCalculationRevision;
+
+	return true;
+}
+
+bool UMVStatComponent::TryGetProgressionStatValues(const FGameplayTag& StatId, float& OutBaseValue, float& OutBonus,
+	float& OutEffectiveValue) const
+{
+	OutBaseValue = 0.0f;
+	OutBonus = 0.0f;
+	OutEffectiveValue = 0.0f;
+
+	if (!FMVProgressionStatBinding::TryGetBaseValue(
+			*this,
+			StatId,
+			OutBaseValue)
+		|| !FMVProgressionStatBinding::TryGetEffectiveValue(
+			*this,
+			StatId,
+			OutEffectiveValue))
+	{
+		return false;
+	}
+
+	OutBonus = ProgressionStatBonuses.FindRef(StatId);
 	return true;
 }
 
@@ -687,15 +759,15 @@ void UMVStatComponent::PoiseActionEnd()
 
 void UMVStatComponent::UpdatePoise(float PoiseDamageAmount)
 {
-	// ÇÇ°İ µîÀ¸·Î ÀÎÇØ Æ÷ÀÌÁî°¡ °¨¼ÒÇÏ´Â °æ¿ì, ConstantPoise¸¦ °¨¼Ò½ÃÅµ´Ï´Ù.
+	// í”¼ê²© ë“±ìœ¼ë¡œ ì¸í•´ í¬ì´ì¦ˆê°€ ê°ì†Œí•˜ëŠ” ê²½ìš°, ConstantPoiseë¥¼ ê°ì†Œì‹œí‚µë‹ˆë‹¤.
 
-	// °­ÀÎµµ °¨¼Ò·®ÀÌ 0 ÀÌÇÏÀÎ °æ¿ì, ¾Æ¹« ÀÛ¾÷µµ ¼öÇàÇÏÁö ¾Ê½À´Ï´Ù.
+	// ê°•ì¸ë„ ê°ì†ŒëŸ‰ì´ 0 ì´í•˜ì¸ ê²½ìš°, ì•„ë¬´ ì‘ì—…ë„ ìˆ˜í–‰í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.
 	if(PoiseDamageAmount <= 0.0f)
 	{
 		return;
 	}
 
-	// Poise Reset Timer »õ·Î ½ÃÀÛ -> ÇÇ°İ µîÀ¸·Î °­ÀÎµµ º¯È­°¡ »ı±â¸é ÇØ´ç ½Ã°£ ±âÁØÀ¸·Î ÀÏÁ¤ ½Ã°£ ÀÌÈÄ °­ÀÎµµ ÃÊ±âÈ­
+	// Poise Reset Timer ìƒˆë¡œ ì‹œì‘ -> í”¼ê²© ë“±ìœ¼ë¡œ ê°•ì¸ë„ ë³€í™”ê°€ ìƒê¸°ë©´ í•´ë‹¹ ì‹œê°„ ê¸°ì¤€ìœ¼ë¡œ ì¼ì • ì‹œê°„ ì´í›„ ê°•ì¸ë„ ì´ˆê¸°í™”
 	UWorld* World = GetWorld();
 	if (World)
 	{
@@ -709,8 +781,8 @@ void UMVStatComponent::UpdatePoise(float PoiseDamageAmount)
 	ConstantPoise = ConstantPoise - PoiseDamageAmount;
 	if(ConstantPoise + AdditionalPoise <= 0.0f)
 	{
-		// Æ÷ÀÌÁî°¡ 0 ÀÌÇÏ·Î ¶³¾îÁø °æ¿ì, °­ÀÎµµ¸¦ ÃÊ±âÈ­, HitReactionÀ» Play
-		// HitReaction Play¸¦ À§ÇÑ flag´Â HitResolverSubsystem¿¡¼­ Ã³¸®ÇÏµµ·Ï ÇÔ
+		// í¬ì´ì¦ˆê°€ 0 ì´í•˜ë¡œ ë–¨ì–´ì§„ ê²½ìš°, ê°•ì¸ë„ë¥¼ ì´ˆê¸°í™”, HitReactionì„ Play
+		// HitReaction Playë¥¼ ìœ„í•œ flagëŠ” HitResolverSubsystemì—ì„œ ì²˜ë¦¬í•˜ë„ë¡ í•¨
 		ResetPoise();
 	}
 
@@ -810,6 +882,19 @@ void UMVStatComponent::BroadcastGroggyEnded()
 	bIsGroggy = false;
 	RecentDamageCooldownRemaining = 0.0f;
 	OnGroggyEnded.Broadcast();
+}
+
+void UMVStatComponent::ApplyProgressionStatBonuses()
+{
+	for (const FGameplayTag& StatId : FMVProgressionStatBinding::GetSupportedStatIds())
+	{
+		const float Bonus = ProgressionStatBonuses.FindRef(StatId);
+
+		FMVProgressionStatBinding::TryApplyBonus(
+			*this,
+			StatId,
+			Bonus);
+	}
 }
 
 void UMVStatComponent::SetAdditionalPoise(float WeaponPoise, float Multiplier)

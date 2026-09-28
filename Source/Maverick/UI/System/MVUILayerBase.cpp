@@ -6,6 +6,7 @@
 #include "Components/OverlaySlot.h"
 #include "UI/Base/MVPopupBase.h"
 #include "Widgets/CommonActivatableWidgetContainer.h"
+#include "UI/System/MVGameplayInputWidget.h"
 
 void UMVUILayerBase::NativeOnInitialized()
 {
@@ -156,16 +157,33 @@ void UMVUILayerBase::BuildNativeLayerTree()
 		return;
 	}
 
-	UOverlay* RootOverlay = WidgetTree->ConstructWidget<UOverlay>(UOverlay::StaticClass(), TEXT("RootOverlay"));
+	UOverlay* RootOverlay = WidgetTree->ConstructWidget<UOverlay>(
+		UOverlay::StaticClass(),
+		TEXT("RootOverlay"));
+
+	GameplayInputWidget = WidgetTree->ConstructWidget<UMVGameplayInputWidget>(
+		UMVGameplayInputWidget::StaticClass(),
+		TEXT("GameplayInputWidget"));
+
 	WindowStack = WidgetTree->ConstructWidget<UCommonActivatableWidgetStack>(
 		UCommonActivatableWidgetStack::StaticClass(),
 		TEXT("WindowStack"));
-	HUDLayer = WidgetTree->ConstructWidget<UOverlay>(UOverlay::StaticClass(), TEXT("HUDLayer"));
-	PopupLayer = WidgetTree->ConstructWidget<UOverlay>(UOverlay::StaticClass(), TEXT("PopupLayer"));
-	WidgetLayer = WidgetTree->ConstructWidget<UOverlay>(UOverlay::StaticClass(), TEXT("WidgetLayer"));
+
+	HUDLayer = WidgetTree->ConstructWidget<UOverlay>(
+		UOverlay::StaticClass(),
+		TEXT("HUDLayer"));
+
+	PopupLayer = WidgetTree->ConstructWidget<UOverlay>(
+		UOverlay::StaticClass(),
+		TEXT("PopupLayer"));
+
+	WidgetLayer = WidgetTree->ConstructWidget<UOverlay>(
+		UOverlay::StaticClass(),
+		TEXT("WidgetLayer"));
 
 	WidgetTree->RootWidget = RootOverlay;
 
+	AddFullScreenOverlayChild(RootOverlay, GameplayInputWidget);
 	AddFullScreenOverlayChild(RootOverlay, WindowStack);
 	AddFullScreenOverlayChild(RootOverlay, HUDLayer);
 	AddFullScreenOverlayChild(RootOverlay, PopupLayer);
@@ -184,4 +202,40 @@ void UMVUILayerBase::AddFullScreenOverlayChild(UOverlay* RootOverlay, UWidget* C
 		ChildSlot->SetHorizontalAlignment(HAlign_Fill);
 		ChildSlot->SetVerticalAlignment(VAlign_Fill);
 	}
+}
+
+UCommonActivatableWidget* UMVUILayerBase::FindWindowByClass(TSubclassOf<UCommonActivatableWidget> WindowClass) const
+{
+	if (!WindowStack || !WindowClass)
+	{
+		return nullptr;
+	}
+
+	const auto& Windows = WindowStack->GetWidgetList();
+
+	for (int32 Index = Windows.Num() - 1; Index >= 0; --Index)
+	{
+		UCommonActivatableWidget* Window = Windows[Index];
+
+		if (IsValid(Window) && Window->IsA(WindowClass.Get()))
+		{
+			return Window;
+		}
+	}
+
+	return nullptr;
+}
+
+bool UMVUILayerBase::RemoveWindow(UCommonActivatableWidget* Window)
+{
+	if (!WindowStack
+		|| !IsValid(Window)
+		|| !WindowStack->GetWidgetList().Contains(Window))
+	{
+		return false;
+	}
+
+	WindowStack->RemoveWidget(*Window);
+
+	return true;
 }

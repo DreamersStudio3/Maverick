@@ -16,6 +16,7 @@
 #include "Tables/MVTableManager.h"
 #include "Tags/MVGameplayTags.h"
 #include "Camera/CameraShakeBase.h"
+#include "Progression/MVPlayerProgression.h"
 
 namespace
 {
@@ -47,6 +48,7 @@ AMVPlayerCharacter::AMVPlayerCharacter()
 	Dodge = CreateDefaultSubobject<UMVPlayerDodge>(TEXT("Dodge"));
 	InteractionDetector = CreateDefaultSubobject<UMVPlayerInteractionDetector>(TEXT("InteractionDetector"));
 	PlayerConsumable = CreateDefaultSubobject<UMVPlayerConsumable>(TEXT("PlayerConsumable"));
+	PlayerProgression = CreateDefaultSubobject<UMVPlayerProgression>(TEXT("PlayerProgression"));
 	CharacterIndexCode = MVGameplayTags::Character_Player_P1;
 	if (CombatComponent)
 	{
@@ -65,6 +67,11 @@ void AMVPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (PlayerProgression)
+	{
+		PlayerProgression->Initialize(*this);
+	}
+	
 	CacheSprintActionData();
 
 	if (Dodge)
@@ -98,6 +105,11 @@ void AMVPlayerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	if (Dodge)
 	{
 		Dodge->Deinitialize();
+	}
+	
+	if (PlayerProgression)
+	{
+		PlayerProgression->Deinitialize();
 	}
 
 	Super::EndPlay(EndPlayReason);

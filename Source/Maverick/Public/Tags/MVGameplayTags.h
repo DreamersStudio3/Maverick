@@ -12,6 +12,12 @@ namespace MVGameplayTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Item_Weapon_OneHand_TestSword);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Item_Weapon_DualSword_TestSword);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Item_HealingPotion_Basic);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Progression_Attribute_HP);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Progression_Attribute_Stamina);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Progression_Attribute_MP);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Stat_MaxHP);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Stat_MaxStamina);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Stat_MaxMP);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_LightAttack);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_HeavyAttack);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_HeavyChargeAttack);
@@ -51,5 +57,4 @@ namespace MVGameplayTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StatusEffect_Type_Debuff);
 
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StatusEffect_Mechanic_Mark);
-
 }

@@ -11,6 +11,7 @@ class UMVPlayerDodge;
 class UMVPlayerInteractionDetector;
 class UMVPlayerConsumable;
 class UCameraShakeBase;
+class UMVPlayerProgression;
 
 /**
  * 로컬 플레이어 캐릭터 런타임 본체.
@@ -26,9 +27,10 @@ class UCameraShakeBase;
  *   - 플레이어 피격 리액션 핸들러를 공통 피격 이벤트에 연결한다.
  *   - 락온 대상이 있을 때 질주/회피 구간의 pawn rotation extension tick 억제를 관리한다.
  *   - 비전투 상태의 플레이어 MaxHP 기준 초당 2% 자연 회복 연결.
+ *   - 저장된 플레이어 성장 상태를 현재 StatComponent에 연결한다.
  *
  * 라이프사이클:
- *   1) 생성자 -> 플레이어 전용 서브모듈 기본 서브오브젝트를 생성한다.
+ *   1) 생성자 -> 플레이어 전용 서브모듈과 성장 브리지를 기본 서브오브젝트로 생성한다.
  *   2) BeginPlay/EndPlay -> 서브모듈 초기화와 해제를 브리지한다.
  *   3) Tick -> 공통 캐릭터 갱신 뒤 상호작용 감지와 락온 회전 억제 상태를 갱신한다.
  */
@@ -88,6 +90,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Instanced, Category = "PlayerCharacter")
 	TObjectPtr<UMVPlayerConsumable> PlayerConsumable;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Instanced, Category = "PlayerCharacter")
+	TObjectPtr<UMVPlayerProgression> PlayerProgression;
+	
 	UPROPERTY(BlueprintReadOnly, Category = "LocomotionData|Stamina")
 	uint8 bIsSprintBlockedByStamina : 1;
 
