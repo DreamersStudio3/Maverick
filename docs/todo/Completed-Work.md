@@ -4,6 +4,8 @@
 
 ## 남겨 둔 결과
 
+- **레벨업 프로토타입:** `8001a813`에 HP·Stamina·MP 투자·재화 차감·실제 최대값·재화 HUD·입력 복구·테스트 저장 구성 반영, 사용자 Windows UE 5.8.1 빌드·자동 검사 7개·PIE 확인 범위에서 종료: [레벨업 프로토타입](../wiki/Features/Progression/Level-Up/document.md)
+
 - **입력과 액션:** GameplayTag 입력을 `UMVInputManagerComponent`에서 버퍼링하고 Dodge·Combat 같은 도메인 처리기로 전달하는 구조, recovery window 전환, hold/instant 입력, 오래된 montage 종료 이벤트 방지가 정리됐다. 현재 흐름은 [Maverick Architecture](../wiki/Architecture/document.md)의 입력·Action 절을 따른다.
 - **전투와 피격:** 공격 Ability, 무기 배율 기반 hit resolve, hit reaction·groggy·airborne·recovery 정책과 관련 회귀 수정 반영. 현재 구현 경계: [Maverick Architecture](../wiki/Architecture/document.md), [Maverick 전투 시스템](../wiki/Features/Combat/Combat-System/document.md)
 - **전투 문서:** 현재 공격 흐름, 공격 종류, Q·R 스킬 구조: [Maverick 전투 시스템](../wiki/Features/Combat/Combat-System/document.md)
