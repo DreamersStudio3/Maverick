@@ -30,28 +30,6 @@ void AMVEnemy::BeginPlay()
 		0.0f);
 }
 
-void AMVEnemy::HideBoundBossHUD()
-{
-	UWorld* World = GetWorld();
-	if (World)
-	{
-		World->GetTimerManager().ClearTimer(BossHUDBindRetryTimerHandle);
-	}
-
-	if (World && World->bIsTearingDown)
-	{
-		BoundBossHUD.Reset();
-		return;
-	}
-
-	if (UMVMainHUDWidget* MainHUD = BoundBossHUD.Get())
-	{
-		MainHUD->HideBossHPBar();
-	}
-
-	BoundBossHUD.Reset();
-}
-
 void AMVEnemy::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	HideBoundBossHUD();
@@ -80,6 +58,28 @@ void AMVEnemy::BindBossHUDToMainHUD()
 
 		GetWorldTimerManager().ClearTimer(BossHUDBindRetryTimerHandle);
 	}
+}
+
+void AMVEnemy::HideBoundBossHUD()
+{
+	UWorld* World = GetWorld();
+	if (World)
+	{
+		World->GetTimerManager().ClearTimer(BossHUDBindRetryTimerHandle);
+	}
+
+	if (World && World->bIsTearingDown)
+	{
+		BoundBossHUD.Reset();
+		return;
+	}
+
+	if (UMVMainHUDWidget* MainHUD = BoundBossHUD.Get())
+	{
+		MainHUD->HideBossHPBar();
+	}
+
+	BoundBossHUD.Reset();
 }
 
 void AMVEnemy::BindDamageHandlers()
