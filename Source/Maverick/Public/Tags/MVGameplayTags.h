@@ -4,6 +4,7 @@
 
 namespace MVGameplayTags
 {
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(AI_Event_AttackNotice);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Character_Player_P1);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Character_NPC_Enemy_E1);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Character_NPC_Enemy_NamelessPuppet);
