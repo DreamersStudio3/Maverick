@@ -26,7 +26,7 @@ class UMVPlayerProgression;
  *   - 전력질주 스태미너 비용, Exhaustion 차단, 고갈 후 재개 조건의 플레이어 액션 데이터 기준 관리.
  *   - 플레이어 피격 리액션 핸들러를 공통 피격 이벤트에 연결한다.
  *   - 락온 대상이 있을 때 질주/회피 구간의 pawn rotation extension tick 억제를 관리한다.
- *   - 비전투 상태의 플레이어 MaxHP 기준 초당 2% 자연 회복 연결.
+ *   - 설정으로 켜고 끄는 플레이어 HP 자동재생, 기본 비활성.
  *   - 저장된 플레이어 성장 상태를 현재 StatComponent에 연결한다.
  *
  * 라이프사이클:
@@ -111,6 +111,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LocomotionData|Sprint|Table", meta = (ClampMin = "1"))
 	int32 DefaultSprintRowIndex = 1;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerCharacter|Health")
+	bool bEnableHPAutoRegen = false;
+	
 private:
 	bool bHasSprintActionData = false;
 	float SprintActionStaminaCost = 20.0f;

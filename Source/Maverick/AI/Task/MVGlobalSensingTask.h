@@ -23,9 +23,6 @@ struct FMVGlobalSensingTaskInstanceData
 	UPROPERTY(EditAnywhere, Category = "Input|Area")
 	float DefensiveArea = 1200.0f;
 	
-	UPROPERTY(EditAnywhere, Category = "Input|Area", meta = (ClampMin = "0.0", Units = "cm"))
-	float AggroExitRadius = 1200.0f;
-
 	UPROPERTY(EditAnywhere, Category = "Input|Area")
 	float OffensiveArea = 500.0f;
 
@@ -175,8 +172,4 @@ struct FMVGlobalSensingTask : public FStateTreeTaskCommonBase
 	virtual EStateTreeRunStatus Tick(
 		FStateTreeExecutionContext& Context,
 		float DeltaTime) const override;
-	
-	virtual void ExitState(
-		FStateTreeExecutionContext& Context,
-		const FStateTreeTransitionResult& Transition) const override;
 };

@@ -9,7 +9,6 @@
 #include "Input/NavigationReply.h"
 #include "MVLevelUpWindow.generated.h"
 
-class UMVCombatStateComponent;
 class UMVStatComponent;
 class UMVWorldStateSubsystem;
 class UMVLevelUpAttributeEntryWidget;
@@ -30,7 +29,7 @@ class UCommonActionWidget;
  * Construct에서 확인 입력·버튼 연결, Destruct에서 연결 해제
  * 활성화 시 상태 구독·행 생성·초점 확보
  * 비활성화 시 상태 구독·행 이벤트 해제, 선택 상태와 임시 투자 폐기
- * 사망·전투 진입·필드 전환 시 창 닫기
+ * 사망·필드 전환 시 창 닫기
  */
 UCLASS(Blueprintable)
 class MAVERICK_API UMVLevelUpWindow : public UMVWindowBase
@@ -152,10 +151,7 @@ private:
 
 	UFUNCTION()
 	void HandlePlayerDead();
-
-	UFUNCTION()
-	void HandleCombatStateChanged(bool bInCombat);
-
+	
 	UFUNCTION()
 	void HandleTransitionPhaseChanged(EMVFieldTransitionPhase NewPhase);
 
@@ -163,7 +159,6 @@ private:
 
 	TWeakObjectPtr<UMVWorldStateSubsystem> WorldState;
 	TWeakObjectPtr<UMVStatComponent> PlayerStats;
-	TWeakObjectPtr<UMVCombatStateComponent> PlayerCombatState;
 	TWeakObjectPtr<UMVFieldTransitionSubsystem> FieldTransition;
 
 	int32 PreviewStatRevision = 0;

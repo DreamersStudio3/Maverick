@@ -18,7 +18,6 @@
 #include "MotionWarpingComponent.h"
 #include "TimerManager.h"
 #include "Components/MVStatusEffectComponent.h"
-#include "Components/MVCombatStateComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogMVCharacterBase, Log, All);
 
@@ -104,7 +103,6 @@ AMVCharacterBase::AMVCharacterBase()
 	StatComponent = CreateDefaultSubobject<UMVStatComponent>(TEXT("StatComponent"));
 	ActionComponent = CreateDefaultSubobject<UMVActionComponent>(TEXT("ActionComponent"));
 	CombatComponent = CreateDefaultSubobject<UMVCombatComponent>(TEXT("CombatComponent"));
-	CombatStateComponent = CreateDefaultSubobject<UMVCombatStateComponent>(TEXT("CombatStateComponent"));
 	DeathComponent = CreateDefaultSubobject<UMVDeathComponent>(TEXT("DeathComponent"));
 	HitReactionComponent = CreateDefaultSubobject<UMVHitReaction>(TEXT("HitReactionComponent"));
 	InputManagerComponent = CreateDefaultSubobject<UMVInputManagerComponent>(TEXT("InputManagerComponent"));

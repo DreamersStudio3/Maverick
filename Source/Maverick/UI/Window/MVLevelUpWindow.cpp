@@ -1,7 +1,6 @@
 #include "UI/Window/MVLevelUpWindow.h"
 
 #include "Character/PC/MVPlayerCharacter.h"
-#include "Components/MVCombatStateComponent.h"
 #include "Components/MVStatComponent.h"
 #include "System/MVWorldStateSubsystem.h"
 #include "System/Progression/MVProgressionDefinition.h"
@@ -269,7 +268,6 @@ bool UMVLevelUpWindow::IsInteractionAllowed() const
 		&& !IsFadingOut()
 		&& Player
 		&& PlayerStats.Get() == Player->StatComponent
-		&& PlayerCombatState.Get() == Player->CombatStateComponent
 		&& FieldTransition.IsValid()
 		&& CanOpenForPlayer(GetOwningPlayer());
 }
@@ -286,7 +284,6 @@ void UMVLevelUpWindow::BindRuntimeEvents()
 	}
 
 	PlayerStats = Player->StatComponent;
-	PlayerCombatState = Player->CombatStateComponent;
 	WorldState = UMVWorldStateSubsystem::Get(this);
 	FieldTransition = UMVFieldTransitionSubsystem::Get(this);
 
@@ -306,13 +303,6 @@ void UMVLevelUpWindow::BindRuntimeEvents()
 		Stats->OnDead.AddUniqueDynamic(
 			this,
 			&UMVLevelUpWindow::HandlePlayerDead);
-	}
-
-	if (UMVCombatStateComponent* Combat = PlayerCombatState.Get())
-	{
-		Combat->OnCombatStateChanged.AddUniqueDynamic(
-			this,
-			&UMVLevelUpWindow::HandleCombatStateChanged);
 	}
 
 	if (UMVFieldTransitionSubsystem* Transition = FieldTransition.Get())
@@ -343,13 +333,6 @@ void UMVLevelUpWindow::UnbindRuntimeEvents()
 			&UMVLevelUpWindow::HandlePlayerDead);
 	}
 
-	if (UMVCombatStateComponent* Combat = PlayerCombatState.Get())
-	{
-		Combat->OnCombatStateChanged.RemoveDynamic(
-			this,
-			&UMVLevelUpWindow::HandleCombatStateChanged);
-	}
-
 	if (UMVFieldTransitionSubsystem* Transition = FieldTransition.Get())
 	{
 		Transition->OnFieldTransitionPhaseChanged.RemoveDynamic(
@@ -359,7 +342,6 @@ void UMVLevelUpWindow::UnbindRuntimeEvents()
 
 	WorldState.Reset();
 	PlayerStats.Reset();
-	PlayerCombatState.Reset();
 	FieldTransition.Reset();
 }
 
@@ -387,18 +369,6 @@ void UMVLevelUpWindow::HandleBaseStatsReady(const int32 Revision)
 void UMVLevelUpWindow::HandlePlayerDead()
 {
 	DeactivateWidget();
-}
-
-void UMVLevelUpWindow::HandleCombatStateChanged(const bool bInCombat)
-{
-	if (bInCombat)
-	{
-		DeactivateWidget();
-	}
-	else
-	{
-		RefreshLevelUpPreview();
-	}
 }
 
 void UMVLevelUpWindow::HandleTransitionPhaseChanged(const EMVFieldTransitionPhase NewPhase)
@@ -726,14 +696,11 @@ bool UMVLevelUpWindow::CanOpenForPlayer(const APlayerController* PlayerControlle
 	}
 
 	const UMVStatComponent* Stats = Player->StatComponent;
-	const UMVCombatStateComponent* Combat = Player->CombatStateComponent;
 	const UMVFieldTransitionSubsystem* Transition = UMVFieldTransitionSubsystem::Get(Player);
 
 	return Stats
 		&& Stats->IsBaseStatsReady()
 		&& !Stats->IsDead()
-		&& Combat
-		&& Combat->IsOutOfCombat()
 		&& Transition
 		&& !Transition->IsTransitionRunning();
 }

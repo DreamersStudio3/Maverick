@@ -1,7 +1,7 @@
 ---
 제목: Maverick 아키텍처
 부제목: 런타임 흐름과 도메인 책임 경계
-최근수정일: 2026-09-28
+최근수정일: 2026-09-29
 최근수정자: "No-Jyun"
 관련문서:
   - "[[Convention/Header-Documentation/document|C++ 헤더 책임 문서화]]"
@@ -70,7 +70,6 @@ flowchart TD
 | 기본 서브오브젝트 | 책임 |
 |---|---|
 | `UMVStatComponent` | HP, Stamina, MP, Groggy와 피해·사망 판정의 권위 계층 |
-| `UMVCombatStateComponent` | 전투 활동 시각·추적 위협·비전투 판정 |
 | `UMVActionComponent` | 선택된 Action Row와 Montage 실행 |
 | `UMVCombatComponent` | 공격·스킬 후보, Chooser·Fallback, Chain, Ability 인스턴스 선택 |
 | `UMVDeathComponent` | Actor 단위 사망 표현 |
@@ -83,7 +82,7 @@ flowchart TD
 
 - `AMVPlayerCharacter`: Dodge, Consumable, InteractionDetector, PlayerProgression 소유
 - 플레이어 전용 Stamina·Lock-on 정책 추가
-- 플레이어 비전투 HP 회복 정책: [[Features/Resource-Recovery/document|기본 재화 회복과 소비]]
+- 플레이어 HP 자동재생은 기본 비활성, `bEnableHPAutoRegen`으로 제어: [[Features/Resource-Recovery/document|기본 재화 회복과 소비]]
 - `UMVPlayerProgression`: 성장 변경·기본 스탯 준비 알림을 구독해 현재 캐릭터에 전체 성장 보너스 적용, 종료 시 연결 해제
 - 확정 투자·재화 원본은 `UMVWorldStateSubsystem`, 계산·확정은 `UMVProgressionSubsystem` 책임: [[Features/Progression/Level-Up/document|레벨업 프로토타입]]
 
