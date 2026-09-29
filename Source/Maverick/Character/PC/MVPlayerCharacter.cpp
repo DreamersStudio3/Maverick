@@ -8,7 +8,6 @@
 #include "Components/MVActionComponent.h"
 #include "Components/MVCombatComponent.h"
 #include "Components/MVHitReactionComponent.h"
-#include "Components/MVCombatStateComponent.h"
 #include "Components/MVStatComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "LockOnTargetComponent.h"
@@ -20,7 +19,7 @@
 
 namespace
 {
-constexpr float MVPlayerOutOfCombatHPRecoveryRatioPerSecond = 0.02f;
+constexpr float MVPlayerHPRecoveryRatioPerSecond = 0.02f;
 
 FString MVPlayerCharacterIndexCodeToTableToken(const FGameplayTag CharacterIndexCode)
 {
@@ -151,16 +150,13 @@ void AMVPlayerCharacter::UpdateRecoverableStats(const float DeltaTime)
 
 	Super::UpdateRecoverableStats(DeltaTime);
 
-	if (CombatStateComponent
-		&& CombatStateComponent->IsOutOfCombat()
-		&& StatComponent->CurrentHP < StatComponent->MaxHP)
+	if (bEnableHPAutoRegen
+	&& StatComponent->CurrentHP < StatComponent->MaxHP)
 	{
-		const float HPRecoveryAmount =
+		StatComponent->RecoverHP(
 			StatComponent->MaxHP
-			* MVPlayerOutOfCombatHPRecoveryRatioPerSecond
-			* DeltaTime;
-
-		StatComponent->RecoverHP(HPRecoveryAmount);
+			* MVPlayerHPRecoveryRatioPerSecond
+			* DeltaTime);
 	}
 
 	const float ResumeThreshold = StatComponent->MaxStamina * ResolveSprintResumeStaminaRatio();
