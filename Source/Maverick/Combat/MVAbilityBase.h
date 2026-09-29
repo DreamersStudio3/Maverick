@@ -77,6 +77,9 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Ability Utility")
 	void ActiveCameraShake(AMVCharacterBase* Owner, TSubclassOf<UCameraShakeBase> Shake, float Scale = 1.0f);
+	
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Attack")
+	void TryVamp(float FinalDamage);
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings", meta = (ExposeOnSpawn = "true"))

@@ -7,6 +7,7 @@
 #include "Components/MVStatComponent.h"
 #include "Components/MVCombatComponent.h"
 #include "Components/MVStatusEffectComponent.h"
+#include "MVAbilityBase.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogMVAbilityBase, Log, All);
 
@@ -203,6 +204,29 @@ void UMVAbilityBase::ActiveCameraShake(AMVCharacterBase* Owner, TSubclassOf<UCam
 	}
 
 	PlayerController->ClientStartCameraShake(Shake, Scale, ECameraShakePlaySpace::World);
+}
+
+void UMVAbilityBase::TryVamp(float FinalDamage)
+{
+	AMVCharacterBase* OwnerCharacter = GetOwnerCharacter();
+
+	if (OwnerCharacter == nullptr)
+	{
+		return;
+	}
+	
+	UMVStatComponent* StatComponent = OwnerCharacter->FindComponentByClass<UMVStatComponent>();
+	if (StatComponent == nullptr)
+	{
+		return;
+	}
+
+	float VampAmount = FinalDamage * StatComponent->NormalVamp;
+	if (VampAmount <= 0)
+	{
+		return;
+	}
+	StatComponent->RecoverHP(VampAmount);
 }
 
 bool UMVAbilityBase::TryConsumeAbilityCost()

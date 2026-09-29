@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "Subsystems/WorldSubsystem.h"
 #include "Struct/MVHitTypes.h"
+#include "../Public/Enum/MVCombatActionTypes.h"
 #include "MVHitResolverSubsystem.generated.h"
 
 class UMVStatComponent;
@@ -44,11 +45,10 @@ private:
 	bool BuildResolvedHitData(const FMVHitResolveRequest& Request, FMVResolvedHitData& OutHitData) const;
 	FMVWeaponHitSnapshot ResolveWeaponHitSnapshot(const AMVCharacterBase& Attacker) const;
 	static float ResolveNonNegativeStat(float Value);
-	static FVector ResolveHitDirection(
-		const FMVHitResolveRequest& Request,
-		const AMVCharacterBase& Attacker,
-		const AMVCharacterBase& Victim);
-
+	static FVector ResolveHitDirection(const FMVHitResolveRequest& Request, const AMVCharacterBase& Attacker, const AMVCharacterBase& Victim);
+	
 	bool BuildDirectDamageHitData(const FMVDirectDamageRequest& Request, FMVResolvedHitData& OutHitData) const;
 	bool DispatchResolvedHit(const FMVResolvedHitData& HitData);
+	// 방어력, 치명타를 고려하여 최종 데미지 계산
+	float ResolveFinalDamage(const EMVAttackTypes AttackTypes, const UMVStatComponent* AttackerStat, const UMVStatComponent* VictimStat, float RawDamage) const;
 };

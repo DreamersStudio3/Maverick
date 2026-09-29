@@ -5,6 +5,7 @@
 #include "Components/MVStatComponent.h"
 #include "Components/MVWeaponComponent.h"
 #include "Engine/World.h"
+#include "MVHitResolverSubsystem.h"
 
 namespace
 {
@@ -191,9 +192,8 @@ bool UMVHitResolverSubsystem::BuildResolvedHitData(
 	const float WeaponAttackPower = ResolveNonNegativeStat(WeaponSnapshot.AttackPower);
 	const float DamageMultiplier = ResolveNonNegativeStat(Request.DamageMultiplier);
 	const float GroggyDamageMultiplier = ResolveNonNegativeStat(Request.GroggyDamageMultiplier);
-	const float VictimDefence = ResolveNonNegativeStat(VictimStat->Defence);
 	const float RawDamage = WeaponAttackPower * DamageMultiplier;
-	const float FinalDamage = FMath::Max(0.0f, RawDamage - VictimDefence);
+	const float FinalDamage = ResolveFinalDamage(Request.AttackTypes,AttackerStat, VictimStat, RawDamage);
 	const float GroggyDamage = WeaponAttackPower * GroggyDamageMultiplier;
 
 	OutHitData.Attacker = Attacker;
@@ -204,7 +204,6 @@ bool UMVHitResolverSubsystem::BuildResolvedHitData(
 	OutHitData.CharacterAttackPower = BaseAttackPower;
 	OutHitData.WeaponSnapshot = WeaponSnapshot;
 	OutHitData.WeaponAttackPower = WeaponAttackPower;
-	OutHitData.VictimDefence = VictimDefence;
 	OutHitData.DamageMultiplier = DamageMultiplier;
 	OutHitData.GroggyDamageMultiplier = GroggyDamageMultiplier;
 	OutHitData.FinalDamage = FinalDamage;
@@ -219,6 +218,7 @@ bool UMVHitResolverSubsystem::BuildResolvedHitData(
 	OutHitData.PoiseDamage = ResolveNonNegativeStat(Request.PoiseDamage);
 	OutHitData.PoiseBreak = VictimStat->PredictPoiseBreak(Request.PoiseDamage);
 
+	// Todo: Groggy 해결하면서 HitReactionComponent 부분을 삭제, 수정해야함
 	const UMVHitReactionComponent* HitReactionComponent = Victim->FindComponentByClass<UMVHitReactionComponent>();
 	const bool bCanTriggerGroggy = HitReactionComponent && HitReactionComponent->CanTriggerGroggy(OutHitData);
 	if (bCanTriggerGroggy)
@@ -323,7 +323,6 @@ bool UMVHitResolverSubsystem::BuildDirectDamageHitData(const FMVDirectDamageRequ
 	const float BaseAttackPower = AttackerAttackPower > 0.0f ? AttackerAttackPower : ResolveNonNegativeStat(FallbackAttackPower);
 
 	OutHitData.CharacterAttackPower = BaseAttackPower;
-	OutHitData.VictimDefence = ResolveNonNegativeStat(VictimStatComponent->Defence);
 
 	OutHitData.DamageMultiplier = 1.0f;
 	OutHitData.GroggyDamageMultiplier = 1.0f;
@@ -356,4 +355,44 @@ bool UMVHitResolverSubsystem::DispatchResolvedHit(const FMVResolvedHitData& HitD
 	Victim->OnHitResolved(HitData);
 
 	return true;
+}
+
+float UMVHitResolverSubsystem::ResolveFinalDamage(const EMVAttackTypes AttackTypes, const UMVStatComponent* AttackerStat, const UMVStatComponent* VictimStat, float RawDamage) const
+{
+	float VictimDefence = 0.0f;
+
+	// 일반 공격인 경우 기본 방어력 고려
+	if (AttackTypes == EMVAttackTypes::NormalAttack)
+	{
+		VictimDefence = VictimStat->NormalDefence;
+	}
+	// 스킬 공격인 경우 스킬 방어력 고려
+	else if (AttackTypes == EMVAttackTypes::SkillAttack)
+	{
+		VictimDefence = VictimStat->SkillDefence;
+	}
+
+	// 방어력에 기반하여 공격력 계산(소수점 한자리)
+	float DamageAmount = FMath::Max(RawDamage - VictimDefence * 0.5f, 0);
+	DamageAmount = FMath::TruncToFloat(DamageAmount * 10.0f) / 10.0f;
+
+	float CriticalDamagePercent = AttackerStat->CriticalPercent;
+	// 치명타율이 0이면 이전 계산한 데미지 리턴
+	if (CriticalDamagePercent <= 0)
+	{
+		return DamageAmount;
+	}
+
+	float RandomSeed = FMath::FRand();
+	// 랜덤 Seed가 치명타율보다 크면 이전 계산한 데미지 리턴
+	if (RandomSeed > CriticalDamagePercent)
+	{
+		return DamageAmount;
+	}
+
+	// 치명타인 경우 이전 계산한 데미지에 치명타데미지(배율)을 곱해서 리턴 -> 배율은 1이 원래 데미지
+	float FinalDamage = DamageAmount * (AttackerStat->CriticalDamage);
+
+
+	return FinalDamage;
 }

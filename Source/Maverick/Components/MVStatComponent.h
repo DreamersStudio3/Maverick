@@ -236,7 +236,10 @@ public:
 	bool HasReachedSprintSpeedRatio(float RequiredRatio) const;
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Defence")
-	void SetDefence(float InDefence);
+	void SetNormalDefence(float NewNormalDefence);
+	
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Defence")
+	void SetSkillDefence(float NewSkillDefence);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Groggy")
 	void SetMaxGroggy(float InMaxGroggy);
@@ -328,11 +331,25 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|MP")
 	float MPRecoveryPerSecond = 0.1f;
 
+	// 캐릭터 기본 공격력, 일반공격은 해당 수치를, 스킬 공격은 스킬 배율을 곱한 수치를 최종 대미지로 사용
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Attack")
 	float AttackPower = 10.0f;
 
+	// 공격 속도, 1.0은 기본 속도, 2.0은 2배 속도, 0.5는 절반 속도
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Attack")
 	float AttackSpeed = 1.0f;
+	
+	// 치명타 확률, 0.0~1.0 사이의 값으로 설정
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Attack")
+	float CriticalPercent = 0.0f;
+	
+	// 치명타 데미지, 1.0은 기본 데미지, 2.0은 2배 데미지, 0.5는 절반 데미지
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Attack")
+	float CriticalDamage = 1.0f;
+	
+	// 기본공격의 흡혈 비율, 1.0은 100% 흡혈, 0.5는 50% 흡혈, 0.0은 흡혈 없음
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Attack")
+	float NormalVamp = 1.0f;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|MoveSpeed")
 	float WalkSpeed = 200.0f;
@@ -342,9 +359,6 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|MoveSpeed")
 	float SprintSpeed = 750.0f;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Defence")
-	float Defence = 1.0f;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Groggy")
 	float MaxGroggy = 100.0f;
@@ -360,6 +374,14 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Damage")
 	float AccumulatedRecentDamage = 0.0f;
+
+	// NormalDefence는 공격자가 입힌 평타 대미지를 얼마나 감소시키는지에 대한 수치
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Defence")
+	float NormalDefence = 10.0f;
+	
+	// SkillDefence는 공격자가 입힌 스킬 대미지를 얼마나 감소시키는지에 대한 수치
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Defence")
+	float SkillDefence = 5.0f;
 	
 	// Poise는 피격 시 경직을 얼마나 잘 버티는지에 대한 수치로, 공격자에게 밀려나거나 넘어지는 피격 반응을 결정하는 데 사용된다.
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Poise")
