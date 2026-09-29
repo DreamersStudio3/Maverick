@@ -59,6 +59,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_FiveParams(
 	float, CurrentHP,
 	const FMVResolvedHitData&, HitData);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMVOnDamageAccumulationReset);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnBaseStatsReady, int32, Revision);
 
 /**
  * 캐릭터 스탯 값과 회복 정책을 관리하는 컴포넌트.
@@ -73,8 +74,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMVOnDamageAccumulationReset);
  *
  * 라이프사이클:
  *   1) BeginPlay -> 설정된 스탯 테이블 행을 읽어 현재 스탯 값을 초기화한다.
- *   2) ConsumeStamina/ConsumeMP -> 값을 감소시킨다.
- *   3) TickRecoverableStats -> 외부 이동/액션 정책이 회복 가능한 프레임에 호출해 스태미너와 MP를 회복한다.
+ *   2) ConsumeHP/ConsumeStamina/ConsumeMP -> 값을 감소시킨다.
+ *   3) TickRecoverableStats -> 매 프레임 MP/스태미나 회복과 Exhaustion 회복 차단 시간 갱신.
  */
 
 UCLASS(ClassGroup = (Maverick), meta = (BlueprintSpawnableComponent))
@@ -121,6 +122,9 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|Stat|Event")
 	FMVOnDeathStarted OnDeathStarted;
 
+	UPROPERTY(BlueprintAssignable, Category = "Maverick|Stat|Event")
+	FMVOnBaseStatsReady OnBaseStatsReady;
+	
 protected:
 	virtual void BeginPlay() override;
 
@@ -137,6 +141,31 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Table")
 	bool LoadStatsFromTable();
 
+	UFUNCTION(BlueprintPure, Category = "Maverick|Stat|Progression")
+	bool IsBaseStatsReady() const { return bBaseStatsReady; }
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|Stat|Progression")
+	int32 GetBaseStatsRevision() const { return BaseStatsRevision; }
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|Stat|Progression")
+	float GetBaseMaxHP() const { return BaseMaxHP; }
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|Stat|Progression")
+	float GetBaseMaxStamina() const { return BaseMaxStamina; }
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|Stat|Progression")
+	float GetBaseMaxMP() const { return BaseMaxMP; }
+	
+	bool ReplaceProgressionStatBonuses(const TMap<FGameplayTag, float>& InBonuses);
+
+	bool TryGetProgressionStatValues(
+		const FGameplayTag& StatId,
+		float& OutBaseValue,
+		float& OutBonus,
+		float& OutEffectiveValue) const;
+
+	int32 GetStatCalculationRevision() const { return StatCalculationRevision; }
+	
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Damage")
 	void HandleDamaged(const FMVResolvedHitData& HitData);
 
@@ -155,7 +184,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Groggy")
 	void ResetGroggyState();
 
-	void TickRecoverableStats(float DeltaTime);
+	void TickRecoverableStats(float DeltaTime, bool bAllowStaminaRecovery);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Recovery")
 	void BeginRecoverableStatRecoveryPause();
@@ -175,6 +204,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|HP")
 	void RecoverHP(float Amount);
 
+	UFUNCTION(BlueprintPure, Category = "Maverick|Stat|HP")
+	bool CanConsumeHP(float Amount) const;
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|HP")
+	bool ConsumeHP(float Amount);
+
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Stamina")
 	void SetMaxStamina(float InMaxStamina);
 
@@ -183,6 +218,12 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Stamina")
 	void SetStaminaRecoveryPerSecond(float InStaminaRecoveryPerSecond);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Stamina")
+	void SetStaminaRecoveryDelay(float InStaminaRecoveryDelay);
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|Stat|Stamina")
+	bool IsStaminaExhausted() const;
 
 	UFUNCTION(BlueprintPure, Category = "Maverick|Stat|Stamina")
 	bool HasStamina(float RequiredAmount) const;
@@ -282,11 +323,14 @@ private:
 	void TickRecentDamageCooldown(float DeltaTime);
 	void TickGroggyRecovery(float DeltaTime);
 	void TickRecoverableResourceRecovery(float DeltaTime);
+	void BeginStaminaExhaustion();
+	void TickStaminaExhaustion(float DeltaTime);
 	void BroadcastDeathStarted(EMVDeathReason Reason);
 	void RestartRecentDamageCooldown();
 	void ResetDamageAccumulation();
 	bool TryStartGroggy();
 	void BroadcastGroggyEnded();
+	void ApplyProgressionStatBonuses();
 
 	// 추가 강인도 설정(무기, 행동 등)
 	void SetAdditionalPoise(float WeaponPoise = 0, float Multiplier = 0);
@@ -317,7 +361,10 @@ public:
 	float CurrentStamina = 100.0f;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Stamina")
-	float StaminaRecoveryPerSecond = 35.0f;
+	float StaminaRecoveryPerSecond = 25.0f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Stamina")
+	float StaminaRecoveryDelay = 1.5f;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|MP")
 	float MaxMP = 100.0f;
@@ -326,7 +373,7 @@ public:
 	float CurrentMP = 100.0f;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|MP")
-	float MPRecoveryPerSecond = 0.1f;
+	float MPRecoveryPerSecond = 5.0f;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Attack")
 	float AttackPower = 10.0f;
@@ -384,6 +431,7 @@ public:
 private:
 	float RecentDamageCooldownRemaining = 0.0f;
 	int32 RecoverableStatRecoveryPauseCount = 0;
+	float StaminaExhaustionRemaining = 0.0f;
 	FMVResolvedHitData PendingDeathHitData;
 	bool bHasPendingDeathHitData = false;
 	bool bHasRecentDamageAccumulation = false;
@@ -392,4 +440,13 @@ private:
 
 	// Poise
 	FTimerHandle PoiseRecoveryTimerHandle;
+	
+	TMap<FGameplayTag, float> ProgressionStatBonuses;
+	int32 StatCalculationRevision = 0;
+	
+	float BaseMaxHP = 100.0f;
+	float BaseMaxStamina = 100.0f;
+	float BaseMaxMP = 100.0f;
+	int32 BaseStatsRevision = 0;
+	bool bBaseStatsReady = false;
 };

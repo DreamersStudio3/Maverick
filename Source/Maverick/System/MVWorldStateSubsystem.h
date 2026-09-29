@@ -7,6 +7,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMVOnWorldStateChanged);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnWorldStateSlotEvent, FString, SlotName);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnPlayerProgressionChanged, const FMVPlayerProgressionSaveData&, PlayerProgression);
 
 /**
  * 저장되어야 하는 전체 게임 상태를 소유하는 GameInstance 서브시스템.
@@ -60,6 +61,13 @@ public:
 
 	const FMVWorldSaveData& GetSaveData() const { return CurrentSaveData; }
 
+	const FMVPlayerProgressionSaveData& GetPlayerProgression() const { return CurrentSaveData.PlayerProgression; }
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|WorldState|Progression")
+	FMVPlayerProgressionSaveData GetPlayerProgressionCopy() const { return CurrentSaveData.PlayerProgression; }
+
+	bool TryReplacePlayerProgression(int32 ExpectedRevision, const FMVPlayerProgressionSaveData& NewProgression);
+	
 	UFUNCTION(BlueprintPure, Category = "Maverick|WorldState|Save")
 	FMVWorldSaveData GetSaveDataCopy() const { return CurrentSaveData; }
 
@@ -117,6 +125,9 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|WorldState|Event")
 	FMVOnWorldStateSlotEvent OnWorldStateLoaded;
 
+	UPROPERTY(BlueprintAssignable, Category = "Maverick|WorldState|Event")
+	FMVOnPlayerProgressionChanged OnPlayerProgressionChanged;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|WorldState|Save")
 	FString DefaultSaveSlotName = TEXT("MaverickDefault");
 
@@ -130,6 +141,7 @@ public:
 	int32 ActiveUserIndex = 0;
 
 private:
+	void UpgradeSaveData();
 	void MarkSaveDataDirty();
 	FString ResolveSlotName(const FString& SlotName) const;
 	FName ResolveCurrentMapName() const;

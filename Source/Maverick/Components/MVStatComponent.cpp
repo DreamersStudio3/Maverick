@@ -5,6 +5,7 @@
 #include "Tags/MVGameplayTags.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "System/Progression/MVProgressionStatBinding.h"
 
 namespace
 {
@@ -86,12 +87,16 @@ bool UMVStatComponent::LoadStatsFromTable()
 		return false;
 	}
 
-	SetMaxHP(StatRow->MaxHP);
+	BaseMaxHP = MVStatClampMaxHP(StatRow->MaxHP);
+	BaseMaxStamina = MVStatNonNegative(StatRow->MaxStamina);
+	BaseMaxMP = MVStatNonNegative(StatRow->MaxMP);
+
+	ApplyProgressionStatBonuses();
+
 	SetCurrentHP(StatRow->CurrentHP);
-	SetMaxStamina(StatRow->MaxStamina);
 	SetCurrentStamina(StatRow->CurrentStamina);
 	SetStaminaRecoveryPerSecond(StatRow->StaminaRecoveryPerSecond);
-	SetMaxMP(StatRow->MaxMP);
+	SetStaminaRecoveryDelay(StatRow->StaminaRecoveryDelay);
 	SetCurrentMP(StatRow->CurrentMP);
 	SetMPRecoveryPerSecond(StatRow->MPRecoveryPerSecond);
 	SetAttackPower(StatRow->AttackPower);
@@ -106,6 +111,74 @@ bool UMVStatComponent::LoadStatsFromTable()
 	SetRecentDamageResetDelay(StatRow->GetRecentDamageResetDelay());
 	SetInitialPoise(StatRow->InitialCharacterPoise);
 
+	bBaseStatsReady = true;
+	++BaseStatsRevision;
+	++StatCalculationRevision;
+	OnBaseStatsReady.Broadcast(BaseStatsRevision);
+
+	return true;
+}
+
+bool UMVStatComponent::ReplaceProgressionStatBonuses(const TMap<FGameplayTag, float>& InBonuses)
+{
+	for (const TPair<FGameplayTag, float>& Pair : InBonuses)
+	{
+		if (!Pair.Key.IsValid()
+			|| !FMVProgressionStatBinding::IsSupportedStat(Pair.Key)
+			|| !FMath::IsFinite(Pair.Value))
+		{
+			return false;
+		}
+	}
+
+	bool bMatchesCurrentBonuses = ProgressionStatBonuses.Num() == InBonuses.Num();
+
+	if (bMatchesCurrentBonuses)
+	{
+		for (const TPair<FGameplayTag, float>& Pair : InBonuses)
+		{
+			const float* CurrentBonus = ProgressionStatBonuses.Find(Pair.Key);
+
+			if (!CurrentBonus || !FMath::IsNearlyEqual(*CurrentBonus, Pair.Value))
+			{
+				bMatchesCurrentBonuses = false;
+				break;
+			}
+		}
+	}
+
+	if (bMatchesCurrentBonuses)
+	{
+		return true;
+	}
+
+	ProgressionStatBonuses = InBonuses;
+	ApplyProgressionStatBonuses();
+	++StatCalculationRevision;
+
+	return true;
+}
+
+bool UMVStatComponent::TryGetProgressionStatValues(const FGameplayTag& StatId, float& OutBaseValue, float& OutBonus,
+	float& OutEffectiveValue) const
+{
+	OutBaseValue = 0.0f;
+	OutBonus = 0.0f;
+	OutEffectiveValue = 0.0f;
+
+	if (!FMVProgressionStatBinding::TryGetBaseValue(
+			*this,
+			StatId,
+			OutBaseValue)
+		|| !FMVProgressionStatBinding::TryGetEffectiveValue(
+			*this,
+			StatId,
+			OutEffectiveValue))
+	{
+		return false;
+	}
+
+	OutBonus = ProgressionStatBonuses.FindRef(StatId);
 	return true;
 }
 
@@ -191,19 +264,23 @@ bool UMVStatComponent::WouldDieFromHit(const FMVResolvedHitData& HitData) const
 	return HPDamage > 0.0f && CurrentHP > 0.0f && CurrentHP - HPDamage <= 0.0f;
 }
 
-void UMVStatComponent::TickRecoverableStats(float DeltaTime)
+void UMVStatComponent::TickRecoverableStats(float DeltaTime, bool bAllowStaminaRecovery)
 {
 	if (DeltaTime <= 0.0f)
 	{
 		return;
 	}
 
-	// MP recovers regardless of whether an action pauses stamina recovery.
+	// MPëŠ” ì „íˆ¬ ë° í–‰ë™ ìƒíƒœì™€ ë¬´ê´€í•˜ê²Œ ìƒì‹œ íšŒë³µ
 	RecoverMP(MPRecoveryPerSecond * DeltaTime);
+
 	TickRecentDamageCooldown(DeltaTime);
 	TickGroggyRecovery(DeltaTime);
+	TickStaminaExhaustion(DeltaTime);
 
-	if (!IsRecoverableStatRecoveryPaused())
+	if (bAllowStaminaRecovery
+		&& !IsStaminaExhausted()
+		&& !IsRecoverableStatRecoveryPaused())
 	{
 		TickRecoverableResourceRecovery(DeltaTime);
 	}
@@ -250,6 +327,21 @@ void UMVStatComponent::TickGroggyRecovery(float DeltaTime)
 void UMVStatComponent::TickRecoverableResourceRecovery(float DeltaTime)
 {
 	RecoverStamina(StaminaRecoveryPerSecond * DeltaTime);
+}
+
+void UMVStatComponent::BeginStaminaExhaustion()
+{
+	StaminaExhaustionRemaining = FMath::Max(StaminaExhaustionRemaining, StaminaRecoveryDelay);
+}
+
+void UMVStatComponent::TickStaminaExhaustion(float DeltaTime)
+{
+	if (StaminaExhaustionRemaining <= 0.0f)
+	{
+		return;
+	}
+
+	StaminaExhaustionRemaining = FMath::Max(0.0f, StaminaExhaustionRemaining - DeltaTime);
 }
 
 void UMVStatComponent::BeginRecoverableStatRecoveryPause()
@@ -337,6 +429,34 @@ void UMVStatComponent::RecoverHP(const float Amount)
 	SetCurrentHP(CurrentHP + RecoveryAmount);
 }
 
+bool UMVStatComponent::CanConsumeHP(float Amount) const
+{
+	const float NormalizedAmount = MVStatNonNegative(Amount);
+	if (NormalizedAmount <= 0.0f)
+	{
+		return true;
+	}
+
+	return !bIsDead && CurrentHP - NormalizedAmount >= 1.0f;
+}
+
+bool UMVStatComponent::ConsumeHP(float Amount)
+{
+	const float NormalizedAmount = MVStatNonNegative(Amount);
+	if (NormalizedAmount <= 0.0f)
+	{
+		return true;
+	}
+
+	if (!CanConsumeHP(NormalizedAmount))
+	{
+		return false;
+	}
+
+	SetCurrentHP(FMath::Max(1.0f, CurrentHP - NormalizedAmount));
+	return true;
+}
+
 void UMVStatComponent::SetMaxStamina(float InMaxStamina)
 {
 	const float PreviousMaxStamina = MaxStamina;
@@ -355,6 +475,12 @@ void UMVStatComponent::SetCurrentStamina(float InCurrentStamina)
 	const float PreviousCurrentStamina = CurrentStamina;
 	CurrentStamina = MVStatClampCurrent(InCurrentStamina, MaxStamina);
 
+	// í•„ë“œ ì „í™˜, ë””ë²„ê·¸ ë¦¬ì…‹ ë“± ê°•ì œ ì–‘ìˆ˜ ì„¤ì • ì‹œ Exhaustion í•´ì œ
+	if (CurrentStamina > 0.0f)
+	{
+		StaminaExhaustionRemaining = 0.0f;
+	}
+
 	if (!FMath::IsNearlyEqual(PreviousCurrentStamina, CurrentStamina))
 	{
 		OnStaminaChanged.Broadcast(CurrentStamina, MaxStamina);
@@ -364,6 +490,16 @@ void UMVStatComponent::SetCurrentStamina(float InCurrentStamina)
 void UMVStatComponent::SetStaminaRecoveryPerSecond(float InStaminaRecoveryPerSecond)
 {
 	StaminaRecoveryPerSecond = MVStatNonNegative(InStaminaRecoveryPerSecond);
+}
+
+void UMVStatComponent::SetStaminaRecoveryDelay(float InStaminaRecoveryDelay)
+{
+	StaminaRecoveryDelay = MVStatNonNegative(InStaminaRecoveryDelay);
+}
+
+bool UMVStatComponent::IsStaminaExhausted() const
+{
+	return StaminaExhaustionRemaining > 0.0f;
 }
 
 bool UMVStatComponent::HasStamina(float RequiredAmount) const
@@ -388,8 +524,16 @@ bool UMVStatComponent::ConsumeStamina(float Amount)
 		return true;
 	}
 
+	const float PreviousStamina = CurrentStamina;
 	const bool bHadEnoughStamina = CurrentStamina >= NormalizedAmount;
+
 	SetCurrentStamina(CurrentStamina - NormalizedAmount);
+
+	if (PreviousStamina > 0.0f && CurrentStamina <= 0.0f)
+	{
+		BeginStaminaExhaustion();
+	}
+
 	return bHadEnoughStamina;
 }
 
@@ -406,14 +550,22 @@ bool UMVStatComponent::ConsumeStaminaAllowPartial(float Amount)
 		return false;
 	}
 
+	const float PreviousStamina = CurrentStamina;
+
 	SetCurrentStamina(CurrentStamina - FMath::Min(CurrentStamina, NormalizedAmount));
+
+	if (PreviousStamina > 0.0f && CurrentStamina <= 0.0f)
+	{
+		BeginStaminaExhaustion();
+	}
+
 	return true;
 }
 
 void UMVStatComponent::RecoverStamina(float Amount)
 {
 	const float NormalizedAmount = MVStatNonNegative(Amount);
-	if (NormalizedAmount <= 0.0f)
+	if (NormalizedAmount <= 0.0f || IsStaminaExhausted())
 	{
 		return;
 	}
@@ -607,15 +759,15 @@ void UMVStatComponent::PoiseActionEnd()
 
 void UMVStatComponent::UpdatePoise(float PoiseDamageAmount)
 {
-	// ÇÇ°İ µîÀ¸·Î ÀÎÇØ Æ÷ÀÌÁî°¡ °¨¼ÒÇÏ´Â °æ¿ì, ConstantPoise¸¦ °¨¼Ò½ÃÅµ´Ï´Ù.
+	// í”¼ê²© ë“±ìœ¼ë¡œ ì¸í•´ í¬ì´ì¦ˆê°€ ê°ì†Œí•˜ëŠ” ê²½ìš°, ConstantPoiseë¥¼ ê°ì†Œì‹œí‚µë‹ˆë‹¤.
 
-	// °­ÀÎµµ °¨¼Ò·®ÀÌ 0 ÀÌÇÏÀÎ °æ¿ì, ¾Æ¹« ÀÛ¾÷µµ ¼öÇàÇÏÁö ¾Ê½À´Ï´Ù.
+	// ê°•ì¸ë„ ê°ì†ŒëŸ‰ì´ 0 ì´í•˜ì¸ ê²½ìš°, ì•„ë¬´ ì‘ì—…ë„ ìˆ˜í–‰í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.
 	if(PoiseDamageAmount <= 0.0f)
 	{
 		return;
 	}
 
-	// Poise Reset Timer »õ·Î ½ÃÀÛ -> ÇÇ°İ µîÀ¸·Î °­ÀÎµµ º¯È­°¡ »ı±â¸é ÇØ´ç ½Ã°£ ±âÁØÀ¸·Î ÀÏÁ¤ ½Ã°£ ÀÌÈÄ °­ÀÎµµ ÃÊ±âÈ­
+	// Poise Reset Timer ìƒˆë¡œ ì‹œì‘ -> í”¼ê²© ë“±ìœ¼ë¡œ ê°•ì¸ë„ ë³€í™”ê°€ ìƒê¸°ë©´ í•´ë‹¹ ì‹œê°„ ê¸°ì¤€ìœ¼ë¡œ ì¼ì • ì‹œê°„ ì´í›„ ê°•ì¸ë„ ì´ˆê¸°í™”
 	UWorld* World = GetWorld();
 	if (World)
 	{
@@ -629,8 +781,8 @@ void UMVStatComponent::UpdatePoise(float PoiseDamageAmount)
 	ConstantPoise = ConstantPoise - PoiseDamageAmount;
 	if(ConstantPoise + AdditionalPoise <= 0.0f)
 	{
-		// Æ÷ÀÌÁî°¡ 0 ÀÌÇÏ·Î ¶³¾îÁø °æ¿ì, °­ÀÎµµ¸¦ ÃÊ±âÈ­, HitReactionÀ» Play
-		// HitReaction Play¸¦ À§ÇÑ flag´Â HitResolverSubsystem¿¡¼­ Ã³¸®ÇÏµµ·Ï ÇÔ
+		// í¬ì´ì¦ˆê°€ 0 ì´í•˜ë¡œ ë–¨ì–´ì§„ ê²½ìš°, ê°•ì¸ë„ë¥¼ ì´ˆê¸°í™”, HitReactionì„ Play
+		// HitReaction Playë¥¼ ìœ„í•œ flagëŠ” HitResolverSubsystemì—ì„œ ì²˜ë¦¬í•˜ë„ë¡ í•¨
 		ResetPoise();
 	}
 
@@ -730,6 +882,19 @@ void UMVStatComponent::BroadcastGroggyEnded()
 	bIsGroggy = false;
 	RecentDamageCooldownRemaining = 0.0f;
 	OnGroggyEnded.Broadcast();
+}
+
+void UMVStatComponent::ApplyProgressionStatBonuses()
+{
+	for (const FGameplayTag& StatId : FMVProgressionStatBinding::GetSupportedStatIds())
+	{
+		const float Bonus = ProgressionStatBonuses.FindRef(StatId);
+
+		FMVProgressionStatBinding::TryApplyBonus(
+			*this,
+			StatId,
+			Bonus);
+	}
 }
 
 void UMVStatComponent::SetAdditionalPoise(float WeaponPoise, float Multiplier)

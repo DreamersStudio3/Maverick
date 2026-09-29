@@ -944,6 +944,16 @@ void UMVCombatComponent::HandleHitResolved(const FMVResolvedHitData& HitData)
 
 	AMVEnemy* HitEnemy = Cast<AMVEnemy>(HitData.Victim.Get());
 
+	if (OwnerCharacter->IsPlayerControlled()
+		&& IsValid(HitEnemy)
+		&& HitData.FinalDamage > 0.0f
+		&& StatComponent)
+	{
+		const float MPRecoveryAmount = FMath::Max(0.0f, CurrentAbilityInstance->AbilityData.MpRecoveryPerHit);
+
+		StatComponent->RecoverMP(MPRecoveryAmount);
+	}
+
 	if (bUseRSkillGauge && IsValid(HitEnemy) && !IsCurrentAbilityRSkill())
 	{
 		AddRSkillGauge(CurrentAbilityInstance->AbilityData.RSkillGaugeGainMultiplier);
@@ -1768,6 +1778,11 @@ bool UMVCombatComponent::CanConsumeActionCost(const FMVSkillDataTableColumn* Ski
 	}
 
 	if (!StatComponent)
+	{
+		return false;
+	}
+
+	if (!StatComponent->CanConsumeHP(SkillData->HpCost))
 	{
 		return false;
 	}

@@ -24,6 +24,7 @@ class UCurveFloat;
 class UMotionWarpingComponent;
 class UMVStatusEffectComponent;
 class UMVHitReaction;
+class UMVCombatStateComponent;
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FMVOnMovementInputReceived, const FVector&);
 
@@ -40,6 +41,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnChangedCharacterIsLying, bool, 
  *   - CharacterIndexCode를 액션/스탯 컴포넌트에 주입하고 CharacterMovement 기준 locomotion 값과 gait,
  *     장비 스타일을 갱신한다.
  *   - CombatComponent를 통해 공통 캐릭터 전투 액션 실행 경로를 제공한다.
+ *   - CombatStateComponent를 통해 전투 활동 시점과 비전투 전환 가능 상태를 관리한다.
  *   - WeaponComponent를 통해 맨손 포함 현재 장착 무기 상태를 공통 캐릭터 런타임에 연결한다.
  *   - HitResolver가 전달한 결과의 CharacterIndexCode를 확인한 뒤 OnDamaged를 브로드캐스트한다.
  *   - ACharacter의 BeginPlay, Tick, AddMovementInput 진입점에서 초기 데이터 로드,
@@ -124,6 +126,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Character|Damage")
 	void SetCharacterMovementRotationActive(bool bMovementActive, bool bRotationActive);
 
+	UFUNCTION(BlueprintPure, Category = "Maverick|Character|State")
+	bool IsCharacterMovementActive() const { return bIsMovementActive; }
+
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Character|State")
 	void SetCharacterIsLying(bool bNewIsLying);
 	
@@ -143,6 +148,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UMVCombatComponent> CombatComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<UMVCombatStateComponent> CombatStateComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UMVDeathComponent> DeathComponent;
@@ -166,7 +174,7 @@ private:
 	void ApplyCharacterIndexCodeToComponents();
 	void UpdateCharacterValue();
 	void UpdateRotation(bool bIsActive = true);
-	void UpdateMovement(float DeltaTime, bool bIsActive = true);
+	void UpdateMovement(bool bIsActive = true);
 	void UpdateLocomotionDirection();
 	void CacheControllerSpaceMovementInput(const FVector& WorldDirection, float ScaleValue);
 	FVector2D ResolveControllerSpaceMovementInput(const FVector& WorldDirection, float ScaleValue) const;

@@ -4,6 +4,8 @@
 
 ## 남겨 둔 결과
 
+- **레벨업 프로토타입:** `8001a813`에 HP·Stamina·MP 투자·재화 차감·실제 최대값·재화 HUD·입력 복구·테스트 저장 구성 반영, 사용자 Windows UE 5.8.1 빌드·자동 검사 7개·PIE 확인 범위에서 종료: [레벨업 프로토타입](../wiki/Features/Progression/Level-Up/document.md)
+
 - **입력과 액션:** GameplayTag 입력을 `UMVInputManagerComponent`에서 버퍼링하고 Dodge·Combat 같은 도메인 처리기로 전달하는 구조, recovery window 전환, hold/instant 입력, 오래된 montage 종료 이벤트 방지가 정리됐다. 현재 흐름은 [Maverick Architecture](../wiki/Architecture/document.md)의 입력·Action 절을 따른다.
 - **전투와 피격:** 공격 Ability, 무기 배율 기반 hit resolve, hit reaction·groggy·airborne·recovery 정책과 관련 회귀 수정 반영. 현재 구현 경계: [Maverick Architecture](../wiki/Architecture/document.md), [Maverick 전투 시스템](../wiki/Features/Combat/Combat-System/document.md)
 - **전투 문서:** 현재 공격 흐름, 공격 종류, Q·R 스킬 구조: [Maverick 전투 시스템](../wiki/Features/Combat/Combat-System/document.md)
@@ -14,6 +16,8 @@
 - **문서 운영:** 사람용 내부 위키는 `docs/wiki/`, 에이전트용 Graphify 출력은 로컬 `graphify-out/` 캐시로 분리했다. 에이전트의 근거 기반 초안, 개발자의 Obsidian 편집 완료 전달, 별도 위키 커밋, PR의 커밋 고정 문서 링크 흐름을 사용하며 별도 승인·초안 비교 절차는 두지 않는다. 현재 절차는 [프로젝트 매버릭 위키 README](../wiki/README.md) 기준이다.
 
 ## 별도 조사 결론
+
+- 레벨업 UI의 누락 부모·원본 경로 의존성을 분리한 참고 위젯 복구 완료; Windows UE 5.8.1에서 28개 에셋 로드·10개 위젯 컴파일 및 실제 디자이너 표시 확인, 게임 레벨업 동작은 범위 밖: [레벨업 UI 참고 위젯](../wiki/Research/Level-Up-UI-Reference/document.md)
 
 - 기후위기 세계관은 WMO·UNEP·IPCC·한국 공식 전망을 기준으로 관측 사실, 모델 전망, 창작적 추론을 구분한다. 단일 시점의 전면 붕괴보다 지역·계층별 충격과 복합 시스템 압력을 사용한다.
 - PvPvE는 독립된 공신력 시장 규모가 없어 인접 장르와 작품별 성과를 함께 봐야 한다. 8인 전면 전환보다 같은 전투 코어의 PvE 협동과 PvPvE 프로토타입을 먼저 비교하고, 매치 인구·서버·운영비를 통과할 때만 확장한다.

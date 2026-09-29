@@ -1,11 +1,13 @@
 ---
 제목: Maverick 아키텍처
 부제목: 런타임 흐름과 도메인 책임 경계
-최근수정일: 2026-09-08
-최근수정자: No-Jyun
+최근수정일: 2026-09-28
+최근수정자: "No-Jyun"
 관련문서:
   - "[[Convention/Header-Documentation/document|C++ 헤더 책임 문서화]]"
   - "[[Features/Combat/Combat-System/document|Maverick 전투 시스템]]"
+  - "[[Features/Resource-Recovery/document|기본 재화 회복과 소비]]"
+  - "[[Features/Progression/Level-Up/document|레벨업 프로토타입]]"
 ---
 
 # Maverick 아키텍처
@@ -55,7 +57,7 @@ flowchart TD
 | `Combat/` | 공격 실행 객체와 월드 단위 적중 계산<br/>`UMVAbilityBase`, `UMVHitResolverSubsystem` |
 | `AI/` | StateTree 공유 문맥, Evaluator, Condition, Task, Perception Controller |
 | `Animation/` | AnimInstance와 Montage 구간을 도메인 API로 연결하는 Notify·NotifyState |
-| `System/` | 필드 전환, 사망 부활, 월드 상태, 저장, 퀘스트 오케스트레이션 |
+| `System/` | 필드 전환, 사망 부활, 월드 상태, 저장, 퀘스트·성장 계산과 확정 |
 | `UI/` | CommonUI Window Stack, HUD·Popup Overlay, Loading·Death·Interaction UI |
 | `Public/Tables`, `Private/Tables` | Typed Row 계약, Editor 생성기, Runtime Manifest 조회 |
 | `Public/Interface`, `Public/Struct`, `Public/Tags` | 도메인 간 계약과 공유 데이터 |
@@ -68,6 +70,7 @@ flowchart TD
 | 기본 서브오브젝트 | 책임 |
 |---|---|
 | `UMVStatComponent` | HP, Stamina, MP, Groggy와 피해·사망 판정의 권위 계층 |
+| `UMVCombatStateComponent` | 전투 활동 시각·추적 위협·비전투 판정 |
 | `UMVActionComponent` | 선택된 Action Row와 Montage 실행 |
 | `UMVCombatComponent` | 공격·스킬 후보, Chooser·Fallback, Chain, Ability 인스턴스 선택 |
 | `UMVDeathComponent` | Actor 단위 사망 표현 |
@@ -78,8 +81,11 @@ flowchart TD
 
 ### 플레이어
 
-- `AMVPlayerCharacter`: Dodge, Consumable, InteractionDetector 소유
+- `AMVPlayerCharacter`: Dodge, Consumable, InteractionDetector, PlayerProgression 소유
 - 플레이어 전용 Stamina·Lock-on 정책 추가
+- 플레이어 비전투 HP 회복 정책: [[Features/Resource-Recovery/document|기본 재화 회복과 소비]]
+- `UMVPlayerProgression`: 성장 변경·기본 스탯 준비 알림을 구독해 현재 캐릭터에 전체 성장 보너스 적용, 종료 시 연결 해제
+- 확정 투자·재화 원본은 `UMVWorldStateSubsystem`, 계산·확정은 `UMVProgressionSubsystem` 책임: [[Features/Progression/Level-Up/document|레벨업 프로토타입]]
 
 ### 적
 
@@ -94,6 +100,8 @@ flowchart TD
 
 - [[Features/Input-to-Action/document|입력에서 Action 실행까지]]
 - [[Features/Hit-Stat-HitReaction/document|Hit, Stat, HitReaction]]
+- [[Features/Resource-Recovery/document|기본 재화 회복과 소비]]
+- [[Features/Progression/Level-Up/document|레벨업 프로토타입]]
 - [[Features/Death-and-Field-Transition/document|사망과 필드 전환]]
 - [[Features/AI-StateTree/document|AI StateTree]]
 - [[Features/UI-and-CommonUI/document|UI와 CommonUI]]

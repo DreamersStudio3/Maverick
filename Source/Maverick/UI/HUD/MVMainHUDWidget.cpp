@@ -12,6 +12,8 @@
 #include "UI/HUD/MVPlayerSkillHUDWidget.h"
 #include "UI/HUD/MVPlayerStatusWidget.h"
 #include "UI/HUD/MVQuickSlotWidget.h"
+#include "System/MVWorldStateSubsystem.h"
+#include "UI/HUD/MVCurrencyStatusWidget.h"
 
 void UMVMainHUDWidget::NativeOnInitialized()
 {
@@ -19,6 +21,25 @@ void UMVMainHUDWidget::NativeOnInitialized()
 
 	BuildNativeWidgetTree();
 	EnsurePlayerSkillHUD();
+}
+
+void UMVMainHUDWidget::NativeConstruct()
+{
+	Super::NativeConstruct();
+
+	if (!IsDesignTime())
+	{
+		BindWorldState();
+		RefreshHUD();
+	}
+}
+
+void UMVMainHUDWidget::NativeDestruct()
+{
+	UnbindWorldState();
+	BindPlayerConsumable(nullptr);
+
+	Super::NativeDestruct();
 }
 
 void UMVMainHUDWidget::RefreshHUD()
@@ -36,6 +57,8 @@ void UMVMainHUDWidget::RefreshHUD()
 
 	AMVPlayerCharacter* PlayerCharacter = Cast<AMVPlayerCharacter>(OwningPawn);
 	BindPlayerConsumable(PlayerCharacter ? PlayerCharacter->PlayerConsumable : nullptr);
+	
+	RefreshCurrencyHUD();
 }
 
 void UMVMainHUDWidget::InitBossStatus(FText BossName, float MaxHP)
@@ -200,4 +223,51 @@ void UMVMainHUDWidget::HandleHealingPotionStateChanged(
 	const FMVHealingPotionRuntimeState& /*HealingPotionState*/)
 {
 	ApplyHealingPotionQuickSlotView();
+}
+
+void UMVMainHUDWidget::BindWorldState()
+{
+	UnbindWorldState();
+
+	UMVWorldStateSubsystem* State = UMVWorldStateSubsystem::Get(this);
+	BoundWorldState = State;
+
+	if (State)
+	{
+		State->OnPlayerProgressionChanged.AddUniqueDynamic(
+			this,
+			&UMVMainHUDWidget::HandlePlayerProgressionChanged);
+	}
+}
+
+void UMVMainHUDWidget::UnbindWorldState()
+{
+	if (UMVWorldStateSubsystem* State = BoundWorldState.Get())
+	{
+		State->OnPlayerProgressionChanged.RemoveDynamic(
+			this,
+			&UMVMainHUDWidget::HandlePlayerProgressionChanged);
+	}
+
+	BoundWorldState.Reset();
+}
+
+void UMVMainHUDWidget::RefreshCurrencyHUD()
+{
+	if (!CurrencyStatus)
+	{
+		return;
+	}
+
+	const UMVWorldStateSubsystem* State = BoundWorldState.Get();
+
+	CurrencyStatus->SetCurrency(State ? State->GetPlayerProgression().Currency : 0);
+}
+
+void UMVMainHUDWidget::HandlePlayerProgressionChanged(const FMVPlayerProgressionSaveData& PlayerProgression)
+{
+	if (CurrencyStatus)
+	{
+		CurrencyStatus->SetCurrency(PlayerProgression.Currency);
+	}
 }
