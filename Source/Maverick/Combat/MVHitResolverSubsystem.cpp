@@ -199,6 +199,7 @@ bool UMVHitResolverSubsystem::BuildResolvedHitData(
 	OutHitData.Attacker = Attacker;
 	OutHitData.Victim = Victim;
 	OutHitData.AttackInstanceId = Request.AttackInstanceId;
+	OutHitData.Origin = EMVResolvedHitOrigin::AttackCollision;
 	OutHitData.AttackerCharacterIndexCode = Attacker->GetCharacterIndexCode();
 	OutHitData.VictimCharacterIndexCode = Victim->GetCharacterIndexCode();
 	OutHitData.CharacterAttackPower = BaseAttackPower;
@@ -318,6 +319,7 @@ bool UMVHitResolverSubsystem::BuildDirectDamageHitData(const FMVDirectDamageRequ
 	OutHitData.VictimCharacterIndexCode = Victim->GetCharacterIndexCode();
 
 	OutHitData.AttackInstanceId = Request.AttackInstanceId;
+	OutHitData.Origin = EMVResolvedHitOrigin::DirectDamage;
 
 	const float AttackerAttackPower = ResolveNonNegativeStat(AttackerStatComponent->AttackPower);
 	const float BaseAttackPower = AttackerAttackPower > 0.0f ? AttackerAttackPower : ResolveNonNegativeStat(FallbackAttackPower);

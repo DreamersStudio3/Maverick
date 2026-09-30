@@ -74,10 +74,11 @@ bool UMVActionComponent::TryStartActionFromTable(
 		return false;
 	}
 
-	return TryStartResolvedAction(ActionTableName, ActionRowName, *ActionRow, StartSection);
+	return TryStartResolvedAction(ActionTableName, ActionRowName, *ActionRow, StartSection, 1.0f);
 }
 
-bool UMVActionComponent::TryStartActionFromRowHandle(const FDataTableRowHandle ActionRowHandle,	FName StartSection, const float BlendoutTime)
+bool UMVActionComponent::TryStartActionFromRowHandle(
+	const FDataTableRowHandle ActionRowHandle,	FName StartSection, const float BlendoutTime, float PlayRateMultiplier)
 {
 	FName ActionTableName = NAME_None;
 	FName ActionRowName = NAME_None;
@@ -97,7 +98,7 @@ bool UMVActionComponent::TryStartActionFromRowHandle(const FDataTableRowHandle A
 		CancelActiveAction(BlendoutTime);
 	}
 
-	return TryStartResolvedAction(ActionTableName, ActionRowName, *ActionRow, StartSection);
+	return TryStartResolvedAction(ActionTableName, ActionRowName, *ActionRow, StartSection, PlayRateMultiplier);
 }
 
 bool UMVActionComponent::TryAdditiveFromRowHandle(FDataTableRowHandle ActionRowHandle, FName StartSection, const float BlendoutTime)
@@ -175,7 +176,8 @@ bool UMVActionComponent::TryStartResolvedAction(
 	const FName ActionTableName,
 	const FName ActionRowName,
 	const FMVActionRow& ActionRow,
-	FName StartSection)
+	FName StartSection,
+	float PlayRateMultiplier)
 {
 	if (ActionTableName.IsNone() || ActionRowName.IsNone())
 	{
@@ -188,7 +190,13 @@ bool UMVActionComponent::TryStartResolvedAction(
 		return false;
 	}
 
-	const float PlayRate = ActionRow.PlayRate > 0.0f ? ActionRow.PlayRate : 1.0f;
+	const float RowPlayRate = ActionRow.PlayRate > 0.0f ? ActionRow.PlayRate : 1.0f;
+	const float SafeMultiplier =
+		FMath::IsFinite(PlayRateMultiplier) && PlayRateMultiplier > 0.0f
+			? PlayRateMultiplier
+			: 1.0f;
+	const float PlayRate = RowPlayRate * SafeMultiplier;
+
 	OnActionPreparing.Broadcast(ActionTableName, ActionRowName);
 
 	UAnimMontage* ActionMontage = ResolveActionRowMontage(ActionTableName, ActionRowName, ActionRow);
@@ -256,7 +264,8 @@ bool UMVActionComponent::TryTransitionActionFromTable(
 bool UMVActionComponent::TryTransitionActionFromRowHandle(
 	const FDataTableRowHandle ActionRowHandle,
 	const FName StartSection,
-	const float BlendOutTime)
+	const float BlendOutTime,
+	float PlayRateMultiplier)
 {
 	FName ActionTableName = NAME_None;
 	FName ActionRowName = NAME_None;
@@ -277,7 +286,7 @@ bool UMVActionComponent::TryTransitionActionFromRowHandle(
 		CancelActiveAction(BlendOutTime);
 	}
 
-	return TryStartResolvedAction(ActionTableName, ActionRowName, *ActionRow, StartSection);
+	return TryStartResolvedAction(ActionTableName, ActionRowName, *ActionRow, StartSection, PlayRateMultiplier);
 }
 
 void UMVActionComponent::FinishActiveAction(bool bInterrupted)

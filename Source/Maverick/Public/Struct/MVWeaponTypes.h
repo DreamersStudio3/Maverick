@@ -6,6 +6,7 @@
 #include "MVWeaponTypes.generated.h"
 
 class UObject;
+class UMVWeaponPassiveSet;
 
 /**
  * WeaponComponent가 소유하는 현재 장착 무기 상태.
@@ -32,6 +33,9 @@ struct MAVERICK_API FMVEquippedWeaponState
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Weapon")
 	EMVWeaponRangeType RangeType = EMVWeaponRangeType::Melee;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Item|Weapon|Passive")
+	TSoftObjectPtr<UMVWeaponPassiveSet> PassiveSet;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Weapon|Visual", meta = (AllowedClasses = "/Script/Engine.SkeletalMesh,/Script/Engine.StaticMesh"))
 	TSoftObjectPtr<UObject> WeaponMesh;

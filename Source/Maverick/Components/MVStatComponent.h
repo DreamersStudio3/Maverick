@@ -4,6 +4,7 @@
 #include "Components/ActorComponent.h"
 #include "GameplayTagContainer.h"
 #include "Struct/MVHitTypes.h"
+#include "Misc/Guid.h"
 #include "MVStatComponent.generated.h"
 
 class UMVTableManager;
@@ -62,20 +63,20 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMVOnDamageAccumulationReset);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnBaseStatsReady, int32, Revision);
 
 /**
- * 캐릭터 스탯 값과 회복 정책을 관리하는 컴포넌트.
+ * 캐릭터 스탯, 회복 정책과 효과별 공격속도 보정을 관리하는 컴포넌트.
  *
- * 명시적으로 설정된 CharacterIndexCode와 동일한 CharacterStat row에서 기본 스탯을
- * 로드하고 HP, 스태미너, MP, groggy, 이동/전투 수치의 현재값과 변경 이벤트를 소유한다.
- * `OnDamaged` 구독을 통해 확정된 피해의 HP 차감도 처리한다.
- * HP가 처음 0 이하가 되면 문맥을 담은 `OnDeathStarted(FMVDeathContext)`를 사망 진입점으로 발행하고,
- * 매개변수 없는 `OnDead`는 기존 Blueprint와의 호환을 위해 함께 유지한다.
- * NotifyState가 요청한 회복 일시정지, 최근 감소 UI 홀드, 그로기 누적 게이지 감소도 이 컴포넌트의 상태로 관리한다.
- * 다른 도메인 컴포넌트의 캐릭터 선택 상태는 참조하지 않는다.
+ * CharacterIndexCode와 일치하는 테이블 행에서 기본 스탯을 로드한다.
+ * HP, 스태미너, MP, Groggy와 이동·전투 수치 및 변경 이벤트를 소유한다.
+ * 공격속도는 기본값과 핸들별 증가율을 합산하며 AttackSpeed에 최종값을 보관한다.
+ * 보정 호출자는 반환된 핸들을 보관하고 효과 종료 시 해당 보정을 제거한다.
  *
- * 라이프사이클:
- *   1) BeginPlay -> 설정된 스탯 테이블 행을 읽어 현재 스탯 값을 초기화한다.
- *   2) ConsumeHP/ConsumeStamina/ConsumeMP -> 값을 감소시킨다.
- *   3) TickRecoverableStats -> 매 프레임 MP/스태미나 회복과 Exhaustion 회복 차단 시간 갱신.
+ * OnDamaged를 구독해 HP 차감을 처리하고, 최초 사망 시
+ * OnDeathStarted에 문맥을 전달하며 기존 Blueprint용 OnDead도 발행한다.
+ * 회복 일시정지, 최근 감소 UI 홀드와 그로기 누적 게이지 감소를 관리한다.
+ * 다른 도메인의 캐릭터 선택 상태는 참조하지 않는다.
+ *
+ * BeginPlay에서 테이블을 로드하고, 자원 소비 API로 현재값을 감소시킨다.
+ * TickRecoverableStats에서 회복과 Exhaustion 회복 차단 시간을 갱신한다.
  */
 
 UCLASS(ClassGroup = (Maverick), meta = (BlueprintSpawnableComponent))
@@ -264,6 +265,20 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Attack")
 	void SetAttackSpeed(float InAttackSpeed);
 
+	UFUNCTION(BlueprintPure, Category = "Maverick|Stat|Attack")
+	float GetBaseAttackSpeed() const { return BaseAttackSpeed; }
+
+	// 증가율을 등록하고, 이후 갱신·제거에 사용할 고유 번호 반환
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Attack")
+	FGuid AddAttackSpeedModifier(float BonusRatio);
+
+	// 같은 효과의 증가율을 새 값으로 교체
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Attack")
+	bool UpdateAttackSpeedModifier(FGuid ModifierHandle, float BonusRatio);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Attack")
+	bool RemoveAttackSpeedModifier(FGuid ModifierHandle);
+
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|MoveSpeed")
 	void SetWalkSpeed(float InWalkSpeed);
 
@@ -429,6 +444,8 @@ public:
 	float PoiseRecoveryTime = 30.0f;
 
 private:
+	void RecalculateAttackSpeed();
+
 	float RecentDamageCooldownRemaining = 0.0f;
 	int32 RecoverableStatRecoveryPauseCount = 0;
 	float StaminaExhaustionRemaining = 0.0f;
@@ -449,4 +466,10 @@ private:
 	float BaseMaxMP = 100.0f;
 	int32 BaseStatsRevision = 0;
 	bool bBaseStatsReady = false;
+
+	UPROPERTY(Transient)
+	float BaseAttackSpeed = 1.0f;
+
+	UPROPERTY(Transient)
+	TMap<FGuid, float> AttackSpeedModifiers;
 };

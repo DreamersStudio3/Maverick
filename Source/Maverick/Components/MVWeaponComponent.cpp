@@ -281,6 +281,7 @@ FMVEquippedWeaponState UMVWeaponComponent::MakeStateFromWeaponRow(const FMVWeapo
 	State.AttackPower = FMath::Max(0.0f, WeaponRow.AttackPower);
 	State.WeaponPoise = FMath::Max(0.0f, WeaponRow.WeaponPoise);
 	State.RangeType = WeaponRow.RangeType;
+	State.PassiveSet = WeaponRow.PassiveSet;
 	State.WeaponMesh = WeaponRow.WeaponMesh;
 	State.AttachSocketName = WeaponRow.AttachSocketName;
 	State.AttachTransform = WeaponRow.AttachTransform;

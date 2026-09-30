@@ -908,6 +908,14 @@ void UMVCombatComponent::HandleAbilityEnded(const UMVAbilityBase* EndedAbility)
 
 	if (bHandledAbility && CurrentAbilityInstance.Get() == EndedAbility)
 	{
+		if (bCurrentAbilityAwaitingCompletion
+			&& EndedAbility->bAbilityCostConsumed
+			&& !bCurrentAbilityHitConfirmed)
+		{
+			OnAttackMissed.Broadcast(
+				const_cast<UMVAbilityBase*>(EndedAbility));
+		}
+
 		bCurrentAbilityAwaitingCompletion = false;
 	}
 
@@ -940,6 +948,14 @@ void UMVCombatComponent::HandleHitResolved(const FMVResolvedHitData& HitData)
 	if (HitData.AttackInstanceId == INDEX_NONE || HitData.AttackInstanceId != CurrentAttackInstanceId)
 	{
 		return;
+	}
+
+	bCurrentAbilityHitConfirmed = true;
+
+	if (HitData.Origin == EMVResolvedHitOrigin::AttackCollision)
+	{
+		OnValidatedAttackHit.Broadcast(
+			HitData, CurrentAbilityInstance.Get());
 	}
 
 	AMVEnemy* HitEnemy = Cast<AMVEnemy>(HitData.Victim.Get());
@@ -1657,6 +1673,22 @@ bool UMVCombatComponent::TryStartActionWithAbility(
 	const bool bIsActionRunning = ActionComponent->IsActionRunning();
 	const bool bCanInterrupt = ActionComponent->CanInterruptActiveAction();
 
+	const FMVSkillDataTableColumn* SpeedRow =
+		RowHandle.DataTable->FindRow<FMVSkillDataTableColumn>(
+			RowHandle.RowName, TEXT("TryStartActionWithAbility"), false);
+	const bool bUseAttackSpeed = SpeedRow && SpeedRow->bUseAttackSpeed;
+
+	const auto GetPlayRateMultiplier = [this, bUseAttackSpeed]() -> float
+	{
+		if (!bUseAttackSpeed || !IsValid(StatComponent.Get()))
+		{
+			return 1.0f;
+		}
+
+		const float Speed = StatComponent->AttackSpeed;
+		return FMath::IsFinite(Speed) && Speed > 0.0f ? Speed : 1.0f;
+	};
+
 	const auto PrepareCurrentAbility =
 		[this, &ActionEntry, &RowHandle]() -> UMVAbilityBase*
 		{
@@ -1668,6 +1700,7 @@ bool UMVCombatComponent::TryStartActionWithAbility(
 			}
 
 			CurrentAbilityInstance = NextAbility;
+			bCurrentAbilityHitConfirmed = false;
 			bCurrentAbilityAwaitingCompletion = CurrentAbilityInstance != nullptr;
 			CurrentAbilityActionTableName = MVCombatActionTableNameFromDataTable(RowHandle.DataTable);
 			CurrentAbilityActionRowName = RowHandle.RowName;
@@ -1700,10 +1733,12 @@ bool UMVCombatComponent::TryStartActionWithAbility(
 		if (bForceTransition || (bRecoveryOpen && bCanInterrupt))
 		{
 			const UMVAbilityBase* PreparedAbility = PrepareCurrentAbility();
+			const float PlayRateMultiplier = GetPlayRateMultiplier();
 			const bool bStarted = ActionComponent->TryTransitionActionFromRowHandle(
 				RowHandle,
 				StartSection,
-				FMath::Max(0.0f, TransitionBlendOutTime));
+				FMath::Max(0.0f, TransitionBlendOutTime),
+				PlayRateMultiplier);
 			if (!bStarted)
 			{
 				ClearPreparedAbilityOnFailure(PreparedAbility);
@@ -1720,7 +1755,12 @@ bool UMVCombatComponent::TryStartActionWithAbility(
 	{
 		// No active action -> start normally
 		const UMVAbilityBase* PreparedAbility = PrepareCurrentAbility();
-		const bool bStarted = ActionComponent->TryStartActionFromRowHandle(RowHandle, StartSection);
+		const float PlayRateMultiplier = GetPlayRateMultiplier();
+		const bool bStarted = ActionComponent->TryStartActionFromRowHandle(
+			RowHandle,
+			StartSection,
+			0.1f,
+			PlayRateMultiplier);
 		if (!bStarted)
 		{
 			ClearPreparedAbilityOnFailure(PreparedAbility);

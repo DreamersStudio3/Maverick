@@ -64,6 +64,8 @@ struct FMVCombatActionEvent
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnCombatActionEvent, const FMVCombatActionEvent&, Event);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnAttackMissed, UMVAbilityBase*, MissedAbility);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FMVOnValidatedAttackHit, const FMVResolvedHitData&, HitData, UMVAbilityBase*, Ability);
 
 USTRUCT(BlueprintType)
 struct FMVSkillEntry
@@ -455,6 +457,12 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|Combat|Event")
 	FMVOnCombatActionEvent OnCombatActionStarted;
 
+	UPROPERTY(BlueprintAssignable, Category = "Maverick|Combat|Event")
+	FMVOnAttackMissed OnAttackMissed;
+
+	UPROPERTY(BlueprintAssignable, Category = "Maverick|Combat|Event")
+	FMVOnValidatedAttackHit OnValidatedAttackHit;
+
 protected:
 	virtual bool TryHandleActionInput(FGameplayTag ActionInputTag, FVector2D ControllerSpaceInput, bool bHasMovementInput) override;
 	virtual bool TryHandleHoldActionInput(
@@ -608,6 +616,8 @@ public:
 
 	int32 NextAttackInstanceId = 0;
 	int32 CurrentAttackInstanceId = INDEX_NONE;
+
+	bool bCurrentAbilityHitConfirmed = false;
 
 private:
 	double LastBasicAttackedTime = 0.0;

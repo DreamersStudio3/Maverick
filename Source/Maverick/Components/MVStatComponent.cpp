@@ -642,7 +642,73 @@ void UMVStatComponent::SetAttackPower(float InAttackPower)
 
 void UMVStatComponent::SetAttackSpeed(float InAttackSpeed)
 {
-	AttackSpeed = MVStatNonNegative(InAttackSpeed);
+	if (!FMath::IsFinite(InAttackSpeed))
+	{
+		return;
+	}
+
+	BaseAttackSpeed = MVStatNonNegative(InAttackSpeed);
+	RecalculateAttackSpeed();
+}
+
+FGuid UMVStatComponent::AddAttackSpeedModifier(float BonusRatio)
+{
+	if (!FMath::IsFinite(BonusRatio))
+	{
+		return FGuid();
+	}
+
+	const FGuid ModifierHandle = FGuid::NewGuid();
+
+	AttackSpeedModifiers.Add(ModifierHandle, BonusRatio);
+	RecalculateAttackSpeed();
+
+	return ModifierHandle;
+}
+
+bool UMVStatComponent::UpdateAttackSpeedModifier(
+	FGuid ModifierHandle,
+	float BonusRatio)
+{
+	if (!ModifierHandle.IsValid() || !FMath::IsFinite(BonusRatio))
+	{
+		return false;
+	}
+
+	float* ExistingBonus = AttackSpeedModifiers.Find(ModifierHandle);
+	if (!ExistingBonus)
+	{
+		return false;
+	}
+
+	*ExistingBonus = BonusRatio;
+	RecalculateAttackSpeed();
+
+	return true;
+}
+
+bool UMVStatComponent::RemoveAttackSpeedModifier(FGuid ModifierHandle)
+{
+	if (AttackSpeedModifiers.Remove(ModifierHandle) == 0)
+	{
+		return false;
+	}
+
+	RecalculateAttackSpeed();
+
+	return true;
+}
+
+void UMVStatComponent::RecalculateAttackSpeed()
+{
+	float TotalBonusRatio = 0.0f;
+
+	for (const TPair<FGuid, float>& Modifier : AttackSpeedModifiers)
+	{
+		TotalBonusRatio += Modifier.Value;
+	}
+
+	AttackSpeed = BaseAttackSpeed * FMath::Max(0.0f, 1.0f + TotalBonusRatio);
 }
 
 void UMVStatComponent::SetWalkSpeed(float InWalkSpeed)

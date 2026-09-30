@@ -120,6 +120,14 @@ struct MAVERICK_API FMVDirectDamageRequest
 	FVector ImpactNormal = FVector::ZeroVector;
 };
 
+UENUM(BlueprintType)
+enum class EMVResolvedHitOrigin : uint8
+{
+	Unknown,
+	AttackCollision,
+	DirectDamage
+};
+
 /**
  * HitResolver가 계산해 피격자에게 넘기는 최종 타격 결과.
  *
@@ -139,6 +147,9 @@ struct MAVERICK_API FMVResolvedHitData
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Hit")
 	int32 AttackInstanceId = INDEX_NONE;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Hit")
+	EMVResolvedHitOrigin Origin = EMVResolvedHitOrigin::Unknown;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Hit", meta = (Categories = "Character"))
 	FGameplayTag AttackerCharacterIndexCode;

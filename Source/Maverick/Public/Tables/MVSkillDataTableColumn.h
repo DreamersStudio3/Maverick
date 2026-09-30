@@ -50,6 +50,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Common", meta = (ClampMin = "0.0"))
 	float DamageMultiplier;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Speed")
+	bool bUseAttackSpeed = false;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Common", meta = (ClampMin = "0.0"))
 	float HpCost = 0.0f;
 

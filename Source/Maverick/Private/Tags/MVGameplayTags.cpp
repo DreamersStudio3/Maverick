@@ -49,9 +49,11 @@ namespace MVGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(StateTreeEvent_Enemy_Groggy, "StateTreeEvent.Enemy.Groggy");
 	UE_DEFINE_GAMEPLAY_TAG(StateTreeEvent_Enemy_GroggyEnd, "StateTreeEvent.Enemy.GroggyEnd");
 
+	UE_DEFINE_GAMEPLAY_TAG(StatusEffect_Passive_StormBlade, "StatusEffect.Passive.StormBlade");
 	UE_DEFINE_GAMEPLAY_TAG(StatusEffect_Skill_ThirdHitMark, "StatusEffect.Skill.ThirdHitMark");
 	UE_DEFINE_GAMEPLAY_TAG(StatusEffect_Skill_Burn, "StatusEffect.Skill.Burn");
 	UE_DEFINE_GAMEPLAY_TAG(StatusEffect_Skill_BurnBurstCooldown, "StatusEffect.Skill.BurnBurstCooldown");
+	UE_DEFINE_GAMEPLAY_TAG(StatusEffect_Passive_StormBladeSpeed, "StatusEffect.Passive.StormBladeSpeed");
 
 	UE_DEFINE_GAMEPLAY_TAG(StatusEffect_Type_Debuff, "StatusEffect.Type.Debuff");
 
