@@ -5,6 +5,8 @@
 #include "StateTreeTaskBase.h"
 #include "MVAIBossDefaultGlobalTask.generated.h"
 
+class AActor;
+
 /**
  * 보스별 실행 데이터와 대상 거리·사망 여부 출력
  * Owner는 보스, Target은 AttackTarget 바인딩 대상; DistanceToTarget은 bHasTarget이 참일 때만 유효한 3차원 거리(cm)
@@ -18,11 +20,14 @@ struct MAVERICK_API FMVAIBossDefaultGlobalTaskInstanceData
 	UPROPERTY(EditAnywhere, Category = "Context")
 	TObjectPtr<APawn> Owner = nullptr;
 
-	UPROPERTY(EditAnywhere, Category = "Input")
+	UPROPERTY(EditAnywhere, Category = "Context")
 	TObjectPtr<AActor> Target = nullptr;
 
 	UPROPERTY(EditAnywhere, Category = "Output", meta = (Units = "cm"))
 	float DistanceToTarget = 0.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Output")
+	bool bPatroing = false;
 
 	UPROPERTY(EditAnywhere, Category = "Output")
 	bool bHasTarget = false;

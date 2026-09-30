@@ -1,6 +1,7 @@
 #include "AI/AITask/FMVBossExecuteAttackTask.h"
 
 #include "AIController.h"
+#include "AI/Controller/MVAIController.h"
 #include "Components/MVActionComponent.h"
 #include "StateTreeExecutionContext.h"
 
@@ -31,9 +32,20 @@ EStateTreeRunStatus FMVBossExecuteAttackTask::EnterState(
 		}
 	}
 
+	float TargetDistance = InstanceData.CombatContext.DistanceToTarget;
+	bool bHasTarget = InstanceData.CombatContext.bHasTarget;
+	if (const AMVAIController* AIController = Cast<AMVAIController>(Context.GetOwner()))
+	{
+		if (const AActor* TargetActor = AIController->TargetActor)
+		{
+			bHasTarget = true;
+			TargetDistance = FVector::Dist(Owner->GetActorLocation(), TargetActor->GetActorLocation());
+		}
+	}
+
 	if (!Owner
-		|| !InstanceData.CombatContext.bHasTarget
-		|| InstanceData.CombatContext.DistanceToTarget > InstanceData.AttackRange
+		|| !bHasTarget
+		|| TargetDistance > InstanceData.AttackRange
 		|| !InstanceData.AttackRow.DataTable
 		|| InstanceData.AttackRow.RowName.IsNone())
 	{
