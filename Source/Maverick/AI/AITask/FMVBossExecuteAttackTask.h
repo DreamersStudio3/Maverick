@@ -8,6 +8,26 @@
 #include "FMVBossExecuteAttackTask.generated.h"
 
 class UMVActionComponent;
+class UAnimInstance;
+class UAnimMontage;
+
+USTRUCT(BlueprintType)
+struct MAVERICK_API FMVTutorialBossSkillRow : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSoftObjectPtr<UAnimMontage> Montage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FName StartSection = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float PlayRate = 1.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bStopOnExit = true;
+};
 
 USTRUCT()
 struct FMVBossExecuteAttackTaskInstanceData
@@ -31,6 +51,15 @@ struct FMVBossExecuteAttackTaskInstanceData
 
 	UPROPERTY(Transient)
 	TObjectPtr<UMVActionComponent> ActionComponent = nullptr;
+
+	UPROPERTY(Transient)
+	TObjectPtr<UAnimInstance> AnimInstance = nullptr;
+
+	UPROPERTY(Transient)
+	TObjectPtr<UAnimMontage> ActiveMontage = nullptr;
+
+	bool bCustomMontageStopOnExit = true;
+	mutable bool bCompletionLogged = false;
 
 	FName StartedActionTableName = NAME_None;
 	FName StartedActionRowName = NAME_None;
