@@ -83,12 +83,16 @@ void UMVWeaponPassiveComponent::HandleEquippedWeaponChanged(const FMVEquippedWea
         }
         SeenDefinitions.Add(Definition);
 
+        const bool bSupportedStackPolicy =
+            Definition->StackPolicy == EMVStatusEffectStackPolicy::NoStack
+            || Definition->StackPolicy == EMVStatusEffectStackPolicy::AddStack;
+
         if (Definition->DurationPolicy != EMVStatusEffectDurationPolicy::Infinite
-            || Definition->StackPolicy != EMVStatusEffectStackPolicy::NoStack
+            || !bSupportedStackPolicy
             || Definition->InstanceScope != EMVStatusEffectInstanceScope::OnePerSource)
         {
             UE_LOG(LogTemp, Warning,
-                TEXT("Weapon passive definition must use Infinite, NoStack, and OnePerSource. Owner=%s Definition=%s"),
+                TEXT("Weapon passive definition must use Infinite, NoStack or AddStack, and OnePerSource. Owner=%s Definition=%s"),
                 *GetNameSafe(GetOwner()),
                 *GetNameSafe(Definition));
             continue;

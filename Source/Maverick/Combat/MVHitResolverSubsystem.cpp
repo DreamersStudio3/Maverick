@@ -4,6 +4,7 @@
 #include "Components/MVHitReactionComponent.h"
 #include "Components/MVStatComponent.h"
 #include "Components/MVWeaponComponent.h"
+#include "Components/MVCombatComponent.h"
 #include "Engine/World.h"
 
 namespace
@@ -136,6 +137,14 @@ bool UMVHitResolverSubsystem::ResolveAttackHit(
 	{
 		MVHitResolverLogAirborneTrace(TEXT("ResolverRejected"), Request);
 		return false;
+	}
+
+	AMVCharacterBase* Attacker = OutHitData.Attacker.Get();
+	UMVCombatComponent* Combat = IsValid(Attacker) ? Attacker->CombatComponent.Get() : nullptr;
+
+	if (IsValid(Combat))
+	{
+		Combat->ApplyOutgoingAttackDamageModifiers(OutHitData);
 	}
 
 	MVHitResolverLogHitLaunchTrace(TEXT("ResolverResolved"), Request, &OutHitData);

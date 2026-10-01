@@ -925,27 +925,7 @@ void UMVCombatComponent::HandleHitResolved(const FMVResolvedHitData& HitData)
 {
 	AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
 
-	if (!OwnerCharacter)
-	{
-		return;
-	}
-
-	if (HitData.Attacker != OwnerCharacter)
-	{
-		return;
-	}
-
-	if (!bCurrentAbilityAwaitingCompletion || !CurrentAbilityInstance)
-	{
-		return;
-	}
-
-	if (!CurrentAbilityInstance->bAbilityActive)
-	{
-		return;
-	}
-
-	if (HitData.AttackInstanceId == INDEX_NONE || HitData.AttackInstanceId != CurrentAttackInstanceId)
+	if (!IsCurrentAttackHit(HitData))
 	{
 		return;
 	}
@@ -1008,6 +988,39 @@ void UMVCombatComponent::HandleHitResolved(const FMVResolvedHitData& HitData)
 		SkillEntry.bCurrentStageHitConfirmed = true;
 		SkillEntry.TryAdvanceChainStage(CurrentTime);
 		return;
+	}
+}
+
+bool UMVCombatComponent::IsCurrentAttackHit(
+	const FMVResolvedHitData& HitData) const
+{
+	const AMVCharacterBase* OwnerCharacter =
+		Cast<AMVCharacterBase>(GetOwner());
+
+	return IsValid(OwnerCharacter)
+		&& HitData.Attacker.Get() == OwnerCharacter
+		&& bCurrentAbilityAwaitingCompletion
+		&& IsValid(CurrentAbilityInstance.Get())
+		&& CurrentAbilityInstance->bAbilityActive
+		&& HitData.AttackInstanceId != INDEX_NONE
+		&& HitData.AttackInstanceId == CurrentAttackInstanceId;
+}
+
+void UMVCombatComponent::ApplyOutgoingAttackDamageModifiers(FMVResolvedHitData& HitData)
+{
+	if (HitData.Origin != EMVResolvedHitOrigin::AttackCollision
+		|| !IsCurrentAttackHit(HitData))
+	{
+		return;
+	}
+
+	float ModifiedDamage = HitData.FinalDamage;
+
+	OnModifyOutgoingAttackDamage.Broadcast(HitData, ModifiedDamage);
+
+	if (FMath::IsFinite(ModifiedDamage))
+	{
+		HitData.FinalDamage = FMath::Max(0.0f, ModifiedDamage);
 	}
 }
 

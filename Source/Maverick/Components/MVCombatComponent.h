@@ -66,6 +66,7 @@ struct FMVCombatActionEvent
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnCombatActionEvent, const FMVCombatActionEvent&, Event);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnAttackMissed, UMVAbilityBase*, MissedAbility);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FMVOnValidatedAttackHit, const FMVResolvedHitData&, HitData, UMVAbilityBase*, Ability);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FMVOnModifyOutgoingAttackDamage, const FMVResolvedHitData&, float&);
 
 USTRUCT(BlueprintType)
 struct FMVSkillEntry
@@ -450,6 +451,8 @@ public:
 	UFUNCTION()
 	void HandleHitResolved(const FMVResolvedHitData& HitData);
 
+	void ApplyOutgoingAttackDamageModifiers(FMVResolvedHitData& HitData);
+
 	// Call When Character Change Weapon --> have to receive Event from Character
 	UFUNCTION(BlueprintCallable, Category = "Combat|Weapon")
 	void ChangeWeapon(EMVEquippedStyle NewStyle);
@@ -462,6 +465,8 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|Combat|Event")
 	FMVOnValidatedAttackHit OnValidatedAttackHit;
+
+	FMVOnModifyOutgoingAttackDamage OnModifyOutgoingAttackDamage;
 
 protected:
 	virtual bool TryHandleActionInput(FGameplayTag ActionInputTag, FVector2D ControllerSpaceInput, bool bHasMovementInput) override;
@@ -563,6 +568,7 @@ private:
 	bool IsSprintAttackContext() const;
 	bool ShouldSuppressChargeAttackInputForSprint() const;
 	bool HasReachedSprintAttackSpeed() const;
+	bool IsCurrentAttackHit(const FMVResolvedHitData& HitData) const;
 
 	UFUNCTION()
 	void HandleActionEnded(FName ActionTableName, FName ActionRowName, bool bInterrupted);
