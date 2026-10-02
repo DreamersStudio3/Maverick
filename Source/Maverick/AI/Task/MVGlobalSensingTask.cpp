@@ -446,10 +446,3 @@ EStateTreeRunStatus FMVGlobalSensingTask::Tick(FStateTreeExecutionContext& Conte
 	FInstanceDataType& InstanceData = Context.GetInstanceData(*this);
 	return UpdateGlobalSensingSnapshot(InstanceData, DeltaTime);
 }
-
-void FMVGlobalSensingTask::ExitState(
-	FStateTreeExecutionContext& Context,
-	const FStateTreeTransitionResult& Transition) const
-{
-	FStateTreeTaskCommonBase::ExitState(Context, Transition);
-}

@@ -11,6 +11,12 @@ namespace MVGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Item_Weapon_OneHand_TestSword, "Item.Weapon.OneHand.TestSword");
 	UE_DEFINE_GAMEPLAY_TAG(Item_Weapon_DualSword_TestSword, "Item.Weapon.DualSword.TestSword");
 	UE_DEFINE_GAMEPLAY_TAG(Item_HealingPotion_Basic, "Item.HealingPotion.Basic");
+	UE_DEFINE_GAMEPLAY_TAG(Progression_Attribute_HP, "Progression.Attribute.HP");
+	UE_DEFINE_GAMEPLAY_TAG(Progression_Attribute_Stamina, "Progression.Attribute.Stamina");
+	UE_DEFINE_GAMEPLAY_TAG(Progression_Attribute_MP, "Progression.Attribute.MP");
+	UE_DEFINE_GAMEPLAY_TAG(Stat_MaxHP, "Stat.MaxHP");
+	UE_DEFINE_GAMEPLAY_TAG(Stat_MaxStamina, "Stat.MaxStamina");
+	UE_DEFINE_GAMEPLAY_TAG(Stat_MaxMP, "Stat.MaxMP");	
 	UE_DEFINE_GAMEPLAY_TAG(Action_Input_LightAttack, "Action.Input.LightAttack");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Input_HeavyAttack, "Action.Input.HeavyAttack");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Input_HeavyChargeAttack, "Action.Input.HeavyChargeAttack");

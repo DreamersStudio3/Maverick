@@ -11,6 +11,7 @@ class UMVPlayerDodge;
 class UMVPlayerInteractionDetector;
 class UMVPlayerConsumable;
 class UCameraShakeBase;
+class UMVPlayerProgression;
 
 /**
  * 로컬 플레이어 캐릭터 런타임 본체.
@@ -22,12 +23,14 @@ class UCameraShakeBase;
  * 책임:
  *   - 플레이어 CharacterIndex와 공격 Chooser/fallback 기본 경로를 설정한다.
  *   - Dodge, 회복약, InteractionDetector 서브모듈을 생성하고 BeginPlay/Tick/EndPlay 수명주기를 전달한다.
- *   - 전력질주 스태미너 비용과 고갈 후 재개 조건을 플레이어 액션 데이터 기준으로 관리한다.
+ *   - 전력질주 스태미너 비용, Exhaustion 차단, 고갈 후 재개 조건의 플레이어 액션 데이터 기준 관리.
  *   - 플레이어 피격 리액션 핸들러를 공통 피격 이벤트에 연결한다.
  *   - 락온 대상이 있을 때 질주/회피 구간의 pawn rotation extension tick 억제를 관리한다.
+ *   - 설정으로 켜고 끄는 플레이어 HP 자동재생, 기본 비활성.
+ *   - 저장된 플레이어 성장 상태를 현재 StatComponent에 연결한다.
  *
  * 라이프사이클:
- *   1) 생성자 -> 플레이어 전용 서브모듈 기본 서브오브젝트를 생성한다.
+ *   1) 생성자 -> 플레이어 전용 서브모듈과 성장 브리지를 기본 서브오브젝트로 생성한다.
  *   2) BeginPlay/EndPlay -> 서브모듈 초기화와 해제를 브리지한다.
  *   3) Tick -> 공통 캐릭터 갱신 뒤 상호작용 감지와 락온 회전 억제 상태를 갱신한다.
  */
@@ -87,6 +90,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Instanced, Category = "PlayerCharacter")
 	TObjectPtr<UMVPlayerConsumable> PlayerConsumable;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Instanced, Category = "PlayerCharacter")
+	TObjectPtr<UMVPlayerProgression> PlayerProgression;
+	
 	UPROPERTY(BlueprintReadOnly, Category = "LocomotionData|Stamina")
 	uint8 bIsSprintBlockedByStamina : 1;
 
@@ -105,6 +111,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LocomotionData|Sprint|Table", meta = (ClampMin = "1"))
 	int32 DefaultSprintRowIndex = 1;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerCharacter|Health")
+	bool bEnableHPAutoRegen = false;
+	
 private:
 	bool bHasSprintActionData = false;
 	float SprintActionStaminaCost = 20.0f;

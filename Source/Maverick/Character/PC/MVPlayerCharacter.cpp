@@ -15,9 +15,12 @@
 #include "Tables/MVTableManager.h"
 #include "Tags/MVGameplayTags.h"
 #include "Camera/CameraShakeBase.h"
+#include "Progression/MVPlayerProgression.h"
 
 namespace
 {
+constexpr float MVPlayerHPRecoveryRatioPerSecond = 0.02f;
+
 FString MVPlayerCharacterIndexCodeToTableToken(const FGameplayTag CharacterIndexCode)
 {
 	if (!CharacterIndexCode.IsValid())
@@ -44,6 +47,7 @@ AMVPlayerCharacter::AMVPlayerCharacter()
 	Dodge = CreateDefaultSubobject<UMVPlayerDodge>(TEXT("Dodge"));
 	InteractionDetector = CreateDefaultSubobject<UMVPlayerInteractionDetector>(TEXT("InteractionDetector"));
 	PlayerConsumable = CreateDefaultSubobject<UMVPlayerConsumable>(TEXT("PlayerConsumable"));
+	PlayerProgression = CreateDefaultSubobject<UMVPlayerProgression>(TEXT("PlayerProgression"));
 	CharacterIndexCode = MVGameplayTags::Character_Player_P1;
 	if (CombatComponent)
 	{
@@ -62,6 +66,11 @@ void AMVPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (PlayerProgression)
+	{
+		PlayerProgression->Initialize(*this);
+	}
+	
 	CacheSprintActionData();
 
 	if (Dodge)
@@ -96,6 +105,11 @@ void AMVPlayerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	{
 		Dodge->Deinitialize();
 	}
+	
+	if (PlayerProgression)
+	{
+		PlayerProgression->Deinitialize();
+	}
 
 	Super::EndPlay(EndPlayReason);
 }
@@ -119,6 +133,7 @@ void AMVPlayerCharacter::UpdateRecoverableStats(const float DeltaTime)
 	}
 
 	const bool bShouldConsumeStamina = SprintStaminaCostPerSecond > 0.0f
+		&& IsCharacterMovementActive()
 		&& Gait == EGait::Sprinting
 		&& bHasMovementInput
 		&& !ShouldPauseSprintStaminaDrain();
@@ -131,10 +146,18 @@ void AMVPlayerCharacter::UpdateRecoverableStats(const float DeltaTime)
 			StatComponent->SetCurrentStamina(0.0f);
 			bIsSprintBlockedByStamina = true;
 		}
-		return;
 	}
 
-	StatComponent->TickRecoverableStats(DeltaTime);
+	Super::UpdateRecoverableStats(DeltaTime);
+
+	if (bEnableHPAutoRegen
+	&& StatComponent->CurrentHP < StatComponent->MaxHP)
+	{
+		StatComponent->RecoverHP(
+			StatComponent->MaxHP
+			* MVPlayerHPRecoveryRatioPerSecond
+			* DeltaTime);
+	}
 
 	const float ResumeThreshold = StatComponent->MaxStamina * ResolveSprintResumeStaminaRatio();
 	if (bIsSprintBlockedByStamina && StatComponent->CurrentStamina >= ResumeThreshold)
@@ -145,6 +168,11 @@ void AMVPlayerCharacter::UpdateRecoverableStats(const float DeltaTime)
 
 bool AMVPlayerCharacter::CanUseSprint() const
 {
+	if (ActionComponent && ActionComponent->IsActionRunning())
+	{
+		return false;
+	}
+
 	if (PlayerConsumable && PlayerConsumable->IsHealingPotionUseActionRunning())
 	{
 		return false;
@@ -153,6 +181,11 @@ bool AMVPlayerCharacter::CanUseSprint() const
 	if (!StatComponent)
 	{
 		return true;
+	}
+
+	if (StatComponent->IsStaminaExhausted())
+	{
+		return false;
 	}
 
 	if (bIsSprintBlockedByStamina)

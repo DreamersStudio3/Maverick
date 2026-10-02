@@ -172,8 +172,4 @@ struct FMVGlobalSensingTask : public FStateTreeTaskCommonBase
 	virtual EStateTreeRunStatus Tick(
 		FStateTreeExecutionContext& Context,
 		float DeltaTime) const override;
-	
-	virtual void ExitState(
-		FStateTreeExecutionContext& Context,
-		const FStateTreeTransitionResult& Transition) const override;
 };

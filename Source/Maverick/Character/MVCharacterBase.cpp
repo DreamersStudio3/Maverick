@@ -150,10 +150,12 @@ void AMVCharacterBase::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	
 	UpdateCharacterValue();
-	UpdateMovement(DeltaTime, bIsMovementActive);
+
+	Gait = DesiredGait();
+	UpdateRecoverableStats(DeltaTime);
+
+	UpdateMovement(bIsMovementActive);
 	UpdateRotation(bIsRotationActive);
-
-
 }
 
 // Called to bind functionality to input
@@ -492,7 +494,7 @@ void AMVCharacterBase::UpdateRotation(bool bIsActive)
 	}
 }
 
-void AMVCharacterBase::UpdateMovement(float DeltaTime, bool bIsActive)
+void AMVCharacterBase::UpdateMovement(bool bIsActive)
 {
 	if (bIsActive == false)
 	{
@@ -500,10 +502,6 @@ void AMVCharacterBase::UpdateMovement(float DeltaTime, bool bIsActive)
 		GetCharacterMovement()->MaxAcceleration = 0.0f;
 		return;
 	}
-
-	// Decide Gait
-	Gait = DesiredGait();
-	UpdateRecoverableStats(DeltaTime);
 
 	// Movement Speed
 	const float WalkSpeed = StatComponent ? StatComponent->WalkSpeed : 200.0f;
@@ -542,7 +540,11 @@ void AMVCharacterBase::UpdateRecoverableStats(float DeltaTime)
 		return;
 	}
 
-	StatComponent->TickRecoverableStats(DeltaTime);
+	const bool bActionRunning = ActionComponent && ActionComponent->IsActionRunning();
+	const bool bIsActivelySprinting = Gait == EGait::Sprinting && bHasMovementInput;
+	const bool bAllowStaminaRecovery = !bActionRunning && !bIsActivelySprinting;
+
+	StatComponent->TickRecoverableStats(DeltaTime, bAllowStaminaRecovery);
 }
 
 void AMVCharacterBase::SetStrafeMode(bool StrafeModeOn)

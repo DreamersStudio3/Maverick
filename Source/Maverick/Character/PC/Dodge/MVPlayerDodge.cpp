@@ -901,6 +901,11 @@ bool UMVPlayerDodge::CanConsumeDodgeCost(const FMVDodgeActionRow& DodgeActionRow
 		return true;
 	}
 
+	if (StatComponent->IsStaminaExhausted())
+	{
+		return false;
+	}
+
 	const float InstantCost = DodgeActionRow.StaminaCostType == EMVActionResourceCostType::Instant
 		? DodgeActionRow.StaminaCost
 		: 0.0f;

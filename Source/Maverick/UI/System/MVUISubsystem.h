@@ -20,6 +20,7 @@ class UMVPopupBase;
 class UMVUILayerBase;
 class UMVWindowBase;
 class USpringArmComponent;
+class UMVLevelUpWindow;
 
 UCLASS()
 class MAVERICK_API UMVUISubsystem : public UGameInstanceSubsystem
@@ -54,6 +55,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
 	void HideHUD();
 
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|LevelUp")
+	UMVLevelUpWindow* ShowLevelUpWindow();
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|LevelUp")
+	bool HideLevelUpWindow();
+	
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
 	UCommonActivatableWidget* ShowLoadingWindow();
 

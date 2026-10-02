@@ -124,6 +124,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Character|Damage")
 	void SetCharacterMovementRotationActive(bool bMovementActive, bool bRotationActive);
 
+	UFUNCTION(BlueprintPure, Category = "Maverick|Character|State")
+	bool IsCharacterMovementActive() const { return bIsMovementActive; }
+
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Character|State")
 	void SetCharacterIsLying(bool bNewIsLying);
 	
@@ -166,7 +169,7 @@ private:
 	void ApplyCharacterIndexCodeToComponents();
 	void UpdateCharacterValue();
 	void UpdateRotation(bool bIsActive = true);
-	void UpdateMovement(float DeltaTime, bool bIsActive = true);
+	void UpdateMovement(bool bIsActive = true);
 	void UpdateLocomotionDirection();
 	void CacheControllerSpaceMovementInput(const FVector& WorldDirection, float ScaleValue);
 	FVector2D ResolveControllerSpaceMovementInput(const FVector& WorldDirection, float ScaleValue) const;

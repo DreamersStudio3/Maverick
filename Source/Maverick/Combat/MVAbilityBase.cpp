@@ -207,9 +207,10 @@ void UMVAbilityBase::ActiveCameraShake(AMVCharacterBase* Owner, TSubclassOf<UCam
 
 bool UMVAbilityBase::TryConsumeAbilityCost()
 {
+	const float HPCost = FMath::Max(0.0f, AbilityData.HpCost);
 	const float StaminaCost = FMath::Max(0.0f, AbilityData.StaminaCost);
 	const float MPCost = FMath::Max(0.0f, AbilityData.MpCost);
-	if (StaminaCost <= 0.0f && MPCost <= 0.0f)
+	if (HPCost <= 0.0f && StaminaCost <= 0.0f && MPCost <= 0.0f)
 	{
 		return true;
 	}
@@ -232,20 +233,24 @@ bool UMVAbilityBase::TryConsumeAbilityCost()
 		return false;
 	}
 
-	if ((StaminaCost > 0.0f && !StatComponent->HasAnyStamina()) || !StatComponent->HasMP(MPCost))
+	if (!StatComponent->CanConsumeHP(HPCost)
+		|| (StaminaCost > 0.0f && !StatComponent->HasAnyStamina())
+		|| !StatComponent->HasMP(MPCost))
 	{
 		UE_LOG(
 			LogMVAbilityBase,
 			Verbose,
-			TEXT("Not enough resources to start ability. Owner=%s, StaminaCost=%.2f, MPCost=%.2f."),
+			TEXT("Not enough resources to start ability. Owner=%s, HPCost=%.2f, StaminaCost=%.2f, MPCost=%.2f."),
 			*GetNameSafe(OwnerCharacter),
+			HPCost,
 			StaminaCost,
 			MPCost);
 		return false;
 	}
 
+	const bool bConsumedHP = StatComponent->ConsumeHP(HPCost);
 	const bool bConsumedStamina = StatComponent->ConsumeStaminaAllowPartial(StaminaCost);
 	const bool bConsumedMP = StatComponent->ConsumeMP(MPCost);
-	return bConsumedStamina && bConsumedMP;
+	return bConsumedHP && bConsumedStamina && bConsumedMP;
 }
 

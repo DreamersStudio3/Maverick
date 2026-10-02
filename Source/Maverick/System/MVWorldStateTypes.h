@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Struct/MVProgressionTypes.h"
 #include "MVWorldStateTypes.generated.h"
 
 /**
@@ -106,4 +107,7 @@ struct MAVERICK_API FMVWorldSaveData
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Save")
 	TArray<FMVQuestSaveData> Quests;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Save|Progression")
+	FMVPlayerProgressionSaveData PlayerProgression;
 };
