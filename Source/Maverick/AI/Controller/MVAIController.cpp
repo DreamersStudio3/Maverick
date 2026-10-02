@@ -7,6 +7,8 @@
 #include "GameFramework/PlayerController.h"
 #include "InputCoreTypes.h"
 #include "Perception/AIPerceptionComponent.h"
+#include "UI/HUD/MVMainHUDWidget.h"
+#include "UI/System/MVUISubsystem.h"
 #include "UObject/UnrealType.h"
 
 AMVAIController::AMVAIController()
@@ -46,11 +48,33 @@ void AMVAIController::Tick(const float DeltaSeconds)
 	if (PlayerController->WasInputKeyJustPressed(EKeys::K))
 	{
 		SetBossPlayStartForDebug(true);
+		if (UGameInstance* GameInstance = GetGameInstance())
+		{
+			if (UMVUISubsystem* UISubsystem = GameInstance->GetSubsystem<UMVUISubsystem>())
+			{
+				if (UMVMainHUDWidget* MainHUD = Cast<UMVMainHUDWidget>(UISubsystem->GetMainHUD()))
+				{
+					MainHUD->MarkBossPatrolComplete();
+
+				}
+			}
+		}
 	}
 
 	if (PlayerController->WasInputKeyJustPressed(EKeys::L))
 	{
 		SetBossAttackTargetForDebug(PlayerController->GetPawn());
+		if (UGameInstance* GameInstance = GetGameInstance())
+		{
+			if (UMVUISubsystem* UISubsystem = GameInstance->GetSubsystem<UMVUISubsystem>())
+			{
+				if (UMVMainHUDWidget* MainHUD = Cast<UMVMainHUDWidget>(UISubsystem->GetMainHUD()))
+				{
+					MainHUD->MarkBossPlayStarted();
+
+				}
+			}
+		}
 	}
 }
 

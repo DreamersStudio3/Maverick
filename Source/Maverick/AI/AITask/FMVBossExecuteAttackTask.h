@@ -11,6 +11,7 @@ class UMVActionComponent;
 class UAnimInstance;
 class UAnimMontage;
 
+/** 보스 선택용 몽타주 행; CombatAttackRow 지정 시 CombatComponent의 Ability 실행 경로 사용 */
 USTRUCT(BlueprintType)
 struct MAVERICK_API FMVTutorialBossSkillRow : public FTableRowBase
 {
@@ -27,6 +28,9 @@ struct MAVERICK_API FMVTutorialBossSkillRow : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool bStopOnExit = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FDataTableRowHandle CombatAttackRow;
 };
 
 USTRUCT()
@@ -59,8 +63,6 @@ struct FMVBossExecuteAttackTaskInstanceData
 	TObjectPtr<UAnimMontage> ActiveMontage = nullptr;
 
 	bool bCustomMontageStopOnExit = true;
-	mutable bool bCompletionLogged = false;
-
 	FName StartedActionTableName = NAME_None;
 	FName StartedActionRowName = NAME_None;
 };

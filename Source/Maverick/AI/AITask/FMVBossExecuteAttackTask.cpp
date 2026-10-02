@@ -3,24 +3,31 @@
 #include "AIController.h"
 #include "AI/Controller/MVAIController.h"
 #include "Components/MVActionComponent.h"
+#include "Components/MVCombatComponent.h"
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimMontage.h"
 #include "GameFramework/Character.h"
 #include "StateTreeExecutionContext.h"
 
+// 지정된 공격 행 실행·종료 감시 담당, 공격 종류 선택과 타격 판정은 각각 선택 Task·Ability 책임
+// 공격 종료 감시용 Tick 활성화
 FMVBossExecuteAttackTask::FMVBossExecuteAttackTask()
 {
 	bShouldCallTick = true;
 }
 
-EStateTreeRunStatus FMVBossExecuteAttackTask::EnterState(FStateTreeExecutionContext& Context,const FStateTreeTransitionResult& Transition) const
+// 소유자·대상·공격 행 검증 후 공격 1회 시작, 범위 밖은 공격 생략 후 Succeeded 반환
+// CombatAttackRow 연결 시 CombatComponent의 Ability 경로, 미연결 선택 행은 몽타주 직접 재생
+// 그 외 행은 ActionComponent 경로 사용; 시작 실패는 Failed, 시작 성공은 Running 반환
+EStateTreeRunStatus FMVBossExecuteAttackTask::EnterState(
+	FStateTreeExecutionContext& Context,
+	const FStateTreeTransitionResult& Transition) const
 {
 	FInstanceDataType& InstanceData = Context.GetInstanceData<FInstanceDataType>(*this);
 	InstanceData.ActionComponent = nullptr;
 	InstanceData.AnimInstance = nullptr;
 	InstanceData.ActiveMontage = nullptr;
 	InstanceData.bCustomMontageStopOnExit = true;
-	InstanceData.bCompletionLogged = false;
 	InstanceData.StartedActionTableName = NAME_None;
 	InstanceData.StartedActionRowName = NAME_None;
 
@@ -41,7 +48,7 @@ EStateTreeRunStatus FMVBossExecuteAttackTask::EnterState(FStateTreeExecutionCont
 	bool bHasTarget = InstanceData.CombatContext.bHasTarget;
 	if (const AMVAIController* AIController = Cast<AMVAIController>(Context.GetOwner()))
 	{
-		if (const AActor* TargetActor = AIController->TargetActor)
+		if (const AActor* TargetActor = AIController->TargetActor; Owner && TargetActor)
 		{
 			bHasTarget = true;
 			TargetDistance = FVector::Dist(Owner->GetActorLocation(), TargetActor->GetActorLocation());
@@ -53,16 +60,6 @@ EStateTreeRunStatus FMVBossExecuteAttackTask::EnterState(FStateTreeExecutionCont
 		|| !InstanceData.AttackRow.DataTable
 		|| InstanceData.AttackRow.RowName.IsNone())
 	{
-		UE_LOG(
-			LogTemp,
-			Warning,
-			TEXT("[BossAttack] Start failed: Owner=%s HasTarget=%s Distance=%.1f Range=%.1f Table=%s Row=%s"),
-			*GetNameSafe(Owner),
-			bHasTarget ? TEXT("true") : TEXT("false"),
-			TargetDistance,
-			InstanceData.AttackRange,
-			*GetNameSafe(InstanceData.AttackRow.DataTable),
-			*InstanceData.AttackRow.RowName.ToString());
 		return EStateTreeRunStatus::Failed;
 	}
 
@@ -70,20 +67,27 @@ EStateTreeRunStatus FMVBossExecuteAttackTask::EnterState(FStateTreeExecutionCont
 	// Failed를 반환하면 상위 공격 분기가 같은 행들을 즉시 재평가하면서 로그가 반복된다.
 	if (TargetDistance > InstanceData.AttackRange)
 	{
-		UE_LOG(
-			LogTemp,
-			Verbose,
-			TEXT("[BossAttack] Out of range: Owner=%s Distance=%.1f Range=%.1f -> Succeeded for Chase transition"),
-			*GetNameSafe(Owner),
-			TargetDistance,
-			InstanceData.AttackRange);
 		return EStateTreeRunStatus::Succeeded;
 	}
 
-	if (const FMVTutorialBossSkillRow* TutorialSkill = InstanceData.AttackRow.DataTable->FindRow<FMVTutorialBossSkillRow>(
+	FDataTableRowHandle ExecutionRow = InstanceData.AttackRow;
+	const FMVTutorialBossSkillRow* TutorialSkill = InstanceData.AttackRow.DataTable->GetRowStruct() == FMVTutorialBossSkillRow::StaticStruct()
+		? InstanceData.AttackRow.DataTable->FindRow<FMVTutorialBossSkillRow>(
 		InstanceData.AttackRow.RowName,
 		TEXT("FMVBossExecuteAttackTask"),
-		false))
+		false) : nullptr;
+	if (TutorialSkill && TutorialSkill->CombatAttackRow.DataTable)
+	{
+		ExecutionRow = TutorialSkill->CombatAttackRow;
+		UMVCombatComponent* Combat = Owner->FindComponentByClass<UMVCombatComponent>();
+		InstanceData.ActionComponent = Owner->FindComponentByClass<UMVActionComponent>();
+		const FName Section = InstanceData.StartSection.IsNone() ? TutorialSkill->StartSection : InstanceData.StartSection;
+		if (!Combat || !InstanceData.ActionComponent || !Combat->TryStartCombatActionFromRowHandle(ExecutionRow, Section))
+		{
+			return EStateTreeRunStatus::Failed;
+		}
+	}
+	else if (TutorialSkill)
 	{
 		ACharacter* Character = Cast<ACharacter>(Owner);
 		UAnimInstance* AnimInstance = Character && Character->GetMesh()
@@ -92,14 +96,6 @@ EStateTreeRunStatus FMVBossExecuteAttackTask::EnterState(FStateTreeExecutionCont
 		UAnimMontage* Montage = TutorialSkill->Montage.LoadSynchronous();
 		if (!AnimInstance || !Montage || AnimInstance->Montage_Play(Montage, TutorialSkill->PlayRate) <= 0.0f)
 		{
-			UE_LOG(
-				LogTemp,
-				Warning,
-				TEXT("[BossAttack] Start failed: Table=%s Row=%s Montage=%s AnimInstance=%s"),
-				*GetNameSafe(InstanceData.AttackRow.DataTable),
-				*InstanceData.AttackRow.RowName.ToString(),
-				*GetNameSafe(Montage),
-				*GetNameSafe(AnimInstance));
 			return EStateTreeRunStatus::Failed;
 		}
 
@@ -123,36 +119,23 @@ EStateTreeRunStatus FMVBossExecuteAttackTask::EnterState(FStateTreeExecutionCont
 				InstanceData.AttackRow,
 				InstanceData.StartSection))
 		{
-			UE_LOG(
-				LogTemp,
-				Warning,
-				TEXT("[BossAttack] Start failed: ActionComponent rejected Table=%s Row=%s"),
-				*GetNameSafe(InstanceData.AttackRow.DataTable),
-				*InstanceData.AttackRow.RowName.ToString());
 			return EStateTreeRunStatus::Failed;
 		}
 	}
 
-	FString ActionTableName = InstanceData.AttackRow.DataTable->GetName();
+	FString ActionTableName = ExecutionRow.DataTable
+		? ExecutionRow.DataTable->GetName()
+		: InstanceData.AttackRow.DataTable->GetName();
 	ActionTableName.RemoveFromStart(TEXT("DT_"));
 	InstanceData.StartedActionTableName = FName(*ActionTableName);
-	InstanceData.StartedActionRowName = InstanceData.AttackRow.RowName;
-	UE_LOG(
-		LogTemp,
-		Display,
-		TEXT("[BossAttack] Started: Table=%s Row=%s Montage=%s PlayRate=%.2f"),
-		*ActionTableName,
-		*InstanceData.AttackRow.RowName.ToString(),
-		*GetNameSafe(InstanceData.ActiveMontage),
-		InstanceData.ActiveMontage && InstanceData.AnimInstance
-			? InstanceData.AnimInstance->Montage_GetPlayRate(InstanceData.ActiveMontage)
-			: 1.0f);
+	InstanceData.StartedActionRowName = ExecutionRow.RowName;
 	return EStateTreeRunStatus::Running;
 }
 
-EStateTreeRunStatus FMVBossExecuteAttackTask::Tick(
-	FStateTreeExecutionContext& Context,
-	const float DeltaTime) const
+// 직접 재생한 몽타주 또는 시작한 테이블·행의 액션이 진행 중이면 Running 유지
+// 감시 대상 종료 시 성공 전이 요청·Succeeded 반환, 액션 경로의 컴포넌트 누락은 Failed
+// 완료 후 Chase·메인 트리 복귀 목적지는 StateTree 전이 설정 책임
+EStateTreeRunStatus FMVBossExecuteAttackTask::Tick(FStateTreeExecutionContext& Context, const float DeltaTime) const
 {
 	const FInstanceDataType& InstanceData = Context.GetInstanceData<FInstanceDataType>(*this);
 	if (InstanceData.ActiveMontage && InstanceData.AnimInstance)
@@ -162,18 +145,7 @@ EStateTreeRunStatus FMVBossExecuteAttackTask::Tick(
 			return EStateTreeRunStatus::Running;
 		}
 
-		if (!InstanceData.bCompletionLogged)
-		{
-			InstanceData.bCompletionLogged = true;
-			UE_LOG(
-				LogTemp,
-				Display,
-				TEXT("[BossAttack] Finished: Table=%s Row=%s Montage=%s -> Succeeded"),
-				*InstanceData.StartedActionTableName.ToString(),
-				*InstanceData.StartedActionRowName.ToString(),
-				*GetNameSafe(InstanceData.ActiveMontage));
-			Context.RequestTransition(FStateTreeTransitionRequest(FStateTreeStateHandle::Succeeded));
-		}
+		Context.RequestTransition(FStateTreeTransitionRequest(FStateTreeStateHandle::Succeeded));
 		return EStateTreeRunStatus::Succeeded;
 	}
 
@@ -191,36 +163,15 @@ EStateTreeRunStatus FMVBossExecuteAttackTask::Tick(
 		return EStateTreeRunStatus::Running;
 	}
 
-	if (!InstanceData.bCompletionLogged)
-	{
-		InstanceData.bCompletionLogged = true;
-		UE_LOG(
-			LogTemp,
-			Display,
-			TEXT("[BossAttack] Finished: Table=%s Row=%s -> Succeeded"),
-			*InstanceData.StartedActionTableName.ToString(),
-			*InstanceData.StartedActionRowName.ToString());
-		Context.RequestTransition(FStateTreeTransitionRequest(FStateTreeStateHandle::Succeeded));
-	}
+	Context.RequestTransition(FStateTreeTransitionRequest(FStateTreeStateHandle::Succeeded));
 	return EStateTreeRunStatus::Succeeded;
 }
 
-void FMVBossExecuteAttackTask::ExitState(
-	FStateTreeExecutionContext& Context,
-	const FStateTreeTransitionResult& Transition) const
+// 직접 재생 몽타주는 bStopOnExit 설정에 따라 중단, 액션은 시작한 테이블·행과 일치할 때만 취소
+// 액션 취소에 따른 Ability 종료·타격 타이머 정리는 전투 컴포넌트와 Ability 경로에 위임
+void FMVBossExecuteAttackTask::ExitState(FStateTreeExecutionContext& Context, const FStateTreeTransitionResult& Transition) const
 {
 	FInstanceDataType& InstanceData = Context.GetInstanceData<FInstanceDataType>(*this);
-	UE_LOG(
-		LogTemp,
-		Display,
-		TEXT("[BossAttack] Exit: Table=%s Row=%s RunStatus=%s CurrentState=%s TargetState=%s ChangeType=%d"),
-		*InstanceData.StartedActionTableName.ToString(),
-		*InstanceData.StartedActionRowName.ToString(),
-		*UEnum::GetValueAsString(Transition.CurrentRunStatus),
-		*Transition.CurrentState.Describe(),
-		*Transition.TargetState.Describe(),
-		static_cast<int32>(Transition.ChangeType));
-
 	if (InstanceData.bCustomMontageStopOnExit
 		&& InstanceData.ActiveMontage
 		&& InstanceData.AnimInstance

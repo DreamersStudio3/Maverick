@@ -15,9 +15,130 @@
 #include "UObject/SavePackage.h"
 #include "UObject/UnrealType.h"
 #include "Components/StateTreeAIComponent.h"
+#include "Combat/MVTutorialBossBasicAttackAbility.h"
+#include "Animation/AnimMontage.h"
+#include "Animation/NotifyStates/MVAnimNotifyState_Ability.h"
+#include "AssetRegistry/AssetRegistryModule.h"
 
 namespace
 {
+bool BossBasicAttackSaveAsset(UObject* Asset)
+{
+	FString Filename;
+	UPackage* Package = Asset->GetOutermost();
+	if (!FPackageName::TryConvertLongPackageNameToFilename(Package->GetName(), Filename, FPackageName::GetAssetPackageExtension()))
+	{
+		return false;
+	}
+	Asset->MarkPackageDirty();
+	FSavePackageArgs Args;
+	Args.TopLevelFlags = RF_Public | RF_Standalone;
+	Args.Error = GError;
+	return UPackage::SavePackage(Package, Asset, *Filename, Args);
+}
+
+bool BossBasicAttackConfigure(bool bVerifyOnly)
+{
+	UDataTable* Selection = LoadObject<UDataTable>(nullptr,
+		TEXT("/Game/Characters/NPC/Boss/TutorialBoss/DT_NewDataTable.DT_NewDataTable"));
+	FMVTutorialBossSkillRow* Selected = Selection && Selection->GetRowStruct() == FMVTutorialBossSkillRow::StaticStruct()
+		? Selection->FindRow<FMVTutorialBossSkillRow>(TEXT("BasicAttack1"), TEXT("BossBasicAttackConfigure")) : nullptr;
+	if (!Selected) return false;
+	UAnimMontage* Montage = Selected->Montage.LoadSynchronous();
+	int32 NotifyCount = 0;
+	if (Montage)
+	{
+		for (const FAnimNotifyEvent& Event : Montage->Notifies)
+		{
+			if (const UMVAnimNotifyState_Ability* Notify = Cast<UMVAnimNotifyState_Ability>(Event.NotifyStateClass))
+			{
+				if (Notify->AbilityClass && !UMVTutorialBossBasicAttackAbility::StaticClass()->IsChildOf(Notify->AbilityClass)) return false;
+				++NotifyCount;
+			}
+		}
+	}
+	if (!Montage || NotifyCount == 0) return false;
+	const FString PackageName = TEXT("/Game/Characters/NPC/Boss/TutorialBoss/DT_TutorialBossCombatAttack");
+	UDataTable* Combat = LoadObject<UDataTable>(nullptr, *(PackageName + TEXT(".DT_TutorialBossCombatAttack")), nullptr, LOAD_NoWarn);
+	if (bVerifyOnly)
+	{
+		const FMVSkillDataTableColumn* Row = Combat && Combat->GetRowStruct() == FMVSkillDataTableColumn::StaticStruct()
+			? Combat->FindRow<FMVSkillDataTableColumn>(TEXT("BasicAttack1"), TEXT("VerifyBasicAttack")) : nullptr;
+		const bool bValid = Row && Row->AbilityReference == UMVTutorialBossBasicAttackAbility::StaticClass()
+			&& Row->Montage == Selected->Montage.ToSoftObjectPath()
+			&& Selected->CombatAttackRow.DataTable == Combat && Selected->CombatAttackRow.RowName == TEXT("BasicAttack1");
+		UE_LOG(LogTemp, Display, TEXT("[BossBasicSetup] Verify=%s NotifyWindows=%d SelectionRows=%d"),
+			bValid ? TEXT("PASS") : TEXT("FAIL"), NotifyCount, Selection->GetRowNames().Num());
+		return bValid;
+	}
+	if (!Combat)
+	{
+		Combat = NewObject<UDataTable>(CreatePackage(*PackageName), TEXT("DT_TutorialBossCombatAttack"), RF_Public | RF_Standalone);
+		Combat->RowStruct = FMVSkillDataTableColumn::StaticStruct();
+		FAssetRegistryModule::AssetCreated(Combat);
+	}
+	if (Combat->GetRowStruct() != FMVSkillDataTableColumn::StaticStruct()) return false;
+	FMVSkillDataTableColumn Row;
+	Row.Montage = Selected->Montage.ToSoftObjectPath();
+	Row.DefaultStartSection = Selected->StartSection;
+	Row.PlayRate = Selected->PlayRate;
+	Row.AbilityReference = UMVTutorialBossBasicAttackAbility::StaticClass();
+	Row.bLocksMovement = true;
+	Row.bCanBeInterrupted = false;
+	Combat->AddRow(TEXT("BasicAttack1"), Row);
+	if (!BossBasicAttackSaveAsset(Combat)) return false;
+	Selected->CombatAttackRow.DataTable = Combat;
+	Selected->CombatAttackRow.RowName = TEXT("BasicAttack1");
+	if (!BossBasicAttackSaveAsset(Selection)) return false;
+	UE_LOG(LogTemp, Display, TEXT("[BossBasicSetup] Saved BasicAttack1 Ability=%s Montage=%s NotifyWindows=%d; other selection rows preserved"),
+		*Row.AbilityReference->GetName(), *GetNameSafe(Montage), NotifyCount);
+	return true;
+}
+
+bool BossBasicAttackInspectStateTree(bool bFixRow = false)
+{
+	UStateTree* Tree = LoadObject<UStateTree>(nullptr,
+		TEXT("/Game/Characters/NPC/Boss/TutorialBoss/ST_TutorialBoss_Attack.ST_TutorialBoss_Attack"));
+	const FObjectProperty* Property = FindFProperty<FObjectProperty>(UStateTree::StaticClass(), TEXT("EditorData"));
+	UStateTreeEditorData* Data = Tree && Property
+		? Cast<UStateTreeEditorData>(Property->GetObjectPropertyValue_InContainer(Tree)) : nullptr;
+	if (!Data) return false;
+	bool bFound = false;
+	bool bChanged = false;
+	TFunction<void(UStateTreeState*)> Inspect = [&](UStateTreeState* State)
+	{
+		for (FStateTreeEditorNode& Node : State->Tasks)
+		{
+			if (FMVBossExecuteAttackTaskInstanceData* Instance = Node.Instance.GetMutablePtr<FMVBossExecuteAttackTaskInstanceData>())
+			{
+				UE_LOG(LogTemp, Display, TEXT("[BossBasicSetup] State=%s AttackTable=%s Row=%s"),
+					*State->Name.ToString(), *GetNameSafe(Instance->AttackRow.DataTable), *Instance->AttackRow.RowName.ToString());
+				if (State->Name == TEXT("BasicAttack1") && Instance->AttackRow.DataTable
+					&& Instance->AttackRow.DataTable->GetName() == TEXT("DT_NewDataTable"))
+				{
+					if (bFixRow && Instance->AttackRow.RowName != TEXT("BasicAttack1"))
+					{
+						Tree->Modify();
+						State->Modify();
+						Instance->AttackRow.RowName = TEXT("BasicAttack1");
+						bChanged = true;
+					}
+					bFound = Instance->AttackRow.RowName == TEXT("BasicAttack1");
+				}
+			}
+		}
+		for (UStateTreeState* Child : State->Children) if (Child) Inspect(Child);
+	};
+	for (UStateTreeState* Root : Data->SubTrees) if (Root) Inspect(Root);
+	if (bChanged)
+	{
+		FStateTreeCompilerLog Log;
+		if (!UStateTreeEditingSubsystem::CompileStateTree(Tree, Log) || !BossBasicAttackSaveAsset(Tree)) return false;
+		UE_LOG(LogTemp, Display, TEXT("[BossBasicSetup] BasicAttack1 state row corrected; other tasks and transitions preserved"));
+	}
+	return bFound;
+}
+
 void BossSelectAttackDumpState(UStateTreeState* State)
 {
 	UE_LOG(LogTemp, Display, TEXT("[BossSelectSetup] State=%s Tasks=%d Selection=%d"),
@@ -283,6 +404,22 @@ UMaverickBossStateTreeCommandlet::UMaverickBossStateTreeCommandlet()
 
 int32 UMaverickBossStateTreeCommandlet::Main(const FString& Params)
 {
+	if (FParse::Param(*Params, TEXT("FixBasicAttackState")))
+	{
+		return BossBasicAttackInspectStateTree(true) ? 0 : 1;
+	}
+	if (FParse::Param(*Params, TEXT("InspectBasicAttackState")))
+	{
+		return BossBasicAttackInspectStateTree() ? 0 : 1;
+	}
+	if (FParse::Param(*Params, TEXT("BasicAttackOnly")))
+	{
+		return BossBasicAttackConfigure(false) ? 0 : 1;
+	}
+	if (FParse::Param(*Params, TEXT("VerifyBasicAttack")))
+	{
+		return BossBasicAttackConfigure(true) ? 0 : 1;
+	}
 	if (FParse::Param(*Params, TEXT("SelectAttackOnly")))
 	{
 		return BossSelectAttackConfigure() ? 0 : 1;

@@ -28,7 +28,7 @@ public:
 	 * AIController가 런타임에 지정하는 공격 대상
 	 * StateTree·블루프린트에서 읽을 수 있으며, 유효하지 않은 동안 대상 없음 상태
 	 */
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "AI")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI|Target")
 	TObjectPtr<AActor> AttackTarget = nullptr;
 
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|Enemy|Event")

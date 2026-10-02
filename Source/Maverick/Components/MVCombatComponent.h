@@ -440,6 +440,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Action")
 	bool TryCombatAction(EMVCombatActionTypes InActionType, int32 ActionIndex = 0, FName StartSection = NAME_None);
 
+	/** AI가 선택한 전투 행의 Ability 준비와 액션 시작 진입점; 실행 중인 액션 교체 제외 */
+	UFUNCTION(BlueprintCallable, Category = "Action")
+	bool TryStartCombatActionFromRowHandle(const FDataTableRowHandle& RowHandle, FName StartSection = NAME_None);
+
 	UFUNCTION(BlueprintPure, Category = "Maverick|Combat|Skill UI")
 	bool GetSkillSlotRuntimeState(int32 SkillIndex, FMVSkillSlotRuntimeState& OutState) const;
 
@@ -487,6 +491,10 @@ protected:
 	virtual FMVSkillDataTableColumn GetDataTableRowFromChooserTable_Implementation(const FMVCombatActionTableInput& ChooserInput, const FName& RowName, bool& OutResult);
 
 private:
+	// AI 직접 실행 Ability의 GC 보존; 다음 직접 액션 시작 시 교체
+	UPROPERTY(Transient)
+	FMVSkillEntry DirectActionEntry;
+
 	bool BuildSkillEntryFromRowHandle(const FDataTableRowHandle& StartingRowHandle, FMVSkillEntry& OutEntry);
 	bool GetActionRowHandleFromChooserTable(
 		const FMVCombatActionTableInput& ChooserInput,
