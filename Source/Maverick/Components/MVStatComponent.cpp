@@ -1,5 +1,6 @@
 #include "Components/MVStatComponent.h"
 
+#include "Character/MVCharacterBase.h"
 #include "Tables/MVTableManager.h"
 #include "Tables/MVStatTableTypes.h"
 #include "Tags/MVGameplayTags.h"
@@ -180,6 +181,26 @@ bool UMVStatComponent::TryGetProgressionStatValues(const FGameplayTag& StatId, f
 
 	OutBonus = ProgressionStatBonuses.FindRef(StatId);
 	return true;
+}
+
+void UMVStatComponent::ApplyIncomingDamageModifiers(FMVResolvedHitData& HitData)
+{
+	if (bIsDead
+		|| HitData.Victim.Get() != GetOwner()
+		|| (HitData.VictimCharacterIndexCode.IsValid()
+			&& HitData.VictimCharacterIndexCode != CharacterIndexCode)
+		|| HitData.FinalDamage <= 0.0f)
+	{
+		return;
+	}
+
+	float ModifiedDamage = HitData.FinalDamage;
+	OnModifyIncomingDamage.Broadcast(HitData, ModifiedDamage);
+
+	if (FMath::IsFinite(ModifiedDamage))
+	{
+		HitData.FinalDamage = FMath::Max(0.0f, ModifiedDamage);
+	}
 }
 
 void UMVStatComponent::HandleDamaged(const FMVResolvedHitData& HitData)

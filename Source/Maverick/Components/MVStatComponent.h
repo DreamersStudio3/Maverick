@@ -46,6 +46,7 @@ struct MAVERICK_API FMVDeathContext
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnDeathStarted, const FMVDeathContext&, DeathContext);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FMVOnModifyIncomingDamage, const FMVResolvedHitData&, float&);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(
 	FMVOnDamageApplied,
 	float, AppliedDamage,
@@ -70,6 +71,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnBaseStatsReady, int32, Revision
  * 공격속도는 기본값과 핸들별 증가율을 합산하며 AttackSpeed에 최종값을 보관한다.
  * 보정 호출자는 반환된 핸들을 보관하고 효과 종료 시 해당 보정을 제거한다.
  *
+ * 피격 전에 체력 피해를 보정할 수 있는 사건을 제공한다.
  * OnDamaged를 구독해 HP 차감을 처리하고, 최초 사망 시
  * OnDeathStarted에 문맥을 전달하며 기존 Blueprint용 OnDead도 발행한다.
  * 회복 일시정지, 최근 감소 UI 홀드와 그로기 누적 게이지 감소를 관리한다.
@@ -89,6 +91,8 @@ public:
 	
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|Stat|Event")
 	FMVOnStatValueChanged OnHPChanged;
+
+	FMVOnModifyIncomingDamage OnModifyIncomingDamage;
 
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|Stat|Event")
 	FMVOnDamageApplied OnDamageApplied;
@@ -166,6 +170,8 @@ public:
 		float& OutEffectiveValue) const;
 
 	int32 GetStatCalculationRevision() const { return StatCalculationRevision; }
+
+	void ApplyIncomingDamageModifiers(FMVResolvedHitData& HitData);
 	
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Damage")
 	void HandleDamaged(const FMVResolvedHitData& HitData);

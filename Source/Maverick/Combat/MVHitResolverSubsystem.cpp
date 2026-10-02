@@ -355,12 +355,17 @@ bool UMVHitResolverSubsystem::BuildDirectDamageHitData(const FMVDirectDamageRequ
 	return true;
 }
 
-bool UMVHitResolverSubsystem::DispatchResolvedHit(const FMVResolvedHitData& HitData)
+bool UMVHitResolverSubsystem::DispatchResolvedHit(FMVResolvedHitData& HitData)
 {
 	AMVCharacterBase* Victim = HitData.Victim.Get();
 	if (!IsValid(Victim))
 	{
 		return false;
+	}
+
+	if (UMVStatComponent* VictimStat = Victim->FindComponentByClass<UMVStatComponent>())
+	{
+		VictimStat->ApplyIncomingDamageModifiers(HitData);
 	}
 
 	OnHitResolved.Broadcast(HitData);

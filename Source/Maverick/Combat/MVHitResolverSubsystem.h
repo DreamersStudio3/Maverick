@@ -50,5 +50,5 @@ private:
 		const AMVCharacterBase& Victim);
 
 	bool BuildDirectDamageHitData(const FMVDirectDamageRequest& Request, FMVResolvedHitData& OutHitData) const;
-	bool DispatchResolvedHit(const FMVResolvedHitData& HitData);
+	bool DispatchResolvedHit(FMVResolvedHitData& HitData);
 };
