@@ -1336,6 +1336,29 @@ FMVSkillDataTableColumn UMVCombatComponent::GetDataTableRowFromChooserTable_Impl
 	return OutRow;
 }
 
+bool UMVCombatComponent::TryStartCombatActionFromRowHandle(const FDataTableRowHandle& RowHandle, FName StartSection)
+{
+	const AMVCharacterBase* Character = Cast<AMVCharacterBase>(GetOwner());
+	if (!Character || !Character->ActionComponent || Character->ActionComponent->IsActionRunning()
+		|| !IsValidSkillActionRowHandle(RowHandle, TEXT("TryStartCombatActionFromRowHandle")))
+	{
+		return false;
+	}
+	const FMVSkillDataTableColumn* Row = RowHandle.DataTable->FindRow<FMVSkillDataTableColumn>(
+		RowHandle.RowName, TEXT("TryStartCombatActionFromRowHandle"));
+	if (!Row || !Row->bEnabled || !CanConsumeActionCost(Row))
+	{
+		return false;
+	}
+	FMVSkillEntry Entry;
+	if (!BuildSkillEntryFromRowHandle(RowHandle, Entry))
+	{
+		return false;
+	}
+	DirectActionEntry = MoveTemp(Entry);
+	return TryStartActionWithAbility(DirectActionEntry, RowHandle, StartSection);
+}
+
 bool UMVCombatComponent::BuildSkillEntryFromRowHandle(const FDataTableRowHandle& StartingRowHandle, FMVSkillEntry& OutEntry)
 {
 	if (!IsValidSkillActionRowHandle(StartingRowHandle, TEXT("BuildSkillEntryFromRowHandle")))

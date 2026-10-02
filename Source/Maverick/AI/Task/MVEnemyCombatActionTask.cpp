@@ -4,6 +4,8 @@
 #include "AIController.h"
 #include "Character/NPC/Enemy/MVEnemy.h"
 #include "Components/MVActionComponent.h"
+#include "Components/MVCombatComponent.h"
+#include "Enum/MVCombatActionTypes.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "StateTreeExecutionContext.h"
@@ -57,15 +59,23 @@ bool EnemyCombatActionTaskTryStartAction(FMVEnemyCombatActionTaskInstanceData& I
 		return false;
 	}
 
+	UMVCombatComponent* CombatComponent = InstanceData.Enemy->FindComponentByClass<UMVCombatComponent>();
+	if (!CombatComponent)
+	{
+		return false;
+	}
+
 	switch (InstanceData.ActionKind)
 	{
 	case EMVEnemyCombatActionKind::HeavyAttack:
-		return InstanceData.Enemy->TryHeavyAttack(
+		return CombatComponent->TryCombatAction(
+			EMVCombatActionTypes::HeavyAttack,
 			InstanceData.SkillIndex,
 			InstanceData.StartSection);
 
 	case EMVEnemyCombatActionKind::Skill:
-		return InstanceData.Enemy->TrySkillAttack(
+		return CombatComponent->TryCombatAction(
+			EMVCombatActionTypes::Skill,
 			InstanceData.SkillIndex,
 			InstanceData.StartSection);
 

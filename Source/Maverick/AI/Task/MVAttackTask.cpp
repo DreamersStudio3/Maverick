@@ -1,7 +1,9 @@
 #include "MVAttackTask.h"
 
-#include "Character/NPC/Enemy/MVEnemy.h"
 #include "AIController.h"
+#include "Components/MVActionComponent.h"
+#include "Components/MVCombatComponent.h"
+#include "Enum/MVCombatActionTypes.h"
 #include "StateTreeAsyncExecutionContext.h"
 #include "StateTreeExecutionContext.h"
 
@@ -9,15 +11,11 @@ EStateTreeRunStatus FMVAttackTask::EnterState(FStateTreeExecutionContext& Contex
                                               const FStateTreeTransitionResult& Transition) const
 {
 	FInstanceDataType& InstanceData = Context.GetInstanceData<FInstanceDataType>(*this);
-	if (InstanceData.Enemy && InstanceData.AttackMontageEndedHandle.IsValid())
-	{
-		InstanceData.Enemy->OnAttackMontageEnded.Remove(InstanceData.AttackMontageEndedHandle);
-	}
-
 	InstanceData.Pawn = nullptr;
-	InstanceData.Enemy = nullptr;
-	InstanceData.AttackInstanceId = INDEX_NONE;
-	InstanceData.AttackMontageEndedHandle.Reset();
+	InstanceData.CombatComponent = nullptr;
+	InstanceData.ActionComponent = nullptr;
+	InstanceData.StartedActionTableName = NAME_None;
+	InstanceData.StartedActionRowName = NAME_None;
 
 	if (const AAIController* AIController = Cast<AAIController>(Context.GetOwner()))
 	{
@@ -33,48 +31,42 @@ EStateTreeRunStatus FMVAttackTask::EnterState(FStateTreeExecutionContext& Contex
 		return EStateTreeRunStatus::Failed;
 	}
 
-	InstanceData.Enemy = Cast<AMVEnemy>(InstanceData.Pawn);
-	if (!InstanceData.Enemy)
+	InstanceData.CombatComponent = InstanceData.Pawn->FindComponentByClass<UMVCombatComponent>();
+	InstanceData.ActionComponent = InstanceData.Pawn->FindComponentByClass<UMVActionComponent>();
+	if (!InstanceData.CombatComponent || !InstanceData.ActionComponent)
 	{
 		return EStateTreeRunStatus::Failed;
 	}
 
-	if (!InstanceData.Enemy->Attack(InstanceData.AttackDirection, InstanceData.AttackInstanceId))
+	if (!InstanceData.CombatComponent->TryCombatAction(EMVCombatActionTypes::LightAttack))
 	{
 		return EStateTreeRunStatus::Failed;
 	}
 
-	const int32 ExpectedAttackInstanceId = InstanceData.AttackInstanceId;
-	InstanceData.AttackMontageEndedHandle = InstanceData.Enemy->OnAttackMontageEnded.AddLambda(
-		[WeakContext = Context.MakeWeakExecutionContext(), ExpectedAttackInstanceId](
-			const int32 FinishedAttackInstanceId,
-			UAnimMontage* Montage,
-			const bool bInterrupted)
-		{
-			if (FinishedAttackInstanceId == ExpectedAttackInstanceId)
-			{
-				WeakContext.FinishTask(bInterrupted
-					? EStateTreeFinishTaskType::Failed
-					: EStateTreeFinishTaskType::Succeeded);
-			}
-		});
+	InstanceData.StartedActionTableName = InstanceData.ActionComponent->GetActiveActionTableName();
+	InstanceData.StartedActionRowName = InstanceData.ActionComponent->GetActiveActionRowName();
 
 	return EStateTreeRunStatus::Running;
 }
 
 EStateTreeRunStatus FMVAttackTask::Tick(FStateTreeExecutionContext& Context, const float DeltaTime) const
 {
-	return EStateTreeRunStatus::Running;
+	const FInstanceDataType& InstanceData = Context.GetInstanceData<FInstanceDataType>(*this);
+	if (!InstanceData.ActionComponent)
+	{
+		return EStateTreeRunStatus::Failed;
+	}
+
+	const bool bActionRunning = InstanceData.ActionComponent->IsActionRunning()
+		&& (InstanceData.StartedActionTableName.IsNone()
+			|| InstanceData.ActionComponent->GetActiveActionTableName() == InstanceData.StartedActionTableName)
+		&& (InstanceData.StartedActionRowName.IsNone()
+			|| InstanceData.ActionComponent->GetActiveActionRowName() == InstanceData.StartedActionRowName);
+
+	return bActionRunning ? EStateTreeRunStatus::Running : EStateTreeRunStatus::Succeeded;
 }
 
 void FMVAttackTask::ExitState(FStateTreeExecutionContext& Context, const FStateTreeTransitionResult& Transition) const
 {
-	FInstanceDataType& InstanceData = Context.GetInstanceData<FInstanceDataType>(*this);
-	if (InstanceData.Enemy && InstanceData.AttackMontageEndedHandle.IsValid())
-	{
-		InstanceData.Enemy->OnAttackMontageEnded.Remove(InstanceData.AttackMontageEndedHandle);
-		InstanceData.AttackMontageEndedHandle.Reset();
-	}
-
 	FStateTreeTaskBase::ExitState(Context, Transition);
 }

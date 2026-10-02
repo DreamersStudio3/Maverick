@@ -1,0 +1,7 @@
+Name,Montage,StartSection,PlayRate,bStopOnExit
+BasicAttack1,/Game/ArtAssets/Animations/Enemy/NamlessPuppet/AttackMontage/AM_E1_SK1.AM_E1_SK1,,1.0,True
+BasicAttack2,/Game/ArtAssets/Animations/Enemy/NamlessPuppet/AttackMontage/AM_E1_SK2.AM_E1_SK2,,1.0,True
+BasicAttack3,/Game/ArtAssets/Animations/Enemy/NamlessPuppet/AttackMontage/AM_E1_SK3.AM_E1_SK3,,1.0,True
+SkillQ,/Game/ArtAssets/Animations/Enemy/NamlessPuppet/AttackMontage/AM_E1_SK4.AM_E1_SK4,,1.0,True
+SkillW,/Game/ArtAssets/Animations/Enemy/NamlessPuppet/AttackMontage/AM_E1_SK5.AM_E1_SK5,,1.0,True
+Resonance,/Game/ArtAssets/Animations/Enemy/NamlessPuppet/AttackMontage/AM_E1_SK6.AM_E1_SK6,,1.0,True

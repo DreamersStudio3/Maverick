@@ -15,6 +15,7 @@ class UMVPlayerStatusWidget;
 class UMVQuickSlotWidget;
 class UMVStatComponent;
 class UMVWorldStateSubsystem;
+class UTextBlock;
 
 /**
  * 플레이어 상태·소모품·스킬·재화·보스 표시를 연결하는 메인 HUD
@@ -43,6 +44,19 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Boss")
 	void HideBossHPBar();
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Boss")
+	void MarkBossPatrolComplete();
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Boss")
+	void MarkBossPlayStarted();
+
+
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+	TObjectPtr<UTextBlock> Txt_Patrol;
+
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+	TObjectPtr<UTextBlock> Txt_PlayInfo;
 
 protected:
 	virtual void NativeOnInitialized() override;

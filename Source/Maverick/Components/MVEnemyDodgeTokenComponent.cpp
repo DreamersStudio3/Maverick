@@ -2,6 +2,7 @@
 
 #include "Character/MVCharacterBase.h"
 #include "Character/NPC/Enemy/MVEnemy.h"
+#include "Components/MVStatComponent.h"
 #include "GameFramework/Pawn.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -97,16 +98,6 @@ bool UMVEnemyDodgeTokenComponent::TrySpendDodgeToken()
 	return true;
 }
 
-void UMVEnemyDodgeTokenComponent::ResetForFieldTransition()
-{
-	DodgeTokenCount = 0;
-	LastGrantReason = EMVEnemyDodgeTokenGrantReason::None;
-	NextSpendAllowedTime = 0.0f;
-	bGroggyActive = false;
-	bGroggyEndedByFinisher = false;
-	ResetCombatFlowCounters();
-}
-
 bool UMVEnemyDodgeTokenComponent::TryConsumeDodgeTokenForThreat(
 	AActor* Target,
 	const FMVCombatActionEvent& CombatActionEvent,
@@ -148,10 +139,13 @@ void UMVEnemyDodgeTokenComponent::BindOwnerEvents()
 
 	OwnerEnemy->OnEnemyDamaged.RemoveDynamic(this, &UMVEnemyDodgeTokenComponent::HandleOwnerDamaged);
 	OwnerEnemy->OnEnemyDamaged.AddUniqueDynamic(this, &UMVEnemyDodgeTokenComponent::HandleOwnerDamaged);
-	OwnerEnemy->OnEnemyGroggyStarted.RemoveDynamic(this, &UMVEnemyDodgeTokenComponent::HandleOwnerGroggyStarted);
-	OwnerEnemy->OnEnemyGroggyStarted.AddUniqueDynamic(this, &UMVEnemyDodgeTokenComponent::HandleOwnerGroggyStarted);
-	OwnerEnemy->OnEnemyGroggyEnded.RemoveDynamic(this, &UMVEnemyDodgeTokenComponent::HandleOwnerGroggyEnded);
-	OwnerEnemy->OnEnemyGroggyEnded.AddUniqueDynamic(this, &UMVEnemyDodgeTokenComponent::HandleOwnerGroggyEnded);
+	if (OwnerEnemy->StatComponent)
+	{
+		OwnerEnemy->StatComponent->OnGroggyStarted.RemoveDynamic(this, &UMVEnemyDodgeTokenComponent::HandleOwnerGroggyStarted);
+		OwnerEnemy->StatComponent->OnGroggyStarted.AddUniqueDynamic(this, &UMVEnemyDodgeTokenComponent::HandleOwnerGroggyStarted);
+		OwnerEnemy->StatComponent->OnGroggyEnded.RemoveDynamic(this, &UMVEnemyDodgeTokenComponent::HandleOwnerGroggyEnded);
+		OwnerEnemy->StatComponent->OnGroggyEnded.AddUniqueDynamic(this, &UMVEnemyDodgeTokenComponent::HandleOwnerGroggyEnded);
+	}
 }
 
 void UMVEnemyDodgeTokenComponent::UnbindOwnerEvents()
@@ -162,8 +156,11 @@ void UMVEnemyDodgeTokenComponent::UnbindOwnerEvents()
 	}
 
 	OwnerEnemy->OnEnemyDamaged.RemoveDynamic(this, &UMVEnemyDodgeTokenComponent::HandleOwnerDamaged);
-	OwnerEnemy->OnEnemyGroggyStarted.RemoveDynamic(this, &UMVEnemyDodgeTokenComponent::HandleOwnerGroggyStarted);
-	OwnerEnemy->OnEnemyGroggyEnded.RemoveDynamic(this, &UMVEnemyDodgeTokenComponent::HandleOwnerGroggyEnded);
+	if (OwnerEnemy->StatComponent)
+	{
+		OwnerEnemy->StatComponent->OnGroggyStarted.RemoveDynamic(this, &UMVEnemyDodgeTokenComponent::HandleOwnerGroggyStarted);
+		OwnerEnemy->StatComponent->OnGroggyEnded.RemoveDynamic(this, &UMVEnemyDodgeTokenComponent::HandleOwnerGroggyEnded);
+	}
 }
 
 void UMVEnemyDodgeTokenComponent::BindObservedTargetDamage()

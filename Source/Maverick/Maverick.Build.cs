@@ -32,6 +32,7 @@ public class Maverick : ModuleRules
 			"Chooser",
 			"LockOnTarget",
 			"MotionWarping",
+			"NavigationSystem",
         });
 
 		if (Target.Type == TargetRules.TargetType.Editor)
@@ -44,6 +45,9 @@ public class Maverick : ModuleRules
 				"BlueprintGraph",
 				"AnimationCore",
 				"ToolMenus",
+				"StateTreeEditorModule",
+				"PropertyBindingUtils",
+				"PropertyBindingUtilsEditor",
 				"Slate",
 				"SlateCore"
 			});
