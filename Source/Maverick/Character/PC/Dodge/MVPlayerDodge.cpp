@@ -585,7 +585,8 @@ bool UMVPlayerDodge::TryStartDodgeAction(const FMVDodgeInputContext& DodgeInput)
 		return false;
 	}
 
-	if (!CanConsumeDodgeCost(*DodgeActionRow))
+	float InstantCost = 0.0f;
+	if (!CanConsumeDodgeCost(*DodgeActionRow, InstantCost))
 	{
 		EndLockOnPawnRotationSuppressionForDodge();
 		return false;
@@ -611,7 +612,7 @@ bool UMVPlayerDodge::TryStartDodgeAction(const FMVDodgeInputContext& DodgeInput)
 	}
 
 	BeginLockOnPawnRotationSuppressionForDodge(*OwnerCharacter);
-	if (!ConsumeDodgeCost(*DodgeActionRow))
+	if (!ConsumeDodgeCost(InstantCost))
 	{
 		UE_LOG(
 			LogMVPlayerDodge,
@@ -890,8 +891,12 @@ const FMVDodgeActionRow* UMVPlayerDodge::FindDodgeActionRow(
 	return DodgeActionRow;
 }
 
-bool UMVPlayerDodge::CanConsumeDodgeCost(const FMVDodgeActionRow& DodgeActionRow) const
+bool UMVPlayerDodge::CanConsumeDodgeCost(
+	const FMVDodgeActionRow& DodgeActionRow,
+	float& OutInstantCost) const
 {
+	OutInstantCost = 0.0f;
+
 	const AMVCharacterBase* OwnerCharacter = GetPlayerCharacter();
 	const UMVStatComponent* StatComponent = OwnerCharacter
 		? OwnerCharacter->FindComponentByClass<UMVStatComponent>()
@@ -906,36 +911,36 @@ bool UMVPlayerDodge::CanConsumeDodgeCost(const FMVDodgeActionRow& DodgeActionRow
 		return false;
 	}
 
-	const float InstantCost = DodgeActionRow.StaminaCostType == EMVActionResourceCostType::Instant
-		? DodgeActionRow.StaminaCost
-		: 0.0f;
+	if (DodgeActionRow.StaminaCostType == EMVActionResourceCostType::Instant)
+	{
+		OutInstantCost = FMath::Max(0.0f, DodgeActionRow.StaminaCost)
+			* StatComponent->GetDodgeStaminaCostMultiplier();
+	}
+
 	const float RequiredStamina = FMath::Max(
 		FMath::Max(0.0f, DodgeActionRow.MinRequiredStamina),
-		FMath::Max(0.0f, InstantCost));
+		OutInstantCost);
 	return StatComponent->HasStamina(RequiredStamina);
 }
 
-bool UMVPlayerDodge::ConsumeDodgeCost(const FMVDodgeActionRow& DodgeActionRow)
+bool UMVPlayerDodge::ConsumeDodgeCost(float InstantCost)
 {
 	AMVCharacterBase* OwnerCharacter = GetPlayerCharacter();
 	UMVStatComponent* StatComponent = OwnerCharacter
 		? OwnerCharacter->FindComponentByClass<UMVStatComponent>()
 		: nullptr;
-	if (!StatComponent || DodgeActionRow.StaminaCost <= 0.0f)
+	if (!StatComponent || InstantCost <= 0.0f)
 	{
 		return true;
 	}
 
-	switch (DodgeActionRow.StaminaCostType)
+	// 액션을 시작하는 사이 스태미너가 달라졌다면 일부만 차감하지 않는다.
+	if (!StatComponent->HasStamina(InstantCost))
 	{
-	case EMVActionResourceCostType::Instant:
-		return StatComponent->ConsumeStamina(DodgeActionRow.StaminaCost);
-	case EMVActionResourceCostType::None:
-	case EMVActionResourceCostType::PerSecond:
-	case EMVActionResourceCostType::OnDemand:
-	default:
-		return true;
+		return false;
 	}
+
+	return StatComponent->ConsumeStamina(InstantCost);
 }
 
 void UMVPlayerDodge::ApplyDodgeChooserSnapshot(

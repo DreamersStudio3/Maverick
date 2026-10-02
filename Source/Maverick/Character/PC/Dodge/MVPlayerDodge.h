@@ -95,8 +95,8 @@ private:
 	FGameplayTag ResolveCharacterIndexCode() const;
 	bool CanTransitionCurrentAction(const UMVInputManagerComponent& InputManager, const UMVActionComponent& ActionComponent) const;
 	const FMVDodgeActionRow* FindDodgeActionRow(FDataTableRowHandle ActionRowHandle) const;
-	bool CanConsumeDodgeCost(const FMVDodgeActionRow& DodgeActionRow) const;
-	bool ConsumeDodgeCost(const FMVDodgeActionRow& DodgeActionRow);
+	bool CanConsumeDodgeCost(const FMVDodgeActionRow& DodgeActionRow, float& OutInstantCost) const;
+	bool ConsumeDodgeCost(float InstantCost);
 	void ApplyDodgeChooserSnapshot(
 		AMVCharacterBase& OwnerCharacter,
 		bool bHasMovementInput,

@@ -279,6 +279,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Attack")
 	bool RemoveAttackSpeedModifier(FGuid ModifierHandle);
 
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Dodge")
+	FGuid AddDodgeStaminaCostModifier(float BonusRatio);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Dodge")
+	bool RemoveDodgeStaminaCostModifier(FGuid ModifierHandle);
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|Stat|Dodge")
+	float GetDodgeStaminaCostMultiplier() const;
+
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|MoveSpeed")
 	void SetWalkSpeed(float InWalkSpeed);
 
@@ -472,4 +481,7 @@ private:
 
 	UPROPERTY(Transient)
 	TMap<FGuid, float> AttackSpeedModifiers;
+
+	UPROPERTY(Transient)
+	TMap<FGuid, float> DodgeStaminaCostModifiers;
 };

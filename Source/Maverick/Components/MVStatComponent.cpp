@@ -711,6 +711,36 @@ void UMVStatComponent::RecalculateAttackSpeed()
 	AttackSpeed = BaseAttackSpeed * FMath::Max(0.0f, 1.0f + TotalBonusRatio);
 }
 
+FGuid UMVStatComponent::AddDodgeStaminaCostModifier(float BonusRatio)
+{
+	if (!FMath::IsFinite(BonusRatio))
+	{
+		return FGuid();
+	}
+
+	const FGuid ModifierHandle = FGuid::NewGuid();
+	DodgeStaminaCostModifiers.Add(ModifierHandle, BonusRatio);
+	return ModifierHandle;
+}
+
+bool UMVStatComponent::RemoveDodgeStaminaCostModifier(FGuid ModifierHandle)
+{
+	return ModifierHandle.IsValid()
+		&& DodgeStaminaCostModifiers.Remove(ModifierHandle) > 0;
+}
+
+float UMVStatComponent::GetDodgeStaminaCostMultiplier() const
+{
+	float TotalBonusRatio = 0.0f;
+
+	for (const TPair<FGuid, float>& Modifier : DodgeStaminaCostModifiers)
+	{
+		TotalBonusRatio += Modifier.Value;
+	}
+
+	return FMath::Max(0.0f, 1.0f + TotalBonusRatio);
+}
+
 void UMVStatComponent::SetWalkSpeed(float InWalkSpeed)
 {
 	WalkSpeed = MVStatNonNegative(InWalkSpeed);
