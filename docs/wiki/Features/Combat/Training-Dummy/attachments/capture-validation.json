@@ -1,0 +1,13 @@
+{
+  "test": "Maverick.Combat.TrainingDummy.PlayerMeleePIE",
+  "state": "Success",
+  "engine_output": "training-hit-output.wav",
+  "channels": 2,
+  "sample_rate": 48000,
+  "duration_seconds": 9.173333333333334,
+  "peak": 0.117279052734375,
+  "rms": 0.005564601393527348,
+  "audible_window_groups": 2,
+  "scope": "Actual player melee in PIE; isolated dummy hit submix output, not source WAV or speaker listening",
+  "passed": true
+}
