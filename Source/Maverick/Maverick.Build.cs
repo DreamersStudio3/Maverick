@@ -44,6 +44,7 @@ public class Maverick : ModuleRules
 				"KismetCompiler",
 				"BlueprintGraph",
 				"AnimationCore",
+				"AudioMixer",
 				"ToolMenus",
 				"StateTreeEditorModule",
 				"PropertyBindingUtils",
