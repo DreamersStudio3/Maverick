@@ -1,0 +1,67 @@
+{
+  "date": "2026-10-03",
+  "host": "Codex",
+  "platform": "Windows",
+  "engine": "5.8.2-56702186+++UE5+Release-5.8",
+  "mode": "NullRHI commandlet with junction to repository Content/DuelistComplete",
+  "base_commit": "a1d6300e8a47b757ea7f601aea9be701d6b68089",
+  "files": 356,
+  "total_bytes": 509476318,
+  "largest_file_bytes": 7721875,
+  "sha256_matches": 356,
+  "assets": {
+    "AnimSequence": 325,
+    "Material": 9,
+    "SkeletalMesh": 1,
+    "Skeleton": 1,
+    "World": 1,
+    "Texture2D": 19
+  },
+  "valid_clips": 325,
+  "samples_per_clip": 3,
+  "bones_per_sample": 786,
+  "material_slots": 9,
+  "external_game_dependencies": [],
+  "missing_game_dependencies": [],
+  "source_pose_comparison": [
+    {
+      "clip": "a000_003000",
+      "samples": 3,
+      "bones_per_sample": 91,
+      "max_position_error_cm": 0.6821779779189325,
+      "axis_mapping": [
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          1,
+          -1,
+          1
+        ]
+      ]
+    },
+    {
+      "clip": "a001_000000",
+      "samples": 3,
+      "bones_per_sample": 81,
+      "max_position_error_cm": 0.7630023522643931,
+      "axis_mapping": [
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          1,
+          -1,
+          1
+        ]
+      ]
+    }
+  ],
+  "errors": [],
+  "visual_likeness_reviewed": false,
+  "maverick_gameplay_tested": false
+}
