@@ -55,6 +55,8 @@ namespace MVGameplayTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StatusEffect_Passive_IndomitableWill);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StatusEffect_Passive_FlexibleFlow);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StatusEffect_Passive_FlexibleFlowStacks);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StatusEffect_Passive_OutsiderStep);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StatusEffect_Passive_OutsiderStepStacks);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StatusEffect_Skill_ThirdHitMark);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StatusEffect_Skill_Burn);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StatusEffect_Skill_BurnBurstCooldown);

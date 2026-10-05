@@ -732,6 +732,54 @@ void UMVStatComponent::RecalculateAttackSpeed()
 	AttackSpeed = BaseAttackSpeed * FMath::Max(0.0f, 1.0f + TotalBonusRatio);
 }
 
+FGuid UMVStatComponent::AddMoveSpeedModifier(float BonusRatio)
+{
+	if (!FMath::IsFinite(BonusRatio))
+	{
+		return FGuid();
+	}
+
+	const FGuid ModifierHandle = FGuid::NewGuid();
+	MoveSpeedModifiers.Add(ModifierHandle, BonusRatio);
+	return ModifierHandle;
+}
+
+bool UMVStatComponent::UpdateMoveSpeedModifier(
+	FGuid ModifierHandle,
+	float BonusRatio)
+{
+	if (!ModifierHandle.IsValid() || !FMath::IsFinite(BonusRatio))
+	{
+		return false;
+	}
+
+	float* ExistingBonus = MoveSpeedModifiers.Find(ModifierHandle);
+	if (!ExistingBonus)
+	{
+		return false;
+	}
+
+	*ExistingBonus = BonusRatio;
+	return true;
+}
+
+bool UMVStatComponent::RemoveMoveSpeedModifier(FGuid ModifierHandle)
+{
+	return ModifierHandle.IsValid()
+		&& MoveSpeedModifiers.Remove(ModifierHandle) > 0;
+}
+
+float UMVStatComponent::GetMoveSpeedMultiplier() const
+{
+	float TotalBonusRatio = 0.0f;
+	for (const TPair<FGuid, float>& Modifier : MoveSpeedModifiers)
+	{
+		TotalBonusRatio += Modifier.Value;
+	}
+
+	return FMath::Max(0.0f, 1.0f + TotalBonusRatio);
+}
+
 FGuid UMVStatComponent::AddDodgeStaminaCostModifier(float BonusRatio)
 {
 	if (!FMath::IsFinite(BonusRatio))
@@ -789,7 +837,10 @@ bool UMVStatComponent::HasReachedSprintSpeedRatio(const float RequiredRatio) con
 	}
 
 	const float CurrentSpeed = MovementComponent->Velocity.Size2D();
-	const float RequiredSpeed = SprintSpeed * FMath::Clamp(RequiredRatio, 0.0f, 1.0f);
+	const float RequiredSpeed =
+		SprintSpeed
+		* GetMoveSpeedMultiplier()
+		* FMath::Clamp(RequiredRatio, 0.0f, 1.0f);
 	return CurrentSpeed >= RequiredSpeed;
 }
 

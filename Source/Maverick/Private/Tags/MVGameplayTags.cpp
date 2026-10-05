@@ -53,6 +53,8 @@ namespace MVGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(StatusEffect_Passive_IndomitableWill, "StatusEffect.Passive.IndomitableWill");
 	UE_DEFINE_GAMEPLAY_TAG(StatusEffect_Passive_FlexibleFlow, "StatusEffect.Passive.FlexibleFlow");
 	UE_DEFINE_GAMEPLAY_TAG(StatusEffect_Passive_FlexibleFlowStacks, "StatusEffect.Passive.FlexibleFlowStacks");
+	UE_DEFINE_GAMEPLAY_TAG(StatusEffect_Passive_OutsiderStep, "StatusEffect.Passive.OutsiderStep");
+	UE_DEFINE_GAMEPLAY_TAG(StatusEffect_Passive_OutsiderStepStacks, "StatusEffect.Passive.OutsiderStepStacks");
 	UE_DEFINE_GAMEPLAY_TAG(StatusEffect_Skill_ThirdHitMark, "StatusEffect.Skill.ThirdHitMark");
 	UE_DEFINE_GAMEPLAY_TAG(StatusEffect_Skill_Burn, "StatusEffect.Skill.Burn");
 	UE_DEFINE_GAMEPLAY_TAG(StatusEffect_Skill_BurnBurstCooldown, "StatusEffect.Skill.BurnBurstCooldown");

@@ -69,8 +69,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnBaseStatsReady, int32, Revision
  * CharacterIndexCode와 일치하는 테이블 행에서 기본 스탯을 로드한다.
  * HP, 스태미너, MP, Groggy와 이동·전투 수치 및 변경 이벤트를 소유한다.
  * 공격속도는 기본값과 핸들별 증가율을 합산하며 AttackSpeed에 최종값을 보관한다.
+ * 이동속도는 핸들별 증가율을 합산하고 최종 이동속도 계산에 배율을 제공한다.
  * 보정 호출자는 반환된 핸들을 보관하고 효과 종료 시 해당 보정을 제거한다.
- *
  * 피격 전에 체력 피해를 보정할 수 있는 사건을 제공한다.
  * OnDamaged를 구독해 HP 차감을 처리하고, 최초 사망 시
  * OnDeathStarted에 문맥을 전달하며 기존 Blueprint용 OnDead도 발행한다.
@@ -285,6 +285,18 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Attack")
 	bool RemoveAttackSpeedModifier(FGuid ModifierHandle);
 
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|MoveSpeed")
+	FGuid AddMoveSpeedModifier(float BonusRatio);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|MoveSpeed")
+	bool UpdateMoveSpeedModifier(FGuid ModifierHandle, float BonusRatio);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|MoveSpeed")
+	bool RemoveMoveSpeedModifier(FGuid ModifierHandle);
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|Stat|MoveSpeed")
+	float GetMoveSpeedMultiplier() const;
+
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Dodge")
 	FGuid AddDodgeStaminaCostModifier(float BonusRatio);
 
@@ -487,6 +499,9 @@ private:
 
 	UPROPERTY(Transient)
 	TMap<FGuid, float> AttackSpeedModifiers;
+
+	UPROPERTY(Transient)
+	TMap<FGuid, float> MoveSpeedModifiers;
 
 	UPROPERTY(Transient)
 	TMap<FGuid, float> DodgeStaminaCostModifiers;

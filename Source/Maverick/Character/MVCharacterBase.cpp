@@ -509,7 +509,12 @@ void AMVCharacterBase::UpdateMovement(bool bIsActive)
 	const float WalkSpeed = StatComponent ? StatComponent->WalkSpeed : 200.0f;
 	const float RunSpeed = StatComponent ? StatComponent->RunSpeed : 500.0f;
 	const float SprintSpeed = StatComponent ? StatComponent->SprintSpeed : 750.0f;
-	GetCharacterMovement()->MaxWalkSpeed = CalculateCharacterMovementSpeed(WalkSpeed, RunSpeed, SprintSpeed);
+	const float BaseMovementSpeed =
+		CalculateCharacterMovementSpeed(WalkSpeed, RunSpeed, SprintSpeed);
+	const float MoveSpeedMultiplier =
+		StatComponent ? StatComponent->GetMoveSpeedMultiplier() : 1.0f;
+	GetCharacterMovement()->MaxWalkSpeed =
+		BaseMovementSpeed * MoveSpeedMultiplier;
 
 	// Acceleration
 	const bool bMovementInputBlocked = IsMovementInputBlocked() || (StatComponent && StatComponent->IsDead());
