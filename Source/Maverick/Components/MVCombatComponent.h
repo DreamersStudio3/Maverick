@@ -451,6 +451,9 @@ public:
 	UFUNCTION()
 	void HandleHitResolved(const FMVResolvedHitData& HitData);
 
+	// 실행된 Ability가 현재 무기의 평타 목록에 속하는지 확인한다.
+	bool IsBasicAttackAbility(const UMVAbilityBase* Ability) const;
+
 	void ApplyOutgoingAttackDamageModifiers(FMVResolvedHitData& HitData);
 
 	// Call When Character Change Weapon --> have to receive Event from Character

@@ -1006,6 +1006,24 @@ bool UMVCombatComponent::IsCurrentAttackHit(
 		&& HitData.AttackInstanceId == CurrentAttackInstanceId;
 }
 
+bool UMVCombatComponent::IsBasicAttackAbility(const UMVAbilityBase* Ability) const
+{
+	if (!IsValid(Ability))
+	{
+		return false;
+	}
+
+	for (const TPair<FName, FMVSkillEntry>& Pair : BasicAttackMap)
+	{
+		if (Pair.Value.ContainsAbility(Ability))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void UMVCombatComponent::ApplyOutgoingAttackDamageModifiers(FMVResolvedHitData& HitData)
 {
 	if (HitData.Origin != EMVResolvedHitOrigin::AttackCollision
