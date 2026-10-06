@@ -4,6 +4,7 @@
 #include "GameplayTagContainer.h"
 #include "Struct/MVWeaponTypes.h"
 #include "Tables/MVActionTableTypes.h"
+#include "Public/Enum/MVCombatActionTypes.h"
 #include "MVHitTypes.generated.h"
 
 class AMVCharacterBase;
@@ -52,6 +53,9 @@ struct MAVERICK_API FMVHitResolveRequest
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Hit")
 	int32 AttackInstanceId = INDEX_NONE;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Hit")
+	EMVAttackTypes AttackTypes = EMVAttackTypes::NormalAttack;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Hit|Damage", meta = (ClampMin = "0.0"))
 	float DamageMultiplier = 1.0f;
