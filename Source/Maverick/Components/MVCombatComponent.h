@@ -96,9 +96,13 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Skill")
 	float MainCooldownDuration = 0.0f;
 
-	// Last time this skill was used (for cooldown tracking)
+	// Last time this skill was used
 	UPROPERTY(BlueprintReadOnly, Category = "Skill")
 	float LastUsedTime = 0.0f;
+
+	// 음수는 아직 주 쿨타임을 시작하지 않았다는 뜻이다.
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Skill")
+	float MainCooldownEndTime = -1.0f;
 
 	// For chained skills: current stage index
 	UPROPERTY(BlueprintReadOnly, Category = "Skill")
@@ -181,14 +185,29 @@ public:
 		return RowHandle;
 	}
 
+	void BeginMainCooldown(float CurrentTime)
+	{
+		LastUsedTime = CurrentTime;
+		MainCooldownEndTime = CurrentTime + FMath::Max(0.0f, MainCooldownDuration);
+	}
+
+	float GetMainCooldownRemaining(float CurrentTime) const
+	{
+		if (MainCooldownDuration <= 0.0f || MainCooldownEndTime < 0.0f)
+		{
+			return 0.0f;
+		}
+
+		return FMath::Clamp(
+			MainCooldownEndTime - CurrentTime,
+			0.0f,
+			MainCooldownDuration);
+	}
+
 	// Check if main cooldown is ready
 	bool IsMainCooldownReady(float CurrentTime) const
 	{
-		if (MainCooldownDuration <= 0.0f)
-		{
-			return true;
-		}
-		return LastUsedTime == 0 || (CurrentTime - LastUsedTime) >= MainCooldownDuration;
+		return GetMainCooldownRemaining(CurrentTime) <= KINDA_SMALL_NUMBER;
 	}
 
 	// Check if input window is valid for chain advancement
@@ -260,7 +279,7 @@ public:
 		else
 		{
 			bChainActive = false;
-			LastUsedTime = CurrentTime;
+			BeginMainCooldown(CurrentTime);
 			bCurrentStageHitConfirmed = false;
 			return;
 		}
@@ -293,7 +312,7 @@ public:
 			return;
 		}
 
-		LastUsedTime = CurrentTime;
+		BeginMainCooldown(CurrentTime);
 	}
 
 	// Advance to next stage in chain
@@ -309,7 +328,7 @@ public:
 		{
 			bChainActive = false;
 			bCurrentStageHitConfirmed = false;
-			LastUsedTime = CurrentTime;
+			BeginMainCooldown(CurrentTime);
 			CurrentChainStageIndex = 0;
 			return false; // Chain complete
 		}
@@ -445,6 +464,20 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Maverick|Combat|Skill UI")
 	bool GetSkillSlotRuntimeState(int32 SkillIndex, FMVSkillSlotRuntimeState& OutState) const;
+
+	// 진행 중인 주 쿨타임의 남은 시간을 횟수만큼 비율로 줄인다.
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Combat|Cooldown")
+	bool ReduceSkillMainCooldown(
+		int32 SkillIndex,
+		float ReductionFraction,
+		int32 TriggerCount,
+		float& OutBeforeSeconds,
+		float& OutAfterSeconds);
+
+	// 현재 무기에서 주 쿨타임이 진행 중인 스킬에만 감소를 적용한다.
+	int32 ReduceOngoingSkillMainCooldowns(
+		float ReductionFraction,
+		int32 TriggerCount);
 
 	void HandleAbilityEnded(const UMVAbilityBase* EndedAbility);
 

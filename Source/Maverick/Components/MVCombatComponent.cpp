@@ -407,14 +407,7 @@ bool UMVCombatComponent::GetSkillSlotRuntimeState(
 	else
 	{
 		OutState.CooldownDuration = FMath::Max(0.0f, SkillEntry->MainCooldownDuration);
-		if (OutState.CooldownDuration > 0.0f && SkillEntry->LastUsedTime > 0.0f)
-		{
-			const float ElapsedTime = FMath::Max(0.0f, CurrentTime - SkillEntry->LastUsedTime);
-			OutState.CooldownRemaining = FMath::Clamp(
-				OutState.CooldownDuration - ElapsedTime,
-				0.0f,
-				OutState.CooldownDuration);
-		}
+		OutState.CooldownRemaining = SkillEntry->GetMainCooldownRemaining(CurrentTime);
 	}
 
 	if (bSlotAbilityRunning)
@@ -434,6 +427,87 @@ bool UMVCombatComponent::GetSkillSlotRuntimeState(
 		&& (!OutState.bGaugeControlled || OutState.bGaugeReady);
 
 	return OutState.bAvailable;
+}
+
+bool UMVCombatComponent::ReduceSkillMainCooldown(
+	int32 SkillIndex,
+	float ReductionFraction,
+	int32 TriggerCount,
+	float& OutBeforeSeconds,
+	float& OutAfterSeconds)
+{
+	OutBeforeSeconds = 0.0f;
+	OutAfterSeconds = 0.0f;
+
+	UWorld* World = GetWorld();
+	if (!World
+		|| SkillIndex < 0
+		|| SkillIndex >= MVCombatSkillSlots::Count
+		|| (SkillIndex == MVCombatSkillSlots::R && bUseRSkillGauge)
+		|| !FMath::IsFinite(ReductionFraction)
+		|| ReductionFraction <= 0.0f
+		|| TriggerCount <= 0)
+	{
+		return false;
+	}
+
+	FMVSkillEntry* SkillEntry = SkillMap.Find(MVCombatMakeSkillMapKey(SkillIndex));
+
+	if (!SkillEntry
+		|| SkillEntry->MainCooldownDuration <= 0.0f
+		|| SkillEntry->MainCooldownEndTime < 0.0f
+		|| SkillEntry->bChainActive
+		|| (CurrentAbilityInstance
+			&& SkillEntry->ContainsAbility(CurrentAbilityInstance.Get())))
+	{
+		return false;
+	}
+
+	const float CurrentTime = World->GetTimeSeconds();
+	OutBeforeSeconds = SkillEntry->GetMainCooldownRemaining(CurrentTime);
+	if (OutBeforeSeconds <= KINDA_SMALL_NUMBER)
+	{
+		return false;
+	}
+
+	const float Fraction = FMath::Clamp(ReductionFraction, 0.0f, 1.0f);
+	const float RemainingMultiplier =
+		FMath::Pow(1.0f - Fraction, TriggerCount);
+
+	OutAfterSeconds = FMath::Clamp(
+		OutBeforeSeconds * RemainingMultiplier,
+		0.0f,
+		OutBeforeSeconds);
+
+	SkillEntry->MainCooldownEndTime = CurrentTime + OutAfterSeconds;
+	return true;
+}
+
+int32 UMVCombatComponent::ReduceOngoingSkillMainCooldowns(
+	float ReductionFraction,
+	int32 TriggerCount)
+{
+	int32 ReducedSkillCount = 0;
+
+	for (int32 SkillIndex = 0;
+		SkillIndex < MVCombatSkillSlots::Count;
+		++SkillIndex)
+	{
+		float BeforeSeconds = 0.0f;
+		float AfterSeconds = 0.0f;
+
+		if (ReduceSkillMainCooldown(
+			SkillIndex,
+			ReductionFraction,
+			TriggerCount,
+			BeforeSeconds,
+			AfterSeconds))
+		{
+			++ReducedSkillCount;
+		}
+	}
+
+	return ReducedSkillCount;
 }
 
 bool UMVCombatComponent::TryCombatAction(
