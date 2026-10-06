@@ -451,6 +451,9 @@ public:
 	UFUNCTION()
 	void HandleHitResolved(const FMVResolvedHitData& HitData);
 
+	UFUNCTION()
+	void HandleHitDeliveryFinished(const FMVResolvedHitData& HitData);
+
 	// 실행된 Ability가 현재 무기의 평타 목록에 속하는지 확인한다.
 	bool IsBasicAttackAbility(const UMVAbilityBase* Ability) const;
 
@@ -468,6 +471,10 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|Combat|Event")
 	FMVOnValidatedAttackHit OnValidatedAttackHit;
+
+	// 원래 타격의 피해자 처리가 끝난 유효 공격 명중
+	UPROPERTY(BlueprintAssignable, Category = "Maverick|Combat|Event")
+	FMVOnValidatedAttackHit OnValidatedAttackHitAfterDamage;
 
 	FMVOnModifyOutgoingAttackDamage OnModifyOutgoingAttackDamage;
 

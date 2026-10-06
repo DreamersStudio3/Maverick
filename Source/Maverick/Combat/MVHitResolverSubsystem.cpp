@@ -369,7 +369,11 @@ bool UMVHitResolverSubsystem::DispatchResolvedHit(FMVResolvedHitData& HitData)
 	}
 
 	OnHitResolved.Broadcast(HitData);
-	Victim->OnHitResolved(HitData);
+
+	if (Victim->OnHitResolved(HitData))
+	{
+		OnHitDeliveryFinished.Broadcast(HitData);
+	}
 
 	return true;
 }

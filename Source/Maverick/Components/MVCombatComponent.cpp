@@ -261,6 +261,8 @@ void UMVCombatComponent::BeginPlay()
 	{
 		HitResolver->OnHitResolved.RemoveDynamic(this, &UMVCombatComponent::HandleHitResolved);
 		HitResolver->OnHitResolved.AddUniqueDynamic(this, &UMVCombatComponent::HandleHitResolved);
+		HitResolver->OnHitDeliveryFinished.RemoveDynamic(this, &UMVCombatComponent::HandleHitDeliveryFinished);
+		HitResolver->OnHitDeliveryFinished.AddUniqueDynamic(this, &UMVCombatComponent::HandleHitDeliveryFinished);
 	}
 
 	if (UMVActionComponent* ActionComponent = OwnerCharacter->ActionComponent)
@@ -292,6 +294,7 @@ void UMVCombatComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 		if (UMVHitResolverSubsystem* HitResolver = UMVHitResolverSubsystem::Get(this))
 		{
 			HitResolver->OnHitResolved.RemoveDynamic(this, &UMVCombatComponent::HandleHitResolved);
+			HitResolver->OnHitDeliveryFinished.RemoveDynamic(this, &UMVCombatComponent::HandleHitDeliveryFinished);
 		}
 
 		if (UMVActionComponent* ActionComponent = OwnerCharacter->ActionComponent)
@@ -989,6 +992,18 @@ void UMVCombatComponent::HandleHitResolved(const FMVResolvedHitData& HitData)
 		SkillEntry.TryAdvanceChainStage(CurrentTime);
 		return;
 	}
+}
+
+void UMVCombatComponent::HandleHitDeliveryFinished(
+	const FMVResolvedHitData& HitData)
+{
+	if (HitData.Origin != EMVResolvedHitOrigin::AttackCollision
+		|| !IsCurrentAttackHit(HitData))
+	{
+		return;
+	}
+
+	OnValidatedAttackHitAfterDamage.Broadcast(HitData, CurrentAbilityInstance.Get());
 }
 
 bool UMVCombatComponent::IsCurrentAttackHit(
