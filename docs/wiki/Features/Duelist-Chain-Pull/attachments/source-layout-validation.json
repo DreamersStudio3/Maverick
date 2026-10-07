@@ -1,0 +1,122 @@
+{
+  "date": "2026-10-07",
+  "host": "codex",
+  "platform": "Windows",
+  "engine": "Unreal Engine 5.8.3",
+  "scope": "Duelist 전용 소스 파일 6개 이동·include 경로 갱신",
+  "source_checks": [
+    {
+      "file": "MVDuelistChainPullAbility.h",
+      "only_include_path_changes": true,
+      "header_byte_identical": true,
+      "sha256": "2A7503BCA926B05742AE44BFD72A18A8482FF1C71F6553EA191C9E527607AD72"
+    },
+    {
+      "file": "MVDuelistChainPullAbility.cpp",
+      "only_include_path_changes": true,
+      "header_byte_identical": false,
+      "sha256": "9E42E580E4A2D0FECE88FC3FC1F410DF34889A6D7AF7347714C6E9B329B6303C"
+    },
+    {
+      "file": "MVDuelistChainProjectile.h",
+      "only_include_path_changes": true,
+      "header_byte_identical": true,
+      "sha256": "784294BC5D710EC02D206ED124774E4225EA707590F5C9E5D923D83DFA5C6319"
+    },
+    {
+      "file": "MVDuelistChainProjectile.cpp",
+      "only_include_path_changes": true,
+      "header_byte_identical": false,
+      "sha256": "7234BA0BC26A76A798DB6FE7BADD259B8C1B8A1CFFC64A99F1D189E08229D207"
+    },
+    {
+      "file": "MVAnimNotify_DuelistFireChain.h",
+      "only_include_path_changes": true,
+      "header_byte_identical": true,
+      "sha256": "8F5DAA348427F3FDE5988B530C681E439A511148D2497FCA5AA00F8FEB5D1C93"
+    },
+    {
+      "file": "MVAnimNotify_DuelistFireChain.cpp",
+      "only_include_path_changes": true,
+      "header_byte_identical": false,
+      "sha256": "9886FAED0EECC62B30F36A261D8E2903647C5FD6951FDA492FE911C2A901EF1B"
+    }
+  ],
+  "asset_checks": [
+    {
+      "path": "Content/DuelistComplete/Skills/BP_Ability_Duelist_ChainPull.uasset",
+      "byte_identical": true,
+      "sha256": "C746428CA8D584D901BBDFC02DDB237CC9B76FC5793B5DCAD43E89400B8BD06B"
+    },
+    {
+      "path": "Content/DuelistComplete/Animations/AM_Duelist_ChainPull.uasset",
+      "byte_identical": true,
+      "sha256": "6C46A17222864BEE20BEB9DAAF10AEE361A682AE7237375EB9FC96525FE0C323"
+    },
+    {
+      "path": "Content/DuelistComplete/DT_DuelistBossCombatAttack.uasset",
+      "byte_identical": true,
+      "sha256": "1ADC2D715AEA0F96EBAD15C47B392334C417E2583069591AC7A446BAC7EF9395"
+    },
+    {
+      "path": "Content/DuelistComplete/ST_DuelistBoss_Attack.uasset",
+      "byte_identical": true,
+      "sha256": "C1135700207DC8A40B2980660181A6279E5161D9460382051468E82C6D1F1EEF"
+    }
+  ],
+  "project_files": {
+    "executed": true,
+    "status": "passed",
+    "scope": "Visual Studio 프로젝트에 새 파일 경로 반영",
+    "log": "Saved/DuelistSourceLayout/project-files.log"
+  },
+  "initial_build": {
+    "executed": true,
+    "status": "failed",
+    "reason": "실행 중인 Unreal Editor의 DLL 잠금",
+    "compile_passed": true,
+    "link_passed": false,
+    "log": "Saved/DuelistSourceLayout/normal-build.log"
+  },
+  "final_build": {
+    "executed": true,
+    "status": "passed",
+    "scope": "MaverickEditor Win64 Development 전체 빌드",
+    "recovery": "관련 레벨·에셋 미저장 변경 없음 확인 후 Editor 정상 종료·재시도",
+    "log": "Saved/DuelistSourceLayout/normal-build-retry.log"
+  },
+  "fresh_editor_load": {
+    "checked_at_utc": "2026-10-07T10:50:29.729285+09:00",
+    "process_id": 27816,
+    "scope": "Fresh Unreal Editor process after normal build: native classes and saved Duelist skill asset references",
+    "gameplay_executed": false,
+    "native_classes": [
+      "/Script/Maverick.MVDuelistChainPullAbility",
+      "/Script/Maverick.MVDuelistChainProjectile",
+      "/Script/Maverick.MVAnimNotify_DuelistFireChain"
+    ],
+    "blueprint_class": "/Game/DuelistComplete/Skills/BP_Ability_Duelist_ChainPull.BP_Ability_Duelist_ChainPull_C",
+    "blueprint_inherits_native_ability": true,
+    "ability_defaults": {
+      "stop_distance_cm": 90.0,
+      "max_range_cm": 2500.0,
+      "pull_duration_s": 0.6499999761581421
+    },
+    "skillq_ability": "/Script/Engine.BlueprintGeneratedClass'/Game/DuelistComplete/Skills/BP_Ability_Duelist_ChainPull.BP_Ability_Duelist_ChainPull_C'",
+    "skillq_montage": "/Game/DuelistComplete/Animations/AM_Duelist_ChainPull.AM_Duelist_ChainPull",
+    "montage_notify_count": 3,
+    "notify_classes": [
+      "/Script/Maverick.MVAnimNotify_DuelistFireChain"
+    ],
+    "state_tree": "/Game/DuelistComplete/ST_DuelistBoss_Attack.ST_DuelistBoss_Attack",
+    "world": "/Game/Characters/NPC/BaseBoss/Level/BaseBossTestLevel.BaseBossTestLevel",
+    "success": true
+  },
+  "blueprint_direct_parent": "/Script/Maverick.MVDuelistChainPullAbility",
+  "gameplay_retest": {
+    "executed": false,
+    "status": "not_run",
+    "reason": "기능 구현 보존·경로 변경만 대상, 이번 Windows 작업의 검증 범위는 컴파일·링크·저장된 연결 로딩",
+    "guarantee": "새 게임플레이·네트워크·패키징 검증 없음"
+  }
+}
