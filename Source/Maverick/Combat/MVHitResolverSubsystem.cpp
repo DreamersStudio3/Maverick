@@ -1,6 +1,7 @@
 #include "Combat/MVHitResolverSubsystem.h"
 
 #include "Character/MVCharacterBase.h"
+#include "Combat/MVAbilityBase.h"
 #include "Components/MVHitReactionComponent.h"
 #include "Components/MVStatComponent.h"
 #include "Components/MVWeaponComponent.h"
@@ -200,7 +201,15 @@ bool UMVHitResolverSubsystem::BuildResolvedHitData(
 	const float WeaponAttackPower = ResolveNonNegativeStat(WeaponSnapshot.AttackPower);
 	const float DamageMultiplier = ResolveNonNegativeStat(Request.DamageMultiplier);
 	const float GroggyDamageMultiplier = ResolveNonNegativeStat(Request.GroggyDamageMultiplier);
-	const float VictimDefence = Request.AttackTypes == EMVAttackTypes::SkillAttack
+	const UMVCombatComponent* Combat = Attacker->CombatComponent.Get();
+	const UMVAbilityBase* ActiveAbility = IsValid(Combat) ? Combat->CurrentAbilityInstance.Get() : nullptr;
+	const bool bCurrentSkillHit = IsValid(ActiveAbility)
+		&& ActiveAbility->bAbilityActive
+		&& Request.AttackInstanceId != INDEX_NONE
+		&& ActiveAbility->GetAttackInstanceId() == Request.AttackInstanceId
+		&& ActiveAbility->GetSourceSkillIndex() != INDEX_NONE;
+	const EMVAttackTypes AttackTypes = bCurrentSkillHit ? EMVAttackTypes::SkillAttack : Request.AttackTypes;
+	const float VictimDefence = AttackTypes == EMVAttackTypes::SkillAttack
 		? ResolveNonNegativeStat(VictimStat->SkillDefence)
 		: ResolveNonNegativeStat(VictimStat->NormalDefence);
 	const float RawDamage = WeaponAttackPower * DamageMultiplier;
