@@ -200,9 +200,11 @@ bool UMVHitResolverSubsystem::BuildResolvedHitData(
 	const float WeaponAttackPower = ResolveNonNegativeStat(WeaponSnapshot.AttackPower);
 	const float DamageMultiplier = ResolveNonNegativeStat(Request.DamageMultiplier);
 	const float GroggyDamageMultiplier = ResolveNonNegativeStat(Request.GroggyDamageMultiplier);
-	const float VictimDefence = ResolveNonNegativeStat(VictimStat->Defence);
+	const float VictimDefence = Request.AttackTypes == EMVAttackTypes::SkillAttack
+		? ResolveNonNegativeStat(VictimStat->SkillDefence)
+		: ResolveNonNegativeStat(VictimStat->NormalDefence);
 	const float RawDamage = WeaponAttackPower * DamageMultiplier;
-	const float FinalDamage = FMath::Max(0.0f, RawDamage - VictimDefence);
+	const float FinalDamage = ResolveFinalDamage(AttackerStat, VictimDefence, RawDamage);
 	const float GroggyDamage = WeaponAttackPower * GroggyDamageMultiplier;
 
 	OutHitData.Attacker = Attacker;
@@ -229,6 +231,7 @@ bool UMVHitResolverSubsystem::BuildResolvedHitData(
 	OutHitData.PoiseDamage = ResolveNonNegativeStat(Request.PoiseDamage);
 	OutHitData.PoiseBreak = VictimStat->PredictPoiseBreak(Request.PoiseDamage);
 
+	// Todo: Groggy 해결하면서 HitReactionComponent 부분을 삭제, 수정해야함
 	const UMVHitReactionComponent* HitReactionComponent = Victim->FindComponentByClass<UMVHitReactionComponent>();
 	const bool bCanTriggerGroggy = HitReactionComponent && HitReactionComponent->CanTriggerGroggy(OutHitData);
 	if (bCanTriggerGroggy)
@@ -334,7 +337,6 @@ bool UMVHitResolverSubsystem::BuildDirectDamageHitData(const FMVDirectDamageRequ
 	const float BaseAttackPower = AttackerAttackPower > 0.0f ? AttackerAttackPower : ResolveNonNegativeStat(FallbackAttackPower);
 
 	OutHitData.CharacterAttackPower = BaseAttackPower;
-	OutHitData.VictimDefence = ResolveNonNegativeStat(VictimStatComponent->Defence);
 
 	OutHitData.DamageMultiplier = 1.0f;
 	OutHitData.GroggyDamageMultiplier = 1.0f;
@@ -376,4 +378,31 @@ bool UMVHitResolverSubsystem::DispatchResolvedHit(FMVResolvedHitData& HitData)
 	}
 
 	return true;
+}
+
+float UMVHitResolverSubsystem::ResolveFinalDamage(const UMVStatComponent* AttackerStat, float VictimDefence, float RawDamage) const
+{
+	// 방어력에 기반하여 공격력 계산(소수점 한자리)
+	float DamageAmount = FMath::Max(RawDamage - VictimDefence * 0.5f, 0);
+	DamageAmount = FMath::TruncToFloat(DamageAmount * 10.0f) / 10.0f;
+
+	float CriticalDamagePercent = AttackerStat->CriticalPercent;
+	// 치명타율이 0이면 이전 계산한 데미지 리턴
+	if (CriticalDamagePercent <= 0)
+	{
+		return DamageAmount;
+	}
+
+	float RandomSeed = FMath::FRand();
+	// 랜덤 Seed가 치명타율보다 크면 이전 계산한 데미지 리턴
+	if (RandomSeed > CriticalDamagePercent)
+	{
+		return DamageAmount;
+	}
+
+	// 치명타인 경우 이전 계산한 데미지에 치명타데미지(배율)을 곱해서 리턴 -> 배율은 1이 원래 데미지
+	float FinalDamage = DamageAmount * (AttackerStat->CriticalDamage);
+
+
+	return FinalDamage;
 }

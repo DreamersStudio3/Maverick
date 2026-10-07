@@ -58,9 +58,6 @@ struct MAVERICK_API FMVFieldTransitionRequest
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|FieldTransition|Target")
 	FTransform TargetTransform = FTransform::Identity;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|FieldTransition|Reset")
-	bool bResetFieldActors = true;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|FieldTransition|Player")
 	bool bResetDeathPresentation = false;
 
@@ -159,8 +156,6 @@ private:
 	void UpdateTransitionProgress(float Progress, FText StepText);
 	void StartAutomaticLoadingCompletion();
 	void ResetTransitionState();
-	int32 ResetWorldActorsForTransition(const FMVFieldTransitionRequest& Request);
-	FName ResolveTransitionResetFieldId(const FMVFieldTransitionRequest& Request) const;
 	bool ApplyTransitionDestination(const FMVFieldTransitionRequest& Request);
 	void ResetPlayerStatsForTransition(AMVCharacterBase& Character) const;
 	void ResetUIToDefaultAfterTransition();

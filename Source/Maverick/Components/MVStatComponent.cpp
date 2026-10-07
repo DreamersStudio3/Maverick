@@ -105,7 +105,8 @@ bool UMVStatComponent::LoadStatsFromTable()
 	SetWalkSpeed(StatRow->WalkSpeed);
 	SetRunSpeed(StatRow->RunSpeed);
 	SetSprintSpeed(StatRow->SprintSpeed);
-	SetDefence(StatRow->Defence);
+	SetNormalDefence(StatRow->Defence);
+	// Todo: Skill Defence 설정
 	SetMaxGroggy(StatRow->MaxGroggy);
 	SetCurrentGroggy(StatRow->CurrentGroggy);
 	SetGroggyRecoveryPerSecond(StatRow->GroggyRecoveryPerSecond);
@@ -844,9 +845,14 @@ bool UMVStatComponent::HasReachedSprintSpeedRatio(const float RequiredRatio) con
 	return CurrentSpeed >= RequiredSpeed;
 }
 
-void UMVStatComponent::SetDefence(float InDefence)
+void UMVStatComponent::SetNormalDefence(float NewNormalDefence)
 {
-	Defence = MVStatNonNegative(InDefence);
+	NormalDefence = MVStatNonNegative(NewNormalDefence);
+}
+
+void UMVStatComponent::SetSkillDefence(float NewSkillDefence)
+{
+	SkillDefence = MVStatNonNegative(NewSkillDefence);
 }
 
 void UMVStatComponent::SetMaxGroggy(float InMaxGroggy)

@@ -8,6 +8,7 @@
 #include "Character/PC/Consumable/MVPlayerConsumable.h"
 #include "Components/MVCombatComponent.h"
 #include "Components/MVStatComponent.h"
+#include "Components/TextBlock.h"
 #include "UI/HUD/MVBossHPBarWidget.h"
 #include "UI/HUD/MVPlayerSkillHUDWidget.h"
 #include "UI/HUD/MVPlayerStatusWidget.h"
@@ -269,5 +270,21 @@ void UMVMainHUDWidget::HandlePlayerProgressionChanged(const FMVPlayerProgression
 	if (CurrencyStatus)
 	{
 		CurrencyStatus->SetCurrency(PlayerProgression.Currency);
+	}
+}
+
+void UMVMainHUDWidget::MarkBossPatrolComplete()
+{
+	if (Txt_Patrol)
+	{
+		Txt_Patrol->SetText(FText::FromString(TEXT("O")));
+	}
+}
+
+void UMVMainHUDWidget::MarkBossPlayStarted()
+{
+	if (Txt_PlayInfo)
+	{
+		Txt_PlayInfo->SetText(FText::FromString(TEXT("O")));
 	}
 }

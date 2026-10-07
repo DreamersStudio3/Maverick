@@ -36,7 +36,7 @@ protected:
 	void OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors);
 
 public:
-	UPROPERTY(BlueprintReadOnly, Category = "AI")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI")
 	AActor* TargetActor;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI|Boss Debug")
