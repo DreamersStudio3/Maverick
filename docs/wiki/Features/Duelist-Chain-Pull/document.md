@@ -30,15 +30,16 @@
 
 | 위치 | 역할 |
 |---|---|
-| `DT_DuelistBossCombatAttack.SkillQ` | 전용 Ability·몽타주·이동 잠금 연결 |
+| `DT_DuelistBossCombatAttack.SkillW` | 현재 사슬 몽타주·전용 Ability 연결 |
 | `/Game/DuelistComplete/Skills/BP_Ability_Duelist_ChainPull` | 공격 수치 편집, `UMVDuelistChainPullAbility` 상속 |
-| `/Game/DuelistComplete/Animations/AM_Duelist_ChainPull` | 기존 기본 공격 돌진 동작 복제, 원본 Q 몽타주 보존 |
-| `ST_DuelistBoss_Attack.SkillQ` | 실행 가능 거리 `2,500 cm`, 기존 선택 분기 유지 |
+| `/Game/DuelistComplete/Animations/AM_Duelist_ChainPull` | 현재 `AS_Duelist_W` 동작 사용, 사용자 몽타주 편집 유지 |
+| `ST_DuelistBoss_Attack.SkillW` | 현재 실행 가능 거리 `300 cm`, 기존 선택 분기 유지 |
 | `/Game/DuelistComplete/Skills/SM_DuelistChainLink`·`M_DuelistChain` | 교차 배치 사슬 고리·금속 재질 |
 
-- 몽타주 길이 `4.1667 s`, `MV Duelist Fire Chain` 발사 Notify 시점 `2.2 s`
-- `ChainAbility`의 `MV Activate Ability`: 시작부터 종료 직전까지 활성 구간 유지
-- 기존 `RootMotionNormalize` 구간·스케일 `(1, 1, 1)` 보존
+- 현재 몽타주 길이 `4.8667 s`, `MV Duelist Fire Chain` 발사 Notify 시점 약 `2.5191 s`
+- `MV Activate Ability`: 시작부터 몽타주 끝까지 활성 구간, `AbilityClass=MVDuelistChainPullAbility`·`AbilityIndex=0`
+- 공격 행의 `AbilityReference`와 활성 Notify의 클래스 일치 필수, 발사 Notify는 `CurrentAbilityInstance`의 사슬 Ability 형변환 성공 시 `FireChain` 호출
+- 몽타주 연결만 변경 시 기존 공격 행의 Ability와 불일치 가능, `AbilityClass does not match` 로그 확인 위치: `MVAnimNotifyState_Ability`
 - `FMVBossExecuteAttackTask`: 전투 행 직접 연결도 `CombatComponent.TryStartCombatActionFromRowHandle` 경유
 
 ## 실행과 소유권
@@ -82,7 +83,7 @@ flowchart LR
 - 사거리 확대·속도 감소·끌어오기 시간 확대 시 `ChainAbility` 구간과 몽타주 길이 동반 검토
 - 이동 도중 보스 추적 대신 적중 시 고정 목적지 사용, 종료 거리와 최종 보스 간 거리 차이 가능
 - Class Defaults 조절 후 Blueprint Compile·Save 필수, 편집 기본값 조회만으로 새 런타임 인스턴스 적용 보장 불가
-- `SkillQ` 선택 시 사슬 발사, 기본 공격·`SkillW`에는 사슬 기능 미연결
+- 현재 `SkillW` 선택 시 사슬 발사, `AM_Duelist_Q`에는 사슬 발사 Notify 미배치
 - 적중 시 보스까지 거리가 정지 거리 이하인 경우 추가 끌어오기 제외, 벽 앞에서는 이동 거리 축소 가능
 - 피해 계산: 기존 장착 무기 공격력·전투 행 배율·대상 방어력 사용
 - 현재 `BP_Duelist` 장비 공격력 `0`, 전투 피해 수치 설정은 별도 장비 데이터 책임
@@ -101,9 +102,9 @@ flowchart LR
 검증 요약: [source-layout-validation.json](attachments/source-layout-validation.json)
 원본 소스 백업·빌드 기록: `Saved/DuelistSourceLayout`, Git 제외
 
-## 기능 검증
+## 초기 구현·이전 조절 검증
 
-Windows / Unreal Engine 5.8.3 실제 PIE 실행
+Windows / Unreal Engine 5.8.3 실제 PIE 실행, 아래 결과는 초기 `SkillQ` 연결 당시 기준
 `BaseBossTestLevel`의 배치된 `BP_Duelist`·기존 AI·공격 선택 경로 검증, 별도 임시 바닥·벽·보스에서 9개 경로 검사
 
 - 기존 AI는 대상 가까이 접근 후 공격 선택, 이전 정지 거리 `180 cm`에서 실제 사슬 적중 후 플레이어 이동 약 `67 cm` 재현
@@ -124,3 +125,16 @@ Windows / Unreal Engine 5.8.3 실제 PIE 실행
 
 검증 요약: [chain-pull-validation.json](attachments/chain-pull-validation.json)
 원본 시험 기록·수정 전 에셋 백업: `Saved/DuelistChainPull`, Git 제외
+
+## 현재 몽타주 연결 복구 검증
+
+2026-10-07 / Codex / Windows / Unreal Engine 5.8.3 실제 PIE 실행
+
+- 수정 전 `SkillW`의 사슬 몽타주·일반 공격 Ability 불일치 재현, 활성 Notify 클래스 불일치와 발사 Notify의 사슬 형변환 실패 확인
+- `DT_DuelistBossCombatAttack.SkillW.AbilityReference`만 `BP_Ability_Duelist_ChainPull`로 변경·저장, 다른 행·수치·몽타주 설정의 변경 없음 확인
+- 배치된 `BP_Duelist`의 전투 행 실행 경로에서 반복 발사 3회 성공, 각 회차 투사체 최대 1개·종료 후 0개·플레이어 이동 입력 잠금 해제 확인
+- 임시 추적 코드 제거·C++ 파일 3개 원본 바이트 복원·Live Coding 재반영 후 사슬 발사 1회와 종료 정리 재확인
+- 현재 Windows의 로컬 Editor 공격 행·Notify·발사·정리 검증, AI의 전체 선택 분기·네트워크·패키징은 연결 수정 범위 밖으로 미실행·성공 보장 제외
+
+검증 요약: [chain-fire-connection-validation.json](attachments/chain-fire-connection-validation.json)
+진단 로그·변경 전 테이블 백업: `Saved/DuelistChainFire`, Git 제외

@@ -65,6 +65,29 @@ flowchart TD
 - `ST_DuelistBoss_Attack.BasicAttack1`의 완료 판정 제외 설정에서 범위 생략 후 액션 없는 `Running` 재현, 명시적 성공 전이로 해소
 - `ST_DuelistBossAIStateTree.Alive.Attack`: 연결 공격 트리 완료 후 `Chase` 복귀, 복귀 목적지는 에셋 전이 책임
 
+### 적 대상 회전
+
+- `AMVEnemy::GetTargetRotation`: `AttackTarget` 위치 기준 수평 Yaw 계산, 현재 Pitch·Roll 유지; 대상 부재·파괴·동일 수평 위치에서는 현재 회전 반환
+- `STT_turnTarget.ContextActor`: `MVEnemy` 계열 적 Binding 필수, 유효한 적 변환 실패 시 `FinishTask(false)`
+- Task Tick: `RInterpTo_Constant` 초당 720° 회전, 실행 구간은 활성 State 소유; `RotatingMovementComponent` 추가·Tick 토글 제거
+- `ANS_RotateActor`: 적은 C++ 함수 직접 호출과 기존 `InterpSpeed` 보간, 그 외 Actor는 기존 `BPI_RotateActor` 경로 유지
+- `BP_TutorialBoss`·`BP_NameLessPuppet`: 반환 서명이 충돌하는 회전 인터페이스와 구현 그래프 제거, `MVEnemy` 함수 상속; 플레이어 회전 인터페이스·공격 데이터 인터페이스 보존
+- 기존 `ST_AIReaction`의 `BP_BaseBoss` 문맥은 `Character` 기반으로 새 Task 사용 대상 제외; 현재 Duelist 공격 트리에 회전 Task 신규 배치 제외
+
+## 적 대상 회전 검증
+
+2026-10-07 / Codex / Windows / Unreal Engine 5.8.3 실제 실행
+
+- 일반 `MaverickEditor Win64 Development` 빌드·새 Editor 프로세스의 C++ 함수 노드 등록 통과, 패키징·네트워크 실행 범위 제외
+- Task·Notify·Duelist·TutorialBoss·TutorialBoss1·NameLessPuppet의 Blueprint 컴파일 통과, 연결 StateTree 2개 Editor 컴파일 통과; 기존 Character 문맥의 적 변환 성공 보장 범위 제외
+- PIE의 실제 `BP_Duelist`에서 C++ 대상 계산·Task Tick·Notify Tick 직접 호출 11항목 통과: 대상 이동·부재·파괴·동일 수평 위치, Pitch·Roll 보존, 0.05초당 36° Task 회전과 45° Notify 회전
+- 플레이어 호환 검증 범위: 대기 상태의 기존 인터페이스 반환과 Notify 결과 일치; 이동·타깃 고정·전체 몽타주 구간과 실제 StateTree 전이 실행 미검증
+- 보조 관측 오류: Python 비노출 함수·Rotator 위치 인자·정적 컴포넌트 이동성·ContextActor 편집 제한을 반사 호출·명시적 필드·가동성 수정으로 보정 후 최종 11항목 통과
+- `BP_Duelist` 디스크 해시 동일, 플레이어 Blueprint 미저장 상태 보존·디스크 저장 제외
+
+검증 요약: [enemy-target-rotation-validation.json](attachments/enemy-target-rotation-validation.json)
+원본 관측·수정 전 백업: `Saved/EnemyTargetRotation`, Git 제외
+
 ## 보스 공격 정지 수정 검증
 
 2026-10-07 / Codex / Windows / Unreal Engine 5.8.3 실제 실행

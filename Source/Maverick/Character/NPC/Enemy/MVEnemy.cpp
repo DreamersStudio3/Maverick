@@ -30,6 +30,24 @@ void AMVEnemy::BeginPlay()
 		0.0f);
 }
 
+FRotator AMVEnemy::GetTargetRotation() const
+{
+	FRotator TargetRotation = GetActorRotation();
+	if (!IsValid(AttackTarget.Get()))
+	{
+		return TargetRotation;
+	}
+
+	FVector TargetDirection = AttackTarget->GetActorLocation() - GetActorLocation();
+	TargetDirection.Z = 0.0f;
+	if (!TargetDirection.IsNearlyZero())
+	{
+		TargetRotation.Yaw = TargetDirection.Rotation().Yaw;
+	}
+
+	return TargetRotation;
+}
+
 void AMVEnemy::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	HideBoundBossHUD();
