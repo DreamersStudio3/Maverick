@@ -1,0 +1,42 @@
+{
+  "date": "2026-10-07",
+  "host": "Codex",
+  "platform": "Windows",
+  "engine": "Unreal Engine 5.8.3",
+  "request": "게임 플레이 중 BP_Duelist 쇠사슬 발사 누락 원인 분석",
+  "row": "/Game/DuelistComplete/DT_DuelistBossCombatAttack.SkillW",
+  "montage": "/Game/DuelistComplete/Animations/AM_Duelist_ChainPull",
+  "activation_start_seconds": 2.3385422229766846,
+  "activation_duration_seconds": 1.482910394668579,
+  "fire_seconds": 2.519090414047241,
+  "confirmed_causes": [
+    {
+      "kind": "ability_class_mismatch",
+      "current": "BP_BoxDamage_C",
+      "required": "MVDuelistChainPullAbility",
+      "native_fire_notify_cast_success": false
+    },
+    {
+      "kind": "same_frame_notify_order",
+      "frame": 78990,
+      "order": ["FireNotify", "FireChain Active=0 Target=None", "AbilityStart", "AbilityStarted Active=1"],
+      "scope": "observed low-frame-rate PIE reproduction with current montage timings"
+    }
+  ],
+  "runtime_cases": [
+    {"case": "current_saved_row", "started": true, "peak_projectiles": 0},
+    {"case": "chain_ability_only_control", "started": true, "peak_projectiles": 0},
+    {"case": "chain_prestarted_control", "started": true, "peak_projectiles": 1, "remaining_projectiles": 0}
+  ],
+  "control_scope": "transient DataTable with existing montage; third case invokes StartAbility immediately after combat action start",
+  "original_attack_assets_changed": false,
+  "cleanup": {
+    "temporary_native_traces_removed": true,
+    "native_source_diff_empty": true,
+    "live_coding_after_trace_removal": "Succeeded",
+    "runtime_trace_callback_detached": true,
+    "pie_stopped": true
+  },
+  "not_executed": ["saved montage notify retiming", "full AI action selection", "network gameplay", "packaging"],
+  "raw_artifacts": "Saved/DuelistChainFireRegression"
+}

@@ -7,6 +7,7 @@
   - "[[Features/Duelist-Attack-RootMotion/document|Duelist 공격 루트 이동]]"
   - "[[Features/AI-StateTree/document|AI StateTree]]"
   - "[[Features/Combat/Combat-System/document|Maverick 전투 시스템]]"
+  - "[[Features/Combat/Box-Damage-Ability/document|박스 범위 피해 Ability]]"
 ---
 
 # Duelist 돌진 사슬 스킬
@@ -30,14 +31,14 @@
 
 | 위치 | 역할 |
 |---|---|
-| `DT_DuelistBossCombatAttack.SkillW` | 현재 사슬 몽타주·전용 Ability 연결 |
+| `DT_DuelistBossCombatAttack.SkillW` | 사슬 몽타주 연결, 발사 구성 시 전용 Ability 지정 필수 |
 | `/Game/DuelistComplete/Skills/BP_Ability_Duelist_ChainPull` | 공격 수치 편집, `UMVDuelistChainPullAbility` 상속 |
 | `/Game/DuelistComplete/Animations/AM_Duelist_ChainPull` | 현재 `AS_Duelist_W` 동작 사용, 사용자 몽타주 편집 유지 |
 | `ST_DuelistBoss_Attack.SkillW` | 현재 실행 가능 거리 `300 cm`, 기존 선택 분기 유지 |
 | `/Game/DuelistComplete/Skills/SM_DuelistChainLink`·`M_DuelistChain` | 교차 배치 사슬 고리·금속 재질 |
 
 - 현재 몽타주 길이 `4.8667 s`, `MV Duelist Fire Chain` 발사 Notify 시점 약 `2.5191 s`
-- `MV Activate Ability`: 시작부터 몽타주 끝까지 활성 구간, `AbilityClass=MVDuelistChainPullAbility`·`AbilityIndex=0`
+- 발사 구성의 `MV Activate Ability`: 시작부터 몽타주 끝까지 활성 구간 권장, `AbilityClass=MVDuelistChainPullAbility`·`AbilityIndex=0`
 - 공격 행의 `AbilityReference`와 활성 Notify의 클래스 일치 필수, 발사 Notify는 `CurrentAbilityInstance`의 사슬 Ability 형변환 성공 시 `FireChain` 호출
 - 몽타주 연결만 변경 시 기존 공격 행의 Ability와 불일치 가능, `AbilityClass does not match` 로그 확인 위치: `MVAnimNotifyState_Ability`
 - `FMVBossExecuteAttackTask`: 전투 행 직접 연결도 `CombatComponent.TryStartCombatActionFromRowHandle` 경유
@@ -83,7 +84,7 @@ flowchart LR
 - 사거리 확대·속도 감소·끌어오기 시간 확대 시 `ChainAbility` 구간과 몽타주 길이 동반 검토
 - 이동 도중 보스 추적 대신 적중 시 고정 목적지 사용, 종료 거리와 최종 보스 간 거리 차이 가능
 - Class Defaults 조절 후 Blueprint Compile·Save 필수, 편집 기본값 조회만으로 새 런타임 인스턴스 적용 보장 불가
-- 현재 `SkillW` 선택 시 사슬 발사, `AM_Duelist_Q`에는 사슬 발사 Notify 미배치
+- `SkillW` 사슬 발사 조건: 전용 Ability와 활성·발사 Notify 연결 일치, `AM_Duelist_Q`에는 사슬 발사 Notify 미배치
 - 적중 시 보스까지 거리가 정지 거리 이하인 경우 추가 끌어오기 제외, 벽 앞에서는 이동 거리 축소 가능
 - 피해 계산: 기존 장착 무기 공격력·전투 행 배율·대상 방어력 사용
 - 현재 `BP_Duelist` 장비 공격력 `0`, 전투 피해 수치 설정은 별도 장비 데이터 책임
@@ -126,7 +127,7 @@ Windows / Unreal Engine 5.8.3 실제 PIE 실행, 아래 결과는 초기 `SkillQ
 검증 요약: [chain-pull-validation.json](attachments/chain-pull-validation.json)
 원본 시험 기록·수정 전 에셋 백업: `Saved/DuelistChainPull`, Git 제외
 
-## 현재 몽타주 연결 복구 검증
+## 이전 몽타주 연결 복구 검증
 
 2026-10-07 / Codex / Windows / Unreal Engine 5.8.3 실제 PIE 실행
 
@@ -138,3 +139,35 @@ Windows / Unreal Engine 5.8.3 실제 PIE 실행, 아래 결과는 초기 `SkillQ
 
 검증 요약: [chain-fire-connection-validation.json](attachments/chain-fire-connection-validation.json)
 진단 로그·변경 전 테이블 백업: `Saved/DuelistChainFire`, Git 제외
+
+## 박스 피해 연결 이후 발사 누락 분석
+
+2026-10-07 / Codex / Windows / Unreal Engine 5.8.3의 배치된 `BP_Duelist`에서 실제 PIE 실행
+원본 공격 행·몽타주 저장 변경 제외, `/Engine/Transient` 대조 행과 임시 실행 인스턴스만 사용
+
+### 확인 원인
+
+- `SkillW.AbilityReference=BP_BoxDamage`, 몽타주 `AM_Duelist_ChainPull`의 활성 Notify는 사슬 클래스 요구
+- 실제 실행 로그: 활성 Notify 클래스 불일치와 발사 Notify의 사슬 형변환 실패, `FireChain` 호출 제외
+- 당시 활성 구간 `2.338542 → 3.821453 s`, 발사 `2.519090 s`, 시작과 발사의 간격 약 `0.180548 s`
+- 이번 낮은 프레임 빈도 재현: 같은 프레임에서 발사 Notify 먼저 처리, `Active=0`·대상 미설정 상태의 발사 거절 후 Ability 활성화
+- 한 공격의 `CurrentAbilityInstance`는 단일 Ability, `BP_BoxDamage`로 교체 시 사슬 기능 대체
+
+### 대조 실행
+
+| 조건 | 실제 결과 | 증명 범위 |
+|---|---|---|
+| 원본 `SkillW` | 투사체 0개 | 박스 피해 Ability와 사슬 Notify의 연결 불일치 재현 |
+| 임시 행의 사슬 Ability만 복원 | 투사체 0개 | 같은 프레임의 발사·활성화 순서 역전 재현 |
+| 같은 임시 행·몽타주, 공격 시작 직후 사슬 Ability 선행 활성화 | 투사체 최대 1개·종료 후 0개 | 선행 활성화 조건에서 발사·플레이어 충돌·정리 확인 |
+
+- 사슬 유지 구성: `SkillW.AbilityReference=BP_Ability_Duelist_ChainPull`, 활성 구간을 몽타주 시작부터 발사·비행·끌어오기 종료까지 확보
+- 몽타주 편집 제안: 활성 구간 시작 0초·종료 몽타주 끝, 발사 Notify 약 2.519초 유지
+- 대조 조건의 선행 활성화는 직접 호출 방식, 원본 몽타주의 Notify 시각 수정과 수정 후 자동 활성화 검증은 이번 원인 분석 범위 밖으로 미실행
+- 사슬과 박스 피해 동시 구성은 한 Ability 내부 또는 별도 피해 Notify 경로의 연결 필요, Notify의 `AbilityClass`만 바꾸어 두 Ability 동시 생성 불가
+- 임시 C++ 추적 3개 파일 제거, Python 재현 콜백 해제와 PIE 종료, 원본 공격 연결 유지
+- 추적 제거 후 Windows Live Coding 재반영 통과, Duelist C++ 원본 대비 차이 0·원본 전투 행 일치 확인
+- 네트워크·패키징·전체 AI 공격 선택은 현재 Windows에서 범위 밖으로 미실행, 해당 동작의 보장 제외
+
+분석 요약: [chain-fire-regression-analysis.json](attachments/chain-fire-regression-analysis.json)
+원시 로그·실행 표본·보조 스크립트: `Saved/DuelistChainFireRegression`, Git 제외
