@@ -8,6 +8,7 @@
 #include "AI/MVAICombatTypes.h"
 #include "Combat/MVAbilityBase.h"
 #include "Components/MVActionComponent.h"
+#include "Components/MVWeaponComponent.h"
 #include "Character/MVCharacterBase.h"
 #include "Combat/MVHitResolverSubsystem.h"
 #include "Components/MVStatComponent.h"
@@ -508,6 +509,44 @@ int32 UMVCombatComponent::ReduceOngoingSkillMainCooldowns(
 	}
 
 	return ReducedSkillCount;
+}
+
+bool UMVCombatComponent::RefundSkillMainCooldownForExecution(
+	int32 SkillIndex,
+	const UMVAbilityBase* SourceAbility)
+{
+	UWorld* World = GetWorld();
+	if (!World
+		|| !IsValid(SourceAbility)
+		|| SkillIndex < 0
+		|| SkillIndex >= MVCombatSkillSlots::Count
+		|| (SkillIndex == MVCombatSkillSlots::R && bUseRSkillGauge)
+		|| CurrentAbilityInstance.Get() != SourceAbility
+		|| CurrentAttackInstanceId == INDEX_NONE
+		|| CurrentAttackInstanceId != SourceAbility->GetAttackInstanceId())
+	{
+		return false;
+	}
+
+	FMVSkillEntry* SkillEntry = SkillMap.Find(MVCombatMakeSkillMapKey(SkillIndex));
+	if (!SkillEntry
+		|| !SkillEntry->ContainsAbility(SourceAbility)
+		|| SkillEntry->MainCooldownDuration <= 0.0f)
+	{
+		return false;
+	}
+
+	const float CurrentTime = World->GetTimeSeconds();
+	SkillEntry->bMainCooldownRefundedForCurrentUse = true;
+
+	// 이미 시작한 주 쿨타임만 즉시 끝낸다.
+	// 연계 스킬의 주 쿨타임이 아직 시작 전이라면 종료 처리에서 면제한다.
+	if (SkillEntry->MainCooldownEndTime >= 0.0f)
+	{
+		SkillEntry->MainCooldownEndTime = CurrentTime;
+	}
+
+	return true;
 }
 
 bool UMVCombatComponent::TryCombatAction(
@@ -1810,29 +1849,46 @@ bool UMVCombatComponent::TryStartActionWithAbility(
 	};
 
 	const auto PrepareCurrentAbility =
-		[this, &ActionEntry, &RowHandle]() -> UMVAbilityBase*
+	[this, &ActionEntry, &RowHandle, Owner]() -> UMVAbilityBase*
+	{
+		UMVAbilityBase* NextAbility = ActionEntry.GetCurrentAbility();
+		PreviousAbilityInstance = CurrentAbilityInstance;
+		if (PreviousAbilityInstance && PreviousAbilityInstance->Implements<UMVAbilityInterface>())
 		{
-			UMVAbilityBase* NextAbility = ActionEntry.GetCurrentAbility();
-			PreviousAbilityInstance = CurrentAbilityInstance;
-			if (PreviousAbilityInstance && PreviousAbilityInstance->Implements<UMVAbilityInterface>())
+			IMVAbilityInterface::Execute_EndAbility(PreviousAbilityInstance);
+		}
+
+		CurrentAbilityInstance = NextAbility;
+		bCurrentAbilityHitConfirmed = false;
+		bCurrentAbilityAwaitingCompletion = CurrentAbilityInstance != nullptr;
+		CurrentAbilityActionTableName = MVCombatActionTableNameFromDataTable(RowHandle.DataTable);
+		CurrentAbilityActionRowName = RowHandle.RowName;
+		if (CurrentAbilityInstance)
+		{
+			int32 SourceSkillIndex = INDEX_NONE;
+			for (int32 SkillIndex = 0; SkillIndex < MVCombatSkillSlots::Count; ++SkillIndex)
 			{
-				IMVAbilityInterface::Execute_EndAbility(PreviousAbilityInstance);
+				if (SkillMap.Find(MVCombatMakeSkillMapKey(SkillIndex)) == &ActionEntry)
+				{
+					SourceSkillIndex = SkillIndex;
+					break;
+				}
 			}
 
-			CurrentAbilityInstance = NextAbility;
-			bCurrentAbilityHitConfirmed = false;
-			bCurrentAbilityAwaitingCompletion = CurrentAbilityInstance != nullptr;
-			CurrentAbilityActionTableName = MVCombatActionTableNameFromDataTable(RowHandle.DataTable);
-			CurrentAbilityActionRowName = RowHandle.RowName;
-			if (CurrentAbilityInstance)
-			{
-				CurrentAttackInstanceId = ++NextAttackInstanceId;
-				CurrentAbilityInstance->SetAttackInstanceId(CurrentAttackInstanceId);
-				CurrentAbilityInstance->PrepareAbilityExecution();
-			}
+			const FGameplayTag SourceWeaponItemTag =
+				IsValid(Owner->WeaponComponent.Get())
+					? Owner->WeaponComponent->GetEquippedWeaponState().ItemTag
+					: FGameplayTag();
 
-			return NextAbility;
-		};
+			CurrentAttackInstanceId = ++NextAttackInstanceId;
+			CurrentAbilityInstance->SetAttackInstanceId(CurrentAttackInstanceId);
+			CurrentAbilityInstance->PrepareAbilityExecution();
+			CurrentAbilityInstance->SetExecutionSource(
+				SourceSkillIndex, SourceWeaponItemTag);
+		}
+
+		return NextAbility;
+	};
 
 	const auto ClearPreparedAbilityOnFailure =
 		[this](const UMVAbilityBase* PreparedAbility)

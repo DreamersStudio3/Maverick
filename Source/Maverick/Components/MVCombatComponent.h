@@ -104,6 +104,10 @@ public:
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Skill")
 	float MainCooldownEndTime = -1.0f;
 
+	// 이번 스킬 사용에서 주 쿨타임 환원이 성공했는지 기록한다.
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Skill")
+	bool bMainCooldownRefundedForCurrentUse = false;
+
 	// For chained skills: current stage index
 	UPROPERTY(BlueprintReadOnly, Category = "Skill")
 	int32 CurrentChainStageIndex = 0;
@@ -188,7 +192,9 @@ public:
 	void BeginMainCooldown(float CurrentTime)
 	{
 		LastUsedTime = CurrentTime;
-		MainCooldownEndTime = CurrentTime + FMath::Max(0.0f, MainCooldownDuration);
+		MainCooldownEndTime = bMainCooldownRefundedForCurrentUse
+			? CurrentTime
+			: CurrentTime + FMath::Max(0.0f, MainCooldownDuration);
 	}
 
 	float GetMainCooldownRemaining(float CurrentTime) const
@@ -259,6 +265,8 @@ public:
 	// Activate chain (start from stage 0)
 	void ActivateChain(float CurrentTime)
 	{
+		bMainCooldownRefundedForCurrentUse = false;
+
 		// If Chain exist(2+ Chained Skills)
 		if (bIsChained && AbilityInstances.Num() > 1)
 		{
@@ -478,6 +486,11 @@ public:
 	int32 ReduceOngoingSkillMainCooldowns(
 		float ReductionFraction,
 		int32 TriggerCount);
+
+	// 현재 실행의 스킬 주 쿨타임을 환원하고 종료 시 재설정도 막는다.
+	bool RefundSkillMainCooldownForExecution(
+		int32 SkillIndex,
+		const UMVAbilityBase* SourceAbility);
 
 	void HandleAbilityEnded(const UMVAbilityBase* EndedAbility);
 

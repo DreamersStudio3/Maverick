@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "UObject/NoExportTypes.h"
 #include "../Public/Interface/MVAbilityInterface.h"
 #include "../Public/Tables/MVSkillDataTableColumn.h"
@@ -59,6 +60,16 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Maverick|Ability|Attack")
 	int32 GetAttackInstanceId() const { return AttackInstanceId; }
 
+	void SetExecutionSource(int32 InSkillIndex, const FGameplayTag& InWeaponItemTag)
+	{
+		SourceSkillIndex = InSkillIndex;
+		SourceWeaponItemTag = InWeaponItemTag;
+	}
+
+	int32 GetSourceSkillIndex() const { return SourceSkillIndex; }
+	const FGameplayTag& GetSourceWeaponItemTag() const { return SourceWeaponItemTag; }
+	float GetConsumedMPThisExecution() const { return ConsumedMPThisExecution; }
+
 	// Ability에 설정한 Launch 값을 HitRequest에 복사한다. HitReaction row에서 bUseLaunch를 켜면 이 값으로 밀림이 걸린다.
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Ability|Hit")
 	void ApplyHitLaunchDataToResolveRequest(UPARAM(ref) FMVHitResolveRequest& Request) const;
@@ -97,6 +108,15 @@ public:
 
 	UPROPERTY(Transient)
 	int32 AttackInstanceId = INDEX_NONE;
+
+	UPROPERTY(Transient)
+	int32 SourceSkillIndex = INDEX_NONE;
+
+	UPROPERTY(Transient)
+	FGameplayTag SourceWeaponItemTag;
+
+	UPROPERTY(Transient)
+	float ConsumedMPThisExecution = 0.0f;
 
 private:
 	bool TryConsumeAbilityCost();

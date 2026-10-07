@@ -58,6 +58,7 @@ namespace MVGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(StatusEffect_Passive_TripleBolt, "StatusEffect.Passive.TripleBolt");
 	UE_DEFINE_GAMEPLAY_TAG(StatusEffect_Passive_TripleBoltMark, "StatusEffect.Passive.TripleBoltMark");
 	UE_DEFINE_GAMEPLAY_TAG(StatusEffect_Passive_BloodPrice, "StatusEffect.Passive.BloodPrice");
+	UE_DEFINE_GAMEPLAY_TAG(StatusEffect_Passive_PredatorCycle, "StatusEffect.Passive.PredatorCycle");
 	UE_DEFINE_GAMEPLAY_TAG(StatusEffect_Skill_ThirdHitMark, "StatusEffect.Skill.ThirdHitMark");
 	UE_DEFINE_GAMEPLAY_TAG(StatusEffect_Skill_Burn, "StatusEffect.Skill.Burn");
 	UE_DEFINE_GAMEPLAY_TAG(StatusEffect_Skill_BurnBurstCooldown, "StatusEffect.Skill.BurnBurstCooldown");
