@@ -18,7 +18,7 @@ FMVBossExecuteAttackTask::FMVBossExecuteAttackTask()
 
 // 소유자·대상·공격 행 검증 후 공격 1회 시작, 범위 밖은 공격 생략 후 Succeeded 반환
 // CombatAttackRow 연결 시 CombatComponent의 Ability 경로, 미연결 선택 행은 몽타주 직접 재생
-// 그 외 행은 ActionComponent 경로 사용; 시작 실패는 Failed, 시작 성공은 Running 반환
+// 전투 행 직접 연결도 CombatComponent 경유, 그 외 행은 ActionComponent 경로 사용
 EStateTreeRunStatus FMVBossExecuteAttackTask::EnterState(
 	FStateTreeExecutionContext& Context,
 	const FStateTreeTransitionResult& Transition) const
@@ -67,6 +67,8 @@ EStateTreeRunStatus FMVBossExecuteAttackTask::EnterState(
 	// Failed를 반환하면 상위 공격 분기가 같은 행들을 즉시 재평가하면서 로그가 반복된다.
 	if (TargetDistance > InstanceData.AttackRange)
 	{
+		// 완료 판정 제외 Task도 공격 트리를 종료하도록 명시적 성공 전이 요청
+		Context.RequestTransition(FStateTreeTransitionRequest(FStateTreeStateHandle::Succeeded));
 		return EStateTreeRunStatus::Succeeded;
 	}
 
@@ -110,6 +112,16 @@ EStateTreeRunStatus FMVBossExecuteAttackTask::EnterState(
 		InstanceData.AnimInstance = AnimInstance;
 		InstanceData.ActiveMontage = Montage;
 		InstanceData.bCustomMontageStopOnExit = TutorialSkill->bStopOnExit;
+	}
+	else if (InstanceData.AttackRow.DataTable->GetRowStruct()->IsChildOf(FMVSkillDataTableColumn::StaticStruct()))
+	{
+		UMVCombatComponent* Combat = Owner->FindComponentByClass<UMVCombatComponent>();
+		InstanceData.ActionComponent = Owner->FindComponentByClass<UMVActionComponent>();
+		if (!Combat || !InstanceData.ActionComponent
+			|| !Combat->TryStartCombatActionFromRowHandle(ExecutionRow, InstanceData.StartSection))
+		{
+			return EStateTreeRunStatus::Failed;
+		}
 	}
 	else
 	{

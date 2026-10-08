@@ -68,7 +68,7 @@ struct FMVBossExecuteAttackTaskInstanceData
 };
 
 /**
- * 보스 공격 row 하나를 ActionComponent에서 실행하고 종료까지 감시하는 StateTree Task
+ * 보스 공격 행 실행·종료 감시 Task, 전투 행은 CombatComponent의 Ability 경로 사용
  * 공격 선택·페이즈 판정은 상위 StateTree와 Condition 책임
  */
 USTRUCT(meta = (DisplayName = "Boss Execute Attack"))

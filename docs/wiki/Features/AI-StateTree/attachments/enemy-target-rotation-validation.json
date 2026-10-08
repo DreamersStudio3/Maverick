@@ -1,0 +1,247 @@
+{
+  "date": "2026-10-07",
+  "host": "Codex",
+  "platform": "Windows",
+  "engine": "5.8.3-58210709+++UE5+Release-5.8",
+  "build": {
+    "target": "MaverickEditor Win64 Development",
+    "executed": true,
+    "status": "Succeeded",
+    "actions": 24,
+    "limitation": "Editor target only; packaging and networking not executed"
+  },
+  "blueprints_compiled": [
+    "STT_turnTarget",
+    "ANS_RotateActor",
+    "BP_Duelist",
+    "BP_TutorialBoss",
+    "BP_TutorialBoss1",
+    "BP_NameLessPuppet"
+  ],
+  "linked_state_trees_compiled": [
+    "ST_AIReaction",
+    "ST_Reaction"
+  ],
+  "runtime": {
+    "host": "Codex",
+    "platform": "Windows",
+    "engine": "5.8.3",
+    "checks": [
+      {
+        "name": "getter_yaw_toward_target_preserves_pitch_roll",
+        "passed": true,
+        "actual": {
+          "pitch": 12.000000000000002,
+          "yaw": 90.0,
+          "roll": 6.999999999999999
+        },
+        "expected": {
+          "pitch": 12.0,
+          "yaw": 90.0,
+          "roll": 7.0
+        }
+      },
+      {
+        "name": "getter_tracks_moved_target",
+        "passed": true,
+        "actual": {
+          "pitch": 12.000000000000002,
+          "yaw": 180.0,
+          "roll": 6.999999999999999
+        },
+        "expected": {
+          "pitch": 12.0,
+          "yaw": 180.0,
+          "roll": 7.0
+        }
+      },
+      {
+        "name": "getter_same_xy_keeps_current_rotation",
+        "passed": true,
+        "actual": {
+          "pitch": 12.000000000000002,
+          "yaw": 2.0322563531551034E-16,
+          "roll": 6.999999999999999
+        },
+        "expected": {
+          "pitch": 12.000000000000002,
+          "yaw": 2.0322563531551034E-16,
+          "roll": 6.999999999999999
+        }
+      },
+      {
+        "name": "getter_missing_target_keeps_current_rotation",
+        "passed": true,
+        "actual": {
+          "pitch": 12.000000000000002,
+          "yaw": 2.0322563531551034E-16,
+          "roll": 6.999999999999999
+        },
+        "expected": {
+          "pitch": 12.000000000000002,
+          "yaw": 2.0322563531551034E-16,
+          "roll": 6.999999999999999
+        }
+      },
+      {
+        "name": "getter_destroyed_target_keeps_current_rotation",
+        "passed": true,
+        "actual": {
+          "pitch": 12.000000000000002,
+          "yaw": 2.0322563531551034E-16,
+          "roll": 6.999999999999999
+        },
+        "expected": {
+          "pitch": 12.000000000000002,
+          "yaw": 2.0322563531551034E-16,
+          "roll": 6.999999999999999
+        }
+      },
+      {
+        "name": "task_720_degrees_per_second_tick_1",
+        "passed": true,
+        "actual": {
+          "pitch": 0.0,
+          "yaw": 36.000000000000014,
+          "roll": -0.0
+        },
+        "expected": {
+          "pitch": 0.0,
+          "yaw": 36.0,
+          "roll": 0.0
+        }
+      },
+      {
+        "name": "task_720_degrees_per_second_tick_2",
+        "passed": true,
+        "actual": {
+          "pitch": 0.0,
+          "yaw": 71.99999999999999,
+          "roll": -0.0
+        },
+        "expected": {
+          "pitch": 0.0,
+          "yaw": 72.0,
+          "roll": 0.0
+        }
+      },
+      {
+        "name": "task_720_degrees_per_second_tick_3",
+        "passed": true,
+        "actual": {
+          "pitch": 0.0,
+          "yaw": 89.99999999999999,
+          "roll": -0.0
+        },
+        "expected": {
+          "pitch": 0.0,
+          "yaw": 90.0,
+          "roll": 0.0
+        }
+      },
+      {
+        "name": "task_no_rotating_movement_component",
+        "passed": true,
+        "actual": 0
+      },
+      {
+        "name": "notify_duelist_native_rotation",
+        "passed": true,
+        "actual": {
+          "pitch": 0.0,
+          "yaw": 45.00000000000003,
+          "roll": -0.0
+        },
+        "expected": {
+          "pitch": 0.0,
+          "yaw": 45.0,
+          "roll": 0.0
+        }
+      },
+      {
+        "name": "notify_player_idle_legacy_interface_rotation",
+        "passed": true,
+        "actual": {
+          "pitch": 0.0,
+          "yaw": 0.0,
+          "roll": 0.0
+        },
+        "expected": {
+          "pitch": 0.0,
+          "yaw": 0.0,
+          "roll": 0.0
+        }
+      }
+    ],
+    "boss_native_parent": true,
+    "notify_return": true,
+    "notify_interp_speed": 10.0,
+    "player_interface_rotation_before": [
+      {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    ],
+    "legacy_notify_return": true,
+    "all_passed": true,
+    "scope": "PIE native getter and actual Blueprint event invocation; StateTree scheduling and montage Notify scheduling excluded"
+  },
+  "interfaces": [
+    {
+      "asset": "/Game/DuelistComplete/BP_Duelist",
+      "native_enemy": true,
+      "rotation_interface": false,
+      "attack_data_interface": false,
+      "native_getter_bound": true
+    },
+    {
+      "asset": "/Game/Characters/NPC/Boss/TutorialBoss/BP_TutorialBoss",
+      "native_enemy": true,
+      "rotation_interface": false,
+      "attack_data_interface": false,
+      "native_getter_bound": true
+    },
+    {
+      "asset": "/Game/Characters/NPC/Enemy/NamelessPuppet/Blueprint/BP_NameLessPuppet",
+      "native_enemy": true,
+      "rotation_interface": false,
+      "attack_data_interface": true,
+      "native_getter_bound": true
+    },
+    {
+      "asset": "/Game/Characters/CharacterLogic/BP_ThirdPersonCharacter",
+      "native_enemy": false,
+      "rotation_interface": true,
+      "attack_data_interface": true,
+      "native_getter_bound": false
+    }
+  ],
+  "scope": {
+    "task_context": "MVEnemy-derived actors only",
+    "legacy_context": "BP_BaseBoss derives Character, outside native enemy rotation contract",
+    "duelist_state_tree_task_placement": "No new Task placement",
+    "duelist_disk_hash": "6EE6F935F5D22BD2BA8BD102A72FB4235B75118AFDC6493A1E86785E7462B5FA",
+    "player_asset": "Unsaved editor state preserved; disk save excluded",
+    "unverified": [
+      "Actual StateTree transition scheduling",
+      "Montage Notify scheduling",
+      "Player movement and lock-on combinations",
+      "Networking",
+      "Packaging"
+    ]
+  },
+  "corrected_probe_errors": [
+    "Blueprint object paths retried with asset.object form",
+    "Task graph old events cleared before final compile",
+    "Python internal functions invoked through reflection",
+    "Rotator fields set by keyword",
+    "Temporary target component mobility set Movable",
+    "Task ContextActor assigned through runtime reflection"
+  ]
+}

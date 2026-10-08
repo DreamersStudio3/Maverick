@@ -38,8 +38,10 @@ struct MAVERICK_API FMVAIPatrolTaskInstanceData
 
 /**
  * 현재 StateTree 상태가 살아 있는 동안 패트롤 이동 요청 하나를 소유하는 Task
- * Enter에서 내비게이션 목표를 한 번 생성하고, Running Tick에서 이동이 끝날 때까지 재요청하지 않음
- * State가 종료되면 Exit에서 해당 Controller의 이동을 정리해 다음 상태의 이동 요청과 충돌하지 않게 처리
+ * Enter에서 목적지·이동 요청 1회 생성, Tick에서 완료 대기; 대상 없는 동안 재요청 없음
+ * AMVAIController의 유효한 TargetActor 발견 시 시작 생략 또는 다음 Tick에서 이동 중단·Succeeded 반환
+ * 대상 발견 중단은 bLastMoveSucceeded false, 후속 Chase 선택은 StateTree 전이 책임
+ * Exit에서 미완료 이동 정리, 다른 AIController 유형은 기존 순찰 경로 유지
  */
 USTRUCT(meta = (DisplayName = "AI Patrol"))
 struct MAVERICK_API FMVAIPatrolTask : public FStateTreeTaskCommonBase
