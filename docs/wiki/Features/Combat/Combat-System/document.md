@@ -1,13 +1,14 @@
 ---
 제목: "Maverick 전투 시스템"
 부제목: "현재 공격 실행 흐름과 공격·스킬 구성"
-최근수정일: 2026-09-14
+최근수정일: 2026-10-09
 최근수정자: "No-Jyun"
 관련문서:
   - "[[Architecture/document|Maverick Architecture]]"
   - "[[Features/Input-to-Action/document|입력에서 Action 실행까지]]"
   - "[[Features/Hit-Stat-HitReaction/document|Hit, Stat, HitReaction]]"
   - "[[Features/Combat/Skill/document|플레이어 스킬 구조]]"
+  - "[[Features/Combat/Ranged-Projectile/document|원거리 발사체와 자동 유도 대상 선택]]"
   - "[[Features/Combat/Weapon-Swap/document|플레이어 무기 교체]]"
 ---
 
@@ -45,6 +46,7 @@ flowchart TD
 
 ## 스킬 시스템
 
+- 원거리 Ability는 기존 Notify 구간에서 발사하고, 발사체 종료까지 원래 공격의 지연 적중을 추적: [[Features/Combat/Ranged-Projectile/document|원거리 발사체와 자동 유도 대상 선택]]
 - 슬롯 매핑: Q `Skill0`, R `Skill1`, W `Skill2`, E `Skill3`
 - 조합 입력: Shift+좌클릭 W, Shift+우클릭 E
 - 현재 무기와 입력 태그를 기준으로 Chooser 또는 DataTable Row 선택

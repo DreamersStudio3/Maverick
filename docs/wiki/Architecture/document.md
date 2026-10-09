@@ -1,11 +1,12 @@
 ---
 제목: Maverick 아키텍처
 부제목: 런타임 흐름과 도메인 책임 경계
-최근수정일: 2026-09-29
+최근수정일: 2026-10-09
 최근수정자: "No-Jyun"
 관련문서:
   - "[[Convention/Header-Documentation/document|C++ 헤더 책임 문서화]]"
   - "[[Features/Combat/Combat-System/document|Maverick 전투 시스템]]"
+  - "[[Features/Combat/Ranged-Projectile/document|원거리 발사체와 자동 유도 대상 선택]]"
   - "[[Features/Resource-Recovery/document|기본 재화 회복과 소비]]"
   - "[[Features/Progression/Level-Up/document|레벨업 프로토타입]]"
 ---
@@ -96,6 +97,7 @@ flowchart TD
 ## 핵심 런타임 흐름
 
 - [[Features/Combat/Weapon-Swap/document|플레이어 무기 교체]]
+- [[Features/Combat/Ranged-Projectile/document|원거리 발사체와 자동 유도 대상 선택]]
 
 - [[Features/Input-to-Action/document|입력에서 Action 실행까지]]
 - [[Features/Hit-Stat-HitReaction/document|Hit, Stat, HitReaction]]
