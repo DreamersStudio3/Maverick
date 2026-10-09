@@ -15,6 +15,7 @@
 #include "MVCombatComponent.generated.h"
 
 class UMVAbilityBase;
+class AMVProjectileBase;
 
 namespace MVCombatSkillSlots
 {
@@ -448,6 +449,34 @@ struct FMVCombatHeavyChargeAttackRuntimeState
 	FDataTableRowHandle ChargeRowHandle;
 };
 
+/**
+ * 발사체가 남아 있는 동안 공격 번호별 원본 실행 정보를 보관한다.
+ *
+ * SourceAbility는 현재 액션 제어에만 사용한다. ExecutionAbility는 발사 순간 값을
+ * 복사한 객체이며, 다음 공격이 SourceAbility를 재사용해도 이전 공격의 값을 유지한다.
+ */
+USTRUCT()
+struct FMVProjectileExecutionRecord
+{
+	GENERATED_BODY()
+
+	TWeakObjectPtr<UMVAbilityBase> SourceAbility;
+
+	UPROPERTY(Transient)
+	TObjectPtr<UMVAbilityBase> ExecutionAbility = nullptr;
+
+	TSet<AMVProjectileBase*> ActiveProjectiles;
+
+	FGameplayTag SourceWeaponItemTag;
+	int32 SourceChainStageIndex = INDEX_NONE;
+	bool bWasBasicAttack = false;
+	bool bWasRSkill = false;
+	bool bHadHit = false;
+	bool bMissPending = false;
+	bool bMissNotified = false;
+	bool bActionEnded = false;
+};
+
 UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class MAVERICK_API UMVCombatComponent : public UActorComponent, public IMVActionInputHandlerInterface
 {
@@ -497,6 +526,11 @@ public:
 		const UMVAbilityBase* SourceAbility);
 
 	void HandleAbilityEnded(const UMVAbilityBase* EndedAbility);
+
+	// 발사체의 충돌을 켜기 전에 호출한다.
+	bool RegisterLaunchedProjectile(
+		AMVProjectileBase* Projectile,
+		UMVAbilityBase* SourceAbility);
 
 	UFUNCTION()
 	void HandleHitResolved(const FMVResolvedHitData& HitData);
@@ -633,6 +667,21 @@ private:
 	bool ShouldSuppressChargeAttackInputForSprint() const;
 	bool HasReachedSprintAttackSpeed() const;
 	bool IsCurrentAttackHit(const FMVResolvedHitData& HitData) const;
+	bool IsProjectileSourceWeaponEquipped(
+	const FMVProjectileExecutionRecord& Record,
+	const FMVResolvedHitData& HitData) const;
+	void CloseProjectileExecution(int32 AttackInstanceId);
+	void FinalizeProjectileExecution(int32 AttackInstanceId);
+
+	UFUNCTION()
+	void HandleRegisteredProjectileHit(
+		AMVProjectileBase* Projectile,
+		const FMVResolvedHitData& HitData);
+
+	UFUNCTION()
+	void HandleRegisteredProjectileFinished(
+		AMVProjectileBase* Projectile,
+		int32 AttackInstanceId);
 
 	UFUNCTION()
 	void HandleActionEnded(FName ActionTableName, FName ActionRowName, bool bInterrupted);
@@ -703,5 +752,8 @@ private:
 	int32 PendingDodgeContextActionInstanceId = INDEX_NONE;
 	EMVAttackSwingDirection LastBasicAttackSwingDirection = EMVAttackSwingDirection::None;
 	FMVCombatHeavyChargeAttackRuntimeState HeavyChargeAttackState;
+
+	UPROPERTY(Transient)
+	TMap<int32, FMVProjectileExecutionRecord> ProjectileExecutions;
 
 };

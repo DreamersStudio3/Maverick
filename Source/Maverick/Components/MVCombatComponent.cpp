@@ -7,6 +7,7 @@
 #include "ChooserFunctionLibrary.h"
 #include "AI/MVAICombatTypes.h"
 #include "Combat/MVAbilityBase.h"
+#include "Combat/Projectile/MVProjectileBase.h"
 #include "Components/MVActionComponent.h"
 #include "Components/MVWeaponComponent.h"
 #include "Character/MVCharacterBase.h"
@@ -309,6 +310,21 @@ void UMVCombatComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 		StatComponent->OnDeathStarted.RemoveDynamic(this, &UMVCombatComponent::HandleOwnerDeathStarted);
 	}
 
+	for (TPair<int32, FMVProjectileExecutionRecord>& Pair : ProjectileExecutions)
+	{
+		for (AMVProjectileBase* Projectile : Pair.Value.ActiveProjectiles)
+		{
+			if (IsValid(Projectile))
+			{
+				Projectile->OnProjectileHit.RemoveDynamic(
+					this, &UMVCombatComponent::HandleRegisteredProjectileHit);
+				Projectile->OnProjectileFinished.RemoveDynamic(
+					this, &UMVCombatComponent::HandleRegisteredProjectileFinished);
+			}
+		}
+	}
+	ProjectileExecutions.Reset();
+
 	Super::EndPlay(EndPlayReason);
 }
 
@@ -516,12 +532,26 @@ bool UMVCombatComponent::RefundSkillMainCooldownForExecution(
 	const UMVAbilityBase* SourceAbility)
 {
 	UWorld* World = GetWorld();
-	if (!World
-		|| !IsValid(SourceAbility)
+	if (!World || !IsValid(SourceAbility))
+	{
+		return false;
+	}
+
+	const UMVAbilityBase* ActiveSourceAbility = SourceAbility;
+	const FMVProjectileExecutionRecord* ProjectileRecord =
+		ProjectileExecutions.Find(SourceAbility->GetAttackInstanceId());
+
+	if (ProjectileRecord &&
+		ProjectileRecord->ExecutionAbility.Get() == SourceAbility)
+	{
+		ActiveSourceAbility = ProjectileRecord->SourceAbility.Get();
+	}
+
+	if (!IsValid(ActiveSourceAbility)
 		|| SkillIndex < 0
 		|| SkillIndex >= MVCombatSkillSlots::Count
 		|| (SkillIndex == MVCombatSkillSlots::R && bUseRSkillGauge)
-		|| CurrentAbilityInstance.Get() != SourceAbility
+		|| CurrentAbilityInstance.Get() != ActiveSourceAbility
 		|| CurrentAttackInstanceId == INDEX_NONE
 		|| CurrentAttackInstanceId != SourceAbility->GetAttackInstanceId())
 	{
@@ -530,7 +560,7 @@ bool UMVCombatComponent::RefundSkillMainCooldownForExecution(
 
 	FMVSkillEntry* SkillEntry = SkillMap.Find(MVCombatMakeSkillMapKey(SkillIndex));
 	if (!SkillEntry
-		|| !SkillEntry->ContainsAbility(SourceAbility)
+		|| !SkillEntry->ContainsAbility(ActiveSourceAbility)
 		|| SkillEntry->MainCooldownDuration <= 0.0f)
 	{
 		return false;
@@ -988,6 +1018,167 @@ bool UMVCombatComponent::TrySkill(
 	return false;
 }
 
+bool UMVCombatComponent::RegisterLaunchedProjectile(
+	AMVProjectileBase* Projectile,
+	UMVAbilityBase* SourceAbility)
+{
+	if (!IsValid(Projectile) ||
+		!IsValid(SourceAbility) ||
+		CurrentAbilityInstance.Get() != SourceAbility ||
+		!SourceAbility->bAbilityActive ||
+		CurrentAttackInstanceId == INDEX_NONE ||
+		SourceAbility->GetAttackInstanceId() != CurrentAttackInstanceId ||
+		Projectile->GetAttackInstanceId() != CurrentAttackInstanceId)
+	{
+		return false;
+	}
+
+	FMVProjectileExecutionRecord* Record = ProjectileExecutions.Find(CurrentAttackInstanceId);
+
+	if (Record)
+	{
+		if (Record->SourceAbility.Get() != SourceAbility ||
+			!IsValid(Record->ExecutionAbility.Get()) ||
+			Record->bActionEnded ||
+			Record->ActiveProjectiles.Contains(Projectile))
+		{
+			return false;
+		}
+	}
+	else
+	{
+		// 원본 Ability가 다음 공격에서 다시 준비되기 전에 실행 값을 복사한다.
+		UMVAbilityBase* ExecutionAbility = NewObject<UMVAbilityBase>(this);
+		if (!IsValid(ExecutionAbility))
+		{
+			return false;
+		}
+
+		ExecutionAbility->SetOwner(this);
+		ExecutionAbility->AbilityData = SourceAbility->AbilityData;
+		ExecutionAbility->SetAttackInstanceId(CurrentAttackInstanceId);
+		ExecutionAbility->SetExecutionSource(
+			SourceAbility->GetSourceSkillIndex(),
+			SourceAbility->GetSourceWeaponItemTag());
+		ExecutionAbility->ConsumedMPThisExecution =
+			SourceAbility->GetConsumedMPThisExecution();
+		ExecutionAbility->bAbilityCostConsumed =
+			SourceAbility->bAbilityCostConsumed;
+		ExecutionAbility->HitLaunchData =
+			SourceAbility->GetHitLaunchData();
+
+		Record = &ProjectileExecutions.FindOrAdd(CurrentAttackInstanceId);
+		Record->SourceAbility = SourceAbility;
+		Record->ExecutionAbility = ExecutionAbility;
+		Record->SourceWeaponItemTag = SourceAbility->GetSourceWeaponItemTag();
+		Record->bWasBasicAttack = IsBasicAttackAbility(SourceAbility);
+		Record->bWasRSkill = IsCurrentAbilityRSkill();
+
+		const int32 SourceSkillIndex = SourceAbility->GetSourceSkillIndex();
+		if (SourceSkillIndex >= 0 && SourceSkillIndex < MVCombatSkillSlots::Count)
+		{
+			const FMVSkillEntry* SourceSkillEntry = SkillMap.Find(MVCombatMakeSkillMapKey(SourceSkillIndex));
+			if (SourceSkillEntry)
+			{
+				for (int32 StageIndex = 0;
+					StageIndex < SourceSkillEntry->AbilityInstances.Num();
+					++StageIndex)
+				{
+					if (SourceSkillEntry->AbilityInstances[StageIndex].Get()
+						== SourceAbility)
+					{
+						Record->SourceChainStageIndex = StageIndex;
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	Record->ActiveProjectiles.Add(Projectile);
+
+	Projectile->OnProjectileHit.AddUniqueDynamic(
+		this, &UMVCombatComponent::HandleRegisteredProjectileHit);
+	Projectile->OnProjectileFinished.AddUniqueDynamic(
+		this, &UMVCombatComponent::HandleRegisteredProjectileFinished);
+	return true;
+}
+
+void UMVCombatComponent::HandleRegisteredProjectileHit(
+	AMVProjectileBase* Projectile,
+	const FMVResolvedHitData& HitData)
+{
+	if (!IsValid(Projectile) ||
+		HitData.AttackInstanceId != Projectile->GetAttackInstanceId() ||
+		HitData.Attacker.Get() != GetOwner())
+	{
+		return;
+	}
+
+	FMVProjectileExecutionRecord* Record = ProjectileExecutions.Find(HitData.AttackInstanceId);
+	if (Record && Record->ActiveProjectiles.Contains(Projectile))
+	{
+		Record->bHadHit = true;
+	}
+}
+
+void UMVCombatComponent::HandleRegisteredProjectileFinished(
+	AMVProjectileBase* Projectile,
+	int32 AttackInstanceId)
+{
+	FMVProjectileExecutionRecord* Record = ProjectileExecutions.Find(AttackInstanceId);
+	if (!Record)
+	{
+		return;
+	}
+
+	Record->ActiveProjectiles.Remove(Projectile);
+	FinalizeProjectileExecution(AttackInstanceId);
+}
+
+void UMVCombatComponent::CloseProjectileExecution(int32 AttackInstanceId)
+{
+	FMVProjectileExecutionRecord* Record = ProjectileExecutions.Find(AttackInstanceId);
+	if (!Record)
+	{
+		return;
+	}
+
+	Record->bActionEnded = true;
+	FinalizeProjectileExecution(AttackInstanceId);
+}
+
+void UMVCombatComponent::FinalizeProjectileExecution(int32 AttackInstanceId)
+{
+	FMVProjectileExecutionRecord* Record = ProjectileExecutions.Find(AttackInstanceId);
+	if (!Record || !Record->bActionEnded || !Record->ActiveProjectiles.IsEmpty())
+	{
+		return;
+	}
+
+	if (Record->bMissPending && !Record->bHadHit && !Record->bMissNotified)
+	{
+		Record->bMissNotified = true;
+
+		UMVAbilityBase* MissedAbility = Record->ExecutionAbility.Get();
+		const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
+		const UMVWeaponComponent* Weapon = IsValid(OwnerCharacter)
+			? OwnerCharacter->WeaponComponent.Get()
+			: nullptr;
+		const FGameplayTag EquippedWeaponItemTag = IsValid(Weapon)
+			? Weapon->GetEquippedWeaponState().ItemTag
+			: FGameplayTag();
+
+		if (IsValid(MissedAbility) &&
+			EquippedWeaponItemTag == Record->SourceWeaponItemTag)
+		{
+			OnAttackMissed.Broadcast(MissedAbility);
+		}
+	}
+
+	ProjectileExecutions.Remove(AttackInstanceId);
+}
+
 void UMVCombatComponent::HandleAbilityEnded(const UMVAbilityBase* EndedAbility)
 {
 	if (!EndedAbility || !GetWorld())
@@ -1024,54 +1215,148 @@ void UMVCombatComponent::HandleAbilityEnded(const UMVAbilityBase* EndedAbility)
 
 	if (bHandledAbility && CurrentAbilityInstance.Get() == EndedAbility)
 	{
+		FMVProjectileExecutionRecord* ProjectileRecord =
+			ProjectileExecutions.Find(EndedAbility->GetAttackInstanceId());
+		const bool bOwnProjectileExecution =
+			ProjectileRecord &&
+			ProjectileRecord->SourceAbility.Get() == EndedAbility;
+
 		if (bCurrentAbilityAwaitingCompletion
 			&& EndedAbility->bAbilityCostConsumed
 			&& !bCurrentAbilityHitConfirmed)
 		{
-			OnAttackMissed.Broadcast(
-				const_cast<UMVAbilityBase*>(EndedAbility));
+			if (bOwnProjectileExecution)
+			{
+				ProjectileRecord->bMissPending = true;
+			}
+			else
+			{
+				OnAttackMissed.Broadcast(
+					const_cast<UMVAbilityBase*>(EndedAbility));
+			}
 		}
 
 		bCurrentAbilityAwaitingCompletion = false;
 	}
-
 }
 
 void UMVCombatComponent::HandleHitResolved(const FMVResolvedHitData& HitData)
 {
 	AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
+	const bool bCurrentAttackHit = IsCurrentAttackHit(HitData);
 
-	if (!IsCurrentAttackHit(HitData))
+	FMVProjectileExecutionRecord* ProjectileRecord =
+		HitData.Origin == EMVResolvedHitOrigin::AttackCollision
+			? ProjectileExecutions.Find(HitData.AttackInstanceId)
+			: nullptr;
+
+	if (!bCurrentAttackHit && !ProjectileRecord)
 	{
 		return;
 	}
 
-	bCurrentAbilityHitConfirmed = true;
+	UMVAbilityBase* EventAbility = ProjectileRecord
+		? ProjectileRecord->ExecutionAbility.Get()
+		: CurrentAbilityInstance.Get();
 
-	if (HitData.Origin == EMVResolvedHitOrigin::AttackCollision)
+	if (!IsValid(OwnerCharacter) ||
+	!IsValid(EventAbility) ||
+	HitData.Attacker.Get() != OwnerCharacter)
 	{
-		OnValidatedAttackHit.Broadcast(
-			HitData, CurrentAbilityInstance.Get());
+		return;
+	}
+
+	const bool bProjectileExecution = ProjectileRecord != nullptr;
+	const TWeakObjectPtr<UMVAbilityBase> ProjectileSourceAbility =
+		bProjectileExecution
+			? ProjectileRecord->SourceAbility
+			: TWeakObjectPtr<UMVAbilityBase>();
+	const int32 ProjectileSourceSkillIndex = bProjectileExecution
+		? EventAbility->GetSourceSkillIndex()
+		: INDEX_NONE;
+	const int32 ProjectileSourceChainStageIndex = bProjectileExecution
+		? ProjectileRecord->SourceChainStageIndex
+		: INDEX_NONE;
+	const FGameplayTag ProjectileSourceWeaponItemTag = bProjectileExecution
+		? ProjectileRecord->SourceWeaponItemTag
+		: FGameplayTag();
+
+	const bool bWasRSkill = ProjectileRecord
+		? ProjectileRecord->bWasRSkill
+		: IsCurrentAbilityRSkill();
+
+	const bool bPublishPassiveEvents =
+		!ProjectileRecord ||
+		IsProjectileSourceWeaponEquipped(*ProjectileRecord, HitData);
+
+	// 이벤트가 다른 액션을 시작하더라도 이 공격의 적중 여부를 먼저 고정한다.
+	if (ProjectileRecord)
+	{
+		ProjectileRecord->bHadHit = true;
+	}
+	if (bCurrentAttackHit)
+	{
+		bCurrentAbilityHitConfirmed = true;
+	}
+
+	if (HitData.Origin == EMVResolvedHitOrigin::AttackCollision &&
+		bPublishPassiveEvents)
+	{
+		OnValidatedAttackHit.Broadcast(HitData, EventAbility);
 	}
 
 	AMVEnemy* HitEnemy = Cast<AMVEnemy>(HitData.Victim.Get());
 
-	if (OwnerCharacter->IsPlayerControlled()
-		&& IsValid(HitEnemy)
-		&& HitData.FinalDamage > 0.0f
-		&& StatComponent)
+	if (IsValid(OwnerCharacter) &&
+		OwnerCharacter->IsPlayerControlled() &&
+		IsValid(HitEnemy) &&
+		HitData.FinalDamage > 0.0f &&
+		IsValid(StatComponent.Get()))
 	{
-		const float MPRecoveryAmount = FMath::Max(0.0f, CurrentAbilityInstance->AbilityData.MpRecoveryPerHit);
-
+		const float MPRecoveryAmount =
+			FMath::Max(0.0f, EventAbility->AbilityData.MpRecoveryPerHit);
 		StatComponent->RecoverMP(MPRecoveryAmount);
 	}
 
-	if (bUseRSkillGauge && IsValid(HitEnemy) && !IsCurrentAbilityRSkill())
+	if (bUseRSkillGauge && IsValid(HitEnemy) && !bWasRSkill)
 	{
-		AddRSkillGauge(CurrentAbilityInstance->AbilityData.RSkillGaugeGainMultiplier);
+		AddRSkillGauge(EventAbility->AbilityData.RSkillGaugeGainMultiplier);
 	}
 
-	CurrentAbilityInstance->ApplyOnHitStatusEffect(HitData);
+	EventAbility->ApplyOnHitStatusEffect(HitData);
+
+	if (!GetWorld())
+	{
+		return;
+	}
+
+	if (bProjectileExecution)
+	{
+		if (HitData.AttackInstanceId != CurrentAttackInstanceId ||
+			ProjectileSourceSkillIndex < 0 ||
+			ProjectileSourceSkillIndex >= MVCombatSkillSlots::Count ||
+			ProjectileSourceChainStageIndex == INDEX_NONE ||
+			!IsValid(ProjectileSourceAbility.Get()) ||
+			!IsValid(OwnerCharacter))
+		{
+			return;
+		}
+
+		const UMVWeaponComponent* Weapon =
+			OwnerCharacter->WeaponComponent.Get();
+		const FGameplayTag CurrentWeaponItemTag = IsValid(Weapon)
+			? Weapon->GetEquippedWeaponState().ItemTag
+			: FGameplayTag();
+
+		if (CurrentWeaponItemTag != ProjectileSourceWeaponItemTag)
+		{
+			return;
+		}
+	}
+	else if (!IsCurrentAttackHit(HitData))
+	{
+		return;
+	}
 
 	const float CurrentTime = GetWorld()->GetTimeSeconds();
 
@@ -1079,24 +1364,28 @@ void UMVCombatComponent::HandleHitResolved(const FMVResolvedHitData& HitData)
 	{
 		FMVSkillEntry& SkillEntry = Pair.Value;
 
-		if (SkillEntry.GetCurrentAbility() != CurrentAbilityInstance)
+		if (bProjectileExecution)
+		{
+			if (Pair.Key != MVCombatMakeSkillMapKey(ProjectileSourceSkillIndex) ||
+				SkillEntry.CurrentChainStageIndex !=
+					ProjectileSourceChainStageIndex ||
+				SkillEntry.GetCurrentAbility() != ProjectileSourceAbility.Get() ||
+				!SkillEntry.IsInputWindowValid(CurrentTime))
+			{
+				continue;
+			}
+		}
+		else if (SkillEntry.GetCurrentAbility() != CurrentAbilityInstance)
 		{
 			continue;
 		}
 
 		const FMVSkillDataTableColumn* CurrentSkillData = SkillEntry.GetCurrentSkillData();
 
-		if (!CurrentSkillData)
-		{
-			return;
-		}
-
-		if (CurrentSkillData->ChainAdvancePolicy != EMVChainAdvancePolicy::OnHitConfirmed)
-		{
-			return;
-		}
-
-		if (SkillEntry.bCurrentStageHitConfirmed)
+		if (!CurrentSkillData ||
+			CurrentSkillData->ChainAdvancePolicy !=
+				EMVChainAdvancePolicy::OnHitConfirmed ||
+			SkillEntry.bCurrentStageHitConfirmed)
 		{
 			return;
 		}
@@ -1110,13 +1399,30 @@ void UMVCombatComponent::HandleHitResolved(const FMVResolvedHitData& HitData)
 void UMVCombatComponent::HandleHitDeliveryFinished(
 	const FMVResolvedHitData& HitData)
 {
-	if (HitData.Origin != EMVResolvedHitOrigin::AttackCollision
-		|| !IsCurrentAttackHit(HitData))
+	if (HitData.Origin != EMVResolvedHitOrigin::AttackCollision)
 	{
 		return;
 	}
 
-	OnValidatedAttackHitAfterDamage.Broadcast(HitData, CurrentAbilityInstance.Get());
+	const FMVProjectileExecutionRecord* ProjectileRecord = ProjectileExecutions.Find(HitData.AttackInstanceId);
+
+	if (ProjectileRecord)
+	{
+		if (IsValid(ProjectileRecord->ExecutionAbility.Get()) &&
+			HitData.Attacker.Get() == GetOwner() &&
+			IsProjectileSourceWeaponEquipped(*ProjectileRecord, HitData))
+		{
+			OnValidatedAttackHitAfterDamage.Broadcast(
+				HitData, ProjectileRecord->ExecutionAbility.Get());
+		}
+		return;
+	}
+
+	if (IsCurrentAttackHit(HitData))
+	{
+		OnValidatedAttackHitAfterDamage.Broadcast(
+			HitData, CurrentAbilityInstance.Get());
+	}
 }
 
 bool UMVCombatComponent::IsCurrentAttackHit(
@@ -1141,6 +1447,14 @@ bool UMVCombatComponent::IsBasicAttackAbility(const UMVAbilityBase* Ability) con
 		return false;
 	}
 
+	const FMVProjectileExecutionRecord* ProjectileRecord =
+		ProjectileExecutions.Find(Ability->GetAttackInstanceId());
+	if (ProjectileRecord &&
+		ProjectileRecord->ExecutionAbility.Get() == Ability)
+	{
+		return ProjectileRecord->bWasBasicAttack;
+	}
+
 	for (const TPair<FName, FMVSkillEntry>& Pair : BasicAttackMap)
 	{
 		if (Pair.Value.ContainsAbility(Ability))
@@ -1152,16 +1466,50 @@ bool UMVCombatComponent::IsBasicAttackAbility(const UMVAbilityBase* Ability) con
 	return false;
 }
 
+bool UMVCombatComponent::IsProjectileSourceWeaponEquipped(
+	const FMVProjectileExecutionRecord& Record,
+	const FMVResolvedHitData& HitData) const
+{
+	const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
+	if (!IsValid(OwnerCharacter) ||
+		HitData.WeaponSnapshot.ItemTag != Record.SourceWeaponItemTag)
+	{
+		return false;
+	}
+
+	const UMVWeaponComponent* Weapon = OwnerCharacter->WeaponComponent.Get();
+	const FGameplayTag CurrentWeaponTag = IsValid(Weapon)
+		? Weapon->GetEquippedWeaponState().ItemTag
+		: FGameplayTag();
+
+	return CurrentWeaponTag == Record.SourceWeaponItemTag;
+}
+
 void UMVCombatComponent::ApplyOutgoingAttackDamageModifiers(FMVResolvedHitData& HitData)
 {
-	if (HitData.Origin != EMVResolvedHitOrigin::AttackCollision
-		|| !IsCurrentAttackHit(HitData))
+	if (HitData.Origin != EMVResolvedHitOrigin::AttackCollision)
+	{
+		return;
+	}
+
+	const FMVProjectileExecutionRecord* ProjectileRecord =
+		ProjectileExecutions.Find(HitData.AttackInstanceId);
+
+	if (ProjectileRecord)
+	{
+		if (!IsValid(ProjectileRecord->ExecutionAbility.Get()) ||
+			HitData.Attacker.Get() != GetOwner() ||
+			!IsProjectileSourceWeaponEquipped(*ProjectileRecord, HitData))
+		{
+			return;
+		}
+	}
+	else if (!IsCurrentAttackHit(HitData))
 	{
 		return;
 	}
 
 	float ModifiedDamage = HitData.FinalDamage;
-
 	OnModifyOutgoingAttackDamage.Broadcast(HitData, ModifiedDamage);
 
 	if (FMath::IsFinite(ModifiedDamage))
@@ -1198,6 +1546,7 @@ void UMVCombatComponent::HandleActionEnded(
 		HandleAbilityEnded(EndedAbility);
 	}
 
+	CloseProjectileExecution(CurrentAttackInstanceId);
 	CurrentAbilityInstance = nullptr;
 	CurrentAbilityActionTableName = NAME_None;
 	CurrentAbilityActionRowName = NAME_None;
@@ -1879,6 +2228,7 @@ bool UMVCombatComponent::TryStartActionWithAbility(
 		if (PreviousAbilityInstance && PreviousAbilityInstance->Implements<UMVAbilityInterface>())
 		{
 			IMVAbilityInterface::Execute_EndAbility(PreviousAbilityInstance);
+			CloseProjectileExecution(PreviousAbilityInstance->GetAttackInstanceId());
 		}
 
 		CurrentAbilityInstance = NextAbility;

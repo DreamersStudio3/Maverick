@@ -38,7 +38,8 @@ struct MAVERICK_API FMVHitLaunchData
  * 충돌 필터링 이후 HitResolver에 넘기는 원본 타격 요청.
  *
  * 공격자, 피격자, 대미지 계수, 피격 타입을 채운 뒤 HitResult의 ImpactPoint/ImpactNormal을 같이 넘긴다.
- * 방향은 HitResolver가 공격자 위치에서 피격자 위치로 계산한다. Ability마다 HitDirection을 따로 만들지 않아도 된다.
+ * 발사체는 발사 당시 무기 정보와 충돌 직전 이동 방향을 선택적으로 전달한다.
+ * 해당 값이 없으면 기존처럼 적중 시점의 무기와 공격자·피격자 위치를 사용한다.
  */
 USTRUCT(BlueprintType)
 struct MAVERICK_API FMVHitResolveRequest
@@ -79,6 +80,20 @@ struct MAVERICK_API FMVHitResolveRequest
 	// HitResult.ImpactNormal에 해당하는 표면 노멀. Launch 방향을 흔들지는 않고, 충돌 표면 문맥이 필요할 때 참고한다.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Hit|Context")
 	FVector ImpactNormal = FVector::ZeroVector;
+
+	// 발사체가 발사 순간 복사한 무기를 사용할 때만 true.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Hit|Weapon")
+	bool bUseSourceWeaponSnapshot = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Hit|Weapon")
+	FMVWeaponHitSnapshot SourceWeaponSnapshot;
+
+	// 발사체가 충돌 직전 이동 방향을 전달할 때만 true.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Hit|Context")
+	bool bUseIncomingDirection = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Hit|Context")
+	FVector IncomingDirection = FVector::ZeroVector;
 };
 
 /**

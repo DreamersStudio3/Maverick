@@ -101,7 +101,33 @@ bool FMVHitResolverMergedDamageTest::RunTest(const FString& Parameters)
 		if (TestTrue(TEXT("Unrelated hit resolves"), Resolver->ResolveAttackHit(Request, OtherHit)))
 		{
 			TestEqual(TEXT("Unrelated hit keeps normal defence"), OtherHit.VictimDefence, 2.0f);
+			TestTrue(
+				TEXT("Hit without incoming direction uses attacker-to-victim direction"),
+				OtherHit.HitDirection.Equals(FVector::ForwardVector));
 		}
+
+		Request.AttackTypes = EMVAttackTypes::SkillAttack;
+		Request.bUseSourceWeaponSnapshot = true;
+		Request.SourceWeaponSnapshot.AttackPower = 13.0f;
+		Request.SourceWeaponSnapshot.bValid = true;
+		Request.bUseIncomingDirection = true;
+		Request.IncomingDirection = FVector(0.0f, 10.0f, 4.0f);
+
+		FMVResolvedHitData ProjectileHit;
+		if (TestTrue(TEXT("Projectile hit resolves"), Resolver->ResolveAttackHit(Request, ProjectileHit)))
+		{
+			TestEqual(TEXT("Projectile uses launch weapon power"), ProjectileHit.WeaponAttackPower, 13.0f);
+			TestEqual(TEXT("Projectile uses skill defence"), ProjectileHit.VictimDefence, 8.0f);
+			TestTrue(
+				TEXT("Projectile uses incoming horizontal direction"),
+				ProjectileHit.HitDirection.Equals(FVector::RightVector));
+		}
+
+		Request.SourceWeaponSnapshot.bValid = false;
+		FMVResolvedHitData RejectedHit;
+		TestFalse(
+			TEXT("Invalid launch weapon snapshot is rejected"),
+			Resolver->ResolveAttackHit(Request, RejectedHit));
 	}
 
 	GEngine->DestroyWorldContext(World);

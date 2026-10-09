@@ -195,9 +195,17 @@ bool UMVHitResolverSubsystem::BuildResolvedHitData(
 
 	const float AttackerAttackPower = ResolveNonNegativeStat(AttackerStat->AttackPower);
 	const float BaseAttackPower = AttackerAttackPower > 0.0f
-		? AttackerAttackPower
-		: ResolveNonNegativeStat(FallbackAttackPower);
-	const FMVWeaponHitSnapshot WeaponSnapshot = ResolveWeaponHitSnapshot(*Attacker);
+	? AttackerAttackPower
+	: ResolveNonNegativeStat(FallbackAttackPower);
+
+	if (Request.bUseSourceWeaponSnapshot && !Request.SourceWeaponSnapshot.bValid)
+	{
+		return false;
+	}
+
+	const FMVWeaponHitSnapshot WeaponSnapshot = Request.bUseSourceWeaponSnapshot
+		? Request.SourceWeaponSnapshot
+		: ResolveWeaponHitSnapshot(*Attacker);
 	const float WeaponAttackPower = ResolveNonNegativeStat(WeaponSnapshot.AttackPower);
 	const float DamageMultiplier = ResolveNonNegativeStat(Request.DamageMultiplier);
 	const float GroggyDamageMultiplier = ResolveNonNegativeStat(Request.GroggyDamageMultiplier);
@@ -280,14 +288,21 @@ FVector UMVHitResolverSubsystem::ResolveHitDirection(
 	const AMVCharacterBase& Victim)
 {
 	FVector Direction = FVector::ZeroVector;
-	const bool bHasAttackerToVictimDirection = MVHitResolverTryResolveAttackerToVictimDirection(Attacker, Victim, Direction);
+	const bool bHasIncomingDirection = Request.bUseIncomingDirection
+		&& FMath::IsFinite(Request.IncomingDirection.X)
+		&& FMath::IsFinite(Request.IncomingDirection.Y)
+		&& MVHitResolverTryNormalize2D(Request.IncomingDirection, Direction);
+	const bool bHasDirection = bHasIncomingDirection
+		|| MVHitResolverTryResolveAttackerToVictimDirection(Attacker, Victim, Direction);
 
 	UE_LOG(
 		LogTemp,
 		Log,
 		TEXT("HitDirectionTrace Frame=%llu Stage=ResolverResolveDirection Source=%s Attacker=%s Victim=%s AttackerLocation=%s VictimLocation=%s HitLocation=%s ImpactNormal=%s Result=%s"),
 		static_cast<unsigned long long>(GFrameCounter),
-		bHasAttackerToVictimDirection ? TEXT("AttackerToVictim") : TEXT("None"),
+		bHasIncomingDirection
+			? TEXT("ProjectileIncoming")
+			: (bHasDirection ? TEXT("AttackerToVictim") : TEXT("None")),
 		*GetNameSafe(&Attacker),
 		*GetNameSafe(&Victim),
 		*Attacker.GetActorLocation().ToString(),
