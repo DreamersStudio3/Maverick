@@ -52,6 +52,9 @@ flowchart TD
 
 ## 구성 재생성
 
+수동 시험: `WBP_BossAttackTest.PazeChangeAttackButton` → `StartResonanceForTest`, 기존 HP 예약·1회 사용 표식 보존
+버튼·자동 AI 정지·입력 복원: [[Features/Boss-Attack-Test/document|보스 공격 시험 UI]]
+
 1. 에디터 Python에서 `Scripts/Editor/ConfigureDuelistResonance.py`: 전용 연출 에셋·BP 컴포넌트 구성
 2. 에디터 종료 후 `UnrealEditor-Cmd Maverick.uproject -run=MaverickBossStateTree -ResonanceOnly`: 전용 Task·선택 링크 구성·공격 트리 컴파일·저장
 

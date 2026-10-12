@@ -61,9 +61,22 @@ bool UMVDuelistResonanceComponent::IsResonanceActive() const
 
 bool UMVDuelistResonanceComponent::StartResonance()
 {
-	if (!IsResonancePending() || !Character || !Stat || Stat->IsDead() || Stat->IsGroggy()) return false;
-	bPending = false;
-	bUsed = true;
+	return BeginResonance(false);
+}
+
+bool UMVDuelistResonanceComponent::StartResonanceForTest()
+{
+	return BeginResonance(true);
+}
+
+bool UMVDuelistResonanceComponent::BeginResonance(bool bForTest)
+{
+	if ((!bForTest && !IsResonancePending()) || IsResonanceActive() || !Character || !Stat || Stat->IsDead() || Stat->IsGroggy()) return false;
+	if (!bForTest)
+	{
+		bPending = false;
+		bUsed = true;
+	}
 	Phase = EMVDuelistResonancePhase::Jump;
 	JumpElapsed = 0.0f;
 	JumpStart = Character->GetActorLocation();

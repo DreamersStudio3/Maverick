@@ -17,6 +17,7 @@ enum class EMVDuelistResonancePhase : uint8 { Ready, Jump, Channel, Groggy, Fini
 /**
  * Duelist의 HP 50% 도달 예약·1회 중앙 도약·공명 폭주 실행 소유
  * StateTree Resonanace Task가 시작·종료 요청, 채널링 강인도 판정은 Stat·HitResolver 경유
+ * UI 반복 시험은 HP 예약·1회 사용 표식 변경 없이 같은 실행 경로 사용, 활성 중 재시작 차단
  * BeginPlay에서 HP·그로기·사망 구독, 중단·EndPlay에서 이동·강인도·연출 복원
  * 실패 피해는 최대 HP 비율의 직접 피해, 암전은 플레이어 화면 위젯의 독립 10초 수명
  */
@@ -28,6 +29,7 @@ public:
 	UMVDuelistResonanceComponent();
 	UFUNCTION(BlueprintPure) bool IsResonancePending() const { return bPending && !bUsed; }
 	UFUNCTION(BlueprintCallable) bool StartResonance();
+	UFUNCTION(BlueprintCallable, Category="Resonance|Test") bool StartResonanceForTest();
 	UFUNCTION(BlueprintCallable) void CancelResonance();
 	UFUNCTION(BlueprintPure) bool IsResonanceActive() const;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Resonance") FVector ArenaCenter = FVector::ZeroVector;
@@ -50,6 +52,7 @@ protected:
 	virtual void EndPlay(const EEndPlayReason::Type Reason) override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* TickFunction) override;
 private:
+	bool BeginResonance(bool bForTest);
 	UFUNCTION() void HandleHPChanged(float HP, float MaxHP);
 	UFUNCTION() void HandleGroggy();
 	UFUNCTION() void HandleDead();
