@@ -1,7 +1,7 @@
 ---
 제목: Hit, Stat, HitReaction
 부제목: 적중 계산·수치 피해·피격 표현의 책임 분리
-최근수정일: 2026-10-11
+최근수정일: 2026-10-12
 최근수정자: Codex
 관련문서:
   - "[[Architecture/document|Maverick Architecture]]"
@@ -44,6 +44,16 @@ flowchart TD
 - 소진 전 그로기 게이지 누적·일반 피격 반응 제외, 소진 타격을 실제 `Groggy`로 변환
 - 현재 사용처: Duelist 공명 폭주 채널링의 강인도 40, 구간 정리 책임은 실행 컴포넌트
 
+## 피해·방향 계산 계약
+
+- `FMVHitResolveRequest.AttackTypes`: 일반 공격은 `NormalDefence`, 스킬 공격은 `SkillDefence` 선택
+- 치명타 적용 전 HP 피해: `max(0, 장착 무기 공격력 × DamageMultiplier − 선택 방어력 × 0.5)`, 소수점 첫째 자리까지 절삭
+- `SetNormalDefence`·`SetSkillDefence`로 방어력 변경, 기존 단일 `Defence` 필드 참조 제외
+- `ResolveHitDirection`: 공격자·피격자 인수 2개, 수평 방향 정규화; `HitLocation`·`ImpactNormal`은 충돌 문맥 보관용
+- `ResolveDirectDamage`: 이미 계산한 최종 피해 전달, 공명 폭주의 최대 HP 80% 고정 피해에 방어력 재적용 제외
+- 2026-10-12 머지 이후 정합성: 방향 선언·구현 일치, 일반 방어력 5의 박스 피해 `20−2.5=17.5`와 일반·스킬 방어력 99999의 공명 고정 피해 검사 통과
+- 검증 범위·경고·한계: [머지 이후 빌드 복구](attachments/merge-build-validation.json)
+
 ## 무적 적용 범위
 
 - 무적 검사: HitReaction 경로
@@ -61,7 +71,7 @@ flowchart TD
 ### 피해 0 확인 지점
 
 - `Damage=0 AppliedDamage=0`: 플레이어 수치 피해 경로 도달, 방어력 반영 후 최종 HP 피해 0
-- 계산 입력: 공격자의 `WeaponComponent.CurrentWeaponState.AttackPower`, 실제 공격 행의 `DamageMultiplier`, 피격자의 `StatComponent.Defence`
+- 계산 입력: 공격자의 `WeaponComponent.CurrentWeaponState.AttackPower`, 실제 공격 행의 `DamageMultiplier`, 공격 유형에 따른 피격자의 `NormalDefence`·`SkillDefence`
 - 유효한 무기 Snapshot의 공격력 0도 그대로 사용, 현재 최종 피해 수식에 캐릭터의 `StatComponent.AttackPower` 미포함
 - `DefaultWeaponRow` 미지정 시 `BareHandWeapon` 장착, 보스 메시의 무기 외형과 실제 장착 상태는 별도 설정
 - 2026-10-08 Windows UE 5.8.3 조사: 사용자 피격 로그와 새 PIE의 실제 Duelist 맨손 공격력 0·플레이어 방어력 1 대조, 기본 공격·Q 배율 100과 W 배율 1에서도 최종 피해 0 확인

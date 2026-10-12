@@ -37,7 +37,8 @@ bool FMVDuelistResonanceTest::RunTest(const FString& Parameters)
 	PC->SetPawn(Player);
 	Player->StatComponent->SetMaxHP(1000);
 	Player->StatComponent->SetCurrentHP(1000);
-	Player->StatComponent->Defence = 99999;
+	Player->StatComponent->SetNormalDefence(99999);
+	Player->StatComponent->SetSkillDefence(99999);
 	Player->WeaponComponent->BareHandWeapon.AttackPower = 10;
 	Player->WeaponComponent->EquipBareHand();
 	const auto SpawnBoss = [&]()

@@ -46,7 +46,7 @@ private:
 	bool BuildResolvedHitData(const FMVHitResolveRequest& Request, FMVResolvedHitData& OutHitData) const;
 	FMVWeaponHitSnapshot ResolveWeaponHitSnapshot(const AMVCharacterBase& Attacker) const;
 	static float ResolveNonNegativeStat(float Value);
-	static FVector ResolveHitDirection(const FMVHitResolveRequest& Request, const AMVCharacterBase& Attacker, const AMVCharacterBase& Victim);
+	static FVector ResolveHitDirection(const AMVCharacterBase& Attacker, const AMVCharacterBase& Victim);
 	
 	bool BuildDirectDamageHitData(const FMVDirectDamageRequest& Request, FMVResolvedHitData& OutHitData) const;
 	bool DispatchResolvedHit(const FMVResolvedHitData& HitData);

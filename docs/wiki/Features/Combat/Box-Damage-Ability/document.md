@@ -1,7 +1,7 @@
 ---
 제목: "박스 범위 피해 Ability"
 부제목: "공통 박스 판정과 피격 유형별 설정"
-최근수정일: 2026-10-08
+최근수정일: 2026-10-12
 최근수정자: "Codex"
 관련문서:
   - "[[Features/Combat/Combat-System/document|Maverick 전투 시스템]]"
@@ -44,7 +44,9 @@
 - 대상: 플레이어가 조종하는 `AMVCharacterBase`, 충돌 오브젝트 유형 `Pawn`
 - 자기 자신·무적·사망·파괴 중인 캐릭터 제외
 - 같은 활성 구간의 플레이어별 최대 1회 피해, 다음 구간에서 재타격 허용
-- 기존 `HitResolver` 계산 사용: `max(0, 장착 무기 공격력 × 행의 DamageMultiplier − 대상 방어력)`
+- 기존 `HitResolver` 계산 사용: `max(0, 장착 무기 공격력 × 행의 DamageMultiplier − 대상 선택 방어력 × 0.5)`, 소수점 첫째 자리까지 절삭 후 치명타 적용
+- 현재 박스 요청의 `AttackTypes` 기본값 `NormalAttack`, 대상 `NormalDefence` 선택
+- 2026-10-12 Windows UE 5.8.3 격리 검사 통과: 무기 공격력 10·계수 2·일반 방어력 5에서 구간당 HP 피해 17.5; [머지 정합성 검증](../../Hit-Stat-HitReaction/attachments/merge-build-validation.json)
 - `HitReactionType=None`: 그로기 배율·자세 피해·밀림 요청 0, 상속받은 `HitLaunchData`와 행의 `GroggyDamageMultiplier` 무시
 - 그 외 피격 유형: 행의 그로기 배율·기존 `HitLaunchData` 전달, 실제 동작은 피격 시스템 책임
 - 기존 HP 감소·사망·적중 이벤트 처리 유지
