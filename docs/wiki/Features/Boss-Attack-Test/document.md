@@ -40,7 +40,9 @@ flowchart LR
 - 사망·그로기·액션·공명 폭주 진행 중 버튼 비활성화와 요청 차단, 종료 후 재활성화
 - 첫 클릭부터 수동 시험 제어 유지: 기존 StateTree 실행 여부·컨트롤러 Tick·두 공격 대상 보관 후 자동 AI 정지, `K`·`L` 디버그 입력과 충돌 차단
 - 위젯 제거·보스 교체: 진행 중 시험 액션·공명 폭주 정리, 기존 대상·Tick 복원, 이전에 실행 중인 트리만 재시작
-- 마우스: 표시 중 커서·`GameAndUI` 입력 유지, CommonUI 기본 게임 입력의 커서 숨김 이후 후속 클릭 복구; 제거 시 기존 커서 상태 복원, 원래 커서 미표시 상태의 기본 게임 입력 복원
+- 마우스: `BossPlayStart=true` 및 수동 제어 미보유 시 커서 숨김·`GameOnly`·`CapturePermanently_IncludingInitialMouseDown`·`LockAlways`, 게임 화면 내부 고정
+- AI 비활성·수동 시험: 커서 표시·`GameAndUI`·`DoNotLock`, CommonUI 기본 게임 입력 복구 이후 후속 클릭 복구; 제거 시 기존 커서 상태와 원래 커서 미표시 상태의 기본 게임 입력 복원
+- 보스 탐색 이후 입력 상태 확인, 표시·잡기·고정 설정 일치 시 재설정 생략; PIE의 편집기 초점 전환은 엔진 기본 동작 유지
 - 버튼 키보드 초점 제외, 플레이어 게임 입력과 공존하는 시험 패널
 
 ## 공명 폭주 반복 시험
@@ -54,4 +56,5 @@ flowchart LR
 ## 검증 · 2026-10-12
 
 현재 Windows·Codex·Unreal Engine 5.8.3에서 실행한 범위와 한계: [검증 자료](attachments/validation.json)
+AI 활성 전후 마우스 상태·Windows 제한 영역·Live Coding 검증: [마우스 고정 검증](attachments/mouse-lock-validation.json)
 원시 자료·사용자 파일 백업: `Saved/BossAttackTest`, Git 제외

@@ -65,5 +65,5 @@ flowchart TD
 
 - 기존 `WBP_MainHUD`의 `WBP_BossAttackTest`에서 기본 공격·Q·W·공명 폭주 수동 실행
 - `UMVBossAttackTestWidget`: 버튼 구독·보스 탐색·수동 AI 제어·입력 복구 소유, 공격 판정은 기존 전투 경로 재사용
-- CommonUI 기본 게임 입력 복구의 커서 숨김과 공존하도록 표시 중 마우스 입력 유지, 제거 시 기본 입력 복원
+- 자동 AI 활성 시 커서 숨김·게임 입력·화면 고정, AI 비활성·수동 시험 시 CommonUI 입력 복구 이후에도 버튼 클릭용 커서 유지; 제거 시 기존 입력 복원
 - 버튼 연결·공명 반복 시험·검증 범위: [[Features/Boss-Attack-Test/document|보스 공격 시험 UI]]
