@@ -32,3 +32,13 @@ enum class EMVCombatAttackTypes : uint8
 	DodgeLightAttack UMETA(DisplayName = "DodgeLightAttack"),
 	DodgeHeavyAttack UMETA(DisplayName = "DodgeHeavyAttack")
 };
+
+// 공격 유형
+// 현재는 NormalAttack와 SkillAttack 두 가지로만 구분하지만
+// 추후 구조를 여러가지로 확장 할 수 있음
+UENUM(BlueprintType)
+enum class EMVAttackTypes : uint8
+{
+	NormalAttack UMETA(DisplayName = "NormalAttack"),
+	SkillAttack UMETA(DisplayName = "SkillAttack")
+};
