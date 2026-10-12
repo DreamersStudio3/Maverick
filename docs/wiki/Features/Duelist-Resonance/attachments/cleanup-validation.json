@@ -1,0 +1,166 @@
+{
+  "date": "2026-10-11",
+  "request": "최근 제작한 Duelist 전투의 불필요한 코드·로그·에셋 정리",
+  "environment": {
+    "host": "Codex",
+    "os": "Windows 11",
+    "engine": "Unreal Engine 5.8.3",
+    "configuration": "Development Editor"
+  },
+  "scope": [
+    "최근 Duelist 기본 공격·SkillQ·사슬 SkillW·공명 폭주",
+    "해당 기능에서 사용한 HitResolver·HitReaction·Ability·PlayerDamage 임시 진단",
+    "사용자 수정·공격 수치·사용 중 에셋 보존"
+  ],
+  "source": {
+    "removed": [
+      "HitLaunchTrace",
+      "HitDirectionTrace",
+      "AirborneTrace",
+      "RecoveryTrace",
+      "공명 폭주 정상 단계·암전 종료 로그",
+      "공격 선택 정상 진행 로그",
+      "진단 전용 문자열 인자·동일한 방향 반환 보조 함수"
+    ],
+    "retained": [
+      "설정 누락·액션 실행 실패 경고",
+      "피해·강인도·피격 방향·발사·회복 처리",
+      "PlayerDamage 진단"
+    ],
+    "player_damage_log": {
+      "level": "Verbose",
+      "enable": "log LogTemp Verbose",
+      "restore": "log LogTemp Log"
+    },
+    "widget_path": "Source/Maverick/UI/BossHUD/MVResonanceScreenWidget",
+    "widget_path_reason": "사용자의 폴더 이동 보존·포함 경로 보정"
+  },
+  "assets": {
+    "inspected": 183,
+    "deleted": [
+      {
+        "package": "/Game/DuelistComplete/Review/L_DuelistReview",
+        "reason": "미사용 생성 검토 맵"
+      },
+      {
+        "package": "/Game/DuelistComplete/Animations/A_Duelist_a001_000000",
+        "reason": "삭제한 검토 맵만 참조한 이전 리디렉터"
+      },
+      {
+        "package": "/Game/DuelistComplete/Animations/AM_Duelist_ChainPull",
+        "reason": "현재 3초 사슬 몽타주로 대체·라이브 참조 없음"
+      },
+      {
+        "package": "/Game/DuelistComplete/Animations/AM_Duelist_PazeChange",
+        "reason": "이전 Resonance 실행 행 제거 후 라이브 참조 없음"
+      }
+    ],
+    "deleted_table_rows": [
+      "BasicAttack3",
+      "Resonance"
+    ],
+    "retained_table_rows": [
+      "BasicAttack1",
+      "BasicAttack2",
+      "SkillQ",
+      "SkillW"
+    ],
+    "remaining_row_values": "변경 전 JSON의 사용 중 4개 행과 정확히 일치",
+    "retired_state": "ST_DuelistBoss_Attack.BossAttack.Resonance",
+    "current_states": [
+      "BasicAttack1",
+      "BasicAttack2",
+      "SkillQ",
+      "SkillW",
+      "Resonanace"
+    ],
+    "skill_w_completion": "Succeeded",
+    "selector": "기본 공격1 → SkillQ → 기본 공격2 → SkillW·범위 밖 SkillQ·공명 폭주 예약 우선",
+    "protected_sha256_unchanged": 15,
+    "protected_examples": [
+      "BP_Duelist",
+      "메인 Duelist StateTree",
+      "기본 공격·Q 몽타주",
+      "현재 3초 사슬 몽타주·시퀀스",
+      "SM_DuelistChainLink·M_DuelistChain",
+      "박스 충돌·에어본 Blueprint",
+      "공명 폭주 몽타주 3개·머티리얼 2개"
+    ],
+    "native_load_check": "SM_DuelistChainLink의 C++ 생성자 직접 로드 확인·Registry 참조 0만으로 삭제 제외",
+    "backup": "Saved/DuelistCleanup/asset-backup",
+    "windows_deletion": "Editor 삭제 API가 성공을 반환한 뒤 파일이 남은 대상은 백업·참조 검사를 거쳐 Content/DuelistComplete 내부의 검증된 정확한 파일만 제거; 새 프로세스 Registry 부재 확인"
+  },
+  "validation": [
+    {
+      "target": "C++ 모듈",
+      "ran": true,
+      "result": "통과",
+      "evidence": [
+        "Saved/DuelistCleanup/build.log",
+        "Saved/DuelistCleanup/build-complete.log"
+      ],
+      "proves": "현재 Windows의 전체 컴파일·링크, Unity 설정 우회 없음",
+      "limits": "PIE·네트워크·패키징 증명 제외"
+    },
+    {
+      "target": "전투 자동 검사",
+      "ran": true,
+      "result": "3개 통과·오류 0",
+      "tests": [
+        "Maverick.Combat.TutorialBoss.BasicAttack1",
+        "Maverick.Combat.BoxDamageAbility",
+        "Maverick.Combat.DuelistResonance"
+      ],
+      "warnings": 1,
+      "warning_reason": "격리 검사 캐릭터의 Death action row 미지정",
+      "evidence": "Saved/DuelistCleanup/Automation/index.json",
+      "proves": "Windows 격리 게임 월드의 기본 공격·범위 피해·공명 폭주 수치 및 정리 계약",
+      "limits": "최종 에셋 연결 변경 전 실행, 이후 런타임 C++ 변경 없음; 전체 AI·화면·사슬 PIE 재현 제외"
+    },
+    {
+      "target": "Duelist 공격 트리",
+      "ran": true,
+      "result": "컴파일·저장 통과",
+      "evidence": "Saved/DuelistCleanup/tree-cleanup-final.log",
+      "proves": "Choices 4·Resonanace 링크·이전 분기 제거·SkillW 성공 종료",
+      "limits": "전체 공통 AI 에셋 정상 여부 증명 제외"
+    },
+    {
+      "target": "새 프로세스의 대상 에셋 검사",
+      "ran": true,
+      "result": "대상 단언 통과·명령 전체 오류 요약 존재",
+      "evidence": [
+        "Saved/DuelistCleanup/verified.json",
+        "Saved/DuelistCleanup/asset-verification.log"
+      ],
+      "proves": "삭제 에셋 4개 Registry 부재·보호 파일 15개 SHA256 일치·4행 수치 보존·5상태·SkillW 종료 링크·BP_Duelist 정상 상태·미저장 콘텐츠 0개",
+      "limits": "공통 ST_BaseAIStateTree의 기존 오류 4건으로 commandlet 전체 결과는 Failure; 프로젝트 전체 에셋 통과 주장 제외"
+    },
+    {
+      "target": "기존 공통 AI 트리",
+      "ran": true,
+      "result": "오류 재확인·이번 정리 수정 제외",
+      "package": "/Game/Characters/NPC/BaseBoss/ST_BaseAIStateTree",
+      "reason": "Search의 Boss·Boss AIController 속성 바인딩 경로 오류; 최근 Duelist 정리 대상 밖의 공통 트리",
+      "baseline": "Saved/DuelistResonance/setup-assets.log의 변경 전 동일 오류",
+      "recovery": "해당 공통 트리 Search의 매개변수 바인딩 경로 정정 후 컴파일·저장 필요",
+      "proves": "이번 변경 이전에도 동일한 오류 존재",
+      "limits": "공통 트리 런타임 정상 사용 보장 불가"
+    },
+    {
+      "target": "PIE·네트워크·패키징",
+      "ran": false,
+      "result": "미실행",
+      "reason": "이번 정리는 Windows의 코드·참조 보존 검사 범위; 사용자 Editor 종료 상태에서 headless 검증 수행",
+      "proves": "없음",
+      "limits": "이번 결과만으로 실제 화면·전체 AI·네트워크·패키지 동작 보장 불가; 이전 PIE 검증은 기존 validation.json에 별도 보존"
+    }
+  ],
+  "raw_evidence": "Saved/DuelistCleanup",
+  "canonical_documents": [
+    "Features/Duelist-Resonance/document.md",
+    "Features/Duelist-Chain-Pull/document.md",
+    "Features/AI-StateTree/document.md",
+    "Features/Hit-Stat-HitReaction/document.md"
+  ]
+}

@@ -1,14 +1,15 @@
 ---
 제목: "Maverick 전투 시스템"
 부제목: "현재 공격 실행 흐름과 공격·스킬 구성"
-최근수정일: 2026-09-14
-최근수정자: "No-Jyun"
+최근수정일: 2026-10-07
+최근수정자: "Codex"
 관련문서:
   - "[[Architecture/document|Maverick Architecture]]"
   - "[[Features/Input-to-Action/document|입력에서 Action 실행까지]]"
   - "[[Features/Hit-Stat-HitReaction/document|Hit, Stat, HitReaction]]"
   - "[[Features/Combat/Skill/document|플레이어 스킬 구조]]"
   - "[[Features/Combat/Weapon-Swap/document|플레이어 무기 교체]]"
+  - "[[Features/Combat/Box-Damage-Ability/document|박스 범위 피해 Ability]]"
 ---
 
 # Maverick 전투 시스템

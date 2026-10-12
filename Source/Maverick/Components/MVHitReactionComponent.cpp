@@ -18,85 +18,6 @@ namespace
 {
 const FName MVHitReactionGetupRecoveryType(TEXT("Getup"));
 const FName MVHitReactionEscapeDodgeRecoveryType(TEXT("EscapeDodge"));
-constexpr bool bMVHitReactionTraceLogEnabled = false;
-
-void MVHitReactionLogHitLaunchTrace(
-	const UObject* Source,
-	const TCHAR* Stage,
-	const FMVResolvedHitData& HitData,
-	const bool bUseLaunch,
-	const FName RowName = NAME_None,
-	const FVector& LaunchVelocity = FVector::ZeroVector)
-{
-	if (!bMVHitReactionTraceLogEnabled)
-	{
-		return;
-	}
-
-	const FMVHitLaunchData& LaunchData = HitData.HitLaunchData;
-	UE_LOG(
-		LogMVHitReactionComponent,
-		Log,
-		TEXT("HitLaunchTrace Frame=%llu Stage=%s Source=%s Victim=%s Row=%s HitReactionType=%d bUseLaunch=%s Distance=%.2f Duration=%.3f VerticalSpeed=%.2f HitLocation=%s ImpactNormal=%s HitDirection=%s LaunchVelocity=%s"),
-		static_cast<unsigned long long>(GFrameCounter),
-		Stage,
-		*GetNameSafe(Source),
-		*GetNameSafe(HitData.Victim.Get()),
-		*RowName.ToString(),
-		static_cast<int32>(HitData.HitReactionType),
-		bUseLaunch ? TEXT("true") : TEXT("false"),
-		LaunchData.LaunchDistance,
-		LaunchData.LaunchDuration,
-		LaunchData.LaunchVerticalSpeed,
-		*HitData.HitLocation.ToString(),
-		*HitData.ImpactNormal.ToString(),
-		*HitData.HitDirection.ToString(),
-		*LaunchVelocity.ToString());
-}
-
-void MVHitReactionLogAirborneTrace(
-	const UObject* Source,
-	const TCHAR* Stage,
-	const FMVResolvedHitData& HitData,
-	const AMVCharacterBase* OwnerCharacter = nullptr,
-	const UMVActionComponent* ActionComponent = nullptr,
-	const FName RowName = NAME_None,
-	const TCHAR* Detail = TEXT(""))
-{
-	if (!bMVHitReactionTraceLogEnabled)
-	{
-		return;
-	}
-
-	if (HitData.HitReactionType != EMVActionHitReactionType::Airborne)
-	{
-		return;
-	}
-
-	const bool bActionRunning = ActionComponent && ActionComponent->IsActionRunning();
-	UE_LOG(
-		LogMVHitReactionComponent,
-		Warning,
-		TEXT("AirborneTrace Frame=%llu Stage=%s Source=%s Owner=%s OwnerIndex=%s Victim=%s VictimIndex=%s Row=%s bActionRunning=%s ActiveTable=%s ActiveRow=%s bCanInterrupt=%s Detail=%s"),
-		static_cast<unsigned long long>(GFrameCounter),
-		Stage,
-		*GetNameSafe(Source),
-		*GetNameSafe(OwnerCharacter),
-		OwnerCharacter ? *OwnerCharacter->GetCharacterIndexCode().ToString() : TEXT("<none>"),
-		*GetNameSafe(HitData.Victim.Get()),
-		*HitData.VictimCharacterIndexCode.ToString(),
-		*RowName.ToString(),
-		bActionRunning ? TEXT("true") : TEXT("false"),
-		ActionComponent ? *ActionComponent->GetActiveActionTableName().ToString() : TEXT("<none>"),
-		ActionComponent ? *ActionComponent->GetActiveActionRowName().ToString() : TEXT("<none>"),
-		(ActionComponent && ActionComponent->CanInterruptActiveAction()) ? TEXT("true") : TEXT("false"),
-		Detail);
-}
-
-const TCHAR* MVHitReactionDebugBoolText(const bool bValue)
-{
-	return bValue ? TEXT("true") : TEXT("false");
-}
 
 void MVHitReactionCopyBaseActionRow(
 	const FMVActionRow& SourceActionRow,
@@ -112,124 +33,10 @@ void MVHitReactionCopyBaseActionRow(
 	TargetActionRow.bUseLaunch = false;
 }
 
-FString MVHitReactionRecoveryDirectionToken(const EMVHitReactionDirection Direction)
+FVector MVHitReactionResolveHitDirection(const FMVResolvedHitData& HitData)
 {
-	switch (Direction)
-	{
-	case EMVHitReactionDirection::Left:
-		return TEXT("L");
-	case EMVHitReactionDirection::Right:
-		return TEXT("R");
-	case EMVHitReactionDirection::Back:
-		return TEXT("B");
-	case EMVHitReactionDirection::Front:
-	default:
-		return TEXT("F");
-	}
-}
-
-FString MVHitReactionRecoveryInputDirectionToken(const EMVActionInputDirection Direction)
-{
-	switch (Direction)
-	{
-	case EMVActionInputDirection::Left:
-		return TEXT("L");
-	case EMVActionInputDirection::Right:
-		return TEXT("R");
-	case EMVActionInputDirection::Back:
-		return TEXT("B");
-	case EMVActionInputDirection::Forward:
-		return TEXT("F");
-	case EMVActionInputDirection::None:
-	default:
-		return TEXT("None");
-	}
-}
-
-void MVHitReactionLogRecoveryTrace(
-	const UObject* Source,
-	const TCHAR* Stage,
-	const AMVCharacterBase* OwnerCharacter,
-	const UMVActionComponent* ActionComponent,
-	const UMVInputManagerComponent* InputManager,
-	const FName ActiveRowName,
-	const EMVActionHitReactionType ActiveHitReactionType,
-	const EMVHitReactionDirection ActiveHitReactionDirection,
-	const bool bRecoveryAction,
-	const FName RequestedRowName = NAME_None,
-	const EMVActionInputDirection EscapeDirection = EMVActionInputDirection::None,
-	const TCHAR* Detail = TEXT(""))
-{
-	if (!bMVHitReactionTraceLogEnabled)
-	{
-		return;
-	}
-
-	UE_LOG(
-		LogMVHitReactionComponent,
-		Warning,
-		TEXT("RecoveryTrace Frame=%llu Stage=%s Source=%s Owner=%s ActiveRow=%s CurrentRow=%s ActiveType=%d FallDirection=%s bRecoveryAction=%s bWindow=%s RequestedRow=%s EscapeDirection=%s Detail=%s"),
-		static_cast<unsigned long long>(GFrameCounter),
-		Stage,
-		*GetNameSafe(Source),
-		*GetNameSafe(OwnerCharacter),
-		*ActiveRowName.ToString(),
-		ActionComponent ? *ActionComponent->GetActiveActionRowName().ToString() : TEXT("<none>"),
-		static_cast<int32>(ActiveHitReactionType),
-		*MVHitReactionRecoveryDirectionToken(ActiveHitReactionDirection),
-		MVHitReactionDebugBoolText(bRecoveryAction),
-		MVHitReactionDebugBoolText(InputManager && InputManager->IsRecoveryEscapeWindowOpen()),
-		*RequestedRowName.ToString(),
-		*MVHitReactionRecoveryInputDirectionToken(EscapeDirection),
-		Detail);
-}
-
-FVector MVHitReactionResolveHitDirection(
-	const FMVResolvedHitData& HitData,
-	FString* OutDirectionSource = nullptr)
-{
-	if (OutDirectionSource)
-	{
-		*OutDirectionSource = TEXT("None");
-	}
-
-	FVector HitDirection2D(HitData.HitDirection.X, HitData.HitDirection.Y, 0.0f);
-	if (!HitDirection2D.IsNearlyZero())
-	{
-		if (OutDirectionSource)
-		{
-			*OutDirectionSource = TEXT("ResolvedHitDirection");
-		}
-		return HitDirection2D.GetSafeNormal2D();
-	}
-
-	return FVector::ZeroVector;
-}
-
-FVector MVHitReactionResolveHitSourceDirection(
-	const FMVResolvedHitData& HitData,
-	FString* OutDirectionSource = nullptr)
-{
-	FString HitDirectionSource;
-	const FVector HitDirection = MVHitReactionResolveHitDirection(HitData, &HitDirectionSource);
-	if (OutDirectionSource)
-	{
-		*OutDirectionSource = HitDirection.IsNearlyZero()
-			? HitDirectionSource
-			: FString::Printf(TEXT("%s_InvertedToHitSource"), *HitDirectionSource);
-	}
-
-	return HitDirection.IsNearlyZero()
-		? FVector::ZeroVector
-		: HitDirection;
-}
-
-bool MVHitReactionShouldLogDirectionTrace(const EMVActionHitReactionType HitReactionType)
-{
-	return HitReactionType == EMVActionHitReactionType::Flinch
-		|| HitReactionType == EMVActionHitReactionType::Stagger
-		|| HitReactionType == EMVActionHitReactionType::KnockDown
-		|| HitReactionType == EMVActionHitReactionType::Airborne;
+	const FVector Direction(HitData.HitDirection.X, HitData.HitDirection.Y, 0.0f);
+	return Direction.IsNearlyZero() ? FVector::ZeroVector : Direction.GetSafeNormal2D();
 }
 
 FRotator MVHitReactionMakeYawSnapRotation(const FVector& HitDirection, const EMVHitReactionDirection Direction)
@@ -335,54 +142,23 @@ void UMVHitReactionComponent::HandleDamaged(const FMVResolvedHitData& HitData)
 
 	const bool bGroggyHitReaction = HitData.HitReactionType == EMVActionHitReactionType::Groggy;
 
-	MVHitReactionLogAirborneTrace(
-		this,
-		TEXT("ReactionHandleEnter"),
-		HitData,
-		OwnerCharacter.Get(),
-		CachedActionComponent.Get());
-
 	if (!OwnerCharacter || !CachedActionComponent || !CachedStatComponent)
 	{
 		CacheOwnerReferences();
-		MVHitReactionLogAirborneTrace(
-			this,
-			TEXT("ReactionHandleAfterCache"),
-			HitData,
-			OwnerCharacter.Get(),
-			CachedActionComponent.Get());
 	}
 
 	if (!OwnerCharacter || !CachedActionComponent)
 	{
-		MVHitReactionLogAirborneTrace(
-			this,
-			TEXT("ReactionRejected_MissingReferences"),
-			HitData,
-			OwnerCharacter.Get(),
-			CachedActionComponent.Get());
 		return;
 	}
 
 	if (CachedStatComponent && CachedStatComponent->IsDead())
 	{
-		MVHitReactionLogAirborneTrace(
-			this,
-			TEXT("ReactionRejected_Dead"),
-			HitData,
-			OwnerCharacter.Get(),
-			CachedActionComponent.Get());
 		return;
 	}
 
 	if (HitData.VictimCharacterIndexCode.IsValid() && HitData.VictimCharacterIndexCode != OwnerCharacter->GetCharacterIndexCode())
 	{
-		MVHitReactionLogAirborneTrace(
-			this,
-			TEXT("ReactionRejected_IndexMismatch"),
-			HitData,
-			OwnerCharacter.Get(),
-			CachedActionComponent.Get());
 		return;
 	}
 
@@ -393,12 +169,6 @@ void UMVHitReactionComponent::HandleDamaged(const FMVResolvedHitData& HitData)
 
 	if (OwnerCharacter->IsInvincible() && !bGroggyHitReaction)
 	{
-		MVHitReactionLogAirborneTrace(
-			this,
-			TEXT("ReactionRejected_Invincible"),
-			HitData,
-			OwnerCharacter.Get(),
-			CachedActionComponent.Get());
 		return;
 	}
 
@@ -406,12 +176,6 @@ void UMVHitReactionComponent::HandleDamaged(const FMVResolvedHitData& HitData)
 
 	if (bLethalHit && !MVActionHitReactions::IsKnockDownOrAirborne(HitData.HitReactionType))
 	{
-		MVHitReactionLogAirborneTrace(
-			this,
-			TEXT("ReactionRejected_LethalNonKnockDownOrAirborne"),
-			HitData,
-			OwnerCharacter.Get(),
-			CachedActionComponent.Get());
 		return;
 	}
 
@@ -424,22 +188,8 @@ void UMVHitReactionComponent::HandleDamaged(const FMVResolvedHitData& HitData)
 			TEXT("HitReaction action data was not resolved. CharacterIndexCode=%s, HitReactionType=%d."),
 			*OwnerCharacter->GetCharacterIndexCode().ToString(),
 			static_cast<int32>(HitData.HitReactionType));
-		MVHitReactionLogAirborneTrace(
-			this,
-			TEXT("ReactionRejected_ActionDataNotResolved"),
-			HitData,
-			OwnerCharacter.Get(),
-			CachedActionComponent.Get());
 		return;
 	}
-
-	MVHitReactionLogAirborneTrace(
-		this,
-		TEXT("ReactionActionDataResolved"),
-		HitData,
-		OwnerCharacter.Get(),
-		CachedActionComponent.Get(),
-		ActionData.ActionRowHandle.RowName);
 
 	if (CachedActionComponent->IsActionRunning())
 	{
@@ -449,25 +199,11 @@ void UMVHitReactionComponent::HandleDamaged(const FMVResolvedHitData& HitData)
 		const bool bRecoveryEscapeWindowOpen = CachedInputManager && CachedInputManager->IsRecoveryEscapeWindowOpen();
 		if (bActiveActionIsHitReaction && !bRecoveryEscapeWindowOpen)
 		{
-			MVHitReactionLogAirborneTrace(
-				this,
-				TEXT("ReactionRejected_ActiveHitReactionNoRecoveryWindow"),
-				HitData,
-				OwnerCharacter.Get(),
-				CachedActionComponent.Get(),
-				ActionData.ActionRowHandle.RowName);
 			return;
 		}
 
 		if (!CachedActionComponent->CanInterruptActiveAction())
 		{
-			MVHitReactionLogAirborneTrace(
-				this,
-				TEXT("ReactionRejected_CannotInterrupt"),
-				HitData,
-				OwnerCharacter.Get(),
-				CachedActionComponent.Get(),
-				ActionData.ActionRowHandle.RowName);
 			return;
 		}
 
@@ -482,26 +218,7 @@ void UMVHitReactionComponent::HandleDamaged(const FMVResolvedHitData& HitData)
 		SnapOwnerYawToHitDirectionForLaunch(
 			HitData,
 			true,
-			ActionData.Direction,
-			ActionData.ActionRowHandle.RowName);
-	}
-
-	if (MVHitReactionShouldLogDirectionTrace(HitData.HitReactionType))
-	{
-		if (bMVHitReactionTraceLogEnabled)
-		{
-			UE_LOG(
-				LogMVHitReactionComponent,
-				Warning,
-				TEXT("HitDirectionTrace Frame=%llu Stage=BeforeActionStart Owner=%s HitReactionType=%d Row=%s ResolvedDirection=%s Forward=%s Rotation=%s"),
-				static_cast<unsigned long long>(GFrameCounter),
-				*GetNameSafe(OwnerCharacter.Get()),
-				static_cast<int32>(HitData.HitReactionType),
-				*ActionData.ActionRowHandle.RowName.ToString(),
-				*HitReactionDirectionToTableToken(ActionData.Direction),
-				OwnerCharacter ? *OwnerCharacter->GetActorForwardVector().GetSafeNormal2D().ToString() : TEXT("<none>"),
-				OwnerCharacter ? *OwnerCharacter->GetActorRotation().ToString() : TEXT("<none>"));
-		}
+			ActionData.Direction);
 	}
 
 	const bool bStarted = CachedActionComponent->TryStartActionFromRowHandle(
@@ -516,41 +233,9 @@ void UMVHitReactionComponent::HandleDamaged(const FMVResolvedHitData& HitData)
 			*GetNameSafe(ActionData.ActionRowHandle.DataTable),
 			*ActionData.ActionRowHandle.RowName.ToString(),
 			*ActionData.StartSection.ToString());
-		MVHitReactionLogAirborneTrace(
-			this,
-			TEXT("ReactionRejected_ActionStartFailed"),
-			HitData,
-			OwnerCharacter.Get(),
-			CachedActionComponent.Get(),
-			ActionData.ActionRowHandle.RowName);
 	}
 	if (bStarted)
 	{
-		if (MVHitReactionShouldLogDirectionTrace(HitData.HitReactionType))
-		{
-			if (bMVHitReactionTraceLogEnabled)
-			{
-				UE_LOG(
-					LogMVHitReactionComponent,
-					Warning,
-					TEXT("HitDirectionTrace Frame=%llu Stage=AfterActionStart Owner=%s HitReactionType=%d Row=%s ResolvedDirection=%s Forward=%s Rotation=%s"),
-					static_cast<unsigned long long>(GFrameCounter),
-					*GetNameSafe(OwnerCharacter.Get()),
-					static_cast<int32>(HitData.HitReactionType),
-					*ActionData.ActionRowHandle.RowName.ToString(),
-					*HitReactionDirectionToTableToken(ActionData.Direction),
-					OwnerCharacter ? *OwnerCharacter->GetActorForwardVector().GetSafeNormal2D().ToString() : TEXT("<none>"),
-					OwnerCharacter ? *OwnerCharacter->GetActorRotation().ToString() : TEXT("<none>"));
-			}
-		}
-
-		MVHitReactionLogAirborneTrace(
-			this,
-			TEXT("ReactionActionStarted"),
-			HitData,
-			OwnerCharacter.Get(),
-			CachedActionComponent.Get(),
-			ActionData.ActionRowHandle.RowName);
 		ResetAirborneLandDetector();
 		ActiveHitReactionActionTable = ActionData.ActionRowHandle.DataTable;
 		ActiveHitReactionActionRowName = ActionData.ActionRowHandle.RowName;
@@ -605,8 +290,7 @@ EMVHitReactionDirection UMVHitReactionComponent::ResolveHitReactionDirection(con
 		return EMVHitReactionDirection::Front;
 	}
 
-	FString DirectionSource;
-	const FVector HitSourceDirection = MVHitReactionResolveHitSourceDirection(HitData, &DirectionSource);
+	const FVector HitSourceDirection = MVHitReactionResolveHitDirection(HitData);
 	if (HitSourceDirection.IsNearlyZero())
 	{
 		return EMVHitReactionDirection::Front;
@@ -630,27 +314,6 @@ EMVHitReactionDirection UMVHitReactionComponent::ResolveHitReactionDirection(con
 		ResolvedDirection = ForwardDot >= 0.0f
 			? EMVHitReactionDirection::Front
 			: EMVHitReactionDirection::Back;
-	}
-
-	if (bMVHitReactionTraceLogEnabled && MVHitReactionShouldLogDirectionTrace(HitData.HitReactionType))
-	{
-		UE_LOG(
-			LogMVHitReactionComponent,
-			Warning,
-			TEXT("HitDirectionTrace Frame=%llu Stage=ResolveDirection Owner=%s HitReactionType=%d Source=%s HitLocation=%s ImpactNormal=%s HitSourceDirection=%s Forward=%s Right=%s ForwardDot=%.3f RightDot=%.3f Result=%s(%d)"),
-			static_cast<unsigned long long>(GFrameCounter),
-			*GetNameSafe(Character),
-			static_cast<int32>(HitData.HitReactionType),
-			*DirectionSource,
-			*HitData.HitLocation.ToString(),
-			*HitData.ImpactNormal.ToString(),
-			*HitSourceDirection.ToString(),
-			*Forward.ToString(),
-			*Right.ToString(),
-			ForwardDot,
-			RightDot,
-			*HitReactionDirectionToTableToken(ResolvedDirection),
-			static_cast<int32>(ResolvedDirection));
 	}
 
 	return ResolvedDirection;
@@ -782,20 +445,13 @@ bool UMVHitReactionComponent::GetActionData(const FMVResolvedHitData& HitData, F
 	OutActionData.Direction = Direction;
 	OutActionData.ActionRow = ResolvedActionRow;
 
-	MVHitReactionLogHitLaunchTrace(
-		this,
-		TEXT("ReactionRowResolved"),
-		HitData,
-		ResolvedActionRow.bUseLaunch,
-		ActionRowHandle.ActionRow.RowName);
 	return true;
 }
 
 void UMVHitReactionComponent::SnapOwnerYawToHitDirectionForLaunch(
 	const FMVResolvedHitData& HitData,
 	const bool bUseLaunch,
-	const EMVHitReactionDirection Direction,
-	const FName ActionRowName)
+	const EMVHitReactionDirection Direction)
 {
 	if (!bUseLaunch)
 	{
@@ -812,36 +468,15 @@ void UMVHitReactionComponent::SnapOwnerYawToHitDirectionForLaunch(
 		return;
 	}
 
-	FString DirectionSource;
-	const FVector HitSourceDirection = MVHitReactionResolveHitSourceDirection(HitData, &DirectionSource);
+	const FVector HitSourceDirection = MVHitReactionResolveHitDirection(HitData);
 	if (HitSourceDirection.IsNearlyZero())
 	{
 		return;
 	}
 
-	const FRotator PreviousRotation = OwnerCharacter->GetActorRotation();
-	const FVector PreviousForward = OwnerCharacter->GetActorForwardVector().GetSafeNormal2D();
 	const FRotator TargetRotation = MVHitReactionMakeYawSnapRotation(HitSourceDirection, Direction);
 	OwnerCharacter->SetActorRotation(TargetRotation);
 
-	if (bMVHitReactionTraceLogEnabled && MVHitReactionShouldLogDirectionTrace(HitData.HitReactionType))
-	{
-		UE_LOG(
-			LogMVHitReactionComponent,
-			Warning,
-			TEXT("HitDirectionTrace Frame=%llu Stage=LaunchYawSnap Owner=%s HitReactionType=%d Row=%s Direction=%s Source=%s HitSourceDirection=%s PreviousForward=%s PreviousRotation=%s TargetRotation=%s NewForward=%s"),
-			static_cast<unsigned long long>(GFrameCounter),
-			*GetNameSafe(OwnerCharacter.Get()),
-			static_cast<int32>(HitData.HitReactionType),
-			*ActionRowName.ToString(),
-			*HitReactionDirectionToTableToken(Direction),
-			*DirectionSource,
-			*HitSourceDirection.ToString(),
-			*PreviousForward.ToString(),
-			*PreviousRotation.ToString(),
-			*TargetRotation.ToString(),
-			*OwnerCharacter->GetActorForwardVector().GetSafeNormal2D().ToString());
-	}
 }
 
 void UMVHitReactionComponent::ApplyHitReactionLaunch(
@@ -850,21 +485,8 @@ void UMVHitReactionComponent::ApplyHitReactionLaunch(
 {
 	ClearHitReactionLaunchWindow();
 
-	MVHitReactionLogHitLaunchTrace(
-		this,
-		TEXT("ReactionLaunchEnter"),
-		HitData,
-		bUseLaunch,
-		ActiveHitReactionActionRowName);
-
 	if (!bUseLaunch)
 	{
-		MVHitReactionLogHitLaunchTrace(
-			this,
-			TEXT("ReactionLaunchSkipped_bUseLaunchFalse"),
-			HitData,
-			bUseLaunch,
-			ActiveHitReactionActionRowName);
 		return;
 	}
 
@@ -875,25 +497,12 @@ void UMVHitReactionComponent::ApplyHitReactionLaunch(
 
 	if (!OwnerCharacter)
 	{
-		MVHitReactionLogHitLaunchTrace(
-			this,
-			TEXT("ReactionLaunchSkipped_NoOwner"),
-			HitData,
-			bUseLaunch,
-			ActiveHitReactionActionRowName);
 		return;
 	}
 
-	FString LaunchDirectionSource;
-	const FVector LaunchDirection = MVHitReactionResolveHitDirection(HitData, &LaunchDirectionSource);
+	const FVector LaunchDirection = MVHitReactionResolveHitDirection(HitData);
 	if (LaunchDirection.IsNearlyZero())
 	{
-		MVHitReactionLogHitLaunchTrace(
-			this,
-			TEXT("ReactionLaunchSkipped_ZeroDirection"),
-			HitData,
-			bUseLaunch,
-			ActiveHitReactionActionRowName);
 		return;
 	}
 
@@ -910,39 +519,9 @@ void UMVHitReactionComponent::ApplyHitReactionLaunch(
 
 	if (LaunchVelocity.IsNearlyZero())
 	{
-		MVHitReactionLogHitLaunchTrace(
-			this,
-			TEXT("ReactionLaunchSkipped_ZeroVelocity"),
-			HitData,
-			bUseLaunch,
-			ActiveHitReactionActionRowName,
-			LaunchVelocity);
 		return;
 	}
 
-	MVHitReactionLogHitLaunchTrace(
-		this,
-		TEXT("ReactionLaunchCharacter"),
-		HitData,
-		bUseLaunch,
-		ActiveHitReactionActionRowName,
-		LaunchVelocity);
-	if (bMVHitReactionTraceLogEnabled)
-	{
-		UE_LOG(
-			LogMVHitReactionComponent,
-			Log,
-			TEXT("HitLaunchTrace Frame=%llu Stage=ReactionLaunchDirection Source=%s Owner=%s ActiveRow=%s DirectionSource=%s HitLocation=%s ImpactNormal=%s HitDirection=%s LaunchDirection=%s"),
-			static_cast<unsigned long long>(GFrameCounter),
-			*GetNameSafe(this),
-			*GetNameSafe(OwnerCharacter.Get()),
-			*ActiveHitReactionActionRowName.ToString(),
-			*LaunchDirectionSource,
-			*HitData.HitLocation.ToString(),
-			*HitData.ImpactNormal.ToString(),
-			*HitData.HitDirection.ToString(),
-			*LaunchDirection.ToString());
-	}
 	OwnerCharacter->LaunchCharacter(LaunchVelocity, true, true);
 
 	if (LaunchDuration <= KINDA_SMALL_NUMBER)
@@ -965,13 +544,6 @@ void UMVHitReactionComponent::ApplyHitReactionLaunch(
 			LaunchDuration,
 			false);
 
-		MVHitReactionLogHitLaunchTrace(
-			this,
-			TEXT("ReactionLaunchWindowTimerSet"),
-			HitData,
-			bUseLaunch,
-			ActiveHitReactionActionRowName,
-			LaunchVelocity);
 	}
 }
 
@@ -1021,21 +593,6 @@ void UMVHitReactionComponent::FinishHitReactionLaunch(
 		}
 	}
 
-	if (bMVHitReactionTraceLogEnabled)
-	{
-		UE_LOG(
-			LogMVHitReactionComponent,
-			Log,
-			TEXT("HitLaunchTrace Frame=%llu Stage=ReactionLaunchWindowFinished Source=%s Owner=%s ActiveRow=%s Serial=%d bStopVertical=%s PreviousZ=%.2f CurrentVelocity=%s"),
-			static_cast<unsigned long long>(GFrameCounter),
-			*GetNameSafe(this),
-			*GetNameSafe(Character),
-			*ActiveHitReactionActionRowName.ToString(),
-			LaunchSerial,
-			bStopVerticalVelocity ? TEXT("true") : TEXT("false"),
-			PreviousZ,
-			*MovementComponent->Velocity.ToString());
-	}
 }
 
 bool UMVHitReactionComponent::TryConsumeBufferedRecoveryMovementInput()
@@ -1249,33 +806,8 @@ bool UMVHitReactionComponent::TryStartProviderRecoveryAction()
 
 bool UMVHitReactionComponent::TryStartEscapeDodgeRecoveryAction(const EMVActionInputDirection Direction)
 {
-	MVHitReactionLogRecoveryTrace(
-		this,
-		TEXT("EscapeDodgeEnter"),
-		OwnerCharacter.Get(),
-		CachedActionComponent.Get(),
-		CachedInputManager.Get(),
-		ActiveHitReactionActionRowName,
-		ActiveHitReactionType,
-		ActiveHitReactionDirection,
-		bActiveHitReactionActionIsRecoveryAction,
-		NAME_None,
-		Direction);
-
 	if (CachedStatComponent && CachedStatComponent->IsDead())
 	{
-		MVHitReactionLogRecoveryTrace(
-			this,
-			TEXT("EscapeDodgeRejected_Dead"),
-			OwnerCharacter.Get(),
-			CachedActionComponent.Get(),
-			CachedInputManager.Get(),
-			ActiveHitReactionActionRowName,
-			ActiveHitReactionType,
-			ActiveHitReactionDirection,
-			bActiveHitReactionActionIsRecoveryAction,
-			NAME_None,
-			Direction);
 		return false;
 	}
 
@@ -1287,18 +819,6 @@ bool UMVHitReactionComponent::TryStartEscapeDodgeRecoveryAction(const EMVActionI
 
 	if (EscapeDirection == EMVActionInputDirection::None)
 	{
-		MVHitReactionLogRecoveryTrace(
-			this,
-			TEXT("EscapeDodgeRejected_NoDirection"),
-			OwnerCharacter.Get(),
-			CachedActionComponent.Get(),
-			CachedInputManager.Get(),
-			ActiveHitReactionActionRowName,
-			ActiveHitReactionType,
-			ActiveHitReactionDirection,
-			bActiveHitReactionActionIsRecoveryAction,
-			NAME_None,
-			EscapeDirection);
 		return false;
 	}
 
@@ -1308,35 +828,11 @@ bool UMVHitReactionComponent::TryStartEscapeDodgeRecoveryAction(const EMVActionI
 	FDataTableRowHandle RecoveryActionRowHandle;
 	if (!ResolveRecoveryActionRowHandle(RecoveryActionRowName, RecoveryActionRowHandle))
 	{
-		MVHitReactionLogRecoveryTrace(
-			this,
-			TEXT("EscapeDodgeRejected_RowResolveFailed"),
-			OwnerCharacter.Get(),
-			CachedActionComponent.Get(),
-			CachedInputManager.Get(),
-			ActiveHitReactionActionRowName,
-			ActiveHitReactionType,
-			ActiveHitReactionDirection,
-			bActiveHitReactionActionIsRecoveryAction,
-			RecoveryActionRowName,
-			EscapeDirection);
 		return false;
 	}
 
 	AlignOwnerToControllerForEscapeDodge();
 	const bool bStarted = TryStartRecoveryAction(RecoveryActionRowHandle, TEXT("RecoveryEscapeDodge"), true);
-	MVHitReactionLogRecoveryTrace(
-		this,
-		bStarted ? TEXT("EscapeDodgeStarted") : TEXT("EscapeDodgeRejected_StartFailed"),
-		OwnerCharacter.Get(),
-		CachedActionComponent.Get(),
-		CachedInputManager.Get(),
-		ActiveHitReactionActionRowName,
-		ActiveHitReactionType,
-		ActiveHitReactionDirection,
-		bActiveHitReactionActionIsRecoveryAction,
-		RecoveryActionRowName,
-		EscapeDirection);
 	return bStarted;
 }
 
@@ -2129,19 +1625,6 @@ bool UMVHitReactionComponent::TryHandleActionInput(
 {
 	if (ShouldConsumeActionInputForActiveHitReaction())
 	{
-		MVHitReactionLogRecoveryTrace(
-			this,
-			TEXT("ActionInputConsumed_LockedHitReaction"),
-			OwnerCharacter.Get(),
-			CachedActionComponent.Get(),
-			CachedInputManager.Get(),
-			ActiveHitReactionActionRowName,
-			ActiveHitReactionType,
-			ActiveHitReactionDirection,
-			bActiveHitReactionActionIsRecoveryAction,
-			NAME_None,
-			EMVActionInputDirection::None,
-			TEXT("RecoveryWindowClosed"));
 		return true;
 	}
 
@@ -2160,19 +1643,6 @@ bool UMVHitReactionComponent::TryHandleHoldActionInput(
 		return false;
 	}
 
-	MVHitReactionLogRecoveryTrace(
-		this,
-		TEXT("HoldInputConsumed_LockedHitReaction"),
-		OwnerCharacter.Get(),
-		CachedActionComponent.Get(),
-		CachedInputManager.Get(),
-		ActiveHitReactionActionRowName,
-		ActiveHitReactionType,
-		ActiveHitReactionDirection,
-		bActiveHitReactionActionIsRecoveryAction,
-		NAME_None,
-		EMVActionInputDirection::None,
-		TEXT("RecoveryWindowClosed"));
 	return true;
 }
 
@@ -2189,59 +1659,18 @@ void UMVHitReactionComponent::HandleActionEnded(
 
 bool UMVHitReactionComponent::TryHandleRecoveryWindowOpened()
 {
-	MVHitReactionLogRecoveryTrace(
-		this,
-		TEXT("WindowOpened"),
-		OwnerCharacter.Get(),
-		CachedActionComponent.Get(),
-		CachedInputManager.Get(),
-		ActiveHitReactionActionRowName,
-		ActiveHitReactionType,
-		ActiveHitReactionDirection,
-		bActiveHitReactionActionIsRecoveryAction);
-
 	if (bActiveHitReactionActionIsRecoveryAction && HasBufferedRecoveryActionInput())
 	{
-		MVHitReactionLogRecoveryTrace(
-			this,
-			TEXT("WindowRejected_RecoveryActionHasBufferedInput"),
-			OwnerCharacter.Get(),
-			CachedActionComponent.Get(),
-			CachedInputManager.Get(),
-			ActiveHitReactionActionRowName,
-			ActiveHitReactionType,
-			ActiveHitReactionDirection,
-			bActiveHitReactionActionIsRecoveryAction);
 		return false;
 	}
 
 	// window는 기본 Getup 시작점이 아니라, 이전에 저장된 이동 의도를 KD/AB 탈출로 소비할 수 있는 구간이다.
 	if (TryConsumeBufferedRecoveryMovementInput())
 	{
-		MVHitReactionLogRecoveryTrace(
-			this,
-			TEXT("WindowConsumed_BufferedMovement"),
-			OwnerCharacter.Get(),
-			CachedActionComponent.Get(),
-			CachedInputManager.Get(),
-			ActiveHitReactionActionRowName,
-			ActiveHitReactionType,
-			ActiveHitReactionDirection,
-			bActiveHitReactionActionIsRecoveryAction);
 		return true;
 	}
 
 	const bool bProviderStarted = TryStartProviderRecoveryAction();
-	MVHitReactionLogRecoveryTrace(
-		this,
-		bProviderStarted ? TEXT("WindowConsumed_Provider") : TEXT("WindowNoRecoveryAction"),
-		OwnerCharacter.Get(),
-		CachedActionComponent.Get(),
-		CachedInputManager.Get(),
-		ActiveHitReactionActionRowName,
-		ActiveHitReactionType,
-		ActiveHitReactionDirection,
-		bActiveHitReactionActionIsRecoveryAction);
 	return bProviderStarted;
 }
 

@@ -47,7 +47,8 @@ struct FMVBossExecuteAttackTaskInstanceData
 	UPROPERTY(EditAnywhere, Category = "Input|Attack")
 	FName StartSection = NAME_None;
 
-	UPROPERTY(EditAnywhere, Category = "Input|Attack")
+	// 0 이하: 거리 제한 없이 실행, 양수: 해당 cm 범위 안에서만 실행
+	UPROPERTY(EditAnywhere, Category = "Input|Attack", meta = (ClampMin = "0", Units = "cm"))
 	float AttackRange = 300.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Input|Context")
@@ -68,8 +69,9 @@ struct FMVBossExecuteAttackTaskInstanceData
 };
 
 /**
- * 보스 공격 row 하나를 ActionComponent에서 실행하고 종료까지 감시하는 StateTree Task
- * 공격 선택·페이즈 판정은 상위 StateTree와 Condition 책임
+ * 보스 공격 행 실행·종료 감시 Task, 전투 행은 CombatComponent의 Ability 경로 사용
+ * AttackRange 양수는 원점 거리 검사, 0 이하는 거리 제한 해제; 대상·행 검증 유지
+ * 실행 종료·범위 생략 시 성공 전이 요청, Exit에서 시작한 액션만 정리; 공격 선택·페이즈는 상위 트리 책임
  */
 USTRUCT(meta = (DisplayName = "Boss Execute Attack"))
 struct FMVBossExecuteAttackTask : public FStateTreeTaskCommonBase

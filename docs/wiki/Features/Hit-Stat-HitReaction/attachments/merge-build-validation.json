@@ -1,0 +1,65 @@
+{
+  "date": "2026-10-12",
+  "host": "Codex desktop",
+  "platform": "Windows",
+  "engine": "Unreal Engine 5.8.3",
+  "request": "Git 머지 이후 제공된 컴파일 오류 복구",
+  "merge_commit": "4b753e35",
+  "validated_source_commit": "058623406d4484f975c5fab72a2ee68305cdefcf",
+  "source_commit_scope": "해당 커밋의 C++ 소스와 실제 검증 소스 일치; 같은 커밋의 HUD 바이너리 변경 전체 PIE 검증 제외",
+  "changes": [
+    "ResolveHitDirection 헤더의 불필요한 Request 인수 제거, 기존 구현·호출의 2개 인수와 일치",
+    "박스 검사에서 SetNormalDefence 사용 및 방어력 절반 반영 공식에 맞춘 HP 기대값 갱신",
+    "공명 검사에서 일반·스킬 방어력을 모두 99999로 지정, 고정 피해의 방어력 무시 검증 유지"
+  ],
+  "checks": [
+    {
+      "scope": "현재 Git 미해결 충돌·텍스트 충돌 표식",
+      "status": "passed",
+      "executed": true,
+      "method": "Windows PowerShell에서 git ls-files -u와 Source·Config·docs 대상 rg 실행",
+      "reason": "미해결 인덱스와 소스·헤더·문서·ini 충돌 표식 없음, 이미 머지 커밋 존재",
+      "proves": "검사한 인덱스·텍스트 범위의 미해결 충돌 부재",
+      "does_not_prove": "전체 기능의 의미적 머지 정합성·바이너리 에셋 연결"
+    },
+    {
+      "scope": "MaverickEditor Win64 Development C++ 일반 빌드",
+      "status": "passed",
+      "executed": true,
+      "method": "현재 Windows Build.bat MaverickEditor Win64 Development -WaitMutex -NoHotReloadFromIDE",
+      "reason": "종료 코드 0, Result: Succeeded, 32.96초",
+      "evidence": "Saved/MergeBuildRepair/build-editor.log",
+      "warnings": [
+        "기존 PropertyBindingUtils·PropertyBindingUtilsEditor 프로젝트 플러그인 의존성 경고",
+        "기존 UButton::IsFocusable 직접 접근 폐기 예정 경고",
+        "XGE 라이선스 미활성 경고 이후 독립 실행 방식 빌드 완료"
+      ],
+      "proves": "제공된 4개 C++ 컴파일 오류 해소·현재 Editor 모듈 링크 성공",
+      "does_not_prove": "패키징·실제 PIE 화면·Blueprint 에셋 연결 전체"
+    },
+    {
+      "scope": "Maverick.Combat 전투 자동 검사 3개",
+      "status": "passed",
+      "executed": true,
+      "method": "현재 Windows UnrealEditor-Cmd의 Unattended·NullRHI, Automation RunTests Maverick.Combat",
+      "reason": "종료 코드 0, 검사 3개 Success, 오류 0, 경고 1",
+      "tests": [
+        "Maverick.Combat.TutorialBoss.BasicAttack1",
+        "Maverick.Combat.BoxDamageAbility",
+        "Maverick.Combat.DuelistResonance"
+      ],
+      "warnings": ["격리 캐릭터 MVCharacterBase_4의 CharacterIndexCode=None·사망 행동 행 미지정"],
+      "evidence": "Saved/MergeBuildRepair/Automation/index.json, Saved/MergeBuildRepair/automation.log",
+      "proves": "격리 월드의 기본 공격·박스 범위와 피해·중복·종료·공명 예약·강인도·고정 피해·정리 검사",
+      "does_not_prove": "NullRHI의 화면 렌더링·현재 Duelist의 실제 PIE·패키징·네트워크"
+    },
+    {
+      "scope": "실제 PIE·패키징·네트워크·다른 운영체제",
+      "status": "not_executed",
+      "executed": false,
+      "reason": "이번 수정은 현재 Windows의 컴파일 머지 정합성과 관련 격리 자동 검사 범위",
+      "proves": "해당 범위 실행 결과 없음",
+      "does_not_prove": "해당 환경의 실제 에셋·화면·멀티플레이 동작"
+    }
+  ]
+}

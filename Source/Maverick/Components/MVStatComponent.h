@@ -62,20 +62,12 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMVOnDamageAccumulationReset);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnBaseStatsReady, int32, Revision);
 
 /**
- * 캐릭터 스탯 값과 회복 정책을 관리하는 컴포넌트.
- *
- * 명시적으로 설정된 CharacterIndexCode와 동일한 CharacterStat row에서 기본 스탯을
- * 로드하고 HP, 스태미너, MP, groggy, 이동/전투 수치의 현재값과 변경 이벤트를 소유한다.
- * `OnDamaged` 구독을 통해 확정된 피해의 HP 차감도 처리한다.
- * HP가 처음 0 이하가 되면 문맥을 담은 `OnDeathStarted(FMVDeathContext)`를 사망 진입점으로 발행하고,
- * 매개변수 없는 `OnDead`는 기존 Blueprint와의 호환을 위해 함께 유지한다.
- * NotifyState가 요청한 회복 일시정지, 최근 감소 UI 홀드, 그로기 누적 게이지 감소도 이 컴포넌트의 상태로 관리한다.
- * 다른 도메인 컴포넌트의 캐릭터 선택 상태는 참조하지 않는다.
- *
- * 라이프사이클:
- *   1) BeginPlay -> 설정된 스탯 테이블 행을 읽어 현재 스탯 값을 초기화한다.
- *   2) ConsumeHP/ConsumeStamina/ConsumeMP -> 값을 감소시킨다.
- *   3) TickRecoverableStats -> 매 프레임 MP/스태미나 회복과 Exhaustion 회복 차단 시간 갱신.
+ * CharacterIndexCode와 일치하는 스탯 행의 HP·스태미너·MP·그로기·이동·전투 수치와 변경 이벤트 소유
+ * BeginPlay에서 기본 스탯 로드, Consume 계열·OnDamaged에서 확정 피해 차감
+ * 최초 HP 소진 시 OnDeathStarted(FMVDeathContext) 발행, Blueprint 호환용 OnDead 병행
+ * TickRecoverableStats에서 자원·Exhaustion·그로기 회복, Notify의 회복 정지와 최근 감소 UI 홀드 관리
+ * 강인도 소진 구간은 Begin/EndPoiseBreakGroggyWindow로 기존 수치·회복 타이머 보관·복원
+ * 해당 구간을 시작한 호출자의 종료 책임, 피해 계산·피격 표현·캐릭터 선택 정책은 외부 도메인 책임
  */
 
 UCLASS(ClassGroup = (Maverick), meta = (BlueprintSpawnableComponent))
@@ -321,6 +313,11 @@ public:
 	// 강인도 수치가 Poise Break를 일으킬지 예측하는 함수 -> HitResolverSubsystem에서 사용
 	bool PredictPoiseBreak(float PoiseDamageAmount) const;
 
+	// 한정된 강인도 소진 구간: 회복 정지·추가 강인도 제외, 종료 시 기존 수치·회복 타이머 복원
+	void BeginPoiseBreakGroggyWindow(float Poise);
+	void EndPoiseBreakGroggyWindow();
+	bool IsPoiseBreakGroggyWindowActive() const { return bPoiseBreakGroggyWindow; }
+
 private:
 	FString MakeStatRowKey() const;
 	void TickRecentDamageCooldown(float DeltaTime);
@@ -462,6 +459,10 @@ private:
 
 	// Poise
 	FTimerHandle PoiseRecoveryTimerHandle;
+	bool bPoiseBreakGroggyWindow = false;
+	float SavedWindowConstantPoise = 0.0f;
+	float SavedWindowAdditionalPoise = 0.0f;
+	float SavedWindowRecoveryRemaining = -1.0f;
 	
 	TMap<FGameplayTag, float> ProgressionStatBonuses;
 	int32 StatCalculationRevision = 0;

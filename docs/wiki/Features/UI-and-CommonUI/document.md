@@ -1,12 +1,13 @@
 ---
 제목: UI와 CommonUI
 부제목: UI 계층·게임 입력 복구·레벨업 창과 HUD 연결
-최근수정일: 2026-09-28
-최근수정자: "No-Jyun"
+최근수정일: 2026-10-12
+최근수정자: "Codex"
 관련문서:
   - "[[Architecture/document|Maverick Architecture]]"
   - "[[Features/Interaction-Flow/document|상호작용 흐름]]"
   - "[[Features/Progression/Level-Up/document|레벨업 프로토타입]]"
+  - "[[Features/Boss-Attack-Test/document|보스 공격 시험 UI]]"
 ---
 
 # UI와 CommonUI
@@ -59,3 +60,10 @@ flowchart TD
 | 재화 HUD | `UMVMainHUDWidget`이 영구 성장 변경 구독 → `UMVCurrencyStatusWidget.SetCurrency(int64)` |
 
 성장·미리보기·위젯 부모·저장·검증 범위: [[Features/Progression/Level-Up/document|레벨업 프로토타입]]
+
+## 보스 공격 시험 패널
+
+- 기존 `WBP_MainHUD`의 `WBP_BossAttackTest`에서 기본 공격·Q·W·공명 폭주 수동 실행
+- `UMVBossAttackTestWidget`: 버튼 구독·보스 탐색·수동 AI 제어·입력 복구 소유, 공격 판정은 기존 전투 경로 재사용
+- 자동 AI 활성 시 커서 숨김·게임 입력·화면 고정, AI 비활성·수동 시험 시 CommonUI 입력 복구 이후에도 버튼 클릭용 커서 유지; 제거 시 기존 입력 복원
+- 버튼 연결·공명 반복 시험·검증 범위: [[Features/Boss-Attack-Test/document|보스 공격 시험 UI]]

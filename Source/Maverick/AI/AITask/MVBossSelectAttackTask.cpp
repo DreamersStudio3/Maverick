@@ -1,5 +1,8 @@
 #include "AI/AITask/MVBossSelectAttackTask.h"
 
+#include "AI/Controller/MVAIController.h"
+#include "Combat/Duelist/MVDuelistResonanceComponent.h"
+#include "GameFramework/Pawn.h"
 #include "StateTreeExecutionContext.h"
 
 // 진입당 공격 하나 선택·해당 상태로 전이 요청 담당, 공격 실행·완료 판정은 실행 Task 책임
@@ -12,7 +15,7 @@ FMVBossSelectAttackTask::FMVBossSelectAttackTask()
 #endif
 }
 
-// 새 진입 시 Choices에서 균등 무작위로 공격 하나 선택, 유지 진입에서는 재선택 생략
+// 새 진입 시 범위 밖 지정 공격 우선, 그 외 Choices 순서 선택; 유지 진입에서는 재선택 생략
 // 후보가 없으면 Failed, 선택 결과 저장 후 Running 반환; 실제 전이 요청은 Tick에서 처리
 EStateTreeRunStatus FMVBossSelectAttackTask::EnterState(
 	FStateTreeExecutionContext& Context, const FStateTreeTransitionResult& Transition) const
@@ -25,15 +28,44 @@ EStateTreeRunStatus FMVBossSelectAttackTask::EnterState(
 	Data.SelectedAttack = NAME_None;
 	Data.SelectedIndex = INDEX_NONE;
 	Data.bTransitionRequested = false;
+	Data.bResonanceSelected = false;
 	if (Data.Choices.IsEmpty())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[BossAttack] Select failed: no choices Owner=%s"), *GetNameSafe(Context.GetOwner()));
 		return EStateTreeRunStatus::Failed;
 	}
-	Data.SelectedIndex = FMath::RandRange(0, Data.Choices.Num() - 1);
+	AMVAIController* Controller = Cast<AMVAIController>(Context.GetOwner());
+	if (!Controller)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[BossAttack] Select failed: MVAIController required Owner=%s"), *GetNameSafe(Context.GetOwner()));
+		return EStateTreeRunStatus::Failed;
+	}
+	const APawn* Pawn = Controller->GetPawn();
+	const UMVDuelistResonanceComponent* Resonance = Pawn ? Pawn->FindComponentByClass<UMVDuelistResonanceComponent>() : nullptr;
+	if (Resonance && Resonance->IsResonancePending() && Data.ResonanceState.LinkType == EStateTreeTransitionType::GotoState)
+	{
+		Data.bResonanceSelected = true;
+		Data.SelectedAttack = TEXT("Resonanace");
+		return EStateTreeRunStatus::Running;
+	}
+	const AActor* Target = Controller->TargetActor;
+	const float TargetDistance = IsValid(Pawn) && IsValid(Target) && !Target->IsActorBeingDestroyed()
+		? Pawn->GetDistanceTo(Target) : -1.0f;
+	if (TargetDistance > Data.NormalAttackRange && !Data.OutOfRangeAttackName.IsNone())
+	{
+		Data.SelectedIndex = Data.Choices.IndexOfByPredicate([&Data](const FMVBossAttackChoice& Choice)
+		{
+			return Choice.AttackName == Data.OutOfRangeAttackName;
+		});
+	}
+	const bool bForcedRangeAttack = Data.SelectedIndex != INDEX_NONE;
+	if (!bForcedRangeAttack)
+	{
+		Data.SelectedIndex = Data.Choices.IsValidIndex(Controller->NextBossAttackChoiceIndex)
+			? Controller->NextBossAttackChoiceIndex : 0;
+		Controller->NextBossAttackChoiceIndex = (Data.SelectedIndex + 1) % Data.Choices.Num();
+	}
 	Data.SelectedAttack = Data.Choices[Data.SelectedIndex].AttackName;
-	UE_LOG(LogTemp, Display, TEXT("[BossAttack] Selected: Owner=%s Attack=%s"),
-		*GetNameSafe(Context.GetOwner()), *Data.SelectedAttack.ToString());
 	return EStateTreeRunStatus::Running;
 }
 
@@ -45,6 +77,11 @@ EStateTreeRunStatus FMVBossSelectAttackTask::Tick(FStateTreeExecutionContext& Co
 	if (!Data.bTransitionRequested)
 	{
 		Data.bTransitionRequested = true;
+		if (Data.bResonanceSelected)
+		{
+			Context.RequestTransition(FStateTreeTransitionRequest(Data.ResonanceState));
+			return EStateTreeRunStatus::Running;
+		}
 		if (!Data.Choices.IsValidIndex(Data.SelectedIndex))
 		{
 			Context.RequestTransition(FStateTreeTransitionRequest(FStateTreeStateHandle::Failed));

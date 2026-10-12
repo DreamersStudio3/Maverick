@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Character/MVCharacterBase.h"
 
 #include "Components/MVActionComponent.h"
@@ -19,35 +18,8 @@
 #include "TimerManager.h"
 #include "Components/MVStatusEffectComponent.h"
 
-DEFINE_LOG_CATEGORY_STATIC(LogMVCharacterBase, Log, All);
-
 namespace
 {
-void MVCharacterLogAirborneTrace(
-	const TCHAR* Stage,
-	const AMVCharacterBase* Character,
-	const FMVResolvedHitData& HitData,
-	const bool bOnDamagedBound)
-{
-	if (HitData.HitReactionType != EMVActionHitReactionType::Airborne)
-	{
-		return;
-	}
-
-	UE_LOG(
-		LogMVCharacterBase,
-		Warning,
-		TEXT("AirborneTrace Frame=%llu Stage=%s Character=%s CharacterIndex=%s Victim=%s VictimIndex=%s bOnDamagedBound=%s HitDirection=%s"),
-		static_cast<unsigned long long>(GFrameCounter),
-		Stage,
-		*GetNameSafe(Character),
-		Character ? *Character->GetCharacterIndexCode().ToString() : TEXT("<none>"),
-		*GetNameSafe(HitData.Victim.Get()),
-		*HitData.VictimCharacterIndexCode.ToString(),
-		bOnDamagedBound ? TEXT("true") : TEXT("false"),
-		*HitData.HitDirection.ToString());
-}
-
 FVector2D ClampCharacterControllerSpaceInput(const FVector2D& Input)
 {
 	const float SizeSquared = Input.SizeSquared();
@@ -328,15 +300,11 @@ bool AMVCharacterBase::IsInvincible() const
 
 bool AMVCharacterBase::OnHitResolved(const FMVResolvedHitData& HitData)
 {
-	MVCharacterLogAirborneTrace(TEXT("CharacterOnHitResolvedEnter"), this, HitData, OnDamaged.IsBound());
-
 	if (HitData.VictimCharacterIndexCode.IsValid() && HitData.VictimCharacterIndexCode != CharacterIndexCode)
 	{
-		MVCharacterLogAirborneTrace(TEXT("CharacterOnHitResolvedRejected_IndexMismatch"), this, HitData, OnDamaged.IsBound());
 		return false;
 	}
 
-	MVCharacterLogAirborneTrace(TEXT("CharacterOnHitResolvedBroadcast"), this, HitData, OnDamaged.IsBound());
 	OnDamaged.Broadcast(HitData);
 	return true;
 }

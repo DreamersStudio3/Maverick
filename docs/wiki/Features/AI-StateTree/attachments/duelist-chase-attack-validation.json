@@ -1,0 +1,47 @@
+{
+  "date": "2026-10-08",
+  "host": "Windows / Codex / Unreal Engine 5.8.3",
+  "state_tree": "/Game/DuelistComplete/ST_DuelistBossAIStateTree",
+  "state": "Alive.Chase",
+  "task": "FMVChaseDistanceAttackTask",
+  "parameters": {
+    "min_attack_distance_cm": 300,
+    "required_duration_s": 1,
+    "comparison": ">=",
+    "continuous_same_target": true
+  },
+  "main_pie": {
+    "actor": "BP_Duelist_C_1",
+    "chase_enter_time_s": 1.4,
+    "ready_time_s": 2.4,
+    "elapsed_time_s": 1.0,
+    "distance_cm": 413.125,
+    "ready_exit_attack_selection_same_frame": 96739,
+    "selected_attack": "BaseAttack2",
+    "later_natural_move_completion_and_basic_attack_montage": true,
+    "scope": "실제 메인 AI 전환과 기존 도착 성공·몽타주 실행; 모든 거리·공격 조합 보장 범위 제외"
+  },
+  "distance_reset_pie": {
+    "temporary_move_task_disabled": true,
+    "temporary_pie_actor_collision_disabled": true,
+    "reset_time_s": 2.0,
+    "reset_distance_cm": 200,
+    "discarded_elapsed_time_s": 0.333,
+    "ready_time_s": 3.333,
+    "ready_distance_cm": 800,
+    "ready_elapsed_time_s": 1.0,
+    "ready_exit_attack_selection_same_frame": 96974,
+    "final_move_task_enabled_restored": true,
+    "scope": "이동 성공 경로를 분리한 거리 초기화 검증; 대상 교체·파괴 재현 제외"
+  },
+  "verification": {
+    "state_tree_editor_compile_and_save": "통과",
+    "final_live_coding_compile_and_patch": "통과",
+    "live_coding_metadata_diagnostics": ".voltbl 진단 존재, 패치 생성 성공 확인; 도구 진단 근본 해결 범위 제외",
+    "normal_editor_build_and_restart": "사용자 미저장 에셋 보존을 위해 미실행",
+    "temporary_cpp_trace_removed": true,
+    "pie_stopped": true,
+    "observer_callbacks_finished": true,
+    "packaging_network_and_all_attack_combinations": "미검증"
+  }
+}
