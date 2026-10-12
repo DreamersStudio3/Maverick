@@ -5,6 +5,8 @@
   "engine": "Unreal Engine 5.8.3",
   "request": "Git 머지 이후 제공된 컴파일 오류 복구",
   "merge_commit": "4b753e35",
+  "validated_source_commit": "058623406d4484f975c5fab72a2ee68305cdefcf",
+  "source_commit_scope": "해당 커밋의 C++ 소스와 실제 검증 소스 일치; 같은 커밋의 HUD 바이너리 변경 전체 PIE 검증 제외",
   "changes": [
     "ResolveHitDirection 헤더의 불필요한 Request 인수 제거, 기존 구현·호출의 2개 인수와 일치",
     "박스 검사에서 SetNormalDefence 사용 및 방어력 절반 반영 공식에 맞춘 HP 기대값 갱신",

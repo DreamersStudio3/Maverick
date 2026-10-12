@@ -58,3 +58,10 @@ flowchart LR
 현재 Windows·Codex·Unreal Engine 5.8.3에서 실행한 범위와 한계: [검증 자료](attachments/validation.json)
 AI 활성 전후 마우스 상태·Windows 제한 영역·Live Coding 검증: [마우스 고정 검증](attachments/mouse-lock-validation.json)
 원시 자료·사용자 파일 백업: `Saved/BossAttackTest`, Git 제외
+
+## develop 통합 기준
+
+- 대상: `codex/boss-reference-assets` → `develop`, [PR #99](https://github.com/DreamersStudio3/Maverick/pull/99)
+- C++ 검증 기준: `05862340`, Windows UE 5.8.3 일반 Editor 빌드·전투 자동 검사 3개 통과; 이후 문서 커밋의 실행 코드 변경 제외
+- 일반 피해·박스 검사·공명 고정 피해의 머지 정합성: [검증 자료](../Hit-Stat-HitReaction/attachments/merge-build-validation.json)
+- 임시 참고 에셋 사용·검증 범위: [[Research/Grave-Warden-Duelist-Reference/document|묘지기 투사 참고 에셋]]
