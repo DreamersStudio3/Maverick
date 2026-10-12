@@ -52,15 +52,18 @@ void UMVBoxDamageAbility::CheckBoxDamage()
 		EndAbility_Implementation();
 		return;
 	}
+
 	const FQuat Rotation = Character->GetActorQuat();
 	const FVector Center = Character->GetActorLocation() + Rotation.RotateVector(BoxOffset);
 	const FVector HalfExtent = BoxSize.ComponentMax(FVector(1.0f)) * 0.5f;
+
 	TArray<FOverlapResult> Overlaps;
 	const FCollisionQueryParams Params(SCENE_QUERY_STAT(MVBoxDamage), false, Character);
 	World->OverlapMultiByObjectType(Overlaps, Center, Rotation,
 		FCollisionObjectQueryParams(ECC_Pawn), FCollisionShape::MakeBox(HalfExtent), Params);
 	UMVHitResolverSubsystem* Resolver = UMVHitResolverSubsystem::Get(World);
 	bool bHit = false;
+
 	for (const FOverlapResult& Overlap : Overlaps)
 	{
 		if (!bAbilityActive) break;
@@ -74,7 +77,12 @@ void UMVBoxDamageAbility::CheckBoxDamage()
 		Request.AttackInstanceId = GetAttackInstanceId();
 		Request.DamageMultiplier = AbilityData.DamageMultiplier;
 		Request.GroggyDamageMultiplier = 0.0f;
-		Request.HitReactionType = EMVActionHitReactionType::None;
+		Request.HitReactionType = HitReactionType;
+		if (HitReactionType != EMVActionHitReactionType::None)
+		{
+			Request.GroggyDamageMultiplier = AbilityData.GroggyDamageMultiplier;
+			Request.HitLaunchData = GetHitLaunchData();
+		}
 		Request.HitLocation = Victim->GetActorLocation();
 		HitActors.Add(Victim);
 		FMVResolvedHitData Resolved;

@@ -16,7 +16,7 @@ FMVBossExecuteAttackTask::FMVBossExecuteAttackTask()
 	bShouldCallTick = true;
 }
 
-// 소유자·대상·공격 행 검증 후 공격 1회 시작, 범위 밖은 공격 생략 후 Succeeded 반환
+// 소유자·대상·공격 행 검증 후 공격 1회 시작, 양수 사거리 밖은 생략 후 Succeeded 반환
 // CombatAttackRow 연결 시 CombatComponent의 Ability 경로, 미연결 선택 행은 몽타주 직접 재생
 // 전투 행 직접 연결도 CombatComponent 경유, 그 외 행은 ActionComponent 경로 사용
 EStateTreeRunStatus FMVBossExecuteAttackTask::EnterState(
@@ -63,9 +63,9 @@ EStateTreeRunStatus FMVBossExecuteAttackTask::EnterState(
 		return EStateTreeRunStatus::Failed;
 	}
 
-	// 공격 범위 밖은 공격 실행 실패가 아니라 Chase 전이를 요청하는 정상 종료
+	// 양수 사거리 밖은 공격 생략·Chase 복귀, 0 이하는 거리 제한 해제
 	// Failed를 반환하면 상위 공격 분기가 같은 행들을 즉시 재평가하면서 로그가 반복된다.
-	if (TargetDistance > InstanceData.AttackRange)
+	if (InstanceData.AttackRange > 0.0f && TargetDistance > InstanceData.AttackRange)
 	{
 		// 완료 판정 제외 Task도 공격 트리를 종료하도록 명시적 성공 전이 요청
 		Context.RequestTransition(FStateTreeTransitionRequest(FStateTreeStateHandle::Succeeded));

@@ -52,6 +52,7 @@ bool FMVBoxDamageAbilityTest::RunTest(const FString& Parameters)
 	Player->StatComponent->SetMaxHP(1000.0f);
 	Player->StatComponent->SetCurrentHP(1000.0f);
 	Player->StatComponent->Defence = 5.0f;
+	Player->StatComponent->SetMaxGroggy(1000.0f);
 	Player->StatComponent->SetCurrentGroggy(25.0f);
 	NonPlayer->StatComponent->SetCurrentHP(100.0f);
 	Boss->WeaponComponent->BareHandWeapon.AttackPower = 10.0f;
@@ -135,6 +136,15 @@ bool FMVBoxDamageAbilityTest::RunTest(const FString& Parameters)
 	AdvanceBoxTestTime();
 	TestFalse(TEXT("Failed ability cost leaves box inactive"), Ability->bAbilityActive);
 	TestEqual(TEXT("Failed activation applies no damage"), Player->StatComponent->CurrentHP, 925.0f);
+	Notify->NotifyEnd(Boss->GetMesh(), nullptr, Reference);
+	Data.MpCost = 0.0f;
+	Ability->InitAbility(Data);
+	Ability->HitReactionType = EMVActionHitReactionType::Airborne;
+	Notify->NotifyBegin(Boss->GetMesh(), nullptr, 1.0f, Reference);
+	TestEqual(TEXT("Airborne configuration shares the same box damage"), Player->StatComponent->CurrentHP, 910.0f);
+	TestEqual(TEXT("Reaction configuration uses the attack row groggy multiplier"), Player->StatComponent->CurrentGroggy, 125.0f);
+	AdvanceBoxTestTime();
+	TestEqual(TEXT("Airborne overlaps also apply damage only once per window"), Player->StatComponent->CurrentHP, 910.0f);
 	Notify->NotifyEnd(Boss->GetMesh(), nullptr, Reference);
 	return !HasAnyErrors();
 }

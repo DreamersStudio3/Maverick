@@ -4,10 +4,10 @@
 #include "MVBoxDamageAbility.generated.h"
 
 /**
- * 액터 기준 박스 안의 플레이어에게 활성 구간당 한 번의 HP 피해 적용
- * 크기·로컬 위치·디버그 표시를 Ability Blueprint 기본값에서 조절, 실제 피해 계산은 HitResolver에 위임
+ * 액터 기준 박스 안의 플레이어에게 활성 구간당 한 번의 피해 적용
+ * BP_BoxCollision과 에어본 설정 에셋의 공통 판정, 실제 피해·피격 동작은 HitResolver에 위임
  * CombatComponent 준비 → MV Activate Ability 시작·검사 → 종료·취소·소멸 시 타이머 정리
- * 박스는 액터 위치·회전을 추적, 무적·사망·자기 자신 제외, 피격 동작·밀림·그로기 요청 없음
+ * 크기·위치·피격 유형은 Blueprint 기본값, None 선택 시 밀림·그로기 없이 HP 피해만 요청
  */
 UCLASS(Blueprintable)
 class MAVERICK_API UMVBoxDamageAbility : public UMVAbilityBase
@@ -29,6 +29,10 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Attack|Box|Debug")
 	bool bDrawDebug = true;
+
+	// None: HP 피해만 적용, 그 외: 행의 그로기 배율과 기존 HitLaunchData 사용
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Attack|Box")
+	EMVActionHitReactionType HitReactionType = EMVActionHitReactionType::None;
 
 private:
 	void CheckBoxDamage();

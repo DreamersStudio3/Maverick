@@ -8,16 +8,10 @@
 class UStateTreeAIComponent;
 
 /**
- * AI 인지와 임시 BaseBoss 전투 시작 제어를 소유하는 공용 AIController.
- *
- * BeginPlay에서 `AttackTarget` 속성을 가진 BaseBoss Pawn의 StateTree를 정지해 전투 시작 전 Idle을
- * 유지한다. 임시 디버그 입력이 `BossPlayStart`를 활성화하면 StateTree를 시작하고, 플레이어 타겟을
- * Pawn의 Blueprint `AttackTarget` 속성에 전달한다.
- *
- * 라이프사이클:
- *   1) 생성자 -> AI Perception 구성과 갱신 delegate 연결
- *   2) BeginPlay -> BaseBoss 여부 판정 후 StateTree 대기 상태 적용
- *   3) 디버그 입력 -> 전투 시작 또는 공격 타겟 전달
+ * AI 인지 대상·임시 BaseBoss 전투 시작 제어·보스 공격 순서 위치를 소유하는 공용 Controller
+ * 생성 시 Perception 구성·갱신 연결, BeginPlay에서 AttackTarget 보유 Pawn의 StateTree 대기 적용
+ * 디버그 입력으로 BossPlayStart 활성화·StateTree 시작·Pawn의 AttackTarget 전달
+ * 공격 순서 위치는 트리 재진입 중 보존, OnPossess에서 첫 후보로 초기화; 선택 정책은 공격 Task 책임
  */
 UCLASS()
 class MAVERICK_API AMVAIController : public AAIController
@@ -41,6 +35,10 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI|Boss Debug")
 	bool BossPlayStart = false;
+
+	// 공격 트리 재진입 중 보존, 선택 순서와 범위 밖 예외 정책은 선택 Task 책임
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = "AI|Boss Attack")
+	int32 NextBossAttackChoiceIndex = 0;
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI|Boss Debug")

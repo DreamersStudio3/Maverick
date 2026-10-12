@@ -149,7 +149,7 @@ private:
 		bool bHasMovementInput) override;
 	virtual bool TryHandleRecoveryWindowOpened() override;
 	bool GetActionData(const FMVResolvedHitData& HitData, FMVHitReactionActionData& OutActionData);
-	void SnapOwnerYawToHitDirectionForLaunch(const FMVResolvedHitData& HitData, bool bUseLaunch, EMVHitReactionDirection Direction, FName ActionRowName);
+	void SnapOwnerYawToHitDirectionForLaunch(const FMVResolvedHitData& HitData, bool bUseLaunch, EMVHitReactionDirection Direction);
 	void ApplyHitReactionLaunch(const FMVResolvedHitData& HitData, bool bUseLaunch);
 	void ClearHitReactionLaunchWindow();
 	void FinishHitReactionLaunch(int32 LaunchSerial, bool bStopVerticalVelocity);

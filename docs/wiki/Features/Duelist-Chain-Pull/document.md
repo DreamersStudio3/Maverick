@@ -1,7 +1,7 @@
 ---
 제목: "Duelist 돌진 사슬 스킬"
 부제목: "전용 Ability·투사체·발사 Notify의 최소 구성"
-최근수정일: 2026-10-07
+최근수정일: 2026-10-11
 최근수정자: "Codex"
 관련문서:
   - "[[Features/Duelist-Attack-RootMotion/document|Duelist 공격 루트 이동]]"
@@ -31,17 +31,66 @@
 
 | 위치 | 역할 |
 |---|---|
-| `DT_DuelistBossCombatAttack.SkillW` | 사슬 몽타주 연결, 발사 구성 시 전용 Ability 지정 필수 |
-| `/Game/DuelistComplete/Skills/BP_Ability_Duelist_ChainPull` | 공격 수치 편집, `UMVDuelistChainPullAbility` 상속 |
-| `/Game/DuelistComplete/Animations/AM_Duelist_ChainPull` | 현재 `AS_Duelist_W` 동작 사용, 사용자 몽타주 편집 유지 |
+| `DT_DuelistBossCombatAttack.SkillW` | `/Script/Maverick.MVDuelistChainPullAbility` 직접 지정, `AM_Duelist_DashChainPull_2s` 연결 |
 | `ST_DuelistBoss_Attack.SkillW` | 현재 실행 가능 거리 `300 cm`, 기존 선택 분기 유지 |
 | `/Game/DuelistComplete/Skills/SM_DuelistChainLink`·`M_DuelistChain` | 교차 배치 사슬 고리·금속 재질 |
 
-- 현재 몽타주 길이 `4.8667 s`, `MV Duelist Fire Chain` 발사 Notify 시점 약 `2.5191 s`
+- 이전 `AM_Duelist_ChainPull`: 길이 `4.8667 s`·발사 약 `2.5191 s`·활성 약 `1.7397~3.8215 s`, 3초 동작으로 대체 후 2026-10-11 미사용 에셋 삭제 완료
+- 정리 시 현재 3초 몽타주·시퀀스·사슬 고리·재질 SHA256 보존, 새 Windows 프로세스의 `SkillW` 연결 재로드 확인; 이번 정리의 PIE 재실행 제외, [정리 검증 자료](../Duelist-Resonance/attachments/cleanup-validation.json)
 - 발사 구성의 `MV Activate Ability`: 시작부터 몽타주 끝까지 활성 구간 권장, `AbilityClass=MVDuelistChainPullAbility`·`AbilityIndex=0`
 - 공격 행의 `AbilityReference`와 활성 Notify의 클래스 일치 필수, 발사 Notify는 `CurrentAbilityInstance`의 사슬 Ability 형변환 성공 시 `FireChain` 호출
 - 몽타주 연결만 변경 시 기존 공격 행의 Ability와 불일치 가능, `AbilityClass does not match` 로그 확인 위치: `MVAnimNotifyState_Ability`
 - `FMVBossExecuteAttackTask`: 전투 행 직접 연결도 `CombatComponent.TryStartCombatActionFromRowHandle` 경유
+
+## 3초 돌진 사슬 애니메이션
+
+2026-10-11 제작한 2초 동작의 첫 돌진에 1초 추가, 기존 에셋 2개 갱신
+현재 저장된 `SkillW`의 해당 몽타주 참조 유지, 참조 보존을 위해 `_2s` 경로 유지·실제 길이 `3 s`
+
+| 에셋 | 경로 |
+|---|---|
+| 새 시퀀스 | `/Game/DuelistComplete/Animations/AnimationsSequence/AS_Duelist_DashChainPull_2s` |
+| 새 몽타주 | `/Game/DuelistComplete/Animations/AM_Duelist_DashChainPull_2s` |
+
+| 구간 | 시간 | 구성 |
+|---|---:|---|
+| 돌진 | `0~1.5 s` | 기존 첫 `0.5 s`를 3배 길이로 재배치, 전진 `220 cm`·돌진 속도 감소 |
+| 사슬 발사 | `1.5~1.85 s` | `AS_Duelist_W` 투척 준비·발사 동작, 발사 Notify `1.85 s` |
+| 회수 | `1.85~2.6 s` | 기존 사슬 공격 회수 동작 재배치, 전용 Ability의 실제 끌어오기 |
+| 대기 복귀 | `2.6~3.0 s` | `AS_Duelist_UpIdle` 첫 자세로 보간, 돌진 종료 위치 유지 |
+
+- 총 길이 `3.0 s`, 원본·플랫폼 샘플링 `60 fps`·`180` 프레임·`181` 키, 실제 뼈 트랙 `746`개
+- 기존 Skeleton·Mesh·무기·사슬 뼈 유지, 평가 자세의 `786`개 중 가상 뼈 추가 키 생성 제외
+- 원본 `AS_Duelist_UpIdle`·`AS_Duelist_Move_Run_Fwd`·`AS_Duelist_W` 활용, 회수 구간의 급격한 회전은 7개 표본 보간으로 완화
+- `DefaultSlot`, 진입·종료 보간 `0.08/0.12 s`, 재생 배율 `1`
+- `RootMotionNormalize`: 전체 `3 s`의 `MotionWarping`·`RootMotionModifier_Scale=(1,1,1)`, 원본 루트 스케일 `100` 유지·일반 루트 추출의 과도한 이동 방지
+- `ChainAbility`: `0.001~2.999 s`, `MVDuelistChainPullAbility`·`AbilityIndex=0`
+- `ChainFire`: 기존 `MVAnimNotify_DuelistFireChain`, `1.85 s`에 발사 1회
+- 실제 공격 연결 위치: `DT_DuelistBossCombatAttack.SkillW.Montage`, 새 몽타주 선택 시 현재 전용 Ability·재생 배율 `1` 유지
+- 재생성 도구: `Scripts/Editor/CreateDuelistDashChainPullAnimation.py`, 원본 동작 보존·신규 시퀀스와 몽타주만 갱신
+- 몽타주 세그먼트의 끝·캐시 길이 `3 s` 갱신 후 저장·패키지 재로딩, 이후 Notify 생성·저장·재로딩으로 내부 길이의 이전 `2 s` 잔류와 상대 종료 링크의 초과 연장 방지
+
+### 제작 검증
+
+Codex / Windows / Unreal Engine `5.8.3`, 실제 Editor·PIE 실행
+
+- 저장·패키지 재로딩 통과: 시퀀스·몽타주 길이 `3 s`·`60 fps`·`181` 키·발사 `1.85 s`·활성 구간·루트 보정 유지
+- 전 프레임 유한 좌표·정규화된 회전 확인, 시작·끝의 로컬 자세와 대기 원본 위치 차이 `0 cm`, 이동 루트 `1.5~3 s`의 `220 cm` 유지
+- 실제 배치된 `BP_Duelist`와 임시 DataTable의 `SkillW` 실행, 몽타주 경로·전투 컴포넌트·CharacterMovement·바닥 충돌 유지
+- 화면 캡처 포함 PIE·종료 Notify 보정 이후 최종 PIE: 실제 돌진 약 `220 cm`·플레이어 이동 약 `300 cm`, 공격 종료 약 `3.00~3.07 s`·보스 위치 유지·사슬 `0`개·이동 입력 복구 확인
+- 캡처 없는 실행의 배경 프레임 간격 약 `0.333 s`, 최초 사슬 관찰 `2.000 s`·직전 미관찰 `1.667 s`, 예약 `1.85 s`를 포함하는 구간 확인·정밀한 실시간 발사 오차 증명 제외
+- PIE 인스턴스만 AI 정지·초기 대상 거리 `700 cm`·공격력 `10`·HP `100` 적용, 검증 피해 `100→91`은 해당 조건 기준·현재 저장 피해 수치 보장 제외
+- 기존 사슬·Q 몽타주와 전투 DataTable 바이트 보존, 사용자가 이미 연결한 `SkillW`의 몽타주 참조 유지
+- 전체 AI 선택·네트워크·패키징은 새 에셋 제작 범위 밖으로 현재 Windows에서 미실행, 해당 경로 보장 제외
+- C++ 변경 없는 에셋·Editor Python 작업, 현재 Windows C++ 빌드 미실행·빌드 성공 보장 제외
+- 검증 PIE·콜백 종료, 사용자 Editor 유지·수정 몽타주 열기·로컬 Python 원격 실행 비활성 복구·미저장 콘텐츠와 맵 `0`개 확인
+
+검증 근거: [dash-chain-pull-three-second-validation.json](attachments/dash-chain-pull-three-second-validation.json)
+원시 조사·검증 자료: `Saved/DuelistChainDuration`, 변경 전 2초 에셋 백업 포함·Git 제외
+
+![실제 PIE 단계별 동작](attachments/dash-chain-pull-three-second-preview.jpg)
+
+이전 2초 제작 근거: [검증 요약](attachments/dash-chain-pull-two-second-validation.json)·[단계별 화면](attachments/dash-chain-pull-two-second-preview.jpg)
 
 ## 실행과 소유권
 
@@ -71,7 +120,7 @@ flowchart LR
 
 ## 조절 위치
 
-`BP_Ability_Duelist_ChainPull`의 Class Defaults
+`MVDuelistChainPullAbility.h`의 클래스 기본값, 변경 후 C++ 빌드 필요
 
 | 값 | 기본값 |
 |---|---:|
@@ -79,15 +128,31 @@ flowchart LR
 | `ProjectileSpeed` | `2,400 cm/s` |
 | `MaxRange` | `2,500 cm` |
 | `PullDuration` | `0.65 s` |
-| `StopDistance` | `90 cm` |
+| `StopDistance` | `180 cm` |
 
 - 사거리 확대·속도 감소·끌어오기 시간 확대 시 `ChainAbility` 구간과 몽타주 길이 동반 검토
 - 이동 도중 보스 추적 대신 적중 시 고정 목적지 사용, 종료 거리와 최종 보스 간 거리 차이 가능
-- Class Defaults 조절 후 Blueprint Compile·Save 필수, 편집 기본값 조회만으로 새 런타임 인스턴스 적용 보장 불가
+- 현재 공격 행은 C++ 클래스 직접 사용, 별도 설정 Blueprint 기본값의 자동 적용 없음
 - `SkillW` 사슬 발사 조건: 전용 Ability와 활성·발사 Notify 연결 일치, `AM_Duelist_Q`에는 사슬 발사 Notify 미배치
 - 적중 시 보스까지 거리가 정지 거리 이하인 경우 추가 끌어오기 제외, 벽 앞에서는 이동 거리 축소 가능
 - 피해 계산: 기존 장착 무기 공격력·전투 행 배율·대상 방어력 사용
 - 현재 `BP_Duelist` 장비 공격력 `0`, 전투 피해 수치 설정은 별도 장비 데이터 책임
+
+## 스킬 정리 검증
+
+2026-10-08 / Codex / Windows / Unreal Engine 5.8.3 실제 실행
+
+- 미참조 `BP_Ability_Duelist_ChainPull` 삭제, 사용 중인 SkillW 행·C++ 클래스·발사 Notify·사슬 메시·재질 유지
+- Blueprint 삭제 전 Asset Registry의 직접·간접 에셋 참조 0과 소스·설정의 실행 경로 확인
+- 사슬 수명은 Ability, 비행·충돌·끌어오기는 Actor, 발사 시점은 Notify 책임 유지
+- 배치된 Duelist의 실제 SkillW 전투 행 실행 PIE 2회에서 투사체 최대 1개·끌어오기 입력 잠금·종료 후 0개·입력 복구 확인
+- 두 회차의 실제 플레이어 이동 약 `333 cm` 확인, 검사 시작 위치 `(0, 0)`에서 X 방향 이동 표본 기준
+- 같은 경로의 공격 취소 PIE에서 투사체 제거·이동 입력 복구 확인
+- 플레이어·보스 위치와 무기 공격력 `10`은 PIE 인스턴스에만 적용, 저장된 공격·장비 수치 변경 제외
+- 전체 AI 선택·네트워크·패키징은 이번 Windows Editor에서 재실행 제외, 전투 행 직접 실행·수명 정리 범위만 증명
+
+검증 요약: [[Features/Combat/Box-Damage-Ability/document|공통 박스 판정 통합 검증]]
+아래 이전 검증의 설정 Blueprint와 정지 거리 `90 cm`는 당시 구성, 현재 직접 클래스 구성의 정본은 위 에셋 연결·조절 위치
 
 ## 소스 이동 검증
 
@@ -161,7 +226,7 @@ Windows / Unreal Engine 5.8.3 실제 PIE 실행, 아래 결과는 초기 `SkillQ
 | 임시 행의 사슬 Ability만 복원 | 투사체 0개 | 같은 프레임의 발사·활성화 순서 역전 재현 |
 | 같은 임시 행·몽타주, 공격 시작 직후 사슬 Ability 선행 활성화 | 투사체 최대 1개·종료 후 0개 | 선행 활성화 조건에서 발사·플레이어 충돌·정리 확인 |
 
-- 사슬 유지 구성: `SkillW.AbilityReference=BP_Ability_Duelist_ChainPull`, 활성 구간을 몽타주 시작부터 발사·비행·끌어오기 종료까지 확보
+- 당시 사슬 유지 구성: 전용 Blueprint 지정, 활성 구간을 몽타주 시작부터 발사·비행·끌어오기 종료까지 확보
 - 몽타주 편집 제안: 활성 구간 시작 0초·종료 몽타주 끝, 발사 Notify 약 2.519초 유지
 - 대조 조건의 선행 활성화는 직접 호출 방식, 원본 몽타주의 Notify 시각 수정과 수정 후 자동 활성화 검증은 이번 원인 분석 범위 밖으로 미실행
 - 사슬과 박스 피해 동시 구성은 한 Ability 내부 또는 별도 피해 Notify 경로의 연결 필요, Notify의 `AbilityClass`만 바꾸어 두 Ability 동시 생성 불가

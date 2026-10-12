@@ -1,0 +1,317 @@
+{
+  "date": "2026-10-11",
+  "host": "Codex",
+  "platform": "Windows",
+  "engine": "5.8.3",
+  "request": "첫 돌진 구간에 1초 추가",
+  "created": {
+    "sequence": "/Game/DuelistComplete/Animations/AnimationsSequence/AS_Duelist_DashChainPull_2s.AS_Duelist_DashChainPull_2s",
+    "montage": "/Game/DuelistComplete/Animations/AM_Duelist_DashChainPull_2s.AM_Duelist_DashChainPull_2s",
+    "duration_seconds": 3.0,
+    "sample_rate": 60,
+    "frames": 180,
+    "keys_per_bone": 181,
+    "bone_tracks": 746,
+    "dash_cm": 220,
+    "fire_time_seconds": 1.85,
+    "sources": [
+      "/Game/DuelistComplete/Animations/AnimationsSequence/AS_Duelist_UpIdle.AS_Duelist_UpIdle",
+      "/Game/DuelistComplete/Animations/AnimationsSequence/AS_Duelist_Move_Run_Fwd.AS_Duelist_Move_Run_Fwd",
+      "/Game/DuelistComplete/Animations/AnimationsSequence/AS_Duelist_W.AS_Duelist_W"
+    ],
+    "phases": {
+      "dash": [
+        0.0,
+        1.5
+      ],
+      "fire": [
+        1.5,
+        1.85
+      ],
+      "retrieve": [
+        1.85,
+        2.6
+      ],
+      "idle_return": [
+        2.6,
+        3.0
+      ]
+    },
+    "data_table_changed": false
+  },
+  "asset_validation": {
+    "duration": 3.0,
+    "montage_duration": 3.0,
+    "skeleton": "/Game/DuelistComplete/Mesh/SK_Duelist_TwinHammers_NoCoat_Skeleton.SK_Duelist_TwinHammers_NoCoat_Skeleton",
+    "bone_tracks": 746,
+    "max_quat_norm_error": 6.661338147750939e-16,
+    "max_body_rotation_step_deg": 38.69495971906205,
+    "max_body_rotation_step_bone": "r_upperarm",
+    "idle_start_error_cm": 0.0,
+    "idle_end_error_cm": 0.0,
+    "idle_end_rotation_error_deg": 3.989964780357977e-05,
+    "root_samples": {
+      "0.0": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "0.75": [
+        0.0,
+        110.0,
+        0.0
+      ],
+      "1.5": [
+        0.0,
+        220.0,
+        0.0
+      ],
+      "1.85": [
+        0.0,
+        220.0,
+        0.0
+      ],
+      "2.6": [
+        0.0,
+        220.0,
+        0.0
+      ],
+      "3.0": [
+        0.0,
+        220.0,
+        0.0
+      ]
+    },
+    "notifies": [
+      {
+        "name": "MotionWarping",
+        "time": 9.999999747378752e-05,
+        "duration": 3.0
+      },
+      {
+        "name": "Activate Ability",
+        "time": 0.0010000000474974513,
+        "duration": 2.997999906539917
+      },
+      {
+        "name": "MVDuelistFireChain",
+        "time": 1.850000023841858,
+        "duration": 0.0
+      }
+    ],
+    "compressed_pose_max_position_error_cm": 0.0,
+    "num_frames": 180,
+    "num_keys": 181,
+    "max_body_rotation_step_time": 2.2666666666666666,
+    "montage_properties": {
+      "SlotAnimTracks": [
+        {
+          "slotName": "DefaultSlot",
+          "animTrack": {
+            "animSegments": [
+              {
+                "cachedPlayLength": 3,
+                "animReference": {
+                  "refPath": "/Game/DuelistComplete/Animations/AnimationsSequence/AS_Duelist_DashChainPull_2s.AS_Duelist_DashChainPull_2s"
+                },
+                "startPos": 0,
+                "animStartTime": 0,
+                "animEndTime": 3,
+                "animPlayRate": 1,
+                "loopingCount": 1
+              }
+            ]
+          }
+        }
+      ],
+      "BlendIn": {
+        "customCurve": "None",
+        "blendTime": 0.07999999821186066,
+        "blendOption": "HermiteCubic"
+      },
+      "BlendOut": {
+        "customCurve": "None",
+        "blendTime": 0.11999999731779099,
+        "blendOption": "HermiteCubic"
+      },
+      "RateScale": 1
+    },
+    "passed": true
+  },
+  "saved_verification": {
+    "reload_success": true,
+    "reload_message": "",
+    "duration": 3.0,
+    "montage_duration": 3.0,
+    "num_keys": 181,
+    "sampling": {
+      "PlatformTargetFrameRate": {
+        "default": {
+          "numerator": 60,
+          "denominator": 1
+        },
+        "perPlatform": {}
+      }
+    },
+    "notifies": [
+      {
+        "name": "MotionWarping",
+        "time": 9.999999747378752e-05,
+        "duration": 3.0,
+        "root_modifier_scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "Activate Ability",
+        "time": 0.0010000000474974513,
+        "duration": 2.997999906539917
+      },
+      {
+        "name": "MVDuelistFireChain",
+        "time": 1.850000023841858,
+        "duration": 0.0
+      }
+    ],
+    "dirty_content": [],
+    "dirty_maps": [],
+    "editor_preserved": true,
+    "pie_stopped": true,
+    "remote_execution_enabled": false,
+    "passed": true
+  },
+  "existing_skill_w": {
+    "Name": "SkillW",
+    "AbilityReference": "/Script/CoreUObject.Class'/Script/Maverick.MVDuelistChainPullAbility'",
+    "DamageMultiplier": 1,
+    "HpCost": 0,
+    "StaminaCost": 0,
+    "MpCost": 0,
+    "MpRecoveryPerHit": 2,
+    "GroggyDamageMultiplier": 1,
+    "RSkillGaugeGainMultiplier": 1,
+    "OnHitStatusEffects": [],
+    "SwingDirection": "None",
+    "ChargeCommitTime": 0,
+    "EarlyReleaseStartSection": "Attack",
+    "EarlyReleaseBlendOutTime": 0.25,
+    "CooldownDuration": 0,
+    "bIsChained": false,
+    "NextChainName": "None",
+    "PoiseAmountMultiplier": 0,
+    "InterStageCooldown": 0,
+    "InputWindowDuration": 0,
+    "ChainAdvancePolicy": "Immediate",
+    "Montage": {
+      "AssetPath": {
+        "PackageName": "/Game/DuelistComplete/Animations/AM_Duelist_DashChainPull_2s",
+        "AssetName": "AM_Duelist_DashChainPull_2s"
+      },
+      "SubPathString": ""
+    },
+    "DefaultStartSection": "None",
+    "PlayRate": 1,
+    "bLocksMovement": false,
+    "bCanBeInterrupted": true,
+    "bEnabled": true,
+    "RowId": 0
+  },
+  "runtime_with_captures": {
+    "errors": [],
+    "hp_before": 100,
+    "initial_boss": [
+      400.0,
+      -59.99999999999999,
+      89.65000009536743
+    ],
+    "original_table_changed": false,
+    "final_boss": [
+      620.0000001171064,
+      -59.99999999999999,
+      89.65000009536743
+    ],
+    "final_player": [
+      799.9538287253717,
+      -59.99999999999999,
+      89.65000009536743
+    ],
+    "hp_after": 91.0,
+    "input_restored": true,
+    "remaining_projectiles": 0,
+    "ended_time": 3.066668212413788,
+    "boss_travel_cm": 220.00000011710642,
+    "seen_projectile": true,
+    "seen_pull": true,
+    "first_projectile_time": 2.0666674971580505,
+    "player_pull_cm": 300.04617127462825
+  },
+  "runtime_without_captures": {
+    "errors": [],
+    "hp_before": 100,
+    "initial_boss": [
+      400.0,
+      -59.99999999999999,
+      89.65000009536743
+    ],
+    "original_table_changed": false,
+    "final_boss": [
+      619.9983239918741,
+      -59.99999999999999,
+      89.65000009536743
+    ],
+    "final_player": [
+      799.9521523421749,
+      -59.99999999999999,
+      89.65000009536743
+    ],
+    "hp_after": 91.0,
+    "input_restored": true,
+    "remaining_projectiles": 0,
+    "ended_time": 3.000001609325409,
+    "boss_travel_cm": 219.99832399187414,
+    "seen_projectile": true,
+    "seen_pull": true,
+    "first_projectile_time": 2.0000011324882507,
+    "player_pull_cm": 300.04784765782506
+  },
+  "runtime_sample_counts": [
+    60,
+    13
+  ],
+  "fire_observation_interval_seconds": [
+    1.6666675209999084,
+    2.0000011324882507
+  ],
+  "original_asset_hashes_unchanged": {
+    "Content/DuelistComplete/DT_DuelistBossCombatAttack.uasset": "EA91B9C7A3A08F8AB9B53FCBB5CA1A1DD5AAEBC9358F327C641902C5BCFF1932",
+    "Content/DuelistComplete/Animations/AM_Duelist_ChainPull.uasset": "BEF3A7A178CDCB7896D403C2CB3F310C4DA52E60A2402FEA033FD6BBD4D6193D",
+    "Content/DuelistComplete/Animations/AM_Duelist_Q.uasset": "3D7B23DD452DF13C184FE8AE2AAFD288388DD65B10E174EEA48E9A580A9D1FBE"
+  },
+  "scope": "실제 BP_Duelist·전투 컴포넌트·임시 SkillW 행·현재 사슬 Ability·CharacterMovement·바닥 충돌",
+  "test_overrides": [
+    "PIE 인스턴스 AI 정지",
+    "초기 플레이어 거리 700cm",
+    "PIE 인스턴스 공격력 10·HP 100",
+    "검증 카메라"
+  ],
+  "proof_limits": [
+    "기존 _2s 에셋 경로 보존·실제 길이 3초",
+    "기존 저장 SkillW가 해당 몽타주 참조·공격 DataTable 저장 변경 없음",
+    "Windows에서 전체 AI 선택·네트워크·패키징 미실행, 해당 범위 보장 제외",
+    "C++ 변경 없음·Windows C++ 빌드 미실행, 컴파일 성공 보장 제외",
+    "정지 화면은 캡처 프레임 지연 포함, 캡처 없는 실행도 백그라운드 프레임 간격 약 0.333초·발사 예약 1.85초를 포함하는 관찰 구간만 증명"
+  ],
+  "recovered": [
+    "로컬 Python 검색 TTL 0 미응답·TTL 1로 연결 복구",
+    "몽타주 세그먼트 갱신 후 내부 길이 2초 잔류·Notify 생성 전 저장·재로딩으로 길이와 상대 종료 링크 보정"
+  ],
+  "cleanup": {
+    "pie_stopped": true,
+    "editor_preserved": true,
+    "remote_execution_restored": true,
+    "dirty_content": [],
+    "dirty_maps": []
+  }
+}
