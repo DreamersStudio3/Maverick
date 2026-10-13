@@ -85,6 +85,19 @@ struct MAVERICK_API FMVQuestSaveData
 	TMap<FName, int32> ObjectiveValues;
 };
 
+/** 완료한 보스 등장 연출의 맵별 식별자·최종 월드 변환, 런타임 액터 참조 제외 */
+USTRUCT(BlueprintType)
+struct MAVERICK_API FMVBossIntroSaveData
+{
+	GENERATED_BODY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Save|BossIntro")
+	FName IntroId = NAME_None;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Save|BossIntro")
+	FName MapName = NAME_None;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Save|BossIntro")
+	FTransform BossTransform = FTransform::Identity;
+};
+
 USTRUCT(BlueprintType)
 struct MAVERICK_API FMVWorldSaveData
 {
@@ -107,6 +120,9 @@ struct MAVERICK_API FMVWorldSaveData
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Save")
 	TArray<FMVQuestSaveData> Quests;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Save|BossIntro")
+	TArray<FMVBossIntroSaveData> BossIntros;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Save|Progression")
 	FMVPlayerProgressionSaveData PlayerProgression;

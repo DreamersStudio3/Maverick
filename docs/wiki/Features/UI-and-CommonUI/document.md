@@ -1,13 +1,14 @@
 ---
 제목: UI와 CommonUI
 부제목: UI 계층·게임 입력 복구·레벨업 창과 HUD 연결
-최근수정일: 2026-10-12
+최근수정일: 2026-10-13
 최근수정자: "Codex"
 관련문서:
   - "[[Architecture/document|Maverick Architecture]]"
   - "[[Features/Interaction-Flow/document|상호작용 흐름]]"
   - "[[Features/Progression/Level-Up/document|레벨업 프로토타입]]"
   - "[[Features/Boss-Attack-Test/document|보스 공격 시험 UI]]"
+  - "[[Features/Boss-Intro/document|최초 보스 등장 연출]]"
 ---
 
 # UI와 CommonUI
@@ -66,4 +67,5 @@ flowchart TD
 - 기존 `WBP_MainHUD`의 `WBP_BossAttackTest`에서 기본 공격·Q·W·공명 폭주 수동 실행
 - `UMVBossAttackTestWidget`: 버튼 구독·보스 탐색·수동 AI 제어·입력 복구 소유, 공격 판정은 기존 전투 경로 재사용
 - 자동 AI 활성 시 커서 숨김·게임 입력·화면 고정, AI 비활성·수동 시험 시 CommonUI 입력 복구 이후에도 버튼 클릭용 커서 유지; 제거 시 기존 입력 복원
+- 보스 등장 대기·재생의 `bBossIntroBlocked` 활성 시 수동 공격 차단·패널의 마우스 입력 강제 설정 제외, 연출 입력·카메라 복구는 [[Features/Boss-Intro/document|최초 보스 등장 연출]] 소유
 - 버튼 연결·공명 반복 시험·검증 범위: [[Features/Boss-Attack-Test/document|보스 공격 시험 UI]]

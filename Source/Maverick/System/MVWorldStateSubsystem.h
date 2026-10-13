@@ -12,12 +12,12 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnPlayerProgressionChanged, const
 /**
  * 저장되어야 하는 전체 게임 상태를 소유하는 GameInstance 서브시스템.
  *
- * 마지막 체크포인트, 1회성 필드 오브젝트 소비 상태, 영구 월드 플래그, 퀘스트 진행 상태를
+ * 마지막 체크포인트, 필드 소비·월드 플래그·퀘스트·보스 등장 완료 위치를
  * `FMVWorldSaveData`로 모아 `UMVWorldSaveGame` 슬롯에 저장/로드한다. 퀘스트나 부활 흐름 같은
  * 도메인 시스템은 SaveGame을 직접 수정하지 않고 이 서브시스템에 변경을 요청한다.
  *
  * 라이프사이클:
- *   1) GameInstance 생성 시 빈 저장 데이터를 준비한다.
+ *   1) GameInstance 생성 시 기본 슬롯 로드, 슬롯 부재 시 빈 데이터 준비.
  *   2) 저장 지점, 퀘스트, 1회성 스폰 상태 변경 요청을 받아 in-memory save data를 갱신한다.
  *   3) Save/Load 요청 시 Unreal SaveGame API로 슬롯을 쓰거나 읽고 변경 이벤트를 발행한다.
  */
@@ -115,6 +115,12 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Maverick|WorldState|Quest")
 	bool IsQuestCompleted(FName QuestId) const;
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|WorldState|BossIntro")
+	bool RecordBossIntroCompleted(FName IntroId, const FTransform& BossTransform);
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|WorldState|BossIntro")
+	bool TryGetBossIntroCompleted(FName IntroId, FMVBossIntroSaveData& OutRecord) const;
 
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|WorldState|Event")
 	FMVOnWorldStateChanged OnWorldStateChanged;

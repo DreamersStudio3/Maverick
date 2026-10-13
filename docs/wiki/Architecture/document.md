@@ -1,13 +1,14 @@
 ---
 제목: Maverick 아키텍처
 부제목: 런타임 흐름과 도메인 책임 경계
-최근수정일: 2026-09-29
-최근수정자: "No-Jyun"
+최근수정일: 2026-10-13
+최근수정자: "Codex"
 관련문서:
   - "[[Convention/Header-Documentation/document|C++ 헤더 책임 문서화]]"
   - "[[Features/Combat/Combat-System/document|Maverick 전투 시스템]]"
   - "[[Features/Resource-Recovery/document|기본 재화 회복과 소비]]"
   - "[[Features/Progression/Level-Up/document|레벨업 프로토타입]]"
+  - "[[Features/Boss-Intro/document|최초 보스 등장 연출]]"
 ---
 
 # Maverick 아키텍처
@@ -57,6 +58,7 @@ flowchart TD
 | `Combat/` | 공격 실행 객체와 월드 단위 적중 계산<br/>`UMVAbilityBase`, `UMVHitResolverSubsystem` |
 | `AI/` | StateTree 공유 문맥, Evaluator, Condition, Task, Perception Controller |
 | `Animation/` | AnimInstance와 Montage 구간을 도메인 API로 연결하는 Notify·NotifyState |
+| `Cinematics/` | 진입 트리거·Level Sequence·최초 관람 완료 위치·입력과 AI 복구 브리지<br/>`AMVBossIntroTrigger`, 영구 기록은 WorldState 소유 |
 | `System/` | 필드 전환, 사망 부활, 월드 상태, 저장, 퀘스트·성장 계산과 확정 |
 | `UI/` | CommonUI Window Stack, HUD·Popup Overlay, Loading·Death·Interaction UI |
 | `Public/Tables`, `Private/Tables` | Typed Row 계약, Editor 생성기, Runtime Manifest 조회 |
@@ -103,6 +105,7 @@ flowchart TD
 - [[Features/Progression/Level-Up/document|레벨업 프로토타입]]
 - [[Features/Death-and-Field-Transition/document|사망과 필드 전환]]
 - [[Features/AI-StateTree/document|AI StateTree]]
+- [[Features/Boss-Intro/document|최초 보스 등장 연출]]
 - [[Features/UI-and-CommonUI/document|UI와 CommonUI]]
 - [[Features/Interaction-Flow/document|상호작용 흐름]]
 - [[Features/Table-Data/document|테이블 데이터]]

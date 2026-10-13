@@ -35,6 +35,8 @@ public class Maverick : ModuleRules
 			"NavigationSystem",
         });
 
+		PrivateDependencyModuleNames.AddRange(new string[] { "LevelSequence", "MovieScene" });
+
 		if (Target.Type == TargetRules.TargetType.Editor)
 		{
 			PrivateDependencyModuleNames.AddRange(new string[]
@@ -44,6 +46,7 @@ public class Maverick : ModuleRules
 				"KismetCompiler",
 				"BlueprintGraph",
 				"AnimationCore",
+				"MovieSceneTracks",
 				"ToolMenus",
 				"StateTreeEditorModule",
 				"PropertyBindingUtils",

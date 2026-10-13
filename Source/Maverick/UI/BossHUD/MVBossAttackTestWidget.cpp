@@ -78,6 +78,7 @@ void UMVBossAttackTestWidget::EnsureMouseInput()
 	if (!Player || !IsVisible()) return;
 	UGameViewportClient* Viewport = GetWorld() ? GetWorld()->GetGameViewport() : nullptr;
 	const AMVAIController* AI = IsValid(TestBoss) ? Cast<AMVAIController>(TestBoss->GetController()) : nullptr;
+	if (AI && AI->bBossIntroBlocked) return;
 	if (AI && AI->BossPlayStart && !bHasManualControl)
 	{
 		if (!Player->bShowMouseCursor && Viewport
@@ -125,6 +126,8 @@ AMVEnemy* UMVBossAttackTestWidget::ResolveBoss()
 
 bool UMVBossAttackTestWidget::CanStartTest() const
 {
+	const AMVAIController* AI = IsValid(TestBoss) ? Cast<AMVAIController>(TestBoss->GetController()) : nullptr;
+	if (AI && AI->bBossIntroBlocked) return false;
 	if (!IsValid(TestBoss) || !TestBoss->StatComponent || TestBoss->StatComponent->IsDead()
 		|| TestBoss->StatComponent->IsGroggy() || !TestBoss->CombatComponent || !TestBoss->ActionComponent
 		|| TestBoss->ActionComponent->IsActionRunning()) return false;

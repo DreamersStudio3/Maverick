@@ -41,6 +41,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnActionRecoveryEscapeWindowChang
  * 캐릭터 공용 액션 입력 관리자.
  *
  * 플레이어 입력을 짧은 액션 입력 버퍼로 정규화하고 등록된 도메인 handler로 중앙 라우팅한다.
+ * 등장 연출의 GameplayInputBlock은 이동·액션 제출·회복 입력 소비 차단, 요청자별 Begin/End 짝 유지
  * 이동 입력은 controller-space로 저장해 Dodge, Combat, HitReaction 같은 도메인 컴포넌트가 같은 기준의 입력 문맥을 사용할 수 있게 한다.
  * 이 컴포넌트는 ActionInputTag별 도메인 규칙을 직접 알지 않고, 우선순위가 높은 handler부터 처리 기회를 넘긴다.
  *
@@ -82,6 +83,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Input|Action")
 	void ClearBufferedActionInput();
+
+	void BeginGameplayInputBlock();
+	void EndGameplayInputBlock();
+	bool IsGameplayInputBlocked() const { return GameplayInputBlockCount > 0; }
 
 	void RegisterActionInputHandler(UObject* HandlerObject, int32 Priority);
 	void UnregisterActionInputHandler(const UObject* HandlerObject);
@@ -224,5 +229,6 @@ private:
 
 private:
 	int32 MovementInputBlockCount = 0;
+	int32 GameplayInputBlockCount = 0;
 	int32 RecoveryEscapeWindowCount = 0;
 };

@@ -35,7 +35,7 @@ void AMVAIController::Tick(const float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	if (!bBossDebugGateInitialized)
+	if (!bBossDebugGateInitialized || bBossIntroBlocked)
 	{
 		return;
 	}
@@ -99,9 +99,29 @@ void AMVAIController::InitializeBossDebugGate()
 	}
 }
 
+void AMVAIController::SetBossIntroBlocked(const bool bBlocked)
+{
+	bBossIntroBlocked = bBlocked;
+	if (bBlocked) SetBossCombatEnabled(false, nullptr);
+}
+
+void AMVAIController::SetBossCombatEnabled(const bool bEnabled, AActor* CombatTarget)
+{
+	if (!IsBossDebugController() || (bEnabled && bBossIntroBlocked)) return;
+	BossPlayStart = bEnabled;
+	TargetActor = bEnabled ? CombatTarget : nullptr;
+	WriteBossAttackTarget(TargetActor);
+	if (!bEnabled) StopMovement();
+	if (UStateTreeAIComponent* Tree = FindBossStateTreeComponent())
+	{
+		if (bEnabled) Tree->StartLogic();
+		else Tree->StopLogic(TEXT("Boss intro / combat disabled"));
+	}
+}
+
 void AMVAIController::SetBossPlayStartForDebug(const bool bInBossPlayStart)
 {
-	if (!IsBossDebugController() || BossPlayStart == bInBossPlayStart)
+	if (!IsBossDebugController() || bBossIntroBlocked || BossPlayStart == bInBossPlayStart)
 	{
 		return;
 	}
