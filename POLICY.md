@@ -96,7 +96,6 @@
 
 - 단일 운영 기준: `docs/wiki/README.md`
 - 활성 지식 체계: 구조·관계 탐색용 Graphify와 사람용 장기 지식 정본 `docs/wiki/`
-- Hive Knowledge: 자동 포착·질의 비활성, 기존 Raw·Wiki 기록 삭제, 신규 생성 금지
 - 지식 배치: 설계 의도·운영 절차·인수인계 지식은 `docs/wiki/`, 코드 구조·호출·관계 탐색은 Graphify
 - `docs/wiki/`: 사람이 Obsidian으로 읽고 최종 검토하는 내부 위키, push 전 영향 검토 필수
 - `docs/todo/`: 진행 중 작업의 단기 상태·검증 기록, 완료 후 삭제

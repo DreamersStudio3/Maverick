@@ -39,6 +39,9 @@ UMVWeaponComponent::UMVWeaponComponent()
 	BareHandWeapon.AttackPower = 0.0f;
 	BareHandWeapon.RangeType = EMVWeaponRangeType::Melee;
 	BareHandWeapon.AttachSocketName = TEXT("hand_r_socket");
+
+	
+
 }
 
 void UMVWeaponComponent::BeginPlay()
@@ -60,6 +63,30 @@ void UMVWeaponComponent::BeginPlay()
 			InputManager->RegisterActionInputHandler(this, MVActionInputHandlerPriorities::Weapon);
 		}
 	}
+
+	for (UMVWeaponSkillMap* OneSkillMap : WeaponSkillMaps)
+	{
+		// Creating Search Map along with WeaponSkillMaps for each WeaponStyle
+		SkillBlueprint.Add(OneSkillMap->WeaponStyle, OneSkillMap);
+
+		// Initialize SkillTreeStates for each WeaponStyle
+		FMVSkillTreeState NewState;
+		NewState.EquippedStyle = OneSkillMap->WeaponStyle;
+		SkillTreeStates.Add(OneSkillMap->WeaponStyle, NewState);
+	}
+	
+	// Todo: Load SkillTreeStates from SaveGame if available and 
+	if (0 /*Save Game exist*/)
+	{
+
+	}
+	// If Theere's no SaveGame, Setting the initial Unlocked Skills and Equipped Skill of each SkillTreeState.
+	else
+	{
+		InitSkillTreeStates();
+	}
+
+	// Todo: Set current weapon skills to the CombatComponent
 }
 
 void UMVWeaponComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -181,6 +208,129 @@ EMVEquippedStyle UMVWeaponComponent::GetEquippedStyle() const
 EMVWeaponRangeType UMVWeaponComponent::GetWeaponRangeType() const
 {
 	return CurrentWeaponState.RangeType;
+}
+
+bool UMVWeaponComponent::GetWeaponSkillState(EMVEquippedStyle EquippedStyle, FMVSkillTreeState& Output) const
+{
+	const FMVSkillTreeState* Result = SkillTreeStates.Find(EquippedStyle);
+	if(Result)
+	{
+		Output = *Result;
+		return true;
+	}
+
+	Output = FMVSkillTreeState();
+	return false;
+}
+
+bool UMVWeaponComponent::GetSkillTree(EMVEquippedStyle EquippedStyle, UMVWeaponSkillMap*& Output) const
+{
+	const TObjectPtr<UMVWeaponSkillMap>* Result = SkillBlueprint.Find(EquippedStyle);
+
+	if(Result && *Result)
+	{
+		Output = Result->Get();
+		return true;
+	}
+
+	Output = nullptr;
+	return false;
+}
+
+// Return Type is Copy TMap. But the number's of element is small and value is FDataTableRowHandle which is small struct. So Copying is not expensive. 
+const TMap<EMVSkillSlot, FDataTableRowHandle> UMVWeaponComponent::GetEquippedSkill(EMVEquippedStyle EquippedStyle) const
+{
+	FMVSkillTreeState State;
+	TMap<EMVSkillSlot, FDataTableRowHandle> Result;
+	EMVEquippedStyle StyleToCheck;
+	
+	// If EquippedStyle is None, use the current weapon's equipped style to get the skill tree state.
+	if(EquippedStyle == EMVEquippedStyle::None)
+	{
+		StyleToCheck = CurrentWeaponState.EquippedStyle;
+	}
+	else
+	{
+		StyleToCheck = EquippedStyle;
+	}
+	
+	if (GetWeaponSkillState(StyleToCheck, State))
+	{
+		Result = State.EquippedSkill;
+	}
+	
+	// If the skill tree state is not found, return an empty map
+	return Result;
+}
+
+bool UMVWeaponComponent::UnlockSkill(EMVEquippedStyle EquippedStyle, FDataTableRowHandle RowHandle)
+{
+	TObjectPtr<UMVWeaponSkillMap>* SkillMapPtr = SkillBlueprint.Find(EquippedStyle);
+	
+	// If the skill map is not found for the given equipped style, return false
+	if(SkillMapPtr == nullptr || *SkillMapPtr == nullptr)
+	{
+		return false;
+	}
+	
+	EMVSkillSlot SkillSlot = SkillMapPtr->Get()->FindSkillSlot(RowHandle);
+	
+	// If the skill slot is NONE, it means the skill is not found in the skill map for the given equipped style
+	if(SkillSlot == EMVSkillSlot::NONE)
+	{
+		return false;
+	}
+
+	int32 RequiredPoints = SkillMapPtr->Get()->GetRequiredPointsForSkill(RowHandle);
+	// If the required points are negative or current Skill Point is not enough, the skill cannot be unlocked
+	// Todo: Implement CurrentSkillPoint check 
+	if(RequiredPoints < 0/* || CurrentSkillPoint < RequiredPoints */)
+	{
+		return false;
+	}
+
+	// If the skill is already unlocked, return false
+	FMVSkillTreeState* SkillTreeStatePtr = SkillTreeStates.Find(EquippedStyle);
+	if (!SkillTreeStatePtr->UnlockedSkills.Contains(FMVHashDataTableRowHandle(RowHandle)))
+	{
+		return false;
+	}
+
+	// If the skill is not unlocked, add it to the UnlockedSkills set
+	SkillTreeStatePtr->UnlockedSkills.Add(FMVHashDataTableRowHandle(RowHandle));
+
+	return true;
+}
+
+bool UMVWeaponComponent::EquipSkill(EMVEquippedStyle EquippedStyle, FDataTableRowHandle RowHandle)
+{
+	TObjectPtr<UMVWeaponSkillMap>* SkillMapPtr = SkillBlueprint.Find(EquippedStyle);
+
+	// If the skill map is not found for the given equipped style, return false
+	if (SkillMapPtr == nullptr || *SkillMapPtr == nullptr)
+	{
+		return false;
+	}
+
+	EMVSkillSlot SkillSlot = SkillMapPtr->Get()->FindSkillSlot(RowHandle);
+
+	// If the skill slot is NONE, it means the skill is not found in the skill map for the given equipped style
+	if (SkillSlot == EMVSkillSlot::NONE)
+	{
+		return false;
+	}
+
+	// Check if the skill is unlocked before equipping
+	FMVSkillTreeState* SkillTreeStatePtr = SkillTreeStates.Find(EquippedStyle);
+	if (!SkillTreeStatePtr->UnlockedSkills.Contains(FMVHashDataTableRowHandle(RowHandle)))
+	{
+		return false;
+	}
+
+	// Equip the skill by adding it to the EquippedSkill map
+	SkillTreeStatePtr->EquippedSkill.Add(SkillSlot, RowHandle);
+
+	return true;
 }
 
 bool UMVWeaponComponent::TryEquipWeaponRow(const FMVWeaponTableRow& WeaponRow, int32 LoadoutIndex)
@@ -674,4 +824,140 @@ USceneComponent* UMVWeaponComponent::ResolveWeaponAttachParent() const
 	}
 
 	return GetOwner() ? GetOwner()->GetRootComponent() : nullptr;
+}
+
+void UMVWeaponComponent::InitSkillTreeStates()
+{
+	for (auto& Pair : SkillTreeStates)
+	{
+		// Find the SkillMap corresponding to the WeaponStyle of the SkillTreeState
+		TObjectPtr<UMVWeaponSkillMap>* FoundSkillMap = SkillBlueprint.Find(Pair.Key);
+		if (!FoundSkillMap)
+		{
+			continue;
+		}
+		// Find One Skill Map for the WeaponStyle and set the initial Unlocked Skills and Equipped Skill of the SkillTreeState.
+		UMVWeaponSkillMap* SkillMap = FoundSkillMap->Get();
+
+		// Passive Skill Setting
+		for (const auto& Elem : SkillMap->PassiveSkill)
+		{
+			EMVSkillSlot SkillSlot = SkillMap->FindSkillSlot(Elem.SkillRowHandle.RowHandle);
+
+			// Invalid SkillSlot, Skip this Skill
+			if (SkillSlot == EMVSkillSlot::NONE)
+			{
+				continue;
+			}
+
+			// If RequiredPoints is 0 or less, Add the Skill to UnlockedSkills of the SkillTreeState
+			if (Elem.RequiredPoints <= 0)
+			{
+				Pair.Value.UnlockedSkills.Add(Elem.SkillRowHandle);
+				//SkillTreeStates[Pair.Key].UnlockedSkills.Add(Elem.SkillRowHandle);
+			}
+
+			// If there's no EquippedSkill for Specific SkillSlot, Set the EquippedSkill to this Skill
+			if (!Pair.Value.EquippedSkill.Contains(SkillSlot))
+			{
+				Pair.Value.EquippedSkill.Add(SkillSlot, Elem.SkillRowHandle.RowHandle);
+			}
+		}
+		// Q Skill Setting
+		for (const auto& Elem : SkillMap->QSkill)
+		{
+			EMVSkillSlot SkillSlot = SkillMap->FindSkillSlot(Elem.SkillRowHandle.RowHandle);
+
+			// Invalid SkillSlot, Skip this Skill
+			if (SkillSlot == EMVSkillSlot::NONE)
+			{
+				continue;
+			}
+
+			// If RequiredPoints is 0 or less, Add the Skill to UnlockedSkills of the SkillTreeState
+			if (Elem.RequiredPoints <= 0)
+			{
+				Pair.Value.UnlockedSkills.Add(Elem.SkillRowHandle);
+				//SkillTreeStates[Pair.Key].UnlockedSkills.Add(Elem.SkillRowHandle);
+			}
+
+			// If there's no EquippedSkill for Specific SkillSlot, Set the EquippedSkill to this Skill
+			if (!Pair.Value.EquippedSkill.Contains(SkillSlot))
+			{
+				Pair.Value.EquippedSkill.Add(SkillSlot, Elem.SkillRowHandle.RowHandle);
+			}
+		}
+		// W Skill Setting
+		for (const auto& Elem : SkillMap->WSkill)
+		{
+			EMVSkillSlot SkillSlot = SkillMap->FindSkillSlot(Elem.SkillRowHandle.RowHandle);
+
+			// Invalid SkillSlot, Skip this Skill
+			if (SkillSlot == EMVSkillSlot::NONE)
+			{
+				continue;
+			}
+
+			// If RequiredPoints is 0 or less, Add the Skill to UnlockedSkills of the SkillTreeState
+			if (Elem.RequiredPoints <= 0)
+			{
+				Pair.Value.UnlockedSkills.Add(Elem.SkillRowHandle);
+				//SkillTreeStates[Pair.Key].UnlockedSkills.Add(Elem.SkillRowHandle);
+			}
+
+			// If there's no EquippedSkill for Specific SkillSlot, Set the EquippedSkill to this Skill
+			if (!Pair.Value.EquippedSkill.Contains(SkillSlot))
+			{
+				Pair.Value.EquippedSkill.Add(SkillSlot, Elem.SkillRowHandle.RowHandle);
+			}
+		}
+		// E Skill Setting
+		for (const auto& Elem : SkillMap->ESkill)
+		{
+			EMVSkillSlot SkillSlot = SkillMap->FindSkillSlot(Elem.SkillRowHandle.RowHandle);
+
+			// Invalid SkillSlot, Skip this Skill
+			if (SkillSlot == EMVSkillSlot::NONE)
+			{
+				continue;
+			}
+
+			// If RequiredPoints is 0 or less, Add the Skill to UnlockedSkills of the SkillTreeState
+			if (Elem.RequiredPoints <= 0)
+			{
+				Pair.Value.UnlockedSkills.Add(Elem.SkillRowHandle);
+				//SkillTreeStates[Pair.Key].UnlockedSkills.Add(Elem.SkillRowHandle);
+			}
+
+			// If there's no EquippedSkill for Specific SkillSlot, Set the EquippedSkill to this Skill
+			if (!Pair.Value.EquippedSkill.Contains(SkillSlot))
+			{
+				Pair.Value.EquippedSkill.Add(SkillSlot, Elem.SkillRowHandle.RowHandle);
+			}
+		}
+		// R Skill Setting
+		for (const auto& Elem : SkillMap->RSkill)
+		{
+			EMVSkillSlot SkillSlot = SkillMap->FindSkillSlot(Elem.SkillRowHandle.RowHandle);
+
+			// Invalid SkillSlot, Skip this Skill
+			if (SkillSlot == EMVSkillSlot::NONE)
+			{
+				continue;
+			}
+
+			// If RequiredPoints is 0 or less, Add the Skill to UnlockedSkills of the SkillTreeState
+			if (Elem.RequiredPoints <= 0)
+			{
+				Pair.Value.UnlockedSkills.Add(Elem.SkillRowHandle);
+				//SkillTreeStates[Pair.Key].UnlockedSkills.Add(Elem.SkillRowHandle);
+			}
+
+			// If there's no EquippedSkill for Specific SkillSlot, Set the EquippedSkill to this Skill
+			if (!Pair.Value.EquippedSkill.Contains(SkillSlot))
+			{
+				Pair.Value.EquippedSkill.Add(SkillSlot, Elem.SkillRowHandle.RowHandle);
+			}
+		}
+	}
 }

@@ -4,8 +4,11 @@
 #include "Components/ActorComponent.h"
 #include "Engine/DataTable.h"
 #include "Struct/MVWeaponTypes.h"
+#include "Struct/MVSkillTree.h" 
 #include "Tables/MVWeaponTableTypes.h"
 #include "Interface/MVActionInputHandlerInterface.h"
+#include "DataAsset/MVWeaponSkillMap.h"
+
 #include "MVWeaponComponent.generated.h"
 
 class UMeshComponent;
@@ -68,6 +71,23 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Maverick|Weapon")
 	EMVWeaponRangeType GetWeaponRangeType() const;
 
+	// Skill Tree Management Functions
+	UFUNCTION(BlueprintPure, Category = "Maverick|Skill")
+	bool GetWeaponSkillState(EMVEquippedStyle EquippedStyle, FMVSkillTreeState& Output) const;
+	
+	UFUNCTION(BlueprintPure, Category = "Maverick|Skill")
+	bool GetSkillTree(EMVEquippedStyle EquippedStyle, UMVWeaponSkillMap*& Output) const;
+	
+	UFUNCTION(BlueprintPure, Category = "Maverick|Skill")
+	const TMap<EMVSkillSlot, FDataTableRowHandle> GetEquippedSkill(EMVEquippedStyle EquippedStyle = EMVEquippedStyle::None) const;
+	
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Skill")
+	bool UnlockSkill(EMVEquippedStyle EquippedStyle, FDataTableRowHandle RowHandle);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Skill")
+	bool EquipSkill(EMVEquippedStyle EquippedStyle, FDataTableRowHandle RowHandle);
+
+public:
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|Weapon|Event")
 	FMVOnEquippedWeaponChanged OnEquippedWeaponChanged;
 
@@ -82,6 +102,10 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Weapon|Visual")
 	bool bManageWeaponMesh = true;
+
+	// Skill Maps that can be used to character's weapon skills. Should be set in Editor or in Blueprint.
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Maverick|Skill")
+	TArray<TObjectPtr<UMVWeaponSkillMap>> WeaponSkillMaps;
 
 private:
 	bool TryEquipWeaponRow(const FMVWeaponTableRow& WeaponRow, int32 LoadoutIndex);
@@ -112,6 +136,13 @@ private:
 		const TCHAR* ComponentNameBase);
 	USceneComponent* ResolveWeaponAttachParent() const;
 
+	// When the SaveGame doesn't exist for SkillTreeStates, this function initializes the SkillTreeStates with default values based on the WeaponSkillMaps.
+	void InitSkillTreeStates();
+	
+	// Todo: Apply Skill to CombatComponent. This function will be responsible for applying the equipped skills to the character's combat component, allowing the character to use the skills in combat.
+	//void ApplySkillToCombatComponent();
+
+private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Weapon", meta = (AllowPrivateAccess = "true"))
 	FMVEquippedWeaponState CurrentWeaponState;
 	
@@ -123,4 +154,12 @@ private:
 
 	UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Weapon|Visual", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UMeshComponent> SecondaryWeaponMeshComponent;
+
+	// SkillBlueprint is a map that associates each equipped style with its corresponding skill map.
+	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Skill", meta = (AllowPrivateAccess = "true"))
+	TMap<EMVEquippedStyle, TObjectPtr<UMVWeaponSkillMap>> SkillBlueprint;
+
+	// SkillTreeStates is current state of the skill tree for each equipped style, which can be used to track the player's equipped skills and unlocks.
+	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Skill", meta = (AllowPrivateAccess = "true"))
+	TMap<EMVEquippedStyle, FMVSkillTreeState> SkillTreeStates;
 };
