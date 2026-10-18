@@ -1,8 +1,8 @@
 ---
 제목: Maverick 아키텍처
 부제목: 런타임 흐름과 도메인 책임 경계
-최근수정일: 2026-09-29
-최근수정자: "No-Jyun"
+최근수정일: 2026-10-19
+최근수정자: "Kwon-Nahoo-Man"
 관련문서:
   - "[[Convention/Header-Documentation/document|C++ 헤더 책임 문서화]]"
   - "[[Features/Combat/Combat-System/document|Maverick 전투 시스템]]"
@@ -22,7 +22,7 @@ flowchart TD
     AITasks -->|SelectAndExecute| Action["UMVActionComponent"]
     AITasks -->|EnemyCombatAction| Combat["UMVCombatComponent"]
     Handlers --> Combat
-    Handlers --> Weapon["UMVWeaponComponent<br/>장비 순환·장착 검증"]
+    Handlers --> Weapon["UMVWeaponComponent<br/>무기 소유·퀵슬롯·장착 검증"]
     Weapon -->|ChangeWeapon| Combat
     Weapon --> WeaponVisual["무기 메시·장착 변경 이벤트<br/>스타일별 Anim Layer"]
     Handlers --> PlayerDomains["Dodge / Consumable / Finisher"]
@@ -75,8 +75,17 @@ flowchart TD
 | `UMVDeathComponent` | Actor 단위 사망 표현 |
 | `UMVHitReactionComponent` | 피격 Row, Interrupt, Groggy, Recovery 표현 |
 | `UMVInputManagerComponent` | 입력 Snapshot, 짧은 Buffer, 우선순위 처리기 배분 |
-| `UMVWeaponComponent` | 교체 입력·장비 목록·장착 상태·무기 메시와 적중 Snapshot 원천 |
+| `UMVWeaponComponent` | 교체 입력·소유 무기·퀵슬롯·장착 상태·무기 메시·적중 Snapshot·스타일별 SkillTree 런타임 상태 원천 |
 | `UMotionWarpingComponent` | Action·Montage 공간 보정 |
+
+### WeaponComponent 경계
+
+- `OwnedWeapons`: 무기 소유권의 단일 정본, 퀵슬롯은 소유 태그만 참조
+- `CurrentWeaponState`: 장착 Row에서 복사한 전투·메시 상태, HitResolver의 Snapshot 원천
+- `WeaponSkillMaps`: 에디터에서 구성하는 스타일별 `UMVWeaponSkillMap` 목록
+- `SkillBlueprint`: `BeginPlay`에서 `WeaponSkillMaps`를 `EMVEquippedStyle` key로 색인
+- `SkillTreeStates`: 스타일별 해금·장착 스킬 런타임 상태와 조회·변경 API 원천
+- 맨손: 소유 목록과 퀵슬롯에 포함하지 않는 내부 장착 fallback
 
 ### 플레이어
 

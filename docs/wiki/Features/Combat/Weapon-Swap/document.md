@@ -1,8 +1,8 @@
 ---
 제목: "플레이어 무기 교체"
 부제목: "한손검·듀얼 소드 장착 전환과 스타일별 애니메이션·손별 공격 판정"
-최근수정일: 2026-09-08
-최근수정자: "No-Jyun"
+최근수정일: 2026-10-19
+최근수정자: "Kwon-Nahoo-Man"
 관련문서:
   - "[[Architecture/document|Maverick 아키텍처]]"
   - "[[Features/Input-to-Action/document|입력에서 Action 실행까지]]"
@@ -21,7 +21,7 @@
 | 계층 | 책임 |
 |---|---|
 | `UMVInputManagerComponent` | 입력 수집·버퍼·우선순위별 처리기 호출 |
-| `UMVWeaponComponent` | 장비 목록·장착 상태·교체 가능 여부·무기 메시 관리 |
+| `UMVWeaponComponent` | 소유 무기·퀵슬롯·장착 상태·교체 가능 여부·무기 메시 관리 |
 | `UMVCombatComponent` | 장착 스타일에 대응하는 전투 데이터·공격 선택 |
 | `BP_ThirdPersonCharacter` | 입력 전달·장착 변경 이벤트·애니메이션 레이어·무기 소켓 좌표 제공 |
 | `BP_DualWeapon_MeleeAttack` | 손별 트레이스 활성 상태·피격 기록·적중 요청 |
@@ -39,6 +39,52 @@ Blueprint는 입력 태그 전달, InputManager는 처리기 배분, WeaponCompo
 `Action.Input.WeaponSwap`이면 `CycleWeapon` 결과와 무관하게 `true`, 다른 태그이면 `false`
 교체 불가 입력의 버퍼 잔류와 액션 종료 후 지연 교체 방지
 
+## 소유 무기와 퀵슬롯
+
+| 상태 | 계약 |
+|---|---|
+| `OwnedWeapons` | `FGameplayTag`를 key로 `FDataTableRowHandle`을 보관하는 무기 소유권의 단일 정본 |
+| `QuickSlotWeaponTags` | 소유 무기 key만 참조하는 고정 슬롯 배열, 기본 최대 2개 |
+| `ActiveQuickSlotIndex` | 현재 장착에 사용한 퀵슬롯 위치, 활성 슬롯을 비워도 위치 유지 |
+| `CurrentWeaponState` | 장착 Row에서 복사한 전투·메시 런타임 상태 |
+
+`AcquireWeapon`은 유효한 무기 Row의 `ItemTag`로 소유 목록에만 추가
+같은 태그의 중복 획득은 기존 Row Handle을 유지하고 거부
+`BeginPlay`에서 `DefaultWeaponRow`를 소유 목록과 첫 퀵슬롯에 등록한 뒤 장착
+
+`SetQuickSlotWeapon`은 슬롯 범위·소유 여부·다른 슬롯 중복을 검증
+활성 슬롯 교체는 새 무기 장착 검증까지 성공해야 확정하며, 실패하면 기존 슬롯 유지
+`ClearQuickSlotWeapon`은 뒤 슬롯을 당기지 않고 해당 위치를 비우며 활성 슬롯이면 즉시 맨손 전환
+
+`DiscardWeapon`은 모든 퀵슬롯 참조를 먼저 비운 뒤 소유 목록에서 제거
+장착 중인 무기를 버리면 다른 무기를 자동 장착하지 않고 맨손 전환
+맨손은 소유 목록과 퀵슬롯에 포함하지 않는 내부 fallback
+
+외부의 명시적 장착 함수는 `CycleWeapon`만 공개하고 모든 무기 장착은 퀵슬롯을 통해 수행
+`EquipQuickSlotWeapon`, Row 장착, 맨손 장착은 내부 순환·초기화·fallback 경로에서만 사용
+
+실제 소유 변경은 `OnOwnedWeaponsChanged`, 퀵슬롯 변경은 `OnQuickSlotsChanged` 발행
+두 이벤트는 컨테이너를 복사하지 않으며 수신 측에서 조회 함수로 현재 상태 확인
+
+## 공개 API와 액션 중 변경 차단
+
+| 구분 | 공개 API | Action 진행 중 |
+|---|---|---|
+| 무기 순환 | `CycleWeapon` | 장착 변경을 거부하고 `false` 반환 |
+| 소유 관리 | `AcquireWeapon`, `DiscardWeapon` | 획득은 허용, 버리기는 거부 |
+| 퀵슬롯 관리 | `SetQuickSlotWeapon`, `ClearQuickSlotWeapon` | 두 요청 모두 거부 |
+| 소유 조회 | `GetOwnedWeapons`, `IsWeaponOwned` | 상태 변경 없음 |
+| 퀵슬롯 조회 | `GetQuickSlotWeapons`, `GetActiveQuickSlotIndex` | 상태 변경 없음 |
+| 장착 상태 조회 | `GetEquippedWeaponState`, `GetEquippedWeaponAttackPower`, `GetEquippedStyle`, `GetWeaponRangeType` | 상태 변경 없음 |
+| 적중 Snapshot | `CaptureWeaponHitSnapshot` | 현재 장착 상태 Snapshot 반환 |
+
+`DiscardWeapon`, `SetQuickSlotWeapon`, `ClearQuickSlotWeapon`은 호출 결과로 장착 무기가 바뀔 수 있어 Action 진행 중 요청 전체를 거부
+`AcquireWeapon`은 소유 목록만 변경하고 장착 상태를 바꾸지 않아 Action 진행 중에도 허용
+차단된 요청은 상태와 변경 이벤트를 유지한 채 `false` 반환
+
+`TryHandleActionInput`은 `Action.Input.WeaponSwap`을 `CycleWeapon`으로 전달하는 입력 인터페이스 경계
+입력 외 시스템도 `CycleWeapon`을 직접 호출할 수 있도록 공개 API 유지
+
 ## Tab 입력과 장착 전환
 
 ```mermaid
@@ -48,12 +94,16 @@ flowchart TD
     Manager --> Cycle["CycleWeapon"]
     Cycle --> Running{"IsActionRunning"}
     Running -->|예| Keep["무기·인덱스 유지 / 입력 소비"]
-    Running -->|아니오| Index["ActiveLoadoutIndex 확인<br/>유실 시 ItemTag로 목록 위치 복구"]
-    Index --> Candidate["WeaponLoadoutRows의 다음 후보 선택"]
-    Candidate --> Validate{"Row·무기 데이터 검증"}
-    Validate -->|실패| Remaining{"남은 후보 존재"}
-    Remaining -->|예| Candidate
-    Remaining -->|아니오| Keep
+    Running -->|아니오| Index["ActiveQuickSlotIndex 확인<br/>유실 시 ItemTag로 슬롯 위치 복구"]
+    Index --> Next["다음 슬롯으로 한 칸 이동<br/>마지막 다음은 첫 슬롯"]
+    Next --> Empty{"다음 슬롯이 비었는가"}
+    Empty -->|예, 현재 무기| BareHand["활성 인덱스 갱신<br/>맨손 장착 / true"]
+    Empty -->|예, 현재 맨손| IndexOnly["활성 인덱스만 갱신<br/>장착 생략 / false"]
+    Empty -->|아니오| Same{"현재와 같은 무기인가"}
+    Same -->|예| IndexOnly
+    Same -->|아니오| Resolve["OwnedWeapons에서 Row Handle 해석"]
+    Resolve --> Validate{"Row·무기 데이터 검증"}
+    Validate -->|실패| Keep
     Validate -->|성공| Apply["인덱스·장착 상태 반영"]
     Apply --> Style["EquippedStyle 동기화<br/>CombatComponent.ChangeWeapon"]
     Style --> Visual["무기 메시 갱신"]
@@ -62,9 +112,11 @@ flowchart TD
 
 장착 전 검증: 유효한 ItemTag, 맨손 이외 주 메시 존재·로드 성공, SkeletalMesh 또는 StaticMesh 형식
 주 메시와 지정된 보조 메시의 필수 소켓: `Trace_Start`, `Trace_End`, `Trace_Left`, `Trace_Right`
-후보 검증 실패 시 다음 Row 탐색, 성공 후보 부재 시 기존 상태 유지
+빈 슬롯을 건너뛰지 않고 호출마다 다음 슬롯으로 한 칸 이동
+다음 슬롯이 비었으면 무기에서 맨손으로 바뀔 때만 `true`, 맨손 유지 시 인덱스만 바꾸고 `false`
+무기가 든 다음 슬롯의 장착 검증 실패 시 현재 장착 상태와 활성 인덱스 유지
 
-성공 시 `ActiveLoadoutIndex`와 `CurrentWeaponState` 갱신, 공격력·TraceRadius를 0 이상으로 제한
+성공 시 `ActiveQuickSlotIndex`와 `CurrentWeaponState` 갱신, 공격력·TraceRadius를 0 이상으로 제한
 주·보조 메시와 각 부착 소켓·Transform을 장착 데이터에서 적용
 
 ## 스타일별 대기·공격 애니메이션
@@ -156,6 +208,13 @@ Dodge_P1_Step_DW_R_01
 Windows Unreal 환경에서 사용자 빌드·플레이 확인 전달: 무기 전환, 스타일별 애니메이션·공격·회피, 양손 개별 트레이스
 공격·회피·피격 중 교체 차단, 지연 교체 방지, 반복 교체 및 잘못된 Row 처리도 사용자 통과 전달
 문서 작성 시 에이전트 빌드·에디터 재실행 없음; 마지막 손별 Notify 수정 이후 실행 결과는 별도 미확인
+
+소유·퀵슬롯 개편과 액션 중 변경 차단을 포함해 UE 5.8 `MaverickEditor Win64 Development` 빌드 성공
+`BP_ThirdPersonCharacter` 테스트 케이스에서 무기 획득·버리기와 퀵슬롯 등록·해제 검증 완료
+기본 무기 초기화·빈 슬롯 순환·네 변경 API의 Action 진행 중 차단 PIE 검증은 남은 상태
+
+맨손은 현재 컴포넌트 내부 데이터 유지
+`BareHandWeapon`의 DataTable 행 전환은 이번 개편 범위에서 제외
 
 리타게팅한 공격의 90도 측면 돌진 문제 잔존
 원본 Root 회전값 차이는 사용자 관찰 사항이며 단독 원인으로 확정하지 않은 상태
