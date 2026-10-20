@@ -374,6 +374,21 @@ bool UMVWeaponComponent::GetSkillTree(EMVEquippedStyle EquippedStyle, UMVWeaponS
 	return false;
 }
 
+bool UMVWeaponComponent::GetBasicAttackRow(
+	const EMVEquippedStyle EquippedStyle,
+	const EMVCombatActionTypes ActionType,
+	FDataTableRowHandle& Output) const
+{
+	const TObjectPtr<UMVWeaponSkillMap>* SkillMap = SkillBlueprint.Find(EquippedStyle);
+	if (!SkillMap || !*SkillMap)
+	{
+		Output = FDataTableRowHandle();
+		return false;
+	}
+
+	return SkillMap->Get()->GetBasicAttackRow(ActionType, Output);
+}
+
 // Return Type is Copy TMap. But the number's of element is small and value is FDataTableRowHandle which is small struct. So Copying is not expensive. 
 const TMap<EMVSkillSlot, FDataTableRowHandle> UMVWeaponComponent::GetEquippedSkill(EMVEquippedStyle EquippedStyle) const
 {
@@ -398,6 +413,25 @@ const TMap<EMVSkillSlot, FDataTableRowHandle> UMVWeaponComponent::GetEquippedSki
 	
 	// If the skill tree state is not found, return an empty map
 	return Result;
+}
+
+bool UMVWeaponComponent::GetEquippedSkillRow(
+	const EMVEquippedStyle EquippedStyle,
+	const EMVSkillSlot SkillSlot,
+	FDataTableRowHandle& Output) const
+{
+	const FMVSkillTreeState* SkillTreeState = SkillTreeStates.Find(EquippedStyle);
+	const FDataTableRowHandle* RowHandle = SkillTreeState
+		? SkillTreeState->EquippedSkill.Find(SkillSlot)
+		: nullptr;
+	if (!RowHandle || !RowHandle->DataTable || RowHandle->RowName.IsNone())
+	{
+		Output = FDataTableRowHandle();
+		return false;
+	}
+
+	Output = *RowHandle;
+	return true;
 }
 
 bool UMVWeaponComponent::UnlockSkill(EMVEquippedStyle EquippedStyle, FDataTableRowHandle RowHandle)
@@ -485,8 +519,7 @@ bool UMVWeaponComponent::EquipSkill(EMVEquippedStyle EquippedStyle, FDataTableRo
 
 	if (EquippedStyle == CurrentWeaponState.EquippedStyle)
 	{
-		// Todo: Replace this full refresh with a slot-level CombatComponent API for SkillSlot.
-		RefreshOwnerCombatComponent();
+		RefreshOwnerCombatSkillSlot(SkillSlot);
 	}
 
 	return true;
@@ -813,6 +846,17 @@ void UMVWeaponComponent::RefreshOwnerCombatComponent() const
 		if (UMVCombatComponent* CombatComponent = Owner->FindComponentByClass<UMVCombatComponent>())
 		{
 			CombatComponent->ChangeWeapon(CurrentWeaponState.EquippedStyle);
+		}
+	}
+}
+
+void UMVWeaponComponent::RefreshOwnerCombatSkillSlot(const EMVSkillSlot SkillSlot) const
+{
+	if (AActor* Owner = GetOwner())
+	{
+		if (UMVCombatComponent* CombatComponent = Owner->FindComponentByClass<UMVCombatComponent>())
+		{
+			CombatComponent->RefreshSkillSlot(SkillSlot);
 		}
 	}
 }

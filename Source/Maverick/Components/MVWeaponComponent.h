@@ -97,9 +97,21 @@ public:
 	
 	UFUNCTION(BlueprintPure, Category = "Maverick|Skill")
 	bool GetSkillTree(EMVEquippedStyle EquippedStyle, UMVWeaponSkillMap*& Output) const;
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|Combat")
+	bool GetBasicAttackRow(
+		EMVEquippedStyle EquippedStyle,
+		EMVCombatActionTypes ActionType,
+		FDataTableRowHandle& Output) const;
 	
 	UFUNCTION(BlueprintPure, Category = "Maverick|Skill")
 	const TMap<EMVSkillSlot, FDataTableRowHandle> GetEquippedSkill(EMVEquippedStyle EquippedStyle = EMVEquippedStyle::None) const;
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|Skill")
+	bool GetEquippedSkillRow(
+		EMVEquippedStyle EquippedStyle,
+		EMVSkillSlot SkillSlot,
+		FDataTableRowHandle& Output) const;
 	
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Skill")
 	bool UnlockSkill(EMVEquippedStyle EquippedStyle, FDataTableRowHandle RowHandle);
@@ -135,8 +147,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Weapon|Visual")
 	bool bManageWeaponMesh = true;
 
-	// Skill Maps that can be used to character's weapon skills. Should be set in Editor or in Blueprint.
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Maverick|Skill")
+	// Per-style static definitions for basic attacks and skill candidates. Set in Editor or Blueprint.
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Maverick|Combat")
 	TArray<TObjectPtr<UMVWeaponSkillMap>> WeaponSkillMaps;
 
 private:
@@ -156,6 +168,7 @@ private:
 	bool ValidateWeaponTraceSockets(const UObject& WeaponMesh, const FGameplayTag& ItemTag) const;
 	void SyncOwnerEquippedStyle() const;
 	void RefreshOwnerCombatComponent() const;
+	void RefreshOwnerCombatSkillSlot(EMVSkillSlot SkillSlot) const;
 	void ApplyWeaponVisual();
 	void ClearWeaponVisual();
 	void ApplyWeaponMeshVisual(
@@ -200,7 +213,7 @@ private:
 	UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Weapon|Visual", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UMeshComponent> SecondaryWeaponMeshComponent;
 
-	// SkillBlueprint is a map that associates each equipped style with its corresponding skill map.
+	// Runtime lookup from equipped style to its static basic attack and skill definition.
 	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Skill", meta = (AllowPrivateAccess = "true"))
 	TMap<EMVEquippedStyle, TObjectPtr<UMVWeaponSkillMap>> SkillBlueprint;
 
