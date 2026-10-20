@@ -1,8 +1,8 @@
 ---
 제목: "Maverick 전투 시스템"
 부제목: "현재 공격 실행 흐름과 공격·스킬 구성"
-최근수정일: 2026-10-07
-최근수정자: "Codex"
+최근수정일: 2026-10-20
+최근수정자: "Kwon-Nahoo-Man"
 관련문서:
   - "[[Architecture/document|Maverick Architecture]]"
   - "[[Features/Input-to-Action/document|입력에서 Action 실행까지]]"
@@ -56,3 +56,25 @@ flowchart TD
 - Ability Notify 최초 시작 시 비용 차감, 종료 시 체인·쿨다운 갱신
 - HUD에 사용 가능 상태·연속 단계·입력 창·남은 쿨다운 투영
 - Q 적중 연계·R 게이지·W/E 조합 입력 계약: [[Features/Combat/Skill/document|플레이어 스킬 구조]]
+
+## Passive 스킬 생명주기
+
+```mermaid
+flowchart LR
+    Request["Passive Row 적용 요청"] --> Clear["기존 Passive 종료·슬롯 비우기"]
+    Clear --> Validate{"Row·Ability·비용·체인 검증"}
+    Validate -->|실패| Vacant["Passive 공석"]
+    Validate -->|성공| Create["UMVAbilityBase 생성·초기화"]
+    Create --> Start["Execute_StartAbility"]
+    Start -->|활성 실패| Vacant
+    Start -->|활성 성공| Active["활성 Row·인스턴스 보관"]
+    Active --> End["명시적 해제 또는 EndPlay"]
+    End --> Clear
+```
+
+- `UMVCombatComponent`가 QWER 실행 상태와 분리된 Passive 단일 슬롯 소유
+- 기존 `FMVSkillDataTableColumn`과 `UMVAbilityBase` 재사용
+- Passive Row의 HP·Stamina·MP 비용과 `NextChainName` 기반 체인 사용 금지
+- 동일 Row 재적용은 현재 인스턴스를 유지하고 성공 반환
+- 교체 실패 시 이전 Passive 복구 없이 공석 유지
+- 사망 시 유지, `WeaponComponent` 장착 상태 연결은 별도 단계
