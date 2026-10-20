@@ -20,10 +20,11 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMVOnOwnedWeaponsChanged);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMVOnQuickSlotsChanged);
 
 /**
- * 캐릭터의 무기 소유권, 퀵슬롯, 현재 장착 상태를 관리하는 컴포넌트.
+ * 캐릭터의 무기 소유권, 퀵슬롯, 현재 장착 상태와 스타일별 스킬 진행을 관리하는 컴포넌트.
  *
  * OwnedWeapons를 소유 여부의 단일 정본으로 유지하고 QuickSlotWeaponTags는 그 key만 참조한다.
- * 장착 변경 시 CharacterBase의 EquippedStyle, CombatComponent의 액션 맵, 선택적 무기 메시를 동기화한다.
+ * 스킬 해금·장착 상태는 EMVEquippedStyle별로 공유하고 스킬 포인트는 모든 스타일이 함께 사용한다.
+ * 장착 스타일이 바뀔 때 CharacterBase의 EquippedStyle과 CombatComponent의 액션 맵을 동기화한다.
  * 맨손은 소유 목록과 퀵슬롯에 넣지 않는 내부 fallback이며, 실제 무기 메시에는 필수 Trace 소켓이 있어야 한다.
  *
  * 라이프사이클:
@@ -106,6 +107,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Skill")
 	bool EquipSkill(EMVEquippedStyle EquippedStyle, FDataTableRowHandle RowHandle);
 
+	UFUNCTION(BlueprintPure, Category = "Maverick|Skill")
+	int32 GetSkillPoints() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Skill")
+	bool AddSkillPoints(int32 Points);
+
 public:
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|Weapon|Event")
 	FMVOnEquippedWeaponChanged OnEquippedWeaponChanged;
@@ -166,6 +173,10 @@ private:
 
 	// When the SaveGame doesn't exist for SkillTreeStates, this function initializes the SkillTreeStates with default values based on the WeaponSkillMaps.
 	void InitSkillTreeStates();
+	void InitSkillSlotState(
+		FMVSkillTreeState& SkillTreeState,
+		EMVSkillSlot SkillSlot,
+		const TSet<FMVWeaponSkillMapData>& Skills) const;
 	
 	// Todo: Apply Skill to CombatComponent. This function will be responsible for applying the equipped skills to the character's combat component, allowing the character to use the skills in combat.
 	//void ApplySkillToCombatComponent();
@@ -196,4 +207,7 @@ private:
 	// SkillTreeStates is current state of the skill tree for each equipped style, which can be used to track the player's equipped skills and unlocks.
 	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Skill", meta = (AllowPrivateAccess = "true"))
 	TMap<EMVEquippedStyle, FMVSkillTreeState> SkillTreeStates;
+
+	UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Skill", meta = (AllowPrivateAccess = "true"))
+	int32 CurrentSkillPoints = 0;
 };
