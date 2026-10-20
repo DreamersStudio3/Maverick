@@ -1,7 +1,7 @@
 ---
 제목: "플레이어 무기 교체"
 부제목: "한손검·듀얼 소드 장착 전환과 스타일별 애니메이션·손별 공격 판정"
-최근수정일: 2026-10-19
+최근수정일: 2026-10-20
 최근수정자: "Kwon-Nahoo-Man"
 관련문서:
   - "[[Architecture/document|Maverick 아키텍처]]"
@@ -105,7 +105,7 @@ flowchart TD
     Resolve --> Validate{"Row·무기 데이터 검증"}
     Validate -->|실패| Keep
     Validate -->|성공| Apply["인덱스·장착 상태 반영"]
-    Apply --> Style["EquippedStyle 동기화<br/>CombatComponent.ChangeWeapon"]
+    Apply --> Style["EquippedStyle 동기화<br/>실제 스타일 변경 시 CombatComponent.ChangeWeapon"]
     Style --> Visual["무기 메시 갱신"]
     Visual --> Event["OnEquippedWeaponChanged 발행"]
 ```
