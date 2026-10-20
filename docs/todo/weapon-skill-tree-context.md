@@ -1,12 +1,13 @@
 # 무기 스타일별 스킬 트리 상태 관리
 
 - 목표: `UMVWeaponComponent`의 스타일별 해금·장착 상태와 공유 스킬 포인트 관리
-- 상태: 2026-10-20 구현과 C++ 컴파일 검증 완료, Save/Load와 슬롯 단위 전투 갱신은 후속 범위
+- 상태: 2026-10-20 Save/Load 분기와 신규 게임 초기화 순서 조정 구현·컴파일 검증 완료
 - 결정: 해금·장착 상태는 개별 무기가 아닌 `EMVEquippedStyle`별 공유
 - 결정: 공유 스킬 포인트는 0에서 시작하고 `UMVWeaponComponent`가 획득·차감
 - 결정: 슬롯이 비어 있으면 순회상 최초의 유효한 `RequiredPoints <= 0` 스킬을 초기 장착
+- 결정: 스킬맵·진행 상태 준비 후 Save/Load를 분기하고, 유효한 세이브가 없을 때만 기본 무기 장착
 - 위키 검토: `갱신: docs/wiki/Features/Combat/Weapon-Skill-Tree/document.md`, `docs/wiki/Features/Combat/Weapon-Swap/document.md`
-- 검증: `git diff --check` 통과, UE 5.8 `MaverickEditor Win64 Development -NoLink -NoUBA` UHT·C++ 컴파일 성공, PIE 미실행
+- 검증: `git diff --check` 통과, 초기화 순서 변경 후 UE 5.8 `MaverickEditor Win64 Development -NoLink -NoUBA` UHT·C++ 컴파일 성공, PIE 미실행
 
 ## 구현 결과
 
@@ -18,6 +19,8 @@
 - 비현재 스타일 장착 변경은 상태만 갱신, 현재 스타일 변경은 임시 전체 전투 갱신
 - 실제 무기 스타일이 변경되거나 처음 설정될 때만 `CombatComponent::ChangeWeapon()` 호출
 - 임시 전체 갱신 위치에 슬롯 단위 `CombatComponent` API 교체용 `Todo:` 유지
+- `BeginPlay()`에서 스킬 상태를 먼저 구성하고 Save/Load 분기 후 신규 게임에만 기본 무기 장착
+- 비활성 SaveGame 분기 안에 복원 대상과 최종 무기 적용 순서를 설명하는 `Todo:` 유지
 
 ## 후속 범위
 

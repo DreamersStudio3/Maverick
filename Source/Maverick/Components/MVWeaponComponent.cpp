@@ -49,18 +49,6 @@ void UMVWeaponComponent::BeginPlay()
 	Super::BeginPlay();
 
 	EnsureQuickSlotStorage();
-	if (!TryInitializeDefaultWeapon())
-	{
-		EquipBareHand();
-	}
-	
-	if (const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner()))
-	{
-		if (UMVInputManagerComponent* InputManager = OwnerCharacter->InputManagerComponent)
-		{
-			InputManager->RegisterActionInputHandler(this, MVActionInputHandlerPriorities::Weapon);
-		}
-	}
 
 	for (UMVWeaponSkillMap* OneSkillMap : WeaponSkillMaps)
 	{
@@ -90,19 +78,29 @@ void UMVWeaponComponent::BeginPlay()
 		NewState.EquippedStyle = OneSkillMap->WeaponStyle;
 		SkillTreeStates.Add(OneSkillMap->WeaponStyle, NewState);
 	}
-	
-	// Todo: Load SkillTreeStates from SaveGame if available and 
-	if (0 /*Save Game exist*/)
-	{
 
+	// Todo: Replace this disabled condition with a successful SaveGame load check.
+	if (0 /* Valid SaveGame loaded */)
+	{
+		// Todo: Restore owned weapons, quick slots, equipped weapon, skill tree states,
+		// and shared skill points before applying the loaded weapon state.
 	}
-	// If Theere's no SaveGame, Setting the initial Unlocked Skills and Equipped Skill of each SkillTreeState.
 	else
 	{
 		InitSkillTreeStates();
+		if (!TryInitializeDefaultWeapon())
+		{
+			EquipBareHand();
+		}
 	}
 
-	// Todo: Set current weapon skills to the CombatComponent
+	if (const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner()))
+	{
+		if (UMVInputManagerComponent* InputManager = OwnerCharacter->InputManagerComponent)
+		{
+			InputManager->RegisterActionInputHandler(this, MVActionInputHandlerPriorities::Weapon);
+		}
+	}
 }
 
 void UMVWeaponComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)

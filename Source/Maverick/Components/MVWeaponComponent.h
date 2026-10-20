@@ -29,7 +29,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMVOnQuickSlotsChanged);
  *
  * 라이프사이클:
  *   1) 생성자 -> 기본 맨손 무기 row 값을 준비한다.
- *   2) BeginPlay -> DefaultWeaponRow를 소유 목록과 첫 퀵슬롯에 등록하고, 장착 실패 시 맨손을 장착한다.
+ *   2) BeginPlay -> 스킬맵과 진행 상태를 준비하고, 저장 상태가 없을 때만 DefaultWeaponRow 또는 맨손을 장착한다.
  *   3) 공개 장착은 CycleWeapon으로 제한하고, 퀵슬롯이 참조하는 row를 내부에서 검증한 뒤 관련 상태와 이벤트를 갱신한다.
  *   4) HitResolver가 타격 확정 시점에 CaptureWeaponHitSnapshot으로 히트 전용 사본을 만든다.
  */
