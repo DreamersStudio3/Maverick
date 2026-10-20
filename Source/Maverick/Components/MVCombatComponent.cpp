@@ -282,6 +282,8 @@ void UMVCombatComponent::BeginPlay()
 
 void UMVCombatComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	ClearPassiveSkill();
+
 	if (const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner()))
 	{
 		if (UMVInputManagerComponent* InputManager = OwnerCharacter->InputManagerComponent)
@@ -306,6 +308,119 @@ void UMVCombatComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	}
 
 	Super::EndPlay(EndPlayReason);
+}
+
+bool UMVCombatComponent::ApplyPassiveSkill(const FDataTableRowHandle& PassiveSkillRowHandle)
+{
+	if (ActivePassiveSkillRowHandle == PassiveSkillRowHandle
+		&& IsValid(ActivePassiveAbilityInstance)
+		&& ActivePassiveAbilityInstance->bAbilityActive)
+	{
+		return true;
+	}
+
+	// 교체는 요청된 장착 상태로의 동기화다. 신규 적용 실패 시 이전 Passive를 복구하지 않는다.
+	ClearPassiveSkill();
+
+	if (!PassiveSkillRowHandle.DataTable || PassiveSkillRowHandle.RowName.IsNone())
+	{
+		UE_LOG(LogMVCombatComponent, Warning, TEXT("ApplyPassiveSkill: Invalid passive skill row handle."));
+		return false;
+	}
+
+	const UDataTable* PassiveSkillTable = PassiveSkillRowHandle.DataTable.Get();
+	if (!PassiveSkillTable->GetRowStruct()
+		|| !PassiveSkillTable->GetRowStruct()->IsChildOf(FMVSkillDataTableColumn::StaticStruct()))
+	{
+		UE_LOG(
+			LogMVCombatComponent,
+			Warning,
+			TEXT("ApplyPassiveSkill: Passive row must use FMVSkillDataTableColumn. Row=%s"),
+			*MVCombatRowHandleToString(PassiveSkillRowHandle));
+		return false;
+	}
+
+	const FMVSkillDataTableColumn* PassiveSkillData = PassiveSkillTable->FindRow<FMVSkillDataTableColumn>(
+		PassiveSkillRowHandle.RowName,
+		TEXT("UMVCombatComponent::ApplyPassiveSkill"),
+		false);
+	if (!PassiveSkillData || !PassiveSkillData->AbilityReference)
+	{
+		UE_LOG(
+			LogMVCombatComponent,
+			Warning,
+			TEXT("ApplyPassiveSkill: Passive row or AbilityReference is invalid. Row=%s"),
+			*MVCombatRowHandleToString(PassiveSkillRowHandle));
+		return false;
+	}
+
+	if (!FMath::IsNearlyZero(PassiveSkillData->HpCost)
+		|| !FMath::IsNearlyZero(PassiveSkillData->StaminaCost)
+		|| !FMath::IsNearlyZero(PassiveSkillData->MpCost))
+	{
+		UE_LOG(
+			LogMVCombatComponent,
+			Warning,
+			TEXT("ApplyPassiveSkill: Passive ability cannot have an activation cost. Row=%s"),
+			*MVCombatRowHandleToString(PassiveSkillRowHandle));
+		return false;
+	}
+
+	if (PassiveSkillData->bIsChained || !PassiveSkillData->NextChainName.IsNone())
+	{
+		UE_LOG(
+			LogMVCombatComponent,
+			Warning,
+			TEXT("ApplyPassiveSkill: Passive ability cannot use a skill chain. Row=%s"),
+			*MVCombatRowHandleToString(PassiveSkillRowHandle));
+		return false;
+	}
+
+	UMVAbilityBase* NewPassiveAbility = NewObject<UMVAbilityBase>(this, PassiveSkillData->AbilityReference);
+	if (!IsValid(NewPassiveAbility))
+	{
+		UE_LOG(
+			LogMVCombatComponent,
+			Warning,
+			TEXT("ApplyPassiveSkill: Failed to create passive ability. Row=%s"),
+			*MVCombatRowHandleToString(PassiveSkillRowHandle));
+		return false;
+	}
+
+	NewPassiveAbility->SetOwner(this);
+	NewPassiveAbility->InitAbility(*PassiveSkillData);
+	ActivePassiveAbilityInstance = NewPassiveAbility;
+	ActivePassiveSkillRowHandle = PassiveSkillRowHandle;
+
+	IMVAbilityInterface::Execute_StartAbility(NewPassiveAbility, INDEX_NONE);
+	if (!NewPassiveAbility->bAbilityActive)
+	{
+		ActivePassiveAbilityInstance = nullptr;
+		ActivePassiveSkillRowHandle = FDataTableRowHandle();
+		IMVAbilityInterface::Execute_EndAbility(NewPassiveAbility);
+
+		UE_LOG(
+			LogMVCombatComponent,
+			Warning,
+			TEXT("ApplyPassiveSkill: Passive ability did not become active. Blueprint overrides must call the parent StartAbility. Row=%s"),
+			*MVCombatRowHandleToString(PassiveSkillRowHandle));
+		return false;
+	}
+
+	return true;
+}
+
+void UMVCombatComponent::ClearPassiveSkill()
+{
+	UMVAbilityBase* PassiveAbilityToDeactivate = ActivePassiveAbilityInstance.Get();
+	ActivePassiveAbilityInstance = nullptr;
+	ActivePassiveSkillRowHandle = FDataTableRowHandle();
+
+	if (IsValid(PassiveAbilityToDeactivate)
+		&& PassiveAbilityToDeactivate->Implements<UMVAbilityInterface>())
+	{
+		IMVAbilityInterface::Execute_EndAbility(PassiveAbilityToDeactivate);
+	}
 }
 
 

@@ -418,6 +418,14 @@ struct FMVCombatHeavyChargeAttackRuntimeState
 	FDataTableRowHandle ChargeRowHandle;
 };
 
+/**
+ * 캐릭터의 공격·실행형 스킬과 장착 Passive Ability 런타임을 소유하는 전투 컴포넌트.
+ *
+ * 실행형 Ability는 Action·AnimNotify 흐름에서 시작·종료하고, Passive Ability는 별도 슬롯에서
+ * ApplyPassiveSkill과 ClearPassiveSkill로 직접 시작·종료한다. Passive 교체 요청은 기존 인스턴스를
+ * 먼저 해제하며 신규 적용 실패 시 공석을 정상 상태로 유지한다. EndPlay에서는 활성 Passive를
+ * 반드시 종료하지만 사망만으로는 해제하지 않는다.
+ */
 UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class MAVERICK_API UMVCombatComponent : public UActorComponent, public IMVActionInputHandlerInterface
 {
@@ -446,6 +454,18 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Maverick|Combat|Skill UI")
 	bool GetSkillSlotRuntimeState(int32 SkillIndex, FMVSkillSlotRuntimeState& OutState) const;
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Combat|Passive Skill")
+	bool ApplyPassiveSkill(const FDataTableRowHandle& PassiveSkillRowHandle);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Combat|Passive Skill")
+	void ClearPassiveSkill();
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|Combat|Passive Skill")
+	UMVAbilityBase* GetActivePassiveSkill() const { return ActivePassiveAbilityInstance.Get(); }
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|Combat|Passive Skill")
+	FDataTableRowHandle GetActivePassiveSkillRowHandle() const { return ActivePassiveSkillRowHandle; }
 
 	void HandleAbilityEnded(const UMVAbilityBase* EndedAbility);
 
@@ -610,6 +630,7 @@ public:
 	TObjectPtr<UMVAbilityBase> PreviousAbilityInstance;
 	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<UMVAbilityBase> CurrentAbilityInstance;
+
 	FName CurrentAbilityActionTableName = NAME_None;
 	FName CurrentAbilityActionRowName = NAME_None;
 	bool bCurrentAbilityAwaitingCompletion = false;
@@ -621,6 +642,12 @@ private:
 	double LastBasicAttackedTime = 0.0;
 	FName ActiveBasicAttackMapKey = NAME_None;
 	TObjectPtr<UMVStatComponent> StatComponent;
+
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = "Maverick|Combat|Passive Skill", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UMVAbilityBase> ActivePassiveAbilityInstance;
+
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = "Maverick|Combat|Passive Skill", meta = (AllowPrivateAccess = "true"))
+	FDataTableRowHandle ActivePassiveSkillRowHandle;
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Combat|R Skill Gauge", meta = (AllowPrivateAccess = "true"))
 	float CurrentRSkillGauge = 0.0f;
