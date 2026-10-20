@@ -50,7 +50,9 @@ Blueprint는 입력 태그 전달, InputManager는 처리기 배분, WeaponCompo
 
 `AcquireWeapon`은 유효한 무기 Row의 `ItemTag`로 소유 목록에만 추가
 같은 태그의 중복 획득은 기존 Row Handle을 유지하고 거부
-`BeginPlay`에서 `DefaultWeaponRow`를 소유 목록과 첫 퀵슬롯에 등록한 뒤 장착
+`BeginPlay`에서 스킬맵과 진행 상태를 먼저 준비하고 유효한 SaveGame이 없을 때만 `DefaultWeaponRow`를 소유 목록과 첫 퀵슬롯에 등록한 뒤 장착
+SaveGame 복원 경로에서는 저장된 소유 무기·퀵슬롯·장착 무기를 적용하고 버린 기본 무기를 다시 획득하지 않는 계약
+현재 복원 분기는 `if (0)`과 `Todo:`로 비활성화
 
 `SetQuickSlotWeapon`은 슬롯 범위·소유 여부·다른 슬롯 중복을 검증
 활성 슬롯 교체는 새 무기 장착 검증까지 성공해야 확정하며, 실패하면 기존 슬롯 유지
