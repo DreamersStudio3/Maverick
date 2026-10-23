@@ -57,7 +57,7 @@ flowchart TD
 - 동일 스킬 재장착은 전투 갱신 없이 성공하는 멱등 처리
 - 비현재 스타일 장착 변경은 상태만 저장하고 해당 스타일로 무기를 바꿀 때 전체 전투 맵 갱신
 - Basic Attack 또는 장착 Skill Row가 비어 있으면 해당 전투 항목도 비운 상태로 유지
-- 기존 Chooser·Fallback Row 설정은 호환을 위해 deprecated 상태로 유지하며 새 갱신 경로에서는 사용하지 않음
+- 기존 CombatComponent Chooser·Fallback API와 설정 제거
 - 현재 SaveGame 경로는 `if (0)`으로 비활성화하고 복원 범위를 `Todo:`로 유지
 
 ## 공개 API
@@ -78,5 +78,4 @@ flowchart TD
 ## 남은 일
 
 - 기존 `UMVWeaponSkillMap` 에셋에 Basic Attack Row 7종 입력
-- 별도 작업에서 `UMVCombatComponent`의 deprecated Chooser·Fallback 경로와 전투 데이터 구성을 정리
 - 스타일별 스킬 상태·공유 포인트·무기 진행 상태 Save/Load 및 변경 이벤트
