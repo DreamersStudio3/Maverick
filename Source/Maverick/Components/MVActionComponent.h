@@ -4,6 +4,7 @@
 #include "Components/ActorComponent.h"
 #include "Engine/DataTable.h"
 #include "GameplayTagContainer.h"
+#include "Tables/MVActionTableTypes.h"
 #include "Tables/MVActionRowTableTypes.h"
 #include "MVActionComponent.generated.h"
 
@@ -53,10 +54,15 @@ public:
 	bool TryStartActionFromTable(
 		FName ActionTableName,
 		FName ActionRowName,
-		FName StartSection = NAME_None);
+		FName StartSection = NAME_None,
+		EMVActionDomain ActionDomain = EMVActionDomain::None);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Action")
-	bool TryStartActionFromRowHandle(FDataTableRowHandle ActionRowHandle, FName StartSection = NAME_None, const float BlendoutTime = 0.1f);
+	bool TryStartActionFromRowHandle(
+		FDataTableRowHandle ActionRowHandle,
+		FName StartSection = NAME_None,
+		float BlendoutTime = 0.1f,
+		EMVActionDomain ActionDomain = EMVActionDomain::None);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Action")
 	bool TryAdditiveFromRowHandle(FDataTableRowHandle ActionRowHandle, FName StartSection = NAME_None, const float BlendoutTime = 0.1f);
@@ -72,13 +78,15 @@ public:
 		FName ActionTableName,
 		FName ActionRowName,
 		FName StartSection = NAME_None,
-		float BlendOutTime = 0.1f);
+		float BlendOutTime = 0.1f,
+		EMVActionDomain ActionDomain = EMVActionDomain::None);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Action")
 	bool TryTransitionActionFromRowHandle(
 		FDataTableRowHandle ActionRowHandle,
 		FName StartSection = NAME_None,
-		float BlendOutTime = 0.1f);
+		float BlendOutTime = 0.1f,
+		EMVActionDomain ActionDomain = EMVActionDomain::None);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Action")
 	void FinishActiveAction(bool bInterrupted = false);
@@ -103,6 +111,9 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Maverick|Action")
 	int32 GetActiveActionInstanceId() const;
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|Action")
+	EMVActionDomain GetActiveActionDomain() const;
 
 	UFUNCTION(BlueprintPure, Category = "Maverick|Action")
 	UAnimMontage* GetActiveActionMontage() const;
@@ -131,7 +142,8 @@ private:
 		FName ActionTableName,
 		FName ActionRowName,
 		const FMVActionRow& ActionRow,
-		FName StartSection);
+		FName StartSection,
+		EMVActionDomain ActionDomain);
 	UAnimInstance* GetOwnerAnimInstance() const;
 	UAnimMontage* ResolveActionRowMontage(FName ActionTableName, FName ActionRowName, const FMVActionRow& ActionRow) const;
 	void HandleActionMontageEnded(UAnimMontage* Montage, bool bInterrupted, int32 ActionInstanceId);
@@ -143,6 +155,7 @@ private:
 
 	FName ActiveActionTableName = NAME_None;
 	FName ActiveActionRowName = NAME_None;
+	EMVActionDomain ActiveActionDomain = EMVActionDomain::None;
 	int32 ActiveActionInstanceId = INDEX_NONE;
 	int32 NextActionInstanceId = 0;
 	bool bActiveActionCanBeInterrupted = true;

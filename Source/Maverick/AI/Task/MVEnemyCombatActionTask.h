@@ -2,12 +2,13 @@
 
 #include "CoreMinimal.h"
 #include "AI/MVAICombatTypes.h"
+#include "Enum/MVSkillSlot.h"
 #include "GameFramework/Pawn.h"
 #include "StateTreeTaskBase.h"
 #include "MVEnemyCombatActionTask.generated.h"
 
-class AMVEnemy;
 class UMVActionComponent;
+class UMVCombatComponent;
 
 UENUM(BlueprintType)
 enum class EMVEnemyCombatActionKind : uint8
@@ -30,8 +31,8 @@ struct FMVEnemyCombatActionTaskInstanceData
 	UPROPERTY(EditAnywhere, Category = "Input|Combat")
 	EMVEnemyCombatActionKind ActionKind = EMVEnemyCombatActionKind::HeavyAttack;
 
-	UPROPERTY(EditAnywhere, Category = "Input|Combat", meta = (ClampMin = "0", DisplayName = "Action Index"))
-	int32 SkillIndex = 0;
+	UPROPERTY(EditAnywhere, Category = "Input|Combat")
+	EMVSkillSlot SkillSlot = EMVSkillSlot::QSkill;
 
 	UPROPERTY(EditAnywhere, Category = "Input|Combat")
 	FName StartSection = NAME_None;
@@ -64,10 +65,10 @@ struct FMVEnemyCombatActionTaskInstanceData
 	FName LastAttackTag = NAME_None;
 
 	UPROPERTY(Transient)
-	TObjectPtr<AMVEnemy> Enemy = nullptr;
+	TObjectPtr<UMVActionComponent> ActionComponent = nullptr;
 
 	UPROPERTY(Transient)
-	TObjectPtr<UMVActionComponent> ActionComponent = nullptr;
+	TObjectPtr<UMVCombatComponent> CombatComponent = nullptr;
 
 	FName StartedActionTableName = NAME_None;
 	FName StartedActionRowName = NAME_None;
@@ -75,9 +76,9 @@ struct FMVEnemyCombatActionTaskInstanceData
 };
 
 /**
- * Runs a HeavyAttack or Skill row by index through CombatComponent, keeping
- * ability and trace setup in the combat domain while letting StateTree own
- * attack-state selection and follow-up transitions.
+ * CombatComponent의 명시적 기본 공격 타입 또는 스킬 슬롯 API를 호출하는 Enemy StateTree Task.
+ * 액션 Row와 Ability 구성은 WeaponComponent에서 갱신된 CombatComponent 런타임 맵을 사용하고,
+ * StateTree는 공격 종류·스킬 슬롯 선택과 후속 전이만 소유한다.
  */
 USTRUCT(meta = (DisplayName = "Enemy Combat Action Task"))
 struct FMVEnemyCombatActionTask : public FStateTreeTaskCommonBase
