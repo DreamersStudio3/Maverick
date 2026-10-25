@@ -186,7 +186,7 @@ void UMVPlayerSkillHUDWidget::RefreshSkillSlots()
 {
 	FMVSkillSlotRuntimeState QState;
 	const bool bQAvailable = BoundCombatComponent
-		&& BoundCombatComponent->GetSkillSlotRuntimeState(MVCombatSkillSlots::Q, QState);
+		&& BoundCombatComponent->GetSkillSlotRuntimeState(EMVSkillSlot::QSkill, QState);
 	if (QSkillSlot)
 	{
 		QSkillSlot->SetRuntimeState(
@@ -212,7 +212,7 @@ void UMVPlayerSkillHUDWidget::RefreshSkillSlots()
 	FMVSkillSlotRuntimeState RState;
 	if (BoundCombatComponent)
 	{
-		BoundCombatComponent->GetSkillSlotRuntimeState(MVCombatSkillSlots::R, RState);
+		BoundCombatComponent->GetSkillSlotRuntimeState(EMVSkillSlot::RSkill, RState);
 	}
 
 	if (RSkillSlot)

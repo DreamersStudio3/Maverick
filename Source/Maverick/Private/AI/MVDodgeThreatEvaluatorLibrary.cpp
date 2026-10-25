@@ -65,7 +65,7 @@ float MVDodgeThreatResolveSignedAngle(
 FGameplayTag MVDodgeThreatResolveActionTag(const FMVCombatActionEvent& CombatActionEvent)
 {
 	if (CombatActionEvent.ActionType == EMVCombatActionTypes::Skill
-		&& CombatActionEvent.ActionIndex == 0)
+		&& CombatActionEvent.SkillSlot == EMVSkillSlot::QSkill)
 	{
 		return MVGameplayTags::Action_Combat_Skill_Q;
 	}

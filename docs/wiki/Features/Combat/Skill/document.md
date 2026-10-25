@@ -1,8 +1,8 @@
 ---
 제목: "플레이어 스킬 구조"
 부제목: "Q 적중 연계, R 적중 충전형 게이지, W·E 조합 입력의 실행 계약"
-최근수정일: 2026-09-18
-최근수정자: "No-Jyun"
+최근수정일: 2026-10-21
+최근수정자: "Kwon-Nahoo-Man"
 관련문서:
   - "[[Features/Combat/Combat-System/document|Maverick 전투 시스템]]"
   - "[[Features/Hit-Stat-HitReaction/document|Hit, Stat, HitReaction]]"
@@ -20,14 +20,15 @@
 
 ## 스킬 슬롯과 조합 입력
 
-| 논리 스킬 | 입력 태그 | 런타임 슬롯 | 실제 입력 |
-|---|---|---:|---|
-| Q | `Action.Input.Skill.Q` | `Skill0` | Q |
-| R | `Action.Input.Skill.R` | `Skill1` | R |
-| W | `Action.Input.Skill.W` | `Skill2` | Shift+좌클릭 |
-| E | `Action.Input.Skill.E` | `Skill3` | Shift+우클릭 |
+| 논리 스킬 | 입력 태그 | 입력 인덱스 | `SkillMap` 키 | 실제 입력 |
+|---|---|---:|---|---|
+| Q | `Action.Input.Skill.Q` | `Skill0` | `EMVSkillSlot::QSkill` | Q |
+| R | `Action.Input.Skill.R` | `Skill1` | `EMVSkillSlot::RSkill` | R |
+| W | `Action.Input.Skill.W` | `Skill2` | `EMVSkillSlot::WSkill` | Shift+좌클릭 |
+| E | `Action.Input.Skill.E` | `Skill3` | `EMVSkillSlot::ESkill` | Shift+우클릭 |
 
-- `Action.Combat.Skill.W`·`Action.Combat.Skill.E`: One Hand Chooser에서 `SkillW`·`SkillE` 시작 행 선택
+- `Action.Combat.Skill.W`·`Action.Combat.Skill.E`: WeaponComponent의 현재 스타일 W·E 장착 Row 사용
+- `Skill0`~`Skill3`은 입력 전달용 인덱스이며, 런타임 엔트리는 `EMVSkillSlot`으로 식별
 - `IA_SkillModifier`: `Started`에서 활성화, `Completed`·`Canceled`에서 해제
 - 좌클릭: 시작 시점의 Modifier 상태에 따라 약공격과 W 중 하나 제출
 - 우클릭: 시작 시점에 `HeavyCharge`·`SkillE` 경로를 고정하고 이후 입력 phase는 선택한 경로로만 전달

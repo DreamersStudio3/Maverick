@@ -6,8 +6,8 @@
 #include "Components/MVStatComponent.h"
 #include "Components/ActorComponent.h"
 #include "Public/Tables/MVSkillDataTableColumn.h"
-#include "Public/Struct/MVCombatActionTableInput.h"
 #include "Public/Enum/MVCombatActionTypes.h"
+#include "Public/Enum/MVSkillSlot.h"
 #include "Components/MVInputManagerComponent.h"
 #include "Interface/MVActionInputHandlerInterface.h"
 #include "Struct/MVHitTypes.h"
@@ -15,32 +15,6 @@
 #include "MVCombatComponent.generated.h"
 
 class UMVAbilityBase;
-
-namespace MVCombatSkillSlots
-{
-	inline constexpr int32 Q = 0;
-	inline constexpr int32 R = 1;
-	inline constexpr int32 W = 2;
-	inline constexpr int32 E = 3;
-	inline constexpr int32 Count = 4;
-}
-
-USTRUCT(BlueprintType)
-struct FMVSkillActionStruct
-{
-	GENERATED_BODY()
-
-public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TObjectPtr<UMVAbilityBase> AbilityInstance;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TObjectPtr<UDataTable> DataTable;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FName RowName;
-
-};
 
 USTRUCT(BlueprintType)
 struct FMVCombatActionEvent
@@ -54,7 +28,7 @@ struct FMVCombatActionEvent
 	EMVCombatActionTypes ActionType = EMVCombatActionTypes::None;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Combat|Event")
-	int32 ActionIndex = 0;
+	EMVSkillSlot SkillSlot = EMVSkillSlot::NONE;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Combat|Event")
 	FName ActionTableName = NAME_None;
@@ -388,22 +362,6 @@ struct FMVSkillSlotRuntimeState
 	float GaugeRatio = 0.0f;
 };
 
-/*
-CombatComponent
-Fetch action RowHandle from ChooserTable and run chained action rows.
-Sprint/Dodge contextual basic attacks are consumed once per source context so single-row contextual attacks do not replay from held or repeated input.
-Concrete character classes or Blueprints own chooser/fallback path configuration; the shared component has no player-specific defaults.
-
-Note:	Getting action RowHandle through ChooserTable should be implemented in blueprint.
-		DataTable-only lookup remains as a compatibility fallback.
-
-		DataTable's Row struct is from "Public/Tables/MVSkillDataTableColumn.h"
-		if want to modify Struct, Go to the pulic/Tables/MVSkillDataTableColumn.h
-
-
-*/
-
-class UChooserTable;
 class UMVStatComponent;
 
 struct FMVCombatHeavyChargeAttackRuntimeState
@@ -413,11 +371,21 @@ struct FMVCombatHeavyChargeAttackRuntimeState
 	float StartedWorldTime = 0.0f;
 	float CommitTime = 0.0f;
 	FName ChargeActionTableName = NAME_None;
-	FName ChargeActionMapKey = NAME_None;
+	EMVCombatActionTypes ChargeActionType = EMVCombatActionTypes::None;
 	int32 ChargeChainStageIndex = INDEX_NONE;
 	FDataTableRowHandle ChargeRowHandle;
 };
 
+/**
+ * 캐릭터의 공격·실행형 스킬과 장착 Passive Ability 런타임을 소유하는 전투 컴포넌트.
+ *
+ * 실행형 Ability는 Action·AnimNotify 흐름에서 시작·종료하고, Passive Ability는 별도 슬롯에서
+ * ApplyPassiveSkill과 ClearPassiveSkill로 직접 시작·종료한다. Passive 교체 요청은 기존 인스턴스를
+ * 먼저 해제하며 신규 적용 실패 시 공석을 정상 상태로 유지한다. EndPlay에서는 활성 Passive를
+ * 반드시 종료하지만 사망만으로는 해제하지 않는다.
+ * 무기별 Basic Attack과 장착 Skill Row는 WeaponComponent를 단일 진입점으로 조회한다.
+ * 무기 변경은 전체 액션 맵을 다시 만들고, 같은 스타일의 스킬 교체는 해당 슬롯만 갱신한다.
+ */
 UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class MAVERICK_API UMVCombatComponent : public UActorComponent, public IMVActionInputHandlerInterface
 {
@@ -437,15 +405,30 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	UFUNCTION(BlueprintCallable, Category = "Action")
-	bool TryCombatAction(EMVCombatActionTypes InActionType, int32 ActionIndex = 0, FName StartSection = NAME_None);
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Combat|Action")
+	bool TryBasicCombatAction(EMVCombatActionTypes InActionType, FName StartSection = NAME_None);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Combat|Action")
+	bool TrySkillCombatAction(EMVSkillSlot SkillSlot, FName StartSection = NAME_None);
 
 	/** AI가 선택한 전투 행의 Ability 준비와 액션 시작 진입점; 실행 중인 액션 교체 제외 */
 	UFUNCTION(BlueprintCallable, Category = "Action")
 	bool TryStartCombatActionFromRowHandle(const FDataTableRowHandle& RowHandle, FName StartSection = NAME_None);
 
 	UFUNCTION(BlueprintPure, Category = "Maverick|Combat|Skill UI")
-	bool GetSkillSlotRuntimeState(int32 SkillIndex, FMVSkillSlotRuntimeState& OutState) const;
+	bool GetSkillSlotRuntimeState(EMVSkillSlot SkillSlot, FMVSkillSlotRuntimeState& OutState) const;
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Combat|Passive Skill")
+	bool ApplyPassiveSkill(const FDataTableRowHandle& PassiveSkillRowHandle);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Combat|Passive Skill")
+	void ClearPassiveSkill();
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|Combat|Passive Skill")
+	UMVAbilityBase* GetActivePassiveSkill() const { return ActivePassiveAbilityInstance.Get(); }
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|Combat|Passive Skill")
+	FDataTableRowHandle GetActivePassiveSkillRowHandle() const { return ActivePassiveSkillRowHandle; }
 
 	void HandleAbilityEnded(const UMVAbilityBase* EndedAbility);
 
@@ -455,6 +438,8 @@ public:
 	// Call When Character Change Weapon --> have to receive Event from Character
 	UFUNCTION(BlueprintCallable, Category = "Combat|Weapon")
 	void ChangeWeapon(EMVEquippedStyle NewStyle);
+
+	void RefreshSkillSlot(EMVSkillSlot SkillSlot);
 
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|Combat|Event")
 	FMVOnCombatActionEvent OnCombatActionStarted;
@@ -471,49 +456,23 @@ protected:
 	bool IsCombatActionInputTag(FGameplayTag ActionInputTag) const;
 	bool IsHeavyChargeActionInputTag(FGameplayTag ActionInputTag) const;
 
-	bool TryBasicAttack(EMVCombatActionTypes InActionType, int32 ActionIndex = 0, FName StartSection = NAME_None);
-	bool TrySkill(EMVCombatActionTypes InActionType, int32 SkillIndex = 0, FName StartSection = NAME_None);
+	bool CanStartCombatAction() const;
+	bool TryBasicAttack(EMVCombatActionTypes InActionType, FName StartSection = NAME_None);
+	bool TrySkill(EMVSkillSlot SkillSlot, FName StartSection = NAME_None);
 
 	// Call when Beginplay or Change Weapon Style
 	void RefreshActionMaps();
 	
 	void ResetBasicAttackMap();
 	void ResetSkillMap();
-	
-protected:
-	// Legacy fallback: should return DataTable using ChooserTable in Blueprint.
-	// Because Using ChooserTable in C++ is So Fucking Shit
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable,Category = "Data")
-	UDataTable* GetDataTableFromChooserTable(const FMVCombatActionTableInput& ChooserInput, bool& OutResult);
-
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Data")
-	FMVSkillDataTableColumn GetDataTableRowFromChooserTable(const FMVCombatActionTableInput& ChooserInput, const FName& RowName, bool& OutResult);
-	virtual FMVSkillDataTableColumn GetDataTableRowFromChooserTable_Implementation(const FMVCombatActionTableInput& ChooserInput, const FName& RowName, bool& OutResult);
-
 private:
 	// AI 직접 실행 Ability의 GC 보존; 다음 직접 액션 시작 시 교체
 	UPROPERTY(Transient)
 	FMVSkillEntry DirectActionEntry;
 
 	bool BuildSkillEntryFromRowHandle(const FDataTableRowHandle& StartingRowHandle, FMVSkillEntry& OutEntry);
-	bool GetActionRowHandleFromChooserTable(
-		const FMVCombatActionTableInput& ChooserInput,
-		FName FallbackRowName,
-		FDataTableRowHandle& OutRowHandle) const;
-	bool ResolveActionRowHandleFromChooserTable(
-		const FMVCombatActionTableInput& ChooserInput,
-		FName FallbackRowName,
-		FDataTableRowHandle& OutRowHandle);
-	UDataTable* LoadFallbackAttackActionTable() const;
-	bool TryMakeFallbackAttackActionRowHandle(
-		EMVCombatActionTypes ActionType,
-		UDataTable* DataTable,
-		FDataTableRowHandle& OutRowHandle) const;
 	bool IsValidSkillActionRowHandle(const FDataTableRowHandle& RowHandle, const TCHAR* Context) const;
 	bool IsCurrentAbilityAction(FName ActionTableName, FName ActionRowName) const;
-	FName MakeActionTypeMapKey(EMVCombatActionTypes ActionType) const;
-	FName MakeIndexedActionRowName(EMVCombatActionTypes ActionType, int32 ActionIndex) const;
-	FGameplayTag MakeActionTypeGameplayTag(EMVCombatActionTypes ActionType) const;
 	bool TryStartActionWithAbility(
 		FMVSkillEntry& ActionEntry,
 		const FDataTableRowHandle& RowHandle,
@@ -533,13 +492,13 @@ private:
 	const FMVSkillDataTableColumn* GetBasicAttackSkillDataAtStage(const FMVSkillEntry& ActionEntry, int32 ChainStageIndex) const;
 	void UpdateLastBasicAttackSwingDirection(const FDataTableRowHandle& RowHandle);
 	void ClearLastBasicAttackSwingDirection();
-	void ResetOtherBasicAttackChains(FName ExceptActionMapKey);
+	void ResetOtherBasicAttackChains(EMVCombatActionTypes ExceptActionType);
 	void MarkBasicAttackChainStarted(
 		FMVSkillEntry& ActionEntry,
-		FName ActionMapKey,
+		EMVCombatActionTypes ActionType,
 		int32 StartedChainStageIndex,
 		float CurrentTime);
-	bool IsHeavyChargeBasicAttackMapKey(FName ActionMapKey) const;
+	bool IsHeavyChargeBasicAttackType(EMVCombatActionTypes ActionType) const;
 	int32 ResolveHeavyChargeStartChainStageIndex(const FMVSkillEntry& ChargeEntry) const;
 	int32 ResolveHeavyChargeEarlyReleaseChainStageIndex(const FMVSkillEntry& HeavyEntry) const;
 	bool TryBeginHeavyChargeAttack(float HeldSeconds);
@@ -556,7 +515,9 @@ private:
 	void ResetHeavyChargeAttackState();
 	EMVCombatActionTypes ResolveContextualBasicAttackActionType(EMVCombatActionTypes RequestedActionType);
 	void MarkContextualBasicAttackStarted(EMVCombatActionTypes StartedActionType);
-	void BroadcastCombatActionStarted(EMVCombatActionTypes ActionType, int32 ActionIndex);
+	void BroadcastCombatActionStarted(
+		EMVCombatActionTypes ActionType,
+		EMVSkillSlot SkillSlot);
 	void UpdateContextualBasicAttackResets();
 	int32 GetDodgeAttackContextInstanceId() const;
 	bool IsDodgeAttackContext() const;
@@ -571,10 +532,10 @@ public:
 
 	// LightAttack, HeavyAttack, ChargeAttack, and contextual sprint/dodge attacks
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Logic")
-	TMap<FName, FMVSkillEntry>BasicAttackMap;
+	TMap<EMVCombatActionTypes, FMVSkillEntry>BasicAttackMap;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Logic")
-	TMap<FName, FMVSkillEntry>SkillMap;
+	TMap<EMVSkillSlot, FMVSkillEntry>SkillMap;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Infomation")
 	EMVEquippedStyle CurrentWeaponStyle;
@@ -591,12 +552,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|HeavyCharge")
 	FName HeavyChargeStartSection = TEXT("LeadIn");
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Chooser")
-	FSoftObjectPath AttackChooserTable;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Chooser")
-	FSoftObjectPath FallbackAttackActionTable;
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat|R Skill Gauge")
 	bool bUseRSkillGauge = false;
 
@@ -610,6 +565,7 @@ public:
 	TObjectPtr<UMVAbilityBase> PreviousAbilityInstance;
 	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<UMVAbilityBase> CurrentAbilityInstance;
+
 	FName CurrentAbilityActionTableName = NAME_None;
 	FName CurrentAbilityActionRowName = NAME_None;
 	bool bCurrentAbilityAwaitingCompletion = false;
@@ -619,8 +575,14 @@ public:
 
 private:
 	double LastBasicAttackedTime = 0.0;
-	FName ActiveBasicAttackMapKey = NAME_None;
+	EMVCombatActionTypes ActiveBasicAttackType = EMVCombatActionTypes::None;
 	TObjectPtr<UMVStatComponent> StatComponent;
+
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = "Maverick|Combat|Passive Skill", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UMVAbilityBase> ActivePassiveAbilityInstance;
+
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = "Maverick|Combat|Passive Skill", meta = (AllowPrivateAccess = "true"))
+	FDataTableRowHandle ActivePassiveSkillRowHandle;
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Combat|R Skill Gauge", meta = (AllowPrivateAccess = "true"))
 	float CurrentRSkillGauge = 0.0f;

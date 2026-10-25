@@ -3,11 +3,9 @@
 
 #include "Components/MVCombatComponent.h"
 
-#include "Chooser.h"
-#include "ChooserFunctionLibrary.h"
-#include "AI/MVAICombatTypes.h"
 #include "Combat/MVAbilityBase.h"
 #include "Components/MVActionComponent.h"
+#include "Components/MVWeaponComponent.h"
 #include "Character/MVCharacterBase.h"
 #include "Combat/MVHitResolverSubsystem.h"
 #include "Components/MVStatComponent.h"
@@ -52,73 +50,6 @@ FString MVCombatSkillRowNamesToString(const TArray<FName>& RowNames)
 	return Result;
 }
 
-void MVCombatAppendRowCandidate(TArray<FName>& OutCandidates, const TCHAR* RowName)
-{
-	OutCandidates.Add(FName(RowName));
-}
-
-TArray<FName> MVCombatMakeFallbackAttackRowCandidates(const EMVCombatActionTypes ActionType)
-{
-	TArray<FName> Candidates;
-	switch (ActionType)
-	{
-	case EMVCombatActionTypes::LightAttack:
-		MVCombatAppendRowCandidate(Candidates, TEXT("LightAttack"));
-		MVCombatAppendRowCandidate(Candidates, TEXT("LightAttack1"));
-		break;
-	case EMVCombatActionTypes::HeavyAttack:
-		MVCombatAppendRowCandidate(Candidates, TEXT("HeavyAttack"));
-		MVCombatAppendRowCandidate(Candidates, TEXT("HeavyAttack1"));
-		break;
-	case EMVCombatActionTypes::ChargeAttack:
-		MVCombatAppendRowCandidate(Candidates, TEXT("ChargeAttack"));
-		MVCombatAppendRowCandidate(Candidates, TEXT("ChargeAttack1"));
-		break;
-	case EMVCombatActionTypes::SprintLightAttack:
-		MVCombatAppendRowCandidate(Candidates, TEXT("Sprint_LightAttack"));
-		MVCombatAppendRowCandidate(Candidates, TEXT("SprintLightAttack"));
-		MVCombatAppendRowCandidate(Candidates, TEXT("SprintLightAttack1"));
-		break;
-	case EMVCombatActionTypes::SprintHeavyAttack:
-		MVCombatAppendRowCandidate(Candidates, TEXT("Sprint_HeavyAttack"));
-		MVCombatAppendRowCandidate(Candidates, TEXT("SprintHeavyAttack"));
-		MVCombatAppendRowCandidate(Candidates, TEXT("SprintHeavyAttack1"));
-		break;
-	case EMVCombatActionTypes::DodgeLightAttack:
-		MVCombatAppendRowCandidate(Candidates, TEXT("Dodge_LightAttack"));
-		MVCombatAppendRowCandidate(Candidates, TEXT("DodgeLightAttack"));
-		MVCombatAppendRowCandidate(Candidates, TEXT("DodgeLightAttack1"));
-		break;
-	case EMVCombatActionTypes::DodgeHeavyAttack:
-		MVCombatAppendRowCandidate(Candidates, TEXT("Dodge_HeavyAttack"));
-		MVCombatAppendRowCandidate(Candidates, TEXT("DodgeHeavyAttack"));
-		MVCombatAppendRowCandidate(Candidates, TEXT("DodgeHeavyAttack1"));
-		break;
-	default:
-		break;
-	}
-
-	return Candidates;
-}
-
-bool MVCombatIsBasicAttackStartRowCandidate(const EMVCombatActionTypes ActionType, const FName RowName)
-{
-	return MVCombatMakeFallbackAttackRowCandidates(ActionType).Contains(RowName);
-}
-
-bool MVCombatIsSkillStartRowName(const FName RowName)
-{
-	return RowName.ToString().StartsWith(TEXT("Skill"));
-}
-
-bool MVCombatIsDodgeContextualAttackRowName(const FString& RowName)
-{
-	return RowName.StartsWith(TEXT("Dodge_LightAttack"))
-		|| RowName.StartsWith(TEXT("Dodge_HeavyAttack"))
-		|| RowName.StartsWith(TEXT("DodgeLightAttack"))
-		|| RowName.StartsWith(TEXT("DodgeHeavyAttack"));
-}
-
 bool MVCombatIsSprintContextualBasicAttackActionType(const EMVCombatActionTypes ActionType)
 {
 	return ActionType == EMVCombatActionTypes::SprintLightAttack
@@ -131,70 +62,40 @@ bool MVCombatIsDodgeContextualBasicAttackActionType(const EMVCombatActionTypes A
 		|| ActionType == EMVCombatActionTypes::DodgeHeavyAttack;
 }
 
-FName MVCombatMakeSkillMapKey(const int32 SkillIndex)
+bool MVCombatIsActiveSkillSlot(const EMVSkillSlot SkillSlot)
 {
-	return FName(*FString::Printf(TEXT("Skill%d"), SkillIndex));
+	return SkillSlot == EMVSkillSlot::QSkill
+		|| SkillSlot == EMVSkillSlot::RSkill
+		|| SkillSlot == EMVSkillSlot::WSkill
+		|| SkillSlot == EMVSkillSlot::ESkill;
 }
 
-int32 MVCombatResolveSkillIndexFromInputTag(const FGameplayTag ActionInputTag)
+EMVSkillSlot MVCombatResolveSkillSlotFromInputTag(const FGameplayTag ActionInputTag)
 {
 	if (ActionInputTag.MatchesTagExact(MVGameplayTags::Action_Input_Skill_Q))
 	{
-		return MVCombatSkillSlots::Q;
+		return EMVSkillSlot::QSkill;
 	}
 
 	if (ActionInputTag.MatchesTagExact(MVGameplayTags::Action_Input_Skill_R))
 	{
-		return MVCombatSkillSlots::R;
+		return EMVSkillSlot::RSkill;
 	}
 
 	if (ActionInputTag.MatchesTagExact(MVGameplayTags::Action_Input_Skill_W))
 	{
-		return MVCombatSkillSlots::W;
+		return EMVSkillSlot::WSkill;
 	}
 
 	if (ActionInputTag.MatchesTagExact(MVGameplayTags::Action_Input_Skill_E))
 	{
-		return MVCombatSkillSlots::E;
+		return EMVSkillSlot::ESkill;
 	}
 
-	return INDEX_NONE;
+	return EMVSkillSlot::NONE;
 }
 
-FGameplayTag MVCombatMakeSkillActionTypeGameplayTag(const int32 SkillIndex)
-{
-	switch (SkillIndex)
-	{
-	case MVCombatSkillSlots::Q:
-		return MVGameplayTags::Action_Combat_Skill_Q;
-	case MVCombatSkillSlots::R:
-		return MVGameplayTags::Action_Combat_Skill_R;
-	case MVCombatSkillSlots::W:
-		return MVGameplayTags::Action_Combat_Skill_W;
-	case MVCombatSkillSlots::E:
-		return MVGameplayTags::Action_Combat_Skill_E;
-	default:
-		return FGameplayTag();
-	}
-}
-
-FName MVCombatMakeSkillFallbackRowName(const int32 SkillIndex)
-{
-	switch (SkillIndex)
-	{
-	case MVCombatSkillSlots::Q:
-		return TEXT("SkillQ");
-	case MVCombatSkillSlots::R:
-		return TEXT("SkillR");
-	case MVCombatSkillSlots::W:
-		return TEXT("SkillW");
-	case MVCombatSkillSlots::E:
-		return TEXT("SkillE");
-	default:
-		return NAME_None;
-	}
-}
-
+// Todo: 해당 기능을 하는 함수가 필요한 지 확인 후 로직 정리예정
 FName MVCombatActionTableNameFromDataTable(const UDataTable* DataTable)
 {
 	if (!DataTable)
@@ -207,6 +108,7 @@ FName MVCombatActionTableNameFromDataTable(const UDataTable* DataTable)
 	return FName(*TableName);
 }
 
+// Todo: 추후 해당 Swing Direction 관련 삭제예정
 EMVAttackSwingDirection MVCombatGetOppositeSwingDirection(const EMVAttackSwingDirection Direction)
 {
 	switch (Direction)
@@ -282,6 +184,8 @@ void UMVCombatComponent::BeginPlay()
 
 void UMVCombatComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	ClearPassiveSkill();
+
 	if (const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner()))
 	{
 		if (UMVInputManagerComponent* InputManager = OwnerCharacter->InputManagerComponent)
@@ -308,6 +212,119 @@ void UMVCombatComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	Super::EndPlay(EndPlayReason);
 }
 
+bool UMVCombatComponent::ApplyPassiveSkill(const FDataTableRowHandle& PassiveSkillRowHandle)
+{
+	if (ActivePassiveSkillRowHandle == PassiveSkillRowHandle
+		&& IsValid(ActivePassiveAbilityInstance)
+		&& ActivePassiveAbilityInstance->bAbilityActive)
+	{
+		return true;
+	}
+
+	// 교체는 요청된 장착 상태로의 동기화다. 신규 적용 실패 시 이전 Passive를 복구하지 않는다.
+	ClearPassiveSkill();
+
+	if (!PassiveSkillRowHandle.DataTable || PassiveSkillRowHandle.RowName.IsNone())
+	{
+		UE_LOG(LogMVCombatComponent, Warning, TEXT("ApplyPassiveSkill: Invalid passive skill row handle."));
+		return false;
+	}
+
+	const UDataTable* PassiveSkillTable = PassiveSkillRowHandle.DataTable.Get();
+	if (!PassiveSkillTable->GetRowStruct()
+		|| !PassiveSkillTable->GetRowStruct()->IsChildOf(FMVSkillDataTableColumn::StaticStruct()))
+	{
+		UE_LOG(
+			LogMVCombatComponent,
+			Warning,
+			TEXT("ApplyPassiveSkill: Passive row must use FMVSkillDataTableColumn. Row=%s"),
+			*MVCombatRowHandleToString(PassiveSkillRowHandle));
+		return false;
+	}
+
+	const FMVSkillDataTableColumn* PassiveSkillData = PassiveSkillTable->FindRow<FMVSkillDataTableColumn>(
+		PassiveSkillRowHandle.RowName,
+		TEXT("UMVCombatComponent::ApplyPassiveSkill"),
+		false);
+	if (!PassiveSkillData || !PassiveSkillData->AbilityReference)
+	{
+		UE_LOG(
+			LogMVCombatComponent,
+			Warning,
+			TEXT("ApplyPassiveSkill: Passive row or AbilityReference is invalid. Row=%s"),
+			*MVCombatRowHandleToString(PassiveSkillRowHandle));
+		return false;
+	}
+
+	if (!FMath::IsNearlyZero(PassiveSkillData->HpCost)
+		|| !FMath::IsNearlyZero(PassiveSkillData->StaminaCost)
+		|| !FMath::IsNearlyZero(PassiveSkillData->MpCost))
+	{
+		UE_LOG(
+			LogMVCombatComponent,
+			Warning,
+			TEXT("ApplyPassiveSkill: Passive ability cannot have an activation cost. Row=%s"),
+			*MVCombatRowHandleToString(PassiveSkillRowHandle));
+		return false;
+	}
+
+	if (PassiveSkillData->bIsChained || !PassiveSkillData->NextChainName.IsNone())
+	{
+		UE_LOG(
+			LogMVCombatComponent,
+			Warning,
+			TEXT("ApplyPassiveSkill: Passive ability cannot use a skill chain. Row=%s"),
+			*MVCombatRowHandleToString(PassiveSkillRowHandle));
+		return false;
+	}
+
+	UMVAbilityBase* NewPassiveAbility = NewObject<UMVAbilityBase>(this, PassiveSkillData->AbilityReference);
+	if (!IsValid(NewPassiveAbility))
+	{
+		UE_LOG(
+			LogMVCombatComponent,
+			Warning,
+			TEXT("ApplyPassiveSkill: Failed to create passive ability. Row=%s"),
+			*MVCombatRowHandleToString(PassiveSkillRowHandle));
+		return false;
+	}
+
+	NewPassiveAbility->SetOwner(this);
+	NewPassiveAbility->InitAbility(*PassiveSkillData);
+	ActivePassiveAbilityInstance = NewPassiveAbility;
+	ActivePassiveSkillRowHandle = PassiveSkillRowHandle;
+
+	IMVAbilityInterface::Execute_StartAbility(NewPassiveAbility, INDEX_NONE);
+	if (!NewPassiveAbility->bAbilityActive)
+	{
+		ActivePassiveAbilityInstance = nullptr;
+		ActivePassiveSkillRowHandle = FDataTableRowHandle();
+		IMVAbilityInterface::Execute_EndAbility(NewPassiveAbility);
+
+		UE_LOG(
+			LogMVCombatComponent,
+			Warning,
+			TEXT("ApplyPassiveSkill: Passive ability did not become active. Blueprint overrides must call the parent StartAbility. Row=%s"),
+			*MVCombatRowHandleToString(PassiveSkillRowHandle));
+		return false;
+	}
+
+	return true;
+}
+
+void UMVCombatComponent::ClearPassiveSkill()
+{
+	UMVAbilityBase* PassiveAbilityToDeactivate = ActivePassiveAbilityInstance.Get();
+	ActivePassiveAbilityInstance = nullptr;
+	ActivePassiveSkillRowHandle = FDataTableRowHandle();
+
+	if (IsValid(PassiveAbilityToDeactivate)
+		&& PassiveAbilityToDeactivate->Implements<UMVAbilityInterface>())
+	{
+		IMVAbilityInterface::Execute_EndAbility(PassiveAbilityToDeactivate);
+	}
+}
+
 
 // Called every frame
 void UMVCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -319,12 +336,12 @@ void UMVCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 }
 
 bool UMVCombatComponent::GetSkillSlotRuntimeState(
-	const int32 SkillIndex,
+	const EMVSkillSlot SkillSlot,
 	FMVSkillSlotRuntimeState& OutState) const
 {
 	OutState = FMVSkillSlotRuntimeState();
 
-	const bool bRSkillGaugeSlot = bUseRSkillGauge && SkillIndex == MVCombatSkillSlots::R;
+	const bool bRSkillGaugeSlot = bUseRSkillGauge && SkillSlot == EMVSkillSlot::RSkill;
 
 	OutState.bGaugeControlled = bRSkillGaugeSlot;
 
@@ -336,7 +353,7 @@ bool UMVCombatComponent::GetSkillSlotRuntimeState(
 		OutState.bGaugeReady = IsRSkillGaugeReady();
 	}
 
-	const FMVSkillEntry* SkillEntry = SkillMap.Find(MVCombatMakeSkillMapKey(FMath::Max(0, SkillIndex)));
+	const FMVSkillEntry* SkillEntry = SkillMap.Find(SkillSlot);
 	const UWorld* World = GetWorld();
 	if (!SkillEntry || !World)
 	{
@@ -433,78 +450,74 @@ bool UMVCombatComponent::GetSkillSlotRuntimeState(
 	return OutState.bAvailable;
 }
 
-bool UMVCombatComponent::TryCombatAction(
-	EMVCombatActionTypes InActionType,
-	int32 ActionIndex,
-	FName StartSection)
+bool UMVCombatComponent::CanStartCombatAction() const
 {
-	const int32 ResolvedActionIndex = FMath::Max(0, ActionIndex);
-
-	// Check Input State
-	AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
-	if (!OwnerCharacter)
-	{
-		return false;
-	}
-
-	UMVActionComponent* ActionComponent = OwnerCharacter->ActionComponent;
+	const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
+	const UMVActionComponent* ActionComponent = OwnerCharacter
+		? OwnerCharacter->ActionComponent
+		: nullptr;
 	if (!ActionComponent)
 	{
 		return false;
 	}
-	
-	bool bIsRevoveryEscapeWindowOpen = false;
-	UMVInputManagerComponent* InputManager = OwnerCharacter->InputManagerComponent;
-	if (!InputManager)
-	{
-		// In case of not Player
-		bIsRevoveryEscapeWindowOpen = true;
-	}
-	else
-	{
-		// In case of Player, Check Recovery Escape Window
-		bIsRevoveryEscapeWindowOpen =InputManager->IsRecoveryEscapeWindowOpen();
-	}
-	
-	const bool bActionRunning = ActionComponent->IsActionRunning();
-	const bool bCanStartAction = !bActionRunning
-		|| (bIsRevoveryEscapeWindowOpen && ActionComponent->CanInterruptActiveAction());
 
-	if (bCanStartAction)
-	{
-		const EMVCombatActionTypes ResolvedActionType = ResolveContextualBasicAttackActionType(InActionType);
+	const UMVInputManagerComponent* InputManager = OwnerCharacter->InputManagerComponent;
+	const bool bRecoveryEscapeWindowOpen = !InputManager || InputManager->IsRecoveryEscapeWindowOpen();
+	return !ActionComponent->IsActionRunning()
+		|| (bRecoveryEscapeWindowOpen && ActionComponent->CanInterruptActiveAction());
+}
 
-		if (IsBasicAttackActionType(ResolvedActionType))
+bool UMVCombatComponent::TryBasicCombatAction(
+	const EMVCombatActionTypes InActionType,
+	const FName StartSection)
+{
+	if (!CanStartCombatAction())
+	{
+		return false;
+	}
+
+	const EMVCombatActionTypes ResolvedActionType = ResolveContextualBasicAttackActionType(InActionType);
+	if (!IsBasicAttackActionType(ResolvedActionType))
+	{
+		return false;
+	}
+
+	const bool bStarted = TryBasicAttack(ResolvedActionType, StartSection);
+	if (bStarted)
+	{
+		MarkContextualBasicAttackStarted(ResolvedActionType);
+		BroadcastCombatActionStarted(ResolvedActionType, EMVSkillSlot::NONE);
+	}
+
+	return bStarted;
+}
+
+bool UMVCombatComponent::TrySkillCombatAction(
+	const EMVSkillSlot SkillSlot,
+	const FName StartSection)
+{
+	if (!MVCombatIsActiveSkillSlot(SkillSlot) || !CanStartCombatAction())
+	{
+		return false;
+	}
+
+	if (SkillSlot == EMVSkillSlot::RSkill && bUseRSkillGauge && !IsRSkillGaugeReady())
+	{
+		return false;
+	}
+
+	const bool bStarted = TrySkill(SkillSlot, StartSection);
+	if (bStarted)
+	{
+		if (SkillSlot == EMVSkillSlot::RSkill && bUseRSkillGauge)
 		{
-			const bool bStarted = TryBasicAttack(ResolvedActionType, ResolvedActionIndex, StartSection);
-			if (bStarted)
-			{
-				MarkContextualBasicAttackStarted(ResolvedActionType);
-				BroadcastCombatActionStarted(ResolvedActionType, ResolvedActionIndex);
-			}
-			return bStarted;
-		}
-		else if (ResolvedActionType == EMVCombatActionTypes::Skill)
-		{
-			const bool bStarted = TrySkill(ResolvedActionType, ResolvedActionIndex, StartSection);
-
-			if (bStarted)
-			{
-				if (ResolvedActionIndex == MVCombatSkillSlots::R && bUseRSkillGauge)
-				{
-					ResetRSkillGauge();
-				}
-
-				BroadcastCombatActionStarted(ResolvedActionType, ResolvedActionIndex);
-			}
-
-			return bStarted;
+			ResetRSkillGauge();
 		}
 
-		// Other Actions --> If Other action should concern, add logic
+		BroadcastCombatActionStarted(EMVCombatActionTypes::Skill, SkillSlot);
 	}
-	
-	return false;
+
+	return bStarted;
 }
 
 bool UMVCombatComponent::TryHandleActionInput(
@@ -553,48 +566,35 @@ bool UMVCombatComponent::ChooseTryCombatAction(const FGameplayTag ActionInputTag
 
 	if (ActionInputTag.MatchesTag(MVGameplayTags::Action_Input_Skill))
 	{
-		const int32 SkillIndex = MVCombatResolveSkillIndexFromInputTag(ActionInputTag);
-		if (SkillIndex == INDEX_NONE)
+		const EMVSkillSlot SkillSlot = MVCombatResolveSkillSlotFromInputTag(ActionInputTag);
+		if (SkillSlot == EMVSkillSlot::NONE || !SkillMap.Contains(SkillSlot))
 		{
-			// 알 수 없는 스킬 입력은 실행 대상이 아니므로 즉시 소비
+			// 알 수 없는 스킬 입력은 실행 대상이 아니거나 현재 장비에 등록되지 않은 스킬 입력은 즉시 소비
 			return true;
 		}
 
-		// 현재 듀얼 소드 전용 스킬 미지원
-		// 입력 버퍼에 남겨 무기 교체 후 실행되는 현상 방지
-		if (CurrentWeaponStyle == EMVEquippedStyle::DualWield)
-		{
-			return true;
-		}
 
-		const FName SkillMapKey = MVCombatMakeSkillMapKey(SkillIndex);
-		if (!SkillMap.Contains(SkillMapKey))
-		{
-			// 현재 장비에 등록되지 않은 스킬 입력 즉시 소비
-			return true;
-		}
-
-		const bool bRSkillInput = SkillIndex == MVCombatSkillSlots::R;
+		const bool bRSkillInput = SkillSlot == EMVSkillSlot::RSkill;
 		if (bRSkillInput && bUseRSkillGauge && !IsRSkillGaugeReady())
 		{
 			// 게이지 미충전 상태의 R 입력 즉시 소비
 			return true;
 		}
 
-		return TryCombatAction(EMVCombatActionTypes::Skill, SkillIndex);
+		return TrySkillCombatAction(SkillSlot);
 	}
 	// Basic attack - Light attack, Heavy Attack, Charge Attack
 	else if(ActionInputTag.MatchesTagExact(MVGameplayTags::Action_Input_LightAttack))
 	{
-		return TryCombatAction(EMVCombatActionTypes::LightAttack);
+		return TryBasicCombatAction(EMVCombatActionTypes::LightAttack);
 	}
 	else if (ActionInputTag.MatchesTagExact(MVGameplayTags::Action_Input_HeavyAttack))
 	{
-		return TryCombatAction(EMVCombatActionTypes::HeavyAttack);
+		return TryBasicCombatAction(EMVCombatActionTypes::HeavyAttack);
 	}
 	else if (ActionInputTag.MatchesTagExact(MVGameplayTags::Action_Input_HeavyChargeAttack))
 	{
-		return TryCombatAction(EMVCombatActionTypes::HeavyAttack);
+		return TryBasicCombatAction(EMVCombatActionTypes::HeavyAttack);
 	}
 	else if (ActionInputTag.MatchesTagExact(MVGameplayTags::Action_Input_ChargeAttack))
 	{
@@ -604,13 +604,13 @@ bool UMVCombatComponent::ChooseTryCombatAction(const FGameplayTag ActionInputTag
 				&& !bSprintContextualBasicAttackConsumed;
 			if (bCanStartSprintHeavyAttack)
 			{
-				return TryCombatAction(EMVCombatActionTypes::HeavyAttack);
+				return TryBasicCombatAction(EMVCombatActionTypes::HeavyAttack);
 			}
 
 			return true;
 		}
 
-		return TryCombatAction(EMVCombatActionTypes::ChargeAttack);
+		return TryBasicCombatAction(EMVCombatActionTypes::ChargeAttack);
 	}
 
 	return false;
@@ -636,40 +636,14 @@ bool UMVCombatComponent::IsHeavyChargeActionInputTag(const FGameplayTag ActionIn
 
 bool UMVCombatComponent::TryBasicAttack(
 	EMVCombatActionTypes InActionType,
-	int32 ActionIndex,
 	FName StartSection)
 {
-	const FName ActionMapKey = MakeActionTypeMapKey(InActionType);
-	FMVSkillEntry* ActionEntry = BasicAttackMap.Find(ActionMapKey);
+	FMVSkillEntry* ActionEntry = BasicAttackMap.Find(InActionType);
 
 	if (!ActionEntry)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("MVCombatComponent::TryBasicAttack - Action '%s' not found"), *ActionMapKey.ToString());
+		UE_LOG(LogTemp, Warning, TEXT("MVCombatComponent::TryBasicAttack - Action '%s' not found"), *MVCombatActionTypeToString(InActionType));
 		return false;
-	}
-
-	if (ActionIndex > 0)
-	{
-		const FName IndexedRowName = MakeIndexedActionRowName(InActionType, ActionIndex);
-		FDataTableRowHandle IndexedRowHandle;
-		IndexedRowHandle.DataTable = ActionEntry->DataTable.Get();
-		IndexedRowHandle.RowName = IndexedRowName;
-
-		if (IndexedRowHandle.DataTable
-			&& IndexedRowHandle.DataTable->FindRow<FMVSkillDataTableColumn>(IndexedRowName, TEXT("TryBasicAttack"), false))
-		{
-			FMVSkillEntry IndexedEntry;
-			if (BuildSkillEntryFromRowHandle(IndexedRowHandle, IndexedEntry)
-				&& CanConsumeActionCost(IndexedEntry.GetCurrentSkillData()))
-			{
-				const bool bStarted = TryStartActionWithAbility(IndexedEntry, IndexedRowHandle, StartSection);
-				if (bStarted)
-				{
-					UpdateLastBasicAttackSwingDirection(IndexedRowHandle);
-				}
-				return bStarted;
-			}
-		}
 	}
 
 	float CurrentTime = GetWorld()->GetTimeSeconds();
@@ -677,18 +651,18 @@ bool UMVCombatComponent::TryBasicAttack(
 	// Reset Basic Attack's Index and Start Attack
 	if (CurrentTime - LastBasicAttackedTime > ResetBasicAttackTime)
 	{
-		for (TPair<FName, FMVSkillEntry>& pair : BasicAttackMap)
+		for (TPair<EMVCombatActionTypes, FMVSkillEntry>& Pair : BasicAttackMap)
 		{
-			FMVSkillEntry& CurrentEntry = pair.Value;
+			FMVSkillEntry& CurrentEntry = Pair.Value;
 			CurrentEntry.ResetChain();
 		}
-		ActiveBasicAttackMapKey = NAME_None;
+		ActiveBasicAttackType = EMVCombatActionTypes::None;
 		ClearLastBasicAttackSwingDirection();
 	}
 
-	if (!ActiveBasicAttackMapKey.IsNone() && ActiveBasicAttackMapKey != ActionMapKey)
+	if (ActiveBasicAttackType != EMVCombatActionTypes::None && ActiveBasicAttackType != InActionType)
 	{
-		ResetOtherBasicAttackChains(ActionMapKey);
+		ResetOtherBasicAttackChains(InActionType);
 		ActionEntry->ResetChain();
 	}
 
@@ -707,7 +681,7 @@ bool UMVCombatComponent::TryBasicAttack(
 		LogMVCombatComponent,
 		Log,
 		TEXT("TryBasicAttack: Action=%s Row=%s ChainStage=%d ChainActive=%s"),
-		*ActionMapKey.ToString(),
+		*MVCombatActionTypeToString(InActionType),
 		*MVCombatRowHandleToString(CurrentRowHandle),
 		ActionEntry->CurrentChainStageIndex,
 		ActionEntry->bChainActive ? TEXT("true") : TEXT("false"));
@@ -719,13 +693,13 @@ bool UMVCombatComponent::TryBasicAttack(
 			UpdateLastBasicAttackSwingDirection(CurrentRowHandle);
 			ActionEntry->TryAdvanceChainStage(CurrentTime);
 			LastBasicAttackedTime = CurrentTime;
-			ActiveBasicAttackMapKey = ActionMapKey;
+			ActiveBasicAttackType = InActionType;
 			return true;
 		}
 		else
 		{
 			ActionEntry->CurrentChainStageIndex = OriginalChainStageIndex;
-			UE_LOG(LogTemp, Warning, TEXT("MVCombatComponent::TryBasicAttack - Failed to send data to ActionComponent for action '%s'"), *ActionMapKey.ToString());
+			UE_LOG(LogTemp, Warning, TEXT("MVCombatComponent::TryBasicAttack - Failed to send data to ActionComponent for action '%s'"), *MVCombatActionTypeToString(InActionType));
 			return false;
 		}
 
@@ -738,13 +712,13 @@ bool UMVCombatComponent::TryBasicAttack(
 			ActionEntry->ActivateChain(CurrentTime);
 			ActionEntry->CurrentChainStageIndex = SelectedChainStageIndex;
 			ActionEntry->TryAdvanceChainStage(CurrentTime);
-			ResetOtherBasicAttackChains(ActionMapKey);
-			ActiveBasicAttackMapKey = ActionMapKey;
+			ResetOtherBasicAttackChains(InActionType);
+			ActiveBasicAttackType = InActionType;
 		}
 		else
 		{
 			ActionEntry->CurrentChainStageIndex = OriginalChainStageIndex;
-			UE_LOG(LogTemp, Warning, TEXT("MVCombatComponent::TryBasicAttack - Failed to send data to ActionComponent for action '%s'"), *ActionMapKey.ToString());
+			UE_LOG(LogTemp, Warning, TEXT("MVCombatComponent::TryBasicAttack - Failed to send data to ActionComponent for action '%s'"), *MVCombatActionTypeToString(InActionType));
 			return false;
 		}
 	}
@@ -753,22 +727,12 @@ bool UMVCombatComponent::TryBasicAttack(
 
 }
 
-bool UMVCombatComponent::TrySkill(
-	EMVCombatActionTypes InActionType,
-	int32 SkillIndex,
-	FName StartSection)
+bool UMVCombatComponent::TrySkill(const EMVSkillSlot SkillSlot, FName StartSection)
 {
-	const FName RowName = MakeIndexedActionRowName(InActionType, SkillIndex);
-
-	FMVSkillEntry* ActionEntry = SkillMap.Find(RowName);
+	FMVSkillEntry* ActionEntry = SkillMap.Find(SkillSlot);
 	if (!ActionEntry)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("MVCombatComponent::TryCombatAction - Action '%s' not found"), *RowName.ToString());
-		return false;
-	}
-
-	if (SkillIndex == MVCombatSkillSlots::R && bUseRSkillGauge && !IsRSkillGaugeReady())
-	{
+		UE_LOG(LogTemp, Warning, TEXT("MVCombatComponent::TrySkill - Skill slot '%d' not found"), static_cast<int32>(SkillSlot));
 		return false;
 	}
 
@@ -882,7 +846,7 @@ void UMVCombatComponent::HandleAbilityEnded(const UMVAbilityBase* EndedAbility)
 	const float CurrentTime = GetWorld()->GetTimeSeconds();
 	bool bHandledAbility = false;
 
-	for (TPair<FName, FMVSkillEntry>& Pair : BasicAttackMap)
+	for (TPair<EMVCombatActionTypes, FMVSkillEntry>& Pair : BasicAttackMap)
 	{
 		if (Pair.Value.ContainsAbility(EndedAbility))
 		{
@@ -895,7 +859,7 @@ void UMVCombatComponent::HandleAbilityEnded(const UMVAbilityBase* EndedAbility)
 
 	if (!bHandledAbility)
 	{
-		for (TPair<FName, FMVSkillEntry>& Pair : SkillMap)
+		for (TPair<EMVSkillSlot, FMVSkillEntry>& Pair : SkillMap)
 		{
 			if (Pair.Value.ContainsAbility(EndedAbility))
 			{
@@ -963,7 +927,7 @@ void UMVCombatComponent::HandleHitResolved(const FMVResolvedHitData& HitData)
 
 	const float CurrentTime = GetWorld()->GetTimeSeconds();
 
-	for (TPair<FName, FMVSkillEntry>& Pair : SkillMap)
+	for (TPair<EMVSkillSlot, FMVSkillEntry>& Pair : SkillMap)
 	{
 		FMVSkillEntry& SkillEntry = Pair.Value;
 
@@ -993,6 +957,7 @@ void UMVCombatComponent::HandleHitResolved(const FMVResolvedHitData& HitData)
 		SkillEntry.TryAdvanceChainStage(CurrentTime);
 		return;
 	}
+
 }
 
 void UMVCombatComponent::HandleActionEnded(
@@ -1037,11 +1002,8 @@ void UMVCombatComponent::RefreshActionMaps()
 
 void UMVCombatComponent::ResetBasicAttackMap()
 {
-	if (BasicAttackMap.Num() != 0)
-	{
-		BasicAttackMap.Reset();
-	}
-	ActiveBasicAttackMapKey = NAME_None;
+	BasicAttackMap.Reset();
+	ActiveBasicAttackType = EMVCombatActionTypes::None;
 	LastBasicAttackedTime = 0.0;
 	bSprintContextualBasicAttackConsumed = false;
 	bWasSprintAttackContextActive = false;
@@ -1050,254 +1012,154 @@ void UMVCombatComponent::ResetBasicAttackMap()
 	ClearLastBasicAttackSwingDirection();
 	ResetHeavyChargeAttackState();
 
-	if (!AttackChooserTable.IsValid() && !FallbackAttackActionTable.IsValid())
+	const AActor* Owner = GetOwner();
+	const UMVWeaponComponent* WeaponComponent = Owner
+		? Owner->FindComponentByClass<UMVWeaponComponent>()
+		: nullptr;
+	if (!WeaponComponent)
 	{
+		UE_LOG(LogMVCombatComponent, Warning, TEXT("ResetBasicAttackMap: WeaponComponent not found."));
 		return;
 	}
-	
-	FMVCombatActionTableInput ChooserInput;
-	ChooserInput.CurrentWeaponStyle = CurrentWeaponStyle;
-	UDataTable* FallbackDataTable = nullptr;
-	bool bFallbackLoadAttempted = false;
 
-	TArray<EMVCombatActionTypes> TypeArray;
-	TypeArray.Add(EMVCombatActionTypes::LightAttack);
-	TypeArray.Add(EMVCombatActionTypes::HeavyAttack);
-	TypeArray.Add(EMVCombatActionTypes::ChargeAttack);
-	TypeArray.Add(EMVCombatActionTypes::SprintLightAttack);
-	TypeArray.Add(EMVCombatActionTypes::SprintHeavyAttack);
-	TypeArray.Add(EMVCombatActionTypes::DodgeLightAttack);
-	TypeArray.Add(EMVCombatActionTypes::DodgeHeavyAttack);
-
-	for (EMVCombatActionTypes Types : TypeArray)
+	const EMVCombatActionTypes TypeArray[] =
 	{
-		ChooserInput.SetActionType(MakeActionTypeGameplayTag(Types));
-		const FName ActionMapKey = MakeActionTypeMapKey(Types);
+		EMVCombatActionTypes::LightAttack,
+		EMVCombatActionTypes::DodgeLightAttack,
+		EMVCombatActionTypes::SprintLightAttack,
+		EMVCombatActionTypes::HeavyAttack,
+		EMVCombatActionTypes::DodgeHeavyAttack,
+		EMVCombatActionTypes::SprintHeavyAttack,
+		EMVCombatActionTypes::ChargeAttack
+	};
 
+	for (const EMVCombatActionTypes ActionType : TypeArray)
+	{
 		FDataTableRowHandle StartingRowHandle;
-		const bool bResolvedFromChooser = ResolveActionRowHandleFromChooserTable(ChooserInput, ActionMapKey, StartingRowHandle);
-		if (bResolvedFromChooser && !MVCombatIsBasicAttackStartRowCandidate(Types, StartingRowHandle.RowName))
+		if (!WeaponComponent->GetBasicAttackRow(CurrentWeaponStyle, ActionType, StartingRowHandle))
 		{
 			UE_LOG(
 				LogMVCombatComponent,
-				Warning,
-				TEXT("ResetBasicAttackMap: Chooser returned an unexpected start row for action '%s'. Returned=%s. Using fallback row candidates."),
-				*ActionMapKey.ToString(),
-				*MVCombatRowHandleToString(StartingRowHandle));
-			StartingRowHandle = FDataTableRowHandle();
-		}
-
-		if (StartingRowHandle.RowName.IsNone() || !StartingRowHandle.DataTable)
-		{
-			if (!bFallbackLoadAttempted)
-			{
-				FallbackDataTable = LoadFallbackAttackActionTable();
-				bFallbackLoadAttempted = true;
-			}
-
-			if (!TryMakeFallbackAttackActionRowHandle(Types, FallbackDataTable, StartingRowHandle))
-			{
-				UE_LOG(LogMVCombatComponent, Verbose, TEXT("ResetBasicAttackMap: Cannot get row handle for action '%s'"), *ActionMapKey.ToString());
-				continue;
-			}
+				Verbose,
+				TEXT("ResetBasicAttackMap: WeaponComponent has no row for Style=%d Action=%s."),
+				static_cast<int32>(CurrentWeaponStyle),
+				*MVCombatActionTypeToString(ActionType));
+			continue;
 		}
 
 		FMVSkillEntry SkillEntry;
 		if (!BuildSkillEntryFromRowHandle(StartingRowHandle, SkillEntry))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("MVCombatComponent(Reset Basic Attack Map): Failed to build action '%s' from row '%s'"),
-				*ActionMapKey.ToString(),
-				*StartingRowHandle.RowName.ToString());
+			UE_LOG(
+				LogMVCombatComponent,
+				Warning,
+				TEXT("ResetBasicAttackMap: Failed to build Action=%s Start=%s."),
+				*MVCombatActionTypeToString(ActionType),
+				*MVCombatRowHandleToString(StartingRowHandle));
 			continue;
 		}
 
-		BasicAttackMap.Add(ActionMapKey, SkillEntry);
+		BasicAttackMap.Add(ActionType, SkillEntry);
 		UE_LOG(
 			LogMVCombatComponent,
 			Log,
 			TEXT("ResetBasicAttackMap: Registered Action=%s Start=%s Chain=%s"),
-			*ActionMapKey.ToString(),
+			*MVCombatActionTypeToString(ActionType),
 			*MVCombatRowHandleToString(StartingRowHandle),
 			*MVCombatSkillRowNamesToString(SkillEntry.SkillRowNames));
 	}
-
 }
 
 void UMVCombatComponent::ResetSkillMap()
 {
-	// If AnyValue remains in maps, clear map
-	if (SkillMap.Num() != 0)
+	SkillMap.Reset();
+
+	const EMVSkillSlot SkillSlots[] =
 	{
-		SkillMap.Reset();
+		EMVSkillSlot::PassiveSkill,
+		EMVSkillSlot::QSkill,
+		EMVSkillSlot::RSkill,
+		EMVSkillSlot::WSkill,
+		EMVSkillSlot::ESkill
+	};
+
+	for (const EMVSkillSlot SkillSlot : SkillSlots)
+	{
+		RefreshSkillSlot(SkillSlot);
 	}
+}
 
-	if (!AttackChooserTable.IsValid() && !FallbackAttackActionTable.IsValid())
+void UMVCombatComponent::RefreshSkillSlot(const EMVSkillSlot SkillSlot)
+{
+	const AActor* Owner = GetOwner();
+	const UMVWeaponComponent* WeaponComponent = Owner
+		? Owner->FindComponentByClass<UMVWeaponComponent>()
+		: nullptr;
+
+	FDataTableRowHandle SkillRowHandle;
+	if (SkillSlot == EMVSkillSlot::PassiveSkill)
 	{
-		return;
-	}
-
-	TSet<FName> ProcessedRowNames;
-	const auto TryRegisterSkillEntry =
-		[this, &ProcessedRowNames](
-			const int32 SkillIndex,
-			const FDataTableRowHandle& StartingRowHandle,
-			const TCHAR* Source) -> bool
+		if (!WeaponComponent
+			|| !WeaponComponent->GetEquippedSkillRow(CurrentWeaponStyle, SkillSlot, SkillRowHandle))
 		{
-			if (!StartingRowHandle.DataTable || StartingRowHandle.RowName.IsNone())
-			{
-				return false;
-			}
-
-			if (ProcessedRowNames.Contains(StartingRowHandle.RowName))
-			{
-				return false;
-			}
-
-			FMVSkillEntry SkillEntry;
-			if (!BuildSkillEntryFromRowHandle(StartingRowHandle, SkillEntry))
-			{
-				UE_LOG(
-					LogMVCombatComponent,
-					Warning,
-					TEXT("ResetSkillMap: Failed to build skill entry. Source=%s Index=%d Start=%s"),
-					Source,
-					SkillIndex,
-					*MVCombatRowHandleToString(StartingRowHandle));
-				return false;
-			}
-
-			for (const FName& SkillRowName : SkillEntry.SkillRowNames)
-			{
-				ProcessedRowNames.Add(SkillRowName);
-			}
-
-			const FName SkillMapKey = MVCombatMakeSkillMapKey(SkillIndex);
-			SkillMap.Add(SkillMapKey, SkillEntry);
-			UE_LOG(
-				LogMVCombatComponent,
-				Log,
-				TEXT("ResetSkillMap: Registered Action=%s Source=%s Start=%s Chain=%s"),
-				*SkillMapKey.ToString(),
-				Source,
-				*MVCombatRowHandleToString(StartingRowHandle),
-				*MVCombatSkillRowNamesToString(SkillEntry.SkillRowNames));
-			return true;
-		};
-
-	for (int32 SkillIndex = 0; SkillIndex < MVCombatSkillSlots::Count; ++SkillIndex)
-	{
-		const FGameplayTag SkillActionType = MVCombatMakeSkillActionTypeGameplayTag(SkillIndex);
-		if (!SkillActionType.IsValid())
-		{
-			continue;
-		}
-
-		FMVCombatActionTableInput SkillChooserInput;
-		SkillChooserInput.CurrentWeaponStyle = CurrentWeaponStyle;
-		SkillChooserInput.SetActionType(SkillActionType);
-
-		FDataTableRowHandle SkillRowHandle;
-		if (ResolveActionRowHandleFromChooserTable(SkillChooserInput, MVCombatMakeSkillFallbackRowName(SkillIndex), SkillRowHandle))
-		{
-			if (MVCombatIsSkillStartRowName(SkillRowHandle.RowName))
-			{
-				TryRegisterSkillEntry(SkillIndex, SkillRowHandle, TEXT("ExactSkillChooser"));
-			}
-			else
-			{
-				UE_LOG(
-					LogMVCombatComponent,
-					Warning,
-					TEXT("ResetSkillMap: Chooser returned a non-skill row. Index=%d Returned=%s."),
-					SkillIndex,
-					*MVCombatRowHandleToString(SkillRowHandle));
-			}
-		}
-	}
-
-	if (SkillMap.Num() > 0)
-	{
-		return;
-	}
-
-	// Make ChooserTable function input 
-	bool DataTableSearchResult = false;
-	FMVCombatActionTableInput ChooserInput;
-	ChooserInput.CurrentWeaponStyle = CurrentWeaponStyle;
-	ChooserInput.SetActionType(MakeActionTypeGameplayTag(EMVCombatActionTypes::Skill));
-
-	// Find DataTable using ChooserTable input
-	UDataTable* CurrentDT = GetDataTableFromChooserTable(ChooserInput, DataTableSearchResult);
-	bool bUsingFallbackAttackActionTable = false;
-
-	if (!DataTableSearchResult || !CurrentDT)
-	{
-		CurrentDT = LoadFallbackAttackActionTable();
-		bUsingFallbackAttackActionTable = CurrentDT != nullptr;
-		if (!CurrentDT)
-		{
-			UE_LOG(LogTemp, Log, TEXT("MVCombatComponent(Reset Skill Map): Cannot Get DataTable"));
+			ClearPassiveSkill();
 			return;
 		}
-	}
 
-	if (!CurrentDT->GetRowStruct() || !CurrentDT->GetRowStruct()->IsChildOf(FMVSkillDataTableColumn::StaticStruct()))
-	{
-		UE_LOG(
-			LogTemp,
-			Warning,
-			TEXT("MVCombatComponent(Reset Skill Map): DataTable '%s' has invalid row struct '%s'"),
-			*CurrentDT->GetName(),
-			CurrentDT->GetRowStruct() ? *CurrentDT->GetRowStruct()->GetName() : TEXT("None"));
+		ApplyPassiveSkill(SkillRowHandle);
 		return;
 	}
 
-	TArray<FName> RowNames = CurrentDT->GetRowNames();
-	RowNames.Sort(
-		[](const FName& Left, const FName& Right)
-		{
-			return Left.ToString() < Right.ToString();
-		});
-
-	int32 SkillIndex = 0;
-	for (const FName RowName : RowNames)
+	if (!MVCombatIsActiveSkillSlot(SkillSlot))
 	{
-		FMVSkillDataTableColumn* RowData = CurrentDT->FindRow<FMVSkillDataTableColumn>(
-			RowName,
-			TEXT("ResetSkillMap"),
-			false);
-
-		if (!RowData || !RowData->AbilityReference)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("MVCombatComponent(Reset Skill Map): Invalid row data or ability reference for '%s'"), *RowName.ToString());
-			continue;
-		}
-
-		if (bUsingFallbackAttackActionTable && !MVCombatIsSkillStartRowName(RowName))
-		{
-			continue;
-		}
-
-		// Chained Skill will add previous when first skill(first Chain skill) add to the map
-		//if (SkillMap.Contains(It.Key))
-		//{
-		//	continue;
-		//}
-		if (ProcessedRowNames.Contains(RowName))
-		{
-			continue;
-		}
-
-		FDataTableRowHandle StartingRowHandle;
-		StartingRowHandle.DataTable = CurrentDT;
-		StartingRowHandle.RowName = RowName;
-
-		if (TryRegisterSkillEntry(SkillIndex, StartingRowHandle, TEXT("LegacySkillTable")))
-		{
-			++SkillIndex;
-		}
+		UE_LOG(
+			LogMVCombatComponent,
+			Warning,
+			TEXT("RefreshSkillSlot: Unsupported slot %d."),
+			static_cast<int32>(SkillSlot));
+		return;
 	}
 
+	SkillMap.Remove(SkillSlot);
+
+	if (!WeaponComponent)
+	{
+		UE_LOG(LogMVCombatComponent, Warning, TEXT("RefreshSkillSlot: WeaponComponent not found."));
+		return;
+	}
+
+	if (!WeaponComponent->GetEquippedSkillRow(CurrentWeaponStyle, SkillSlot, SkillRowHandle))
+	{
+		UE_LOG(
+			LogMVCombatComponent,
+			Verbose,
+			TEXT("RefreshSkillSlot: No equipped row for Style=%d Slot=%d."),
+			static_cast<int32>(CurrentWeaponStyle),
+			static_cast<int32>(SkillSlot));
+		return;
+	}
+
+	FMVSkillEntry SkillEntry;
+	if (!BuildSkillEntryFromRowHandle(SkillRowHandle, SkillEntry))
+	{
+		UE_LOG(
+			LogMVCombatComponent,
+			Warning,
+			TEXT("RefreshSkillSlot: Failed to build Slot=%d Start=%s."),
+			static_cast<int32>(SkillSlot),
+			*MVCombatRowHandleToString(SkillRowHandle));
+		return;
+	}
+
+	SkillMap.Add(SkillSlot, SkillEntry);
+	UE_LOG(
+		LogMVCombatComponent,
+		Log,
+		TEXT("RefreshSkillSlot: Registered Action=%s Slot=%d Start=%s Chain=%s."),
+		*StaticEnum<EMVSkillSlot>()->GetNameStringByValue(static_cast<int64>(SkillSlot)),
+		static_cast<int32>(SkillSlot),
+		*MVCombatRowHandleToString(SkillRowHandle),
+		*MVCombatSkillRowNamesToString(SkillEntry.SkillRowNames));
 }
 
 void UMVCombatComponent::ChangeWeapon(EMVEquippedStyle NewStyle)
@@ -1307,56 +1169,6 @@ void UMVCombatComponent::ChangeWeapon(EMVEquippedStyle NewStyle)
 
 	// Refresh Attack Index Maps
 	RefreshActionMaps();
-}
-
-FMVSkillDataTableColumn UMVCombatComponent::GetDataTableRowFromChooserTable_Implementation(const FMVCombatActionTableInput& ChooserInput, const FName& RowName, bool& OutResult)
-{
-	FMVSkillDataTableColumn OutRow;
-
-	FDataTableRowHandle RowHandle;
-	if (!ResolveActionRowHandleFromChooserTable(ChooserInput, RowName, RowHandle))
-	{
-		OutResult = false;
-		return OutRow;
-	}
-
-	// Find Row
-	FMVSkillDataTableColumn* Data = RowHandle.DataTable->FindRow<FMVSkillDataTableColumn>(RowHandle.RowName, TEXT("DataTableRow"));
-	
-	if (Data)
-	{
-		OutRow = *Data;
-		OutResult = true;
-	}
-	else
-	{
-		OutResult = false;
-	}
-
-	return OutRow;
-}
-
-bool UMVCombatComponent::TryStartCombatActionFromRowHandle(const FDataTableRowHandle& RowHandle, FName StartSection)
-{
-	const AMVCharacterBase* Character = Cast<AMVCharacterBase>(GetOwner());
-	if (!Character || !Character->ActionComponent || Character->ActionComponent->IsActionRunning()
-		|| !IsValidSkillActionRowHandle(RowHandle, TEXT("TryStartCombatActionFromRowHandle")))
-	{
-		return false;
-	}
-	const FMVSkillDataTableColumn* Row = RowHandle.DataTable->FindRow<FMVSkillDataTableColumn>(
-		RowHandle.RowName, TEXT("TryStartCombatActionFromRowHandle"));
-	if (!Row || !Row->bEnabled || !CanConsumeActionCost(Row))
-	{
-		return false;
-	}
-	FMVSkillEntry Entry;
-	if (!BuildSkillEntryFromRowHandle(RowHandle, Entry))
-	{
-		return false;
-	}
-	DirectActionEntry = MoveTemp(Entry);
-	return TryStartActionWithAbility(DirectActionEntry, RowHandle, StartSection);
 }
 
 bool UMVCombatComponent::BuildSkillEntryFromRowHandle(const FDataTableRowHandle& StartingRowHandle, FMVSkillEntry& OutEntry)
@@ -1425,150 +1237,6 @@ bool UMVCombatComponent::BuildSkillEntryFromRowHandle(const FDataTableRowHandle&
 	return OutEntry.AbilityInstances.Num() > 0;
 }
 
-bool UMVCombatComponent::GetActionRowHandleFromChooserTable(
-	const FMVCombatActionTableInput& ChooserInput,
-	const FName FallbackRowName,
-	FDataTableRowHandle& OutRowHandle) const
-{
-	OutRowHandle = FDataTableRowHandle();
-
-	if (!AttackChooserTable.IsValid())
-	{
-		return false;
-	}
-
-	UChooserTable* ChooserTable = Cast<UChooserTable>(AttackChooserTable.TryLoad());
-	if (!ChooserTable)
-	{
-		UE_LOG(
-			LogTemp,
-			Warning,
-			TEXT("MVCombatComponent::GetActionRowHandleFromChooserTable - Chooser failed to load. Path=%s."),
-			*AttackChooserTable.ToString());
-		return false;
-	}
-
-	FMVCombatActionTableInput MutableChooserInput = ChooserInput;
-	MutableChooserInput.RefreshActionTypeTags();
-	FGameplayTag ActionTypeTag = MutableChooserInput.ActionType;
-	FGameplayTagContainer ActionTypeTags = MutableChooserInput.ActionTypeTags;
-	FMVAttackActionRowHandle ChooserAttackActionRowHandle;
-	ChooserAttackActionRowHandle.Reset();
-
-	FChooserEvaluationContext ChooserContext;
-	ChooserContext.AddStructParam(MutableChooserInput);
-	ChooserContext.AddStructParam(ChooserAttackActionRowHandle);
-	ChooserContext.AddStructParam(ActionTypeTag);
-	ChooserContext.AddStructParam(ActionTypeTags);
-
-	TSoftObjectPtr<UObject> SelectedObject;
-	UChooserTable::EvaluateChooser(
-		ChooserContext,
-		ChooserTable,
-		FObjectChooserBase::FObjectChooserSoftObjectIteratorCallback::CreateLambda(
-			[&SelectedObject](const TSoftObjectPtr<UObject>& InResult)
-			{
-				SelectedObject = InResult;
-				return FObjectChooserBase::EIteratorStatus::Stop;
-			}));
-
-	if (ChooserAttackActionRowHandle.ActionRow.DataTable)
-	{
-		OutRowHandle = ChooserAttackActionRowHandle.ActionRow;
-		if (OutRowHandle.RowName.IsNone())
-		{
-			OutRowHandle.RowName = FallbackRowName;
-		}
-		return !OutRowHandle.RowName.IsNone();
-	}
-
-	UObject* ResolvedObject = SelectedObject.IsValid()
-		? SelectedObject.Get()
-		: SelectedObject.LoadSynchronous();
-	UDataTable* SelectedDataTable = Cast<UDataTable>(ResolvedObject);
-	if (!SelectedDataTable)
-	{
-		return false;
-	}
-
-	OutRowHandle.DataTable = SelectedDataTable;
-	OutRowHandle.RowName = FallbackRowName;
-	return !OutRowHandle.RowName.IsNone();
-}
-
-bool UMVCombatComponent::ResolveActionRowHandleFromChooserTable(
-	const FMVCombatActionTableInput& ChooserInput,
-	const FName FallbackRowName,
-	FDataTableRowHandle& OutRowHandle)
-{
-	if (GetActionRowHandleFromChooserTable(ChooserInput, FallbackRowName, OutRowHandle))
-	{
-		return true;
-	}
-
-	return false;
-}
-
-UDataTable* UMVCombatComponent::LoadFallbackAttackActionTable() const
-{
-	if (!FallbackAttackActionTable.IsValid())
-	{
-		return nullptr;
-	}
-
-	UDataTable* DataTable = Cast<UDataTable>(FallbackAttackActionTable.TryLoad());
-	if (!DataTable)
-	{
-		UE_LOG(
-			LogTemp,
-			Warning,
-			TEXT("MVCombatComponent::LoadFallbackAttackActionTable - Fallback table failed to load. Path=%s."),
-			*FallbackAttackActionTable.ToString());
-		return nullptr;
-	}
-
-	if (!DataTable->GetRowStruct() || !DataTable->GetRowStruct()->IsChildOf(FMVSkillDataTableColumn::StaticStruct()))
-	{
-		UE_LOG(
-			LogTemp,
-			Warning,
-			TEXT("MVCombatComponent::LoadFallbackAttackActionTable - DataTable '%s' has invalid row struct '%s'"),
-			*DataTable->GetName(),
-			DataTable->GetRowStruct() ? *DataTable->GetRowStruct()->GetName() : TEXT("None"));
-		return nullptr;
-	}
-
-	return DataTable;
-}
-
-bool UMVCombatComponent::TryMakeFallbackAttackActionRowHandle(
-	const EMVCombatActionTypes ActionType,
-	UDataTable* DataTable,
-	FDataTableRowHandle& OutRowHandle) const
-{
-	OutRowHandle = FDataTableRowHandle();
-
-	if (!DataTable)
-	{
-		return false;
-	}
-
-	for (const FName CandidateRowName : MVCombatMakeFallbackAttackRowCandidates(ActionType))
-	{
-		if (DataTable->FindRow<FMVSkillDataTableColumn>(
-			CandidateRowName,
-			TEXT("TryMakeFallbackAttackActionRowHandle"),
-			false))
-		{
-			OutRowHandle.DataTable = DataTable;
-			OutRowHandle.RowName = CandidateRowName;
-			return true;
-		}
-	}
-
-	return false;
-}
-
 bool UMVCombatComponent::IsValidSkillActionRowHandle(const FDataTableRowHandle& RowHandle, const TCHAR* Context) const
 {
 	if (!RowHandle.DataTable || RowHandle.RowName.IsNone())
@@ -1606,49 +1274,6 @@ bool UMVCombatComponent::IsCurrentAbilityAction(
 		&& !CurrentAbilityActionRowName.IsNone()
 		&& ActionTableName == CurrentAbilityActionTableName
 		&& ActionRowName == CurrentAbilityActionRowName;
-}
-
-FName UMVCombatComponent::MakeActionTypeMapKey(const EMVCombatActionTypes ActionType) const
-{
-	const UEnum* EnumPtr = StaticEnum<EMVCombatActionTypes>();
-	return EnumPtr
-		? FName(*EnumPtr->GetNameStringByValue((int64)ActionType))
-		: NAME_None;
-}
-
-FName UMVCombatComponent::MakeIndexedActionRowName(
-	const EMVCombatActionTypes ActionType,
-	const int32 ActionIndex) const
-{
-	const FName TypeName = MakeActionTypeMapKey(ActionType);
-	return TypeName.IsNone()
-		? NAME_None
-		: FName(*FString::Printf(TEXT("%s%d"), *TypeName.ToString(), ActionIndex));
-}
-
-FGameplayTag UMVCombatComponent::MakeActionTypeGameplayTag(const EMVCombatActionTypes ActionType) const
-{
-	switch (ActionType)
-	{
-	case EMVCombatActionTypes::LightAttack:
-		return MVGameplayTags::Action_Combat_LightAttack;
-	case EMVCombatActionTypes::HeavyAttack:
-		return MVGameplayTags::Action_Combat_HeavyAttack;
-	case EMVCombatActionTypes::ChargeAttack:
-		return MVGameplayTags::Action_Combat_ChargeAttack;
-	case EMVCombatActionTypes::Skill:
-		return MVGameplayTags::Action_Combat_Skill;
-	case EMVCombatActionTypes::SprintLightAttack:
-		return MVGameplayTags::Action_Combat_SprintLightAttack;
-	case EMVCombatActionTypes::SprintHeavyAttack:
-		return MVGameplayTags::Action_Combat_SprintHeavyAttack;
-	case EMVCombatActionTypes::DodgeLightAttack:
-		return MVGameplayTags::Action_Combat_DodgeLightAttack;
-	case EMVCombatActionTypes::DodgeHeavyAttack:
-		return MVGameplayTags::Action_Combat_DodgeHeavyAttack;
-	default:
-		return FGameplayTag();
-	}
 }
 
 bool UMVCombatComponent::TryStartActionWithAbility(
@@ -1766,7 +1391,7 @@ bool UMVCombatComponent::IsCurrentAbilityRSkill() const
 		return false;
 	}
 
-	const FMVSkillEntry* RSkillEntry = SkillMap.Find(MVCombatMakeSkillMapKey(MVCombatSkillSlots::R));
+	const FMVSkillEntry* RSkillEntry = SkillMap.Find(EMVSkillSlot::RSkill);
 
 	return RSkillEntry && RSkillEntry->ContainsAbility(CurrentAbilityInstance);
 }
@@ -1896,11 +1521,11 @@ void UMVCombatComponent::ClearLastBasicAttackSwingDirection()
 	LastBasicAttackSwingDirection = EMVAttackSwingDirection::None;
 }
 
-void UMVCombatComponent::ResetOtherBasicAttackChains(const FName ExceptActionMapKey)
+void UMVCombatComponent::ResetOtherBasicAttackChains(const EMVCombatActionTypes ExceptActionType)
 {
-	for (TPair<FName, FMVSkillEntry>& Pair : BasicAttackMap)
+	for (TPair<EMVCombatActionTypes, FMVSkillEntry>& Pair : BasicAttackMap)
 	{
-		if (Pair.Key != ExceptActionMapKey)
+		if (Pair.Key != ExceptActionType)
 		{
 			Pair.Value.ResetChain();
 		}
@@ -1909,7 +1534,7 @@ void UMVCombatComponent::ResetOtherBasicAttackChains(const FName ExceptActionMap
 
 void UMVCombatComponent::MarkBasicAttackChainStarted(
 	FMVSkillEntry& ActionEntry,
-	const FName ActionMapKey,
+	const EMVCombatActionTypes ActionType,
 	const int32 StartedChainStageIndex,
 	const float CurrentTime)
 {
@@ -1925,15 +1550,15 @@ void UMVCombatComponent::MarkBasicAttackChainStarted(
 	}
 
 	ActionEntry.TryAdvanceChainStage(CurrentTime);
-	ResetOtherBasicAttackChains(ActionMapKey);
+	ResetOtherBasicAttackChains(ActionType);
 	LastBasicAttackedTime = CurrentTime;
-	ActiveBasicAttackMapKey = ActionMapKey;
+	ActiveBasicAttackType = ActionType;
 }
 
-bool UMVCombatComponent::IsHeavyChargeBasicAttackMapKey(const FName ActionMapKey) const
+bool UMVCombatComponent::IsHeavyChargeBasicAttackType(const EMVCombatActionTypes ActionType) const
 {
-	return ActionMapKey == MakeActionTypeMapKey(EMVCombatActionTypes::HeavyAttack)
-		|| ActionMapKey == MakeActionTypeMapKey(EMVCombatActionTypes::ChargeAttack);
+	return ActionType == EMVCombatActionTypes::HeavyAttack
+		|| ActionType == EMVCombatActionTypes::ChargeAttack;
 }
 
 int32 UMVCombatComponent::ResolveHeavyChargeStartChainStageIndex(const FMVSkillEntry& ChargeEntry) const
@@ -1942,12 +1567,12 @@ int32 UMVCombatComponent::ResolveHeavyChargeStartChainStageIndex(const FMVSkillE
 		? ChargeEntry.CurrentChainStageIndex
 		: 0;
 
-	if (!IsHeavyChargeBasicAttackMapKey(ActiveBasicAttackMapKey))
+	if (!IsHeavyChargeBasicAttackType(ActiveBasicAttackType))
 	{
 		return ChainStageIndex;
 	}
 
-	const FMVSkillEntry* ActiveEntry = BasicAttackMap.Find(ActiveBasicAttackMapKey);
+	const FMVSkillEntry* ActiveEntry = BasicAttackMap.Find(ActiveBasicAttackType);
 	if (ActiveEntry && ActiveEntry->SkillRowNames.IsValidIndex(ActiveEntry->CurrentChainStageIndex))
 	{
 		ChainStageIndex = ActiveEntry->CurrentChainStageIndex;
@@ -1958,8 +1583,7 @@ int32 UMVCombatComponent::ResolveHeavyChargeStartChainStageIndex(const FMVSkillE
 
 int32 UMVCombatComponent::ResolveHeavyChargeEarlyReleaseChainStageIndex(const FMVSkillEntry& HeavyEntry) const
 {
-	const FName HeavyActionMapKey = MakeActionTypeMapKey(EMVCombatActionTypes::HeavyAttack);
-	const bool bContinueHeavyChain = ActiveBasicAttackMapKey == HeavyActionMapKey
+	const bool bContinueHeavyChain = ActiveBasicAttackType == EMVCombatActionTypes::HeavyAttack
 		&& HeavyEntry.bChainActive;
 	const bool bUseChargeChainStage = !bContinueHeavyChain
 		&& HeavyEntry.SkillRowNames.IsValidIndex(HeavyChargeAttackState.ChargeChainStageIndex);
@@ -2015,7 +1639,7 @@ bool UMVCombatComponent::TryBeginHeavyChargeAttack(const float /*HeldSeconds*/)
 
 	if (IsDodgeAttackContext())
 	{
-		return TryCombatAction(EMVCombatActionTypes::HeavyAttack);
+		return TryBasicCombatAction(EMVCombatActionTypes::HeavyAttack);
 	}
 
 	if (ShouldSuppressChargeAttackInputForSprint())
@@ -2023,7 +1647,7 @@ bool UMVCombatComponent::TryBeginHeavyChargeAttack(const float /*HeldSeconds*/)
 		const bool bCanStartSprintHeavyAttack = IsSprintAttackContext()
 			&& !bSprintContextualBasicAttackConsumed;
 		return bCanStartSprintHeavyAttack
-			? TryCombatAction(EMVCombatActionTypes::HeavyAttack)
+			? TryBasicCombatAction(EMVCombatActionTypes::HeavyAttack)
 			: true;
 	}
 
@@ -2033,29 +1657,28 @@ bool UMVCombatComponent::TryBeginHeavyChargeAttack(const float /*HeldSeconds*/)
 		return false;
 	}
 
-	FMVSkillEntry* ChargeEntry = BasicAttackMap.Find(MakeActionTypeMapKey(EMVCombatActionTypes::ChargeAttack));
+	FMVSkillEntry* ChargeEntry = BasicAttackMap.Find(EMVCombatActionTypes::ChargeAttack);
 	if (!ChargeEntry)
 	{
 		return false;
 	}
-	FMVSkillEntry* HeavyEntry = BasicAttackMap.Find(MakeActionTypeMapKey(EMVCombatActionTypes::HeavyAttack));
+	FMVSkillEntry* HeavyEntry = BasicAttackMap.Find(EMVCombatActionTypes::HeavyAttack);
 
 	const float CurrentTime = World->GetTimeSeconds();
 	if (CurrentTime - LastBasicAttackedTime > ResetBasicAttackTime)
 	{
-		for (TPair<FName, FMVSkillEntry>& Pair : BasicAttackMap)
+		for (TPair<EMVCombatActionTypes, FMVSkillEntry>& Pair : BasicAttackMap)
 		{
 			Pair.Value.ResetChain();
 		}
-		ActiveBasicAttackMapKey = NAME_None;
+		ActiveBasicAttackType = EMVCombatActionTypes::None;
 		ClearLastBasicAttackSwingDirection();
 	}
 
-	const FName ChargeActionMapKey = MakeActionTypeMapKey(EMVCombatActionTypes::ChargeAttack);
-	const bool bContinueHeavyChargeChain = IsHeavyChargeBasicAttackMapKey(ActiveBasicAttackMapKey);
-	if (!ActiveBasicAttackMapKey.IsNone() && !bContinueHeavyChargeChain)
+	const bool bContinueHeavyChargeChain = IsHeavyChargeBasicAttackType(ActiveBasicAttackType);
+	if (ActiveBasicAttackType != EMVCombatActionTypes::None && !bContinueHeavyChargeChain)
 	{
-		ResetOtherBasicAttackChains(ChargeActionMapKey);
+		ResetOtherBasicAttackChains(EMVCombatActionTypes::ChargeAttack);
 		ChargeEntry->ResetChain();
 		if (HeavyEntry)
 		{
@@ -2087,7 +1710,7 @@ bool UMVCombatComponent::TryBeginHeavyChargeAttack(const float /*HeldSeconds*/)
 	HeavyChargeAttackState.StartedWorldTime = CurrentTime;
 	HeavyChargeAttackState.CommitTime = ResolveHeavyChargeCommitTime(ChargeSkillData);
 	HeavyChargeAttackState.ChargeActionTableName = MVCombatActionTableNameFromDataTable(ChargeRowHandle.DataTable);
-	HeavyChargeAttackState.ChargeActionMapKey = ChargeActionMapKey;
+	HeavyChargeAttackState.ChargeActionType = EMVCombatActionTypes::ChargeAttack;
 	HeavyChargeAttackState.ChargeChainStageIndex = SelectedChainStageIndex;
 	HeavyChargeAttackState.ChargeRowHandle = ChargeRowHandle;
 	return true;
@@ -2158,7 +1781,7 @@ bool UMVCombatComponent::TryCommitHeavyChargeAttack(const float /*HeldSeconds*/)
 		return false;
 	}
 
-	FMVSkillEntry* ChargeEntry = BasicAttackMap.Find(HeavyChargeAttackState.ChargeActionMapKey);
+	FMVSkillEntry* ChargeEntry = BasicAttackMap.Find(HeavyChargeAttackState.ChargeActionType);
 	if (!ChargeEntry || !IsHeavyChargeActionRunning())
 	{
 		ResetHeavyChargeAttackState();
@@ -2167,7 +1790,7 @@ bool UMVCombatComponent::TryCommitHeavyChargeAttack(const float /*HeldSeconds*/)
 
 	MarkBasicAttackChainStarted(
 		*ChargeEntry,
-		HeavyChargeAttackState.ChargeActionMapKey,
+		HeavyChargeAttackState.ChargeActionType,
 		HeavyChargeAttackState.ChargeChainStageIndex,
 		World->GetTimeSeconds());
 	UpdateLastBasicAttackSwingDirection(HeavyChargeAttackState.ChargeRowHandle);
@@ -2230,10 +1853,9 @@ bool UMVCombatComponent::TryEarlyReleaseHeavyChargeAttack(const float /*HeldSeco
 
 	if (UWorld* World = GetWorld())
 	{
-		const FName HeavyActionMapKey = MakeActionTypeMapKey(EMVCombatActionTypes::HeavyAttack);
 		MarkBasicAttackChainStarted(
 			*HeavyEntry,
-			HeavyActionMapKey,
+			EMVCombatActionTypes::HeavyAttack,
 			HeavyChainStageIndex,
 			World->GetTimeSeconds());
 	}
@@ -2272,8 +1894,7 @@ bool UMVCombatComponent::ResolveHeavyChargeEarlyReleaseRow(
 	OutHeavyRowHandle = FDataTableRowHandle();
 	OutHeavyChainStageIndex = INDEX_NONE;
 
-	const FName HeavyActionMapKey = MakeActionTypeMapKey(EMVCombatActionTypes::HeavyAttack);
-	OutHeavyEntry = BasicAttackMap.Find(HeavyActionMapKey);
+	OutHeavyEntry = BasicAttackMap.Find(EMVCombatActionTypes::HeavyAttack);
 	if (!OutHeavyEntry || !OutHeavyEntry->DataTable)
 	{
 		return false;
@@ -2352,12 +1973,12 @@ void UMVCombatComponent::MarkContextualBasicAttackStarted(const EMVCombatActionT
 
 void UMVCombatComponent::BroadcastCombatActionStarted(
 	const EMVCombatActionTypes ActionType,
-	const int32 ActionIndex)
+	const EMVSkillSlot SkillSlot)
 {
 	FMVCombatActionEvent Event;
 	Event.Instigator = GetOwner();
 	Event.ActionType = ActionType;
-	Event.ActionIndex = ActionIndex;
+	Event.SkillSlot = SkillSlot;
 
 	const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
 	const UMVActionComponent* ActionComponent = OwnerCharacter ? OwnerCharacter->ActionComponent : nullptr;
@@ -2398,18 +2019,12 @@ int32 UMVCombatComponent::GetDodgeAttackContextInstanceId() const
 		return INDEX_NONE;
 	}
 
-	const FName ActiveActionTableName = ActionComponent->GetActiveActionTableName();
-	const FName ActiveActionRowName = ActionComponent->GetActiveActionRowName();
-	const FString ActiveActionTableNameString = ActiveActionTableName.ToString();
-	const FString ActiveActionRowNameString = ActiveActionRowName.ToString();
-	if (MVCombatIsDodgeContextualAttackRowName(ActiveActionRowNameString))
+	if (ActionComponent->GetActiveActionDomain() != EMVActionDomain::Dodge)
 	{
 		return INDEX_NONE;
 	}
 
-	const bool bIsDodgeActionContext = ActiveActionTableNameString.StartsWith(TEXT("Dodge"))
-		|| ActiveActionRowNameString.StartsWith(TEXT("Dodge_"));
-	return bIsDodgeActionContext ? ActionComponent->GetActiveActionInstanceId() : INDEX_NONE;
+	return ActionComponent->GetActiveActionInstanceId();
 }
 
 bool UMVCombatComponent::IsDodgeAttackContext() const
