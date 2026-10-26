@@ -217,15 +217,16 @@ void UMVStatComponent::HandleDamaged(const FMVResolvedHitData& HitData)
 	}
 
 	const float HPDamage = MVStatNonNegative(HitData.FinalDamage);
+	const float PreviousHP = CurrentHP;
+	float AppliedDamage = 0.0f;
 	if (HPDamage > 0.0f)
 	{
-		const float PreviousHP = CurrentHP;
 		PendingDeathHitData = HitData;
 		bHasPendingDeathHitData = true;
 		SetCurrentHP(CurrentHP - HPDamage);
 		bHasPendingDeathHitData = false;
 
-		const float AppliedDamage = FMath::Max(0.0f, PreviousHP - CurrentHP);
+		AppliedDamage = FMath::Max(0.0f, PreviousHP - CurrentHP);
 		if (AppliedDamage > 0.0f)
 		{
 			AccumulatedRecentDamage += AppliedDamage;
@@ -238,6 +239,15 @@ void UMVStatComponent::HandleDamaged(const FMVResolvedHitData& HitData)
 				ResetDamageAccumulation();
 			}
 		}
+	}
+
+	const APawn* VictimPawn = Cast<APawn>(GetOwner());
+	if (VictimPawn && VictimPawn->IsPlayerControlled())
+	{
+		UE_LOG(LogTemp, Verbose,
+			TEXT("PlayerDamage Frame=%llu Attacker=%s Player=%s Damage=%.2f AppliedDamage=%.2f HP=%.2f->%.2f"),
+			GFrameCounter, *GetNameSafe(HitData.Attacker.Get()), *GetNameSafe(VictimPawn),
+			HPDamage, AppliedDamage, PreviousHP, PreviousHP - AppliedDamage);
 	}
 
 	const float PoiseDamage = MVStatNonNegative(HitData.PoiseDamage);
@@ -264,8 +274,9 @@ void UMVStatComponent::HandleDamaged(const FMVResolvedHitData& HitData)
 
 		if (HitData.HitReactionType == EMVActionHitReactionType::Groggy)
 		{
+			const bool bWindowHit = bPoiseBreakGroggyWindow;
 			TryStartGroggy();
-			ResetPoise();
+			if (!bWindowHit) ResetPoise();
 		}
 	}
 }
@@ -922,17 +933,24 @@ void UMVStatComponent::SetInitialPoise(float InitialPoise)
 
 void UMVStatComponent::PoiseActionStart(float WeaponPoise, float Multiplier)
 {
+	if (bPoiseBreakGroggyWindow) return;
 	SetAdditionalPoise(WeaponPoise, Multiplier);
 	AdjustMinPoise();
 }
 
 void UMVStatComponent::PoiseActionEnd()
 {
+	if (bPoiseBreakGroggyWindow) return;
 	SetAdditionalPoise();
 }
 
 void UMVStatComponent::UpdatePoise(float PoiseDamageAmount)
 {
+	if (bPoiseBreakGroggyWindow)
+	{
+		ConstantPoise = FMath::Max(0.0f, ConstantPoise - FMath::Max(0.0f, PoiseDamageAmount));
+		return;
+	}
 	// 피격 등으로 인해 포이즈가 감소하는 경우, ConstantPoise를 감소시킵니다.
 
 	// 강인도 감소량이 0 이하인 경우, 아무 작업도 수행하지 않습니다.
@@ -964,6 +982,7 @@ void UMVStatComponent::UpdatePoise(float PoiseDamageAmount)
 
 void UMVStatComponent::ResetPoise()
 {
+	if (bPoiseBreakGroggyWindow) return;
 	UWorld* World = GetWorld();
 	if (World && PoiseRecoveryTimerHandle.IsValid())
 	{
@@ -987,6 +1006,31 @@ bool UMVStatComponent::PredictPoiseBreak(float PoiseDamageAmount) const
 	bool Result = PredictedPoise <= 0.0f;
 
 	return Result;
+}
+
+void UMVStatComponent::BeginPoiseBreakGroggyWindow(float Poise)
+{
+	if (bPoiseBreakGroggyWindow) return;
+	SavedWindowConstantPoise = ConstantPoise;
+	SavedWindowAdditionalPoise = AdditionalPoise;
+	if (UWorld* World = GetWorld())
+	{
+		SavedWindowRecoveryRemaining = World->GetTimerManager().GetTimerRemaining(PoiseRecoveryTimerHandle);
+		World->GetTimerManager().ClearTimer(PoiseRecoveryTimerHandle);
+	}
+	bPoiseBreakGroggyWindow = true;
+	ConstantPoise = FMath::Max(1.0f, Poise);
+	AdditionalPoise = 0.0f;
+}
+
+void UMVStatComponent::EndPoiseBreakGroggyWindow()
+{
+	if (!bPoiseBreakGroggyWindow) return;
+	bPoiseBreakGroggyWindow = false;
+	ConstantPoise = SavedWindowConstantPoise;
+	AdditionalPoise = SavedWindowAdditionalPoise;
+	if (UWorld* World = GetWorld(); World && SavedWindowRecoveryRemaining > 0.0f)
+		World->GetTimerManager().SetTimer(PoiseRecoveryTimerHandle, this, &UMVStatComponent::ResetPoise, SavedWindowRecoveryRemaining, false);
 }
 
 void UMVStatComponent::RestartRecentDamageCooldown()

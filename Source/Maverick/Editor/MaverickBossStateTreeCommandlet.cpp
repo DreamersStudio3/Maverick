@@ -2,11 +2,11 @@
 
 #include "AI/AITask/FMVBossExecuteAttackTask.h"
 #include "AI/AITask/MVBossSelectAttackTask.h"
+#include "AI/AITask/MVDuelistResonanceTask.h"
 #include "AI/Controller/MVAIController.h"
 #include "AssetToolsModule.h"
 #include "Engine/AssetManager.h"
 #include "Engine/DataTable.h"
-#include "AI/AITask/FMVBossExecuteAttackTask.h"
 #include "StateTree.h"
 #include "StateTreeEditorData.h"
 #include "StateTreeEditingSubsystem.h"
@@ -22,6 +22,60 @@
 
 namespace
 {
+bool MVDuelistResonanceConfigureStateTree()
+{
+	UStateTree* Tree = LoadObject<UStateTree>(nullptr, TEXT("/Game/DuelistComplete/ST_DuelistBoss_Attack.ST_DuelistBoss_Attack"));
+	FObjectProperty* EditorDataProperty = FindFProperty<FObjectProperty>(UStateTree::StaticClass(), TEXT("EditorData"));
+	UStateTreeEditorData* Data = Tree && EditorDataProperty
+		? Cast<UStateTreeEditorData>(EditorDataProperty->GetObjectPropertyValue_InContainer(Tree)) : nullptr;
+	if (!Data || Data->SubTrees.IsEmpty() || Data->SubTrees[0]->Children.IsEmpty()) return false;
+	UStateTreeState* BossAttack = Data->SubTrees[0]->Children[0];
+	FMVBossSelectAttackTaskInstanceData* SelectorData = nullptr;
+	for (FStateTreeEditorNode& Node : BossAttack->Tasks)
+		if (Node.Node.GetScriptStruct() == FMVBossSelectAttackTask::StaticStruct())
+			SelectorData = Node.Instance.GetMutablePtr<FMVBossSelectAttackTaskInstanceData>();
+	if (!SelectorData) return false;
+	Tree->Modify();
+	BossAttack->Modify();
+	// 전용 Task로 대체된 이전 몽타주 상태 정리, 선택 배열의 명시적인 연결 보존
+	TArray<FGuid> RetiredStates;
+	BossAttack->Children.RemoveAll([SelectorData, &RetiredStates](const UStateTreeState* Child)
+	{
+		const bool bRetire = Child->Name == TEXT("Resonance") && !SelectorData->Choices.ContainsByPredicate([Child](const FMVBossAttackChoice& Choice)
+		{
+			return Choice.AttackState.ID == Child->ID;
+		});
+		if (bRetire) RetiredStates.Add(Child->ID);
+		return bRetire;
+	});
+	for (UStateTreeState* Child : BossAttack->Children)
+		for (FStateTreeTransition& Transition : Child->Transitions)
+			if (RetiredStates.Contains(Transition.State.ID))
+				Transition.State = FStateTreeStateLink(EStateTreeTransitionType::Succeeded);
+	Data->RemoveInvalidBindings();
+	UStateTreeState* Resonance = nullptr;
+	for (UStateTreeState* Child : BossAttack->Children)
+		if (Child->Name == TEXT("Resonanace")) Resonance = Child;
+	if (!Resonance) Resonance = &BossAttack->AddChildState(TEXT("Resonanace"));
+	Resonance->Modify();
+	bool bHasTask = false;
+	for (const FStateTreeEditorNode& Node : Resonance->Tasks)
+		bHasTask |= Node.Node.GetScriptStruct() == FMVDuelistResonanceTask::StaticStruct();
+	if (!bHasTask) Resonance->AddTask<FMVDuelistResonanceTask>().GetNode().Name = TEXT("Resonanace");
+	SelectorData->ResonanceState = Resonance->GetLinkToState();
+	UStateTreeEditingSubsystem::ValidateStateTree(Tree);
+	FStateTreeCompilerLog Log;
+	if (!UStateTreeEditingSubsystem::CompileStateTree(Tree, Log)) return false;
+	FString Filename;
+	if (!FPackageName::TryConvertLongPackageNameToFilename(Tree->GetOutermost()->GetName(), Filename, FPackageName::GetAssetPackageExtension())) return false;
+	FSavePackageArgs Args;
+	Args.TopLevelFlags = RF_Public | RF_Standalone;
+	Args.Error = GError;
+	const bool bSaved = UPackage::SavePackage(Tree->GetOutermost(), Tree, *Filename, Args);
+	UE_LOG(LogTemp, Display, TEXT("[ResonanceSetup] Compiled=%d Saved=%d Choices=%d Asset=%s"), Tree->IsReadyToRun(), bSaved, SelectorData->Choices.Num(), *Tree->GetPathName());
+	return bSaved;
+}
+
 bool BossBasicAttackSaveAsset(UObject* Asset)
 {
 	FString Filename;
@@ -404,6 +458,7 @@ UMaverickBossStateTreeCommandlet::UMaverickBossStateTreeCommandlet()
 
 int32 UMaverickBossStateTreeCommandlet::Main(const FString& Params)
 {
+	if (FParse::Param(*Params, TEXT("ResonanceOnly"))) return MVDuelistResonanceConfigureStateTree() ? 0 : 1;
 	if (FParse::Param(*Params, TEXT("FixBasicAttackState")))
 	{
 		return BossBasicAttackInspectStateTree(true) ? 0 : 1;

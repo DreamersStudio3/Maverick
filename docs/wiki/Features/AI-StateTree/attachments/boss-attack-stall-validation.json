@@ -1,0 +1,61 @@
+{
+  "date": "2026-10-07",
+  "host": "codex",
+  "platform": "Windows",
+  "engine": "Unreal Engine 5.8.3",
+  "change": "FMVBossExecuteAttackTask.EnterState 범위 생략 분기에 명시적 성공 전이 1곳 추가",
+  "live_coding": {
+    "executed": true,
+    "status": "passed",
+    "scope": "최종 C++ 변경의 현재 Windows Editor 컴파일·패치",
+    "completed_at_utc": "2026-10-07T03:15:43.857Z",
+    "guarantee_limit": "일반 Editor 빌드·새 프로세스 로딩 증명 제외"
+  },
+  "range_reproduction": {
+    "executed": true,
+    "scope": "실제 배치 보스의 PIE 런타임 컴포넌트에 ST_DuelistBoss_Attack 연결, 대상 350cm",
+    "before": {"status": "Running", "last_sample_s": 3.125, "action_running": false},
+    "after": {"status": "Succeeded", "first_sample_s": 0.218, "last_sample_s": 3.218, "action_running": false},
+    "brain_component_is_running_after": true,
+    "completion_measure": "GetStateTreeRunStatus, BrainComponent IsRunning 플래그와 구분",
+    "guarantee_limit": "단독 공격 트리 종료 검증, 메인 AI 복귀는 별도 관측"
+  },
+  "initial_probe": {
+    "executed": true,
+    "status": "failed",
+    "reason": "Windows Editor Python에서 보호 속성 bAbilityActive 직접 조회 차단",
+    "scope": "관측 보조 스크립트, 수집 표본 0개로 게임 동작 판정 불가",
+    "recovery": "공개 Action·몽타주·StateTree 상태값으로 관측 변경"
+  },
+  "main_ai_observation": {
+    "executed": true,
+    "status": "passed",
+    "scope": "기존 BaseBossTestLevel의 실제 배치 BP_Duelist·메인 AI, PIE 런타임 시작 조건·대상 지정",
+    "sample_count": 61,
+    "duration_game_s": 20.000151,
+    "rows_observed": ["SkillQ", "BasicAttack1", "BasicAttack2", "Resonance", "None"],
+    "evidence": "공격 종료 후 액션 해제·추적 성공 로그·다음 공격 시작 확인, BasicAttack2 종료 거리 534.11cm 이후 다음 공격 진입 거리 147.24cm",
+    "guarantee_limit": "관측 구간의 반복 동작 확인, 모든 공격·거리 조합의 무정지 보장 제외"
+  },
+  "skill_w_reference": {
+    "executed": true,
+    "status": "failed",
+    "scope": "현재 Windows Editor의 DT_DuelistBossCombatAttack.SkillW 몽타주 로딩·실제 재생 시도",
+    "reason": "/Game/DuelistComplete/Animations/AM_Duelist_SkillW.AM_Duelist_SkillW 누락",
+    "guarantee_limit": "해당 행 재생 실패만 확인, 범위 생략 정지와 별도 결함",
+    "recovery": "사용자가 의도한 유효 몽타주 지정 필요, 대체 공격 미지정으로 행 보존"
+  },
+  "cleanup": {
+    "temporary_cpp_logs_removed": true,
+    "action_component_matches_before_trace_sha256": "C5A1CFA81FECB7BB1EB02B7E31A4B7243F8E3FF26F4F306D45B21F667971694F",
+    "saved_asset_edits_executed": false,
+    "owned_pie_stopped": true,
+    "owned_probes_unregistered": true
+  },
+  "not_executed": {
+    "scope": "일반 Editor 전체 빌드·프로세스 재시작·네트워크·패키징",
+    "reason": "현재 Windows 작업은 C++ 분기 1곳 수정과 PIE 재현 검증, 사용자 DataTable 미저장 편집 보존·다중 실행 환경 범위 밖",
+    "guarantee_limit": "배포 바이너리·새 Editor 프로세스·네트워크 전파 검증 제외"
+  },
+  "raw_evidence": "Saved/BossAttackStall, Git 제외"
+}

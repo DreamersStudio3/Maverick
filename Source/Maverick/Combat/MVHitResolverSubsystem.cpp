@@ -37,88 +37,6 @@ bool MVHitResolverTryResolveAttackerToVictimDirection(
 	return MVHitResolverTryNormalize2D(HitDirection, OutDirection);
 }
 
-void MVHitResolverLogHitLaunchTrace(
-	const TCHAR* Stage,
-	const FMVHitResolveRequest& Request,
-	const FMVResolvedHitData* ResolvedHitData = nullptr)
-{
-	const FMVHitLaunchData& LaunchData = ResolvedHitData
-		? ResolvedHitData->HitLaunchData
-		: Request.HitLaunchData;
-	const FString HitDirectionText = ResolvedHitData
-		? ResolvedHitData->HitDirection.ToString()
-		: TEXT("<pending>");
-	UE_LOG(
-		LogTemp,
-		Log,
-		TEXT("HitLaunchTrace Frame=%llu Stage=%s Attacker=%s Victim=%s HitReactionType=%d Distance=%.2f Duration=%.3f VerticalSpeed=%.2f HitLocation=%s ImpactNormal=%s HitDirection=%s"),
-		static_cast<unsigned long long>(GFrameCounter),
-		Stage,
-		*GetNameSafe(Request.Attacker.Get()),
-		*GetNameSafe(Request.Victim.Get()),
-		static_cast<int32>(ResolvedHitData ? ResolvedHitData->HitReactionType : Request.HitReactionType),
-		LaunchData.LaunchDistance,
-		LaunchData.LaunchDuration,
-		LaunchData.LaunchVerticalSpeed,
-		*(ResolvedHitData ? ResolvedHitData->HitLocation.ToString() : Request.HitLocation.ToString()),
-		*(ResolvedHitData ? ResolvedHitData->ImpactNormal.ToString() : Request.ImpactNormal.ToString()),
-		*HitDirectionText);
-}
-
-bool MVHitResolverShouldLogAirborneTrace(
-	const FMVHitResolveRequest& Request,
-	const FMVResolvedHitData* ResolvedHitData = nullptr)
-{
-	return Request.HitReactionType == EMVActionHitReactionType::Airborne
-		|| (ResolvedHitData && ResolvedHitData->HitReactionType == EMVActionHitReactionType::Airborne);
-}
-
-void MVHitResolverLogAirborneTrace(
-	const TCHAR* Stage,
-	const FMVHitResolveRequest& Request,
-	const FMVResolvedHitData* ResolvedHitData = nullptr)
-{
-	if (!MVHitResolverShouldLogAirborneTrace(Request, ResolvedHitData))
-	{
-		return;
-	}
-
-	const FMVHitLaunchData& LaunchData = ResolvedHitData
-		? ResolvedHitData->HitLaunchData
-		: Request.HitLaunchData;
-	const AMVCharacterBase* Attacker = Request.Attacker.Get();
-	const AMVCharacterBase* Victim = Request.Victim.Get();
-	const FString HitDirectionText = ResolvedHitData
-		? ResolvedHitData->HitDirection.ToString()
-		: TEXT("<pending>");
-	const FVector& HitLocation = ResolvedHitData
-		? ResolvedHitData->HitLocation
-		: Request.HitLocation;
-	const FVector& ImpactNormal = ResolvedHitData
-		? ResolvedHitData->ImpactNormal
-		: Request.ImpactNormal;
-
-	UE_LOG(
-		LogTemp,
-		Warning,
-		TEXT("AirborneTrace Frame=%llu Stage=%s Attacker=%s Victim=%s bAttackerValid=%s bVictimValid=%s bSelfHit=%s RequestType=%d ResolvedType=%d Distance=%.2f Duration=%.3f VerticalSpeed=%.2f HitLocation=%s ImpactNormal=%s HitDirection=%s"),
-		static_cast<unsigned long long>(GFrameCounter),
-		Stage,
-		*GetNameSafe(Attacker),
-		*GetNameSafe(Victim),
-		Attacker ? TEXT("true") : TEXT("false"),
-		Victim ? TEXT("true") : TEXT("false"),
-		(Attacker && Victim && Attacker == Victim) ? TEXT("true") : TEXT("false"),
-		static_cast<int32>(Request.HitReactionType),
-		static_cast<int32>(ResolvedHitData ? ResolvedHitData->HitReactionType : EMVActionHitReactionType::None),
-		LaunchData.LaunchDistance,
-		LaunchData.LaunchDuration,
-		LaunchData.LaunchVerticalSpeed,
-		*HitLocation.ToString(),
-		*ImpactNormal.ToString(),
-		*HitDirectionText);
-}
-
 }
 
 UMVHitResolverSubsystem* UMVHitResolverSubsystem::Get(const UObject* WorldContextObject)
@@ -131,29 +49,9 @@ bool UMVHitResolverSubsystem::ResolveAttackHit(
 	const FMVHitResolveRequest& Request,
 	FMVResolvedHitData& OutHitData)
 {
-	MVHitResolverLogHitLaunchTrace(TEXT("ResolverRequest"), Request);
-	MVHitResolverLogAirborneTrace(TEXT("ResolverRequest"), Request);
-
 	if (!BuildResolvedHitData(Request, OutHitData))
 	{
-		MVHitResolverLogAirborneTrace(TEXT("ResolverRejected"), Request);
 		return false;
-	}
-
-	AMVCharacterBase* Attacker = OutHitData.Attacker.Get();
-	UMVCombatComponent* Combat = IsValid(Attacker) ? Attacker->CombatComponent.Get() : nullptr;
-
-	if (IsValid(Combat))
-	{
-		Combat->ApplyOutgoingAttackDamageModifiers(OutHitData);
-	}
-
-	MVHitResolverLogHitLaunchTrace(TEXT("ResolverResolved"), Request, &OutHitData);
-	MVHitResolverLogAirborneTrace(TEXT("ResolverResolved"), Request, &OutHitData);
-
-	if (AMVCharacterBase* Victim = OutHitData.Victim.Get())
-	{
-		MVHitResolverLogAirborneTrace(TEXT("ResolverDispatchVictim"), Request, &OutHitData);
 	}
 
 	return DispatchResolvedHit(OutHitData);
@@ -181,7 +79,6 @@ bool UMVHitResolverSubsystem::BuildResolvedHitData(
 	// Todo: 자기 자신의 체력을 깎는 공격을 허용할지 여부를 결정해야 함
 	if (!Attacker || !Victim /*|| Attacker == Victim*/)
 	{
-		MVHitResolverLogAirborneTrace(TEXT("BuildRejected_InvalidParticipants"), Request);
 		return false;
 	}
 
@@ -189,7 +86,6 @@ bool UMVHitResolverSubsystem::BuildResolvedHitData(
 	const UMVStatComponent* VictimStat = Victim->FindComponentByClass<UMVStatComponent>();
 	if (!AttackerStat || !VictimStat)
 	{
-		MVHitResolverLogAirborneTrace(TEXT("BuildRejected_MissingStat"), Request);
 		return false;
 	}
 
@@ -244,9 +140,18 @@ bool UMVHitResolverSubsystem::BuildResolvedHitData(
 	OutHitData.ImpactNormal = Request.ImpactNormal.IsNearlyZero()
 		? FVector::ZeroVector
 		: Request.ImpactNormal.GetSafeNormal();
-	OutHitData.HitDirection = ResolveHitDirection(Request, *Attacker, *Victim);
+	OutHitData.HitDirection = ResolveHitDirection(*Attacker, *Victim);
 	OutHitData.PoiseDamage = ResolveNonNegativeStat(Request.PoiseDamage);
 	OutHitData.PoiseBreak = VictimStat->PredictPoiseBreak(Request.PoiseDamage);
+	if (VictimStat->IsPoiseBreakGroggyWindowActive())
+	{
+		// 기존 공격의 GroggyDamage를 강인도 피해로 사용, 명시적인 PoiseDamage 우선
+		OutHitData.PoiseDamage = OutHitData.PoiseDamage > 0.0f ? OutHitData.PoiseDamage : GroggyDamage;
+		OutHitData.PoiseBreak = VictimStat->PredictPoiseBreak(OutHitData.PoiseDamage);
+		OutHitData.HitReactionType = OutHitData.PoiseBreak ? EMVActionHitReactionType::Groggy : EMVActionHitReactionType::None;
+		OutHitData.GroggyDamage = OutHitData.PoiseBreak ? FMath::Max(1.0f, VictimStat->MaxGroggy - VictimStat->CurrentGroggy) : 0.0f;
+		return true;
+	}
 
 	// Todo: Groggy 해결하면서 HitReactionComponent 부분을 삭제, 수정해야함
 	const UMVHitReactionComponent* HitReactionComponent = Victim->FindComponentByClass<UMVHitReactionComponent>();
@@ -254,7 +159,6 @@ bool UMVHitResolverSubsystem::BuildResolvedHitData(
 	if (bCanTriggerGroggy)
 	{
 		OutHitData.HitReactionType = EMVActionHitReactionType::Groggy;
-		MVHitResolverLogAirborneTrace(TEXT("BuildConvertedToGroggy"), Request, &OutHitData);
 	}
 
 	return true;
@@ -283,33 +187,12 @@ float UMVHitResolverSubsystem::ResolveNonNegativeStat(const float Value)
 }
 
 FVector UMVHitResolverSubsystem::ResolveHitDirection(
-	const FMVHitResolveRequest& Request,
 	const AMVCharacterBase& Attacker,
 	const AMVCharacterBase& Victim)
 {
 	FVector Direction = FVector::ZeroVector;
-	const bool bHasIncomingDirection = Request.bUseIncomingDirection
-		&& FMath::IsFinite(Request.IncomingDirection.X)
-		&& FMath::IsFinite(Request.IncomingDirection.Y)
-		&& MVHitResolverTryNormalize2D(Request.IncomingDirection, Direction);
-	const bool bHasDirection = bHasIncomingDirection
-		|| MVHitResolverTryResolveAttackerToVictimDirection(Attacker, Victim, Direction);
+	MVHitResolverTryResolveAttackerToVictimDirection(Attacker, Victim, Direction);
 
-	UE_LOG(
-		LogTemp,
-		Log,
-		TEXT("HitDirectionTrace Frame=%llu Stage=ResolverResolveDirection Source=%s Attacker=%s Victim=%s AttackerLocation=%s VictimLocation=%s HitLocation=%s ImpactNormal=%s Result=%s"),
-		static_cast<unsigned long long>(GFrameCounter),
-		bHasIncomingDirection
-			? TEXT("ProjectileIncoming")
-			: (bHasDirection ? TEXT("AttackerToVictim") : TEXT("None")),
-		*GetNameSafe(&Attacker),
-		*GetNameSafe(&Victim),
-		*Attacker.GetActorLocation().ToString(),
-		*Victim.GetActorLocation().ToString(),
-		*Request.HitLocation.ToString(),
-		*Request.ImpactNormal.ToString(),
-		*Direction.ToString());
 	return Direction;
 }
 

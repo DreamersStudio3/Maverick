@@ -1,0 +1,48 @@
+{
+  "date": "2026-10-07",
+  "host": "Codex",
+  "platform": "Windows",
+  "engine": "Unreal Engine 5.8.3",
+  "request": "에어본 없는 범위 피해 Ability 추가",
+  "build": {
+    "target": "MaverickEditor Win64 Development",
+    "result": "Succeeded",
+    "elapsed_seconds": 173.76,
+    "native_implementation_compiled": true,
+    "corrected_timer_test_applied_with_live_coding": true
+  },
+  "automation": {
+    "test": "Maverick.Combat.BoxDamageAbility",
+    "result": "Success",
+    "passed": 1,
+    "failed": 0,
+    "warnings": 0,
+    "duration_seconds": 0.03670169785618782,
+    "world": "isolated Game UWorld in Editor",
+    "criteria": [
+      "player inside box receives weapon-based damage minus defence",
+      "outside and non-player actors excluded",
+      "one hit per activation window",
+      "actor rotation and vertical offset followed",
+      "invincible target excluded and eligible later",
+      "groggy unchanged, no reaction action, zero movement velocity",
+      "no damage after Notify End or explicit termination",
+      "insufficient ability cost blocks activation"
+    ]
+  },
+  "blueprint": {
+    "asset": "/Game/Characters/Components/Combat/Abilities/BP_BoxDamage",
+    "parent": "/Script/Maverick.MVBoxDamageAbility",
+    "compiled_with_warnings_as_errors": true,
+    "saved": true,
+    "box_size_cm": [200, 200, 200],
+    "box_offset_cm": [150, 0, 0],
+    "draw_debug": true
+  },
+  "not_executed": [
+    "existing attack montage binding and PIE playback",
+    "packaging",
+    "network gameplay",
+    "debug box visual inspection"
+  ]
+}

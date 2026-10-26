@@ -50,7 +50,8 @@ FGameplayTag UMVActionComponent::GetCharacterIndexCode() const
 bool UMVActionComponent::TryStartActionFromTable(
 	const FName ActionTableName,
 	const FName ActionRowName,
-	FName StartSection)
+	FName StartSection,
+	const EMVActionDomain ActionDomain)
 {
 	if (ActionTableName.IsNone() || ActionRowName.IsNone())
 	{
@@ -74,11 +75,14 @@ bool UMVActionComponent::TryStartActionFromTable(
 		return false;
 	}
 
-	return TryStartResolvedAction(ActionTableName, ActionRowName, *ActionRow, StartSection, 1.0f);
+	return TryStartResolvedAction(ActionTableName, ActionRowName, *ActionRow, StartSection, ActionDomain);
 }
 
 bool UMVActionComponent::TryStartActionFromRowHandle(
-	const FDataTableRowHandle ActionRowHandle,	FName StartSection, const float BlendoutTime, float PlayRateMultiplier)
+	const FDataTableRowHandle ActionRowHandle,
+	FName StartSection,
+	const float BlendoutTime,
+	const EMVActionDomain ActionDomain)
 {
 	FName ActionTableName = NAME_None;
 	FName ActionRowName = NAME_None;
@@ -98,7 +102,7 @@ bool UMVActionComponent::TryStartActionFromRowHandle(
 		CancelActiveAction(BlendoutTime);
 	}
 
-	return TryStartResolvedAction(ActionTableName, ActionRowName, *ActionRow, StartSection, PlayRateMultiplier);
+	return TryStartResolvedAction(ActionTableName, ActionRowName, *ActionRow, StartSection, ActionDomain);
 }
 
 bool UMVActionComponent::TryAdditiveFromRowHandle(FDataTableRowHandle ActionRowHandle, FName StartSection, const float BlendoutTime)
@@ -177,7 +181,7 @@ bool UMVActionComponent::TryStartResolvedAction(
 	const FName ActionRowName,
 	const FMVActionRow& ActionRow,
 	FName StartSection,
-	float PlayRateMultiplier)
+	const EMVActionDomain ActionDomain)
 {
 	if (ActionTableName.IsNone() || ActionRowName.IsNone())
 	{
@@ -230,6 +234,7 @@ bool UMVActionComponent::TryStartResolvedAction(
 	ActiveActionTableName = ActionTableName;
 	ActiveActionRowName = ActionRowName;
 	ActiveActionMontage = ActionMontage;
+	ActiveActionDomain = ActionDomain;
 	ActiveActionInstanceId = ++NextActionInstanceId;
 	bActiveActionCanBeInterrupted = ActionRow.bCanBeInterrupted;
 
@@ -246,7 +251,8 @@ bool UMVActionComponent::TryTransitionActionFromTable(
 	const FName ActionTableName,
 	const FName ActionRowName,
 	const FName StartSection,
-	const float BlendOutTime)
+	const float BlendOutTime,
+	const EMVActionDomain ActionDomain)
 {
 	if (ActionTableName.IsNone() || ActionRowName.IsNone())
 	{
@@ -258,14 +264,14 @@ bool UMVActionComponent::TryTransitionActionFromTable(
 		CancelActiveAction(BlendOutTime);
 	}
 
-	return TryStartActionFromTable(ActionTableName, ActionRowName, StartSection);
+	return TryStartActionFromTable(ActionTableName, ActionRowName, StartSection, ActionDomain);
 }
 
 bool UMVActionComponent::TryTransitionActionFromRowHandle(
 	const FDataTableRowHandle ActionRowHandle,
 	const FName StartSection,
 	const float BlendOutTime,
-	float PlayRateMultiplier)
+	const EMVActionDomain ActionDomain)
 {
 	FName ActionTableName = NAME_None;
 	FName ActionRowName = NAME_None;
@@ -286,7 +292,7 @@ bool UMVActionComponent::TryTransitionActionFromRowHandle(
 		CancelActiveAction(BlendOutTime);
 	}
 
-	return TryStartResolvedAction(ActionTableName, ActionRowName, *ActionRow, StartSection, PlayRateMultiplier);
+	return TryStartResolvedAction(ActionTableName, ActionRowName, *ActionRow, StartSection, ActionDomain);
 }
 
 void UMVActionComponent::FinishActiveAction(bool bInterrupted)
@@ -301,6 +307,7 @@ void UMVActionComponent::FinishActiveAction(bool bInterrupted)
 	ActiveActionTableName = NAME_None;
 	ActiveActionRowName = NAME_None;
 	ActiveActionMontage = nullptr;
+	ActiveActionDomain = EMVActionDomain::None;
 	ActiveActionInstanceId = INDEX_NONE;
 	bActiveActionCanBeInterrupted = true;
 
@@ -358,6 +365,11 @@ FName UMVActionComponent::GetActiveActionRowName() const
 int32 UMVActionComponent::GetActiveActionInstanceId() const
 {
 	return ActiveActionInstanceId;
+}
+
+EMVActionDomain UMVActionComponent::GetActiveActionDomain() const
+{
+	return ActiveActionDomain;
 }
 
 UAnimMontage* UMVActionComponent::GetActiveActionMontage() const

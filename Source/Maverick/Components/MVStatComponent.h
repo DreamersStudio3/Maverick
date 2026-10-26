@@ -64,21 +64,12 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMVOnDamageAccumulationReset);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnBaseStatsReady, int32, Revision);
 
 /**
- * 캐릭터 스탯, 회복 정책과 효과별 공격속도 보정을 관리하는 컴포넌트.
- *
- * CharacterIndexCode와 일치하는 테이블 행에서 기본 스탯을 로드한다.
- * HP, 스태미너, MP, Groggy와 이동·전투 수치 및 변경 이벤트를 소유한다.
- * 공격속도는 기본값과 핸들별 증가율을 합산하며 AttackSpeed에 최종값을 보관한다.
- * 이동속도는 핸들별 증가율을 합산하고 최종 이동속도 계산에 배율을 제공한다.
- * 보정 호출자는 반환된 핸들을 보관하고 효과 종료 시 해당 보정을 제거한다.
- * 피격 전에 체력 피해를 보정할 수 있는 사건을 제공한다.
- * OnDamaged를 구독해 HP 차감을 처리하고, 최초 사망 시
- * OnDeathStarted에 문맥을 전달하며 기존 Blueprint용 OnDead도 발행한다.
- * 회복 일시정지, 최근 감소 UI 홀드와 그로기 누적 게이지 감소를 관리한다.
- * 다른 도메인의 캐릭터 선택 상태는 참조하지 않는다.
- *
- * BeginPlay에서 테이블을 로드하고, 자원 소비 API로 현재값을 감소시킨다.
- * TickRecoverableStats에서 회복과 Exhaustion 회복 차단 시간을 갱신한다.
+ * CharacterIndexCode와 일치하는 스탯 행의 HP·스태미너·MP·그로기·이동·전투 수치와 변경 이벤트 소유
+ * BeginPlay에서 기본 스탯 로드, Consume 계열·OnDamaged에서 확정 피해 차감
+ * 최초 HP 소진 시 OnDeathStarted(FMVDeathContext) 발행, Blueprint 호환용 OnDead 병행
+ * TickRecoverableStats에서 자원·Exhaustion·그로기 회복, Notify의 회복 정지와 최근 감소 UI 홀드 관리
+ * 강인도 소진 구간은 Begin/EndPoiseBreakGroggyWindow로 기존 수치·회복 타이머 보관·복원
+ * 해당 구간을 시작한 호출자의 종료 책임, 피해 계산·피격 표현·캐릭터 선택 정책은 외부 도메인 책임
  */
 
 UCLASS(ClassGroup = (Maverick), meta = (BlueprintSpawnableComponent))
@@ -363,6 +354,11 @@ public:
 	// 강인도 수치가 Poise Break를 일으킬지 예측하는 함수 -> HitResolverSubsystem에서 사용
 	bool PredictPoiseBreak(float PoiseDamageAmount) const;
 
+	// 한정된 강인도 소진 구간: 회복 정지·추가 강인도 제외, 종료 시 기존 수치·회복 타이머 복원
+	void BeginPoiseBreakGroggyWindow(float Poise);
+	void EndPoiseBreakGroggyWindow();
+	bool IsPoiseBreakGroggyWindowActive() const { return bPoiseBreakGroggyWindow; }
+
 private:
 	FString MakeStatRowKey() const;
 	void TickRecentDamageCooldown(float DeltaTime);
@@ -506,6 +502,10 @@ private:
 
 	// Poise
 	FTimerHandle PoiseRecoveryTimerHandle;
+	bool bPoiseBreakGroggyWindow = false;
+	float SavedWindowConstantPoise = 0.0f;
+	float SavedWindowAdditionalPoise = 0.0f;
+	float SavedWindowRecoveryRemaining = -1.0f;
 	
 	TMap<FGameplayTag, float> ProgressionStatBonuses;
 	int32 StatCalculationRevision = 0;

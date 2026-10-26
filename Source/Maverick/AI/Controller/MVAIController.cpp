@@ -26,6 +26,7 @@ void AMVAIController::BeginPlay()
 
 void AMVAIController::OnPossess(APawn* InPawn)
 {
+	NextBossAttackChoiceIndex = 0;
 	Super::OnPossess(InPawn);
 	InitializeBossDebugGate();
 }

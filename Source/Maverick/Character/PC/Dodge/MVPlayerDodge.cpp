@@ -595,8 +595,17 @@ bool UMVPlayerDodge::TryStartDodgeAction(const FMVDodgeInputContext& DodgeInput)
 	const FName StartSection = ActionRowHandle.StartSection.IsNone()
 		? DodgeActionRow->DefaultStartSection
 		: ActionRowHandle.StartSection;
-	const bool bStarted = bCanTransitionCurrentAction ? ActionComponent->TryTransitionActionFromRowHandle(ActionRowHandle.ActionRow,StartSection, RecoveryDodgeTransitionBlendOutTime)
-		: ActionComponent->TryStartActionFromRowHandle(ActionRowHandle.ActionRow, StartSection);
+	const bool bStarted = bCanTransitionCurrentAction
+		? ActionComponent->TryTransitionActionFromRowHandle(
+			ActionRowHandle.ActionRow,
+			StartSection,
+			RecoveryDodgeTransitionBlendOutTime,
+			EMVActionDomain::Dodge)
+		: ActionComponent->TryStartActionFromRowHandle(
+			ActionRowHandle.ActionRow,
+			StartSection,
+			0.1f,
+			EMVActionDomain::Dodge);
 	if (!bStarted)
 	{
 		UE_LOG(

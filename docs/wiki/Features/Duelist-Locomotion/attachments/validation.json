@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-06",
+  "platform": "Windows",
+  "engine": "Unreal Engine 5.8.3",
+  "target": "/Game/DuelistComplete/BP_Duelist.BP_Duelist",
+  "animation_blueprint": "/Game/DuelistComplete/Animations/ABP_Duelist",
+  "blend_space": "/Game/DuelistComplete/Animations/BS_Duelist_Locomotion",
+  "compile": {
+    "executed": true,
+    "warnings_as_errors": true,
+    "assets": ["ABP_Duelist", "BP_Duelist"],
+    "result": "passed",
+    "scope": "Blueprint graph and class validity; full combat behavior excluded"
+  },
+  "runtime": {
+    "executed": true,
+    "mode": "SimulateInEditor",
+    "actor": "BP_Duelist",
+    "stages": ["Idle", "WalkForward", "WalkLeft", "WalkRight", "WalkBackward", "RunForward", "Stop"],
+    "sample_count": 14,
+    "error_count": 0,
+    "max_moving_root_translation_cm": 0.0022583007812500017,
+    "result": "passed",
+    "scope": "Controlled velocity inputs, native GroundSpeed, live bone poses and root lock",
+    "limitation": "CharacterMovement tick and collision disabled for the validation actor; actual AI navigation and combat not exercised",
+    "raw_report": "Saved/DuelistLocomotion/runtime-validation.json"
+  },
+  "cleanup": {
+    "pie_stopped": true,
+    "temporary_level_deleted": true,
+    "original_level_restored": "/Game/Characters/NPC/Enemy/Level/AITestLevel",
+    "dirty_asset_count": 0,
+    "checked_asset_count": 8
+  },
+  "not_executed": [
+    {"scope": "AI navigation and combat", "reason": "Outside the requested basic locomotion scope on the current Windows editor"},
+    {"scope": "C++ build and packaging", "reason": "Asset-only changes with no C++ edits; editor validation does not prove packaged behavior"}
+  ]
+}

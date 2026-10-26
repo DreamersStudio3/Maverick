@@ -1,0 +1,92 @@
+{
+  "date": "2026-10-07",
+  "host": "Codex",
+  "platform": "Windows",
+  "engine": "5.8.3",
+  "request": "간헐적인 사슬 미발사 원인 확인, 사용자가 지정한 AM_Duelist_ChainPull 연결 기준",
+  "scope": "SkillW 전투 행의 AbilityReference와 사슬 몽타주 연결",
+  "before": {
+    "executed": true,
+    "mode": "PIE",
+    "result": "미발사 경로 재현",
+    "evidence": [
+      "MV Activate Ability Begin: AbilityClass does not match",
+      "AM_Duelist_ChainPull 발사 Notify: IsChain=0, Current=MVTutorialBossBasicAttackAbility"
+    ],
+    "proves": "Notify 호출 중 전용 Ability 형변환 실패",
+    "does_not_prove": "모든 간헐적 미발사의 단일 원인"
+  },
+  "change": [
+    {
+      "row": "SkillW",
+      "field": "AbilityReference",
+      "before": "/Script/CoreUObject.Class'/Script/Maverick.MVTutorialBossBasicAttackAbility'",
+      "after": "/Script/Engine.BlueprintGeneratedClass'/Game/DuelistComplete/Skills/BP_Ability_Duelist_ChainPull.BP_Ability_Duelist_ChainPull_C'"
+    }
+  ],
+  "after": {
+    "executed": true,
+    "mode": "PIE",
+    "passed": true,
+    "results": [
+      {
+        "index": 0,
+        "started": true,
+        "seen_projectile": true,
+        "peak_projectiles": 1,
+        "remaining_projectiles": 0,
+        "input_locked": false
+      },
+      {
+        "index": 1,
+        "started": true,
+        "seen_projectile": true,
+        "peak_projectiles": 1,
+        "remaining_projectiles": 0,
+        "input_locked": false
+      },
+      {
+        "index": 2,
+        "started": true,
+        "seen_projectile": true,
+        "peak_projectiles": 1,
+        "remaining_projectiles": 0,
+        "input_locked": false
+      }
+    ],
+    "proves": "전투 행 경유 발사 3회·각 투사체 정리·입력 복구",
+    "does_not_prove": "전체 AI 선택 균형·네트워크 전파·패키징"
+  },
+  "source_restored_sha256": {
+    "MVDuelistChainPullAbility.cpp": "9e42e580e4a2d0fece88fc3fc1f410df34889a6d7af7347714c6e9b329b6303c",
+    "MVAnimNotify_DuelistFireChain.cpp": "9886faed0eecc62b30f36a261d8e2903647c5fd6951fda492fe911c2a901ef1b",
+    "MVDuelistChainProjectile.cpp": "7234ba0bc26a76a798db6fe7badd259b8c1b8a1cffc64a99f1d189e08229d207"
+  },
+  "not_executed": [
+    {
+      "scope": "전체 AI 선택 균형·네트워크·패키징",
+      "platform": "현재 Windows 호스트",
+      "executed": false,
+      "reason": "이번 로컬 Editor 공격 연결 수정 범위 밖",
+      "proves": "없음",
+      "does_not_prove": "해당 동작 성공"
+    }
+  ],
+  "after_trace_removal": {
+    "executed": true,
+    "mode": "PIE",
+    "passed": true,
+    "results": [
+      {
+        "index": 0,
+        "started": true,
+        "seen_projectile": true,
+        "peak_projectiles": 1,
+        "remaining_projectiles": 0,
+        "input_locked": false
+      }
+    ],
+    "proves": " 임시 C++ 로그 제거 상태의 발사·정리·입력 복구",
+    "does_not_prove": "전체 게임 동작"
+  }
+}

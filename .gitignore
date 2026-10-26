@@ -85,10 +85,6 @@ DerivedDataCache
 # Agent 도구와 로컬 생성 상태
 .agent-tools/
 graphify-out/
-.hive/index/
-.hive/runtime/
-.hive/backups/
-.hive/cache/
 
 # Obsidian 팀 공통 설정과 플러그인 배포 파일만 추적; 개인 작업공간 제외
 docs/wiki/.obsidian/*
