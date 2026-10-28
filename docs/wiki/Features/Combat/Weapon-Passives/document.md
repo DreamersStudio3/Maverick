@@ -1,7 +1,7 @@
 ---
 제목: "무기 패시브"
-부제목: "무기별 패시브 기획 목록과 장착·적용 기준"
-최근수정일: 2026-10-07
+부제목: "무기 종류별 후보에서 한 개를 선택하는 적용 구조와 패시브 기획 목록"
+최근수정일: 2026-10-27
 최근수정자: "No-Jyun"
 관련문서:
   - "[[Features/Combat/Combat-System/document|Maverick 전투 시스템]]"
@@ -13,22 +13,27 @@
 
 ## 핵심
 
-- 무기 행의 `PassiveSet`이 장착 시 활성화할 패시브 묶음을 지정; 최종 목표는 무기당 3종이며 배열 개수는 코드에서 강제하지 않음
-- 패시브는 공격 행마다 넣지 않고 장착 중 공통 전투 사건을 받아 동작
+- `UMVWeaponSkillMap::PassiveSkill`에 후보 N개를 두고, 무기 종류 태그로 걸러 한 개를 선택
+- 선택은 현재 플레이 세션에서 무기 종류별로 기억하고, 현재 장착 종류의 한 개만 `UMVCombatComponent`에 적용
+- 공격 행에 패시브를 반복 등록하지 않고, 선택된 본체 효과가 공통 전투 사건을 받아 동작
 
 ## 변경
 
-- `UMVWeaponPassiveComponent`가 장착 변경 시 자신이 적용한 이전 효과를 제거하고 새 세트의 효과를 적용
+- `UMVWeaponComponent`가 선택 행을 보관하고, 장착 종류·아이템이 바뀌면 기존 패시브를 해제한 뒤 현재 종류의 선택을 다시 적용
+- `UMVCombatComponent`의 `PassiveSkill` 전용 슬롯은 `UMVStatusEffectPassiveAbility`의 인스턴스 한 개를 유지; 공용 Ability가 본체 상태 효과 한 개를 적용·해제
+- `WeaponPassiveComponent`와 `WeaponPassiveSet` 적용 경로 제거; 개별 `DA_Passive_*`, `BP_Passive_*`, 행동과 파생 효과는 유지
 - 폭풍 칼날 본체가 검증된 공격 충돌 명중·빗나감·피격·사망을 처리하고, 별도 중첩 효과가 공격속도를 보정
 - 유효 명중마다 2%, 최대 10중첩, 마지막 명중부터 5초 유지; 빗나감·피격 시 중첩 제거
 - 공격 행의 `bUseAttackSpeed`가 켜진 동작만 계산된 공격속도를 몽타주 재생 속도에 반영
 
 ```mermaid
 flowchart LR
-    WeaponRow["무기 행 PassiveSet"] --> PassiveSet["패시브 세트"]
-    PassiveSet --> Equip["장착 변경: 이전 효과 제거·새 효과 적용"]
-    Equip --> Body["폭풍 칼날 본체"]
-    Combat["공통 명중·빗나감 사건"] --> Body
+    WeaponRow["무기 행 WeaponTypeTag"] --> Filter["스타일 스킬 트리에서 종류별 후보 조회"]
+    Filter --> Select["WeaponComponent: 종류별 한 행 선택"]
+    Select --> Combat["CombatComponent: 패시브 Ability 한 개"]
+    Combat --> Body["공용 Ability: 선택한 본체 상태 효과"]
+    Swap["무기 교체"] -->|"이전 해제·현재 종류 재적용"| Combat
+    Hit["공통 명중·빗나감 사건"] --> Body
     Damaged["피격·사망 사건"] --> Body
     Body --> Speed["공격속도 중첩 효과"]
     Speed --> Stat["효과별 공격속도 보정"]
@@ -55,11 +60,11 @@ flowchart LR
 - `UMVWeightOfRuinPassiveBehavior`가 장착 중 유효한 평타·스킬 공격 충돌의 방어 계산 후 피해를 15% 증가; 지속 피해와 별도 직접 피해는 제외
 - `UMVStatComponent`에 회피 비용 증가율 20%를 고유 핸들로 등록; 효과 제거 시 피해 보정 구독과 자신이 등록한 비용 보정만 해제
 - `UMVPlayerDodge`는 `Instant` 회피 비용에 현재 배율을 한 번 적용하고, 같은 값으로 실행 가능 여부를 검사한 뒤 회피 시작에 성공하면 차감; `MinRequiredStamina`는 별도 최소 보유 조건으로 유지
-- 현재 시험 무기에서 기본 회피 비용 `12→14.4`, 비용 미달 시 회피 거부, 무기 해제 시 `12`로 복원 확인; 월광의 응집 강화와 함께 적용되면 피해 배율 `1.15×1.20=1.38`
+- 현재 시험 무기에서 기본 회피 비용 `12→14.4`, 비용 미달 시 회피 거부, 무기 해제 시 `12`로 복원 확인; 단일 선택에서는 월광의 응집과 동시 적용되지 않음
 
 ## 불굴의 의지
 
-- `DA_TwoHandedShield_PassiveSet`의 `DA_Passive_IndomitableWill`은 `Infinite`·`NoStack`·`OnePerSource`로 장착 중 유지; 현재 무기로 시험하고 실제 양손 방패 연결은 제작 후 진행
+- `DA_Passive_IndomitableWill`은 `Infinite`·`NoStack`·`OnePerSource`로 선택·장착 중 유지; 현재 무기로 시험하고 실제 양손 방패 연결은 제작 후 진행
 - `UMVHitResolverSubsystem`이 공격자 보정 뒤 피해자의 `UMVStatComponent::OnModifyIncomingDamage`를 호출; 보정된 `FinalDamage`를 체력 차감과 후속 피격 처리에 함께 전달
 - `UMVIndomitableWillPassiveBehavior`는 피격 직전 `CurrentHP ≤ MaxHP × 0.30`이면 체력 피해에 `0.70`을 곱함; 이번 피해로 기준 이하가 되면 다음 피격부터 적용
 - 체력 조건은 매 피해마다 다시 계산; 체력 소비·직접 설정과 강인도·그로기 피해는 보정하지 않음
@@ -115,7 +120,7 @@ flowchart LR
 
 ## 포식자의 순환
 
-- `DA_WhipEnergySword_PassiveSet`의 `DA_Passive_PredatorCycle`을 장착 중 적용; `UMVPredatorCyclePassiveBehavior`의 `RefundChance` 기본값은 0.10
+- `DA_Passive_PredatorCycle`을 선택·장착 중 적용; `UMVPredatorCyclePassiveBehavior`의 `RefundChance` 기본값은 0.10
 - `UMVAbilityBase`가 실행 번호·스킬 슬롯·사용 당시 무기 태그·실제 지불 MP를 실행별로 기록; 비용 지불에 실패한 실행은 제외
 - 살아 있는 적에게 양수 피해를 준 스킬의 `AttackCollision` 명중마다 10% 판정; 성공 전에는 같은 실행의 다음 명중에서 재판정하며 평타·직접 피해·지속 피해·게이지 방식 R 스킬은 제외
 - 성공한 `AttackInstanceId`는 중복 환원 차단; 실제 지불 MP를 최대치까지 회복하고 해당 스킬의 주 쿨타임을 환원; 연계 스킬은 완료 시 주 쿨타임 생성을 막되 단계 사이 대기시간 유지
@@ -133,7 +138,7 @@ flowchart LR
 
 ## 아웃사이더 스텝
 
-- `DA_CrossbowBow_PassiveSet`의 `DA_Passive_OutsiderStep`이 장착 중 공통 연속 명중 행동을 활성화; 평타 유효 명중마다 별도 효과 `DA_Effect_OutsiderStepStacks`를 1중첩 적용
+- `DA_Passive_OutsiderStep`이 선택·장착 중 공통 연속 명중 행동을 활성화; 평타 유효 명중마다 별도 효과 `DA_Effect_OutsiderStepStacks`를 1중첩 적용
 - 중첩은 최대 10, 마지막 명중부터 5초 유지; 평타 빗나감·사망·장착 해제에 제거하고 피격에는 유지
 - 같은 중첩 효과의 `UMVAttackSpeedPerStackBehavior`와 `UMVMoveSpeedPerStackBehavior`가 중첩당 공격속도·이동속도를 각각 1%, 최대 10% 증가; 해제 시 각자 등록한 보정만 제거
 - 이동속도 배율은 방향·걷기·달리기·질주 속도 계산 뒤 적용하며 질주 공격의 속도 기준에도 반영; 공격 몽타주는 해당 행의 `bUseAttackSpeed` 설정을 따름
@@ -153,7 +158,7 @@ flowchart LR
 
 ## 트리플 볼트
 
-- `DA_CrossbowBow_PassiveSet`의 `DA_Passive_TripleBolt` 본체가 장착 중 `UMVTripleBoltPassiveBehavior`를 활성화; 현재 시험 범위는 기존 무기의 평타
+- `DA_Passive_TripleBolt` 본체가 선택·장착 중 `UMVTripleBoltPassiveBehavior`를 활성화; 현재 시험 범위는 기존 무기의 평타
 - `UMVHitResolverSubsystem::OnHitDeliveryFinished`는 원래 타격의 피격 처리가 끝난 뒤 발생; `UMVCombatComponent`가 현재 공격의 `AttackCollision` 명중만 `OnValidatedAttackHitAfterDamage`로 전달
 - 본체는 살아 있는 대상에 `DA_Effect_TripleBoltMark`를 적용; 대상별·시전자별 최대 3중첩, 마지막 명중부터 5초 갱신, 빗나감·시전자 피격에는 유지
 - 세 번째 명중에 `UMVStackMaxHealthDamageBehavior`가 대상 최대 체력의 8%를 직접 피해로 적용하고 표식을 소비; 추가 피해의 `DirectDamage` 출처와 `INDEX_NONE` 공격 번호는 새 평타 명중으로 집계하지 않음
@@ -174,14 +179,22 @@ flowchart LR
 
 ## 기준
 
-- 다음 무기도 같은 세트·상태 효과 연결을 사용하고, 패시브별 규칙은 각 행동에 둠
+- 다음 무기도 종류 태그·스킬 트리 후보·공용 Ability를 사용하고, 패시브별 규칙은 각 행동에 둠
 
 | 설정 지점 | 재사용 기준 |
 |---|---|
-| 패시브 세트 | 무기 행의 `PassiveSet`에 연결하고 `PassiveDefinitions`에 해당 무기의 패시브 본체를 배치 |
-| 패시브 본체 | `Infinite`·`OnePerSource`와 `NoStack` 또는 `AddStack` 설정 필요; 다른 설정은 장착 컴포넌트에서 건너뜀 |
+| 무기 행 | `WeaponTypeTag`에 정확한 무기 종류 지정; 손 사용 스타일은 별도로 유지 |
+| 스킬 트리 | `PassiveSkill` 후보마다 사용 가능한 `PassiveWeaponTypes`, 스킬 행, 필요 포인트 지정 |
+| 스킬 행·Ability | `AbilityReference`에 `UMVStatusEffectPassiveAbility` 자식 Blueprint 연결; `PassiveDefinition`에 본체 지정; 실행 비용·연계·명중 시 효과를 두지 않음 |
+| 패시브 본체 | `Infinite`·`OnePerSource`와 `NoStack` 또는 `AddStack` 설정 필요; 공용 Ability가 맞지 않는 설정의 적용을 거절 |
 | 패시브 행동 | 필요한 공통 사건을 구독하고 제거 시 구독과 자신이 만든 파생 효과를 정리 |
 | 공격 행 | 같은 패시브를 `OnHitStatusEffects`에 중복 설정하지 않음; 속도 반영 대상만 `bUseAttackSpeed`로 선택 |
+
+- `GetPassiveCandidates`는 종류별 후보와 해금 상태를 돌려주며, `SelectPassive`는 현재 행동이 실행 중이면 거절
+- 선택 전에는 활성 0개 허용; 다른 종류를 들면 해당 종류의 선택만 적용하고, 같은 종류의 다른 무기 아이템은 선택을 공유
+- 한 개 제한은 패시브 Ability·본체에 적용; 선택한 패시브가 만드는 중첩·표식 같은 파생 효과는 별도로 유지
+- 공격 시작 때 패시브 적용 번호를 기록해 교체 전 투사체가 새 패시브를 발동시키지 않도록 검사
+- UI의 후보 표시·한 개 선택과 SaveGame 선택 복원은 별도 후속 작업
 
 ## 기획서 기준 무기별 패시브
 
@@ -212,11 +225,13 @@ flowchart LR
 
 ## 남은 일
 
-- 완성된 대검의 무기 행에 `DA_GreatSword_PassiveSet` 연결 후 월광의 응집·파멸의 무게를 실제 대검에서 재검증
-- 양손 방패 제작 후 무기 행에 `DA_TwoHandedShield_PassiveSet` 연결·불굴의 의지와 피 흘린 만큼.. 재검증; 가드 구현 후 불굴의 의지의 가드 비용 절반 효과 추가
+- 완성된 대검의 무기 행에 종류 태그와 스킬 트리 후보를 연결한 뒤 월광의 응집·파멸의 무게를 실제 대검에서 재검증
+- 양손 방패 제작 후 종류 태그와 후보를 연결해 불굴의 의지·피 흘린 만큼.. 재검증; 가드 구현 후 불굴의 의지의 가드 비용 절반 효과 추가
 - 피 흘린 만큼..의 쿨타임 감소 후 화면 표시·실제 재사용 시점·환원 저장 없음, 직접·지속 피해와 체력 회복·최대 체력 변경 경계, 임시 로그 제거 후 회귀 동작은 실행 검증 보류
-- 채찍·에너지소드 제작 후 무기 행에 `DA_WhipEnergySword_PassiveSet` 연결·재검증
-- 석궁·활 제작 후 `DA_CrossbowBow_PassiveSet` 연결·재검증; 트리플 볼트의 주력 사격과 공격 동작 종료 뒤 도착한 투사체의 명중은 현재 시험 범위 밖
+- 채찍·에너지소드 제작 후 종류별 후보와 선택을 연결해 재검증
+- 석궁·활 제작 후 종류별 후보와 선택을 연결해 재검증; 트리플 볼트의 주력 사격과 공격 동작 종료 뒤 도착한 투사체의 명중은 현재 시험 범위 밖
 - 트리플 볼트의 다른 시전자·다단 타격과 임시 로그 제거 후 회귀 동작은 개별 실행 검증 미보고
 - 불굴의 의지의 직접·지속 피해, 정확히 30%·회복·최대 체력 변경 경계는 실행 검증 보류
-- 다른 새 무기별 세트 연결과 폭풍 칼날의 대상 공격 목록·방어 판정 연결은 이후 결정
+- 6단계 C++ 삭제 뒤 사용자 빌드·Editor 재저장은 오류 없이 끝났다고 보고됨; 같은 빌드의 PIE에서 검 선택 `FlexibleFlow/1`, 해제·맨손 `None/0`, 검 재장착 직후 `FlexibleFlow/1` 재확인
+- 늦은 투사체·같은 스타일의 다른 무기 교체와 최종 무기 종류별 자산 연결은 아직 실행 확인되지 않음
+- 다른 새 무기별 후보 연결과 폭풍 칼날의 대상 공격 목록·방어 판정 연결은 이후 결정
