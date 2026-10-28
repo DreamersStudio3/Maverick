@@ -7,7 +7,7 @@
 - 분류 기준: 대검·양손 방패·활 같은 무기 종류. `OneHand/TwoHand/DualWield` 같은 손 사용 스타일과 구분한다.
 - 적용 경로: 현재 `CombatComponent`의 `PassiveSkill` 슬롯과 패시브 Ability 인스턴스를 사용한다.
 - 개정 방향: 공용 패시브 Ability에 기존 상태 효과를 설정하고, 기존 `Test_*` 스킬 트리의 `PassiveSkill`에 스킬 행을 등록한다. 별도 `WeaponPassiveSet` 후보집 전환안은 폐기한다.
-- UI: [패시브 선택 UI 후속 작업](../../todo/weapon-passive-selection-ui.md)으로 분리한다.
+- UI: 패시브 선택 화면은 후속 작업으로 분리한다.
 
 ## 1. 전환 시작 때 확인한 구조
 
@@ -346,7 +346,7 @@ UMVAbilityBase
 
 ## 10. 후속 UI와 조사 근거
 
-UI에서는 무기를 고르면 기존 스킬 트리에서 해당 종류로 걸러진 후보 N개를 보여 주고 한 개를 선택하게 한다. 표시와 입력은 WeaponComponent의 후보·선택 API를 사용하고, 효과를 직접 적용하거나 별도 선택 상태를 보관하지 않는다. 구체적인 화면·입력·확인 흐름은 [UI 후속 작업](../../todo/weapon-passive-selection-ui.md)에 남긴다.
+UI에서는 무기를 고르면 기존 스킬 트리에서 해당 종류로 걸러진 후보 N개를 보여 주고 한 개를 선택하게 한다. 표시와 입력은 WeaponComponent의 후보·선택 API를 사용하고, 효과를 직접 적용하거나 별도 선택 상태를 보관하지 않는다. 구체적인 화면·입력·확인 흐름은 후속 UI 작업에서 정한다.
 
 현재 구조의 근거:
 
