@@ -27,7 +27,12 @@ bool FMVDuelistResonanceTest::RunTest(const FString& Parameters)
 	World->BeginPlay();
 	FActorSpawnParameters Spawn;
 	Spawn.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	AMVCharacterBase* Player = World->SpawnActor<AMVCharacterBase>(FVector(500, 0, 1000), FRotator::ZeroRotator, Spawn);
+	const FTransform PlayerTransform(FRotator::ZeroRotator, FVector(500, 0, 1000));
+	AMVCharacterBase* Player = World->SpawnActorDeferred<AMVCharacterBase>(
+		AMVCharacterBase::StaticClass(), PlayerTransform, nullptr, nullptr,
+		ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+	Player->WeaponComponent->BareHandWeapon.AttackPower = 10.0f;
+	Player->FinishSpawning(PlayerTransform);
 	Player->DispatchBeginPlay();
 	APlayerController* PC = World->SpawnActor<APlayerController>();
 	APlayerState* PS = World->SpawnActor<APlayerState>();
@@ -39,8 +44,6 @@ bool FMVDuelistResonanceTest::RunTest(const FString& Parameters)
 	Player->StatComponent->SetCurrentHP(1000);
 	Player->StatComponent->SetNormalDefence(99999);
 	Player->StatComponent->SetSkillDefence(99999);
-	Player->WeaponComponent->BareHandWeapon.AttackPower = 10;
-	Player->WeaponComponent->EquipBareHand();
 	const auto SpawnBoss = [&]()
 	{
 		AMVCharacterBase* Boss = World->SpawnActor<AMVCharacterBase>(FVector(400, 0, 1000), FRotator::ZeroRotator, Spawn);

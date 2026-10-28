@@ -5,7 +5,6 @@
 #include "Character/NPC/Enemy/MVEnemy.h"
 #include "Character/PC/MVPlayerCharacter.h"
 #include "Combat/Projectile/MVProjectileBase.h"
-#include "Components/MVCombatComponent.h"
 #include "Components/MVStatComponent.h"
 #include "Engine/Engine.h"
 #include "Engine/World.h"
@@ -47,11 +46,6 @@ bool FMVProjectileCollisionTest::RunTest(const FString& Parameters)
         nullptr, nullptr, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
     if (Player)
     {
-        if (UMVCombatComponent* Combat = Player->CombatComponent.Get())
-        {
-            Combat->AttackChooserTable = FSoftObjectPath();
-            Combat->FallbackAttackActionTable = FSoftObjectPath();
-        }
         Player->FinishSpawning(PlayerTransform);
     }
 

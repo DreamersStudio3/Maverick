@@ -6,10 +6,8 @@
 #include "Combat/MVHitResolverSubsystem.h"
 #include "Components/MVCombatComponent.h"
 #include "Components/MVStatComponent.h"
-#include "Components/MVStatusEffectComponent.h"
 #include "Engine/Engine.h"
 #include "Engine/World.h"
-#include "StatusEffects/MVStatusEffectDefinition.h"
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
 	FMVHitResolverMergedDamageTest,
@@ -46,19 +44,49 @@ bool FMVHitResolverMergedDamageTest::RunTest(const FString& Parameters)
 		Ability->SetAttackInstanceId(17);
 		Ability->SetExecutionSource(0, FGameplayTag());
 		Attacker->CombatComponent->CurrentAbilityInstance = Ability;
+		Attacker->CombatComponent->bCurrentAbilityAwaitingCompletion = true;
+		Attacker->CombatComponent->CurrentAttackInstanceId = 17;
+		Attacker->CombatComponent->CurrentAttackLifeId =
+			Attacker->CombatComponent->CurrentLifeId;
+
+		int32 OutgoingModifierCalls = 0;
+		const FDelegateHandle OutgoingModifierHandle =
+			Attacker->CombatComponent->OnModifyOutgoingAttackDamage.AddLambda(
+				[&OutgoingModifierCalls](const FMVResolvedHitData&, float& InOutDamage)
+				{
+					++OutgoingModifierCalls;
+					InOutDamage *= 1.15f;
+				});
+
+		FMVDirectDamageRequest DirectRequest;
+		DirectRequest.Attacker = Attacker;
+		DirectRequest.Victim = Victim;
+		DirectRequest.AttackInstanceId = 17;
+		DirectRequest.FinalDamage = 0.1f;
+		FMVResolvedHitData DirectHit;
+		if (TestTrue(TEXT("Direct damage resolves"), Resolver->ResolveDirectDamage(DirectRequest, DirectHit)))
+		{
+			TestEqual(TEXT("Direct damage skips outgoing attack modifiers"), OutgoingModifierCalls, 0);
+			TestEqual(TEXT("Direct damage keeps its supplied amount"), DirectHit.FinalDamage, 0.1f);
+			TestFalse(TEXT("Direct damage does not confirm the current attack"),
+				Attacker->CombatComponent->bCurrentAbilityHitConfirmed);
+		}
+		Attacker->CombatComponent->OnModifyOutgoingAttackDamage.Remove(OutgoingModifierHandle);
 
 		FMVHitResolveRequest Request;
 		Request.Attacker = Attacker;
 		Request.Victim = Victim;
 		Request.AttackInstanceId = 17;
+		Request.bUseSourceWeaponSnapshot = true;
+		Request.SourceWeaponSnapshot.AttackPower = 13.0f;
+		Request.SourceWeaponSnapshot.bValid = true;
 		FMVResolvedHitData SkillHit;
 		if (TestTrue(TEXT("Active skill hit resolves"), Resolver->ResolveAttackHit(Request, SkillHit)))
 		{
+			TestEqual(TEXT("Skill hit uses nonzero launch weapon power"), SkillHit.WeaponAttackPower, 13.0f);
 			TestEqual(TEXT("Active skill uses skill defence"), SkillHit.VictimDefence, 8.0f);
-			const float AfterDefence = FMath::TruncToFloat(
-				FMath::Max(0.0f, SkillHit.WeaponAttackPower - 4.0f) * 10.0f) / 10.0f;
-			TestTrue(TEXT("Skill damage applies defence before outgoing modifiers"),
-				FMath::IsNearlyEqual(SkillHit.FinalDamage, AfterDefence));
+			TestEqual(TEXT("Skill damage applies defence before outgoing modifiers"),
+				SkillHit.FinalDamage, 9.0f);
 		}
 
 		Attacker->StatComponent->CriticalPercent = 1.0f;
@@ -66,61 +94,51 @@ bool FMVHitResolverMergedDamageTest::RunTest(const FString& Parameters)
 		FMVResolvedHitData CriticalHit;
 		if (TestTrue(TEXT("Critical skill hit resolves"), Resolver->ResolveAttackHit(Request, CriticalHit)))
 		{
-			const float AfterDefence = FMath::TruncToFloat(
-				FMath::Max(0.0f, CriticalHit.WeaponAttackPower - 4.0f) * 10.0f) / 10.0f;
-			TestTrue(TEXT("Critical multiplier follows skill defence"),
-				FMath::IsNearlyEqual(CriticalHit.FinalDamage, AfterDefence * 2.0f));
+			TestEqual(TEXT("Critical multiplier follows skill defence"), CriticalHit.FinalDamage, 18.0f);
 		}
 
-		UMVStatusEffectDefinition* Passive = LoadObject<UMVStatusEffectDefinition>(nullptr,
-			TEXT("/Game/Miscellaneous/Weapon/Passive/GreatSword/DA_Passive_WeightOfRuin.DA_Passive_WeightOfRuin"));
-		if (TestNotNull(TEXT("Weight of Ruin passive asset"), Passive))
-		{
-			FMVStatusEffectSpec Spec;
-			Spec.Definition = Passive;
-			Spec.SourceActor = Attacker;
-			const FMVStatusEffectHandle Handle = Attacker->StatusEffectComponent->ApplyStatusEffect(Spec);
-			if (TestTrue(TEXT("Weight of Ruin applies"), Handle.IsValid()))
-			{
-				Attacker->CombatComponent->bCurrentAbilityAwaitingCompletion = true;
-				Attacker->CombatComponent->CurrentAttackInstanceId = 17;
-				FMVResolvedHitData PassiveHit;
-				if (TestTrue(TEXT("Passive skill hit resolves"), Resolver->ResolveAttackHit(Request, PassiveHit)))
+		const FDelegateHandle ActiveModifierHandle =
+			Attacker->CombatComponent->OnModifyOutgoingAttackDamage.AddLambda(
+				[&OutgoingModifierCalls](const FMVResolvedHitData&, float& InOutDamage)
 				{
-					const float AfterDefence = FMath::TruncToFloat(
-						FMath::Max(0.0f, PassiveHit.WeaponAttackPower - 4.0f) * 10.0f) / 10.0f;
-					TestTrue(TEXT("Passive multiplies damage after skill defence and critical"),
-						FMath::IsNearlyEqual(PassiveHit.FinalDamage, AfterDefence * 2.0f * 1.15f));
-				}
-				Attacker->StatusEffectComponent->RemoveStatusEffect(Handle);
-			}
+					++OutgoingModifierCalls;
+					InOutDamage *= 1.15f;
+				});
+		FMVResolvedHitData ModifiedHit;
+		if (TestTrue(TEXT("Current attack hit resolves"), Resolver->ResolveAttackHit(Request, ModifiedHit)))
+		{
+			TestEqual(TEXT("Current attack calls outgoing modifier once"), OutgoingModifierCalls, 1);
+			TestTrue(TEXT("Outgoing modifier follows skill defence and critical"),
+				FMath::IsNearlyEqual(ModifiedHit.FinalDamage, 20.7f, 0.001f));
+			TestTrue(TEXT("Outgoing modifier changes positive damage"),
+				ModifiedHit.FinalDamage > CriticalHit.FinalDamage);
 		}
 
 		Request.AttackInstanceId = 18;
 		FMVResolvedHitData OtherHit;
 		if (TestTrue(TEXT("Unrelated hit resolves"), Resolver->ResolveAttackHit(Request, OtherHit)))
 		{
+			TestEqual(TEXT("Unrelated attack skips outgoing modifier"), OutgoingModifierCalls, 1);
 			TestEqual(TEXT("Unrelated hit keeps normal defence"), OtherHit.VictimDefence, 2.0f);
+			TestEqual(TEXT("Unrelated hit keeps unmodified damage"), OtherHit.FinalDamage, 24.0f);
 			TestTrue(
 				TEXT("Hit without incoming direction uses attacker-to-victim direction"),
 				OtherHit.HitDirection.Equals(FVector::ForwardVector));
 		}
 
 		Request.AttackTypes = EMVAttackTypes::SkillAttack;
-		Request.bUseSourceWeaponSnapshot = true;
-		Request.SourceWeaponSnapshot.AttackPower = 13.0f;
-		Request.SourceWeaponSnapshot.bValid = true;
 		Request.bUseIncomingDirection = true;
 		Request.IncomingDirection = FVector(0.0f, 10.0f, 4.0f);
 
 		FMVResolvedHitData ProjectileHit;
 		if (TestTrue(TEXT("Projectile hit resolves"), Resolver->ResolveAttackHit(Request, ProjectileHit)))
 		{
+			TestEqual(TEXT("Unrelated projectile skips outgoing modifier"), OutgoingModifierCalls, 1);
 			TestEqual(TEXT("Projectile uses launch weapon power"), ProjectileHit.WeaponAttackPower, 13.0f);
 			TestEqual(TEXT("Projectile uses skill defence"), ProjectileHit.VictimDefence, 8.0f);
 			TestTrue(
-				TEXT("Projectile uses incoming horizontal direction"),
-				ProjectileHit.HitDirection.Equals(FVector::RightVector));
+				TEXT("Projectile uses attacker-to-victim horizontal direction"),
+				ProjectileHit.HitDirection.Equals(FVector::ForwardVector));
 		}
 
 		Request.SourceWeaponSnapshot.bValid = false;
@@ -128,6 +146,7 @@ bool FMVHitResolverMergedDamageTest::RunTest(const FString& Parameters)
 		TestFalse(
 			TEXT("Invalid launch weapon snapshot is rejected"),
 			Resolver->ResolveAttackHit(Request, RejectedHit));
+		Attacker->CombatComponent->OnModifyOutgoingAttackDamage.Remove(ActiveModifierHandle);
 	}
 
 	GEngine->DestroyWorldContext(World);

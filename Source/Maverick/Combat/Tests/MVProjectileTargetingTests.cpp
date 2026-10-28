@@ -7,7 +7,6 @@
 #include "Combat/Projectile/MVProjectileBase.h"
 #include "Combat/Projectile/MVProjectileTargeting.h"
 #include "Components/BoxComponent.h"
-#include "Components/MVCombatComponent.h"
 #include "Components/MVStatComponent.h"
 #include "Engine/Engine.h"
 #include "Engine/World.h"
@@ -55,11 +54,6 @@ bool FMVProjectileTargetSelectionTest::RunTest(const FString& Parameters)
 
     if (Player)
     {
-        if (UMVCombatComponent* Combat = Player->CombatComponent.Get())
-        {
-            Combat->AttackChooserTable = FSoftObjectPath();
-            Combat->FallbackAttackActionTable = FSoftObjectPath();
-        }
         Player->FinishSpawning(PlayerTransform);
     }
 
