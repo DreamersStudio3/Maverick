@@ -84,6 +84,17 @@ bool UMVActionComponent::TryStartActionFromRowHandle(
 	const float BlendoutTime,
 	const EMVActionDomain ActionDomain)
 {
+	return TryStartActionFromRowHandleWithPlayRate(
+		ActionRowHandle, StartSection, BlendoutTime, ActionDomain, 1.0f);
+}
+
+bool UMVActionComponent::TryStartActionFromRowHandleWithPlayRate(
+	const FDataTableRowHandle ActionRowHandle,
+	FName StartSection,
+	const float BlendoutTime,
+	const EMVActionDomain ActionDomain,
+	const float PlayRateMultiplier)
+{
 	FName ActionTableName = NAME_None;
 	FName ActionRowName = NAME_None;
 	const FMVActionRow* ActionRow = FindActionRow(ActionRowHandle, ActionTableName, ActionRowName);
@@ -102,7 +113,7 @@ bool UMVActionComponent::TryStartActionFromRowHandle(
 		CancelActiveAction(BlendoutTime);
 	}
 
-	return TryStartResolvedAction(ActionTableName, ActionRowName, *ActionRow, StartSection, ActionDomain);
+	return TryStartResolvedAction(ActionTableName, ActionRowName, *ActionRow, StartSection, ActionDomain, PlayRateMultiplier);
 }
 
 bool UMVActionComponent::TryAdditiveFromRowHandle(FDataTableRowHandle ActionRowHandle, FName StartSection, const float BlendoutTime)
@@ -181,7 +192,8 @@ bool UMVActionComponent::TryStartResolvedAction(
 	const FName ActionRowName,
 	const FMVActionRow& ActionRow,
 	FName StartSection,
-	const EMVActionDomain ActionDomain)
+	const EMVActionDomain ActionDomain,
+	const float PlayRateMultiplier)
 {
 	if (ActionTableName.IsNone() || ActionRowName.IsNone())
 	{
@@ -273,6 +285,17 @@ bool UMVActionComponent::TryTransitionActionFromRowHandle(
 	const float BlendOutTime,
 	const EMVActionDomain ActionDomain)
 {
+	return TryTransitionActionFromRowHandleWithPlayRate(
+		ActionRowHandle, StartSection, BlendOutTime, ActionDomain, 1.0f);
+}
+
+bool UMVActionComponent::TryTransitionActionFromRowHandleWithPlayRate(
+	const FDataTableRowHandle ActionRowHandle,
+	const FName StartSection,
+	const float BlendOutTime,
+	const EMVActionDomain ActionDomain,
+	const float PlayRateMultiplier)
+{
 	FName ActionTableName = NAME_None;
 	FName ActionRowName = NAME_None;
 	const FMVActionRow* ActionRow = FindActionRow(ActionRowHandle, ActionTableName, ActionRowName);
@@ -292,7 +315,7 @@ bool UMVActionComponent::TryTransitionActionFromRowHandle(
 		CancelActiveAction(BlendOutTime);
 	}
 
-	return TryStartResolvedAction(ActionTableName, ActionRowName, *ActionRow, StartSection, ActionDomain);
+	return TryStartResolvedAction(ActionTableName, ActionRowName, *ActionRow, StartSection, ActionDomain, PlayRateMultiplier);
 }
 
 void UMVActionComponent::FinishActiveAction(bool bInterrupted)

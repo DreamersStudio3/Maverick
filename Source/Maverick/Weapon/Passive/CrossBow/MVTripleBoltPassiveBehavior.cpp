@@ -91,6 +91,7 @@ void UMVTripleBoltPassiveBehavior::HandleValidatedAttackHitAfterDamage(
 		|| HitData.Origin != EMVResolvedHitOrigin::AttackCollision
 		|| HitData.Attacker.Get() != Owner
 		|| Ability->GetOwnerCharacter() != Owner
+		|| !Combat->IsAttackFromCurrentPassiveActivation(HitData)
 		|| !Combat->IsBasicAttackAbility(Ability)
 		|| OwnerEffects->FindStatusEffectHandle(
 			PassiveDefinition.Get(), Owner) != GetEffectHandle())

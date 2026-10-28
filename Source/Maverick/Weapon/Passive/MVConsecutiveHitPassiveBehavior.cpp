@@ -105,6 +105,7 @@ void UMVConsecutiveHitPassiveBehavior::HandleValidatedAttackHit(
 		|| HitData.Origin != EMVResolvedHitOrigin::AttackCollision
 		|| HitData.Attacker.Get() != Owner
 		|| Ability->GetOwnerCharacter() != Owner
+		|| !Combat->IsAttackFromCurrentPassiveActivation(HitData)
 		|| !Combat->IsBasicAttackAbility(Ability)
 		|| Effects->FindStatusEffectHandle(
 			PassiveDefinition.Get(), Owner) != GetEffectHandle())
@@ -136,6 +137,7 @@ void UMVConsecutiveHitPassiveBehavior::HandleAttackMissed(
 		|| !IsValid(Combat)
 		|| !IsValid(MissedAbility)
 		|| MissedAbility->GetOwnerCharacter() != Owner
+		|| !Combat->IsAttackFromCurrentPassiveActivation(MissedAbility)
 		|| !Combat->IsBasicAttackAbility(MissedAbility))
 	{
 		return;

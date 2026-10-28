@@ -17,6 +17,16 @@
 class UMVAbilityBase;
 class AMVProjectileBase;
 
+// 기존 Ability와 패시브가 사용하는 Q/R/W/E 번호. 새 맵의 키와는 별개다.
+namespace MVCombatSkillSlots
+{
+	inline constexpr int32 Q = 0;
+	inline constexpr int32 R = 1;
+	inline constexpr int32 W = 2;
+	inline constexpr int32 E = 3;
+	inline constexpr int32 Count = 4;
+}
+
 USTRUCT(BlueprintType)
 struct FMVCombatActionEvent
 {
@@ -66,6 +76,10 @@ public:
 	// DataTable reference
 	UPROPERTY(BlueprintReadOnly, Category = "Skill")
 	TObjectPtr<UDataTable> DataTable = nullptr;
+
+	// 현재 슬롯 구성과 연계 전체를 묶는 사용 회차. 투사체의 지연 적중 출처로 복사한다.
+	uint64 LoadoutRevision = 0;
+	uint64 CurrentUseId = 0;
 
 	// Main cooldown duration (applies to entire skill or chain)
 	UPROPERTY(BlueprintReadOnly, Category = "Skill")
@@ -240,8 +254,6 @@ public:
 	// Activate chain (start from stage 0)
 	void ActivateChain(float CurrentTime)
 	{
-		bMainCooldownRefundedForCurrentUse = false;
-
 		// If Chain exist(2+ Chained Skills)
 		if (bIsChained && AbilityInstances.Num() > 1)
 		{
@@ -408,6 +420,42 @@ struct FMVCombatHeavyChargeAttackRuntimeState
 };
 
 /**
+ * 한 공격에서 발사한 탄과 원래 스킬 사용 회차를 묶는 임시 기록.
+ * 첫 탄 등록 때 행·슬롯·무기·생존 회차를 고정하고, 환원 성공도 공격별로 기록한다.
+ * 모든 탄과 동작이 끝난 뒤 제거한다.
+ * 실제로 활성화한 탄이 하나도 없으면 빗나감 사건을 내지 않는다.
+ */
+USTRUCT()
+struct FMVProjectileExecutionRecord
+{
+	GENERATED_BODY()
+
+	TWeakObjectPtr<UMVAbilityBase> SourceAbility;
+
+	UPROPERTY(Transient)
+	TObjectPtr<UMVAbilityBase> ExecutionAbility = nullptr;
+
+	TSet<AMVProjectileBase*> ActiveProjectiles;
+	UPROPERTY(Transient)
+	FDataTableRowHandle SourceRowHandle;
+	EMVSkillSlot SourceSkillSlot = EMVSkillSlot::NONE;
+	uint64 SourceSlotRevision = 0;
+	uint64 SourceSkillUseId = 0;
+	uint64 SourceLifeId = 0;
+	FGameplayTag SourceWeaponItemTag;
+	uint64 PassiveActivationId = 0;
+	int32 SourceChainStageIndex = INDEX_NONE;
+	bool bWasBasicAttack = false;
+	bool bWasRSkill = false;
+	bool bHadActivatedProjectile = false;
+	bool bHadHit = false;
+	bool bMissPending = false;
+	bool bMissNotified = false;
+	bool bActionEnded = false;
+	bool bRefundProcessed = false;
+};
+
+/**
  * 캐릭터의 공격·실행형 스킬과 장착 Passive Ability 런타임을 소유하는 전투 컴포넌트.
  *
  * 실행형 Ability는 Action·AnimNotify 흐름에서 시작·종료하고, Passive Ability는 별도 슬롯에서
@@ -415,7 +463,9 @@ struct FMVCombatHeavyChargeAttackRuntimeState
  * 먼저 해제하며 신규 적용 실패 시 공석을 정상 상태로 유지한다. EndPlay에서는 활성 Passive를
  * 반드시 종료하지만 사망만으로는 해제하지 않는다.
  * 무기별 Basic Attack과 장착 Skill Row는 WeaponComponent를 단일 진입점으로 조회한다.
- * 무기 변경은 전체 액션 맵을 다시 만들고, 같은 스타일의 스킬 교체는 해당 슬롯만 갱신한다.
+ * 스타일 변경은 전체 액션 맵을, 아이템·종류 변경은 패시브 슬롯을 갱신한다.
+ * 공격 시작 때 패시브 적용 식별값을 보관해 교체 전 공격이 새 패시브를 발동하지 않게 한다.
+ * 투사체는 발사 시점의 스킬 행·구성·사용·생존 회차와 함께 기록해 동작 종료 후에도 정리한다.
  */
 UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class MAVERICK_API UMVCombatComponent : public UActorComponent, public IMVActionInputHandlerInterface
@@ -461,6 +511,10 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Maverick|Combat|Passive Skill")
 	FDataTableRowHandle GetActivePassiveSkillRowHandle() const { return ActivePassiveSkillRowHandle; }
 
+	// 공격이 시작될 때 활성화된 패시브가 현재도 같은 실행 객체인지 확인한다.
+	bool IsAttackFromCurrentPassiveActivation(const FMVResolvedHitData& HitData) const;
+	bool IsAttackFromCurrentPassiveActivation(const UMVAbilityBase* Ability) const;
+
 	// 진행 중인 주 쿨타임의 남은 시간을 횟수만큼 비율로 줄인다.
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Combat|Cooldown")
 	bool ReduceSkillMainCooldown(
@@ -475,12 +529,16 @@ public:
 		float ReductionFraction,
 		int32 TriggerCount);
 
-	// 현재 실행의 스킬 주 쿨타임을 환원하고 종료 시 재설정도 막는다.
+	// 같은 스킬 사용 회차의 공격에 한 번만 주 쿨타임 환원을 승인한다.
+	// 성공한 호출만 MP 환원과 짝을 이루며, 이미 끝난 쿨타임도 유효한 사용으로 취급한다.
 	bool RefundSkillMainCooldownForExecution(
 		int32 SkillIndex,
 		const UMVAbilityBase* SourceAbility);
 
 	void HandleAbilityEnded(const UMVAbilityBase* EndedAbility);
+
+	// 같은 동작의 다음 발사 Notify가 시작되면 종료 대기 상태를 다시 연다.
+	void NotifyProjectileAbilityStarted(const UMVAbilityBase* StartedAbility);
 
 	// 발사체의 충돌을 켜기 전에 호출한다.
 	bool RegisterLaunchedProjectile(
@@ -659,15 +717,28 @@ public:
 
 	FName CurrentAbilityActionTableName = NAME_None;
 	FName CurrentAbilityActionRowName = NAME_None;
+	UPROPERTY(Transient)
+	FDataTableRowHandle CurrentAbilityRowHandle;
+	EMVSkillSlot CurrentPreparedSkillSlot = EMVSkillSlot::NONE;
+	int32 CurrentPreparedChainStageIndex = INDEX_NONE;
+	uint64 CurrentPreparedSlotRevision = 0;
+	uint64 CurrentPreparedSkillUseId = 0;
 	bool bCurrentAbilityAwaitingCompletion = false;
 
 	int32 NextAttackInstanceId = 0;
 	int32 CurrentAttackInstanceId = INDEX_NONE;
+	uint64 NextSkillSlotRevision = 0;
+	uint64 NextSkillUseId = 0;
+	uint64 CurrentLifeId = 1;
+	uint64 CurrentAttackLifeId = 0;
+	uint64 CurrentAttackPassiveActivationId = 0;
+	int32 CurrentRefundedAttackInstanceId = INDEX_NONE;
 
 	bool bCurrentAbilityHitConfirmed = false;
 
 private:
 	double LastBasicAttackedTime = 0.0;
+	friend class FMVProjectileExecutionTest;
 	EMVCombatActionTypes ActiveBasicAttackType = EMVCombatActionTypes::None;
 	TObjectPtr<UMVStatComponent> StatComponent;
 
@@ -676,6 +747,9 @@ private:
 
 	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = "Maverick|Combat|Passive Skill", meta = (AllowPrivateAccess = "true"))
 	FDataTableRowHandle ActivePassiveSkillRowHandle;
+
+	uint64 NextPassiveActivationId = 0;
+	uint64 ActivePassiveActivationId = 0;
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Combat|R Skill Gauge", meta = (AllowPrivateAccess = "true"))
 	float CurrentRSkillGauge = 0.0f;

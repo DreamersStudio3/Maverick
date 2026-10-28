@@ -1,5 +1,6 @@
 #include "Components/MVWeaponComponent.h"
 
+#include "Combat/MVAbilityBase.h"
 #include "MVActionComponent.h"
 #include "Components/MVInputManagerComponent.h"
 #include "Character/MVCharacterBase.h"
@@ -10,6 +11,7 @@
 #include "Engine/SkeletalMesh.h"
 #include "Engine/StaticMesh.h"
 #include "Tags/MVGameplayTags.h"
+#include "Tables/MVSkillDataTableColumn.h"
 
 namespace
 {
@@ -409,6 +411,15 @@ const TMap<EMVSkillSlot, FDataTableRowHandle> UMVWeaponComponent::GetEquippedSki
 	if (GetWeaponSkillState(StyleToCheck, State))
 	{
 		Result = State.EquippedSkill;
+		Result.Remove(EMVSkillSlot::PassiveSkill);
+		if (StyleToCheck == CurrentWeaponState.EquippedStyle)
+		{
+			FDataTableRowHandle PassiveRow;
+			if (GetEquippedWeaponPassiveRow(PassiveRow))
+			{
+				Result.Add(EMVSkillSlot::PassiveSkill, PassiveRow);
+			}
+		}
 	}
 	
 	// If the skill tree state is not found, return an empty map
@@ -420,6 +431,16 @@ bool UMVWeaponComponent::GetEquippedSkillRow(
 	const EMVSkillSlot SkillSlot,
 	FDataTableRowHandle& Output) const
 {
+	if (SkillSlot == EMVSkillSlot::PassiveSkill)
+	{
+		if (EquippedStyle == CurrentWeaponState.EquippedStyle)
+		{
+			return GetEquippedWeaponPassiveRow(Output);
+		}
+		Output = FDataTableRowHandle();
+		return false;
+	}
+
 	const FMVSkillTreeState* SkillTreeState = SkillTreeStates.Find(EquippedStyle);
 	const FDataTableRowHandle* RowHandle = SkillTreeState
 		? SkillTreeState->EquippedSkill.Find(SkillSlot)
@@ -455,6 +476,16 @@ bool UMVWeaponComponent::UnlockSkill(EMVEquippedStyle EquippedStyle, FDataTableR
 	if(SkillSlot == EMVSkillSlot::NONE)
 	{
 		return false;
+	}
+	if (SkillSlot == EMVSkillSlot::PassiveSkill)
+	{
+		const FMVWeaponSkillMapData* PassiveEntry = SkillMapPtr->Get()->PassiveSkill.Find(
+			FMVWeaponSkillMapData(RowHandle));
+		if (!PassiveEntry || PassiveEntry->PassiveWeaponTypes.IsEmpty()
+			|| !IsValidPassiveCandidateRow(RowHandle))
+		{
+			return false;
+		}
 	}
 
 	// If the skill is already unlocked, return false
@@ -508,6 +539,12 @@ bool UMVWeaponComponent::EquipSkill(EMVEquippedStyle EquippedStyle, FDataTableRo
 		return false;
 	}
 
+	if (SkillSlot == EMVSkillSlot::PassiveSkill)
+	{
+		return EquippedStyle == CurrentWeaponState.EquippedStyle
+			&& SelectPassive(CurrentWeaponState.WeaponTypeTag, RowHandle);
+	}
+
 	if (const FDataTableRowHandle* EquippedSkill = SkillTreeStatePtr->EquippedSkill.Find(SkillSlot);
 		EquippedSkill && *EquippedSkill == RowHandle)
 	{
@@ -523,6 +560,193 @@ bool UMVWeaponComponent::EquipSkill(EMVEquippedStyle EquippedStyle, FDataTableRo
 	}
 
 	return true;
+}
+
+TArray<FMVPassiveSkillCandidate> UMVWeaponComponent::GetPassiveCandidates(const FGameplayTag WeaponTypeTag) const
+{
+	TArray<FMVPassiveSkillCandidate> Result;
+	EMVEquippedStyle WeaponStyle;
+	if (!ResolveOwnedWeaponTypeStyle(WeaponTypeTag, WeaponStyle))
+	{
+		return Result;
+	}
+
+	const TObjectPtr<UMVWeaponSkillMap>* SkillMap = SkillBlueprint.Find(WeaponStyle);
+	const FMVSkillTreeState* SkillState = SkillTreeStates.Find(WeaponStyle);
+	if (!SkillMap || !*SkillMap || !SkillState)
+	{
+		return Result;
+	}
+
+	for (const FMVWeaponSkillMapData& Entry : (*SkillMap)->PassiveSkill)
+	{
+		const FDataTableRowHandle& RowHandle = Entry.SkillRowHandle.RowHandle;
+		if (!Entry.PassiveWeaponTypes.HasTagExact(WeaponTypeTag)
+			|| !IsValidPassiveCandidateRow(RowHandle))
+		{
+			continue;
+		}
+
+		FMVPassiveSkillCandidate Candidate;
+		Candidate.SkillRowHandle = RowHandle;
+		Candidate.RequiredPoints = FMath::Max(0, Entry.RequiredPoints);
+		Candidate.bUnlocked = SkillState->UnlockedSkills.Contains(FMVHashDataTableRowHandle(RowHandle));
+		Result.Add(Candidate);
+	}
+
+	Result.Sort([](const FMVPassiveSkillCandidate& A, const FMVPassiveSkillCandidate& B)
+	{
+		const FString ATable = A.SkillRowHandle.DataTable.Get()->GetPathName();
+		const FString BTable = B.SkillRowHandle.DataTable.Get()->GetPathName();
+		return ATable == BTable
+			? A.SkillRowHandle.RowName.LexicalLess(B.SkillRowHandle.RowName)
+			: ATable < BTable;
+	});
+	return Result;
+}
+
+bool UMVWeaponComponent::GetSelectedPassive(
+	const FGameplayTag WeaponTypeTag,
+	FDataTableRowHandle& Output) const
+{
+	const FDataTableRowHandle* Selected = SelectedPassiveByWeaponType.Find(WeaponTypeTag);
+	if (!Selected || !Selected->DataTable || Selected->RowName.IsNone())
+	{
+		Output = FDataTableRowHandle();
+		return false;
+	}
+	Output = *Selected;
+	return true;
+}
+
+bool UMVWeaponComponent::GetEquippedWeaponPassiveRow(FDataTableRowHandle& Output) const
+{
+	if (!CurrentWeaponState.bValid)
+	{
+		Output = FDataTableRowHandle();
+		return false;
+	}
+	return GetSelectedPassive(CurrentWeaponState.WeaponTypeTag, Output);
+}
+
+bool UMVWeaponComponent::SelectPassive(
+	const FGameplayTag WeaponTypeTag,
+	const FDataTableRowHandle RowHandle)
+{
+	const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
+	const bool bActionRunning = OwnerCharacter && OwnerCharacter->ActionComponent
+		&& OwnerCharacter->ActionComponent->IsActionRunning();
+	if (bActionRunning)
+	{
+		return false;
+	}
+
+	const TArray<FMVPassiveSkillCandidate> Candidates = GetPassiveCandidates(WeaponTypeTag);
+	for (const FMVPassiveSkillCandidate& Candidate : Candidates)
+	{
+		if (Candidate.SkillRowHandle == RowHandle && Candidate.bUnlocked)
+		{
+			SelectedPassiveByWeaponType.Add(WeaponTypeTag, RowHandle);
+			if (CurrentWeaponState.bValid
+				&& CurrentWeaponState.WeaponTypeTag.MatchesTagExact(WeaponTypeTag))
+			{
+				RefreshOwnerCombatSkillSlot(EMVSkillSlot::PassiveSkill);
+				const UMVCombatComponent* CombatComponent = GetOwner()
+					? GetOwner()->FindComponentByClass<UMVCombatComponent>() : nullptr;
+				const UMVAbilityBase* ActivePassive = CombatComponent
+					? CombatComponent->GetActivePassiveSkill() : nullptr;
+				return IsValid(ActivePassive)
+					&& ActivePassive->bAbilityActive
+					&& CombatComponent->GetActivePassiveSkillRowHandle() == RowHandle;
+			}
+			return true;
+		}
+	}
+	return false;
+}
+
+bool UMVWeaponComponent::ClearSelectedPassive(const FGameplayTag WeaponTypeTag)
+{
+	const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
+	if (OwnerCharacter && OwnerCharacter->ActionComponent
+		&& OwnerCharacter->ActionComponent->IsActionRunning())
+	{
+		return false;
+	}
+	if (!WeaponTypeTag.IsValid() || SelectedPassiveByWeaponType.Remove(WeaponTypeTag) == 0)
+	{
+		return false;
+	}
+	if (CurrentWeaponState.bValid
+		&& CurrentWeaponState.WeaponTypeTag.MatchesTagExact(WeaponTypeTag))
+	{
+		RefreshOwnerCombatSkillSlot(EMVSkillSlot::PassiveSkill);
+	}
+	return true;
+}
+
+bool UMVWeaponComponent::ResolveOwnedWeaponTypeStyle(
+	const FGameplayTag WeaponTypeTag,
+	EMVEquippedStyle& OutputStyle) const
+{
+	if (!WeaponTypeTag.IsValid())
+	{
+		return false;
+	}
+
+	bool bFound = false;
+	const auto ConsiderWeapon = [&WeaponTypeTag, &OutputStyle, &bFound](
+		const FGameplayTag& CandidateType, const EMVEquippedStyle CandidateStyle)
+	{
+		if (!CandidateType.MatchesTagExact(WeaponTypeTag))
+		{
+			return true;
+		}
+		if (bFound && OutputStyle != CandidateStyle)
+		{
+			return false;
+		}
+		OutputStyle = CandidateStyle;
+		bFound = true;
+		return true;
+	};
+
+	if (CurrentWeaponState.bValid
+		&& !ConsiderWeapon(CurrentWeaponState.WeaponTypeTag, CurrentWeaponState.EquippedStyle))
+	{
+		return false;
+	}
+	if (!ConsiderWeapon(BareHandWeapon.WeaponTypeTag, BareHandWeapon.EquippedStyle))
+	{
+		return false;
+	}
+	for (const TPair<FGameplayTag, FDataTableRowHandle>& OwnedWeapon : OwnedWeapons)
+	{
+		const FMVWeaponTableRow* Row = ResolveWeaponRow(
+			OwnedWeapon.Value, TEXT("UMVWeaponComponent::ResolveOwnedWeaponTypeStyle"));
+		if (Row && !ConsiderWeapon(Row->WeaponTypeTag, Row->EquippedStyle))
+		{
+			return false;
+		}
+	}
+	return bFound;
+}
+
+bool UMVWeaponComponent::IsValidPassiveCandidateRow(const FDataTableRowHandle& RowHandle) const
+{
+	if (!RowHandle.DataTable || RowHandle.RowName.IsNone()
+		|| !RowHandle.DataTable->GetRowStruct()
+		|| !RowHandle.DataTable->GetRowStruct()->IsChildOf(FMVSkillDataTableColumn::StaticStruct()))
+	{
+		return false;
+	}
+	const FMVSkillDataTableColumn* SkillData = RowHandle.DataTable->FindRow<FMVSkillDataTableColumn>(
+		RowHandle.RowName, TEXT("UMVWeaponComponent::IsValidPassiveCandidateRow"), false);
+	return SkillData && SkillData->AbilityReference
+		&& FMath::IsNearlyZero(SkillData->HpCost)
+		&& FMath::IsNearlyZero(SkillData->StaminaCost)
+		&& FMath::IsNearlyZero(SkillData->MpCost)
+		&& !SkillData->bIsChained && SkillData->NextChainName.IsNone();
 }
 
 int32 UMVWeaponComponent::GetSkillPoints() const
@@ -642,6 +866,21 @@ void UMVWeaponComponent::ApplyEquippedWeaponState(const FMVEquippedWeaponState& 
 	const bool bShouldRefreshCombat =
 		!CurrentWeaponState.bValid
 		|| CurrentWeaponState.EquippedStyle != NewState.EquippedStyle;
+	const bool bPassiveContextChanged =
+		!CurrentWeaponState.bValid
+		|| CurrentWeaponState.ItemTag != NewState.ItemTag
+		|| CurrentWeaponState.WeaponTypeTag != NewState.WeaponTypeTag
+		|| CurrentWeaponState.EquippedStyle != NewState.EquippedStyle;
+	if (bPassiveContextChanged)
+	{
+		if (AActor* Owner = GetOwner())
+		{
+			if (UMVCombatComponent* CombatComponent = Owner->FindComponentByClass<UMVCombatComponent>())
+			{
+				CombatComponent->ClearPassiveSkill();
+			}
+		}
+	}
 
 	CurrentWeaponState = NewState;
 	CurrentWeaponState.AttackPower = FMath::Max(0.0f, CurrentWeaponState.AttackPower);
@@ -653,6 +892,10 @@ void UMVWeaponComponent::ApplyEquippedWeaponState(const FMVEquippedWeaponState& 
 	{
 		RefreshOwnerCombatComponent();
 	}
+	else if (bPassiveContextChanged)
+	{
+		RefreshOwnerCombatSkillSlot(EMVSkillSlot::PassiveSkill);
+	}
 	ApplyWeaponVisual();
 	OnEquippedWeaponChanged.Broadcast(CurrentWeaponState);
 }
@@ -661,11 +904,11 @@ FMVEquippedWeaponState UMVWeaponComponent::MakeStateFromWeaponRow(const FMVWeapo
 {
 	FMVEquippedWeaponState State;
 	State.ItemTag = WeaponRow.ItemTag;
+	State.WeaponTypeTag = WeaponRow.WeaponTypeTag;
 	State.EquippedStyle = WeaponRow.EquippedStyle;
 	State.AttackPower = FMath::Max(0.0f, WeaponRow.AttackPower);
 	State.WeaponPoise = FMath::Max(0.0f, WeaponRow.WeaponPoise);
 	State.RangeType = WeaponRow.RangeType;
-	State.PassiveSet = WeaponRow.PassiveSet;
 	State.WeaponMesh = WeaponRow.WeaponMesh;
 	State.AttachSocketName = WeaponRow.AttachSocketName;
 	State.AttachTransform = WeaponRow.AttachTransform;
@@ -1126,13 +1369,15 @@ void UMVWeaponComponent::InitSkillSlotState(
 
 		bFoundAutoUnlockedSkill = true;
 		SkillTreeState.UnlockedSkills.Add(Skill.SkillRowHandle);
-		if (!SkillTreeState.EquippedSkill.Contains(SkillSlot))
+		if (SkillSlot != EMVSkillSlot::PassiveSkill
+			&& !SkillTreeState.EquippedSkill.Contains(SkillSlot))
 		{
 			SkillTreeState.EquippedSkill.Add(SkillSlot, RowHandle);
 		}
 	}
 
-	if (!bFoundAutoUnlockedSkill && !SkillTreeState.EquippedSkill.Contains(SkillSlot))
+	if (SkillSlot != EMVSkillSlot::PassiveSkill
+		&& !bFoundAutoUnlockedSkill && !SkillTreeState.EquippedSkill.Contains(SkillSlot))
 	{
 		UE_LOG(
 			LogTemp,

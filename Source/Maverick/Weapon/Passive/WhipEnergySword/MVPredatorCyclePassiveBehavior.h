@@ -14,7 +14,8 @@ class UMVStatusEffectDefinition;
 /**
  * 장착 중 피해 처리가 끝난 스킬 명중마다 발동 확률을 판정한다.
  * 성공한 실행의 소비 마나와 주 쿨타임을 최대 한 번 환원한다.
- * 사망 또는 효과 제거 시 실행 기록과 사건 구독을 정리한다.
+ * 공격별 중복 여부와 원래 스킬 사용 회차는 CombatComponent가 판정한다.
+ * 효과 제거 시 사건 구독을 정리한다.
  */
 UCLASS(BlueprintType, EditInlineNew)
 class MAVERICK_API UMVPredatorCyclePassiveBehavior : public UMVStatusEffectBehavior
@@ -37,9 +38,6 @@ private:
 		const FMVResolvedHitData& HitData,
 		UMVAbilityBase* Ability);
 
-	UFUNCTION()
-	void HandleOwnerDeathStarted(const FMVDeathContext& DeathContext);
-
 	UPROPERTY(Transient)
 	TWeakObjectPtr<AMVCharacterBase> BoundOwner;
 
@@ -52,5 +50,4 @@ private:
 	UPROPERTY(Transient)
 	TWeakObjectPtr<UMVStatusEffectDefinition> PassiveDefinition;
 
-	int32 RefundedAttackInstanceId = INDEX_NONE;
 };

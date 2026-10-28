@@ -10,6 +10,14 @@ namespace MVGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Item_Weapon_BareHand, "Item.Weapon.BareHand");
 	UE_DEFINE_GAMEPLAY_TAG(Item_Weapon_OneHand_TestSword, "Item.Weapon.OneHand.TestSword");
 	UE_DEFINE_GAMEPLAY_TAG(Item_Weapon_DualSword_TestSword, "Item.Weapon.DualSword.TestSword");
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Type_Katana, "Weapon.Type.Katana");
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Type_Rapier, "Weapon.Type.Rapier");
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Type_GreatSword, "Weapon.Type.GreatSword");
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Type_TwoHandedShield, "Weapon.Type.TwoHandedShield");
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Type_Crossbow, "Weapon.Type.Crossbow");
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Type_Bow, "Weapon.Type.Bow");
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Type_Whip, "Weapon.Type.Whip");
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Type_EnergySword, "Weapon.Type.EnergySword");
 	UE_DEFINE_GAMEPLAY_TAG(Item_HealingPotion_Basic, "Item.HealingPotion.Basic");
 	UE_DEFINE_GAMEPLAY_TAG(Progression_Attribute_HP, "Progression.Attribute.HP");
 	UE_DEFINE_GAMEPLAY_TAG(Progression_Attribute_Stamina, "Progression.Attribute.Stamina");

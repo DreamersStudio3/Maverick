@@ -96,6 +96,8 @@ void UMVStormBladePassiveBehavior::HandleValidatedAttackHit(
         || HitData.Origin != EMVResolvedHitOrigin::AttackCollision
         || HitData.Attacker.Get() != Owner
         || Ability->GetOwnerCharacter() != Owner
+		|| !IsValid(BoundCombatComponent.Get())
+		|| !BoundCombatComponent->IsAttackFromCurrentPassiveActivation(HitData)
         || Effects->FindStatusEffectHandle(
             PassiveDefinition.Get(), Owner) != GetEffectHandle())
     {
@@ -119,7 +121,9 @@ void UMVStormBladePassiveBehavior::HandleValidatedAttackHit(
 void UMVStormBladePassiveBehavior::HandleAttackMissed(UMVAbilityBase* MissedAbility)
 {
     if (IsValid(MissedAbility)
-        && MissedAbility->GetOwnerCharacter() == BoundCharacter.Get())
+		&& MissedAbility->GetOwnerCharacter() == BoundCharacter.Get()
+		&& IsValid(BoundCombatComponent.Get())
+		&& BoundCombatComponent->IsAttackFromCurrentPassiveActivation(MissedAbility))
     {
         RemoveSpeedEffect(EMVStatusEffectRemovalReason::Consumed);
     }

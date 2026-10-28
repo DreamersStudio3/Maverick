@@ -19,11 +19,28 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnEquippedWeaponChanged, const FM
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMVOnOwnedWeaponsChanged);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMVOnQuickSlotsChanged);
 
+/** 무기 종류로 걸러진 패시브 후보의 스킬 행과 현재 해금 상태. */
+USTRUCT(BlueprintType)
+struct FMVPassiveSkillCandidate
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Skill|Passive")
+	FDataTableRowHandle SkillRowHandle;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Skill|Passive")
+	int32 RequiredPoints = 0;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Skill|Passive")
+	bool bUnlocked = false;
+};
+
 /**
  * 캐릭터의 무기 소유권, 퀵슬롯, 현재 장착 상태와 스타일별 스킬 진행을 관리하는 컴포넌트.
  *
  * OwnedWeapons를 소유 여부의 단일 정본으로 유지하고 QuickSlotWeaponTags는 그 key만 참조한다.
- * 스킬 해금·장착 상태는 EMVEquippedStyle별로 공유하고 스킬 포인트는 모든 스타일이 함께 사용한다.
+ * Q/W/E/R 해금·장착은 EMVEquippedStyle별로 공유하고 스킬 포인트는 모든 스타일이 함께 사용한다.
+ * 패시브 후보는 스타일 트리에서 무기 종류로 거르고, 선택한 한 행은 종류별로 보관한다.
  * 장착 스타일이 바뀔 때 CharacterBase의 EquippedStyle과 CombatComponent의 액션 맵을 동기화한다.
  * 맨손은 소유 목록과 퀵슬롯에 넣지 않는 내부 fallback이며, 실제 무기 메시에는 필수 Trace 소켓이 있어야 한다.
  *
@@ -119,6 +136,21 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Skill")
 	bool EquipSkill(EMVEquippedStyle EquippedStyle, FDataTableRowHandle RowHandle);
 
+	UFUNCTION(BlueprintPure, Category = "Maverick|Skill|Passive")
+	TArray<FMVPassiveSkillCandidate> GetPassiveCandidates(FGameplayTag WeaponTypeTag) const;
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|Skill|Passive")
+	bool GetSelectedPassive(FGameplayTag WeaponTypeTag, FDataTableRowHandle& Output) const;
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|Skill|Passive")
+	bool GetEquippedWeaponPassiveRow(FDataTableRowHandle& Output) const;
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Skill|Passive")
+	bool SelectPassive(FGameplayTag WeaponTypeTag, FDataTableRowHandle RowHandle);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Skill|Passive")
+	bool ClearSelectedPassive(FGameplayTag WeaponTypeTag);
+
 	UFUNCTION(BlueprintPure, Category = "Maverick|Skill")
 	int32 GetSkillPoints() const;
 
@@ -190,6 +222,8 @@ private:
 		FMVSkillTreeState& SkillTreeState,
 		EMVSkillSlot SkillSlot,
 		const TSet<FMVWeaponSkillMapData>& Skills) const;
+	bool ResolveOwnedWeaponTypeStyle(FGameplayTag WeaponTypeTag, EMVEquippedStyle& OutputStyle) const;
+	bool IsValidPassiveCandidateRow(const FDataTableRowHandle& RowHandle) const;
 	
 	// Todo: Apply Skill to CombatComponent. This function will be responsible for applying the equipped skills to the character's combat component, allowing the character to use the skills in combat.
 	//void ApplySkillToCombatComponent();
@@ -220,6 +254,10 @@ private:
 	// SkillTreeStates is current state of the skill tree for each equipped style, which can be used to track the player's equipped skills and unlocks.
 	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Skill", meta = (AllowPrivateAccess = "true"))
 	TMap<EMVEquippedStyle, FMVSkillTreeState> SkillTreeStates;
+
+	// Current session selection; later save data must persist this by weapon kind.
+	UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Skill|Passive", meta = (AllowPrivateAccess = "true"))
+	TMap<FGameplayTag, FDataTableRowHandle> SelectedPassiveByWeaponType;
 
 	UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Skill", meta = (AllowPrivateAccess = "true"))
 	int32 CurrentSkillPoints = 0;

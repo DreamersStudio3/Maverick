@@ -8,6 +8,7 @@
 #include "Enum/MVSkillSlot.h"
 #include "Enum/MVEquipmentEnums.h"
 #include "Struct/MVHashDataTableRowHandle.h" 
+#include "GameplayTagContainer.h"
 
 #include "MVWeaponSkillMap.generated.h"
 
@@ -67,6 +68,10 @@ struct FMVWeaponSkillMapData
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Requirements")
 	int32 RequiredPoints = 0;
+
+	// PassiveSkill entries only. An empty container is not a selectable passive candidate.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Passive", meta = (Categories = "Weapon.Type"))
+	FGameplayTagContainer PassiveWeaponTypes;
 
 	bool operator==(const FMVWeaponSkillMapData& Other) const
 	{

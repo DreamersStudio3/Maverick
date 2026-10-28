@@ -54,6 +54,14 @@ bool UMVHitResolverSubsystem::ResolveAttackHit(
 		return false;
 	}
 
+	if (AMVCharacterBase* Attacker = OutHitData.Attacker.Get())
+	{
+		if (UMVCombatComponent* Combat = Attacker->CombatComponent.Get())
+		{
+			Combat->ApplyOutgoingAttackDamageModifiers(OutHitData);
+		}
+	}
+
 	return DispatchResolvedHit(OutHitData);
 }
 

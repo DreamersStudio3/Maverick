@@ -4,6 +4,7 @@
 #include "Components/MVCombatComponent.h"
 
 #include "Combat/MVAbilityBase.h"
+#include "Combat/Projectile/MVProjectileAbility.h"
 #include "Combat/Projectile/MVProjectileBase.h"
 #include "Components/MVActionComponent.h"
 #include "Components/MVWeaponComponent.h"
@@ -69,6 +70,18 @@ bool MVCombatIsActiveSkillSlot(const EMVSkillSlot SkillSlot)
 		|| SkillSlot == EMVSkillSlot::RSkill
 		|| SkillSlot == EMVSkillSlot::WSkill
 		|| SkillSlot == EMVSkillSlot::ESkill;
+}
+
+EMVSkillSlot MVCombatLegacySkillIndexToSlot(const int32 SkillIndex)
+{
+	switch (SkillIndex)
+	{
+	case MVCombatSkillSlots::Q: return EMVSkillSlot::QSkill;
+	case MVCombatSkillSlots::R: return EMVSkillSlot::RSkill;
+	case MVCombatSkillSlots::W: return EMVSkillSlot::WSkill;
+	case MVCombatSkillSlots::E: return EMVSkillSlot::ESkill;
+	default: return EMVSkillSlot::NONE;
+	}
 }
 
 EMVSkillSlot MVCombatResolveSkillSlotFromInputTag(const FGameplayTag ActionInputTag)
@@ -312,18 +325,30 @@ bool UMVCombatComponent::ApplyPassiveSkill(const FDataTableRowHandle& PassiveSki
 	NewPassiveAbility->InitAbility(*PassiveSkillData);
 	ActivePassiveAbilityInstance = NewPassiveAbility;
 	ActivePassiveSkillRowHandle = PassiveSkillRowHandle;
+	if (++NextPassiveActivationId == 0)
+	{
+		++NextPassiveActivationId;
+	}
+	const uint64 NewActivationId = NextPassiveActivationId;
+	ActivePassiveActivationId = NewActivationId;
 
 	IMVAbilityInterface::Execute_StartAbility(NewPassiveAbility, INDEX_NONE);
-	if (!NewPassiveAbility->bAbilityActive)
+	if (!NewPassiveAbility->bAbilityActive
+		|| ActivePassiveAbilityInstance.Get() != NewPassiveAbility
+		|| ActivePassiveActivationId != NewActivationId)
 	{
-		ActivePassiveAbilityInstance = nullptr;
-		ActivePassiveSkillRowHandle = FDataTableRowHandle();
+		if (ActivePassiveAbilityInstance.Get() == NewPassiveAbility)
+		{
+			ActivePassiveAbilityInstance = nullptr;
+			ActivePassiveSkillRowHandle = FDataTableRowHandle();
+			ActivePassiveActivationId = 0;
+		}
 		IMVAbilityInterface::Execute_EndAbility(NewPassiveAbility);
 
 		UE_LOG(
 			LogMVCombatComponent,
 			Warning,
-			TEXT("ApplyPassiveSkill: Passive ability did not become active. Blueprint overrides must call the parent StartAbility. Row=%s"),
+			TEXT("ApplyPassiveSkill: Passive ability did not remain active. Check the Blueprint parent StartAbility and effect definition. Row=%s"),
 			*MVCombatRowHandleToString(PassiveSkillRowHandle));
 		return false;
 	}
@@ -336,6 +361,7 @@ void UMVCombatComponent::ClearPassiveSkill()
 	UMVAbilityBase* PassiveAbilityToDeactivate = ActivePassiveAbilityInstance.Get();
 	ActivePassiveAbilityInstance = nullptr;
 	ActivePassiveSkillRowHandle = FDataTableRowHandle();
+	ActivePassiveActivationId = 0;
 
 	if (IsValid(PassiveAbilityToDeactivate)
 		&& PassiveAbilityToDeactivate->Implements<UMVAbilityInterface>())
@@ -462,6 +488,157 @@ bool UMVCombatComponent::GetSkillSlotRuntimeState(
 	return OutState.bAvailable;
 }
 
+bool UMVCombatComponent::ReduceSkillMainCooldown(
+	int32 SkillIndex,
+	float ReductionFraction,
+	int32 TriggerCount,
+	float& OutBeforeSeconds,
+	float& OutAfterSeconds)
+{
+	OutBeforeSeconds = 0.0f;
+	OutAfterSeconds = 0.0f;
+
+	UWorld* World = GetWorld();
+	if (!World
+		|| SkillIndex < 0
+		|| SkillIndex >= MVCombatSkillSlots::Count
+		|| (SkillIndex == MVCombatSkillSlots::R && bUseRSkillGauge)
+		|| !FMath::IsFinite(ReductionFraction)
+		|| ReductionFraction <= 0.0f
+		|| TriggerCount <= 0)
+	{
+		return false;
+	}
+
+	FMVSkillEntry* SkillEntry = SkillMap.Find(MVCombatLegacySkillIndexToSlot(SkillIndex));
+	if (!SkillEntry
+		|| SkillEntry->MainCooldownDuration <= 0.0f
+		|| SkillEntry->MainCooldownEndTime < 0.0f
+		|| SkillEntry->bChainActive
+		|| (CurrentAbilityInstance
+			&& SkillEntry->ContainsAbility(CurrentAbilityInstance.Get())))
+	{
+		return false;
+	}
+
+	const float CurrentTime = World->GetTimeSeconds();
+	OutBeforeSeconds = SkillEntry->GetMainCooldownRemaining(CurrentTime);
+	if (OutBeforeSeconds <= KINDA_SMALL_NUMBER)
+	{
+		return false;
+	}
+
+	const float Fraction = FMath::Clamp(ReductionFraction, 0.0f, 1.0f);
+	const float RemainingMultiplier = FMath::Pow(1.0f - Fraction, TriggerCount);
+	OutAfterSeconds = FMath::Clamp(
+		OutBeforeSeconds * RemainingMultiplier,
+		0.0f,
+		OutBeforeSeconds);
+	SkillEntry->MainCooldownEndTime = CurrentTime + OutAfterSeconds;
+	return true;
+}
+
+int32 UMVCombatComponent::ReduceOngoingSkillMainCooldowns(
+	float ReductionFraction,
+	int32 TriggerCount)
+{
+	int32 ReducedSkillCount = 0;
+	for (int32 SkillIndex = 0; SkillIndex < MVCombatSkillSlots::Count; ++SkillIndex)
+	{
+		float BeforeSeconds = 0.0f;
+		float AfterSeconds = 0.0f;
+		if (ReduceSkillMainCooldown(
+			SkillIndex,
+			ReductionFraction,
+			TriggerCount,
+			BeforeSeconds,
+			AfterSeconds))
+		{
+			++ReducedSkillCount;
+		}
+	}
+	return ReducedSkillCount;
+}
+
+bool UMVCombatComponent::RefundSkillMainCooldownForExecution(
+	int32 SkillIndex,
+	const UMVAbilityBase* SourceAbility)
+{
+	const int32 AttackInstanceId = IsValid(SourceAbility)
+		? SourceAbility->GetAttackInstanceId() : INDEX_NONE;
+
+	UWorld* World = GetWorld();
+	const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
+	const UMVWeaponComponent* Weapon = IsValid(OwnerCharacter)
+		? OwnerCharacter->WeaponComponent.Get() : nullptr;
+	if (!World || !IsValid(SourceAbility) || !IsValid(StatComponent.Get())
+		|| StatComponent->IsDead() || !IsValid(Weapon)
+		|| SkillIndex < 0 || SkillIndex >= MVCombatSkillSlots::Count
+		|| (SkillIndex == MVCombatSkillSlots::R && bUseRSkillGauge)
+		|| AttackInstanceId == INDEX_NONE)
+	{
+		return false;
+	}
+
+	const EMVSkillSlot SkillSlot = MVCombatLegacySkillIndexToSlot(SkillIndex);
+	FMVSkillEntry* SkillEntry = SkillMap.Find(SkillSlot);
+	if (!SkillEntry || SkillEntry->LoadoutRevision == 0
+		|| SkillEntry->CurrentUseId == 0)
+	{
+		return false;
+	}
+
+	FMVProjectileExecutionRecord* ProjectileRecord =
+		ProjectileExecutions.Find(AttackInstanceId);
+	if (ProjectileRecord)
+	{
+		if (ProjectileRecord->ExecutionAbility.Get() != SourceAbility
+			|| ProjectileRecord->SourceSkillSlot != SkillSlot
+			|| ProjectileRecord->SourceSlotRevision != SkillEntry->LoadoutRevision
+			|| ProjectileRecord->SourceSkillUseId != SkillEntry->CurrentUseId
+			|| ProjectileRecord->SourceLifeId != CurrentLifeId
+			|| ProjectileRecord->bRefundProcessed
+			|| !IsValid(ProjectileRecord->SourceAbility.Get())
+			|| !SkillEntry->ContainsAbility(ProjectileRecord->SourceAbility.Get())
+			|| Weapon->GetEquippedWeaponState().ItemTag != ProjectileRecord->SourceWeaponItemTag
+			|| SourceAbility->GetSourceWeaponItemTag() != ProjectileRecord->SourceWeaponItemTag)
+		{
+			return false;
+		}
+	}
+	else if (CurrentAbilityInstance.Get() != SourceAbility
+		|| !bCurrentAbilityAwaitingCompletion
+		|| CurrentAttackInstanceId != AttackInstanceId
+		|| CurrentAttackLifeId != CurrentLifeId
+		|| CurrentRefundedAttackInstanceId == AttackInstanceId
+		|| CurrentPreparedSkillSlot != SkillSlot
+		|| CurrentPreparedSlotRevision != SkillEntry->LoadoutRevision
+		|| CurrentPreparedSkillUseId != SkillEntry->CurrentUseId
+		|| !SkillEntry->ContainsAbility(SourceAbility)
+		|| Weapon->GetEquippedWeaponState().ItemTag != SourceAbility->GetSourceWeaponItemTag())
+	{
+		return false;
+	}
+
+	// 환원 권한을 먼저 소비해 같은 공격의 관통·다발 적중과 재진입을 막는다.
+	if (ProjectileRecord)
+	{
+		ProjectileRecord->bRefundProcessed = true;
+	}
+	else
+	{
+		CurrentRefundedAttackInstanceId = AttackInstanceId;
+	}
+	const float CurrentTime = World->GetTimeSeconds();
+	SkillEntry->bMainCooldownRefundedForCurrentUse = true;
+	// 이미 시작한 주 쿨타임은 끝내고, 아직 시작 전이면 종료 처리에서 면제한다.
+	if (SkillEntry->MainCooldownEndTime >= 0.0f)
+	{
+		SkillEntry->MainCooldownEndTime = CurrentTime;
+	}
+	return true;
+}
+
 bool UMVCombatComponent::CanStartCombatAction() const
 {
 	const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
@@ -530,6 +707,34 @@ bool UMVCombatComponent::TrySkillCombatAction(
 	}
 
 	return bStarted;
+}
+
+bool UMVCombatComponent::TryStartCombatActionFromRowHandle(
+	const FDataTableRowHandle& RowHandle,
+	FName StartSection)
+{
+	const AMVCharacterBase* Character = Cast<AMVCharacterBase>(GetOwner());
+	if (!Character || !Character->ActionComponent || Character->ActionComponent->IsActionRunning()
+		|| !IsValidSkillActionRowHandle(RowHandle, TEXT("TryStartCombatActionFromRowHandle")))
+	{
+		return false;
+	}
+
+	const FMVSkillDataTableColumn* Row = RowHandle.DataTable->FindRow<FMVSkillDataTableColumn>(
+		RowHandle.RowName, TEXT("TryStartCombatActionFromRowHandle"));
+	if (!Row || !Row->bEnabled || !CanConsumeActionCost(Row))
+	{
+		return false;
+	}
+
+	FMVSkillEntry Entry;
+	if (!BuildSkillEntryFromRowHandle(RowHandle, Entry))
+	{
+		return false;
+	}
+
+	DirectActionEntry = MoveTemp(Entry);
+	return TryStartActionWithAbility(DirectActionEntry, RowHandle, StartSection);
 }
 
 bool UMVCombatComponent::TryHandleActionInput(
@@ -754,6 +959,24 @@ bool UMVCombatComponent::TrySkill(const EMVSkillSlot SkillSlot, FName StartSecti
 	}
 
 	float CurrentTime = GetWorld()->GetTimeSeconds();
+	const auto TryStartSkillStage = [this, ActionEntry, StartSection](const bool bNewUse)
+	{
+		const uint64 PreviousUseId = ActionEntry->CurrentUseId;
+		const bool bPreviousRefunded = ActionEntry->bMainCooldownRefundedForCurrentUse;
+		if (bNewUse)
+		{
+			ActionEntry->CurrentUseId = ++NextSkillUseId;
+			ActionEntry->bMainCooldownRefundedForCurrentUse = false;
+		}
+		const bool bStarted = TryStartActionWithAbility(
+			*ActionEntry, ActionEntry->GetCurrentActionRowHandle(), StartSection);
+		if (!bStarted)
+		{
+			ActionEntry->CurrentUseId = PreviousUseId;
+			ActionEntry->bMainCooldownRefundedForCurrentUse = bPreviousRefunded;
+		}
+		return bStarted;
+	};
 
 	// Chain Is Active --> doing chaining actions
 	if (ActionEntry->bChainActive)
@@ -772,7 +995,7 @@ bool UMVCombatComponent::TrySkill(const EMVSkillSlot SkillSlot, FName StartSecti
 				return false;
 			}
 
-			if (TryStartActionWithAbility(*ActionEntry, ActionEntry->GetCurrentActionRowHandle(), StartSection))
+			if (TryStartSkillStage(true))
 			{
 				ClearLastBasicAttackSwingDirection();
 				ActionEntry->ActivateChain(CurrentTime);
@@ -800,7 +1023,7 @@ bool UMVCombatComponent::TrySkill(const EMVSkillSlot SkillSlot, FName StartSecti
 		if (ActionEntry->CurrentChainStageIndex < ActionEntry->AbilityInstances.Num())
 		{
 
-			if (TryStartActionWithAbility(*ActionEntry, ActionEntry->GetCurrentActionRowHandle(), StartSection))
+			if (TryStartSkillStage(false))
 			{
 				ClearLastBasicAttackSwingDirection();
 
@@ -826,7 +1049,7 @@ bool UMVCombatComponent::TrySkill(const EMVSkillSlot SkillSlot, FName StartSecti
 			return false;
 		}
 
-		if (TryStartActionWithAbility(*ActionEntry, ActionEntry->GetCurrentActionRowHandle(), StartSection))
+		if (TryStartSkillStage(true))
 		{
 			ClearLastBasicAttackSwingDirection();
 			ActionEntry->ActivateChain(CurrentTime);
@@ -862,6 +1085,11 @@ bool UMVCombatComponent::RegisterLaunchedProjectile(
 	{
 		return false;
 	}
+	if (!IsValid(StatComponent.Get()) || StatComponent->IsDead()
+		|| CurrentAttackLifeId != CurrentLifeId)
+	{
+		return false;
+	}
 
 	FMVProjectileExecutionRecord* Record = ProjectileExecutions.Find(CurrentAttackInstanceId);
 
@@ -869,6 +1097,7 @@ bool UMVCombatComponent::RegisterLaunchedProjectile(
 	{
 		if (Record->SourceAbility.Get() != SourceAbility ||
 			!IsValid(Record->ExecutionAbility.Get()) ||
+			Record->SourceLifeId != CurrentLifeId ||
 			Record->bActionEnded ||
 			Record->ActiveProjectiles.Contains(Projectile))
 		{
@@ -900,29 +1129,17 @@ bool UMVCombatComponent::RegisterLaunchedProjectile(
 		Record = &ProjectileExecutions.FindOrAdd(CurrentAttackInstanceId);
 		Record->SourceAbility = SourceAbility;
 		Record->ExecutionAbility = ExecutionAbility;
+		Record->SourceRowHandle = CurrentAbilityRowHandle;
+		Record->SourceSkillSlot = CurrentPreparedSkillSlot;
+		Record->SourceChainStageIndex = CurrentPreparedChainStageIndex;
+		Record->SourceSlotRevision = CurrentPreparedSlotRevision;
+		Record->SourceSkillUseId = CurrentPreparedSkillUseId;
+		Record->SourceLifeId = CurrentLifeId;
 		Record->SourceWeaponItemTag = SourceAbility->GetSourceWeaponItemTag();
+		Record->PassiveActivationId = CurrentAttackPassiveActivationId;
 		Record->bWasBasicAttack = IsBasicAttackAbility(SourceAbility);
 		Record->bWasRSkill = IsCurrentAbilityRSkill();
 
-		const int32 SourceSkillIndex = SourceAbility->GetSourceSkillIndex();
-		if (SourceSkillIndex >= 0 && SourceSkillIndex < MVCombatSkillSlots::Count)
-		{
-			const FMVSkillEntry* SourceSkillEntry = SkillMap.Find(MVCombatMakeSkillMapKey(SourceSkillIndex));
-			if (SourceSkillEntry)
-			{
-				for (int32 StageIndex = 0;
-					StageIndex < SourceSkillEntry->AbilityInstances.Num();
-					++StageIndex)
-				{
-					if (SourceSkillEntry->AbilityInstances[StageIndex].Get()
-						== SourceAbility)
-					{
-						Record->SourceChainStageIndex = StageIndex;
-						break;
-					}
-				}
-			}
-		}
 	}
 
 	Record->ActiveProjectiles.Add(Projectile);
@@ -948,6 +1165,7 @@ void UMVCombatComponent::HandleRegisteredProjectileHit(
 	FMVProjectileExecutionRecord* Record = ProjectileExecutions.Find(HitData.AttackInstanceId);
 	if (Record && Record->ActiveProjectiles.Contains(Projectile))
 	{
+		Record->bHadActivatedProjectile |= Projectile->WasEverActivated();
 		Record->bHadHit = true;
 	}
 }
@@ -962,6 +1180,10 @@ void UMVCombatComponent::HandleRegisteredProjectileFinished(
 		return;
 	}
 
+	if (Projectile)
+	{
+		Record->bHadActivatedProjectile |= Projectile->WasEverActivated();
+	}
 	Record->ActiveProjectiles.Remove(Projectile);
 	FinalizeProjectileExecution(AttackInstanceId);
 }
@@ -986,7 +1208,7 @@ void UMVCombatComponent::FinalizeProjectileExecution(int32 AttackInstanceId)
 		return;
 	}
 
-	if (Record->bMissPending && !Record->bHadHit && !Record->bMissNotified)
+	if (Record->bMissPending && Record->bHadActivatedProjectile && !Record->bHadHit && !Record->bMissNotified)
 	{
 		Record->bMissNotified = true;
 
@@ -1000,6 +1222,8 @@ void UMVCombatComponent::FinalizeProjectileExecution(int32 AttackInstanceId)
 			: FGameplayTag();
 
 		if (IsValid(MissedAbility) &&
+			Record->SourceLifeId == CurrentLifeId &&
+			IsValid(StatComponent.Get()) && !StatComponent->IsDead() &&
 			EquippedWeaponItemTag == Record->SourceWeaponItemTag)
 		{
 			OnAttackMissed.Broadcast(MissedAbility);
@@ -1007,6 +1231,19 @@ void UMVCombatComponent::FinalizeProjectileExecution(int32 AttackInstanceId)
 	}
 
 	ProjectileExecutions.Remove(AttackInstanceId);
+}
+
+void UMVCombatComponent::NotifyProjectileAbilityStarted(const UMVAbilityBase* StartedAbility)
+{
+	if (IsValid(StartedAbility) &&
+		CurrentAbilityInstance.Get() == StartedAbility &&
+		IsValid(StatComponent.Get()) && !StatComponent->IsDead() &&
+		CurrentAttackLifeId == CurrentLifeId &&
+		CurrentAttackInstanceId != INDEX_NONE &&
+		CurrentAttackInstanceId == StartedAbility->GetAttackInstanceId())
+	{
+		bCurrentAbilityAwaitingCompletion = true;
+	}
 }
 
 void UMVCombatComponent::HandleAbilityEnded(const UMVAbilityBase* EndedAbility)
@@ -1042,6 +1279,12 @@ void UMVCombatComponent::HandleAbilityEnded(const UMVAbilityBase* EndedAbility)
 			}
 		}
 	}
+	if (!bHandledAbility &&
+		DirectActionEntry.ContainsAbility(EndedAbility) &&
+		Cast<UMVProjectileAbility>(EndedAbility))
+	{
+		bHandledAbility = true;
+	}
 
 	if (bHandledAbility && CurrentAbilityInstance.Get() == EndedAbility)
 	{
@@ -1053,7 +1296,9 @@ void UMVCombatComponent::HandleAbilityEnded(const UMVAbilityBase* EndedAbility)
 
 		if (bCurrentAbilityAwaitingCompletion
 			&& EndedAbility->bAbilityCostConsumed
-			&& !bCurrentAbilityHitConfirmed)
+			&& !bCurrentAbilityHitConfirmed
+			&& CurrentAttackLifeId == CurrentLifeId
+			&& IsValid(StatComponent.Get()) && !StatComponent->IsDead())
 		{
 			if (bOwnProjectileExecution)
 			{
@@ -1061,8 +1306,12 @@ void UMVCombatComponent::HandleAbilityEnded(const UMVAbilityBase* EndedAbility)
 			}
 			else
 			{
-				OnAttackMissed.Broadcast(
-					const_cast<UMVAbilityBase*>(EndedAbility));
+				// 투사체가 하나도 활성화되지 못한 시도는 적을 빗맞힌 공격이 아니다.
+				if (!Cast<UMVProjectileAbility>(EndedAbility))
+				{
+					OnAttackMissed.Broadcast(
+						const_cast<UMVAbilityBase*>(EndedAbility));
+				}
 			}
 		}
 
@@ -1072,15 +1321,23 @@ void UMVCombatComponent::HandleAbilityEnded(const UMVAbilityBase* EndedAbility)
 
 void UMVCombatComponent::HandleHitResolved(const FMVResolvedHitData& HitData)
 {
+	if (HitData.Origin != EMVResolvedHitOrigin::AttackCollision)
+	{
+		return;
+	}
+
 	AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
 	const bool bCurrentAttackHit = IsCurrentAttackHit(HitData);
 
 	FMVProjectileExecutionRecord* ProjectileRecord =
-		HitData.Origin == EMVResolvedHitOrigin::AttackCollision
-			? ProjectileExecutions.Find(HitData.AttackInstanceId)
-			: nullptr;
+		ProjectileExecutions.Find(HitData.AttackInstanceId);
 
 	if (!bCurrentAttackHit && !ProjectileRecord)
+	{
+		return;
+	}
+	if (!IsValid(StatComponent.Get()) || StatComponent->IsDead()
+		|| (ProjectileRecord && ProjectileRecord->SourceLifeId != CurrentLifeId))
 	{
 		return;
 	}
@@ -1110,6 +1367,9 @@ void UMVCombatComponent::HandleHitResolved(const FMVResolvedHitData& HitData)
 	const FGameplayTag ProjectileSourceWeaponItemTag = bProjectileExecution
 		? ProjectileRecord->SourceWeaponItemTag
 		: FGameplayTag();
+	const uint64 HitLifeId = bProjectileExecution
+		? ProjectileRecord->SourceLifeId
+		: CurrentAttackLifeId;
 
 	const bool bWasRSkill = ProjectileRecord
 		? ProjectileRecord->bWasRSkill
@@ -1129,10 +1389,14 @@ void UMVCombatComponent::HandleHitResolved(const FMVResolvedHitData& HitData)
 		bCurrentAbilityHitConfirmed = true;
 	}
 
-	if (HitData.Origin == EMVResolvedHitOrigin::AttackCollision &&
-		bPublishPassiveEvents)
+	if (bPublishPassiveEvents)
 	{
 		OnValidatedAttackHit.Broadcast(HitData, EventAbility);
+	}
+	if (!IsValid(StatComponent.Get()) || StatComponent->IsDead()
+		|| HitLifeId != CurrentLifeId)
+	{
+		return;
 	}
 
 	AMVEnemy* HitEnemy = Cast<AMVEnemy>(HitData.Victim.Get());
@@ -1196,7 +1460,7 @@ void UMVCombatComponent::HandleHitResolved(const FMVResolvedHitData& HitData)
 
 		if (bProjectileExecution)
 		{
-			if (Pair.Key != MVCombatMakeSkillMapKey(ProjectileSourceSkillIndex) ||
+			if (Pair.Key != MVCombatLegacySkillIndexToSlot(ProjectileSourceSkillIndex) ||
 				SkillEntry.CurrentChainStageIndex !=
 					ProjectileSourceChainStageIndex ||
 				SkillEntry.GetCurrentAbility() != ProjectileSourceAbility.Get() ||
@@ -1230,7 +1494,8 @@ void UMVCombatComponent::HandleHitResolved(const FMVResolvedHitData& HitData)
 void UMVCombatComponent::HandleHitDeliveryFinished(
 	const FMVResolvedHitData& HitData)
 {
-	if (HitData.Origin != EMVResolvedHitOrigin::AttackCollision)
+	if (HitData.Origin != EMVResolvedHitOrigin::AttackCollision
+		|| !IsValid(StatComponent.Get()) || StatComponent->IsDead())
 	{
 		return;
 	}
@@ -1239,7 +1504,8 @@ void UMVCombatComponent::HandleHitDeliveryFinished(
 
 	if (ProjectileRecord)
 	{
-		if (IsValid(ProjectileRecord->ExecutionAbility.Get()) &&
+		if (ProjectileRecord->SourceLifeId == CurrentLifeId &&
+			IsValid(ProjectileRecord->ExecutionAbility.Get()) &&
 			HitData.Attacker.Get() == GetOwner() &&
 			IsProjectileSourceWeaponEquipped(*ProjectileRecord, HitData))
 		{
@@ -1264,11 +1530,75 @@ bool UMVCombatComponent::IsCurrentAttackHit(
 
 	return IsValid(OwnerCharacter)
 		&& HitData.Attacker.Get() == OwnerCharacter
+		&& IsValid(StatComponent.Get()) && !StatComponent->IsDead()
 		&& bCurrentAbilityAwaitingCompletion
+		&& CurrentAttackLifeId == CurrentLifeId
 		&& IsValid(CurrentAbilityInstance.Get())
 		&& CurrentAbilityInstance->bAbilityActive
 		&& HitData.AttackInstanceId != INDEX_NONE
 		&& HitData.AttackInstanceId == CurrentAttackInstanceId;
+}
+
+bool UMVCombatComponent::IsAttackFromCurrentPassiveActivation(
+	const FMVResolvedHitData& HitData) const
+{
+	if (ActivePassiveActivationId == 0
+		|| !IsValid(ActivePassiveAbilityInstance.Get())
+		|| !ActivePassiveAbilityInstance->bAbilityActive
+		|| !IsValid(StatComponent.Get()) || StatComponent->IsDead()
+		|| HitData.Origin != EMVResolvedHitOrigin::AttackCollision)
+	{
+		return false;
+	}
+
+	const FMVProjectileExecutionRecord* ProjectileRecord =
+		ProjectileExecutions.Find(HitData.AttackInstanceId);
+	if (ProjectileRecord)
+	{
+		return ProjectileRecord->SourceLifeId == CurrentLifeId
+			&& ProjectileRecord->PassiveActivationId == ActivePassiveActivationId
+			&& IsValid(ProjectileRecord->ExecutionAbility.Get())
+			&& HitData.Attacker.Get() == GetOwner()
+			&& IsProjectileSourceWeaponEquipped(*ProjectileRecord, HitData);
+	}
+
+	return CurrentAttackPassiveActivationId == ActivePassiveActivationId
+		&& IsCurrentAttackHit(HitData);
+}
+
+bool UMVCombatComponent::IsAttackFromCurrentPassiveActivation(
+	const UMVAbilityBase* Ability) const
+{
+	if (!IsValid(Ability)
+		|| ActivePassiveActivationId == 0
+		|| !IsValid(ActivePassiveAbilityInstance.Get())
+		|| !ActivePassiveAbilityInstance->bAbilityActive
+		|| !IsValid(StatComponent.Get()) || StatComponent->IsDead()
+		|| Ability->GetAttackInstanceId() == INDEX_NONE)
+	{
+		return false;
+	}
+
+	const FMVProjectileExecutionRecord* ProjectileRecord =
+		ProjectileExecutions.Find(Ability->GetAttackInstanceId());
+	if (ProjectileRecord)
+	{
+		const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
+		const UMVWeaponComponent* Weapon = IsValid(OwnerCharacter)
+			? OwnerCharacter->WeaponComponent.Get()
+			: nullptr;
+		return ProjectileRecord->SourceLifeId == CurrentLifeId
+			&& ProjectileRecord->ExecutionAbility.Get() == Ability
+			&& ProjectileRecord->PassiveActivationId == ActivePassiveActivationId
+			&& IsValid(Weapon)
+			&& Weapon->GetEquippedWeaponState().ItemTag == ProjectileRecord->SourceWeaponItemTag;
+	}
+
+	return CurrentAbilityInstance.Get() == Ability
+		&& bCurrentAbilityAwaitingCompletion
+		&& CurrentAttackLifeId == CurrentLifeId
+		&& CurrentAttackInstanceId == Ability->GetAttackInstanceId()
+		&& CurrentAttackPassiveActivationId == ActivePassiveActivationId;
 }
 
 bool UMVCombatComponent::IsBasicAttackAbility(const UMVAbilityBase* Ability) const
@@ -1286,7 +1616,7 @@ bool UMVCombatComponent::IsBasicAttackAbility(const UMVAbilityBase* Ability) con
 		return ProjectileRecord->bWasBasicAttack;
 	}
 
-	for (const TPair<FName, FMVSkillEntry>& Pair : BasicAttackMap)
+	for (const TPair<EMVCombatActionTypes, FMVSkillEntry>& Pair : BasicAttackMap)
 	{
 		if (Pair.Value.ContainsAbility(Ability))
 		{
@@ -1318,7 +1648,8 @@ bool UMVCombatComponent::IsProjectileSourceWeaponEquipped(
 
 void UMVCombatComponent::ApplyOutgoingAttackDamageModifiers(FMVResolvedHitData& HitData)
 {
-	if (HitData.Origin != EMVResolvedHitOrigin::AttackCollision)
+	if (HitData.Origin != EMVResolvedHitOrigin::AttackCollision
+		|| !IsValid(StatComponent.Get()) || StatComponent->IsDead())
 	{
 		return;
 	}
@@ -1328,7 +1659,8 @@ void UMVCombatComponent::ApplyOutgoingAttackDamageModifiers(FMVResolvedHitData& 
 
 	if (ProjectileRecord)
 	{
-		if (!IsValid(ProjectileRecord->ExecutionAbility.Get()) ||
+		if (ProjectileRecord->SourceLifeId != CurrentLifeId ||
+			!IsValid(ProjectileRecord->ExecutionAbility.Get()) ||
 			HitData.Attacker.Get() != GetOwner() ||
 			!IsProjectileSourceWeaponEquipped(*ProjectileRecord, HitData))
 		{
@@ -1381,6 +1713,13 @@ void UMVCombatComponent::HandleActionEnded(
 	CurrentAbilityInstance = nullptr;
 	CurrentAbilityActionTableName = NAME_None;
 	CurrentAbilityActionRowName = NAME_None;
+	CurrentAbilityRowHandle = FDataTableRowHandle();
+	CurrentPreparedSkillSlot = EMVSkillSlot::NONE;
+	CurrentPreparedChainStageIndex = INDEX_NONE;
+	CurrentPreparedSlotRevision = 0;
+	CurrentPreparedSkillUseId = 0;
+	CurrentAttackLifeId = 0;
+	CurrentAttackPassiveActivationId = 0;
 	bCurrentAbilityAwaitingCompletion = false;
 }
 
@@ -1490,7 +1829,7 @@ void UMVCombatComponent::RefreshSkillSlot(const EMVSkillSlot SkillSlot)
 	if (SkillSlot == EMVSkillSlot::PassiveSkill)
 	{
 		if (!WeaponComponent
-			|| !WeaponComponent->GetEquippedSkillRow(CurrentWeaponStyle, SkillSlot, SkillRowHandle))
+			|| !WeaponComponent->GetEquippedWeaponPassiveRow(SkillRowHandle))
 		{
 			ClearPassiveSkill();
 			return;
@@ -1541,6 +1880,7 @@ void UMVCombatComponent::RefreshSkillSlot(const EMVSkillSlot SkillSlot)
 		return;
 	}
 
+	SkillEntry.LoadoutRevision = ++NextSkillSlotRevision;
 	SkillMap.Add(SkillSlot, SkillEntry);
 	UE_LOG(
 		LogMVCombatComponent,
@@ -1727,14 +2067,23 @@ bool UMVCombatComponent::TryStartActionWithAbility(
 		bCurrentAbilityAwaitingCompletion = CurrentAbilityInstance != nullptr;
 		CurrentAbilityActionTableName = MVCombatActionTableNameFromDataTable(RowHandle.DataTable);
 		CurrentAbilityActionRowName = RowHandle.RowName;
+		CurrentAbilityRowHandle = RowHandle;
+		CurrentPreparedSkillSlot = EMVSkillSlot::NONE;
+		CurrentPreparedChainStageIndex = INDEX_NONE;
+		CurrentPreparedSlotRevision = 0;
+		CurrentPreparedSkillUseId = 0;
 		if (CurrentAbilityInstance)
 		{
 			int32 SourceSkillIndex = INDEX_NONE;
 			for (int32 SkillIndex = 0; SkillIndex < MVCombatSkillSlots::Count; ++SkillIndex)
 			{
-				if (SkillMap.Find(MVCombatMakeSkillMapKey(SkillIndex)) == &ActionEntry)
+				if (SkillMap.Find(MVCombatLegacySkillIndexToSlot(SkillIndex)) == &ActionEntry)
 				{
 					SourceSkillIndex = SkillIndex;
+					CurrentPreparedSkillSlot = MVCombatLegacySkillIndexToSlot(SkillIndex);
+					CurrentPreparedChainStageIndex = ActionEntry.CurrentChainStageIndex;
+					CurrentPreparedSlotRevision = ActionEntry.LoadoutRevision;
+					CurrentPreparedSkillUseId = ActionEntry.CurrentUseId;
 					break;
 				}
 			}
@@ -1745,6 +2094,8 @@ bool UMVCombatComponent::TryStartActionWithAbility(
 					: FGameplayTag();
 
 			CurrentAttackInstanceId = ++NextAttackInstanceId;
+			CurrentAttackLifeId = CurrentLifeId;
+			CurrentAttackPassiveActivationId = ActivePassiveActivationId;
 			CurrentAbilityInstance->SetAttackInstanceId(CurrentAttackInstanceId);
 			CurrentAbilityInstance->PrepareAbilityExecution();
 			CurrentAbilityInstance->SetExecutionSource(
@@ -1762,7 +2113,14 @@ bool UMVCombatComponent::TryStartActionWithAbility(
 				CurrentAbilityInstance = nullptr;
 				CurrentAbilityActionTableName = NAME_None;
 				CurrentAbilityActionRowName = NAME_None;
+				CurrentAbilityRowHandle = FDataTableRowHandle();
+				CurrentPreparedSkillSlot = EMVSkillSlot::NONE;
+				CurrentPreparedChainStageIndex = INDEX_NONE;
+				CurrentPreparedSlotRevision = 0;
+				CurrentPreparedSkillUseId = 0;
 				CurrentAttackInstanceId = INDEX_NONE;
+				CurrentAttackLifeId = 0;
+				CurrentAttackPassiveActivationId = 0;
 				bCurrentAbilityAwaitingCompletion = false;
 			}
 		};
@@ -1774,10 +2132,11 @@ bool UMVCombatComponent::TryStartActionWithAbility(
 		{
 			const UMVAbilityBase* PreparedAbility = PrepareCurrentAbility();
 			const float PlayRateMultiplier = GetPlayRateMultiplier();
-			const bool bStarted = ActionComponent->TryTransitionActionFromRowHandle(
+			const bool bStarted = ActionComponent->TryTransitionActionFromRowHandleWithPlayRate(
 				RowHandle,
 				StartSection,
 				FMath::Max(0.0f, TransitionBlendOutTime),
+				EMVActionDomain::Attack,
 				PlayRateMultiplier);
 			if (!bStarted)
 			{
@@ -1796,10 +2155,11 @@ bool UMVCombatComponent::TryStartActionWithAbility(
 		// No active action -> start normally
 		const UMVAbilityBase* PreparedAbility = PrepareCurrentAbility();
 		const float PlayRateMultiplier = GetPlayRateMultiplier();
-		const bool bStarted = ActionComponent->TryStartActionFromRowHandle(
+		const bool bStarted = ActionComponent->TryStartActionFromRowHandleWithPlayRate(
 			RowHandle,
 			StartSection,
 			0.1f,
+			EMVActionDomain::Attack,
 			PlayRateMultiplier);
 		if (!bStarted)
 		{
@@ -1847,6 +2207,10 @@ void UMVCombatComponent::ResetRSkillGauge()
 
 void UMVCombatComponent::HandleOwnerDeathStarted(const FMVDeathContext& /*DeathContext*/)
 {
+	if (++CurrentLifeId == 0)
+	{
+		++CurrentLifeId;
+	}
 	ResetRSkillGauge();
 }
 

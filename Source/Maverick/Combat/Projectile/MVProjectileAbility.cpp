@@ -7,6 +7,7 @@
 #include "Combat/Projectile/MVProjectileBase.h"
 #include "Combat/Projectile/MVProjectileTargeting.h"
 #include "Components/MVCombatComponent.h"
+#include "Components/MVStatComponent.h"
 #include "Components/MVWeaponComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Engine/World.h"
@@ -37,10 +38,17 @@ void UMVProjectileAbility::StartAbility_Implementation(int32 AbilityIndex)
 
     // 기존 Ability의 비용 소모와 활성화 순서를 그대로 사용한다.
     Super::StartAbility_Implementation(AbilityIndex);
-    if (!bAbilityActive || !IsValid(Character))
+    if (!bAbilityActive || !IsValid(Character) ||
+        (IsValid(Character) && IsValid(Character->StatComponent.Get()) && Character->StatComponent->IsDead()))
     {
+        if (bAbilityActive)
+        {
+            IMVAbilityInterface::Execute_EndAbility(this);
+        }
         return;
     }
+
+    Combat->NotifyProjectileAbilityStarted(this);
 
     AMVProjectileBase* Projectile =
         World->SpawnActorDeferred<AMVProjectileBase>(
@@ -52,6 +60,7 @@ void UMVProjectileAbility::StartAbility_Implementation(int32 AbilityIndex)
 
     if (!IsValid(Projectile))
     {
+        IMVAbilityInterface::Execute_EndAbility(this);
         return;
     }
 
@@ -59,6 +68,7 @@ void UMVProjectileAbility::StartAbility_Implementation(int32 AbilityIndex)
     {
         Projectile->FinishSpawning(SpawnTransform);
         Projectile->Destroy();
+        IMVAbilityInterface::Execute_EndAbility(this);
         return;
     }
 
@@ -67,6 +77,7 @@ void UMVProjectileAbility::StartAbility_Implementation(int32 AbilityIndex)
     if (!Combat->RegisterLaunchedProjectile(Projectile, this))
     {
         Projectile->Destroy();
+        IMVAbilityInterface::Execute_EndAbility(this);
         return;
     }
 
@@ -74,6 +85,7 @@ void UMVProjectileAbility::StartAbility_Implementation(int32 AbilityIndex)
     {
         // 등록 후 실패했으므로 EndPlay의 종료 통지로 등록이 해제된다.
         Projectile->Destroy();
+        IMVAbilityInterface::Execute_EndAbility(this);
     }
 }
 
@@ -115,6 +127,11 @@ bool UMVProjectileAbility::TryBuildLaunchContext(
         return false;
     }
 
+    if (IsValid(Character->StatComponent.Get()) && Character->StatComponent->IsDead())
+    {
+        return false;
+    }
+
     EMVProjectileTeam Team = EMVProjectileTeam::Unknown;
     if (Cast<AMVPlayerCharacter>(Character))
     {
@@ -151,6 +168,14 @@ bool UMVProjectileAbility::TryBuildLaunchContext(
     }
 
     const UMVWeaponComponent* WeaponComponent = Character->FindComponentByClass<UMVWeaponComponent>();
+
+    const FGameplayTag CurrentWeaponItemTag = IsValid(WeaponComponent)
+        ? WeaponComponent->GetEquippedWeaponState().ItemTag
+        : FGameplayTag();
+    if (CurrentWeaponItemTag != GetSourceWeaponItemTag())
+    {
+        return false;
+    }
 
     FMVWeaponHitSnapshot WeaponSnapshot;
     float PoiseDamage = 0.0f;
@@ -192,7 +217,10 @@ bool UMVProjectileAbility::TryBuildLaunchContext(
     OutContext.Attacker = Character;
     OutContext.Team = Team;
     OutContext.AttackInstanceId = GetAttackInstanceId();
-    OutContext.AttackTypes = ProjectileAttackType;
+    // 현재 기술은 Resolver가 기술 공격으로 다룬다. 늦게 맞아도 같은 방어력을 사용한다.
+    OutContext.AttackTypes = GetSourceSkillIndex() != INDEX_NONE
+        ? EMVAttackTypes::SkillAttack
+        : ProjectileAttackType;
     OutContext.LaunchDirection = Direction.GetSafeNormal();
 
     const AMVProjectileBase* ProjectileDefaults = ProjectileClass.GetDefaultObject();

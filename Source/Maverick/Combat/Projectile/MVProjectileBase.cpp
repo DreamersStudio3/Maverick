@@ -5,6 +5,7 @@
 #include "Character/PC/MVPlayerCharacter.h"
 #include "Combat/MVHitResolverSubsystem.h"
 #include "Combat/Projectile/MVProjectileTargeting.h"
+#include "Components/MVStatComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Engine/OverlapResult.h"
@@ -91,10 +92,14 @@ bool AMVProjectileBase::InitializeProjectile(const FMVProjectileLaunchContext& C
 
 bool AMVProjectileBase::ActivateProjectile()
 {
+	const AMVCharacterBase* Attacker = LaunchContext.Attacker.Get();
+	const bool bAttackerDead = IsValid(Attacker) && IsValid(Attacker->StatComponent.Get())
+		&& Attacker->StatComponent->IsDead();
 	if (!bInitialized ||
 		bActive ||
 		bEnding ||
-		!IsValid(LaunchContext.Attacker.Get()) ||
+		!IsValid(Attacker) ||
+		bAttackerDead ||
 		ProjectileMovement->InitialSpeed <= 0.0f ||
 		MaxLifeSeconds <= 0.0f)
 	{
@@ -124,6 +129,7 @@ bool AMVProjectileBase::ActivateProjectile()
 		}
 	}
 
+	bEverActivated = true;
 	bActive = true;
 	ProjectileMovement->Activate(true);
 	SetActorTickEnabled(true);
@@ -234,8 +240,7 @@ void AMVProjectileBase::HandleOverlap(
 	}
 
 	AMVCharacterBase* Victim = Cast<AMVCharacterBase>(OtherActor);
-	const bool bCanHit = CanHitCharacter(Victim);
-	if (!bCanHit)
+	if (!CanHitCharacter(Victim))
 	{
 		return;
 	}

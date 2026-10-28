@@ -50,6 +50,7 @@ public:
     const USphereComponent* GetTargetingCollision() const { return Collision.Get(); }
 
     int32 GetAttackInstanceId() const { return LaunchContext.AttackInstanceId; }
+	bool WasEverActivated() const { return bEverActivated; }
 
     UPROPERTY(BlueprintAssignable, Category = "Maverick|Projectile|Event")
     FMVOnProjectileHitSignature OnProjectileHit;
@@ -101,6 +102,7 @@ private:
     TSet<TWeakObjectPtr<AMVCharacterBase>> HitCharacters;
 
     bool bInitialized = false;
+	bool bEverActivated = false;
     bool bActive = false;
     bool bEnding = false;
     bool bResolvingHit = false;

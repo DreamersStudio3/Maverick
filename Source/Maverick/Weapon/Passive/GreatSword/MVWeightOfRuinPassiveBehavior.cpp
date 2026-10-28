@@ -79,7 +79,9 @@ void UMVWeightOfRuinPassiveBehavior::HandleOutgoingAttackDamage(
     if (!IsValid(Owner)
         || HitData.Origin != EMVResolvedHitOrigin::AttackCollision
         || HitData.Attacker.Get() != Owner
-        || !IsValid(HitData.Victim.Get()))
+		|| !IsValid(HitData.Victim.Get())
+		|| !IsValid(BoundCombatComponent.Get())
+		|| !BoundCombatComponent->IsAttackFromCurrentPassiveActivation(HitData))
     {
         return;
     }

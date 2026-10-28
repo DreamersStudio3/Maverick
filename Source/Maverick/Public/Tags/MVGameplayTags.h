@@ -12,6 +12,14 @@ namespace MVGameplayTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Item_Weapon_BareHand);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Item_Weapon_OneHand_TestSword);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Item_Weapon_DualSword_TestSword);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Type_Katana);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Type_Rapier);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Type_GreatSword);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Type_TwoHandedShield);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Type_Crossbow);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Type_Bow);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Type_Whip);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Type_EnergySword);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Item_HealingPotion_Basic);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Progression_Attribute_HP);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Progression_Attribute_Stamina);

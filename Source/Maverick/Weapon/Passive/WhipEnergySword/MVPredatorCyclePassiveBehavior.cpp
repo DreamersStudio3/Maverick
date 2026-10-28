@@ -39,14 +39,10 @@ void UMVPredatorCyclePassiveBehavior::OnApplied_Implementation(const FMVStatusEf
 	BoundCombatComponent = Combat;
 	BoundStatComponent = Stats;
 	PassiveDefinition = Instance.Definition.Get();
-	RefundedAttackInstanceId = INDEX_NONE;
 
 	Combat->OnValidatedAttackHitAfterDamage.AddUniqueDynamic(
 		this,
 		&UMVPredatorCyclePassiveBehavior::HandleValidatedAttackHitAfterDamage);
-	Stats->OnDeathStarted.AddUniqueDynamic(
-		this,
-		&UMVPredatorCyclePassiveBehavior::HandleOwnerDeathStarted);
 }
 
 void UMVPredatorCyclePassiveBehavior::OnRemoved_Implementation(
@@ -60,18 +56,10 @@ void UMVPredatorCyclePassiveBehavior::OnRemoved_Implementation(
 			&UMVPredatorCyclePassiveBehavior::HandleValidatedAttackHitAfterDamage);
 	}
 
-	if (UMVStatComponent* Stats = BoundStatComponent.Get())
-	{
-		Stats->OnDeathStarted.RemoveDynamic(
-			this,
-			&UMVPredatorCyclePassiveBehavior::HandleOwnerDeathStarted);
-	}
-
 	BoundOwner.Reset();
 	BoundCombatComponent.Reset();
 	BoundStatComponent.Reset();
 	PassiveDefinition.Reset();
-	RefundedAttackInstanceId = INDEX_NONE;
 }
 
 void UMVPredatorCyclePassiveBehavior::HandleValidatedAttackHitAfterDamage(
@@ -97,10 +85,10 @@ void UMVPredatorCyclePassiveBehavior::HandleValidatedAttackHitAfterDamage(
 		|| HitData.Attacker.Get() != Owner
 		|| HitData.FinalDamage <= 0.0f
 		|| Ability->GetOwnerCharacter() != Owner
+		|| !Combat->IsAttackFromCurrentPassiveActivation(HitData)
 		|| !Ability->bAbilityCostConsumed
 		|| Ability->GetAttackInstanceId() != HitData.AttackInstanceId
 		|| HitData.AttackInstanceId == INDEX_NONE
-		|| HitData.AttackInstanceId == RefundedAttackInstanceId
 		|| Effects->FindStatusEffectHandle(
 			PassiveDefinition.Get(), Owner) != GetEffectHandle())
 	{
@@ -141,17 +129,9 @@ void UMVPredatorCyclePassiveBehavior::HandleValidatedAttackHitAfterDamage(
 		return;
 	}
 
-	// 회복이 다른 사건을 일으켜도 같은 실행의 두 번째 환원을 막는다.
-	RefundedAttackInstanceId = HitData.AttackInstanceId;
-
-	Combat->RefundSkillMainCooldownForExecution(SkillIndex, Ability);
-	Stats->RecoverMP(RefundAmount);
-}
-
-void UMVPredatorCyclePassiveBehavior::HandleOwnerDeathStarted(const FMVDeathContext& DeathContext)
-{
-	if (DeathContext.DeadActor.Get() == BoundOwner.Get())
+	// Combat가 원래 스킬 사용 회차와 공격별 중복을 승인한 경우에만 MP를 돌려준다.
+	if (Combat->RefundSkillMainCooldownForExecution(SkillIndex, Ability))
 	{
-		RefundedAttackInstanceId = INDEX_NONE;
+		Stats->RecoverMP(RefundAmount);
 	}
 }
