@@ -336,6 +336,10 @@ public:
 	// Poise
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Poise")
 	void SetInitialPoise(float InitialPoise);
+
+	// 효과별 강인도 증가율을 등록하고, 제거할 때 이 효과의 고유 번호만 사용
+	FGuid AddPoiseModifier(float BonusRatio);
+	bool RemovePoiseModifier(FGuid ModifierHandle);
 	
 	// 행동 시작/종료 시 상시 강인도, 무기 강인도 조정
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Poise")
@@ -490,6 +494,8 @@ public:
 
 private:
 	void RecalculateAttackSpeed();
+	float CalculatePoiseModifierMultiplier() const;
+	bool ApplyPoiseModifierMultiplier(float NewMultiplier);
 
 	float RecentDamageCooldownRemaining = 0.0f;
 	int32 RecoverableStatRecoveryPauseCount = 0;
@@ -506,6 +512,9 @@ private:
 	float SavedWindowConstantPoise = 0.0f;
 	float SavedWindowAdditionalPoise = 0.0f;
 	float SavedWindowRecoveryRemaining = -1.0f;
+	float BaseInitialPoise = 0.0f;
+	float PoiseModifierMultiplier = 1.0f;
+	TMap<FGuid, float> PoiseModifiers;
 	
 	TMap<FGameplayTag, float> ProgressionStatBonuses;
 	int32 StatCalculationRevision = 0;

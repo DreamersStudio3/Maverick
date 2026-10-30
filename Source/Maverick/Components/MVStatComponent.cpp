@@ -927,8 +927,85 @@ void UMVStatComponent::SetGroggyRecoveryDelay(float InGroggyRecoveryDelay)
 
 void UMVStatComponent::SetInitialPoise(float InitialPoise)
 {
-	InitialCharacterPoise = InitialPoise;
+	BaseInitialPoise = FMath::Max(0.0f, InitialPoise);
+	InitialCharacterPoise = BaseInitialPoise * PoiseModifierMultiplier;
+	if (bPoiseBreakGroggyWindow)
+	{
+		SavedWindowConstantPoise = InitialCharacterPoise;
+		SavedWindowAdditionalPoise = 0.0f;
+		return;
+	}
 	ConstantPoise = InitialCharacterPoise;
+}
+
+FGuid UMVStatComponent::AddPoiseModifier(float BonusRatio)
+{
+	if (!FMath::IsFinite(BonusRatio) || BonusRatio < 0.0f)
+	{
+		return FGuid();
+	}
+
+	const FGuid ModifierHandle = FGuid::NewGuid();
+	PoiseModifiers.Add(ModifierHandle, BonusRatio);
+	if (!ApplyPoiseModifierMultiplier(CalculatePoiseModifierMultiplier()))
+	{
+		PoiseModifiers.Remove(ModifierHandle);
+		return FGuid();
+	}
+	return ModifierHandle;
+}
+
+bool UMVStatComponent::RemovePoiseModifier(FGuid ModifierHandle)
+{
+	if (!ModifierHandle.IsValid() || PoiseModifiers.Remove(ModifierHandle) == 0)
+	{
+		return false;
+	}
+	ApplyPoiseModifierMultiplier(CalculatePoiseModifierMultiplier());
+	return true;
+}
+
+float UMVStatComponent::CalculatePoiseModifierMultiplier() const
+{
+	float Multiplier = 1.0f;
+	for (const TPair<FGuid, float>& Modifier : PoiseModifiers)
+	{
+		Multiplier += Modifier.Value;
+	}
+	return Multiplier;
+}
+
+bool UMVStatComponent::ApplyPoiseModifierMultiplier(float NewMultiplier)
+{
+	if (!FMath::IsFinite(NewMultiplier) || NewMultiplier < 1.0f)
+	{
+		return false;
+	}
+
+	const float Scale = NewMultiplier / PoiseModifierMultiplier;
+	if (!FMath::IsFinite(BaseInitialPoise * NewMultiplier)
+		|| !FMath::IsFinite(ConstantPoise * Scale)
+		|| !FMath::IsFinite(AdditionalPoise * Scale)
+		|| (bPoiseBreakGroggyWindow
+			&& (!FMath::IsFinite(SavedWindowConstantPoise * Scale)
+				|| !FMath::IsFinite(SavedWindowAdditionalPoise * Scale))))
+	{
+		return false;
+	}
+
+	InitialCharacterPoise = BaseInitialPoise * NewMultiplier;
+	if (bPoiseBreakGroggyWindow)
+	{
+		SavedWindowConstantPoise *= Scale;
+		SavedWindowAdditionalPoise *= Scale;
+	}
+	else
+	{
+		ConstantPoise *= Scale;
+		AdditionalPoise *= Scale;
+	}
+	PoiseModifierMultiplier = NewMultiplier;
+	return true;
 }
 
 void UMVStatComponent::PoiseActionStart(float WeaponPoise, float Multiplier)
@@ -1123,7 +1200,7 @@ void UMVStatComponent::SetAdditionalPoise(float WeaponPoise, float Multiplier)
 		return;
 	}
 
-	AdditionalPoise = WeaponPoise * Multiplier;
+	AdditionalPoise = WeaponPoise * Multiplier * PoiseModifierMultiplier;
 }
 
 void UMVStatComponent::AdjustMinPoise()
