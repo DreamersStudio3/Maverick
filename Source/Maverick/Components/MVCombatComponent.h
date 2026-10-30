@@ -52,6 +52,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnCombatActionEvent, const FMVCom
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnAttackMissed, UMVAbilityBase*, MissedAbility);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FMVOnValidatedAttackHit, const FMVResolvedHitData&, HitData, UMVAbilityBase*, Ability);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FMVOnModifyOutgoingAttackDamage, const FMVResolvedHitData&, float&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FMVOnModifyOutgoingCriticalChance, const FMVResolvedHitData&, float&);
 
 USTRUCT(BlueprintType)
 struct FMVSkillEntry
@@ -555,6 +556,7 @@ public:
 	bool IsBasicAttackAbility(const UMVAbilityBase* Ability) const;
 
 	void ApplyOutgoingAttackDamageModifiers(FMVResolvedHitData& HitData);
+	void ApplyOutgoingCriticalChanceModifiers(const FMVResolvedHitData& HitData, float& InOutChance);
 
 	// Call When Character Change Weapon --> have to receive Event from Character
 	UFUNCTION(BlueprintCallable, Category = "Combat|Weapon")
@@ -576,6 +578,7 @@ public:
 	FMVOnValidatedAttackHit OnValidatedAttackHitAfterDamage;
 
 	FMVOnModifyOutgoingAttackDamage OnModifyOutgoingAttackDamage;
+	FMVOnModifyOutgoingCriticalChance OnModifyOutgoingCriticalChance;
 
 protected:
 	virtual bool TryHandleActionInput(FGameplayTag ActionInputTag, FVector2D ControllerSpaceInput, bool bHasMovementInput) override;
@@ -658,6 +661,7 @@ private:
 	bool ShouldSuppressChargeAttackInputForSprint() const;
 	bool HasReachedSprintAttackSpeed() const;
 	bool IsCurrentAttackHit(const FMVResolvedHitData& HitData) const;
+	bool CanApplyOutgoingAttackModifiers(const FMVResolvedHitData& HitData) const;
 	bool IsProjectileSourceWeaponEquipped(
 	const FMVProjectileExecutionRecord& Record,
 	const FMVResolvedHitData& HitData) const;

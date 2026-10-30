@@ -1646,12 +1646,12 @@ bool UMVCombatComponent::IsProjectileSourceWeaponEquipped(
 	return CurrentWeaponTag == Record.SourceWeaponItemTag;
 }
 
-void UMVCombatComponent::ApplyOutgoingAttackDamageModifiers(FMVResolvedHitData& HitData)
+bool UMVCombatComponent::CanApplyOutgoingAttackModifiers(const FMVResolvedHitData& HitData) const
 {
 	if (HitData.Origin != EMVResolvedHitOrigin::AttackCollision
 		|| !IsValid(StatComponent.Get()) || StatComponent->IsDead())
 	{
-		return;
+		return false;
 	}
 
 	const FMVProjectileExecutionRecord* ProjectileRecord =
@@ -1664,10 +1664,36 @@ void UMVCombatComponent::ApplyOutgoingAttackDamageModifiers(FMVResolvedHitData& 
 			HitData.Attacker.Get() != GetOwner() ||
 			!IsProjectileSourceWeaponEquipped(*ProjectileRecord, HitData))
 		{
-			return;
+			return false;
 		}
 	}
 	else if (!IsCurrentAttackHit(HitData))
+	{
+		return false;
+	}
+	return true;
+}
+
+void UMVCombatComponent::ApplyOutgoingCriticalChanceModifiers(
+	const FMVResolvedHitData& HitData,
+	float& InOutChance)
+{
+	if (!CanApplyOutgoingAttackModifiers(HitData) || !OnModifyOutgoingCriticalChance.IsBound())
+	{
+		return;
+	}
+
+	float ModifiedChance = InOutChance;
+	OnModifyOutgoingCriticalChance.Broadcast(HitData, ModifiedChance);
+	if (FMath::IsFinite(ModifiedChance))
+	{
+		InOutChance = FMath::Clamp(ModifiedChance, 0.0f, 1.0f);
+	}
+}
+
+void UMVCombatComponent::ApplyOutgoingAttackDamageModifiers(FMVResolvedHitData& HitData)
+{
+	if (!CanApplyOutgoingAttackModifiers(HitData))
 	{
 		return;
 	}

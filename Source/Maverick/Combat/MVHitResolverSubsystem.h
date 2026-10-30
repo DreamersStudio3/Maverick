@@ -56,5 +56,6 @@ private:
 	bool BuildDirectDamageHitData(const FMVDirectDamageRequest& Request, FMVResolvedHitData& OutHitData) const;
 	bool DispatchResolvedHit(FMVResolvedHitData& HitData);
 	// 방어력, 치명타를 고려하여 최종 데미지 계산
-	float ResolveFinalDamage(const UMVStatComponent* AttackerStat, float VictimDefence, float RawDamage) const;
+	float ResolveFinalDamage(const UMVStatComponent* AttackerStat, float VictimDefence, float RawDamage,
+		float CriticalChance) const;
 };

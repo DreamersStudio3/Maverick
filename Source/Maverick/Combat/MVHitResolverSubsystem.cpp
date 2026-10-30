@@ -113,7 +113,7 @@ bool UMVHitResolverSubsystem::BuildResolvedHitData(
 	const float WeaponAttackPower = ResolveNonNegativeStat(WeaponSnapshot.AttackPower);
 	const float DamageMultiplier = ResolveNonNegativeStat(Request.DamageMultiplier);
 	const float GroggyDamageMultiplier = ResolveNonNegativeStat(Request.GroggyDamageMultiplier);
-	const UMVCombatComponent* Combat = Attacker->CombatComponent.Get();
+	UMVCombatComponent* Combat = Attacker->CombatComponent.Get();
 	const UMVAbilityBase* ActiveAbility = IsValid(Combat) ? Combat->CurrentAbilityInstance.Get() : nullptr;
 	const bool bCurrentSkillHit = IsValid(ActiveAbility)
 		&& ActiveAbility->bAbilityActive
@@ -125,7 +125,6 @@ bool UMVHitResolverSubsystem::BuildResolvedHitData(
 		? ResolveNonNegativeStat(VictimStat->SkillDefence)
 		: ResolveNonNegativeStat(VictimStat->NormalDefence);
 	const float RawDamage = WeaponAttackPower * DamageMultiplier;
-	const float FinalDamage = ResolveFinalDamage(AttackerStat, VictimDefence, RawDamage);
 	const float GroggyDamage = WeaponAttackPower * GroggyDamageMultiplier;
 
 	OutHitData.Attacker = Attacker;
@@ -140,7 +139,6 @@ bool UMVHitResolverSubsystem::BuildResolvedHitData(
 	OutHitData.VictimDefence = VictimDefence;
 	OutHitData.DamageMultiplier = DamageMultiplier;
 	OutHitData.GroggyDamageMultiplier = GroggyDamageMultiplier;
-	OutHitData.FinalDamage = FinalDamage;
 	OutHitData.GroggyDamage = GroggyDamage;
 	OutHitData.HitReactionType = Request.HitReactionType;
 	OutHitData.HitLaunchData = Request.HitLaunchData;
@@ -149,6 +147,12 @@ bool UMVHitResolverSubsystem::BuildResolvedHitData(
 		? FVector::ZeroVector
 		: Request.ImpactNormal.GetSafeNormal();
 	OutHitData.HitDirection = ResolveHitDirection(*Attacker, *Victim);
+	float CriticalChance = AttackerStat->CriticalPercent;
+	if (IsValid(Combat))
+	{
+		Combat->ApplyOutgoingCriticalChanceModifiers(OutHitData, CriticalChance);
+	}
+	OutHitData.FinalDamage = ResolveFinalDamage(AttackerStat, VictimDefence, RawDamage, CriticalChance);
 	OutHitData.PoiseDamage = ResolveNonNegativeStat(Request.PoiseDamage);
 	OutHitData.PoiseBreak = VictimStat->PredictPoiseBreak(Request.PoiseDamage);
 	if (VictimStat->IsPoiseBreakGroggyWindowActive())
@@ -295,22 +299,22 @@ bool UMVHitResolverSubsystem::DispatchResolvedHit(FMVResolvedHitData& HitData)
 	return true;
 }
 
-float UMVHitResolverSubsystem::ResolveFinalDamage(const UMVStatComponent* AttackerStat, float VictimDefence, float RawDamage) const
+float UMVHitResolverSubsystem::ResolveFinalDamage(const UMVStatComponent* AttackerStat, float VictimDefence,
+	float RawDamage, float CriticalChance) const
 {
 	// 방어력에 기반하여 공격력 계산(소수점 한자리)
 	float DamageAmount = FMath::Max(RawDamage - VictimDefence * 0.5f, 0);
 	DamageAmount = FMath::TruncToFloat(DamageAmount * 10.0f) / 10.0f;
 
-	float CriticalDamagePercent = AttackerStat->CriticalPercent;
 	// 치명타율이 0이면 이전 계산한 데미지 리턴
-	if (CriticalDamagePercent <= 0)
+	if (CriticalChance <= 0)
 	{
 		return DamageAmount;
 	}
 
 	float RandomSeed = FMath::FRand();
 	// 랜덤 Seed가 치명타율보다 크면 이전 계산한 데미지 리턴
-	if (RandomSeed > CriticalDamagePercent)
+	if (RandomSeed > CriticalChance)
 	{
 		return DamageAmount;
 	}
