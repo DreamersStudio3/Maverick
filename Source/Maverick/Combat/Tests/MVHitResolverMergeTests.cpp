@@ -141,6 +141,40 @@ bool FMVHitResolverMergedDamageTest::RunTest(const FString& Parameters)
 				ProjectileHit.HitDirection.Equals(FVector::ForwardVector));
 		}
 
+		const FGuid FirstDefenceHandle = Victim->StatComponent->AddDefenceModifier(0.20f);
+		TestTrue(TEXT("First defence modifier registered"), FirstDefenceHandle.IsValid());
+		Request.AttackTypes = EMVAttackTypes::NormalAttack;
+		FMVResolvedHitData ModifiedNormalHit;
+		if (TestTrue(TEXT("Modified normal hit resolves"), Resolver->ResolveAttackHit(Request, ModifiedNormalHit)))
+		{
+			TestTrue(TEXT("Normal hit uses modified defence"),
+				FMath::IsNearlyEqual(ModifiedNormalHit.VictimDefence, 2.4f, 0.001f));
+		}
+		Request.AttackTypes = EMVAttackTypes::SkillAttack;
+		FMVResolvedHitData ModifiedSkillHit;
+		if (TestTrue(TEXT("Modified skill hit resolves"), Resolver->ResolveAttackHit(Request, ModifiedSkillHit)))
+		{
+			TestTrue(TEXT("Skill hit uses modified defence"),
+				FMath::IsNearlyEqual(ModifiedSkillHit.VictimDefence, 9.6f, 0.001f));
+		}
+
+		const FGuid SecondDefenceHandle = Victim->StatComponent->AddDefenceModifier(0.10f);
+		TestTrue(TEXT("Second defence modifier registered"), SecondDefenceHandle.IsValid());
+		TestTrue(TEXT("Defence modifiers add their ratios"),
+			FMath::IsNearlyEqual(Victim->StatComponent->NormalDefence, 2.6f, 0.001f)
+			&& FMath::IsNearlyEqual(Victim->StatComponent->SkillDefence, 10.4f, 0.001f));
+		TestTrue(TEXT("Removing one modifier preserves the other"),
+			Victim->StatComponent->RemoveDefenceModifier(FirstDefenceHandle));
+		Victim->StatComponent->SetNormalDefence(3.0f);
+		Victim->StatComponent->SetSkillDefence(10.0f);
+		TestTrue(TEXT("Updated base defence keeps the active modifier"),
+			FMath::IsNearlyEqual(Victim->StatComponent->NormalDefence, 3.3f, 0.001f)
+			&& FMath::IsNearlyEqual(Victim->StatComponent->SkillDefence, 11.0f, 0.001f));
+		TestTrue(TEXT("Removing the final modifier restores updated bases"),
+			Victim->StatComponent->RemoveDefenceModifier(SecondDefenceHandle));
+		TestEqual(TEXT("Normal defence restores updated base"), Victim->StatComponent->NormalDefence, 3.0f);
+		TestEqual(TEXT("Skill defence restores updated base"), Victim->StatComponent->SkillDefence, 10.0f);
+
 		Request.SourceWeaponSnapshot.bValid = false;
 		FMVResolvedHitData RejectedHit;
 		TestFalse(
