@@ -62,9 +62,10 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_FiveParams(
 	const FMVResolvedHitData&, HitData);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMVOnDamageAccumulationReset);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnBaseStatsReady, int32, Revision);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMVOnMaxHPModifierChanged);
 
 /**
- * CharacterIndexCode와 일치하는 스탯 행의 HP·스태미너·MP·그로기·이동·전투 수치와 변경 이벤트 소유
+ * CharacterIndexCode와 일치하는 스탯 행의 자원·이동·전투 수치, 효과별 방어력·최대 체력 보정과 변경 이벤트 소유
  * BeginPlay에서 기본 스탯 로드, Consume 계열·OnDamaged에서 확정 피해 차감
  * 최초 HP 소진 시 OnDeathStarted(FMVDeathContext) 발행, Blueprint 호환용 OnDead 병행
  * TickRecoverableStats에서 자원·Exhaustion·그로기 회복, Notify의 회복 정지와 최근 감소 UI 홀드 관리
@@ -120,6 +121,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|Stat|Event")
 	FMVOnBaseStatsReady OnBaseStatsReady;
+
+	UPROPERTY(BlueprintAssignable, Category = "Maverick|Stat|Event")
+	FMVOnMaxHPModifierChanged OnMaxHPModifierChanged;
 	
 protected:
 	virtual void BeginPlay() override;
@@ -159,6 +163,8 @@ public:
 		float& OutBaseValue,
 		float& OutBonus,
 		float& OutEffectiveValue) const;
+	// 기본 최대 체력과 후보 성장 보너스에 현재 효과별 보정을 적용하되 능력치는 변경하지 않는다
+	bool TryCalculateMaxHPWithProgressionBonus(float Bonus, float& OutMaxHP) const;
 
 	int32 GetStatCalculationRevision() const { return StatCalculationRevision; }
 
@@ -193,8 +199,20 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Maverick|Stat|Recovery")
 	bool IsRecoverableStatRecoveryPaused() const;
 
+	// 입력값은 성장 반영 후, 효과별 최대 체력 보정 전 값이다
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|HP")
 	void SetMaxHP(float InMaxHP);
+
+	// 무기 교체 중 보정 제거·재등록을 묶어 최종 최대 체력으로 한 번만 HP를 제한한다
+	void BeginMaxHPModifierBatch();
+	void EndMaxHPModifierBatch();
+
+	// 보정마다 고유 번호를 발급하고, 해제할 때 해당 번호의 보정만 제거한다
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|HP")
+	FGuid AddMaxHPModifier(float BonusRatio);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|HP")
+	bool RemoveMaxHPModifier(FGuid ModifierHandle);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|HP")
 	void SetCurrentHP(float InCurrentHP);
@@ -314,6 +332,13 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Defence")
 	void SetSkillDefence(float NewSkillDefence);
+
+	// 기본 방어력은 유지하고, 등록된 증가율의 합을 두 방어력에 적용한다
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Defence")
+	FGuid AddDefenceModifier(float BonusRatio);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Defence")
+	bool RemoveDefenceModifier(FGuid ModifierHandle);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Groggy")
 	void SetMaxGroggy(float InMaxGroggy);
@@ -494,6 +519,9 @@ public:
 
 private:
 	void RecalculateAttackSpeed();
+	bool RecalculateDefence();
+	bool TryCalculateModifiedMaxHP(float InUnmodifiedMaxHP, float& OutMaxHP) const;
+	void ApplyCalculatedMaxHP(float NewMaxHP);
 	float CalculatePoiseModifierMultiplier() const;
 	bool ApplyPoiseModifierMultiplier(float NewMultiplier);
 
@@ -522,11 +550,25 @@ private:
 	float BaseMaxHP = 100.0f;
 	float BaseMaxStamina = 100.0f;
 	float BaseMaxMP = 100.0f;
+	float UnmodifiedMaxHP = 100.0f;
+	TMap<FGuid, float> MaxHPModifiers;
+	int32 MaxHPModifierBatchDepth = 0;
+	bool bMaxHPBatchNeedsRecalculation = false;
+	bool bMaxHPBatchModifiersChanged = false;
 	int32 BaseStatsRevision = 0;
 	bool bBaseStatsReady = false;
 
 	UPROPERTY(Transient)
 	float BaseAttackSpeed = 1.0f;
+
+	UPROPERTY(Transient)
+	float BaseNormalDefence = 10.0f;
+
+	UPROPERTY(Transient)
+	float BaseSkillDefence = 5.0f;
+
+	UPROPERTY(Transient)
+	TMap<FGuid, float> DefenceModifiers;
 
 	UPROPERTY(Transient)
 	TMap<FGuid, float> AttackSpeedModifiers;

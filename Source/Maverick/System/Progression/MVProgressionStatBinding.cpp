@@ -76,7 +76,8 @@ bool FMVProgressionStatBinding::TryApplyBonus(
 	const FGameplayTag& StatId,
 	const float Bonus)
 {
-	if (!FMath::IsFinite(Bonus))
+	float CheckedValue = 0.0f;
+	if (!TryGetPreviewEffectiveValue(StatComponent, StatId, Bonus, CheckedValue))
 	{
 		return false;
 	}
@@ -100,6 +101,34 @@ bool FMVProgressionStatBinding::TryApplyBonus(
 	}
 
 	return false;
+}
+
+bool FMVProgressionStatBinding::TryGetPreviewEffectiveValue(
+	const UMVStatComponent& StatComponent,
+	const FGameplayTag& StatId,
+	float PreviewBonus,
+	float& OutValue)
+{
+	OutValue = 0.0f;
+	if (!FMath::IsFinite(PreviewBonus))
+	{
+		return false;
+	}
+
+	if (StatId == MVGameplayTags::Stat_MaxHP)
+	{
+		return StatComponent.TryCalculateMaxHPWithProgressionBonus(PreviewBonus, OutValue);
+	}
+
+	float BaseValue = 0.0f;
+	if (!TryGetBaseValue(StatComponent, StatId, BaseValue)
+		|| !FMath::IsFinite(BaseValue + PreviewBonus))
+	{
+		return false;
+	}
+
+	OutValue = FMath::Max(0.0f, BaseValue + PreviewBonus);
+	return true;
 }
 
 bool FMVProgressionStatBinding::TryGetDisplayInfo(

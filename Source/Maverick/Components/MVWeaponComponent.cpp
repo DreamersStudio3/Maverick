@@ -5,6 +5,7 @@
 #include "Components/MVInputManagerComponent.h"
 #include "Character/MVCharacterBase.h"
 #include "Components/MVCombatComponent.h"
+#include "Components/MVStatComponent.h"
 #include "Components/MeshComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/StaticMeshComponent.h"
@@ -871,6 +872,12 @@ void UMVWeaponComponent::ApplyEquippedWeaponState(const FMVEquippedWeaponState& 
 		|| CurrentWeaponState.ItemTag != NewState.ItemTag
 		|| CurrentWeaponState.WeaponTypeTag != NewState.WeaponTypeTag
 		|| CurrentWeaponState.EquippedStyle != NewState.EquippedStyle;
+	UMVStatComponent* StatComponent = bPassiveContextChanged && GetOwner()
+		? GetOwner()->FindComponentByClass<UMVStatComponent>() : nullptr;
+	if (IsValid(StatComponent))
+	{
+		StatComponent->BeginMaxHPModifierBatch();
+	}
 	if (bPassiveContextChanged)
 	{
 		if (AActor* Owner = GetOwner())
@@ -895,6 +902,10 @@ void UMVWeaponComponent::ApplyEquippedWeaponState(const FMVEquippedWeaponState& 
 	else if (bPassiveContextChanged)
 	{
 		RefreshOwnerCombatSkillSlot(EMVSkillSlot::PassiveSkill);
+	}
+	if (IsValid(StatComponent))
+	{
+		StatComponent->EndMaxHPModifierBatch();
 	}
 	ApplyWeaponVisual();
 	OnEquippedWeaponChanged.Broadcast(CurrentWeaponState);
