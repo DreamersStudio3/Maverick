@@ -155,6 +155,117 @@ bool FMVProgressionStatBonusReplacementTest::RunTest(
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(
+	FMVProgressionMaxHPModifierTest,
+	"Maverick.Progression.StatBinding.MaxHPModifier",
+	EAutomationTestFlags::EditorContext
+		| EAutomationTestFlags::EngineFilter)
+
+bool FMVProgressionMaxHPModifierTest::RunTest(const FString& Parameters)
+{
+	(void)Parameters;
+
+	UMVStatComponent* StatComponent = NewObject<UMVStatComponent>();
+	if (!TestNotNull(TEXT("Stat component"), StatComponent))
+	{
+		return false;
+	}
+
+	StatComponent->SetCurrentHP(60.0f);
+	const FGuid FirstHandle = StatComponent->AddMaxHPModifier(0.20f);
+	TestTrue(TEXT("Max HP modifier registered"), FirstHandle.IsValid());
+	TestTrue(TEXT("Base Max HP increases by 20 percent"),
+		FMath::IsNearlyEqual(StatComponent->MaxHP, 120.0f, 0.001f));
+	TestEqual(TEXT("Increasing maximum does not heal"), StatComponent->CurrentHP, 60.0f);
+	TestEqual(TEXT("Modifier changes calculation revision"),
+		StatComponent->GetStatCalculationRevision(), 1);
+
+	float PreviewMaxHP = 0.0f;
+	TestTrue(TEXT("Preview with growth bonus succeeds"),
+		FMVProgressionStatBinding::TryGetPreviewEffectiveValue(
+			*StatComponent, MVGameplayTags::Stat_MaxHP, 40.0f, PreviewMaxHP));
+	TestTrue(TEXT("Preview includes growth and modifier"),
+		FMath::IsNearlyEqual(PreviewMaxHP, 168.0f, 0.001f));
+
+	TMap<FGameplayTag, float> Bonuses;
+	Bonuses.Add(MVGameplayTags::Stat_MaxHP, 40.0f);
+	TestTrue(TEXT("Growth replacement succeeds while modified"),
+		StatComponent->ReplaceProgressionStatBonuses(Bonuses));
+	TestTrue(TEXT("Applied Max HP matches preview"),
+		FMath::IsNearlyEqual(StatComponent->MaxHP, PreviewMaxHP, 0.001f));
+	TestEqual(TEXT("Growth and modifier do not heal"), StatComponent->CurrentHP, 60.0f);
+	TestEqual(TEXT("Growth changes calculation revision"),
+		StatComponent->GetStatCalculationRevision(), 2);
+
+	TestTrue(TEXT("Next growth preview succeeds"),
+		FMVProgressionStatBinding::TryGetPreviewEffectiveValue(
+			*StatComponent, MVGameplayTags::Stat_MaxHP, 60.0f, PreviewMaxHP));
+	TestTrue(TEXT("Next growth preview includes modifier"),
+		FMath::IsNearlyEqual(PreviewMaxHP, 192.0f, 0.001f));
+
+	StatComponent->SetCurrentHP(160.0f);
+	const FGuid SecondHandle = StatComponent->AddMaxHPModifier(0.10f);
+	TestTrue(TEXT("Second Max HP modifier registered"), SecondHandle.IsValid());
+	TestTrue(TEXT("Two modifier ratios add"),
+		FMath::IsNearlyEqual(StatComponent->MaxHP, 182.0f, 0.001f));
+	TestEqual(TEXT("Adding second modifier keeps current HP"), StatComponent->CurrentHP, 160.0f);
+	TestTrue(TEXT("First modifier removes independently"),
+		StatComponent->RemoveMaxHPModifier(FirstHandle));
+	TestTrue(TEXT("Remaining modifier stays on growth-adjusted base"),
+		FMath::IsNearlyEqual(StatComponent->MaxHP, 154.0f, 0.001f));
+	TestTrue(TEXT("Maximum reduction only clamps excess current HP"),
+		FMath::IsNearlyEqual(StatComponent->CurrentHP, 154.0f, 0.001f));
+
+	Bonuses.Add(MVGameplayTags::Stat_MaxHP, 60.0f);
+	TestTrue(TEXT("Later growth replacement succeeds"),
+		StatComponent->ReplaceProgressionStatBonuses(Bonuses));
+	TestTrue(TEXT("Later growth retains remaining modifier"),
+		FMath::IsNearlyEqual(StatComponent->MaxHP, 176.0f, 0.001f));
+	TestTrue(TEXT("Final modifier removes independently"),
+		StatComponent->RemoveMaxHPModifier(SecondHandle));
+	TestTrue(TEXT("Latest growth remains after all modifiers leave"),
+		FMath::IsNearlyEqual(StatComponent->MaxHP, 160.0f, 0.001f));
+	TestTrue(TEXT("Removing final modifier does not heal"),
+		FMath::IsNearlyEqual(StatComponent->CurrentHP, 154.0f, 0.001f));
+
+	StatComponent->SetCurrentHP(0.0f);
+	const FGuid DeadHandle = StatComponent->AddMaxHPModifier(0.20f);
+	TestTrue(TEXT("Modifier can recalculate while dead"), DeadHandle.IsValid());
+	TestEqual(TEXT("Dead character stays at zero HP"), StatComponent->CurrentHP, 0.0f);
+	TestTrue(TEXT("Dead character modifier removes"),
+		StatComponent->RemoveMaxHPModifier(DeadHandle));
+	TestEqual(TEXT("Removing modifier does not revive"), StatComponent->CurrentHP, 0.0f);
+
+	UMVStatComponent* SwapStats = NewObject<UMVStatComponent>();
+	if (!TestNotNull(TEXT("Swap stat component"), SwapStats))
+	{
+		return false;
+	}
+	const FGuid OriginalHandle = SwapStats->AddMaxHPModifier(0.20f);
+	TestTrue(TEXT("Swap original modifier registered"), OriginalHandle.IsValid());
+	SwapStats->SetCurrentHP(120.0f);
+	SwapStats->BeginMaxHPModifierBatch();
+	TestTrue(TEXT("Swap original modifier removed"),
+		SwapStats->RemoveMaxHPModifier(OriginalHandle));
+	TestEqual(TEXT("Swap does not clamp HP between passive instances"), SwapStats->CurrentHP, 120.0f);
+	const FGuid ReplacementHandle = SwapStats->AddMaxHPModifier(0.20f);
+	TestTrue(TEXT("Swap replacement modifier registered"), ReplacementHandle.IsValid());
+	SwapStats->EndMaxHPModifierBatch();
+	TestEqual(TEXT("Same passive swap keeps maximum HP"), SwapStats->MaxHP, 120.0f);
+	TestEqual(TEXT("Same passive swap keeps current HP"), SwapStats->CurrentHP, 120.0f);
+	TestEqual(TEXT("Swap changes calculation revision once"),
+		SwapStats->GetStatCalculationRevision(), 2);
+
+	SwapStats->BeginMaxHPModifierBatch();
+	TestTrue(TEXT("Final passive modifier removed"),
+		SwapStats->RemoveMaxHPModifier(ReplacementHandle));
+	SwapStats->EndMaxHPModifierBatch();
+	TestEqual(TEXT("Final passive removal restores maximum HP"), SwapStats->MaxHP, 100.0f);
+	TestEqual(TEXT("Final passive removal clamps excess current HP"), SwapStats->CurrentHP, 100.0f);
+
+	return !HasAnyErrors();
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(
 	FMVProgressionStatBonusRejectionTest,
 	"Maverick.Progression.StatBinding.AtomicRejection",
 	EAutomationTestFlags::EditorContext

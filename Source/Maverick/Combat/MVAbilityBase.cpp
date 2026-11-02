@@ -121,6 +121,9 @@ void UMVAbilityBase::PrepareAbilityExecution()
 {
 	bAbilityActive = false;
 	bAbilityCostConsumed = false;
+	SourceSkillIndex = INDEX_NONE;
+	SourceWeaponItemTag = FGameplayTag();
+	ConsumedMPThisExecution = 0.0f;
 }
 
 void UMVAbilityBase::StartAbility_Implementation(int32 AbilityIndex)
@@ -130,7 +133,8 @@ void UMVAbilityBase::StartAbility_Implementation(int32 AbilityIndex)
 		return;
 	}
 
-	if (!bAbilityCostConsumed && !TryConsumeAbilityCost())
+	const bool bFirstCostPayment = !bAbilityCostConsumed;
+	if (bFirstCostPayment && !TryConsumeAbilityCost())
 	{
 		return;
 	}
@@ -191,7 +195,7 @@ void UMVAbilityBase::TryVamp(float FinalDamage)
 	{
 		return;
 	}
-	
+
 	UMVStatComponent* StatComponent = OwnerCharacter->FindComponentByClass<UMVStatComponent>();
 	if (StatComponent == nullptr)
 	{
@@ -251,7 +255,16 @@ bool UMVAbilityBase::TryConsumeAbilityCost()
 
 	const bool bConsumedHP = StatComponent->ConsumeHP(HPCost);
 	const bool bConsumedStamina = StatComponent->ConsumeStaminaAllowPartial(StaminaCost);
+	const float MPBeforePayment = StatComponent->CurrentMP;
 	const bool bConsumedMP = StatComponent->ConsumeMP(MPCost);
-	return bConsumedHP && bConsumedStamina && bConsumedMP;
+
+	if (!bConsumedHP || !bConsumedStamina || !bConsumedMP)
+	{
+		return false;
+	}
+
+	ConsumedMPThisExecution =
+		FMath::Max(0.0f, MPBeforePayment - StatComponent->CurrentMP);
+	return true;
 }
 

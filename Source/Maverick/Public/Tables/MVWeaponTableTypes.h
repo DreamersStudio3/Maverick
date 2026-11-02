@@ -6,7 +6,6 @@
 #include "MVWeaponTableTypes.generated.h"
 
 class UObject;
-
 /**
  * 무기 아이템의 장착/전투 선택 데이터.
  *
@@ -26,6 +25,9 @@ struct MAVERICK_API FMVWeaponTableRow : public FMVItemTableRow
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Item|Weapon")
 	EMVEquippedStyle EquippedStyle = EMVEquippedStyle::BareHand;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Item|Weapon|Passive", meta = (Categories = "Weapon.Type"))
+	FGameplayTag WeaponTypeTag;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Item|Weapon", meta = (ClampMin = "0.0"))
 	float AttackPower = 0.0f;

@@ -8,6 +8,7 @@
   - "[[Features/Input-to-Action/document|입력에서 Action 실행까지]]"
   - "[[Features/Hit-Stat-HitReaction/document|Hit, Stat, HitReaction]]"
   - "[[Features/Combat/Skill/document|플레이어 스킬 구조]]"
+  - "[[Features/Combat/Ranged-Projectile/document|원거리 발사체와 자동 유도 대상 선택]]"
   - "[[Features/Combat/Weapon-Swap/document|플레이어 무기 교체]]"
   - "[[Features/Combat/Box-Damage-Ability/document|박스 범위 피해 Ability]]"
 ---

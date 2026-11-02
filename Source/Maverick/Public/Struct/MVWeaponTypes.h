@@ -21,6 +21,9 @@ struct MAVERICK_API FMVEquippedWeaponState
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Weapon", meta = (Categories = "Item.Weapon"))
 	FGameplayTag ItemTag;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Weapon|Passive", meta = (Categories = "Weapon.Type"))
+	FGameplayTag WeaponTypeTag;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Weapon")
 	EMVEquippedStyle EquippedStyle = EMVEquippedStyle::BareHand;
 

@@ -35,7 +35,12 @@ bool FMVBoxDamageAbilityTest::RunTest(const FString& Parameters)
 	World->BeginPlay();
 	FActorSpawnParameters Spawn;
 	Spawn.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	AMVCharacterBase* Boss = World->SpawnActor<AMVCharacterBase>(FVector(0, 0, 1000), FRotator::ZeroRotator, Spawn);
+	const FTransform BossTransform(FRotator::ZeroRotator, FVector(0, 0, 1000));
+	AMVCharacterBase* Boss = World->SpawnActorDeferred<AMVCharacterBase>(
+		AMVCharacterBase::StaticClass(), BossTransform, nullptr, nullptr,
+		ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+	Boss->WeaponComponent->BareHandWeapon.AttackPower = 10.0f;
+	Boss->FinishSpawning(BossTransform);
 	AMVCharacterBase* Player = World->SpawnActor<AMVCharacterBase>(FVector(350, 0, 1000), FRotator::ZeroRotator, Spawn);
 	AMVCharacterBase* NonPlayer = World->SpawnActor<AMVCharacterBase>(FVector(150, 0, 1000), FRotator::ZeroRotator, Spawn);
 	Boss->DispatchBeginPlay();
@@ -55,8 +60,6 @@ bool FMVBoxDamageAbilityTest::RunTest(const FString& Parameters)
 	Player->StatComponent->SetMaxGroggy(1000.0f);
 	Player->StatComponent->SetCurrentGroggy(25.0f);
 	NonPlayer->StatComponent->SetCurrentHP(100.0f);
-	Boss->WeaponComponent->BareHandWeapon.AttackPower = 10.0f;
-	Boss->WeaponComponent->EquipBareHand();
 	TestEqual(TEXT("Controlled weapon power"), Boss->WeaponComponent->GetEquippedWeaponAttackPower(), 10.0f);
 	UMVBoxDamageAbility* Ability = NewObject<UMVBoxDamageAbility>(Boss->CombatComponent);
 	Boss->CombatComponent->CurrentAbilityInstance = Ability;

@@ -12,6 +12,14 @@ namespace MVGameplayTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Item_Weapon_BareHand);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Item_Weapon_OneHand_TestSword);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Item_Weapon_DualSword_TestSword);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Type_Katana);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Type_Rapier);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Type_GreatSword);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Type_TwoHandedShield);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Type_Crossbow);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Type_Bow);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Type_Whip);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Type_EnergySword);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Item_HealingPotion_Basic);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Progression_Attribute_HP);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Progression_Attribute_Stamina);
@@ -51,9 +59,22 @@ namespace MVGameplayTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StateTreeEvent_Enemy_Groggy);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StateTreeEvent_Enemy_GroggyEnd);
 
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StatusEffect_Passive_StormBlade);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StatusEffect_Passive_IndomitableWill);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StatusEffect_Passive_FlexibleFlow);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StatusEffect_Passive_FlexibleFlowStacks);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StatusEffect_Passive_OutsiderStep);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StatusEffect_Passive_OutsiderStepStacks);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StatusEffect_Passive_TripleBolt);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StatusEffect_Passive_TripleBoltMark);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StatusEffect_Passive_BloodPrice);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StatusEffect_Passive_PredatorCycle);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StatusEffect_Passive_GiantFortitude);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StatusEffect_Passive_IronWall);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StatusEffect_Skill_ThirdHitMark);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StatusEffect_Skill_Burn);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StatusEffect_Skill_BurnBurstCooldown);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StatusEffect_Passive_StormBladeSpeed);
 
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StatusEffect_Type_Debuff);
 

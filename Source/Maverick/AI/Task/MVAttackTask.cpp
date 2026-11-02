@@ -38,7 +38,7 @@ EStateTreeRunStatus FMVAttackTask::EnterState(FStateTreeExecutionContext& Contex
 		return EStateTreeRunStatus::Failed;
 	}
 
-	if (!InstanceData.CombatComponent->TryCombatAction(EMVCombatActionTypes::LightAttack))
+	if (!InstanceData.CombatComponent->TryBasicCombatAction(EMVCombatActionTypes::LightAttack))
 	{
 		return EStateTreeRunStatus::Failed;
 	}

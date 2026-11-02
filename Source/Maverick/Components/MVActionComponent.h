@@ -63,6 +63,12 @@ public:
 		FName StartSection = NAME_None,
 		float BlendoutTime = 0.1f,
 		EMVActionDomain ActionDomain = EMVActionDomain::None);
+	bool TryStartActionFromRowHandleWithPlayRate(
+		FDataTableRowHandle ActionRowHandle,
+		FName StartSection,
+		float BlendoutTime,
+		EMVActionDomain ActionDomain,
+		float PlayRateMultiplier);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Action")
 	bool TryAdditiveFromRowHandle(FDataTableRowHandle ActionRowHandle, FName StartSection = NAME_None, const float BlendoutTime = 0.1f);
@@ -87,6 +93,12 @@ public:
 		FName StartSection = NAME_None,
 		float BlendOutTime = 0.1f,
 		EMVActionDomain ActionDomain = EMVActionDomain::None);
+	bool TryTransitionActionFromRowHandleWithPlayRate(
+		FDataTableRowHandle ActionRowHandle,
+		FName StartSection,
+		float BlendOutTime,
+		EMVActionDomain ActionDomain,
+		float PlayRateMultiplier);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Action")
 	void FinishActiveAction(bool bInterrupted = false);
@@ -143,7 +155,8 @@ private:
 		FName ActionRowName,
 		const FMVActionRow& ActionRow,
 		FName StartSection,
-		EMVActionDomain ActionDomain);
+		EMVActionDomain ActionDomain,
+		float PlayRateMultiplier = 1.0f);
 	UAnimInstance* GetOwnerAnimInstance() const;
 	UAnimMontage* ResolveActionRowMontage(FName ActionTableName, FName ActionRowName, const FMVActionRow& ActionRow) const;
 	void HandleActionMontageEnded(UAnimMontage* Montage, bool bInterrupted, int32 ActionInstanceId);
