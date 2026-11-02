@@ -1,13 +1,13 @@
 ---
 제목: AI StateTree
 부제목: StateTree 감지·판단·Action 실행 경계
-최근수정일: 2026-10-13
+최근수정일: 2026-11-02
 최근수정자: Codex
 관련문서:
   - "[[Architecture/document|Maverick Architecture]]"
   - "[[Features/Duelist-Chain-Pull/document|Duelist 돌진 사슬 스킬]]"
   - "[[Features/Duelist-Resonance/document|Duelist 공명 폭주]]"
-  - "[[Features/Boss-Intro/document|최초 보스 등장 연출]]"
+  - "[[Features/Boss-Intro/document|보스 등장 연출]]"
 ---
 
 # AI StateTree
@@ -35,7 +35,8 @@ flowchart TD
 - GlobalSensing 현재 플레이어 탐색: 별도 타깃 탐색 경로
 - StateTree Component 조립·배치: Blueprint 책임
 - 탐색 순서: Controller BrainComponent → 기타 Controller Component → Pawn Component
-- 보스 등장 대기·재생: `AMVBossIntroTrigger`가 `bBossIntroBlocked`·StateTree 정지 소유, 완료·기관람 진입 시 `SetBossCombatEnabled(true, PlayerPawn)`으로 대상 연결·전투 시작; [[Features/Boss-Intro/document|최초 보스 등장 연출]] 참조
+- 보스 등장 대기: `AMVBossIntroTrigger`의 자동 AI 정지와 K/L 수동 활성화 허용, 실제 재생 구간만 `bBossIntroBlocked` 적용; 자연 종료 시 `SetBossCombatEnabled(true, PlayerPawn)`으로 대상 연결·전투 시작, 기존 관람 기록과 무관하게 새 플레이에서 재생
+- 명시적 AI 제어 요청의 `OnBossCombatControlRequested`로 수동 공격 시험 해제, K는 기존 대상 유지·AI 시작, L은 플레이어 대상 지정·AI 시작; [[Features/Boss-Intro/document|보스 등장 연출]]·[[Features/Boss-Attack-Test/document|보스 공격 시험 UI]] 참조
 
 ## StateTree 계약
 

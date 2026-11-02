@@ -15,7 +15,6 @@
 #include "LevelSequencePlayer.h"
 #include "MovieSceneObjectBindingID.h"
 #include "MovieSceneSequencePlaybackSettings.h"
-#include "System/MVWorldStateSubsystem.h"
 #include "TimerManager.h"
 
 AMVBossIntroTrigger::AMVBossIntroTrigger()
@@ -36,51 +35,23 @@ void AMVBossIntroTrigger::BeginPlay()
 {
 	Super::BeginPlay();
 	TriggerBox->OnComponentBeginOverlap.AddUniqueDynamic(this, &ThisClass::HandleOverlap);
-	WorldState = UMVWorldStateSubsystem::Get(this);
-	if (WorldState.IsValid()) WorldState->OnWorldStateLoaded.AddUniqueDynamic(this, &ThisClass::HandleWorldLoaded);
 	// Pawn·Controller·StateTree의 BeginPlay 이후 AI 자동 시작도 대기 상태로 정리
 	InitializeTimer = GetWorldTimerManager().SetTimerForNextTick(this, &ThisClass::InitializeEncounter);
 }
 
 void AMVBossIntroTrigger::InitializeEncounter()
 {
-	if (bEndingPlay || bInitialized || !IsValid(Boss) || IntroId.IsNone()) return;
+	if (bEndingPlay || bInitialized || !IsValid(Boss)) return;
 	BossController = Cast<AMVAIController>(Boss->GetController());
 	if (!BossController.IsValid()) return;
-	InitialBossTransform = Boss->GetActorTransform();
 	bInitialized = true;
-	BossController->SetBossIntroBlocked(true);
-	RestoreCompletedPlacement();
+	BossController->SetBossCombatEnabled(false, nullptr);
 	TArray<AActor*> OverlappingActors;
 	TriggerBox->GetOverlappingActors(OverlappingActors, APawn::StaticClass());
 	for (AActor* Actor : OverlappingActors)
 	{
 		if (TryStartIntro(Cast<APawn>(Actor))) break;
 	}
-}
-
-void AMVBossIntroTrigger::RestoreCompletedPlacement()
-{
-	if (!IsValid(Boss) || !WorldState.IsValid()) return;
-	FMVBossIntroSaveData Record;
-	if (WorldState->TryGetBossIntroCompleted(IntroId, Record))
-	{
-		Boss->SetActorTransform(Record.BossTransform, false, nullptr, ETeleportType::TeleportPhysics);
-		State = EMVBossIntroState::Completed;
-	}
-	else
-	{
-		Boss->SetActorTransform(InitialBossTransform, false, nullptr, ETeleportType::TeleportPhysics);
-		State = EMVBossIntroState::Waiting;
-	}
-}
-
-void AMVBossIntroTrigger::HandleWorldLoaded(FString SlotName)
-{
-	CancelIntro();
-	bEncounterActivated = false;
-	if (BossController.IsValid()) BossController->SetBossIntroBlocked(true);
-	RestoreCompletedPlacement();
 }
 
 void AMVBossIntroTrigger::HandleOverlap(UPrimitiveComponent* Overlapped, AActor* OtherActor,
@@ -100,19 +71,13 @@ bool AMVBossIntroTrigger::TryStartIntro(APawn* PlayerPawn)
 		InitializeEncounter();
 		if (IsIntroPlaying() || bEncounterActivated) return true;
 	}
-	if (!bInitialized || !WorldState.IsValid() || !IsValid(Boss)
+	if (!bInitialized || !IsValid(Boss)
 		|| (Boss->StatComponent && Boss->StatComponent->IsDead())) return false;
 	if (const AMVCharacterBase* Character = Cast<AMVCharacterBase>(PlayerPawn);
 		Character && Character->StatComponent && Character->StatComponent->IsDead()) return false;
 	for (TActorIterator<AMVBossIntroTrigger> It(GetWorld()); It; ++It)
 	{
 		if (*It != this && It->IsIntroPlaying()) return false;
-	}
-	RestoreCompletedPlacement();
-	if (State == EMVBossIntroState::Completed)
-	{
-		ActivateCombat(PlayerPawn);
-		return true;
 	}
 	if (!IntroSequence) return false;
 	FMovieSceneSequencePlaybackSettings Settings;
@@ -136,6 +101,7 @@ bool AMVBossIntroTrigger::TryStartIntro(APawn* PlayerPawn)
 	SequenceActor->SetBindingByTag(BossBindingTag, TArray<AActor*>{Boss}, false);
 	SequencePlayer->OnFinished.AddUniqueDynamic(this, &ThisClass::HandleFinished);
 	SequencePlayer->OnStop.AddUniqueDynamic(this, &ThisClass::HandleStopped);
+	BossController->SetBossIntroBlocked(true);
 	PlaybackStartTransform = Boss->GetActorTransform();
 	SavedMovementMode = Boss->GetCharacterMovement()->MovementMode;
 	SavedCustomMovementMode = Boss->GetCharacterMovement()->CustomMovementMode;
@@ -253,15 +219,8 @@ void AMVBossIntroTrigger::FinishIntro(const bool bCompleted)
 		Boss->GetCharacterMovement()->SetMovementMode(static_cast<EMovementMode>(SavedMovementMode), SavedCustomMovementMode);
 	}
 	RestorePlayerControl();
-	if (bSuccess && WorldState.IsValid())
-	{
-		WorldState->RecordBossIntroCompleted(IntroId, FinalTransform);
-		if (!WorldState->SaveToSlot(WorldState->ActiveSaveSlotName, WorldState->ActiveUserIndex))
-		{
-			UE_LOG(LogTemp, Warning, TEXT("BossIntro: save failed for %s, completion retained in memory"), *IntroId.ToString());
-		}
-		ActivateCombat(ControlledPawn.Get());
-	}
+	if (BossController.IsValid()) BossController->SetBossIntroBlocked(false);
+	if (bSuccess) ActivateCombat(ControlledPawn.Get());
 	ControlledPawn.Reset();
 	LocalPlayer.Reset();
 	OnIntroEnded.Broadcast(bSuccess);
@@ -286,7 +245,6 @@ void AMVBossIntroTrigger::EndPlay(const EEndPlayReason::Type Reason)
 	GetWorldTimerManager().ClearTimer(InitializeTimer);
 	CancelIntro();
 	TriggerBox->OnComponentBeginOverlap.RemoveAll(this);
-	if (WorldState.IsValid()) WorldState->OnWorldStateLoaded.RemoveAll(this);
 	if (BossController.IsValid()) BossController->SetBossIntroBlocked(false);
 	Super::EndPlay(Reason);
 }

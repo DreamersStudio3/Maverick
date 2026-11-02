@@ -9,8 +9,12 @@
 #include "Components/MVStatComponent.h"
 #include "Components/StateTreeAIComponent.h"
 #include "Engine/GameViewportClient.h"
+#include "Engine/LocalPlayer.h"
 #include "EngineUtils.h"
 #include "GameFramework/PlayerController.h"
+#include "Input/CommonUIActionRouterBase.h"
+#include "InputCoreTypes.h"
+#include "UI/System/MVGameplayInputWidget.h"
 #include "UObject/ConstructorHelpers.h"
 
 UMVBossAttackTestWidget::UMVBossAttackTestWidget(const FObjectInitializer& ObjectInitializer)
@@ -59,6 +63,12 @@ void UMVBossAttackTestWidget::NativeTick(const FGeometry& MyGeometry, float InDe
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 	ResolveBoss();
+	if (CanControlMouseInput())
+	{
+		APlayerController* Player = GetOwningPlayer();
+		if (Player->WasInputKeyJustPressed(EKeys::J)) SetUIMouseMode(true);
+		else if (bUIMouseMode && Player->WasInputKeyJustPressed(EKeys::LeftMouseButton)) SetUIMouseMode(false);
+	}
 	EnsureMouseInput();
 	RefreshButtons();
 }
@@ -72,36 +82,59 @@ void UMVBossAttackTestWidget::SetTestBoss(AMVEnemy* InBoss)
 	RefreshButtons();
 }
 
-void UMVBossAttackTestWidget::EnsureMouseInput()
+bool UMVBossAttackTestWidget::CanControlMouseInput() const
 {
 	APlayerController* Player = GetOwningPlayer();
-	if (!Player || !IsVisible()) return;
-	UGameViewportClient* Viewport = GetWorld() ? GetWorld()->GetGameViewport() : nullptr;
+	if (!Player || !IsVisible()) return false;
 	const AMVAIController* AI = IsValid(TestBoss) ? Cast<AMVAIController>(TestBoss->GetController()) : nullptr;
-	if (AI && AI->bBossIntroBlocked) return;
-	if (AI && AI->BossPlayStart && !bHasManualControl)
+	if (AI && AI->bBossIntroBlocked) return false;
+	if (const ULocalPlayer* LocalPlayer = Player->GetLocalPlayer())
 	{
-		if (!Player->bShowMouseCursor && Viewport
-			&& Viewport->GetMouseCaptureMode() == EMouseCaptureMode::CapturePermanently_IncludingInitialMouseDown
-			&& Viewport->GetMouseLockMode() == EMouseLockMode::LockAlways) return;
+		if (const UCommonUIActionRouterBase* Router = LocalPlayer->GetSubsystem<UCommonUIActionRouterBase>())
+		{
+			const UCommonActivatableWidget* ActiveWidget = Router->GetLeafmostActivatableWidget();
+			if (ActiveWidget && !ActiveWidget->IsA<UMVGameplayInputWidget>()) return false;
+		}
+	}
+	return true;
+}
+
+void UMVBossAttackTestWidget::SetUIMouseMode(const bool bEnable)
+{
+	if (!CanControlMouseInput()) return;
+	bUIMouseMode = bEnable;
+	EnsureMouseInput();
+}
+
+void UMVBossAttackTestWidget::EnsureMouseInput()
+{
+	if (!CanControlMouseInput()) return;
+	APlayerController* Player = GetOwningPlayer();
+	UGameViewportClient* Viewport = GetWorld() ? GetWorld()->GetGameViewport() : nullptr;
+	if (!bUIMouseMode)
+	{
+		if (!Player->bShowMouseCursor && Viewport && Viewport->GetMouseLockMode() == EMouseLockMode::LockAlways
+			&& Viewport->GetMouseCaptureMode() == EMouseCaptureMode::CapturePermanently_IncludingInitialMouseDown) return;
 		Player->SetShowMouseCursor(false);
 		FInputModeGameOnly InputMode;
 		InputMode.SetConsumeCaptureMouseDown(false);
 		Player->SetInputMode(InputMode);
 		if (Viewport)
 		{
-			Viewport->SetMouseCaptureMode(EMouseCaptureMode::CapturePermanently_IncludingInitialMouseDown);
 			Viewport->SetMouseLockMode(EMouseLockMode::LockAlways);
+			Viewport->SetMouseCaptureMode(EMouseCaptureMode::CapturePermanently_IncludingInitialMouseDown);
 		}
 		return;
 	}
-	if (Player->bShowMouseCursor && Viewport && Viewport->GetMouseLockMode() == EMouseLockMode::DoNotLock) return;
+	if (Player->bShowMouseCursor && Viewport && Viewport->GetMouseLockMode() == EMouseLockMode::DoNotLock
+		&& Viewport->GetMouseCaptureMode() == EMouseCaptureMode::CaptureDuringMouseDown) return;
 	// CommonUI의 기본 게임 입력 복구 후에도 시험 패널의 후속 클릭 허용
 	Player->SetShowMouseCursor(true);
 	FInputModeGameAndUI InputMode;
 	InputMode.SetHideCursorDuringCapture(false);
 	InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 	Player->SetInputMode(InputMode);
+	if (Viewport) Viewport->SetMouseCaptureMode(EMouseCaptureMode::CaptureDuringMouseDown);
 }
 
 AMVEnemy* UMVBossAttackTestWidget::ResolveBoss()
@@ -154,8 +187,7 @@ void UMVBossAttackTestWidget::AcquireManualControl()
 		if (AMVAIController* AI = ControlledAI.Get())
 		{
 			SavedAITarget = AI->TargetActor;
-			bWasAITickEnabled = AI->IsActorTickEnabled();
-			AI->SetActorTickEnabled(false);
+			AI->OnBossCombatControlRequested.AddUObject(this, &ThisClass::ReleaseManualControl, false);
 			ControlledTree = AI->FindComponentByClass<UStateTreeAIComponent>();
 			if (UStateTreeAIComponent* Tree = ControlledTree.Get())
 			{
@@ -176,7 +208,7 @@ void UMVBossAttackTestWidget::AcquireManualControl()
 	}
 }
 
-void UMVBossAttackTestWidget::ReleaseManualControl()
+void UMVBossAttackTestWidget::ReleaseManualControl(const bool bRestoreAI)
 {
 	if (!bHasManualControl) return;
 	if (IsValid(TestBoss))
@@ -188,9 +220,10 @@ void UMVBossAttackTestWidget::ReleaseManualControl()
 	if (AMVAIController* AI = ControlledAI.Get())
 	{
 		AI->TargetActor = SavedAITarget.Get();
-		AI->SetActorTickEnabled(bWasAITickEnabled);
+		AI->OnBossCombatControlRequested.RemoveAll(this);
 	}
-	if (UStateTreeAIComponent* Tree = ControlledTree.Get(); Tree && bWasTreeRunning && IsValid(TestBoss)
+	if (UStateTreeAIComponent* Tree = ControlledTree.Get(); bRestoreAI && Tree && bWasTreeRunning && IsValid(TestBoss)
+		&& (!ControlledAI.IsValid() || !ControlledAI->bBossIntroBlocked)
 		&& TestBoss->StatComponent && !TestBoss->StatComponent->IsDead()) Tree->StartLogic();
 	ControlledAI.Reset();
 	ControlledTree.Reset();

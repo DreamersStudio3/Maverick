@@ -14,7 +14,6 @@ class ULevelSequence;
 class ULevelSequencePlayer;
 class ALevelSequenceActor;
 class UMVInputManagerComponent;
-class UMVWorldStateSubsystem;
 
 UENUM(BlueprintType)
 enum class EMVBossIntroState : uint8 { Waiting, Playing, Completed };
@@ -22,11 +21,11 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMVBossIntroStartedSignature);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVBossIntroEndedSignature, bool, bCompleted);
 
 /**
- * 플레이어의 박스 진입·최초 보스 등장 연출·완료 위치 저장 소유
- * BeginPlay에서 저장 위치 복원·AI 대기, 완료 후 입력·카메라 복원과 전투 시작
- * 중단·EndPlay는 관람 기록 제외, 생성 시퀀스·이벤트·입력 차단 정리
- * IntroId는 맵 내 고유 값, Level Sequence의 Boss 태그는 실제 보스 액터에 연결
- * 저장은 WorldState, 공격 정책은 기존 AI·전투 도메인 책임; 단일 로컬 플레이어 기준
+ * 플레이어의 박스 진입·플레이별 보스 등장 연출 소유
+ * BeginPlay에서 AI 대기, 완료 후 마지막 평가 위치 유지·입력과 카메라 복구·전투 시작
+ * 중단·EndPlay에서 생성 시퀀스·이벤트·입력 차단 정리, 중단 후 재시도 허용
+ * Boss 태그는 실제 보스 액터에 연결, 재생 중·같은 전투 내 중복 진입 차단
+ * 관람 기록 조회·저장 제외, IntroId는 기존 에셋 호환용; 단일 로컬 플레이어 기준
  */
 UCLASS()
 class MAVERICK_API AMVBossIntroTrigger : public AActor
@@ -51,7 +50,6 @@ protected:
 	virtual void Tick(float DeltaSeconds) override;
 private:
 	void InitializeEncounter();
-	void RestoreCompletedPlacement();
 	void AcquirePlayerControl(APawn* PlayerPawn, APlayerController* Controller);
 	void RestorePlayerControl();
 	void FinishIntro(bool bCompleted);
@@ -59,16 +57,13 @@ private:
 	UFUNCTION() void HandleOverlap(UPrimitiveComponent* Overlapped, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION() void HandleFinished();
 	UFUNCTION() void HandleStopped();
-	UFUNCTION() void HandleWorldLoaded(FString SlotName);
 	UPROPERTY(Transient) TObjectPtr<ULevelSequencePlayer> SequencePlayer;
 	UPROPERTY(Transient) TObjectPtr<ALevelSequenceActor> SequenceActor;
 	TWeakObjectPtr<AMVAIController> BossController;
-	TWeakObjectPtr<UMVWorldStateSubsystem> WorldState;
 	TWeakObjectPtr<APlayerController> LocalPlayer;
 	TWeakObjectPtr<APawn> ControlledPawn;
 	TWeakObjectPtr<AActor> PreviousViewTarget;
 	TWeakObjectPtr<UMVInputManagerComponent> BlockedInput;
-	FTransform InitialBossTransform;
 	FTransform PlaybackStartTransform;
 	FTimerHandle InitializeTimer;
 	EMouseCaptureMode SavedCaptureMode = EMouseCaptureMode::CapturePermanently;
