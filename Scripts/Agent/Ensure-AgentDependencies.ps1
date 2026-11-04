@@ -1,8 +1,5 @@
 [CmdletBinding()]
-param(
-    [ValidateSet("codex", "claude", "antigravity")]
-    [string]$HostName = "codex"
-)
+param()
 
 $ErrorActionPreference = "Stop"
 
@@ -24,26 +21,6 @@ function Invoke-CheckedCommand {
     if ($LASTEXITCODE -ne 0) {
         throw "명령 실패: $Command $($Arguments -join ' ')"
     }
-}
-
-$hiveVersion = [string]$dependencies.hive.version
-$hiveCommand = Get-Command hive -ErrorAction SilentlyContinue
-if (-not $hiveCommand -or -not ((& hive --version) -match [regex]::Escape($hiveVersion))) {
-    if (-not (Get-Command npm -ErrorAction SilentlyContinue)) {
-        throw "Hive $hiveVersion 자동 설치에 필요한 npm을 찾을 수 없습니다."
-    }
-
-    Invoke-CheckedCommand npm install --global "$($dependencies.hive.package)@$hiveVersion"
-}
-
-& hive install --scope user --host $HostName --validate --user-root $userRoot --output json *> $null
-if ($LASTEXITCODE -ne 0) {
-    Invoke-CheckedCommand hive install --scope user --host $HostName --apply --user-root $userRoot --output json
-    Invoke-CheckedCommand hive install --scope user --host $HostName --validate --user-root $userRoot --output json
-}
-
-if (-not (Test-Path (Join-Path $projectRoot ".hive/config/harness.toml"))) {
-    throw "프로젝트 Hive harness 누락: .hive/config/harness.toml"
 }
 
 $graphifyVersion = [string]$dependencies.graphify.version
@@ -99,8 +76,6 @@ if (-not (Test-Path $graphifySkill) -or $stampedVersion -ne $graphifyVersion) {
 }
 
 [pscustomobject]@{
-    Hive = $hiveVersion
     Graphify = $graphifyVersion
     GraphifyPython = $graphifyPython
-    Host = $HostName
 }

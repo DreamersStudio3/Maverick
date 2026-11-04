@@ -2,7 +2,6 @@
 .git/
 .agents/
 .codex/
-.hive/
 .idea/
 .vs/
 graphify-out/

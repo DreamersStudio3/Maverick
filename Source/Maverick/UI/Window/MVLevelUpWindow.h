@@ -27,7 +27,7 @@ class UCommonActionWidget;
  * Blueprint는 배치·행 클래스·선택 배경과 입력 안내 위젯 담당
  *
  * Construct에서 확인 입력·버튼 연결, Destruct에서 연결 해제
- * 활성화 시 상태 구독·행 생성·초점 확보
+ * 활성화 시 상태 구독·행 생성·초점 확보, 최대 체력 보정 변경 시 미리보기 갱신
  * 비활성화 시 상태 구독·행 이벤트 해제, 선택 상태와 임시 투자 폐기
  * 사망·필드 전환 시 창 닫기
  */
@@ -148,6 +148,9 @@ private:
 
 	UFUNCTION()
 	void HandleBaseStatsReady(int32 Revision);
+
+	UFUNCTION()
+	void HandleMaxHPModifierChanged();
 
 	UFUNCTION()
 	void HandlePlayerDead();

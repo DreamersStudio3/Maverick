@@ -204,11 +204,10 @@ bool UMVLevelUpWindow::CanConfirmLevelUp() const
 
 	for (const TPair<FGameplayTag, float>& Pair : LevelUpPreview.PreviewStatBonuses)
 	{
-		float BaseValue = 0.0f;
+		float PreviewValue = 0.0f;
 
-		if (!FMVProgressionStatBinding::TryGetBaseValue(*Stats, Pair.Key,BaseValue)
-			|| !FMath::IsFinite(Pair.Value)
-			|| !FMath::IsFinite(BaseValue + Pair.Value))
+		if (!FMVProgressionStatBinding::TryGetPreviewEffectiveValue(
+				*Stats, Pair.Key, Pair.Value, PreviewValue))
 		{
 			return false;
 		}
@@ -299,6 +298,9 @@ void UMVLevelUpWindow::BindRuntimeEvents()
 		Stats->OnBaseStatsReady.AddUniqueDynamic(
 			this,
 			&UMVLevelUpWindow::HandleBaseStatsReady);
+		Stats->OnMaxHPModifierChanged.AddUniqueDynamic(
+			this,
+			&UMVLevelUpWindow::HandleMaxHPModifierChanged);
 
 		Stats->OnDead.AddUniqueDynamic(
 			this,
@@ -327,6 +329,9 @@ void UMVLevelUpWindow::UnbindRuntimeEvents()
 		Stats->OnBaseStatsReady.RemoveDynamic(
 			this,
 			&UMVLevelUpWindow::HandleBaseStatsReady);
+		Stats->OnMaxHPModifierChanged.RemoveDynamic(
+			this,
+			&UMVLevelUpWindow::HandleMaxHPModifierChanged);
 
 		Stats->OnDead.RemoveDynamic(
 			this,
@@ -363,6 +368,11 @@ void UMVLevelUpWindow::HandleBaseStatsReady(const int32 Revision)
 	(void)Revision;
 
 	PendingRanks.Reset();
+	RefreshLevelUpPreview();
+}
+
+void UMVLevelUpWindow::HandleMaxHPModifierChanged()
+{
 	RefreshLevelUpPreview();
 }
 
@@ -625,22 +635,22 @@ void UMVLevelUpWindow::UpdateLevelUpRows()
 		FText DisplayName;
 		bool bLowerIsBetter = false;
 		float CurrentValue = 0.0f;
+		float PreviewValue = 0.0f;
 
 		if (!FMVProgressionStatBinding::TryGetDisplayInfo(Pair.Key, DisplayName, bLowerIsBetter)
-			|| !FMVProgressionStatBinding::TryGetEffectiveValue(*Stats, Pair.Key, CurrentValue))
+			|| !FMVProgressionStatBinding::TryGetEffectiveValue(*Stats, Pair.Key, CurrentValue)
+			|| !FMVProgressionStatBinding::TryGetPreviewEffectiveValue(
+				*Stats, Pair.Key, LevelUpPreview.PreviewStatBonuses.FindRef(Pair.Key), PreviewValue))
 		{
 			Row->SetVisibility(ESlateVisibility::Collapsed);
 			continue;
 		}
 
-		const float BonusChange =
-			LevelUpPreview.PreviewStatBonuses.FindRef(Pair.Key) - LevelUpPreview.CurrentStatBonuses.FindRef(Pair.Key);
-
 		const bool bDisplayed = Row->SetComparison(
 			Pair.Key,
 			DisplayName,
 			CurrentValue,
-			CurrentValue + BonusChange,
+			PreviewValue,
 			bLowerIsBetter);
 
 		Row->SetVisibility(bDisplayed ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);

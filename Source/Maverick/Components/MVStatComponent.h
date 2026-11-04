@@ -4,6 +4,7 @@
 #include "Components/ActorComponent.h"
 #include "GameplayTagContainer.h"
 #include "Struct/MVHitTypes.h"
+#include "Misc/Guid.h"
 #include "MVStatComponent.generated.h"
 
 class UMVTableManager;
@@ -45,6 +46,7 @@ struct MAVERICK_API FMVDeathContext
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnDeathStarted, const FMVDeathContext&, DeathContext);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FMVOnModifyIncomingDamage, const FMVResolvedHitData&, float&);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(
 	FMVOnDamageApplied,
 	float, AppliedDamage,
@@ -60,9 +62,10 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_FiveParams(
 	const FMVResolvedHitData&, HitData);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMVOnDamageAccumulationReset);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnBaseStatsReady, int32, Revision);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMVOnMaxHPModifierChanged);
 
 /**
- * CharacterIndexCode와 일치하는 스탯 행의 HP·스태미너·MP·그로기·이동·전투 수치와 변경 이벤트 소유
+ * CharacterIndexCode와 일치하는 스탯 행의 자원·이동·전투 수치, 효과별 방어력·최대 체력 보정과 변경 이벤트 소유
  * BeginPlay에서 기본 스탯 로드, Consume 계열·OnDamaged에서 확정 피해 차감
  * 최초 HP 소진 시 OnDeathStarted(FMVDeathContext) 발행, Blueprint 호환용 OnDead 병행
  * TickRecoverableStats에서 자원·Exhaustion·그로기 회복, Notify의 회복 정지와 최근 감소 UI 홀드 관리
@@ -80,6 +83,8 @@ public:
 	
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|Stat|Event")
 	FMVOnStatValueChanged OnHPChanged;
+
+	FMVOnModifyIncomingDamage OnModifyIncomingDamage;
 
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|Stat|Event")
 	FMVOnDamageApplied OnDamageApplied;
@@ -116,6 +121,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|Stat|Event")
 	FMVOnBaseStatsReady OnBaseStatsReady;
+
+	UPROPERTY(BlueprintAssignable, Category = "Maverick|Stat|Event")
+	FMVOnMaxHPModifierChanged OnMaxHPModifierChanged;
 	
 protected:
 	virtual void BeginPlay() override;
@@ -155,8 +163,12 @@ public:
 		float& OutBaseValue,
 		float& OutBonus,
 		float& OutEffectiveValue) const;
+	// 기본 최대 체력과 후보 성장 보너스에 현재 효과별 보정을 적용하되 능력치는 변경하지 않는다
+	bool TryCalculateMaxHPWithProgressionBonus(float Bonus, float& OutMaxHP) const;
 
 	int32 GetStatCalculationRevision() const { return StatCalculationRevision; }
+
+	void ApplyIncomingDamageModifiers(FMVResolvedHitData& HitData);
 	
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Damage")
 	void HandleDamaged(const FMVResolvedHitData& HitData);
@@ -187,8 +199,20 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Maverick|Stat|Recovery")
 	bool IsRecoverableStatRecoveryPaused() const;
 
+	// 입력값은 성장 반영 후, 효과별 최대 체력 보정 전 값이다
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|HP")
 	void SetMaxHP(float InMaxHP);
+
+	// 무기 교체 중 보정 제거·재등록을 묶어 최종 최대 체력으로 한 번만 HP를 제한한다
+	void BeginMaxHPModifierBatch();
+	void EndMaxHPModifierBatch();
+
+	// 보정마다 고유 번호를 발급하고, 해제할 때 해당 번호의 보정만 제거한다
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|HP")
+	FGuid AddMaxHPModifier(float BonusRatio);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|HP")
+	bool RemoveMaxHPModifier(FGuid ModifierHandle);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|HP")
 	void SetCurrentHP(float InCurrentHP);
@@ -256,6 +280,41 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Attack")
 	void SetAttackSpeed(float InAttackSpeed);
 
+	UFUNCTION(BlueprintPure, Category = "Maverick|Stat|Attack")
+	float GetBaseAttackSpeed() const { return BaseAttackSpeed; }
+
+	// 증가율을 등록하고, 이후 갱신·제거에 사용할 고유 번호 반환
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Attack")
+	FGuid AddAttackSpeedModifier(float BonusRatio);
+
+	// 같은 효과의 증가율을 새 값으로 교체
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Attack")
+	bool UpdateAttackSpeedModifier(FGuid ModifierHandle, float BonusRatio);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Attack")
+	bool RemoveAttackSpeedModifier(FGuid ModifierHandle);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|MoveSpeed")
+	FGuid AddMoveSpeedModifier(float BonusRatio);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|MoveSpeed")
+	bool UpdateMoveSpeedModifier(FGuid ModifierHandle, float BonusRatio);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|MoveSpeed")
+	bool RemoveMoveSpeedModifier(FGuid ModifierHandle);
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|Stat|MoveSpeed")
+	float GetMoveSpeedMultiplier() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Dodge")
+	FGuid AddDodgeStaminaCostModifier(float BonusRatio);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Dodge")
+	bool RemoveDodgeStaminaCostModifier(FGuid ModifierHandle);
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|Stat|Dodge")
+	float GetDodgeStaminaCostMultiplier() const;
+
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|MoveSpeed")
 	void SetWalkSpeed(float InWalkSpeed);
 
@@ -270,9 +329,16 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Defence")
 	void SetNormalDefence(float NewNormalDefence);
-	
+
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Defence")
 	void SetSkillDefence(float NewSkillDefence);
+
+	// 기본 방어력은 유지하고, 등록된 증가율의 합을 두 방어력에 적용한다
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Defence")
+	FGuid AddDefenceModifier(float BonusRatio);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Defence")
+	bool RemoveDefenceModifier(FGuid ModifierHandle);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Groggy")
 	void SetMaxGroggy(float InMaxGroggy);
@@ -295,6 +361,10 @@ public:
 	// Poise
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Poise")
 	void SetInitialPoise(float InitialPoise);
+
+	// 효과별 강인도 증가율을 등록하고, 제거할 때 이 효과의 고유 번호만 사용
+	FGuid AddPoiseModifier(float BonusRatio);
+	bool RemovePoiseModifier(FGuid ModifierHandle);
 	
 	// 행동 시작/종료 시 상시 강인도, 무기 강인도 조정
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Poise")
@@ -382,15 +452,15 @@ public:
 	// 공격 속도, 1.0은 기본 속도, 2.0은 2배 속도, 0.5는 절반 속도
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Attack")
 	float AttackSpeed = 1.0f;
-	
+
 	// 치명타 확률, 0.0~1.0 사이의 값으로 설정
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Attack")
 	float CriticalPercent = 0.0f;
-	
+
 	// 치명타 데미지, 1.0은 기본 데미지, 2.0은 2배 데미지, 0.5는 절반 데미지
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Attack")
 	float CriticalDamage = 1.0f;
-	
+
 	// 기본공격의 흡혈 비율, 1.0은 100% 흡혈, 0.5는 50% 흡혈, 0.0은 흡혈 없음
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Attack")
 	float NormalVamp = 1.0f;
@@ -422,7 +492,7 @@ public:
 	// NormalDefence는 공격자가 입힌 평타 대미지를 얼마나 감소시키는지에 대한 수치
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Defence")
 	float NormalDefence = 10.0f;
-	
+
 	// SkillDefence는 공격자가 입힌 스킬 대미지를 얼마나 감소시키는지에 대한 수치
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Stat|Defence")
 	float SkillDefence = 5.0f;
@@ -448,6 +518,13 @@ public:
 	float PoiseRecoveryTime = 30.0f;
 
 private:
+	void RecalculateAttackSpeed();
+	bool RecalculateDefence();
+	bool TryCalculateModifiedMaxHP(float InUnmodifiedMaxHP, float& OutMaxHP) const;
+	void ApplyCalculatedMaxHP(float NewMaxHP);
+	float CalculatePoiseModifierMultiplier() const;
+	bool ApplyPoiseModifierMultiplier(float NewMultiplier);
+
 	float RecentDamageCooldownRemaining = 0.0f;
 	int32 RecoverableStatRecoveryPauseCount = 0;
 	float StaminaExhaustionRemaining = 0.0f;
@@ -463,6 +540,9 @@ private:
 	float SavedWindowConstantPoise = 0.0f;
 	float SavedWindowAdditionalPoise = 0.0f;
 	float SavedWindowRecoveryRemaining = -1.0f;
+	float BaseInitialPoise = 0.0f;
+	float PoiseModifierMultiplier = 1.0f;
+	TMap<FGuid, float> PoiseModifiers;
 	
 	TMap<FGameplayTag, float> ProgressionStatBonuses;
 	int32 StatCalculationRevision = 0;
@@ -470,6 +550,32 @@ private:
 	float BaseMaxHP = 100.0f;
 	float BaseMaxStamina = 100.0f;
 	float BaseMaxMP = 100.0f;
+	float UnmodifiedMaxHP = 100.0f;
+	TMap<FGuid, float> MaxHPModifiers;
+	int32 MaxHPModifierBatchDepth = 0;
+	bool bMaxHPBatchNeedsRecalculation = false;
+	bool bMaxHPBatchModifiersChanged = false;
 	int32 BaseStatsRevision = 0;
 	bool bBaseStatsReady = false;
+
+	UPROPERTY(Transient)
+	float BaseAttackSpeed = 1.0f;
+
+	UPROPERTY(Transient)
+	float BaseNormalDefence = 10.0f;
+
+	UPROPERTY(Transient)
+	float BaseSkillDefence = 5.0f;
+
+	UPROPERTY(Transient)
+	TMap<FGuid, float> DefenceModifiers;
+
+	UPROPERTY(Transient)
+	TMap<FGuid, float> AttackSpeedModifiers;
+
+	UPROPERTY(Transient)
+	TMap<FGuid, float> MoveSpeedModifiers;
+
+	UPROPERTY(Transient)
+	TMap<FGuid, float> DodgeStaminaCostModifiers;
 };
