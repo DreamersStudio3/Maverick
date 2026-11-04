@@ -1,0 +1,182 @@
+{
+  "date": "2026-10-13",
+  "host": "Codex",
+  "platform": "Windows",
+  "engine": "5.8.3",
+  "build": {
+    "executed": true,
+    "target": "MaverickEditor Win64 Development",
+    "result": "Succeeded",
+    "seconds": 13.79,
+    "warning": "XGE License not activated",
+    "evidence": "Saved/BossIntro/build-final.log",
+    "proves": "C++ 컴파일·Editor 링크",
+    "excludes": [
+      "패키징",
+      "네트워크 실행"
+    ]
+  },
+  "automation": {
+    "executed": true,
+    "passed": 11,
+    "passed_with_warnings": 2,
+    "failed": 0,
+    "not_run": 0,
+    "tests": [
+      {
+        "name": "Maverick.Cinematics.BossIntro",
+        "state": "Success",
+        "warnings": 2,
+        "errors": 0
+      },
+      {
+        "name": "Maverick.Combat.TutorialBoss.BasicAttack1",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      },
+      {
+        "name": "Maverick.Combat.BoxDamageAbility",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      },
+      {
+        "name": "Maverick.Combat.DuelistResonance",
+        "state": "Success",
+        "warnings": 1,
+        "errors": 0
+      },
+      {
+        "name": "Maverick.Progression.StatBinding.AtomicRejection",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      },
+      {
+        "name": "Maverick.Progression.StatBinding.BonusReplacement",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      },
+      {
+        "name": "Maverick.Progression.StatBinding.Registry",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      },
+      {
+        "name": "Maverick.Progression.AllocationOrder",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      },
+      {
+        "name": "Maverick.Progression.DefaultAllocation",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      },
+      {
+        "name": "Maverick.Progression.SaveDefaults",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      },
+      {
+        "name": "Maverick.Progression.Validation",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0
+      }
+    ],
+    "warning_scope": [
+      "등장 검사: 격리 월드의 게임 화면 부재 2건",
+      "기존 공명 폭주 검사: 사망 행 부재 1건"
+    ],
+    "evidence": "Saved/BossIntro/AutomationFinal/index.json",
+    "excludes": [
+      "실제 게임 화면과 최종 사망 표현",
+      "전체 저장 기능 회귀"
+    ]
+  },
+  "pie": {
+    "executed": true,
+    "map": "BaseBossTestLevel",
+    "temporary_profile": true,
+    "first_overlap": "Playing·CineCamera·이동과 시점 차단·AI 정지",
+    "natural_completion": "Completed·입력과 카메라 복구·StateTree 실행",
+    "saved_final_transform": {
+      "translation": [
+        900,
+        -60,
+        88
+      ],
+      "rotation_quat": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "same_encounter_reentry": {
+      "sequence_actor_count": 0,
+      "boss_teleport_distance": 0,
+      "input_blocked": false
+    },
+    "fresh_game_instance_selected_slot_load": {
+      "restored_final_transform": true,
+      "no_sequence_on_entry": true,
+      "combat_started": true
+    },
+    "excludes": [
+      "다른 프로필의 자동 기본 슬롯 시작",
+      "모든 보스와 동시 연출 조합",
+      "네트워크와 패키징"
+    ],
+    "evidence": [
+      "Saved/BossIntro/pie-first.json",
+      "Saved/BossIntro/pie-revisit.json"
+    ]
+  },
+  "assets": {
+    "trigger": "/Game/DuelistComplete/BP_BossIntroTrigger",
+    "sequence": "/Game/DuelistComplete/Intro/LS_Duelist_Intro",
+    "intro_id": "Duelist_001",
+    "binding_tag": "Boss",
+    "user_trigger_reused": true,
+    "user_location_preserved": [
+      230,
+      -620,
+      220
+    ],
+    "box_extent": [
+      120,
+      220,
+      150
+    ],
+    "animation_skeleton_match": true,
+    "saved": true
+  },
+  "cleanup": {
+    "pie_stopped": true,
+    "temporary_slot_deleted": true,
+    "default_slot_writes": false,
+    "remote_python_original_setting_restored": true
+  },
+  "known_limitations": [
+    "단일 로컬 플레이어 기준",
+    "기존 ST_BaseAIStateTree 바인딩 오류 수정 제외"
+  ],
+  "recovered_incident": {
+    "action": "초기 Live Coding 재적용",
+    "observed": "LockOnTarget 테스트 월드 종료 경로의 Editor 종료",
+    "recovery": "테스트 액터 선행 정리·일반 빌드·새 프로세스 검증",
+    "excludes": "플러그인의 일반 Live Coding 안정성"
+  }
+}

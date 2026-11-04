@@ -1,11 +1,12 @@
 ---
 제목: 사망과 필드 전환
 부제목: 치명 판정부터 부활·필드 상태 복구까지의 런타임 순서
-최근수정일: 2026-08-12
-최근수정자: 곽민규
+최근수정일: 2026-11-02
+최근수정자: Codex
 관련문서:
   - "[[Architecture/document|Maverick Architecture]]"
   - "[[Features/Interaction-Flow/document|상호작용 흐름]]"
+  - "[[Features/Boss-Intro/document|보스 등장 연출]]"
 ---
 
 # 사망과 필드 전환
@@ -41,6 +42,7 @@ flowchart TD
 - `UMVDeathRespawnFlow`: `UMVFieldTransitionSubsystem` 소유 Transient Coordinator
 - World 변경 시 플레이어 DeathComponent 재바인딩
 - WorldStateSubsystem: Checkpoint, Consumed Spawn, Flag, Quest, SaveGame 상태 보존
+- 보스 등장 연출: 관람 완료 기록에 따른 생략·종료 위치 저장 연동 제거, 기존 `BossIntros` 자료형은 슬롯 호환용 유지; 현재 재생·중단 계약은 [[Features/Boss-Intro/document|보스 등장 연출]] 참조
 - QuestSubsystem: GameInstance 수명 Facade와 WorldState 의존성 초기화
 - Quest 읽기·쓰기와 선택적 저장: WorldState 위임
 

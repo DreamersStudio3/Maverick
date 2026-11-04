@@ -6,7 +6,10 @@
 
 class AAIController;
 class APawn;
+class USplineComponent;
+class UCharacterMovementComponent;
 
+/** 순찰 입력과 실행 중 적용한 이동 설정의 복구 상태, Task 인스턴스별 소유 */
 USTRUCT()
 struct MAVERICK_API FMVAIPatrolTaskInstanceData
 {
@@ -15,33 +18,42 @@ struct MAVERICK_API FMVAIPatrolTaskInstanceData
 	UPROPERTY(EditAnywhere, Category = "Input|Owner")
 	TObjectPtr<APawn> Owner = nullptr;
 
-	UPROPERTY(EditAnywhere, Category = "Input|Patrol", meta = (Units = "cm"))
-	float Radius = 900.0f;
+	UPROPERTY(EditAnywhere, Category = "Input|Patrol", meta = (ClampMin = "1", Units = "cm/s"))
+	float PatrolSpeed = 180.0f;
 
-	UPROPERTY(EditAnywhere, Category = "Input|Patrol", meta = (Units = "cm"))
+	UPROPERTY(EditAnywhere, Category = "Input|Patrol", meta = (ClampMin = "1", Units = "cm"))
+	float LookAheadDistance = 120.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Input|Patrol", meta = (ClampMin = "0", Units = "cm", ToolTip = "열린 Spline의 끝에서 방향을 전환할 거리"))
 	float AcceptanceRadius = 75.0f;
 
-	UPROPERTY(EditAnywhere, Category = "Output")
-	bool bPatrolling = false;
-
-	UPROPERTY(EditAnywhere, Category = "Output")
-	bool bLastMoveSucceeded = false;
-
-	UPROPERTY(EditAnywhere, Category = "Output")
-	FVector Destination = FVector::ZeroVector;
+	UPROPERTY(EditAnywhere, Category = "Input|Patrol", meta = (ClampMin = "1", Units = "deg/s"))
+	float TurnRate = 180.0f;
 
 	UPROPERTY(Transient)
 	TObjectPtr<AAIController> Controller = nullptr;
 
-	bool bMoveRequested = false;
+	UPROPERTY(Transient)
+	TObjectPtr<USplineComponent> Spline = nullptr;
+
+	UPROPERTY(Transient)
+	TObjectPtr<UCharacterMovementComponent> Movement = nullptr;
+
+	float Direction = 1.0f;
+	float PreviousMaxWalkSpeed = 0.0f;
+	FRotator PreviousRotationRate = FRotator::ZeroRotator;
+	bool bPreviousUseControllerRotationYaw = false;
+	bool bPreviousOrientRotationToMovement = false;
+	bool bPreviousUseControllerDesiredRotation = false;
+	FDelegateHandle MovementSettingsHandle;
 };
 
 /**
- * 현재 StateTree 상태가 살아 있는 동안 패트롤 이동 요청 하나를 소유하는 Task
- * Enter에서 목적지·이동 요청 1회 생성, Tick에서 완료 대기; 대상 없는 동안 재요청 없음
- * AMVAIController의 유효한 TargetActor 발견 시 시작 생략 또는 다음 Tick에서 이동 중단·Succeeded 반환
- * 대상 발견 중단은 bLastMoveSucceeded false, 후속 Chase 선택은 StateTree 전이 책임
- * Exit에서 미완료 이동 정리, 다른 AIController 유형은 기존 순찰 경로 유지
+ * AMVEnemy.PatrolPath의 Spline을 CharacterMovement 입력으로 연속 추종하는 Task
+ * Enter에서 경로 조회·기존 MoveTo 중단·locomotion 갱신 이후 순찰 설정 적용 구독
+ * 닫힌 경로는 순환, 열린 경로는 끝에서 왕복; 지점 통과 중 Running 유지
+ * TargetActor 발견 시 Succeeded 반환, Chase 전이는 StateTree 책임
+ * 실패·대상 발견·Exit에서 기존 이동 설정 복구, 자동 장애물 우회는 경로 설계 범위
  */
 USTRUCT(meta = (DisplayName = "AI Patrol"))
 struct MAVERICK_API FMVAIPatrolTask : public FStateTreeTaskCommonBase
@@ -49,21 +61,9 @@ struct MAVERICK_API FMVAIPatrolTask : public FStateTreeTaskCommonBase
 	GENERATED_BODY()
 
 	using FInstanceDataType = FMVAIPatrolTaskInstanceData;
-
 	FMVAIPatrolTask();
-
-	virtual const UStruct* GetInstanceDataType() const override
-	{
-		return FInstanceDataType::StaticStruct();
-	}
-
-	virtual EStateTreeRunStatus EnterState(
-		FStateTreeExecutionContext& Context,
-		const FStateTreeTransitionResult& Transition) const override;
-	virtual EStateTreeRunStatus Tick(
-		FStateTreeExecutionContext& Context,
-		float DeltaTime) const override;
-	virtual void ExitState(
-		FStateTreeExecutionContext& Context,
-		const FStateTreeTransitionResult& Transition) const override;
+	virtual const UStruct* GetInstanceDataType() const override { return FInstanceDataType::StaticStruct(); }
+	virtual EStateTreeRunStatus EnterState(FStateTreeExecutionContext& Context, const FStateTreeTransitionResult& Transition) const override;
+	virtual EStateTreeRunStatus Tick(FStateTreeExecutionContext& Context, float DeltaTime) const override;
+	virtual void ExitState(FStateTreeExecutionContext& Context, const FStateTreeTransitionResult& Transition) const override;
 };

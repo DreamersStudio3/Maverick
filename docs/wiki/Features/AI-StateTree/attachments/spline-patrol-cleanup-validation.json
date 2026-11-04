@@ -1,0 +1,60 @@
+{
+  "date": "2026-11-04",
+  "host": "Codex",
+  "platform": "Windows",
+  "engine": "5.8.3",
+  "scope": "최근 Spline 패트롤 변경 08927178 점검·정리",
+  "removed_state": [
+    "bPatrolling",
+    "Destination 저장 필드",
+    "bMovementSettingsApplied"
+  ],
+  "simplification": {
+    "patrol_status": "기존 StateTree 실행 상태 사용",
+    "destination": "Tick 내부 지역 변수로 계산",
+    "movement_settings_ownership": "MovementSettingsHandle.IsValid()로 판단"
+  },
+  "retained": {
+    "BP_PatrolPath": "배치 보스가 실제 참조 중인 유일한 신규 경로 Blueprint",
+    "PatrolPath": "보스와 경로 Actor 연결",
+    "FMVAIPatrolTask": "연속 추종·열린 경로 왕복·Chase 전환 시 정리",
+    "OnLocomotionSettingsUpdated": "공통 갱신이 순찰 속도를 덮는 문제 방지에 필요한 연결"
+  },
+  "temporary_files": {
+    "old_python_scripts_removed": 20,
+    "review_python_helpers_removed": 7,
+    "stale_process_id_files_removed": 1,
+    "recoverable_archives": [
+      "Saved/SplinePatrolCleanup/removed-helper-scripts.zip",
+      "Saved/SplinePatrolCleanup/cleanup-verification-scripts.zip"
+    ],
+    "final_reports_logs_and_backups_retained": true
+  },
+  "validation": {
+    "build": "MaverickEditor Win64 Development Succeeded",
+    "build_seconds": 32.53,
+    "warning": "XGE License not activated",
+    "state_tree_compile": "ST_Search_Default·ST_DuelistBossAIStateTree 컴파일 통과",
+    "actual_pie": {
+      "closed_loop_wraps": 1,
+      "minimum_speed_cm_s": 179.9999999999983,
+      "events": [
+        "ClosedLoopStarted",
+        "ClosedLoopSeamPassed",
+        "TargetAssignedForChase",
+        "ChaseRestoredMovement",
+        "OpenPathStarted",
+        "OpenPathReversed"
+      ],
+      "movement_settings_restored": true
+    },
+    "user_map_and_spline_preserved": true,
+    "save_bytes_and_mtime_preserved": true,
+    "dirty_packages": []
+  },
+  "limits": {
+    "automatic_perception": "공개 전투 제어 함수로 대상 지정, 자동 시야 감지 자체의 회귀 검증 제외",
+    "packaging_and_network": "현재 Windows Editor 정리 작업 범위로 패키징·네트워크 실행 미실행"
+  },
+  "local_evidence": "Saved/SplinePatrolCleanup/"
+}

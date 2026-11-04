@@ -12,7 +12,7 @@ class AActor;
 struct FMVAIDodgeRequest;
 
 /**
- * 적 공통 대상 상태·피해 이벤트·보스 HUD 연결의 캐릭터 브리지
+ * 적 공통 대상·순찰 경로 참조·피해 이벤트·보스 HUD 연결의 캐릭터 브리지
  * BeginPlay의 HUD 연결 재시도와 EndPlay의 해제 소유
  * 대상 방향 계산은 C++, 회전 실행·구간 제어는 StateTree Task·Notify 책임
  */
@@ -39,6 +39,10 @@ public:
 	 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI|Target")
 	TObjectPtr<AActor> AttackTarget = nullptr;
+
+	/** 레벨에 배치한 Spline 경로 Actor, 이동·회전 정책은 Patrol Task 소유 */
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "AI|Patrol")
+	TObjectPtr<AActor> PatrolPath = nullptr;
 
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|Enemy|Event")
 	FMVOnDamagedSignature OnEnemyDamaged;

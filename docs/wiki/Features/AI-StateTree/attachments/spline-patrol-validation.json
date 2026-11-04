@@ -1,0 +1,99 @@
+{
+  "date": "2026-11-03",
+  "host": "Codex",
+  "platform": "Windows",
+  "engine": "5.8.3",
+  "request": "Spline 경로를 편집하면 그 경로를 연속 추종하는 보스 패트롤 적용",
+  "blueprint": "/Game/Characters/NPC/BaseBoss/Patrol/BP_PatrolPath",
+  "level": "/Game/Characters/NPC/BaseBoss/Level/BaseBossTestLevel",
+  "route_actor": "Duelist_PatrolPath",
+  "state_trees": [
+    "ST_Search_Default",
+    "ST_DuelistBossAIStateTree"
+  ],
+  "build": {
+    "result": "Succeeded",
+    "seconds": 55.63,
+    "warnings": [
+      "XGE License not activated",
+      "기존 MVBossAttackTestWidget.cpp UButton::IsFocusable 직접 접근 폐기 예정 경고"
+    ]
+  },
+  "regression_automation": {
+    "executed": true,
+    "test": "Maverick.Cinematics.BossIntro",
+    "state": "Success",
+    "warnings": [
+      "LogScript: Script Msg: No game viewport was found.",
+      "LogScript: Script Msg: No game viewport was found."
+    ],
+    "scope": "격리 월드의 등장 연출·입력 차단·복구 회귀, 실제 화면 표현 보장 제외"
+  },
+  "pie": {
+    "executed": true,
+    "closed_loop_length_cm": 2815.176025390625,
+    "closed_loop_wraps": 1,
+    "minimum_speed_after_warmup_cm_s": 179.99999999999795,
+    "maximum_speed_cm_s": 180.0000000000019,
+    "maximum_path_error_after_warmup_cm": 7.442306036905704,
+    "events": [
+      {
+        "event": "ClosedLoopStarted",
+        "frame": 552,
+        "phase": "closed",
+        "elapsed": 0.0,
+        "length": 2815.176025390625
+      },
+      {
+        "event": "ClosedLoopSeamPassed",
+        "frame": 600,
+        "phase": "closed",
+        "elapsed": 16.0,
+        "speed": 179.99999999999997,
+        "path_error": 7.327071164968195
+      },
+      {
+        "event": "TargetAssignedForChase",
+        "frame": 600,
+        "phase": "chase",
+        "elapsed": 16.0
+      },
+      {
+        "event": "ChaseRestoredMovement",
+        "frame": 603,
+        "phase": "chase",
+        "elapsed": 17.0
+      },
+      {
+        "event": "OpenPathStarted",
+        "frame": 603,
+        "phase": "open",
+        "elapsed": 17.0,
+        "length": 2454.370361328125
+      },
+      {
+        "event": "OpenPathReversed",
+        "frame": 610,
+        "phase": "open",
+        "elapsed": 19.328999999999724,
+        "turnaround_distance": 2432.4375,
+        "current_distance": 2204.07421875
+      }
+    ],
+    "movement_settings_restored": true,
+    "target_injection": "공개 SetBossCombatEnabled 함수로 대상 지정, 자동 시야 감지 자체의 회귀 검증 제외"
+  },
+  "fix": "공통 locomotion 갱신이 속도를 500으로 덮는 경로 확인 후, 갱신 완료 이벤트에서 Patrol Task 설정 재적용",
+  "cleanup": {
+    "pie_stopped": true,
+    "trace_callback_unregistered": true,
+    "original_save_bytes_and_mtime_restored": true,
+    "editor_route_closed_loop_preserved": true,
+    "remote_execution_restored_to": false
+  },
+  "not_tested": {
+    "packaged_build_and_network": "현재 Windows Editor의 단일 보스·평지 경로 구현 범위, 패키징·네트워크 실행 미실행",
+    "dynamic_obstacle_avoidance": "고정 Spline 추종 설계에서 미지원, CharacterMovement 충돌만 사용"
+  },
+  "local_evidence": "Saved/SplinePatrol/"
+}
