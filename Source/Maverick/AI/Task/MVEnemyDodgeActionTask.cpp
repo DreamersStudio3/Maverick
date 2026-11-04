@@ -236,13 +236,8 @@ EStateTreeRunStatus FMVEnemyDodgeActionTask::EnterState(
 		? InstanceData.ActionComponent->TryTransitionActionFromRowHandle(
 			RowHandle,
 			StartSection,
-			InstanceData.TransitionBlendOutTime,
-			EMVActionDomain::Dodge)
-		: InstanceData.ActionComponent->TryStartActionFromRowHandle(
-			RowHandle,
-			StartSection,
-			0.1f,
-			EMVActionDomain::Dodge);
+			InstanceData.TransitionBlendOutTime)
+		: InstanceData.ActionComponent->TryStartActionFromRowHandle(RowHandle, StartSection);
 	if (!bStarted)
 	{
 		return EStateTreeRunStatus::Failed;

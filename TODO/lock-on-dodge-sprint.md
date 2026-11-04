@@ -1,0 +1,7 @@
+- [x] Check `POLICY.md` before starting work.
+- [x] Inspect Maverick dodge, sprint, and strafe input flow.
+- [x] Compare ProjectBA lock-on dodge/sprint behavior.
+- [x] Fix lock-on diagonal dodge direction resolution.
+- [x] Allow sprint while locked on and release pawn-facing lock during sprint.
+- [x] Locate current `WantsToStrafe` debug binding for cleanup.
+- [x] Build-check the C++ changes.

@@ -20,12 +20,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Layer")
 	UCommonActivatableWidget* PushWindow(TSubclassOf<UCommonActivatableWidget> WindowClass);
 
-	UFUNCTION(BlueprintPure, Category = "Maverick|UI|Layer")
-	UCommonActivatableWidget* FindWindowByClass(TSubclassOf<UCommonActivatableWidget> WindowClass) const;
-
-	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Layer")
-	bool RemoveWindow(UCommonActivatableWidget* Window);
-	
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Layer")
 	UMVPopupBase* PushPopup(TSubclassOf<UMVPopupBase> PopupClass);
 
@@ -64,9 +58,6 @@ private:
 	void BuildNativeLayerTree();
 	void AddFullScreenOverlayChild(UOverlay* RootOverlay, UWidget* ChildWidget) const;
 
-	UPROPERTY(Transient)
-	TObjectPtr<UCommonActivatableWidget> GameplayInputWidget;
-	
 	UPROPERTY(Transient)
 	TObjectPtr<UUserWidget> ActiveHUDWidget;
 };

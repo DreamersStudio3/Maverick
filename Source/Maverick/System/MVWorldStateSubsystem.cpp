@@ -5,7 +5,7 @@
 
 namespace
 {
-const int32 MVWorldStateCurrentSaveVersion = 3;
+const int32 MVWorldStateCurrentSaveVersion = 1;
 
 FString WorldStateResolveFallbackSlotName(const FString& RequestedSlotName, const FString& DefaultSlotName)
 {
@@ -25,11 +25,6 @@ void UMVWorldStateSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	ResetSaveData();
 	ActiveSaveSlotName = ResolveSlotName(DefaultSaveSlotName);
 	ActiveUserIndex = DefaultUserIndex;
-	if (DoesSaveSlotExist(ActiveSaveSlotName, ActiveUserIndex)
-		&& !LoadFromSlot(ActiveSaveSlotName, ActiveUserIndex))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("WorldState: failed to load default slot %s"), *ActiveSaveSlotName);
-	}
 }
 
 void UMVWorldStateSubsystem::Deinitialize()
@@ -92,12 +87,14 @@ bool UMVWorldStateSubsystem::LoadFromSlot(const FString& SlotName, const int32 U
 	}
 
 	CurrentSaveData = WorldSaveGame->SaveData;
-	UpgradeSaveData();
-	
+	if (CurrentSaveData.SaveVersion <= 0)
+	{
+		CurrentSaveData.SaveVersion = MVWorldStateCurrentSaveVersion;
+	}
+
 	ActiveSaveSlotName = ResolvedSlotName;
 	ActiveUserIndex = UserIndex;
 	bSaveDataDirty = false;
-	OnPlayerProgressionChanged.Broadcast(CurrentSaveData.PlayerProgression);
 	OnWorldStateLoaded.Broadcast(ActiveSaveSlotName);
 	OnWorldStateChanged.Broadcast();
 	return true;
@@ -135,54 +132,18 @@ void UMVWorldStateSubsystem::ResetSaveData()
 	CurrentSaveData = FMVWorldSaveData();
 	CurrentSaveData.SaveVersion = MVWorldStateCurrentSaveVersion;
 	bSaveDataDirty = false;
-	OnPlayerProgressionChanged.Broadcast(CurrentSaveData.PlayerProgression);
 	OnWorldStateChanged.Broadcast();
 }
 
 void UMVWorldStateSubsystem::ApplySaveData(const FMVWorldSaveData& InSaveData)
 {
 	CurrentSaveData = InSaveData;
-	UpgradeSaveData();
-	OnPlayerProgressionChanged.Broadcast(CurrentSaveData.PlayerProgression);
-	MarkSaveDataDirty();
-}
-
-bool UMVWorldStateSubsystem::TryReplacePlayerProgression(
-	const int32 ExpectedRevision,
-	const FMVPlayerProgressionSaveData& NewProgression)
-{
-	const FMVPlayerProgressionSaveData& CurrentProgression = CurrentSaveData.PlayerProgression;
-
-	if (ExpectedRevision < 0
-		|| ExpectedRevision == MAX_int32
-		|| CurrentProgression.Revision != ExpectedRevision)
+	if (CurrentSaveData.SaveVersion <= 0)
 	{
-		return false;
+		CurrentSaveData.SaveVersion = MVWorldStateCurrentSaveVersion;
 	}
-
-	if (NewProgression.DataVersion <= 0
-		|| NewProgression.DataVersion != CurrentProgression.DataVersion
-		|| NewProgression.BaseLevel != CurrentProgression.BaseLevel
-		|| NewProgression.Currency < 0
-		|| NewProgression.Revision != ExpectedRevision + 1)
-	{
-		return false;
-	}
-
-	for (const TPair<FGameplayTag, int32>& Rank : NewProgression.InvestedRanks)
-	{
-		if (!Rank.Key.IsValid() || Rank.Value < 0)
-		{
-			return false;
-		}
-	}
-
-	CurrentSaveData.PlayerProgression = NewProgression;
-
-	OnPlayerProgressionChanged.Broadcast(CurrentSaveData.PlayerProgression);
 
 	MarkSaveDataDirty();
-	return true;
 }
 
 bool UMVWorldStateSubsystem::SetLastCheckpoint(
@@ -369,54 +330,6 @@ bool UMVWorldStateSubsystem::IsQuestCompleted(const FName QuestId) const
 {
 	const FMVQuestSaveData* QuestRecord = FindQuestRecord(QuestId);
 	return QuestRecord && QuestRecord->bCompleted;
-}
-
-bool UMVWorldStateSubsystem::RecordBossIntroCompleted(const FName IntroId, const FTransform& BossTransform)
-{
-	if (IntroId.IsNone() || BossTransform.ContainsNaN() || !BossTransform.IsValid()) return false;
-	FMVBossIntroSaveData Existing;
-	if (TryGetBossIntroCompleted(IntroId, Existing)) return true;
-	FMVBossIntroSaveData Record;
-	Record.IntroId = IntroId;
-	Record.MapName = ResolveCurrentMapName();
-	Record.BossTransform = BossTransform;
-	CurrentSaveData.BossIntros.Add(Record);
-	MarkSaveDataDirty();
-	return true;
-}
-
-bool UMVWorldStateSubsystem::TryGetBossIntroCompleted(const FName IntroId, FMVBossIntroSaveData& OutRecord) const
-{
-	OutRecord = FMVBossIntroSaveData();
-	if (IntroId.IsNone()) return false;
-	const FName MapName = ResolveCurrentMapName();
-	const FMVBossIntroSaveData* Record = CurrentSaveData.BossIntros.FindByPredicate(
-		[IntroId, MapName](const FMVBossIntroSaveData& Item) { return Item.IntroId == IntroId && Item.MapName == MapName; });
-	if (!Record) return false;
-	OutRecord = *Record;
-	return true;
-}
-
-void UMVWorldStateSubsystem::UpgradeSaveData()
-{
-	if (CurrentSaveData.SaveVersion < 2)
-	{
-		CurrentSaveData.PlayerProgression = FMVPlayerProgressionSaveData();
-	}
-
-	CurrentSaveData.PlayerProgression.DataVersion =
-		FMath::Max(1, CurrentSaveData.PlayerProgression.DataVersion);
-
-	CurrentSaveData.PlayerProgression.BaseLevel =
-		FMath::Max(1, CurrentSaveData.PlayerProgression.BaseLevel);
-
-	CurrentSaveData.PlayerProgression.Currency =
-		FMath::Max<int64>(0, CurrentSaveData.PlayerProgression.Currency);
-
-	CurrentSaveData.PlayerProgression.Revision =
-		FMath::Max(0, CurrentSaveData.PlayerProgression.Revision);
-
-	CurrentSaveData.SaveVersion = MVWorldStateCurrentSaveVersion;
 }
 
 void UMVWorldStateSubsystem::MarkSaveDataDirty()

@@ -2,7 +2,6 @@
 
 #include "CoreMinimal.h"
 #include "Struct/MVHealingPotionTypes.h"
-#include "Struct/MVProgressionTypes.h"
 #include "UI/Base/MVHUDWidgetBase.h"
 #include "MVMainHUDWidget.generated.h"
 
@@ -14,17 +13,7 @@ class UMVPlayerSkillHUDWidget;
 class UMVPlayerStatusWidget;
 class UMVQuickSlotWidget;
 class UMVStatComponent;
-class UMVWorldStateSubsystem;
-class UTextBlock;
 
-/**
- * 플레이어 상태·소모품·스킬·재화·보스 표시를 연결하는 메인 HUD
- *
- * 하위 표시 위젯에 각 도메인의 현재 상태 전달
- * 재화 원본과 저장은 WorldState 책임, Blueprint는 HUD 배치 담당
- * Construct에서 재화 변경 구독과 초기 표시 갱신
- * Destruct에서 재화·소모품 연결 해제
- */
 UCLASS(Blueprintable)
 class MAVERICK_API UMVMainHUDWidget : public UMVHUDWidgetBase
 {
@@ -45,24 +34,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Boss")
 	void HideBossHPBar();
 
-	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Boss")
-	void MarkBossPatrolComplete();
-
-	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Boss")
-	void MarkBossPlayStarted();
-
-
-	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
-	TObjectPtr<UTextBlock> Txt_Patrol;
-
-	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
-	TObjectPtr<UTextBlock> Txt_PlayInfo;
-
 protected:
 	virtual void NativeOnInitialized() override;
-	virtual void NativeConstruct() override;
-	virtual void NativeDestruct() override;
-	
+
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional), Category = "Maverick|UI|HUD")
 	TObjectPtr<UMVPlayerStatusWidget> PlayerStatus;
 
@@ -89,13 +63,7 @@ private:
 	void EnsurePlayerSkillHUD();
 	void BindPlayerConsumable(UMVPlayerConsumable* Consumable);
 	void ApplyHealingPotionQuickSlotView();
-	void BindWorldState();
-	void UnbindWorldState();
-	void RefreshCurrencyHUD();
 
-	UFUNCTION()
-	void HandlePlayerProgressionChanged(const FMVPlayerProgressionSaveData& PlayerProgression);
-	
 	UFUNCTION()
 	void HandleHealingPotionStateChanged(const FMVHealingPotionRuntimeState& HealingPotionState);
 
@@ -103,6 +71,4 @@ private:
 
 	UPROPERTY(Transient)
 	TObjectPtr<UMVPlayerConsumable> BoundPlayerConsumable;
-	
-	TWeakObjectPtr<UMVWorldStateSubsystem> BoundWorldState;
 };

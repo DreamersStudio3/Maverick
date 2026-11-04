@@ -2,6 +2,7 @@
 
 #include "AI/MVActionCooldownComponent.h"
 #include "Character/MVCharacterBase.h"
+#include "Character/NPC/Enemy/MVEnemy.h"
 #include "AIController.h"
 #include "Chooser.h"
 #include "Components/MVActionComponent.h"
@@ -364,9 +365,17 @@ EStateTreeRunStatus FMVExecuteFixedAttackTask::EnterState(
 	const FStateTreeTransitionResult& Transition) const
 {
 	FInstanceDataType& InstanceData = Context.GetInstanceData<FInstanceDataType>(*this);
+	if (InstanceData.Enemy && InstanceData.AttackMontageEndedHandle.IsValid())
+	{
+		InstanceData.Enemy->OnAttackMontageEnded.Remove(InstanceData.AttackMontageEndedHandle);
+	}
+
 	InstanceData.ActionComponent = nullptr;
+	InstanceData.Enemy = nullptr;
 	InstanceData.StartedActionTableName = NAME_None;
 	InstanceData.StartedActionRowName = NAME_None;
+	InstanceData.AttackInstanceId = INDEX_NONE;
+	InstanceData.AttackMontageEndedHandle.Reset();
 	InstanceData.ChooserAttackActionRowHandle.Reset();
 
 	APawn* Owner = ExecuteAttackResolveOwner(Context, InstanceData.Owner);
@@ -410,7 +419,34 @@ EStateTreeRunStatus FMVExecuteFixedAttackTask::EnterState(
 		return EStateTreeRunStatus::Running;
 	}
 
-	return EStateTreeRunStatus::Failed;
+	InstanceData.Enemy = Cast<AMVEnemy>(Owner);
+	if (!InstanceData.Enemy || !InstanceData.Enemy->Attack(InstanceData.FallbackAttackDirection, InstanceData.AttackInstanceId))
+	{
+		return EStateTreeRunStatus::Failed;
+	}
+
+	if (!ExecuteAttackStartCooldown(*Owner, ResolvedAttack))
+	{
+		return EStateTreeRunStatus::Failed;
+	}
+
+	const int32 ExpectedAttackInstanceId = InstanceData.AttackInstanceId;
+	InstanceData.AttackMontageEndedHandle = InstanceData.Enemy->OnAttackMontageEnded.AddLambda(
+		[WeakContext = Context.MakeWeakExecutionContext(), ExpectedAttackInstanceId](
+			const int32 FinishedAttackInstanceId,
+			UAnimMontage* Montage,
+			const bool bInterrupted)
+		{
+			if (FinishedAttackInstanceId == ExpectedAttackInstanceId)
+			{
+				WeakContext.FinishTask(bInterrupted
+					? EStateTreeFinishTaskType::Failed
+					: EStateTreeFinishTaskType::Succeeded);
+			}
+		});
+
+	InstanceData.LastAttackTag = MVAICombat::MakeActionTag(ResolvedAttack);
+	return EStateTreeRunStatus::Running;
 }
 
 EStateTreeRunStatus FMVExecuteFixedAttackTask::Tick(FStateTreeExecutionContext& Context, const float DeltaTime) const
@@ -434,6 +470,12 @@ void FMVExecuteFixedAttackTask::ExitState(
 	const FStateTreeTransitionResult& Transition) const
 {
 	FInstanceDataType& InstanceData = Context.GetInstanceData<FInstanceDataType>(*this);
+	if (InstanceData.Enemy && InstanceData.AttackMontageEndedHandle.IsValid())
+	{
+		InstanceData.Enemy->OnAttackMontageEnded.Remove(InstanceData.AttackMontageEndedHandle);
+		InstanceData.AttackMontageEndedHandle.Reset();
+	}
+
 	if (InstanceData.ActionComponent
 		&& ExecuteAttackIsStartedActionRunning(
 			*InstanceData.ActionComponent,

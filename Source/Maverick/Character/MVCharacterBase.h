@@ -10,7 +10,7 @@
 #include "Struct/CharacterLocomotionStructs.h"
 #include "Struct/MVHitTypes.h"
 #include "Tables/MVCharacterTableTypes.h"
-#include "Enum/MVHitReactionEnums.h"
+
 
 #include "MVCharacterBase.generated.h"
 
@@ -18,17 +18,13 @@ class UMVStatComponent;
 class UMVActionComponent;
 class UMVCombatComponent;
 class UMVDeathComponent;
+class UMVHitReactionComponent;
 class UMVInputManagerComponent;
 class UMVWeaponComponent;
 class UCurveFloat;
 class UMotionWarpingComponent;
-class UMVStatusEffectComponent;
-class UMVHitReaction;
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FMVOnMovementInputReceived, const FVector&);
-DECLARE_MULTICAST_DELEGATE_TwoParams(FMVOnLocomotionSettingsUpdated, bool, bool);
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnChangedCharacterIsLying, bool, bIsLying);
 
 /**
  * 공통 캐릭터 런타임 본체.
@@ -54,7 +50,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnChangedCharacterIsLying, bool, 
  * 라이프사이클:
  *   1) BeginPlay -> 공용 컴포넌트 이벤트와 locomotion 보조 데이터를 초기화한다.
  *   2) AddMovementInput -> controller yaw 기준 raw 2D 입력을 누적하고 이동 입력 이벤트를 브로드캐스트한다.
- *   3) Tick -> 이동/회전/gait 갱신·조회 상태 정리 후 OnLocomotionSettingsUpdated로 실행 중 도메인 설정 적용 연결
+ *   3) Tick -> 이동/회전/gait를 갱신하고 애니메이션 조회용 상태를 정리한다.
  */
 UCLASS(Blueprintable, BlueprintType)
 class MAVERICK_API AMVCharacterBase : public ACharacter
@@ -99,8 +95,6 @@ public:
 
 	void ApplyLocomotionDirectionSnapshot(const FVector& MovementDirection);
 
-	void SetLyingFaceDirection(EMVHitReactionDir HitReactionDir);
-
 	UFUNCTION(BlueprintCallable, Category = "LocomotionData|Equipment")
 	void SetEquippedStyle(EMVEquippedStyle NewEquippedStyle);
 
@@ -122,22 +116,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Character|Damage")
 	bool OnHitResolved(const FMVResolvedHitData& HitData);
 
-	UFUNCTION(BlueprintCallable, Category = "Maverick|Character|Damage")
-	void SetCharacterMovementRotationActive(bool bMovementActive, bool bRotationActive);
-
-	UFUNCTION(BlueprintPure, Category = "Maverick|Character|State")
-	bool IsCharacterMovementActive() const { return bIsMovementActive; }
-
-	UFUNCTION(BlueprintCallable, Category = "Maverick|Character|State")
-	void SetCharacterIsLying(bool bNewIsLying);
-	
-	UFUNCTION(BlueprintCallable, Category = "Maverick|Character|State")
-	bool GetCharacterIsLying() const { return bIsLying; }
-
 	FMVOnMovementInputReceived OnMovementInputReceived;
-
-	/** 공통 이동·회전 설정 갱신 이후의 도메인 연결 지점, 인수는 이동 활성·회전 활성 */
-	FMVOnLocomotionSettingsUpdated OnLocomotionSettingsUpdated;
 
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|Character|Event")
 	FMVOnDamagedSignature OnDamaged;
@@ -155,7 +134,7 @@ public:
 	TObjectPtr<UMVDeathComponent> DeathComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	TObjectPtr<UMVHitReaction> HitReactionComponent;
+	TObjectPtr<UMVHitReactionComponent> HitReactionComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UMVInputManagerComponent> InputManagerComponent;
@@ -166,14 +145,13 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UMotionWarpingComponent> MotionWarpingComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	TObjectPtr<UMVStatusEffectComponent> StatusEffectComponent;
+
 
 private:
 	void ApplyCharacterIndexCodeToComponents();
 	void UpdateCharacterValue();
-	void UpdateRotation(bool bIsActive = true);
-	void UpdateMovement(bool bIsActive = true);
+	void UpdateRotation();
+	void UpdateMovement(float DeltaTime);
 	void UpdateLocomotionDirection();
 	void CacheControllerSpaceMovementInput(const FVector& WorldDirection, float ScaleValue);
 	FVector2D ResolveControllerSpaceMovementInput(const FVector& WorldDirection, float ScaleValue) const;
@@ -190,13 +168,10 @@ private:
 	EGait DesiredGait();
 	bool CanSprint() const;
 	float CalculateCharacterMovementSpeed(float WalkSpeed, float RunSpeed, float SprintSpeed);
-	
-private:
 	int32 InvincibilityCount = 0;
 	FVector2D ControllerSpaceMovementInput = FVector2D::ZeroVector;
 	uint64 ControllerSpaceMovementInputFrame = 0;
-	bool bIsMovementActive = true;
-	bool bIsRotationActive = true;
+	
 
 public:
 
@@ -236,16 +211,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LocomotionData")
 	TObjectPtr<UCurveFloat> SpeedDirectionCurve;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Character|State")
-	FMVOnChangedCharacterIsLying OnChangedCharacterIsLying;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Character|State")
-	bool bIsLying = false;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Character|State")
-	EMVLyingFaceDirection LyingFaceDirection = EMVLyingFaceDirection::Front;
-
-
 	// Utility Function
 public:
 	void ActiveHitstop(float Duration, float DilationAmount);
@@ -255,6 +220,5 @@ private:
 
 private:
 	FTimerHandle HitStopTimerHandle;
-	
 
 };

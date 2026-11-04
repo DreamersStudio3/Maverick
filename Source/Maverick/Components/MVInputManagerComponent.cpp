@@ -25,7 +25,6 @@ void UMVInputManagerComponent::BeginPlay()
 
 bool UMVInputManagerComponent::SubmitActionInput(const FGameplayTag ActionInputTag)
 {
-	if (IsGameplayInputBlocked()) return false;
 	if (!ActionInputTag.IsValid())
 	{
 		return false;
@@ -59,7 +58,6 @@ bool UMVInputManagerComponent::SubmitHoldActionInput(
 	const EMVActionInputPhase Phase,
 	const float HeldSeconds)
 {
-	if (IsGameplayInputBlocked()) return false;
 	if (!ActionInputTag.IsValid())
 	{
 		return false;
@@ -166,19 +164,6 @@ bool UMVInputManagerComponent::TryGetBufferedActionInput(
 	return true;
 }
 
-void UMVInputManagerComponent::BeginGameplayInputBlock()
-{
-	++GameplayInputBlockCount;
-	ClearBufferedActionInput();
-	CachedActionControllerSpaceInput = FVector2D::ZeroVector;
-}
-
-void UMVInputManagerComponent::EndGameplayInputBlock()
-{
-	GameplayInputBlockCount = FMath::Max(0, GameplayInputBlockCount - 1);
-	ClearBufferedActionInput();
-}
-
 void UMVInputManagerComponent::ClearBufferedActionInput()
 {
 	BufferedActionInput.Reset();
@@ -282,7 +267,7 @@ void UMVInputManagerComponent::EndMovementInputBlock()
 
 bool UMVInputManagerComponent::IsMovementInputBlocked() const
 {
-	return MovementInputBlockCount > 0 || IsGameplayInputBlocked();
+	return MovementInputBlockCount > 0;
 }
 
 void UMVInputManagerComponent::BeginRecoveryEscapeWindow()
@@ -535,7 +520,6 @@ bool UMVInputManagerComponent::TryRouteRecoveryWindowOpened()
 
 bool UMVInputManagerComponent::TryConsumeRecoveryEscapeInput()
 {
-	if (IsGameplayInputBlocked()) return false;
 	if (!IsRecoveryEscapeWindowOpen())
 	{
 		return false;
@@ -699,7 +683,7 @@ void UMVInputManagerComponent::BuildActionInputSnapshot(
 	bool bHasCurrentMovementInput = false;
 	if (const AMVCharacterBase* Character = OwnerCharacter.Get())
 	{
-		bHasCurrentMovementInput = Character->TryGetControllerSpaceMovementInput(OutControllerSpaceInput, 1);
+		bHasCurrentMovementInput = Character->TryGetControllerSpaceMovementInput(OutControllerSpaceInput, 0);
 	}
 
 	const uint64 CurrentFrame = GFrameCounter;

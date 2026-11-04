@@ -32,10 +32,7 @@ public class Maverick : ModuleRules
 			"Chooser",
 			"LockOnTarget",
 			"MotionWarping",
-			"NavigationSystem",
         });
-
-		PrivateDependencyModuleNames.AddRange(new string[] { "LevelSequence", "MovieScene" });
 
 		if (Target.Type == TargetRules.TargetType.Editor)
 		{
@@ -46,11 +43,7 @@ public class Maverick : ModuleRules
 				"KismetCompiler",
 				"BlueprintGraph",
 				"AnimationCore",
-				"MovieSceneTracks",
 				"ToolMenus",
-				"StateTreeEditorModule",
-				"PropertyBindingUtils",
-				"PropertyBindingUtilsEditor",
 				"Slate",
 				"SlateCore"
 			});

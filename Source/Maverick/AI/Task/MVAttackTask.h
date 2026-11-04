@@ -6,8 +6,7 @@
 #include "StateTreeTaskBase.h"
 #include "MVAttackTask.generated.h"
 
-class UMVActionComponent;
-class UMVCombatComponent;
+class AMVEnemy;
 
 USTRUCT()
 struct FMVAttackTaskInstanceData
@@ -18,16 +17,16 @@ struct FMVAttackTaskInstanceData
 	TObjectPtr<APawn> Pawn = nullptr;
 
 	UPROPERTY()
-	TObjectPtr<UMVCombatComponent> CombatComponent = nullptr;
-
-	UPROPERTY()
-	TObjectPtr<UMVActionComponent> ActionComponent = nullptr;
+	TObjectPtr<AMVEnemy> Enemy = nullptr;
 
 	UPROPERTY(EditAnywhere, Category = "Input|Attack")
 	EMVAttackDirection AttackDirection = EMVAttackDirection::Forward;
 
-	FName StartedActionTableName = NAME_None;
-	FName StartedActionRowName = NAME_None;
+	int32 AttackInstanceId = INDEX_NONE;
+	FDelegateHandle AttackMontageEndedHandle;
+	
+	
+	
 };
 
 USTRUCT(meta = (DisplayName = "Attack Task"))

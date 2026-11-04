@@ -6,11 +6,9 @@
 UENUM(BlueprintType)
 enum class EMVEquippedStyle : uint8
 {
-	None UMETA(DisplayName = "None"),
 	BareHand UMETA(DisplayName = "Bare Hand"),
 	OneHand UMETA(DisplayName = "One Hand"),
-	TwoHand UMETA(DisplayName = "Two Hand"),
-	DualWield UMETA(DisplayName = "Dual Wield")
+	TwoHand UMETA(DisplayName = "Two Hand")
 };
 
 UENUM(BlueprintType)

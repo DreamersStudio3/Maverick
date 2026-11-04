@@ -59,9 +59,6 @@ struct FMVGlobalSensingTaskInstanceData
 	UPROPERTY(EditAnywhere, Category = "Input|Cooldown")
 	TArray<FMVActionCooldownDefinition> ActionCooldowns;
 
-	UPROPERTY(EditAnywhere, Category = "Input|Cooldown", meta = (ClampMin = "0.0"))
-	float AttackCooldownSeconds = 1.5f;
-
 	UPROPERTY(EditAnywhere, Category = "Input|Cooldown")
 	FName AttackCadenceActionId = NAME_None;
 
@@ -144,13 +141,6 @@ struct FMVGlobalSensingTaskInstanceData
 	TObjectPtr<UMVActionCooldownComponent> CooldownComponent = nullptr;
 };
 
-/**
- * 타깃과 전투 환경을 감지해 `FMVAICombatContext`를 계속 갱신하는 StateTree 부모 Task.
- *
- * 거리·각도·LOS·이동 경로와 ActionComponent 상태를 모으고 `UMVActionCooldownComponent`를 구성·tick한다.
- * 같은 StateTree에서 Global Action Cooldown Task와 함께 tick 소유자가 되면 쿨다운이 이중 감소하므로
- * 둘 중 하나만 배치한다. 실제 Target, CombatContext와 LastAttackTag binding은 StateTree 에셋에서 확인한다.
- */
 USTRUCT()
 struct FMVGlobalSensingTask : public FStateTreeTaskCommonBase
 {
@@ -172,4 +162,8 @@ struct FMVGlobalSensingTask : public FStateTreeTaskCommonBase
 	virtual EStateTreeRunStatus Tick(
 		FStateTreeExecutionContext& Context,
 		float DeltaTime) const override;
+	
+	virtual void ExitState(
+		FStateTreeExecutionContext& Context,
+		const FStateTreeTransitionResult& Transition) const override;
 };

@@ -11,8 +11,6 @@
 #include "Tables/MVTableManager.h"
 #include "Tags/MVGameplayTags.h"
 
-
-
 DEFINE_LOG_CATEGORY_STATIC(LogMVPlayerDodge, Log, All);
 
 namespace
@@ -70,13 +68,9 @@ FString DodgeEquippedStyleToRowToken(const EMVEquippedStyle EquippedStyle)
 	case EMVEquippedStyle::OneHand:
 		return TEXT("1H");
 	case EMVEquippedStyle::BareHand:
+	default:
 		return TEXT("BH");
-	case EMVEquippedStyle::TwoHand:
-		return TEXT("2H");
-	case EMVEquippedStyle::DualWield:
-		return TEXT("DW");
 	}
-	return FString();
 }
 
 FString DodgeDirectionToRowToken(const ELocomotionDirection Direction)
@@ -394,11 +388,11 @@ UMVPlayerDodge::FMVDodgeInputContext UMVPlayerDodge::MakeDodgeInputContext(
 	}
 
 	DodgeInput.bHasMovementInput = !DodgeInput.ControllerSpaceInput.IsNearlyZero();
-
-	// Todo: IsLyingÀ» °í·ÁÇØ¼­ StrafeMode ½Ã Dodge¿Í °°Àº DodgeInputÀ» ¸¸µé ¼ö ÀÖµµ·Ï ÇØ¾ßÇÔ. (ÇöÀç´Â IsLyingÀÏ ¶§ DodgeInputÀÌ ¸¸µé¾îÁöÁö ¾ÊÀ½)
-	//const bool bIsLying = OwnerCharacter->GetCharacterIsLying();
-	const bool bFreeDodge = (DodgeInput.bHasMovementInput && !OwnerCharacter->CharacterInputState.WantsToStrafe && !OwnerCharacter->CharacterInputState.WantsToAim) /*|| bIsLying*/;
-	const bool bStrafeDodge = (!bFreeDodge && (OwnerCharacter->CharacterInputState.WantsToStrafe || OwnerCharacter->CharacterInputState.WantsToAim)) /*|| bIsLying*/;
+	const bool bFreeDodge = DodgeInput.bHasMovementInput
+		&& !OwnerCharacter->CharacterInputState.WantsToStrafe
+		&& !OwnerCharacter->CharacterInputState.WantsToAim;
+	const bool bStrafeDodge = !bFreeDodge
+		&& (OwnerCharacter->CharacterInputState.WantsToStrafe || OwnerCharacter->CharacterInputState.WantsToAim);
 	const FRotator StrafeReferenceRotation = ResolveStrafeReferenceRotation(*OwnerCharacter);
 	const FVector RawMovementDirection = DodgeResolveWorldDirectionFromControllerSpaceInput(
 		DodgeInput.ControllerSpaceInput,
@@ -433,13 +427,7 @@ void UMVPlayerDodge::ApplyDodgeInputContext(
 	if (!DodgeInput.FacingDirection.IsNearlyZero())
 	{
 		BeginLockOnPawnRotationSuppressionForDodge(OwnerCharacter);
-		// Todo: MakeDodgeInputContext¿¡¼­ bIsLyingÀ» °í·ÁÇØ¼­ StrafeMode ½Ã Dodge¿Í °°Àº DodgeInputÀ» ¸¸µé ¼ö ÀÖµµ·Ï ÇØ¾ßÇÔ. (ÇöÀç´Â IsLyingÀÏ ¶§ DodgeInputÀÌ ¸¸µé¾îÁöÁö ¾ÊÀ½)
-		// ÇöÀç´Â ÀÓ½Ã·Î bIsLyingÀÏ ¶§´Â SetActorRotationÀ» ÇÏÁö ¾Êµµ·Ï Ã³¸®ÇÔ.
-		if(!OwnerCharacter.GetCharacterIsLying())
-		{
-			OwnerCharacter.SetActorRotation(MakeYawRotationFromDirection(DodgeInput.FacingDirection));
-		}
-		
+		OwnerCharacter.SetActorRotation(MakeYawRotationFromDirection(DodgeInput.FacingDirection));
 		if (UCharacterMovementComponent* MovementComponent = OwnerCharacter.GetCharacterMovement())
 		{
 			MovementComponent->bUseControllerDesiredRotation = false;
@@ -555,16 +543,12 @@ bool UMVPlayerDodge::TryStartDodgeAction(const FMVDodgeInputContext& DodgeInput)
 
 
 	const bool bActionRunning = ActionComponent->IsActionRunning();
-	const bool bIsLying = OwnerCharacter->GetCharacterIsLying();
-	const bool bCanTransitionCurrentAction = bIsLying || (bActionRunning && CanTransitionCurrentAction(*InputManager, *ActionComponent));
-
-	// bIsLying == true ÀÌ¸é Escape Dodge »óÈ² -> ´©¿öÀÖ´Â »óÅÂ´Â Montage°¡ ½ÇÇàµÇ°í ÀÖ´Â »óÅÂÀÌ¹Ç·Î µÞ Á¶°ÇÀ» ¹«½ÃÇØ¾ß Escape Dodge°¡ ½ÇÇàµÉ ¼ö ÀÖÀ½
-	// bIsLying == false ÀÌ¸é ÀÏ¹Ý Dodge »óÈ² -> Montage°¡ ½ÇÇàµÇ°í ÀÖ´Â »óÅÂÀÌ¸é Dodge¸¦ ½ÇÇàÇÒ ¼ö ¾øÀ½
+	const bool bCanTransitionCurrentAction = bActionRunning && CanTransitionCurrentAction(*InputManager, *ActionComponent);
 	if (bActionRunning && !bCanTransitionCurrentAction)
 	{
 		return false;
 	}
-	
+
 	ApplyDodgeInputContext(*OwnerCharacter, DodgeInput);
 
 	FMVDodgeActionRowHandle ActionRowHandle;
@@ -585,8 +569,7 @@ bool UMVPlayerDodge::TryStartDodgeAction(const FMVDodgeInputContext& DodgeInput)
 		return false;
 	}
 
-	float InstantCost = 0.0f;
-	if (!CanConsumeDodgeCost(*DodgeActionRow, InstantCost))
+	if (!CanConsumeDodgeCost(*DodgeActionRow))
 	{
 		EndLockOnPawnRotationSuppressionForDodge();
 		return false;
@@ -599,13 +582,8 @@ bool UMVPlayerDodge::TryStartDodgeAction(const FMVDodgeInputContext& DodgeInput)
 		? ActionComponent->TryTransitionActionFromRowHandle(
 			ActionRowHandle.ActionRow,
 			StartSection,
-			RecoveryDodgeTransitionBlendOutTime,
-			EMVActionDomain::Dodge)
-		: ActionComponent->TryStartActionFromRowHandle(
-			ActionRowHandle.ActionRow,
-			StartSection,
-			0.1f,
-			EMVActionDomain::Dodge);
+			RecoveryDodgeTransitionBlendOutTime)
+		: ActionComponent->TryStartActionFromRowHandle(ActionRowHandle.ActionRow, StartSection);
 	if (!bStarted)
 	{
 		UE_LOG(
@@ -621,7 +599,7 @@ bool UMVPlayerDodge::TryStartDodgeAction(const FMVDodgeInputContext& DodgeInput)
 	}
 
 	BeginLockOnPawnRotationSuppressionForDodge(*OwnerCharacter);
-	if (!ConsumeDodgeCost(InstantCost))
+	if (!ConsumeDodgeCost(*DodgeActionRow))
 	{
 		UE_LOG(
 			LogMVPlayerDodge,
@@ -744,11 +722,6 @@ bool UMVPlayerDodge::EvaluateDodgeChooserActionRowHandle(
 			OutActionRowHandle.ActionRow.RowName = MakeDodgeActionRowName(*OwnerCharacter, DodgeInput, DefaultDodgeRowIndex);
 			OutActionRowHandle.StartSection = NAME_None;
 		}
-
-		// ´©¿öÀÖ´Â »óÅÂ¿¡¼­ ±¸¸£±â ½Ã, Ä³¸¯ÅÍ ÀÌµ¿ Active && Ä³¸¯ÅÍ bIsLyingÀ» false
-		OwnerCharacter->SetCharacterMovementRotationActive(true, true);
-		OwnerCharacter->SetCharacterIsLying(false);
-
 		return true;
 	}
 
@@ -804,12 +777,6 @@ FName UMVPlayerDodge::MakeDodgeActionRowName(
 	}
 
 	const FString EquippedStyleToken = DodgeEquippedStyleToRowToken(OwnerCharacter.GetEquippedStyle());
-	
-	if (EquippedStyleToken.IsEmpty())
-	{
-		return NAME_None;
-	}
-	
 	const int32 ClampedIndex = FMath::Max(1, Index);
 	if (!DodgeInput.bHasMovementInput)
 	{
@@ -900,12 +867,8 @@ const FMVDodgeActionRow* UMVPlayerDodge::FindDodgeActionRow(
 	return DodgeActionRow;
 }
 
-bool UMVPlayerDodge::CanConsumeDodgeCost(
-	const FMVDodgeActionRow& DodgeActionRow,
-	float& OutInstantCost) const
+bool UMVPlayerDodge::CanConsumeDodgeCost(const FMVDodgeActionRow& DodgeActionRow) const
 {
-	OutInstantCost = 0.0f;
-
 	const AMVCharacterBase* OwnerCharacter = GetPlayerCharacter();
 	const UMVStatComponent* StatComponent = OwnerCharacter
 		? OwnerCharacter->FindComponentByClass<UMVStatComponent>()
@@ -915,41 +878,36 @@ bool UMVPlayerDodge::CanConsumeDodgeCost(
 		return true;
 	}
 
-	if (StatComponent->IsStaminaExhausted())
-	{
-		return false;
-	}
-
-	if (DodgeActionRow.StaminaCostType == EMVActionResourceCostType::Instant)
-	{
-		OutInstantCost = FMath::Max(0.0f, DodgeActionRow.StaminaCost)
-			* StatComponent->GetDodgeStaminaCostMultiplier();
-	}
-
+	const float InstantCost = DodgeActionRow.StaminaCostType == EMVActionResourceCostType::Instant
+		? DodgeActionRow.StaminaCost
+		: 0.0f;
 	const float RequiredStamina = FMath::Max(
 		FMath::Max(0.0f, DodgeActionRow.MinRequiredStamina),
-		OutInstantCost);
+		FMath::Max(0.0f, InstantCost));
 	return StatComponent->HasStamina(RequiredStamina);
 }
 
-bool UMVPlayerDodge::ConsumeDodgeCost(float InstantCost)
+bool UMVPlayerDodge::ConsumeDodgeCost(const FMVDodgeActionRow& DodgeActionRow)
 {
 	AMVCharacterBase* OwnerCharacter = GetPlayerCharacter();
 	UMVStatComponent* StatComponent = OwnerCharacter
 		? OwnerCharacter->FindComponentByClass<UMVStatComponent>()
 		: nullptr;
-	if (!StatComponent || InstantCost <= 0.0f)
+	if (!StatComponent || DodgeActionRow.StaminaCost <= 0.0f)
 	{
 		return true;
 	}
 
-	// ì•¡ì…˜ì„ ì‹œìž‘í•˜ëŠ” ì‚¬ì´ ìŠ¤íƒœë¯¸ë„ˆê°€ ë‹¬ë¼ì¡Œë‹¤ë©´ ì¼ë¶€ë§Œ ì°¨ê°í•˜ì§€ ì•ŠëŠ”ë‹¤.
-	if (!StatComponent->HasStamina(InstantCost))
+	switch (DodgeActionRow.StaminaCostType)
 	{
-		return false;
+	case EMVActionResourceCostType::Instant:
+		return StatComponent->ConsumeStamina(DodgeActionRow.StaminaCost);
+	case EMVActionResourceCostType::None:
+	case EMVActionResourceCostType::PerSecond:
+	case EMVActionResourceCostType::OnDemand:
+	default:
+		return true;
 	}
-
-	return StatComponent->ConsumeStamina(InstantCost);
 }
 
 void UMVPlayerDodge::ApplyDodgeChooserSnapshot(

@@ -50,8 +50,7 @@ FGameplayTag UMVActionComponent::GetCharacterIndexCode() const
 bool UMVActionComponent::TryStartActionFromTable(
 	const FName ActionTableName,
 	const FName ActionRowName,
-	FName StartSection,
-	const EMVActionDomain ActionDomain)
+	FName StartSection)
 {
 	if (ActionTableName.IsNone() || ActionRowName.IsNone())
 	{
@@ -75,25 +74,10 @@ bool UMVActionComponent::TryStartActionFromTable(
 		return false;
 	}
 
-	return TryStartResolvedAction(ActionTableName, ActionRowName, *ActionRow, StartSection, ActionDomain);
+	return TryStartResolvedAction(ActionTableName, ActionRowName, *ActionRow, StartSection);
 }
 
-bool UMVActionComponent::TryStartActionFromRowHandle(
-	const FDataTableRowHandle ActionRowHandle,
-	FName StartSection,
-	const float BlendoutTime,
-	const EMVActionDomain ActionDomain)
-{
-	return TryStartActionFromRowHandleWithPlayRate(
-		ActionRowHandle, StartSection, BlendoutTime, ActionDomain, 1.0f);
-}
-
-bool UMVActionComponent::TryStartActionFromRowHandleWithPlayRate(
-	const FDataTableRowHandle ActionRowHandle,
-	FName StartSection,
-	const float BlendoutTime,
-	const EMVActionDomain ActionDomain,
-	const float PlayRateMultiplier)
+bool UMVActionComponent::TryStartActionFromRowHandle(const FDataTableRowHandle ActionRowHandle,	FName StartSection, const float BlendoutTime)
 {
 	FName ActionTableName = NAME_None;
 	FName ActionRowName = NAME_None;
@@ -113,52 +97,7 @@ bool UMVActionComponent::TryStartActionFromRowHandleWithPlayRate(
 		CancelActiveAction(BlendoutTime);
 	}
 
-	return TryStartResolvedAction(ActionTableName, ActionRowName, *ActionRow, StartSection, ActionDomain, PlayRateMultiplier);
-}
-
-bool UMVActionComponent::TryAdditiveFromRowHandle(FDataTableRowHandle ActionRowHandle, FName StartSection, const float BlendoutTime)
-{
-	FName ActionTableName = NAME_None;
-	FName ActionRowName = NAME_None;
-	const FMVActionRow* ActionRow = FindActionRow(ActionRowHandle, ActionTableName, ActionRowName);
-
-	if (!ActionRow)
-	{
-		return false;
-	}
-
-	const float PlayRate = ActionRow->PlayRate > 0.0f ? ActionRow->PlayRate : 1.0f;
-
-	UObject* MontageObject = ActionRow->Montage.TryLoad();
-	UAnimMontage* ActionMontage = Cast<UAnimMontage>(MontageObject);
-	if (!ActionMontage)
-	{
-		return false;
-	}
-
-	UAnimInstance* AnimInstance = GetOwnerAnimInstance();
-	if (!AnimInstance)
-	{
-		return false;
-	}
-
-	const float MontageDuration = AnimInstance->Montage_Play(ActionMontage, PlayRate);
-	if (MontageDuration < 0.0f)
-	{
-		return false;
-	}
-
-	if (StartSection.IsNone())
-	{
-		StartSection = ActionRow->DefaultStartSection;
-	}
-
-	if (!StartSection.IsNone())
-	{
-		AnimInstance->Montage_JumpToSection(StartSection, ActionMontage);
-	}
-
-	return true;
+	return TryStartResolvedAction(ActionTableName, ActionRowName, *ActionRow, StartSection);
 }
 
 bool UMVActionComponent::PauseActiveAction()
@@ -191,9 +130,7 @@ bool UMVActionComponent::TryStartResolvedAction(
 	const FName ActionTableName,
 	const FName ActionRowName,
 	const FMVActionRow& ActionRow,
-	FName StartSection,
-	const EMVActionDomain ActionDomain,
-	const float PlayRateMultiplier)
+	FName StartSection)
 {
 	if (ActionTableName.IsNone() || ActionRowName.IsNone())
 	{
@@ -206,13 +143,7 @@ bool UMVActionComponent::TryStartResolvedAction(
 		return false;
 	}
 
-	const float RowPlayRate = ActionRow.PlayRate > 0.0f ? ActionRow.PlayRate : 1.0f;
-	const float SafeMultiplier =
-		FMath::IsFinite(PlayRateMultiplier) && PlayRateMultiplier > 0.0f
-			? PlayRateMultiplier
-			: 1.0f;
-	const float PlayRate = RowPlayRate * SafeMultiplier;
-
+	const float PlayRate = ActionRow.PlayRate > 0.0f ? ActionRow.PlayRate : 1.0f;
 	OnActionPreparing.Broadcast(ActionTableName, ActionRowName);
 
 	UAnimMontage* ActionMontage = ResolveActionRowMontage(ActionTableName, ActionRowName, ActionRow);
@@ -246,7 +177,6 @@ bool UMVActionComponent::TryStartResolvedAction(
 	ActiveActionTableName = ActionTableName;
 	ActiveActionRowName = ActionRowName;
 	ActiveActionMontage = ActionMontage;
-	ActiveActionDomain = ActionDomain;
 	ActiveActionInstanceId = ++NextActionInstanceId;
 	bActiveActionCanBeInterrupted = ActionRow.bCanBeInterrupted;
 
@@ -263,8 +193,7 @@ bool UMVActionComponent::TryTransitionActionFromTable(
 	const FName ActionTableName,
 	const FName ActionRowName,
 	const FName StartSection,
-	const float BlendOutTime,
-	const EMVActionDomain ActionDomain)
+	const float BlendOutTime)
 {
 	if (ActionTableName.IsNone() || ActionRowName.IsNone())
 	{
@@ -276,25 +205,13 @@ bool UMVActionComponent::TryTransitionActionFromTable(
 		CancelActiveAction(BlendOutTime);
 	}
 
-	return TryStartActionFromTable(ActionTableName, ActionRowName, StartSection, ActionDomain);
+	return TryStartActionFromTable(ActionTableName, ActionRowName, StartSection);
 }
 
 bool UMVActionComponent::TryTransitionActionFromRowHandle(
 	const FDataTableRowHandle ActionRowHandle,
 	const FName StartSection,
-	const float BlendOutTime,
-	const EMVActionDomain ActionDomain)
-{
-	return TryTransitionActionFromRowHandleWithPlayRate(
-		ActionRowHandle, StartSection, BlendOutTime, ActionDomain, 1.0f);
-}
-
-bool UMVActionComponent::TryTransitionActionFromRowHandleWithPlayRate(
-	const FDataTableRowHandle ActionRowHandle,
-	const FName StartSection,
-	const float BlendOutTime,
-	const EMVActionDomain ActionDomain,
-	const float PlayRateMultiplier)
+	const float BlendOutTime)
 {
 	FName ActionTableName = NAME_None;
 	FName ActionRowName = NAME_None;
@@ -315,7 +232,7 @@ bool UMVActionComponent::TryTransitionActionFromRowHandleWithPlayRate(
 		CancelActiveAction(BlendOutTime);
 	}
 
-	return TryStartResolvedAction(ActionTableName, ActionRowName, *ActionRow, StartSection, ActionDomain, PlayRateMultiplier);
+	return TryStartResolvedAction(ActionTableName, ActionRowName, *ActionRow, StartSection);
 }
 
 void UMVActionComponent::FinishActiveAction(bool bInterrupted)
@@ -330,7 +247,6 @@ void UMVActionComponent::FinishActiveAction(bool bInterrupted)
 	ActiveActionTableName = NAME_None;
 	ActiveActionRowName = NAME_None;
 	ActiveActionMontage = nullptr;
-	ActiveActionDomain = EMVActionDomain::None;
 	ActiveActionInstanceId = INDEX_NONE;
 	bActiveActionCanBeInterrupted = true;
 
@@ -388,11 +304,6 @@ FName UMVActionComponent::GetActiveActionRowName() const
 int32 UMVActionComponent::GetActiveActionInstanceId() const
 {
 	return ActiveActionInstanceId;
-}
-
-EMVActionDomain UMVActionComponent::GetActiveActionDomain() const
-{
-	return ActiveActionDomain;
 }
 
 UAnimMontage* UMVActionComponent::GetActiveActionMontage() const

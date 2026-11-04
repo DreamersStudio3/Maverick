@@ -1,9 +1,7 @@
 #include "MVAttackTask.h"
 
+#include "Character/NPC/Enemy/MVEnemy.h"
 #include "AIController.h"
-#include "Components/MVActionComponent.h"
-#include "Components/MVCombatComponent.h"
-#include "Enum/MVCombatActionTypes.h"
 #include "StateTreeAsyncExecutionContext.h"
 #include "StateTreeExecutionContext.h"
 
@@ -11,11 +9,15 @@ EStateTreeRunStatus FMVAttackTask::EnterState(FStateTreeExecutionContext& Contex
                                               const FStateTreeTransitionResult& Transition) const
 {
 	FInstanceDataType& InstanceData = Context.GetInstanceData<FInstanceDataType>(*this);
+	if (InstanceData.Enemy && InstanceData.AttackMontageEndedHandle.IsValid())
+	{
+		InstanceData.Enemy->OnAttackMontageEnded.Remove(InstanceData.AttackMontageEndedHandle);
+	}
+
 	InstanceData.Pawn = nullptr;
-	InstanceData.CombatComponent = nullptr;
-	InstanceData.ActionComponent = nullptr;
-	InstanceData.StartedActionTableName = NAME_None;
-	InstanceData.StartedActionRowName = NAME_None;
+	InstanceData.Enemy = nullptr;
+	InstanceData.AttackInstanceId = INDEX_NONE;
+	InstanceData.AttackMontageEndedHandle.Reset();
 
 	if (const AAIController* AIController = Cast<AAIController>(Context.GetOwner()))
 	{
@@ -31,42 +33,48 @@ EStateTreeRunStatus FMVAttackTask::EnterState(FStateTreeExecutionContext& Contex
 		return EStateTreeRunStatus::Failed;
 	}
 
-	InstanceData.CombatComponent = InstanceData.Pawn->FindComponentByClass<UMVCombatComponent>();
-	InstanceData.ActionComponent = InstanceData.Pawn->FindComponentByClass<UMVActionComponent>();
-	if (!InstanceData.CombatComponent || !InstanceData.ActionComponent)
+	InstanceData.Enemy = Cast<AMVEnemy>(InstanceData.Pawn);
+	if (!InstanceData.Enemy)
 	{
 		return EStateTreeRunStatus::Failed;
 	}
 
-	if (!InstanceData.CombatComponent->TryBasicCombatAction(EMVCombatActionTypes::LightAttack))
+	if (!InstanceData.Enemy->Attack(InstanceData.AttackDirection, InstanceData.AttackInstanceId))
 	{
 		return EStateTreeRunStatus::Failed;
 	}
 
-	InstanceData.StartedActionTableName = InstanceData.ActionComponent->GetActiveActionTableName();
-	InstanceData.StartedActionRowName = InstanceData.ActionComponent->GetActiveActionRowName();
+	const int32 ExpectedAttackInstanceId = InstanceData.AttackInstanceId;
+	InstanceData.AttackMontageEndedHandle = InstanceData.Enemy->OnAttackMontageEnded.AddLambda(
+		[WeakContext = Context.MakeWeakExecutionContext(), ExpectedAttackInstanceId](
+			const int32 FinishedAttackInstanceId,
+			UAnimMontage* Montage,
+			const bool bInterrupted)
+		{
+			if (FinishedAttackInstanceId == ExpectedAttackInstanceId)
+			{
+				WeakContext.FinishTask(bInterrupted
+					? EStateTreeFinishTaskType::Failed
+					: EStateTreeFinishTaskType::Succeeded);
+			}
+		});
 
 	return EStateTreeRunStatus::Running;
 }
 
 EStateTreeRunStatus FMVAttackTask::Tick(FStateTreeExecutionContext& Context, const float DeltaTime) const
 {
-	const FInstanceDataType& InstanceData = Context.GetInstanceData<FInstanceDataType>(*this);
-	if (!InstanceData.ActionComponent)
-	{
-		return EStateTreeRunStatus::Failed;
-	}
-
-	const bool bActionRunning = InstanceData.ActionComponent->IsActionRunning()
-		&& (InstanceData.StartedActionTableName.IsNone()
-			|| InstanceData.ActionComponent->GetActiveActionTableName() == InstanceData.StartedActionTableName)
-		&& (InstanceData.StartedActionRowName.IsNone()
-			|| InstanceData.ActionComponent->GetActiveActionRowName() == InstanceData.StartedActionRowName);
-
-	return bActionRunning ? EStateTreeRunStatus::Running : EStateTreeRunStatus::Succeeded;
+	return EStateTreeRunStatus::Running;
 }
 
 void FMVAttackTask::ExitState(FStateTreeExecutionContext& Context, const FStateTreeTransitionResult& Transition) const
 {
+	FInstanceDataType& InstanceData = Context.GetInstanceData<FInstanceDataType>(*this);
+	if (InstanceData.Enemy && InstanceData.AttackMontageEndedHandle.IsValid())
+	{
+		InstanceData.Enemy->OnAttackMontageEnded.Remove(InstanceData.AttackMontageEndedHandle);
+		InstanceData.AttackMontageEndedHandle.Reset();
+	}
+
 	FStateTreeTaskBase::ExitState(Context, Transition);
 }

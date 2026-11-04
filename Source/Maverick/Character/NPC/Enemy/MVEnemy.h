@@ -3,58 +3,139 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AI/Enum/MVAttackDirection.h"
 #include "Character/MVCharacterBase.h"
+#include "Character/NPC/Enemy/MVEnemyWeapon.h"
+#include "Interface/MVHitReactionRecoveryDecisionProvider.h"
+#include "System/MVFieldTransitionResettableInterface.h"
 #include "TimerManager.h"
 #include "MVEnemy.generated.h"
 
+class UAnimMontage;
 class UMVMainHUDWidget;
-class AActor;
-struct FMVAIDodgeRequest;
+class UMVEnemyDodgeTokenComponent;
 
 /**
- * 적 공통 대상·순찰 경로 참조·피해 이벤트·보스 HUD 연결의 캐릭터 브리지
- * BeginPlay의 HUD 연결 재시도와 EndPlay의 해제 소유
- * 대상 방향 계산은 C++, 회전 실행·구간 제어는 StateTree Task·Notify 책임
+ * Enemy character bridge for AI-driven combat.
+ *
+ * Owns attack montage playback notifications so AI tasks can react to
+ * animation completion without reaching into animation state directly. Weapon
+ * visuals and weapon state are expected to be handled by the shared weapon
+ * component path, while damage notifications are routed to enemy-specific
+ * events so StateTree tasks can decide when to run combat state presentation.
+ * Boss HUD binding is owned here as part of the enemy presentation lifecycle.
+ * Field transition reset restores reusable enemy runtime state after player
+ * death respawn without moving the actor back to its initial spawn transform.
+ * Enemy identity defaults here, while concrete enemy Blueprints configure
+ * their own CombatComponent chooser and fallback tables.
  */
 UCLASS()
-class MAVERICK_API AMVEnemy : public AMVCharacterBase
+class MAVERICK_API AMVEnemy
+	: public AMVCharacterBase
+	, public IMVHitReactionRecoveryDecisionProvider
+	, public IMVFieldTransitionResettableInterface
 {
 	GENERATED_BODY()
 	
 public:
+	DECLARE_MULTICAST_DELEGATE_ThreeParams(
+		FMVEnemyAttackMontageEndedSignature,
+		int32 /*AttackInstanceId*/,
+		UAnimMontage* /*Montage*/,
+		bool /*bInterrupted*/);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMVEnemyGroggyStartedSignature);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMVEnemyGroggyEndedSignature);
+
 	AMVEnemy();
 	virtual void BeginPlay() override;
+	bool Attack(EMVAttackDirection AttackDirection);
+	bool Attack(EMVAttackDirection AttackDirection, int32& OutAttackInstanceId);
 
-	bool ReceiveAttackNotice(const FMVAIDodgeRequest& Notice);
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Maverick|Enemy|Combat")
+	bool TryHeavyAttack(int32 ActionIndex = 0, FName StartSection = NAME_None);
+	virtual bool TryHeavyAttack_Implementation(int32 ActionIndex, FName StartSection);
 
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Maverick|Enemy|Combat")
+	bool TrySkillAttack(int32 SkillIndex, FName StartSection = NAME_None);
+	virtual bool TrySkillAttack_Implementation(int32 SkillIndex, FName StartSection);
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|Enemy|Weapon")
+	AMVEnemyWeapon* GetWeaponActor() const;
+
+	void DestroyWeaponActor();
 	void HideBoundBossHUD();
 
-	/** 공격 대상의 수평 방향, 대상 부재·동일 수평 위치에서는 현재 회전 유지 */
-	UFUNCTION(BlueprintPure, Category = "AI|Target")
-	FRotator GetTargetRotation() const;
+	virtual bool TryChooseHitReactionRecovery(
+		const FMVHitReactionRecoveryDecisionContext& Context,
+		FMVHitReactionRecoveryDecision& OutDecision) override;
 
-	/**
-	 * AIController가 런타임에 지정하는 공격 대상
-	 * StateTree·블루프린트에서 읽을 수 있으며, 유효하지 않은 동안 대상 없음 상태
-	 */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI|Target")
-	TObjectPtr<AActor> AttackTarget = nullptr;
+	virtual EMVFieldTransitionResetPolicy GetFieldTransitionResetPolicy_Implementation() const override;
+	virtual FName GetFieldTransitionResetFieldId_Implementation() const override;
+	virtual FName GetFieldTransitionResetObjectId_Implementation() const override;
+	virtual void HandleFieldTransitionReset_Implementation(
+		const FMVFieldTransitionResetContext& ResetContext) override;
 
-	/** 레벨에 배치한 Spline 경로 Actor, 이동·회전 정책은 Patrol Task 소유 */
-	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "AI|Patrol")
-	TObjectPtr<AActor> PatrolPath = nullptr;
+	FMVEnemyAttackMontageEndedSignature OnAttackMontageEnded;
 
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|Enemy|Event")
 	FMVOnDamagedSignature OnEnemyDamaged;
 
+	UPROPERTY(BlueprintAssignable, Category = "Maverick|Enemy|Event")
+	FMVEnemyGroggyStartedSignature OnEnemyGroggyStarted;
+
+	UPROPERTY(BlueprintAssignable, Category = "Maverick|Enemy|Event")
+	FMVEnemyGroggyEndedSignature OnEnemyGroggyEnded;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<UMVEnemyDodgeTokenComponent> EnemyDodgeTokenComponent;
+	
+	
 protected:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	virtual void BindDamageHandlers() override;
 
+	void ScheduleBossHUDBindRetry(float DelaySeconds);
 	void BindBossHUDToMainHUD();
+	void ResetEnemyForFieldTransition();
+	void RestoreWeaponActor();
+	void RestartStateTreeLogicForFieldTransition();
+
+	void HandleAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted, int32 AttackInstanceId);
+
 	UFUNCTION()
 	void HandleEnemyDamaged(const FMVResolvedHitData& HitData);
 
+	UFUNCTION()
+	void HandleEnemyGroggyStarted();
+
+	UFUNCTION()
+	void HandleEnemyGroggyEnded();
+
+	AActor* ResolveHitReactionRecoveryTarget() const;
+	EMVActionInputDirection ResolveEscapeDirectionAwayFromTarget(const AActor& Target) const;
+
+	UPROPERTY(EditAnywhere, Category = "Animation")
+	TObjectPtr<UAnimMontage> AttackMontage;
+
+	int32 NextAttackInstanceId = 0;
+	
+	
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AMVEnemyWeapon> WeaponClass ;
+	
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<AMVEnemyWeapon> WeaponActor;
+	
+	UPROPERTY(EditAnywhere, Category = "Weapon")
+	bool bUseDualWeapon = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Enemy|HitReaction|Recovery")
+	bool bUseAirborneRecoveryDecision = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Enemy|HitReaction|Recovery", meta = (ClampMin = "0.0", Units = "cm"))
+	float AirborneEscapeDodgeDistance = 500.0f;
+
 	FTimerHandle BossHUDBindRetryTimerHandle;
 	TWeakObjectPtr<UMVMainHUDWidget> BoundBossHUD;
+	int32 BossHUDBindAttemptsRemaining = 0;
 };
