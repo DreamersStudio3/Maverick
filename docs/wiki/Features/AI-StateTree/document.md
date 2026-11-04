@@ -1,7 +1,7 @@
 ---
 제목: AI StateTree
 부제목: StateTree 감지·판단·Action 실행 경계
-최근수정일: 2026-11-03
+최근수정일: 2026-11-04
 최근수정자: Codex
 관련문서:
   - "[[Architecture/document|Maverick Architecture]]"
@@ -53,6 +53,7 @@ flowchart TD
 - `PatrolSpline` 점 선택·이동으로 경로 편집, `Closed Loop` 활성 시 순환·비활성 시 양 끝 왕복
 - 기본 Task 값: `PatrolSpeed = 180cm/s`, `LookAheadDistance = 120cm`, `TurnRate = 180°/s`, 열린 끝 방향 전환 거리 `AcceptanceRadius = 75cm`
 - 실제 발 위치의 최근접 Spline 거리에서 앞선 목표점 계산, `AddMovementInput` 사용; 지점 통과·순환 중 `Running` 유지
+- 순찰 상태는 StateTree 실행 상태, 설정 복구 여부는 이벤트 구독 핸들로 관리; 목표점은 Tick 내부 지역 계산
 - `LookAheadDistance`의 실제 적용 범위는 1cm부터 전체 길이의 1/4까지, 큰 값은 급커브의 경로 이탈 증가 가능
 - `AMVCharacterBase.OnLocomotionSettingsUpdated`: 공통 이동·회전 설정 갱신 이후의 연결 지점, 속도·회전 정책은 Patrol Task 소유
 - Task의 약한 이벤트 구독으로 매 갱신 뒤 순찰 설정 적용, 이동·회전 비활성 상태의 잠금 보존; 대상 발견·실패·Exit에서 구독 해제와 기존 설정 복구
@@ -73,6 +74,16 @@ flowchart TD
 
 검증 요약: [spline-patrol-validation.json](attachments/spline-patrol-validation.json)
 원본 주행 관측·빌드·회귀 검사·백업: `Saved/SplinePatrol/`, Git 제외
+
+2026-11-04 / Codex / Windows / Unreal Engine 5.8.3 정리 검증
+
+- 참조 없는 `bPatrolling`·목표점 저장 필드 제거, 적용 여부 Boolean은 구독 핸들로 통합; 순찰 기능·경로 에셋 유지
+- 일반 빌드와 두 관련 StateTree 컴파일 통과, XGE 라이선스 비활성 경고 포함; 실제 PIE의 순환·왕복·대상 지정 후 설정 복구 확인
+- 제작용 Python 스크립트 20개·이번 검증 보조 스크립트 7개·오래된 프로세스 번호 파일 1개를 보관본 생성 후 정리, 최종 관측·로그·백업 유지
+- 사용자 맵 파일 바이트·Spline 형상·저장 파일 바이트와 수정 시각 보존 확인, 패키징·네트워크·자동 시야 감지 자체의 실행 검증 제외
+
+정리 검증: [spline-patrol-cleanup-validation.json](attachments/spline-patrol-cleanup-validation.json)
+원본 관측·복원용 스크립트 보관본: `Saved/SplinePatrolCleanup/`, Git 제외
 
 ### 공격 예고 이벤트
 

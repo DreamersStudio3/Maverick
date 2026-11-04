@@ -9,7 +9,7 @@ class APawn;
 class USplineComponent;
 class UCharacterMovementComponent;
 
-/** 순찰 입력·관측 값과 실행 중 적용한 이동 설정의 복구 상태, Task 인스턴스별 소유 */
+/** 순찰 입력과 실행 중 적용한 이동 설정의 복구 상태, Task 인스턴스별 소유 */
 USTRUCT()
 struct MAVERICK_API FMVAIPatrolTaskInstanceData
 {
@@ -30,12 +30,6 @@ struct MAVERICK_API FMVAIPatrolTaskInstanceData
 	UPROPERTY(EditAnywhere, Category = "Input|Patrol", meta = (ClampMin = "1", Units = "deg/s"))
 	float TurnRate = 180.0f;
 
-	UPROPERTY(EditAnywhere, Category = "Output")
-	bool bPatrolling = false;
-
-	UPROPERTY(EditAnywhere, Category = "Output")
-	FVector Destination = FVector::ZeroVector;
-
 	UPROPERTY(Transient)
 	TObjectPtr<AAIController> Controller = nullptr;
 
@@ -51,7 +45,6 @@ struct MAVERICK_API FMVAIPatrolTaskInstanceData
 	bool bPreviousUseControllerRotationYaw = false;
 	bool bPreviousOrientRotationToMovement = false;
 	bool bPreviousUseControllerDesiredRotation = false;
-	bool bMovementSettingsApplied = false;
 	FDelegateHandle MovementSettingsHandle;
 };
 

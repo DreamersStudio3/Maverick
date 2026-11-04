@@ -24,25 +24,21 @@ void ApplyMovementSettings(AMVEnemy& Enemy, const float Speed, const float TurnR
 
 void RestoreMovement(FMVAIPatrolTaskInstanceData& Data)
 {
-	if (Data.bMovementSettingsApplied)
+	if (!Data.MovementSettingsHandle.IsValid()) return;
+	if (AMVEnemy* Enemy = Cast<AMVEnemy>(Data.Owner)) Enemy->OnLocomotionSettingsUpdated.Remove(Data.MovementSettingsHandle);
+	Data.MovementSettingsHandle.Reset();
+	if (IsValid(Data.Movement))
 	{
-		if (AMVEnemy* Enemy = Cast<AMVEnemy>(Data.Owner)) Enemy->OnLocomotionSettingsUpdated.Remove(Data.MovementSettingsHandle);
-		Data.MovementSettingsHandle.Reset();
-		if (IsValid(Data.Movement))
-		{
-			Data.Movement->MaxWalkSpeed = Data.PreviousMaxWalkSpeed;
-			Data.Movement->RotationRate = Data.PreviousRotationRate;
-			Data.Movement->bOrientRotationToMovement = Data.bPreviousOrientRotationToMovement;
-			Data.Movement->bUseControllerDesiredRotation = Data.bPreviousUseControllerDesiredRotation;
-		}
-		if (IsValid(Data.Owner))
-		{
-			Data.Owner->bUseControllerRotationYaw = Data.bPreviousUseControllerRotationYaw;
-			Data.Owner->ConsumeMovementInputVector();
-		}
+		Data.Movement->MaxWalkSpeed = Data.PreviousMaxWalkSpeed;
+		Data.Movement->RotationRate = Data.PreviousRotationRate;
+		Data.Movement->bOrientRotationToMovement = Data.bPreviousOrientRotationToMovement;
+		Data.Movement->bUseControllerDesiredRotation = Data.bPreviousUseControllerDesiredRotation;
 	}
-	Data.bMovementSettingsApplied = false;
-	Data.bPatrolling = false;
+	if (IsValid(Data.Owner))
+	{
+		Data.Owner->bUseControllerRotationYaw = Data.bPreviousUseControllerRotationYaw;
+		Data.Owner->ConsumeMovementInputVector();
+	}
 }
 
 bool HasTarget(const AAIController* Controller)
@@ -77,8 +73,8 @@ bool UpdateMovement(FMVAIPatrolTaskInstanceData& Data)
 	float TargetDistance = Distance + Data.Direction * LookAhead;
 	if (Data.Spline->IsClosedLoop()) TargetDistance = FMath::Fmod(TargetDistance + Length, Length);
 	else TargetDistance = FMath::Clamp(TargetDistance, 0.0f, Length);
-	Data.Destination = Data.Spline->GetLocationAtDistanceAlongSpline(TargetDistance, ESplineCoordinateSpace::World);
-	Data.Owner->AddMovementInput((Data.Destination - Location).GetSafeNormal2D());
+	const FVector Destination = Data.Spline->GetLocationAtDistanceAlongSpline(TargetDistance, ESplineCoordinateSpace::World);
+	Data.Owner->AddMovementInput((Destination - Location).GetSafeNormal2D());
 	return true;
 }
 }
@@ -88,10 +84,7 @@ FMVAIPatrolTask::FMVAIPatrolTask() { bShouldCallTick = true; }
 EStateTreeRunStatus FMVAIPatrolTask::EnterState(FStateTreeExecutionContext& Context, const FStateTreeTransitionResult& Transition) const
 {
 	FInstanceDataType& Data = Context.GetInstanceData<FInstanceDataType>(*this);
-	Data.bPatrolling = false;
-	Data.bMovementSettingsApplied = false;
 	Data.Direction = 1.0f;
-	Data.Destination = FVector::ZeroVector;
 	Data.Owner = MaverickPatrolTaskPrivate::ResolveOwner(Context, Data.Owner);
 	Data.Controller = IsValid(Data.Owner) ? Cast<AAIController>(Data.Owner->GetController()) : nullptr;
 	Data.Spline = nullptr;
@@ -108,7 +101,6 @@ EStateTreeRunStatus FMVAIPatrolTask::EnterState(FStateTreeExecutionContext& Cont
 	Data.bPreviousUseControllerRotationYaw = Enemy->bUseControllerRotationYaw;
 	Data.bPreviousOrientRotationToMovement = Data.Movement->bOrientRotationToMovement;
 	Data.bPreviousUseControllerDesiredRotation = Data.Movement->bUseControllerDesiredRotation;
-	Data.bMovementSettingsApplied = true;
 	const float Speed = FMath::Max(1.0f, Data.PatrolSpeed);
 	const float TurnRate = FMath::Max(1.0f, Data.TurnRate);
 	Data.MovementSettingsHandle = Enemy->OnLocomotionSettingsUpdated.AddWeakLambda(Enemy,
@@ -117,7 +109,6 @@ EStateTreeRunStatus FMVAIPatrolTask::EnterState(FStateTreeExecutionContext& Cont
 			MaverickPatrolTaskPrivate::ApplyMovementSettings(*Enemy, Speed, TurnRate, bMovementActive, bRotationActive);
 		});
 	MaverickPatrolTaskPrivate::ApplyMovementSettings(*Enemy, Speed, TurnRate, Enemy->IsCharacterMovementActive(), true);
-	Data.bPatrolling = true;
 	MaverickPatrolTaskPrivate::UpdateMovement(Data);
 	return EStateTreeRunStatus::Running;
 }
