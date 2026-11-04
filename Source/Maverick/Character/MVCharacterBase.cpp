@@ -1,15 +1,14 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Character/MVCharacterBase.h"
 
 #include "Components/MVActionComponent.h"
 #include "Components/MVCombatComponent.h"
 #include "Components/MVDeathComponent.h"
-#include "Components/MVHitReactionComponent.h"
 #include "Components/MVInputManagerComponent.h"
 #include "Components/MVStatComponent.h"
 #include "Components/MVWeaponComponent.h"
+#include "Components/MVHitReaction.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "KismetAnimationLibrary.h"
@@ -17,36 +16,10 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "MotionWarpingComponent.h"
 #include "TimerManager.h"
-
-DEFINE_LOG_CATEGORY_STATIC(LogMVCharacterBase, Log, All);
+#include "Components/MVStatusEffectComponent.h"
 
 namespace
 {
-void MVCharacterLogAirborneTrace(
-	const TCHAR* Stage,
-	const AMVCharacterBase* Character,
-	const FMVResolvedHitData& HitData,
-	const bool bOnDamagedBound)
-{
-	if (HitData.HitReactionType != EMVActionHitReactionType::Airborne)
-	{
-		return;
-	}
-
-	UE_LOG(
-		LogMVCharacterBase,
-		Warning,
-		TEXT("AirborneTrace Frame=%llu Stage=%s Character=%s CharacterIndex=%s Victim=%s VictimIndex=%s bOnDamagedBound=%s HitDirection=%s"),
-		static_cast<unsigned long long>(GFrameCounter),
-		Stage,
-		*GetNameSafe(Character),
-		Character ? *Character->GetCharacterIndexCode().ToString() : TEXT("<none>"),
-		*GetNameSafe(HitData.Victim.Get()),
-		*HitData.VictimCharacterIndexCode.ToString(),
-		bOnDamagedBound ? TEXT("true") : TEXT("false"),
-		*HitData.HitDirection.ToString());
-}
-
 FVector2D ClampCharacterControllerSpaceInput(const FVector2D& Input)
 {
 	const float SizeSquared = Input.SizeSquared();
@@ -103,10 +76,11 @@ AMVCharacterBase::AMVCharacterBase()
 	ActionComponent = CreateDefaultSubobject<UMVActionComponent>(TEXT("ActionComponent"));
 	CombatComponent = CreateDefaultSubobject<UMVCombatComponent>(TEXT("CombatComponent"));
 	DeathComponent = CreateDefaultSubobject<UMVDeathComponent>(TEXT("DeathComponent"));
-	HitReactionComponent = CreateDefaultSubobject<UMVHitReactionComponent>(TEXT("HitReactionComponent"));
+	HitReactionComponent = CreateDefaultSubobject<UMVHitReaction>(TEXT("HitReactionComponent"));
 	InputManagerComponent = CreateDefaultSubobject<UMVInputManagerComponent>(TEXT("InputManagerComponent"));
 	WeaponComponent = CreateDefaultSubobject<UMVWeaponComponent>(TEXT("WeaponComponent"));
 	MotionWarpingComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarpingComponent"));
+	StatusEffectComponent = CreateDefaultSubobject<UMVStatusEffectComponent>(TEXT("StatusEffectComponent"));
 	ApplyCharacterIndexCodeToComponents();
 	bHasDodgeMovementInput = false;
 	LocomotionDirection = ELocomotionDirection::F;
@@ -148,10 +122,13 @@ void AMVCharacterBase::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	
 	UpdateCharacterValue();
-	UpdateMovement(DeltaTime);
-	UpdateRotation();
 
+	Gait = DesiredGait();
+	UpdateRecoverableStats(DeltaTime);
 
+	UpdateMovement(bIsMovementActive);
+	UpdateRotation(bIsRotationActive);
+	OnLocomotionSettingsUpdated.Broadcast(bIsMovementActive, bIsRotationActive);
 }
 
 // Called to bind functionality to input
@@ -273,6 +250,25 @@ void AMVCharacterBase::ApplyLocomotionDirectionSnapshot(const FVector& MovementD
 	UpdateLocomotionDirection();
 }
 
+void AMVCharacterBase::SetLyingFaceDirection(EMVHitReactionDir HitReactionDir)
+{
+	switch (HitReactionDir)
+	{
+	case EMVHitReactionDir::Back:
+		LyingFaceDirection = EMVLyingFaceDirection::Back;
+		break;
+	case EMVHitReactionDir::Right:
+		LyingFaceDirection = EMVLyingFaceDirection::Right;
+		break;
+	case EMVHitReactionDir::Left:
+		LyingFaceDirection = EMVLyingFaceDirection::Left;
+		break;
+	default:
+		LyingFaceDirection = EMVLyingFaceDirection::Front;
+		break;
+	}
+}
+
 void AMVCharacterBase::SetEquippedStyle(const EMVEquippedStyle NewEquippedStyle)
 {
 	EquippedStyle = NewEquippedStyle;
@@ -305,17 +301,28 @@ bool AMVCharacterBase::IsInvincible() const
 
 bool AMVCharacterBase::OnHitResolved(const FMVResolvedHitData& HitData)
 {
-	MVCharacterLogAirborneTrace(TEXT("CharacterOnHitResolvedEnter"), this, HitData, OnDamaged.IsBound());
-
 	if (HitData.VictimCharacterIndexCode.IsValid() && HitData.VictimCharacterIndexCode != CharacterIndexCode)
 	{
-		MVCharacterLogAirborneTrace(TEXT("CharacterOnHitResolvedRejected_IndexMismatch"), this, HitData, OnDamaged.IsBound());
 		return false;
 	}
 
-	MVCharacterLogAirborneTrace(TEXT("CharacterOnHitResolvedBroadcast"), this, HitData, OnDamaged.IsBound());
 	OnDamaged.Broadcast(HitData);
 	return true;
+}
+
+void AMVCharacterBase::SetCharacterMovementRotationActive(bool bMovementActive, bool bRotationActive)
+{
+	bIsMovementActive = bMovementActive;
+	bIsRotationActive = bRotationActive;
+}
+
+void AMVCharacterBase::SetCharacterIsLying(bool bNewIsLying)
+{
+	if(bIsLying != bNewIsLying)
+	{
+		OnChangedCharacterIsLying.Broadcast(bNewIsLying);
+		bIsLying = bNewIsLying;
+	}
 }
 
 void AMVCharacterBase::ApplyCharacterIndexCodeToComponents()
@@ -337,6 +344,12 @@ void AMVCharacterBase::BindDamageHandlers()
 	{
 		OnDamaged.RemoveDynamic(StatComponent, &UMVStatComponent::HandleDamaged);
 		OnDamaged.AddUniqueDynamic(StatComponent, &UMVStatComponent::HandleDamaged);
+		
+	}
+	if (HitReactionComponent)
+	{
+		OnDamaged.RemoveDynamic(HitReactionComponent, &UMVHitReaction::HandleHitEvent);
+		OnDamaged.AddUniqueDynamic(HitReactionComponent, &UMVHitReaction::HandleHitEvent);
 	}
 }
 
@@ -427,8 +440,14 @@ FVector2D AMVCharacterBase::ResolveControllerSpaceMovementInput(
 		FVector::DotProduct(ScaledWorldInput, RightVector)));
 }
 
-void AMVCharacterBase::UpdateRotation()
+void AMVCharacterBase::UpdateRotation(bool bIsActive)
 {
+	if (bIsActive == false)
+	{
+		GetCharacterMovement()->RotationRate = FRotator(0.0f, 0.0f, 0.0f);
+		return;
+	}
+
 	if (Gait == EGait::Sprinting)
 	{
 		SetStrafeMode(false);
@@ -444,17 +463,25 @@ void AMVCharacterBase::UpdateRotation()
 	}
 }
 
-void AMVCharacterBase::UpdateMovement(float DeltaTime)
+void AMVCharacterBase::UpdateMovement(bool bIsActive)
 {
-	// Decide Gait
-	Gait = DesiredGait();
-	UpdateRecoverableStats(DeltaTime);
+	if (bIsActive == false)
+	{
+		GetCharacterMovement()->MaxWalkSpeed = 0.0f;
+		GetCharacterMovement()->MaxAcceleration = 0.0f;
+		return;
+	}
 
 	// Movement Speed
 	const float WalkSpeed = StatComponent ? StatComponent->WalkSpeed : 200.0f;
 	const float RunSpeed = StatComponent ? StatComponent->RunSpeed : 500.0f;
 	const float SprintSpeed = StatComponent ? StatComponent->SprintSpeed : 750.0f;
-	GetCharacterMovement()->MaxWalkSpeed = CalculateCharacterMovementSpeed(WalkSpeed, RunSpeed, SprintSpeed);
+	const float BaseMovementSpeed =
+		CalculateCharacterMovementSpeed(WalkSpeed, RunSpeed, SprintSpeed);
+	const float MoveSpeedMultiplier =
+		StatComponent ? StatComponent->GetMoveSpeedMultiplier() : 1.0f;
+	GetCharacterMovement()->MaxWalkSpeed =
+		BaseMovementSpeed * MoveSpeedMultiplier;
 
 	// Acceleration
 	const bool bMovementInputBlocked = IsMovementInputBlocked() || (StatComponent && StatComponent->IsDead());
@@ -487,7 +514,11 @@ void AMVCharacterBase::UpdateRecoverableStats(float DeltaTime)
 		return;
 	}
 
-	StatComponent->TickRecoverableStats(DeltaTime);
+	const bool bActionRunning = ActionComponent && ActionComponent->IsActionRunning();
+	const bool bIsActivelySprinting = Gait == EGait::Sprinting && bHasMovementInput;
+	const bool bAllowStaminaRecovery = !bActionRunning && !bIsActivelySprinting;
+
+	StatComponent->TickRecoverableStats(DeltaTime, bAllowStaminaRecovery);
 }
 
 void AMVCharacterBase::SetStrafeMode(bool StrafeModeOn)

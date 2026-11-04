@@ -1,6 +1,0 @@
-- [x] Check `POLICY.md` before starting work.
-- [x] Locate the ProjectBA `LockOnTarget` plugin and confirm tracked plugin files.
-- [x] Copy the `LockOnTarget` plugin into Maverick.
-- [x] Enable the plugin in `Maverick.uproject`.
-- [x] Add the `LockOnTarget` module dependency for Maverick C++ integration.
-- [x] Verify copied files and project state.

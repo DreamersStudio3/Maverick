@@ -1,0 +1,4 @@
+interface:
+  display_name: "위키 초안 문답"
+  short_description: "문답 후 위키 문서·첨부 구조 생성과 Obsidian 열기"
+  default_prompt: "Use $draft-wiki-with-developer to interview me, create an approved wiki document with frontmatter and attachments, and open it in Obsidian."

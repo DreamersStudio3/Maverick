@@ -1,0 +1,71 @@
+{
+  "date": "2026-10-11",
+  "host": "Windows / Codex / Unreal Engine 5.8.3",
+  "build": {
+    "target": "MaverickEditor Win64 Development",
+    "executed": true,
+    "result": "Succeeded",
+    "evidence": "Saved/DuelistResonance/build-final.log",
+    "proves": "Native compilation and linking; excludes packaging"
+  },
+  "automation": {
+    "name": "Maverick.Combat.DuelistResonance",
+    "executed": true,
+    "result": "Success",
+    "completed_utc": "2026-10-11 06:02:38.576",
+    "errors": 0,
+    "warnings": 10,
+    "evidence": "Saved/DuelistResonance/editor-final.log",
+    "scope": "Isolated Game world: HP initialization regression, next-attack reservation, 40 poise, real groggy, fixed damage, once-only behavior, death cleanup"
+  },
+  "assets": {
+    "executed": true,
+    "tree": "/Game/DuelistComplete/ST_DuelistBoss_Attack",
+    "state": "BossAttack.Resonanace",
+    "task": "FMVDuelistResonanceTask",
+    "selector_choices": 4,
+    "montage_seconds": [0.75, 5.0, 10.0],
+    "montage_notifies": [0, 0, 0],
+    "bp_status": "BS_UP_TO_DATE",
+    "evidence": "Saved/DuelistResonance/final-assets.json"
+  },
+  "pie_success": {
+    "executed": true,
+    "ordinary_attack_at_threshold": "BasicAttack1",
+    "pending_during_attack": true,
+    "poise_after_39": 1,
+    "poise_break_with_additional": 1,
+    "actual_groggy": true,
+    "player_hp": [100, 100],
+    "attack_cursor": [1, 1],
+    "movement_restored": "MOVE_WALKING",
+    "errors": [],
+    "evidence": "Saved/DuelistResonance/success-runtime.json"
+  },
+  "pie_failure": {
+    "executed": true,
+    "channel_seconds": 5,
+    "player_hp": [100, 20],
+    "blackout_seconds": 10,
+    "blackout_start_utc": "2026-10-11 05:55:25.112",
+    "blackout_end_utc": "2026-10-11 05:55:35.112",
+    "attack_cursor": [0, 0],
+    "movement_restored": "MOVE_WALKING",
+    "screenshots_verified": ["failure-blackout.png", "failure-recovered.png"],
+    "errors": [],
+    "evidence": "Saved/DuelistResonance/failure-runtime.json"
+  },
+  "existing_asset_error": {
+    "asset": "/Game/Characters/NPC/BaseBoss/ST_BaseAIStateTree",
+    "state": "Search",
+    "reason": "Malformed Boss and Boss AIController property binding paths",
+    "effect": "Asset-configuration command exited 1 despite completed target saves",
+    "scope": "Existing common tree; Duelist attack tree compilation and live PIE separately passed"
+  },
+  "limitations": [
+    "PIE interrupt hits injected through the real resolver; exhaustive player-input and collision-notify combinations untested",
+    "Out-of-range priority checked in selector code; dedicated out-of-range PIE scenario untested",
+    "Existing animation clips reused; new bespoke character motion not authored",
+    "Multiplayer, split-screen, packaged builds and obstructed arenas untested on this Windows host"
+  ]
+}

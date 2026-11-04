@@ -1,0 +1,292 @@
+{
+  "date": "2026-10-06",
+  "platform": "Windows",
+  "engine": "5.8.3",
+  "skill_row": "/Game/DuelistComplete/DT_DuelistBossCombatAttack.SkillQ",
+  "scope": "전용 스킬 이동·충돌·피해·취소·입력 잠금 소유권·사망 정리",
+  "build": {
+    "target": "MaverickEditor Win64 Development",
+    "executed": true,
+    "passed": true,
+    "max_parallel_actions": 1,
+    "initial_failure": "기존 LockOnTargetDev 컴파일 C1060 메모리 부족",
+    "proves": "새 native 클래스와 기존 Task 수정의 컴파일·링크 성공",
+    "does_not_prove": "패키징·네트워크·전체 AI 선택 동작"
+  },
+  "cold_load": {
+    "native_classes": [
+      "/Script/Maverick.MVDuelistChainPullAbility",
+      "/Script/Maverick.MVDuelistChainProjectile",
+      "/Script/Maverick.MVAnimNotify_DuelistFireChain"
+    ],
+    "ability": "/Game/DuelistComplete/Skills/BP_Ability_Duelist_ChainPull.BP_Ability_Duelist_ChainPull_C",
+    "montage": "/Game/DuelistComplete/Animations/AM_Duelist_ChainPull.AM_Duelist_ChainPull",
+    "range_cm": 2500.0,
+    "pull_duration_s": 0.6499999761581421,
+    "stop_distance_cm": 180.0,
+    "notify_count": 3,
+    "world": "/Game/Characters/NPC/Enemy/Level/AITestLevel.AITestLevel",
+    "scope": "초기 구현의 일반 빌드·에디터 재시작 로딩, 정지 거리 조절 전 180cm"
+  },
+  "state_tree_reloaded_skill_q": {
+    "task": "/Script/Maverick.MVBossExecuteAttackTask",
+    "row": "SkillQ",
+    "attack_range_cm": 2500
+  },
+  "pie": {
+    "platform": "Windows",
+    "engine": "5.8.3",
+    "mode": "PIE",
+    "case_count": 9,
+    "sample_count": 144,
+    "controlled_damage": true,
+    "results": [
+      {
+        "case": "Hit",
+        "passed": true,
+        "pull_distance_cm": 508.65,
+        "final_hp": 90.0,
+        "input_lock_restored": true,
+        "remaining_projectiles": 0
+      },
+      {
+        "case": "Miss",
+        "passed": true,
+        "pull_distance_cm": 0.0,
+        "final_hp": 100.0,
+        "input_lock_restored": true,
+        "remaining_projectiles": 0
+      },
+      {
+        "case": "Invincible",
+        "passed": true,
+        "pull_distance_cm": 0.0,
+        "final_hp": 100.0,
+        "input_lock_restored": true,
+        "remaining_projectiles": 0
+      },
+      {
+        "case": "FlightWall",
+        "passed": true,
+        "pull_distance_cm": 0.0,
+        "final_hp": 100.0,
+        "input_lock_restored": true,
+        "remaining_projectiles": 0
+      },
+      {
+        "case": "PullWall",
+        "passed": true,
+        "pull_distance_cm": 195.86,
+        "final_hp": 90.0,
+        "input_lock_restored": true,
+        "remaining_projectiles": 0
+      },
+      {
+        "case": "CancelFlight",
+        "passed": true,
+        "pull_distance_cm": 0.0,
+        "final_hp": 100.0,
+        "input_lock_restored": true,
+        "remaining_projectiles": 0
+      },
+      {
+        "case": "CancelPull",
+        "passed": true,
+        "pull_distance_cm": 0.0,
+        "final_hp": 90.0,
+        "input_lock_restored": true,
+        "remaining_projectiles": 0
+      },
+      {
+        "case": "BaselineLock",
+        "passed": true,
+        "pull_distance_cm": 508.65,
+        "final_hp": 90.0,
+        "input_lock_restored": true,
+        "remaining_projectiles": 0
+      },
+      {
+        "case": "BossDeath",
+        "passed": true,
+        "pull_distance_cm": 0.0,
+        "final_hp": 90.0,
+        "input_lock_restored": true,
+        "remaining_projectiles": 0
+      }
+    ]
+  },
+  "damage_fixture": {
+    "instance_only": true,
+    "weapon_attack_power": 10,
+    "target_defence": 0,
+    "hit_hp": [
+      100,
+      90
+    ],
+    "actual_boss_weapon_power": 0,
+    "proves": "시험 수치에서 유효 적중 피해 1회·무적과 비행 장애물 피해 거절",
+    "does_not_prove": "실제 장비 데이터의 피해 균형"
+  },
+  "editor_cleanup": {
+    "restored_actor_labels": [
+      "DirectionalLight",
+      "SkyAtmosphere",
+      "SkyLight",
+      "ExponentialHeightFog",
+      "VolumetricCloud",
+      "PlayerStart",
+      "SM_SkySphere",
+      "Floor",
+      "NavMeshBoundsVolume",
+      "RecastNavMesh-Default",
+      "BP_Duelist"
+    ],
+    "map_saved": false,
+    "dirty_maps": [
+      "/Game/Characters/NPC/BaseBoss/Level/BaseBossTestLevel"
+    ],
+    "dirty_content": []
+  },
+  "not_executed": [
+    {
+      "scope": "전체 AI 공격 선택 균형",
+      "platform": "현재 Windows",
+      "reason": "이번 전용 스킬 동작 범위 밖",
+      "executed": false
+    },
+    {
+      "scope": "네트워크 전파·패키징",
+      "platform": "현재 Windows",
+      "reason": "이번 로컬 Editor 스킬 구현 범위 밖",
+      "executed": false
+    }
+  ],
+  "initial_editor_cleanup": {
+    "world": "/Game/Characters/NPC/Enemy/Level/AITestLevel.AITestLevel",
+    "removed_test_actors": [
+      "DuelistChainValidation_Floor",
+      "DuelistChainValidation_Wall",
+      "DuelistChainValidation_Boss"
+    ],
+    "remaining_test_actors": [],
+    "remaining_level_actor_count": 12,
+    "dirty_maps": [],
+    "dirty_content": []
+  },
+  "initial_pie": {
+    "platform": "Windows",
+    "engine": "5.8.3",
+    "mode": "PIE",
+    "case_count": 9,
+    "sample_count": 146,
+    "controlled_damage": true,
+    "results": [
+      {
+        "case": "Hit",
+        "passed": true,
+        "pull_distance_cm": 418.68,
+        "final_hp": 90.0,
+        "input_lock_restored": true,
+        "remaining_projectiles": 0
+      },
+      {
+        "case": "Miss",
+        "passed": true,
+        "pull_distance_cm": 0.0,
+        "final_hp": 100.0,
+        "input_lock_restored": true,
+        "remaining_projectiles": 0
+      },
+      {
+        "case": "Invincible",
+        "passed": true,
+        "pull_distance_cm": 0.0,
+        "final_hp": 100.0,
+        "input_lock_restored": true,
+        "remaining_projectiles": 0
+      },
+      {
+        "case": "FlightWall",
+        "passed": true,
+        "pull_distance_cm": 0.0,
+        "final_hp": 100.0,
+        "input_lock_restored": true,
+        "remaining_projectiles": 0
+      },
+      {
+        "case": "PullWall",
+        "passed": true,
+        "pull_distance_cm": 197.66,
+        "final_hp": 90.0,
+        "input_lock_restored": true,
+        "remaining_projectiles": 0
+      },
+      {
+        "case": "CancelFlight",
+        "passed": true,
+        "pull_distance_cm": 0.0,
+        "final_hp": 100.0,
+        "input_lock_restored": true,
+        "remaining_projectiles": 0
+      },
+      {
+        "case": "CancelPull",
+        "passed": true,
+        "pull_distance_cm": 0.0,
+        "final_hp": 90.0,
+        "input_lock_restored": true,
+        "remaining_projectiles": 0
+      },
+      {
+        "case": "BaselineLock",
+        "passed": true,
+        "pull_distance_cm": 418.69,
+        "final_hp": 90.0,
+        "input_lock_restored": true,
+        "remaining_projectiles": 0
+      },
+      {
+        "case": "BossDeath",
+        "passed": true,
+        "pull_distance_cm": 0.0,
+        "final_hp": 90.0,
+        "input_lock_restored": true,
+        "remaining_projectiles": 0
+      }
+    ]
+  },
+  "current_defaults": {
+    "asset": "/Game/DuelistComplete/Skills/BP_Ability_Duelist_ChainPull",
+    "stop_distance_cm": 90,
+    "blueprint_compiled_and_saved": true
+  },
+  "actual_ai": {
+    "platform": "Windows",
+    "engine": "5.8.3",
+    "mode": "PIE",
+    "level": "/Game/Characters/NPC/BaseBoss/Level/BaseBossTestLevel",
+    "actor": "BP_Duelist_C_1",
+    "controller": "BP_DuelistBAIController_C_0",
+    "tree": "/Game/DuelistComplete/ST_DuelistBossAIStateTree",
+    "linked_tree": "/Game/DuelistComplete/ST_DuelistBoss_Attack",
+    "executed": true,
+    "passed": true,
+    "setup": "PIE 인스턴스의 기존 전투 시작·플레이어 대상 값을 엔진 반영 API로 지정, 기존 AI 공격 선택 실행",
+    "before_stop_distance_cm": 180,
+    "before_movement_cm": 66.9840804720346,
+    "after_stop_distance_cm": 90.0,
+    "after_movement_cm": 156.998741962015,
+    "input_restored": true,
+    "remaining_chains": 0,
+    "proves": "현재 배치 보스의 AI 선택·전투 실행·발사·적중·실제 플레이어 이동 연결",
+    "does_not_prove": "전체 공격 선택 균형·모든 맵·네트워크 동작"
+  },
+  "temporary_trace_removed": true,
+  "cleanup_live_coding": {
+    "platform": "Windows",
+    "executed": true,
+    "passed": true,
+    "proves": "임시 추적 로그 제거 코드의 컴파일·현재 에디터 반영",
+    "does_not_prove": "패키징·다른 플랫폼"
+  }
+}

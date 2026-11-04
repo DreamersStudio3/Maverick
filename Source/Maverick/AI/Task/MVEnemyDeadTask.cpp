@@ -140,10 +140,6 @@ EMVEnemyDeadTaskCleanupResult EnemyDeadTaskApplyCleanup(FMVEnemyDeadTaskInstance
 		}
 
 		InstanceData.bCleanupApplied = true;
-		if (AMVEnemy* Enemy = Cast<AMVEnemy>(Owner))
-		{
-			Enemy->DestroyWeaponActor();
-		}
 		Owner->SetActorEnableCollision(false);
 		Owner->SetActorHiddenInGame(true);
 		Owner->SetActorTickEnabled(false);

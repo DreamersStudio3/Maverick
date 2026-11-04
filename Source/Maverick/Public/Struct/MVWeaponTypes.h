@@ -21,11 +21,17 @@ struct MAVERICK_API FMVEquippedWeaponState
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Weapon", meta = (Categories = "Item.Weapon"))
 	FGameplayTag ItemTag;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Weapon|Passive", meta = (Categories = "Weapon.Type"))
+	FGameplayTag WeaponTypeTag;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Weapon")
 	EMVEquippedStyle EquippedStyle = EMVEquippedStyle::BareHand;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Weapon", meta = (ClampMin = "0.0"))
 	float AttackPower = 0.0f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Weapon", meta = (ClampMin = "0.0"))
+	float WeaponPoise = 0.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Weapon")
 	EMVWeaponRangeType RangeType = EMVWeaponRangeType::Melee;

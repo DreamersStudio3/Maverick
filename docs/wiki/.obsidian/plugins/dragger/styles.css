@@ -1,0 +1,394 @@
+/* Dragger 插件样式 — adapter handle (md-dragger-*) + host paint (d-*) */
+
+.md-dragger-handle {
+    position: relative;
+    width: var(--d-handle-size, 20px);
+    height: var(--d-handle-size, 20px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: grab;
+    opacity: 0;
+    transition: none;
+    color: var(--d-handle-color, var(--interactive-accent));
+    border-radius: 999px;
+    z-index: 3;
+    border: 0;
+    background: transparent;
+    padding: 0;
+}
+
+.markdown-source-view.mod-cm6 .cm-editor.d-root-editor .cm-gutters {
+    overflow: visible;
+}
+
+/* Adapter gutter — zero-width overlay layout for Obsidian. */
+.markdown-source-view.mod-cm6 .cm-editor.d-root-editor .cm-gutter.md-dragger-gutter {
+    flex: 0 0 0;
+    width: 0;
+    min-width: 0;
+    max-width: 0;
+    overflow: visible;
+    pointer-events: none;
+    z-index: 4;
+}
+
+.markdown-source-view.mod-cm6 .cm-editor.d-root-editor .cm-gutter.md-dragger-gutter .cm-gutterElement {
+    position: relative;
+    display: block;
+    box-sizing: border-box;
+    width: 0;
+    min-width: 0;
+    max-width: 0;
+    padding: 0;
+    overflow: visible;
+    pointer-events: none;
+    white-space: nowrap;
+    text-align: center;
+}
+
+.markdown-source-view.mod-cm6 .cm-editor.d-root-editor .cm-gutter.md-dragger-gutter .cm-gutterElement > .md-dragger-handle {
+    display: inline-flex;
+    vertical-align: middle;
+    transform: translateX(calc(var(--d-handle-horizontal-offset-px, 0px) - 50%));
+    pointer-events: auto;
+}
+
+/* Obsidian opens a nested CM6 editor inside a focused table cell (Live
+   Preview); it inherits this plugin's editor extensions, so the gutter rail
+   is re-created there. The cell editor has no line numbers or folds of its
+   own — drop the whole rail (and any handle painted before the editor is
+   attached; it is constructed detached) so the cell text starts at
+   Obsidian's native cell padding. */
+.cm-table-widget .cm-gutters {
+    display: none;
+}
+
+.cm-table-widget .md-dragger-handle {
+    display: none;
+}
+
+.md-dragger-handle:hover {
+    opacity: 1;
+    color: var(--d-handle-color-hover, var(--d-handle-color, var(--text-accent)));
+    filter: brightness(1.08);
+}
+
+.md-dragger-handle:active {
+    cursor: grabbing;
+}
+
+/* Multi-select: selected block handles become checkboxes. */
+.md-dragger-handle.is-selected,
+.md-dragger-handle.is-selected:hover {
+    opacity: 1;
+    color: var(--interactive-accent);
+    filter: none;
+}
+
+.md-dragger-handle.is-selected .d-handle-core {
+    position: relative;
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    background: var(--interactive-accent);
+    box-shadow:
+        0 0 0 1px color-mix(in srgb, var(--interactive-accent) 72%, var(--background-primary)),
+        0 2px 8px color-mix(in srgb, var(--interactive-accent) 28%, transparent);
+}
+
+.md-dragger-handle.is-selected .d-handle-core::before {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 2px;
+    width: 4px;
+    height: 7px;
+    border: solid var(--text-on-accent);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.d-handle-core {
+    width: var(--d-handle-core-size, 10px);
+    height: var(--d-handle-core-size, 10px);
+    border-radius: 999px;
+    background: currentColor;
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.18),
+        0 0 8px var(--d-handle-color, var(--interactive-accent));
+}
+
+/* 手柄图标样式：六点抓手 */
+[data-d-handle-icon="grip-dots"] .d-handle-core {
+    width: auto;
+    height: auto;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+    font-size: var(--d-grip-dots-core-size, 16px);
+    line-height: 1;
+}
+[data-d-handle-icon="grip-dots"] .d-handle-core::before {
+    content: '⠿';
+}
+
+/* 手柄图标样式：三横线 */
+[data-d-handle-icon="grip-lines"] .d-handle-core {
+    width: auto;
+    height: auto;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+    font-size: var(--d-handle-core-size, 10px);
+    line-height: 1;
+}
+[data-d-handle-icon="grip-lines"] .d-handle-core::before {
+    content: '☰';
+}
+
+/* 手柄图标样式：方块 */
+[data-d-handle-icon="square"] .d-handle-core {
+    border-radius: 2px;
+}
+
+.markdown-source-view.mod-cm6 .cm-editor.d-root-editor {
+    position: relative;
+    /* Own stacking context: drag overlays live inside the editor (absolute,
+       z 2) and can never escape above Obsidian's app chrome, which sits in
+       the root stacking context at or above z 0. */
+    z-index: 0;
+}
+
+.markdown-source-view.mod-cm6 .cm-editor.d-root-editor .cm-content > .cm-line {
+    position: relative;
+    overflow: visible;
+}
+
+/* 统一拖拽视觉样式变量（源块高亮；attribute 在 body 上） */
+body,
+body[data-d-drag-source-style="subtle"] {
+    --d-drag-source-bg: color-mix(in srgb, var(--interactive-accent) 10%, transparent);
+    --d-drag-source-border: color-mix(in srgb, var(--interactive-accent) 60%, transparent);
+}
+
+body[data-d-drag-source-style="outline"] {
+    --d-drag-source-bg: transparent;
+    --d-drag-source-border: color-mix(in srgb, var(--interactive-accent) 60%, transparent);
+}
+
+body[data-d-drag-source-style="filled"] {
+    --d-drag-source-bg: color-mix(in srgb, var(--interactive-accent) 18%, transparent);
+    --d-drag-source-border: color-mix(in srgb, var(--interactive-accent) 60%, transparent);
+}
+
+/* 选区高亮：CM6 行装饰，与手柄同一渲染管线，随文本流滚动零延迟。
+   背景与左右边缘线直接画在行上，无绝对定位 overlay。每行通过行内
+   --d-source-level（adapter sourceListLevel，源自引擎 parseLine 的嵌套层级）与 view 级
+   --d-list-indent-step（Obsidian 渲染缩进步长）相乘得到左缘位置：
+   嵌套越深，蒙版左缘越靠右。左缘竖线是定位在 --d-source-left 的 2px
+   渐变（box-shadow inset 的可见区域是 [0, offset) 整块，不能用）。 */
+.cm-line.md-dragger-drag-source {
+    --d-source-left: calc(var(--d-source-level, 0) * var(--d-list-indent-step, 0px));
+    background:
+        linear-gradient(var(--d-drag-source-border), var(--d-drag-source-border)) no-repeat,
+        linear-gradient(90deg, transparent 0 var(--d-source-left), var(--d-drag-source-bg) var(--d-source-left));
+    background-size: 2px 100%, 100% 100%;
+    background-position: var(--d-source-left) 0, 0 0;
+    box-shadow: inset -1px 0 0 0 var(--d-drag-source-border);
+}
+
+body[data-d-drag-source-highlight="off"] .cm-line.md-dragger-drag-source {
+    background: transparent;
+    box-shadow: none;
+}
+
+/* 常态显示拖拽手柄 */
+body.d-handles-always .md-dragger-handle {
+    opacity: 0.6;
+}
+
+body.d-handles-always .md-dragger-handle:hover {
+    opacity: 1;
+}
+
+/* 默认 hover：指针在该块行上时 host 加 is-visible；gutter 自身 hover 也显示 */
+body:not(.d-handles-always):not(.d-handles-hidden):not(.d-mobile-handles-hidden)
+.markdown-source-view.mod-cm6 .cm-editor.d-root-editor .md-dragger-handle.is-visible,
+body:not(.d-handles-always):not(.d-handles-hidden):not(.d-mobile-handles-hidden)
+.markdown-source-view.mod-cm6 .cm-editor.d-root-editor .cm-gutter.md-dragger-gutter .cm-gutterElement:hover > .md-dragger-handle {
+    opacity: 0.5;
+}
+
+body.d-handles-hidden .md-dragger-handle,
+body.d-mobile-handles-hidden .md-dragger-handle {
+    display: none;
+}
+
+/* Mobile drag mode: suppress native text selection */
+body.d-mobile-drag-mode-enabled .markdown-source-view.mod-cm6 .cm-editor.d-root-editor,
+body.d-mobile-drag-mode-enabled .markdown-source-view.mod-cm6 .cm-editor.d-root-editor .cm-scroller,
+body.d-mobile-drag-mode-enabled .markdown-source-view.mod-cm6 .cm-editor.d-root-editor .cm-content,
+body.d-mobile-drag-mode-enabled .markdown-source-view.mod-cm6 .cm-editor.d-root-editor .cm-line {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+}
+
+body.d-dragging {
+    cursor: grabbing;
+}
+
+body.d-dragging * {
+    cursor: grabbing;
+}
+
+body.d-dragging .cm-line:hover {
+    background-color: transparent;
+}
+
+body.d-dragging,
+body.d-mobile-gesture-lock {
+    overflow: hidden;
+    overscroll-behavior: none;
+    touch-action: none;
+}
+
+body.d-dragging .markdown-source-view.mod-cm6 .cm-editor.d-root-editor,
+body.d-dragging .markdown-source-view.mod-cm6 .cm-editor.d-root-editor .cm-scroller,
+body.d-dragging .markdown-source-view.mod-cm6 .cm-editor.d-root-editor .cm-content,
+body.d-mobile-gesture-lock .markdown-source-view.mod-cm6 .cm-editor.d-root-editor,
+body.d-mobile-gesture-lock .markdown-source-view.mod-cm6 .cm-editor.d-root-editor .cm-scroller,
+body.d-mobile-gesture-lock .markdown-source-view.mod-cm6 .cm-editor.d-root-editor .cm-content {
+    touch-action: none;
+    overscroll-behavior: none;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+}
+
+/* Drop seam: a CM6 line decoration built by the adapter on the seam row
+   (above the first line, or below the previous line). The row itself is
+   untouched — zero layout impact — and it scrolls with the text flow. The
+   visible line is an overflowing pseudo-element; its x offset and width come
+   from the adapter's seamOffset geometry, exposed as CSS variables by the
+   paint view plugin.
+
+   The overflowing 2px sits inside the *neighbor* line's box (below-seam →
+   top of the target line). Lines with a background (code blocks, callouts,
+   …) would paint over it in DOM order, so the pseudo carries a z-index:
+   positive z-index paints above all z-index:auto lines inside the editor's
+   stacking context (.cm-editor has contain: layout style), while never
+   escaping to Obsidian's app chrome. */
+.cm-line.md-dragger-drop-seam-top::before,
+.cm-line.md-dragger-drop-seam-below::after {
+    content: '';
+    position: absolute;
+    z-index: 2;
+    left: var(--d-seam-left, 0px);
+    width: var(--d-seam-width, auto);
+    height: 2px;
+    border-radius: 2px;
+    background: var(--d-drop-indicator-color, var(--d-drag-source-border, var(--interactive-accent)));
+    pointer-events: none;
+}
+
+.cm-line.md-dragger-drop-seam-top::before {
+    top: -2px;
+}
+
+.cm-line.md-dragger-drop-seam-below::after {
+    bottom: -2px;
+}
+
+/* Rejected drop (e.g. re-inserting in place): the seam stays visible as a
+   light grey line (--text-faint) instead of disappearing — the muted tone
+   signals the drop is forbidden/invalid. */
+.cm-line.md-dragger-drop-seam-top.is-invalid::before,
+.cm-line.md-dragger-drop-seam-below.is-invalid::after {
+    background: var(--text-faint);
+}
+
+.d-block-type-submenu-title {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.d-block-type-submenu-title-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.d-block-type-submenu-title-chevron {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-inline-start: auto;
+    padding-inline-start: var(--size-4-2, 8px);
+    color: var(--text-muted);
+}
+
+.d-block-type-submenu-title-chevron svg {
+    width: var(--icon-size, 18px);
+    height: var(--icon-size, 18px);
+}
+
+.menu.d-block-type-flyout {
+    position: fixed;
+    min-width: 10em;
+    max-height: min(70vh, 320px);
+    overflow-y: auto;
+    padding: var(--size-2-1, 4px);
+    z-index: 10000;
+}
+
+.menu.d-block-type-flyout .d-block-type-flyout-item {
+    cursor: pointer;
+}
+
+.menu.d-block-type-flyout .d-block-type-flyout-item:hover {
+    background-color: var(--background-modifier-hover);
+}
+
+.d-settings-nav {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--background-modifier-border);
+    margin-bottom: var(--size-4-4);
+}
+
+.d-settings-tab {
+    flex: 1;
+    padding: var(--size-4-2) var(--size-4-4);
+    background: none;
+    border: none;
+    border-radius: 0;
+    border-bottom: 2px solid transparent;
+    color: var(--text-muted);
+    font-size: var(--font-ui-medium);
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+}
+
+.d-settings-tab:hover {
+    color: var(--text-normal);
+}
+
+.d-settings-tab.is-active {
+    color: var(--text-normal);
+    border-bottom-color: var(--interactive-accent);
+    font-weight: var(--font-semibold);
+}
+
+.setting-item .d-setting-number-input {
+    width: 4em;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+}
+
+.d-theme-accent-probe {
+    display: none;
+    background-color: var(--interactive-accent);
+}

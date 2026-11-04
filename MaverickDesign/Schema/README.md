@@ -1,5 +1,7 @@
 # 테이블 JSON 스키마
 
+관련 아키텍처: [Maverick Architecture](../../docs/wiki/Architecture/document.md)
+
 이 폴더는 `MaverickDesign/Json`에 생성되는 테이블 JSON의 공통 형식을 설명합니다.
 
 JSON은 런타임이 직접 읽는 최종 데이터가 아니라, 에디터에서 `UDataTable`을 생성하기 위한 중간 산출물입니다.

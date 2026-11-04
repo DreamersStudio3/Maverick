@@ -24,6 +24,8 @@
 #include "UI/Window/MVDeathOverlayWindow.h"
 #include "UI/Window/MVDialogueWindow.h"
 #include "UI/Window/MVLoadingWindow.h"
+#include "System/Progression/MVProgressionSubsystem.h"
+#include "UI/Window/MVLevelUpWindow.h"
 
 namespace
 {
@@ -1179,4 +1181,89 @@ void UMVUISubsystem::TrackActiveDialogueWindow(UMVDialogueWindow* DialogueWindow
 		ActiveDialogueWindow->OnDialogueWindowClosing.AddUniqueDynamic(this, &UMVUISubsystem::HandleDialogueWindowClosing);
 		ActiveDialogueWindow->OnDialogueWindowClosed.AddUniqueDynamic(this, &UMVUISubsystem::HandleDialogueWindowClosed);
 	}
+}
+
+UMVLevelUpWindow* UMVUISubsystem::ShowLevelUpWindow()
+{
+	UWorld* World = GetWorld();
+
+	if (!World || !World->IsGameWorld())
+	{
+		return nullptr;
+	}
+
+	APlayerController* PlayerController = World->GetFirstPlayerController();
+
+	if (!UMVLevelUpWindow::CanOpenForPlayer(PlayerController))
+	{
+		return nullptr;
+	}
+
+	const UMVProgressionSubsystem* Progression = UMVProgressionSubsystem::Get(this);
+
+	if (!Progression
+		|| !Progression->EvaluateCurrentProgression().IsSuccess())
+	{
+		return nullptr;
+	}
+
+	for (int32 Index = LayerStack.Num() - 1; Index >= 0; --Index)
+	{
+		UMVUILayerBase* Layer = LayerStack[Index];
+
+		if (!IsValid(Layer) || !Layer->IsInViewport())
+		{
+			continue;
+		}
+
+		UMVLevelUpWindow* ExistingWindow = Cast<UMVLevelUpWindow>(
+			Layer->FindWindowByClass(UMVLevelUpWindow::StaticClass()));
+
+		if (ExistingWindow)
+		{
+			return ExistingWindow->IsFadingOut()
+				? nullptr
+				: ExistingWindow;
+		}
+	}
+
+	const UMVUISettings* Settings = GetDefault<UMVUISettings>();
+
+	if (!Settings || !Settings->LevelUpWindowClass)
+	{
+		return nullptr;
+	}
+
+	return Cast<UMVLevelUpWindow>(PushWindowByClass(Settings->LevelUpWindowClass));
+}
+
+bool UMVUISubsystem::HideLevelUpWindow()
+{
+	for (int32 Index = LayerStack.Num() - 1; Index >= 0; --Index)
+	{
+		UMVUILayerBase* Layer = LayerStack[Index];
+
+		if (!IsValid(Layer) || !Layer->IsInViewport())
+		{
+			continue;
+		}
+
+		UMVLevelUpWindow* Window = Cast<UMVLevelUpWindow>(
+			Layer->FindWindowByClass(UMVLevelUpWindow::StaticClass()));
+
+		if (!Window)
+		{
+			continue;
+		}
+
+		if (Window->IsActivated())
+		{
+			Window->CancelLevelUp();
+			return true;
+		}
+
+		return Layer->RemoveWindow(Window);
+	}
+
+	return false;
 }

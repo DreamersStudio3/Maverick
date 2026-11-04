@@ -2,8 +2,9 @@
 
 #include "AI/MVActionCooldownComponent.h"
 #include "AIController.h"
-#include "Character/NPC/Enemy/MVEnemy.h"
 #include "Components/MVActionComponent.h"
+#include "Components/MVCombatComponent.h"
+#include "Enum/MVCombatActionTypes.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "StateTreeExecutionContext.h"
@@ -35,24 +36,9 @@ bool EnemyCombatActionTaskIsStartedActionRunning(const FMVEnemyCombatActionTaskI
 			|| InstanceData.ActionComponent->GetActiveActionRowName() == InstanceData.StartedActionRowName);
 }
 
-FName EnemyCombatActionTaskMakeActionTag(const EMVEnemyCombatActionKind ActionKind, const int32 ActionIndex)
-{
-	switch (ActionKind)
-	{
-	case EMVEnemyCombatActionKind::HeavyAttack:
-		return FName(*FString::Printf(TEXT("HeavyAttack%d"), ActionIndex));
-
-	case EMVEnemyCombatActionKind::Skill:
-		return FName(*FString::Printf(TEXT("Skill%d"), ActionIndex));
-
-	default:
-		return NAME_None;
-	}
-}
-
 bool EnemyCombatActionTaskTryStartAction(FMVEnemyCombatActionTaskInstanceData& InstanceData)
 {
-	if (!InstanceData.Enemy)
+	if (!InstanceData.CombatComponent)
 	{
 		return false;
 	}
@@ -60,13 +46,13 @@ bool EnemyCombatActionTaskTryStartAction(FMVEnemyCombatActionTaskInstanceData& I
 	switch (InstanceData.ActionKind)
 	{
 	case EMVEnemyCombatActionKind::HeavyAttack:
-		return InstanceData.Enemy->TryHeavyAttack(
-			InstanceData.SkillIndex,
+		return InstanceData.CombatComponent->TryBasicCombatAction(
+			EMVCombatActionTypes::HeavyAttack,
 			InstanceData.StartSection);
 
 	case EMVEnemyCombatActionKind::Skill:
-		return InstanceData.Enemy->TrySkillAttack(
-			InstanceData.SkillIndex,
+		return InstanceData.CombatComponent->TrySkillCombatAction(
+			InstanceData.SkillSlot,
 			InstanceData.StartSection);
 
 	default:
@@ -135,7 +121,7 @@ EStateTreeRunStatus FMVEnemyCombatActionTask::EnterState(
 	const FStateTreeTransitionResult& Transition) const
 {
 	FInstanceDataType& InstanceData = Context.GetInstanceData<FInstanceDataType>(*this);
-	InstanceData.Enemy = nullptr;
+	InstanceData.CombatComponent = nullptr;
 	InstanceData.ActionComponent = nullptr;
 	InstanceData.StartedActionTableName = NAME_None;
 	InstanceData.StartedActionRowName = NAME_None;
@@ -149,9 +135,9 @@ EStateTreeRunStatus FMVEnemyCombatActionTask::EnterState(
 	}
 
 	InstanceData.Owner = Owner;
-	InstanceData.Enemy = Cast<AMVEnemy>(Owner);
+	InstanceData.CombatComponent = Owner->FindComponentByClass<UMVCombatComponent>();
 	InstanceData.ActionComponent = Owner->FindComponentByClass<UMVActionComponent>();
-	if (!InstanceData.Enemy || !InstanceData.ActionComponent)
+	if (!InstanceData.CombatComponent || !InstanceData.ActionComponent)
 	{
 		return EStateTreeRunStatus::Failed;
 	}
@@ -163,9 +149,7 @@ EStateTreeRunStatus FMVEnemyCombatActionTask::EnterState(
 
 	InstanceData.StartedActionTableName = InstanceData.ActionComponent->GetActiveActionTableName();
 	InstanceData.StartedActionRowName = InstanceData.ActionComponent->GetActiveActionRowName();
-	InstanceData.LastAttackTag = EnemyCombatActionTaskMakeActionTag(
-		InstanceData.ActionKind,
-		InstanceData.SkillIndex);
+	InstanceData.LastAttackTag = InstanceData.StartedActionRowName;
 
 	if (!EnemyCombatActionTaskTryStartCooldown(*Owner, InstanceData.CooldownActionId))
 	{

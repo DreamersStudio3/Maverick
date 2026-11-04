@@ -1,0 +1,8 @@
+{
+  "graphify": {
+    "package": "graphifyy",
+    "version": "0.9.38",
+    "environment": ".agent-tools/graphify",
+    "packageManager": "pip"
+  }
+}

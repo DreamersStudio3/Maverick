@@ -239,7 +239,7 @@ namespace
 			return false;
 		}
 
-		const TSharedPtr<FJsonValue>* Value = Object->Values.Find(FieldName);
+		const TSharedPtr<FJsonValue>* Value = Object->Values.Find(UE::FSharedString(FieldName));
 		if (!Value || !Value->IsValid() || (*Value)->Type != EJson::Object)
 		{
 			return false;
@@ -256,7 +256,7 @@ namespace
 			return false;
 		}
 
-		const TSharedPtr<FJsonValue>* Value = Object->Values.Find(FieldName);
+		const TSharedPtr<FJsonValue>* Value = Object->Values.Find(UE::FSharedString(FieldName));
 		if (!Value || !Value->IsValid() || (*Value)->Type != EJson::Array)
 		{
 			return false;
@@ -273,7 +273,7 @@ namespace
 			return false;
 		}
 
-		const TSharedPtr<FJsonValue>* Value = Object->Values.Find(FieldName);
+		const TSharedPtr<FJsonValue>* Value = Object->Values.Find(UE::FSharedString(FieldName));
 		if (!Value || !Value->IsValid() || (*Value)->Type != EJson::String)
 		{
 			return false;
@@ -370,12 +370,12 @@ namespace
 				break;
 			}
 
-			TArray<FString> FieldNames;
+			TArray<UE::FSharedString> FieldNames;
 			Object->Values.GetKeys(FieldNames);
 			FieldNames.Sort();
 
 			OutSource += TEXT("{");
-			for (const FString& FieldName : FieldNames)
+			for (const UE::FSharedString& FieldName : FieldNames)
 			{
 				OutSource += FString::Printf(TEXT("K%d:"), FieldName.Len());
 				OutSource += FieldName;
@@ -537,7 +537,7 @@ namespace
 			}
 
 			const TSharedPtr<FJsonObject> RowObject = Element->AsObject();
-			const TSharedPtr<FJsonValue>* KeyValue = RowObject->Values.Find(KeyColumnName);
+			const TSharedPtr<FJsonValue>* KeyValue = RowObject->Values.Find(UE::FSharedString(KeyColumnName));
 			FString KeyString;
 			if (!KeyValue
 				|| !KeyValue->IsValid()
@@ -616,7 +616,7 @@ namespace
 			}
 
 			const TSharedPtr<FJsonObject> RowObject = Element->AsObject();
-			const TSharedPtr<FJsonValue>* KeyValue = RowObject->Values.Find(KeyColumnName);
+			const TSharedPtr<FJsonValue>* KeyValue = RowObject->Values.Find(UE::FSharedString(KeyColumnName));
 			FString KeyString;
 			if (!KeyValue
 				|| !KeyValue->IsValid()
@@ -1345,7 +1345,7 @@ bool UMVTableAssetGenerator::BuildAndSaveDataTable(
 		}
 
 		const TSharedPtr<FJsonObject> RowObject = Element->AsObject();
-		const TSharedPtr<FJsonValue>* KeyValue = RowObject->Values.Find(Spec.KeyColumnName);
+		const TSharedPtr<FJsonValue>* KeyValue = RowObject->Values.Find(UE::FSharedString(Spec.KeyColumnName));
 		if (!KeyValue || !KeyValue->IsValid())
 		{
 			UE_LOG(

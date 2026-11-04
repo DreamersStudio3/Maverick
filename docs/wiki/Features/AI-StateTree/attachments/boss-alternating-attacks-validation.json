@@ -1,0 +1,213 @@
+{
+  "request": "무작위 공격 제거, 기본 공격·스킬 교대 반복; 범위 밖 SkillQ 예외 유지",
+  "date": "2026-10-10",
+  "host": "Codex",
+  "platform": "Windows x64",
+  "engine": "Unreal Engine 5.8.3",
+  "settings": {
+    "normal_attack_range_cm": 300,
+    "choices": [
+      "BaseAttack1",
+      "AttackQ",
+      "BaseAttack2",
+      "AttackW"
+    ],
+    "outside_candidate": "AttackQ",
+    "outside_exception_advances_cursor": false,
+    "cursor_owner": "AMVAIController",
+    "cursor_reset": "OnPossess"
+  },
+  "normal_editor_build": {
+    "actually_ran": true,
+    "result": "Succeeded",
+    "seconds": 30.23,
+    "configuration": "MaverickEditor Win64 Development",
+    "editor_restart": true,
+    "proves": "최종 C++ 컴파일·Editor 모듈 링크·새 Blueprint 속성 등록",
+    "excludes": [
+      "패키징",
+      "네트워크 실행"
+    ],
+    "warnings": [
+      "PropertyBindingUtils 플러그인 의존성 선언 누락",
+      "XGE 라이선스 미활성, standalone 빌드 사용"
+    ]
+  },
+  "runtime": {
+    "actually_ran": true,
+    "result": "passed",
+    "map": "/Game/Characters/NPC/BaseBoss/Level/BaseBossTestLevel",
+    "actor": "BP_Duelist",
+    "tree": "/Game/DuelistComplete/ST_DuelistBossAIStateTree",
+    "distance_cm": 300,
+    "observed_actions": [
+      {
+        "elapsed_s": 0.3631366044282913,
+        "instance_id": 1,
+        "row": "BasicAttack1",
+        "montage": "/Game/DuelistComplete/Animations/AM_Duelist_BaseAttack.AM_Duelist_BaseAttack",
+        "distance_cm": 300.0,
+        "next_index": 1
+      },
+      {
+        "elapsed_s": 4.674220904707909,
+        "instance_id": 2,
+        "row": "SkillQ",
+        "montage": "/Game/DuelistComplete/Animations/AM_Duelist_Q.AM_Duelist_Q",
+        "distance_cm": 300.0,
+        "next_index": 2
+      },
+      {
+        "elapsed_s": 11.151570804417133,
+        "instance_id": 3,
+        "row": "BasicAttack2",
+        "montage": "/Game/DuelistComplete/Animations/AM_Duelist_BaseAttack.AM_Duelist_BaseAttack",
+        "distance_cm": 300.0,
+        "next_index": 3
+      },
+      {
+        "elapsed_s": 15.46248110383749,
+        "instance_id": 4,
+        "row": "SkillW",
+        "montage": "/Game/DuelistComplete/Animations/AM_Duelist_ChainPull.AM_Duelist_ChainPull",
+        "distance_cm": 300.0,
+        "next_index": 0
+      },
+      {
+        "elapsed_s": 20.46868860349059,
+        "instance_id": 5,
+        "row": "BasicAttack1",
+        "montage": "/Game/DuelistComplete/Animations/AM_Duelist_BaseAttack.AM_Duelist_BaseAttack",
+        "distance_cm": 300.0,
+        "next_index": 1
+      },
+      {
+        "elapsed_s": 24.772995103150606,
+        "instance_id": 6,
+        "row": "SkillQ",
+        "montage": "/Game/DuelistComplete/Animations/AM_Duelist_Q.AM_Duelist_Q",
+        "distance_cm": 300.0,
+        "next_index": 2
+      },
+      {
+        "elapsed_s": 31.26333450525999,
+        "instance_id": 7,
+        "row": "BasicAttack2",
+        "montage": "/Game/DuelistComplete/Animations/AM_Duelist_BaseAttack.AM_Duelist_BaseAttack",
+        "distance_cm": 300.0,
+        "next_index": 3
+      },
+      {
+        "elapsed_s": 35.57225010544062,
+        "instance_id": 8,
+        "row": "SkillW",
+        "montage": "/Game/DuelistComplete/Animations/AM_Duelist_ChainPull.AM_Duelist_ChainPull",
+        "distance_cm": 300.0,
+        "next_index": 0
+      }
+    ],
+    "samples": 3544,
+    "natural_completions_before_next_attack": 7,
+    "eighth_action": "SkillW 시작 확인 후 별도 범위 시험을 위해 중단",
+    "exception_and_resume": [
+      {
+        "distance_cm": 800,
+        "cursor_before": 0,
+        "rows": [
+          "SkillQ"
+        ],
+        "observed_next_indices": [
+          0
+        ],
+        "first_action_observed_s": 0.011195898056030273,
+        "montage": "/Game/DuelistComplete/Animations/AM_Duelist_Q.AM_Duelist_Q",
+        "result": "passed"
+      },
+      {
+        "distance_cm": 3000,
+        "cursor_before": 0,
+        "rows": [
+          "SkillQ"
+        ],
+        "observed_next_indices": [
+          0
+        ],
+        "first_action_observed_s": 0.009643100202083588,
+        "montage": "/Game/DuelistComplete/Animations/AM_Duelist_Q.AM_Duelist_Q",
+        "result": "passed"
+      },
+      {
+        "distance_cm": 300,
+        "cursor_before": 0,
+        "rows": [
+          "BasicAttack1"
+        ],
+        "observed_next_indices": [
+          1
+        ],
+        "first_action_observed_s": 0.010349899530410767,
+        "montage": "/Game/DuelistComplete/Animations/AM_Duelist_BaseAttack.AM_Duelist_BaseAttack",
+        "result": "passed"
+      }
+    ],
+    "test_overrides": "PIE 이동·충돌 비활성화·메시 자세 갱신 강제",
+    "proves": "메인 AI 연결 공격 트리 재진입 중 교대 순서 8개 액션 시작·범위 밖 예외의 진행 위치 보존·범위 복귀 재개",
+    "excludes": [
+      "8번째 SkillW 자연 완료",
+      "피해·이동·시각 효과",
+      "복수 보스 동시 실행",
+      "선택 후 실행 실패·중단 시 순서 되돌리기",
+      "패키징",
+      "네트워크 실행"
+    ]
+  },
+  "asset": {
+    "path": "/Game/DuelistComplete/ST_DuelistBoss_Attack",
+    "saved": true,
+    "sha256": "347AB2345E1B2A73328002AA52D79FF5FE2195455A7685A35C848646C4522EA5",
+    "changes": "Choices 순서 재배치, 범위 예외·상태 연결 ID 유지"
+  },
+  "recovered_probe_failures": [
+    "Live Coding 패치의 임시 구조체 유형 불일치와 Blueprint 새 속성 미등록: 일반 빌드·새 프로세스로 복구",
+    "EditorData 비노출 Python 속성 조회: StateTreeEditorData.get_editor_data 사용",
+    "읽기 전용 다음 순서 속성 쓰기: 생성·OnPossess 초기값을 읽는 검증으로 교체",
+    "검증용 종료 스크립트의 PythonScriptPluginSettings 비노출 타입: 기본 객체 반사 설정으로 교체"
+  ],
+  "observed_outside_scope_errors": [
+    {
+      "asset": "ST_BaseAIStateTree",
+      "error": "Search의 Boss·Boss AIController 파라미터 바인딩 오류",
+      "changed": false,
+      "recovery": "해당 파라미터 바인딩 재연결·컴파일",
+      "limits": "해당 에셋 유효성 보장 제외, Duelist 메인 AI 관측 성공"
+    },
+    {
+      "asset": "CHT_Attack_Player",
+      "error": "Missing property binding",
+      "changed": false,
+      "recovery": "해당 속성 바인딩 재연결",
+      "limits": "플레이어 Chooser 유효성 보장 제외"
+    }
+  ],
+  "raw_evidence": "Saved/BossAlternatingAttack, Git 제외",
+  "persistence_check": {
+    "actually_ran": true,
+    "result": "passed",
+    "method": "검증 종료·저장 후 일반 Editor 재시작과 MCP 속성 조회",
+    "choices": [
+      "BaseAttack1",
+      "AttackQ",
+      "BaseAttack2",
+      "AttackW"
+    ],
+    "node_type": "/Script/Maverick.MVBossSelectAttackTask",
+    "instance_type": "/Script/Maverick.MVBossSelectAttackTaskInstanceData",
+    "proves": "에셋 배열 순서·정식 구조체 경로의 디스크 저장 유지, 임시 로컬 Python 실행 설정 복구",
+    "excludes": [
+      "패키징",
+      "다른 에셋의 바인딩 유효성"
+    ],
+    "remote_execution_enabled": false,
+    "original_remote_execution_restored": true
+  }
+}

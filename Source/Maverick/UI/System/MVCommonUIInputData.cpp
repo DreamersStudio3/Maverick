@@ -11,7 +11,7 @@ UMVCommonUIInputData::UMVCommonUIInputData()
 	if (GenericInputActionTable.Succeeded())
 	{
 		DefaultClickAction.DataTable = GenericInputActionTable.Object;
-		DefaultClickAction.RowName = TEXT("GenericAccept");
+		DefaultClickAction.RowName = TEXT("GenericForward");
 
 		DefaultBackAction.DataTable = GenericInputActionTable.Object;
 		DefaultBackAction.RowName = TEXT("GenericBack");

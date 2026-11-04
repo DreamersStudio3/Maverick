@@ -1,10 +1,12 @@
 #include "Components/MVStatComponent.h"
 
+#include "Character/MVCharacterBase.h"
 #include "Tables/MVTableManager.h"
 #include "Tables/MVStatTableTypes.h"
 #include "Tags/MVGameplayTags.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "System/Progression/MVProgressionStatBinding.h"
 
 namespace
 {
@@ -86,12 +88,25 @@ bool UMVStatComponent::LoadStatsFromTable()
 		return false;
 	}
 
-	SetMaxHP(StatRow->MaxHP);
+	const float NewBaseMaxHP = MVStatClampMaxHP(StatRow->MaxHP);
+	float CheckedMaxHP = 0.0f;
+	if (!FMath::IsFinite(StatRow->MaxHP)
+		|| !TryCalculateModifiedMaxHP(
+			NewBaseMaxHP + ProgressionStatBonuses.FindRef(MVGameplayTags::Stat_MaxHP),
+			CheckedMaxHP))
+	{
+		return false;
+	}
+	BaseMaxHP = NewBaseMaxHP;
+	BaseMaxStamina = MVStatNonNegative(StatRow->MaxStamina);
+	BaseMaxMP = MVStatNonNegative(StatRow->MaxMP);
+
+	ApplyProgressionStatBonuses();
+
 	SetCurrentHP(StatRow->CurrentHP);
-	SetMaxStamina(StatRow->MaxStamina);
 	SetCurrentStamina(StatRow->CurrentStamina);
 	SetStaminaRecoveryPerSecond(StatRow->StaminaRecoveryPerSecond);
-	SetMaxMP(StatRow->MaxMP);
+	SetStaminaRecoveryDelay(StatRow->StaminaRecoveryDelay);
 	SetCurrentMP(StatRow->CurrentMP);
 	SetMPRecoveryPerSecond(StatRow->MPRecoveryPerSecond);
 	SetAttackPower(StatRow->AttackPower);
@@ -99,13 +114,121 @@ bool UMVStatComponent::LoadStatsFromTable()
 	SetWalkSpeed(StatRow->WalkSpeed);
 	SetRunSpeed(StatRow->RunSpeed);
 	SetSprintSpeed(StatRow->SprintSpeed);
-	SetDefence(StatRow->Defence);
+	SetNormalDefence(StatRow->Defence);
+	// Todo: Skill Defence 설정
 	SetMaxGroggy(StatRow->MaxGroggy);
 	SetCurrentGroggy(StatRow->CurrentGroggy);
 	SetGroggyRecoveryPerSecond(StatRow->GroggyRecoveryPerSecond);
 	SetRecentDamageResetDelay(StatRow->GetRecentDamageResetDelay());
+	SetInitialPoise(StatRow->InitialCharacterPoise);
+
+	bBaseStatsReady = true;
+	++BaseStatsRevision;
+	++StatCalculationRevision;
+	OnBaseStatsReady.Broadcast(BaseStatsRevision);
 
 	return true;
+}
+
+bool UMVStatComponent::ReplaceProgressionStatBonuses(const TMap<FGameplayTag, float>& InBonuses)
+{
+	for (const TPair<FGameplayTag, float>& Pair : InBonuses)
+	{
+		if (!Pair.Key.IsValid()
+			|| !FMVProgressionStatBinding::IsSupportedStat(Pair.Key)
+			|| !FMath::IsFinite(Pair.Value))
+		{
+			return false;
+		}
+	}
+
+	float CheckedMaxHP = 0.0f;
+	if (!TryCalculateMaxHPWithProgressionBonus(
+			InBonuses.FindRef(MVGameplayTags::Stat_MaxHP), CheckedMaxHP))
+	{
+		return false;
+	}
+
+	bool bMatchesCurrentBonuses = ProgressionStatBonuses.Num() == InBonuses.Num();
+
+	if (bMatchesCurrentBonuses)
+	{
+		for (const TPair<FGameplayTag, float>& Pair : InBonuses)
+		{
+			const float* CurrentBonus = ProgressionStatBonuses.Find(Pair.Key);
+
+			if (!CurrentBonus || !FMath::IsNearlyEqual(*CurrentBonus, Pair.Value))
+			{
+				bMatchesCurrentBonuses = false;
+				break;
+			}
+		}
+	}
+
+	if (bMatchesCurrentBonuses)
+	{
+		return true;
+	}
+
+	ProgressionStatBonuses = InBonuses;
+	ApplyProgressionStatBonuses();
+	++StatCalculationRevision;
+
+	return true;
+}
+
+bool UMVStatComponent::TryGetProgressionStatValues(const FGameplayTag& StatId, float& OutBaseValue, float& OutBonus,
+	float& OutEffectiveValue) const
+{
+	OutBaseValue = 0.0f;
+	OutBonus = 0.0f;
+	OutEffectiveValue = 0.0f;
+
+	if (!FMVProgressionStatBinding::TryGetBaseValue(
+			*this,
+			StatId,
+			OutBaseValue)
+		|| !FMVProgressionStatBinding::TryGetEffectiveValue(
+			*this,
+			StatId,
+			OutEffectiveValue))
+	{
+		return false;
+	}
+
+	OutBonus = ProgressionStatBonuses.FindRef(StatId);
+	return true;
+}
+
+bool UMVStatComponent::TryCalculateMaxHPWithProgressionBonus(float Bonus, float& OutMaxHP) const
+{
+	OutMaxHP = 0.0f;
+	if (!FMath::IsFinite(Bonus))
+	{
+		return false;
+	}
+
+	return TryCalculateModifiedMaxHP(BaseMaxHP + Bonus, OutMaxHP);
+}
+
+void UMVStatComponent::ApplyIncomingDamageModifiers(FMVResolvedHitData& HitData)
+{
+	if (bIsDead
+		|| HitData.Victim.Get() != GetOwner()
+		|| (HitData.VictimCharacterIndexCode.IsValid()
+			&& HitData.VictimCharacterIndexCode != CharacterIndexCode)
+		|| HitData.FinalDamage <= 0.0f)
+	{
+		return;
+	}
+
+	float ModifiedDamage = HitData.FinalDamage;
+	OnModifyIncomingDamage.Broadcast(HitData, ModifiedDamage);
+
+	if (FMath::IsFinite(ModifiedDamage))
+	{
+		HitData.FinalDamage = FMath::Max(0.0f, ModifiedDamage);
+	}
 }
 
 void UMVStatComponent::HandleDamaged(const FMVResolvedHitData& HitData)
@@ -121,15 +244,16 @@ void UMVStatComponent::HandleDamaged(const FMVResolvedHitData& HitData)
 	}
 
 	const float HPDamage = MVStatNonNegative(HitData.FinalDamage);
+	const float PreviousHP = CurrentHP;
+	float AppliedDamage = 0.0f;
 	if (HPDamage > 0.0f)
 	{
-		const float PreviousHP = CurrentHP;
 		PendingDeathHitData = HitData;
 		bHasPendingDeathHitData = true;
 		SetCurrentHP(CurrentHP - HPDamage);
 		bHasPendingDeathHitData = false;
 
-		const float AppliedDamage = FMath::Max(0.0f, PreviousHP - CurrentHP);
+		AppliedDamage = FMath::Max(0.0f, PreviousHP - CurrentHP);
 		if (AppliedDamage > 0.0f)
 		{
 			AccumulatedRecentDamage += AppliedDamage;
@@ -142,6 +266,21 @@ void UMVStatComponent::HandleDamaged(const FMVResolvedHitData& HitData)
 				ResetDamageAccumulation();
 			}
 		}
+	}
+
+	const APawn* VictimPawn = Cast<APawn>(GetOwner());
+	if (VictimPawn && VictimPawn->IsPlayerControlled())
+	{
+		UE_LOG(LogTemp, Verbose,
+			TEXT("PlayerDamage Frame=%llu Attacker=%s Player=%s Damage=%.2f AppliedDamage=%.2f HP=%.2f->%.2f"),
+			GFrameCounter, *GetNameSafe(HitData.Attacker.Get()), *GetNameSafe(VictimPawn),
+			HPDamage, AppliedDamage, PreviousHP, PreviousHP - AppliedDamage);
+	}
+
+	const float PoiseDamage = MVStatNonNegative(HitData.PoiseDamage);
+	if (PoiseDamage > 0.0f)
+	{
+		UpdatePoise(MVStatNonNegative(HitData.PoiseDamage));
 	}
 
 	if (bIsDead)
@@ -159,9 +298,12 @@ void UMVStatComponent::HandleDamaged(const FMVResolvedHitData& HitData)
 	{
 		SetCurrentGroggy(CurrentGroggy + GroggyDamage);
 		RestartRecentDamageCooldown();
+
 		if (HitData.HitReactionType == EMVActionHitReactionType::Groggy)
 		{
+			const bool bWindowHit = bPoiseBreakGroggyWindow;
 			TryStartGroggy();
+			if (!bWindowHit) ResetPoise();
 		}
 	}
 }
@@ -182,19 +324,23 @@ bool UMVStatComponent::WouldDieFromHit(const FMVResolvedHitData& HitData) const
 	return HPDamage > 0.0f && CurrentHP > 0.0f && CurrentHP - HPDamage <= 0.0f;
 }
 
-void UMVStatComponent::TickRecoverableStats(float DeltaTime)
+void UMVStatComponent::TickRecoverableStats(float DeltaTime, bool bAllowStaminaRecovery)
 {
 	if (DeltaTime <= 0.0f)
 	{
 		return;
 	}
 
-	// MP recovers regardless of whether an action pauses stamina recovery.
+	// MP는 전투 및 행동 상태와 무관하게 상시 회복
 	RecoverMP(MPRecoveryPerSecond * DeltaTime);
+
 	TickRecentDamageCooldown(DeltaTime);
 	TickGroggyRecovery(DeltaTime);
+	TickStaminaExhaustion(DeltaTime);
 
-	if (!IsRecoverableStatRecoveryPaused())
+	if (bAllowStaminaRecovery
+		&& !IsStaminaExhausted()
+		&& !IsRecoverableStatRecoveryPaused())
 	{
 		TickRecoverableResourceRecovery(DeltaTime);
 	}
@@ -241,6 +387,21 @@ void UMVStatComponent::TickGroggyRecovery(float DeltaTime)
 void UMVStatComponent::TickRecoverableResourceRecovery(float DeltaTime)
 {
 	RecoverStamina(StaminaRecoveryPerSecond * DeltaTime);
+}
+
+void UMVStatComponent::BeginStaminaExhaustion()
+{
+	StaminaExhaustionRemaining = FMath::Max(StaminaExhaustionRemaining, StaminaRecoveryDelay);
+}
+
+void UMVStatComponent::TickStaminaExhaustion(float DeltaTime)
+{
+	if (StaminaExhaustionRemaining <= 0.0f)
+	{
+		return;
+	}
+
+	StaminaExhaustionRemaining = FMath::Max(0.0f, StaminaExhaustionRemaining - DeltaTime);
 }
 
 void UMVStatComponent::BeginRecoverableStatRecoveryPause()
@@ -290,9 +451,148 @@ void UMVStatComponent::ResetGroggyState()
 
 void UMVStatComponent::SetMaxHP(float InMaxHP)
 {
+	float NewMaxHP = 0.0f;
+	if (!TryCalculateModifiedMaxHP(InMaxHP, NewMaxHP))
+	{
+		return;
+	}
+
+	UnmodifiedMaxHP = MVStatClampMaxHP(InMaxHP);
+	if (MaxHPModifierBatchDepth > 0)
+	{
+		bMaxHPBatchNeedsRecalculation = true;
+		return;
+	}
+	ApplyCalculatedMaxHP(NewMaxHP);
+}
+
+void UMVStatComponent::BeginMaxHPModifierBatch()
+{
+	++MaxHPModifierBatchDepth;
+}
+
+void UMVStatComponent::EndMaxHPModifierBatch()
+{
+	if (MaxHPModifierBatchDepth <= 0)
+	{
+		return;
+	}
+
+	if (--MaxHPModifierBatchDepth > 0 || !bMaxHPBatchNeedsRecalculation)
+	{
+		return;
+	}
+
+	float NewMaxHP = 0.0f;
+	if (!TryCalculateModifiedMaxHP(UnmodifiedMaxHP, NewMaxHP))
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to finish MaxHP modifier batch. Owner=%s."),
+			*GetNameSafe(GetOwner()));
+		return;
+	}
+
+	const bool bModifiersChanged = bMaxHPBatchModifiersChanged;
+	bMaxHPBatchNeedsRecalculation = false;
+	bMaxHPBatchModifiersChanged = false;
+	if (bModifiersChanged)
+	{
+		++StatCalculationRevision;
+	}
+	ApplyCalculatedMaxHP(NewMaxHP);
+	if (bModifiersChanged)
+	{
+		OnMaxHPModifierChanged.Broadcast();
+	}
+}
+
+FGuid UMVStatComponent::AddMaxHPModifier(float BonusRatio)
+{
+	if (!FMath::IsFinite(BonusRatio) || BonusRatio < 0.0f)
+	{
+		return FGuid();
+	}
+
+	const FGuid ModifierHandle = FGuid::NewGuid();
+	MaxHPModifiers.Add(ModifierHandle, BonusRatio);
+	float NewMaxHP = 0.0f;
+	if (!TryCalculateModifiedMaxHP(UnmodifiedMaxHP, NewMaxHP))
+	{
+		MaxHPModifiers.Remove(ModifierHandle);
+		return FGuid();
+	}
+
+	if (MaxHPModifierBatchDepth > 0)
+	{
+		bMaxHPBatchNeedsRecalculation = true;
+		bMaxHPBatchModifiersChanged = true;
+	}
+	else
+	{
+		++StatCalculationRevision;
+		ApplyCalculatedMaxHP(NewMaxHP);
+		OnMaxHPModifierChanged.Broadcast();
+	}
+	return ModifierHandle;
+}
+
+bool UMVStatComponent::RemoveMaxHPModifier(FGuid ModifierHandle)
+{
+	const float* ExistingBonus = MaxHPModifiers.Find(ModifierHandle);
+	if (!ModifierHandle.IsValid() || !ExistingBonus)
+	{
+		return false;
+	}
+
+	const float RemovedBonus = *ExistingBonus;
+	MaxHPModifiers.Remove(ModifierHandle);
+	float NewMaxHP = 0.0f;
+	if (!TryCalculateModifiedMaxHP(UnmodifiedMaxHP, NewMaxHP))
+	{
+		MaxHPModifiers.Add(ModifierHandle, RemovedBonus);
+		return false;
+	}
+
+	if (MaxHPModifierBatchDepth > 0)
+	{
+		bMaxHPBatchNeedsRecalculation = true;
+		bMaxHPBatchModifiersChanged = true;
+	}
+	else
+	{
+		++StatCalculationRevision;
+		ApplyCalculatedMaxHP(NewMaxHP);
+		OnMaxHPModifierChanged.Broadcast();
+	}
+	return true;
+}
+
+bool UMVStatComponent::TryCalculateModifiedMaxHP(float InUnmodifiedMaxHP, float& OutMaxHP) const
+{
+	OutMaxHP = 0.0f;
+	if (!FMath::IsFinite(InUnmodifiedMaxHP))
+	{
+		return false;
+	}
+
+	float Multiplier = 1.0f;
+	for (const TPair<FGuid, float>& Modifier : MaxHPModifiers)
+	{
+		Multiplier += Modifier.Value;
+		if (!FMath::IsFinite(Multiplier))
+		{
+			return false;
+		}
+	}
+
+	OutMaxHP = MVStatClampMaxHP(InUnmodifiedMaxHP) * Multiplier;
+	return FMath::IsFinite(OutMaxHP);
+}
+
+void UMVStatComponent::ApplyCalculatedMaxHP(float NewMaxHP)
+{
 	const float PreviousMaxHP = MaxHP;
 	const float PreviousCurrentHP = CurrentHP;
-	MaxHP = MVStatClampMaxHP(InMaxHP);
+	MaxHP = NewMaxHP;
 	CurrentHP = MVStatClampCurrent(CurrentHP, MaxHP);
 
 	if (!FMath::IsNearlyEqual(PreviousMaxHP, MaxHP) || !FMath::IsNearlyEqual(PreviousCurrentHP, CurrentHP))
@@ -328,6 +628,34 @@ void UMVStatComponent::RecoverHP(const float Amount)
 	SetCurrentHP(CurrentHP + RecoveryAmount);
 }
 
+bool UMVStatComponent::CanConsumeHP(float Amount) const
+{
+	const float NormalizedAmount = MVStatNonNegative(Amount);
+	if (NormalizedAmount <= 0.0f)
+	{
+		return true;
+	}
+
+	return !bIsDead && CurrentHP - NormalizedAmount >= 1.0f;
+}
+
+bool UMVStatComponent::ConsumeHP(float Amount)
+{
+	const float NormalizedAmount = MVStatNonNegative(Amount);
+	if (NormalizedAmount <= 0.0f)
+	{
+		return true;
+	}
+
+	if (!CanConsumeHP(NormalizedAmount))
+	{
+		return false;
+	}
+
+	SetCurrentHP(FMath::Max(1.0f, CurrentHP - NormalizedAmount));
+	return true;
+}
+
 void UMVStatComponent::SetMaxStamina(float InMaxStamina)
 {
 	const float PreviousMaxStamina = MaxStamina;
@@ -346,6 +674,12 @@ void UMVStatComponent::SetCurrentStamina(float InCurrentStamina)
 	const float PreviousCurrentStamina = CurrentStamina;
 	CurrentStamina = MVStatClampCurrent(InCurrentStamina, MaxStamina);
 
+	// 필드 전환, 디버그 리셋 등 강제 양수 설정 시 Exhaustion 해제
+	if (CurrentStamina > 0.0f)
+	{
+		StaminaExhaustionRemaining = 0.0f;
+	}
+
 	if (!FMath::IsNearlyEqual(PreviousCurrentStamina, CurrentStamina))
 	{
 		OnStaminaChanged.Broadcast(CurrentStamina, MaxStamina);
@@ -355,6 +689,16 @@ void UMVStatComponent::SetCurrentStamina(float InCurrentStamina)
 void UMVStatComponent::SetStaminaRecoveryPerSecond(float InStaminaRecoveryPerSecond)
 {
 	StaminaRecoveryPerSecond = MVStatNonNegative(InStaminaRecoveryPerSecond);
+}
+
+void UMVStatComponent::SetStaminaRecoveryDelay(float InStaminaRecoveryDelay)
+{
+	StaminaRecoveryDelay = MVStatNonNegative(InStaminaRecoveryDelay);
+}
+
+bool UMVStatComponent::IsStaminaExhausted() const
+{
+	return StaminaExhaustionRemaining > 0.0f;
 }
 
 bool UMVStatComponent::HasStamina(float RequiredAmount) const
@@ -379,8 +723,16 @@ bool UMVStatComponent::ConsumeStamina(float Amount)
 		return true;
 	}
 
+	const float PreviousStamina = CurrentStamina;
 	const bool bHadEnoughStamina = CurrentStamina >= NormalizedAmount;
+
 	SetCurrentStamina(CurrentStamina - NormalizedAmount);
+
+	if (PreviousStamina > 0.0f && CurrentStamina <= 0.0f)
+	{
+		BeginStaminaExhaustion();
+	}
+
 	return bHadEnoughStamina;
 }
 
@@ -397,14 +749,22 @@ bool UMVStatComponent::ConsumeStaminaAllowPartial(float Amount)
 		return false;
 	}
 
+	const float PreviousStamina = CurrentStamina;
+
 	SetCurrentStamina(CurrentStamina - FMath::Min(CurrentStamina, NormalizedAmount));
+
+	if (PreviousStamina > 0.0f && CurrentStamina <= 0.0f)
+	{
+		BeginStaminaExhaustion();
+	}
+
 	return true;
 }
 
 void UMVStatComponent::RecoverStamina(float Amount)
 {
 	const float NormalizedAmount = MVStatNonNegative(Amount);
-	if (NormalizedAmount <= 0.0f)
+	if (NormalizedAmount <= 0.0f || IsStaminaExhausted())
 	{
 		return;
 	}
@@ -481,7 +841,151 @@ void UMVStatComponent::SetAttackPower(float InAttackPower)
 
 void UMVStatComponent::SetAttackSpeed(float InAttackSpeed)
 {
-	AttackSpeed = MVStatNonNegative(InAttackSpeed);
+	if (!FMath::IsFinite(InAttackSpeed))
+	{
+		return;
+	}
+
+	BaseAttackSpeed = MVStatNonNegative(InAttackSpeed);
+	RecalculateAttackSpeed();
+}
+
+FGuid UMVStatComponent::AddAttackSpeedModifier(float BonusRatio)
+{
+	if (!FMath::IsFinite(BonusRatio))
+	{
+		return FGuid();
+	}
+
+	const FGuid ModifierHandle = FGuid::NewGuid();
+
+	AttackSpeedModifiers.Add(ModifierHandle, BonusRatio);
+	RecalculateAttackSpeed();
+
+	return ModifierHandle;
+}
+
+bool UMVStatComponent::UpdateAttackSpeedModifier(
+	FGuid ModifierHandle,
+	float BonusRatio)
+{
+	if (!ModifierHandle.IsValid() || !FMath::IsFinite(BonusRatio))
+	{
+		return false;
+	}
+
+	float* ExistingBonus = AttackSpeedModifiers.Find(ModifierHandle);
+	if (!ExistingBonus)
+	{
+		return false;
+	}
+
+	*ExistingBonus = BonusRatio;
+	RecalculateAttackSpeed();
+
+	return true;
+}
+
+bool UMVStatComponent::RemoveAttackSpeedModifier(FGuid ModifierHandle)
+{
+	if (AttackSpeedModifiers.Remove(ModifierHandle) == 0)
+	{
+		return false;
+	}
+
+	RecalculateAttackSpeed();
+
+	return true;
+}
+
+void UMVStatComponent::RecalculateAttackSpeed()
+{
+	float TotalBonusRatio = 0.0f;
+
+	for (const TPair<FGuid, float>& Modifier : AttackSpeedModifiers)
+	{
+		TotalBonusRatio += Modifier.Value;
+	}
+
+	AttackSpeed = BaseAttackSpeed * FMath::Max(0.0f, 1.0f + TotalBonusRatio);
+}
+
+FGuid UMVStatComponent::AddMoveSpeedModifier(float BonusRatio)
+{
+	if (!FMath::IsFinite(BonusRatio))
+	{
+		return FGuid();
+	}
+
+	const FGuid ModifierHandle = FGuid::NewGuid();
+	MoveSpeedModifiers.Add(ModifierHandle, BonusRatio);
+	return ModifierHandle;
+}
+
+bool UMVStatComponent::UpdateMoveSpeedModifier(
+	FGuid ModifierHandle,
+	float BonusRatio)
+{
+	if (!ModifierHandle.IsValid() || !FMath::IsFinite(BonusRatio))
+	{
+		return false;
+	}
+
+	float* ExistingBonus = MoveSpeedModifiers.Find(ModifierHandle);
+	if (!ExistingBonus)
+	{
+		return false;
+	}
+
+	*ExistingBonus = BonusRatio;
+	return true;
+}
+
+bool UMVStatComponent::RemoveMoveSpeedModifier(FGuid ModifierHandle)
+{
+	return ModifierHandle.IsValid()
+		&& MoveSpeedModifiers.Remove(ModifierHandle) > 0;
+}
+
+float UMVStatComponent::GetMoveSpeedMultiplier() const
+{
+	float TotalBonusRatio = 0.0f;
+	for (const TPair<FGuid, float>& Modifier : MoveSpeedModifiers)
+	{
+		TotalBonusRatio += Modifier.Value;
+	}
+
+	return FMath::Max(0.0f, 1.0f + TotalBonusRatio);
+}
+
+FGuid UMVStatComponent::AddDodgeStaminaCostModifier(float BonusRatio)
+{
+	if (!FMath::IsFinite(BonusRatio))
+	{
+		return FGuid();
+	}
+
+	const FGuid ModifierHandle = FGuid::NewGuid();
+	DodgeStaminaCostModifiers.Add(ModifierHandle, BonusRatio);
+	return ModifierHandle;
+}
+
+bool UMVStatComponent::RemoveDodgeStaminaCostModifier(FGuid ModifierHandle)
+{
+	return ModifierHandle.IsValid()
+		&& DodgeStaminaCostModifiers.Remove(ModifierHandle) > 0;
+}
+
+float UMVStatComponent::GetDodgeStaminaCostMultiplier() const
+{
+	float TotalBonusRatio = 0.0f;
+
+	for (const TPair<FGuid, float>& Modifier : DodgeStaminaCostModifiers)
+	{
+		TotalBonusRatio += Modifier.Value;
+	}
+
+	return FMath::Max(0.0f, 1.0f + TotalBonusRatio);
 }
 
 void UMVStatComponent::SetWalkSpeed(float InWalkSpeed)
@@ -511,13 +1015,94 @@ bool UMVStatComponent::HasReachedSprintSpeedRatio(const float RequiredRatio) con
 	}
 
 	const float CurrentSpeed = MovementComponent->Velocity.Size2D();
-	const float RequiredSpeed = SprintSpeed * FMath::Clamp(RequiredRatio, 0.0f, 1.0f);
+	const float RequiredSpeed =
+		SprintSpeed
+		* GetMoveSpeedMultiplier()
+		* FMath::Clamp(RequiredRatio, 0.0f, 1.0f);
 	return CurrentSpeed >= RequiredSpeed;
 }
 
-void UMVStatComponent::SetDefence(float InDefence)
+void UMVStatComponent::SetNormalDefence(float NewNormalDefence)
 {
-	Defence = MVStatNonNegative(InDefence);
+	if (!FMath::IsFinite(NewNormalDefence))
+	{
+		return;
+	}
+
+	const float PreviousBase = BaseNormalDefence;
+	BaseNormalDefence = MVStatNonNegative(NewNormalDefence);
+	if (!RecalculateDefence())
+	{
+		BaseNormalDefence = PreviousBase;
+	}
+}
+
+void UMVStatComponent::SetSkillDefence(float NewSkillDefence)
+{
+	if (!FMath::IsFinite(NewSkillDefence))
+	{
+		return;
+	}
+
+	const float PreviousBase = BaseSkillDefence;
+	BaseSkillDefence = MVStatNonNegative(NewSkillDefence);
+	if (!RecalculateDefence())
+	{
+		BaseSkillDefence = PreviousBase;
+	}
+}
+
+FGuid UMVStatComponent::AddDefenceModifier(float BonusRatio)
+{
+	if (!FMath::IsFinite(BonusRatio) || BonusRatio < 0.0f)
+	{
+		return FGuid();
+	}
+
+	const FGuid ModifierHandle = FGuid::NewGuid();
+	DefenceModifiers.Add(ModifierHandle, BonusRatio);
+	if (!RecalculateDefence())
+	{
+		DefenceModifiers.Remove(ModifierHandle);
+		return FGuid();
+	}
+
+	return ModifierHandle;
+}
+
+bool UMVStatComponent::RemoveDefenceModifier(FGuid ModifierHandle)
+{
+	if (!ModifierHandle.IsValid() || DefenceModifiers.Remove(ModifierHandle) == 0)
+	{
+		return false;
+	}
+
+	RecalculateDefence();
+	return true;
+}
+
+bool UMVStatComponent::RecalculateDefence()
+{
+	float Multiplier = 1.0f;
+	for (const TPair<FGuid, float>& Modifier : DefenceModifiers)
+	{
+		Multiplier += Modifier.Value;
+		if (!FMath::IsFinite(Multiplier))
+		{
+			return false;
+		}
+	}
+
+	const float NewNormalDefence = BaseNormalDefence * Multiplier;
+	const float NewSkillDefence = BaseSkillDefence * Multiplier;
+	if (!FMath::IsFinite(NewNormalDefence) || !FMath::IsFinite(NewSkillDefence))
+	{
+		return false;
+	}
+
+	NormalDefence = NewNormalDefence;
+	SkillDefence = NewSkillDefence;
+	return true;
 }
 
 void UMVStatComponent::SetMaxGroggy(float InMaxGroggy)
@@ -577,6 +1162,191 @@ void UMVStatComponent::SetRecentDamageResetDelay(float InRecentDamageResetDelay)
 void UMVStatComponent::SetGroggyRecoveryDelay(float InGroggyRecoveryDelay)
 {
 	SetRecentDamageResetDelay(InGroggyRecoveryDelay);
+}
+
+void UMVStatComponent::SetInitialPoise(float InitialPoise)
+{
+	BaseInitialPoise = FMath::Max(0.0f, InitialPoise);
+	InitialCharacterPoise = BaseInitialPoise * PoiseModifierMultiplier;
+	if (bPoiseBreakGroggyWindow)
+	{
+		SavedWindowConstantPoise = InitialCharacterPoise;
+		SavedWindowAdditionalPoise = 0.0f;
+		return;
+	}
+	ConstantPoise = InitialCharacterPoise;
+}
+
+FGuid UMVStatComponent::AddPoiseModifier(float BonusRatio)
+{
+	if (!FMath::IsFinite(BonusRatio) || BonusRatio < 0.0f)
+	{
+		return FGuid();
+	}
+
+	const FGuid ModifierHandle = FGuid::NewGuid();
+	PoiseModifiers.Add(ModifierHandle, BonusRatio);
+	if (!ApplyPoiseModifierMultiplier(CalculatePoiseModifierMultiplier()))
+	{
+		PoiseModifiers.Remove(ModifierHandle);
+		return FGuid();
+	}
+	return ModifierHandle;
+}
+
+bool UMVStatComponent::RemovePoiseModifier(FGuid ModifierHandle)
+{
+	if (!ModifierHandle.IsValid() || PoiseModifiers.Remove(ModifierHandle) == 0)
+	{
+		return false;
+	}
+	ApplyPoiseModifierMultiplier(CalculatePoiseModifierMultiplier());
+	return true;
+}
+
+float UMVStatComponent::CalculatePoiseModifierMultiplier() const
+{
+	float Multiplier = 1.0f;
+	for (const TPair<FGuid, float>& Modifier : PoiseModifiers)
+	{
+		Multiplier += Modifier.Value;
+	}
+	return Multiplier;
+}
+
+bool UMVStatComponent::ApplyPoiseModifierMultiplier(float NewMultiplier)
+{
+	if (!FMath::IsFinite(NewMultiplier) || NewMultiplier < 1.0f)
+	{
+		return false;
+	}
+
+	const float Scale = NewMultiplier / PoiseModifierMultiplier;
+	if (!FMath::IsFinite(BaseInitialPoise * NewMultiplier)
+		|| !FMath::IsFinite(ConstantPoise * Scale)
+		|| !FMath::IsFinite(AdditionalPoise * Scale)
+		|| (bPoiseBreakGroggyWindow
+			&& (!FMath::IsFinite(SavedWindowConstantPoise * Scale)
+				|| !FMath::IsFinite(SavedWindowAdditionalPoise * Scale))))
+	{
+		return false;
+	}
+
+	InitialCharacterPoise = BaseInitialPoise * NewMultiplier;
+	if (bPoiseBreakGroggyWindow)
+	{
+		SavedWindowConstantPoise *= Scale;
+		SavedWindowAdditionalPoise *= Scale;
+	}
+	else
+	{
+		ConstantPoise *= Scale;
+		AdditionalPoise *= Scale;
+	}
+	PoiseModifierMultiplier = NewMultiplier;
+	return true;
+}
+
+void UMVStatComponent::PoiseActionStart(float WeaponPoise, float Multiplier)
+{
+	if (bPoiseBreakGroggyWindow) return;
+	SetAdditionalPoise(WeaponPoise, Multiplier);
+	AdjustMinPoise();
+}
+
+void UMVStatComponent::PoiseActionEnd()
+{
+	if (bPoiseBreakGroggyWindow) return;
+	SetAdditionalPoise();
+}
+
+void UMVStatComponent::UpdatePoise(float PoiseDamageAmount)
+{
+	if (bPoiseBreakGroggyWindow)
+	{
+		ConstantPoise = FMath::Max(0.0f, ConstantPoise - FMath::Max(0.0f, PoiseDamageAmount));
+		return;
+	}
+	// 피격 등으로 인해 포이즈가 감소하는 경우, ConstantPoise를 감소시킵니다.
+
+	// 강인도 감소량이 0 이하인 경우, 아무 작업도 수행하지 않습니다.
+	if(PoiseDamageAmount <= 0.0f)
+	{
+		return;
+	}
+
+	// Poise Reset Timer 새로 시작 -> 피격 등으로 강인도 변화가 생기면 해당 시간 기준으로 일정 시간 이후 강인도 초기화
+	UWorld* World = GetWorld();
+	if (World)
+	{
+		if(PoiseRecoveryTimerHandle.IsValid())
+		{
+			World->GetTimerManager().ClearTimer(PoiseRecoveryTimerHandle);
+		}
+		World->GetTimerManager().SetTimer(PoiseRecoveryTimerHandle, this, &UMVStatComponent::ResetPoise, PoiseRecoveryTime, false);
+	}
+
+	ConstantPoise = ConstantPoise - PoiseDamageAmount;
+	if(ConstantPoise + AdditionalPoise <= 0.0f)
+	{
+		// 포이즈가 0 이하로 떨어진 경우, 강인도를 초기화, HitReaction을 Play
+		// HitReaction Play를 위한 flag는 HitResolverSubsystem에서 처리하도록 함
+		ResetPoise();
+	}
+
+}
+
+void UMVStatComponent::ResetPoise()
+{
+	if (bPoiseBreakGroggyWindow) return;
+	UWorld* World = GetWorld();
+	if (World && PoiseRecoveryTimerHandle.IsValid())
+	{
+		World->GetTimerManager().ClearTimer(PoiseRecoveryTimerHandle);
+	}
+
+	if(ConstantPoise < InitialCharacterPoise)
+	{
+		ConstantPoise = InitialCharacterPoise;
+	}
+}
+
+bool UMVStatComponent::PredictPoiseBreak(float PoiseDamageAmount) const
+{
+	if(PoiseDamageAmount <= 0.0f)
+	{
+		return false;
+	}
+
+	float PredictedPoise = ConstantPoise + AdditionalPoise - PoiseDamageAmount;
+	bool Result = PredictedPoise <= 0.0f;
+
+	return Result;
+}
+
+void UMVStatComponent::BeginPoiseBreakGroggyWindow(float Poise)
+{
+	if (bPoiseBreakGroggyWindow) return;
+	SavedWindowConstantPoise = ConstantPoise;
+	SavedWindowAdditionalPoise = AdditionalPoise;
+	if (UWorld* World = GetWorld())
+	{
+		SavedWindowRecoveryRemaining = World->GetTimerManager().GetTimerRemaining(PoiseRecoveryTimerHandle);
+		World->GetTimerManager().ClearTimer(PoiseRecoveryTimerHandle);
+	}
+	bPoiseBreakGroggyWindow = true;
+	ConstantPoise = FMath::Max(1.0f, Poise);
+	AdditionalPoise = 0.0f;
+}
+
+void UMVStatComponent::EndPoiseBreakGroggyWindow()
+{
+	if (!bPoiseBreakGroggyWindow) return;
+	bPoiseBreakGroggyWindow = false;
+	ConstantPoise = SavedWindowConstantPoise;
+	AdditionalPoise = SavedWindowAdditionalPoise;
+	if (UWorld* World = GetWorld(); World && SavedWindowRecoveryRemaining > 0.0f)
+		World->GetTimerManager().SetTimer(PoiseRecoveryTimerHandle, this, &UMVStatComponent::ResetPoise, SavedWindowRecoveryRemaining, false);
 }
 
 void UMVStatComponent::RestartRecentDamageCooldown()
@@ -647,3 +1417,39 @@ void UMVStatComponent::BroadcastGroggyEnded()
 	RecentDamageCooldownRemaining = 0.0f;
 	OnGroggyEnded.Broadcast();
 }
+
+void UMVStatComponent::ApplyProgressionStatBonuses()
+{
+	for (const FGameplayTag& StatId : FMVProgressionStatBinding::GetSupportedStatIds())
+	{
+		const float Bonus = ProgressionStatBonuses.FindRef(StatId);
+
+		FMVProgressionStatBinding::TryApplyBonus(
+			*this,
+			StatId,
+			Bonus);
+	}
+}
+
+void UMVStatComponent::SetAdditionalPoise(float WeaponPoise, float Multiplier)
+{
+	if(WeaponPoise <= 0.0f || Multiplier <= 0.0f)
+	{
+		AdditionalPoise = 0.0f;
+		return;
+	}
+
+	AdditionalPoise = WeaponPoise * Multiplier * PoiseModifierMultiplier;
+}
+
+void UMVStatComponent::AdjustMinPoise()
+{
+	float currentPoise = ConstantPoise + AdditionalPoise;
+	float comparePoise = (InitialCharacterPoise + AdditionalPoise) * MinPoiseRecoveryRatio;
+
+	if (currentPoise < comparePoise)
+	{
+		ConstantPoise = comparePoise - AdditionalPoise;
+	}
+}
+

@@ -1,0 +1,242 @@
+{
+  "date": "2026-10-11",
+  "host": "Codex",
+  "platform": "Windows",
+  "engine": "5.8.3",
+  "request": "기존 Duelist 에셋으로 약 2초 돌진·사슬 발사·회수·대기 복귀 애니메이션 제작",
+  "created": {
+    "sequence": "/Game/DuelistComplete/Animations/AnimationsSequence/AS_Duelist_DashChainPull_2s.AS_Duelist_DashChainPull_2s",
+    "montage": "/Game/DuelistComplete/Animations/AM_Duelist_DashChainPull_2s.AM_Duelist_DashChainPull_2s",
+    "duration_seconds": 2.0,
+    "sample_rate": 60,
+    "frames": 120,
+    "keys_per_bone": 121,
+    "bone_tracks": 746,
+    "dash_cm": 220,
+    "fire_time_seconds": 0.85,
+    "sources": [
+      "/Game/DuelistComplete/Animations/AnimationsSequence/AS_Duelist_UpIdle.AS_Duelist_UpIdle",
+      "/Game/DuelistComplete/Animations/AnimationsSequence/AS_Duelist_Move_Run_Fwd.AS_Duelist_Move_Run_Fwd",
+      "/Game/DuelistComplete/Animations/AnimationsSequence/AS_Duelist_W.AS_Duelist_W"
+    ],
+    "phases": {
+      "dash": [
+        0.0,
+        0.5
+      ],
+      "fire": [
+        0.5,
+        0.85
+      ],
+      "retrieve": [
+        0.85,
+        1.6
+      ],
+      "idle_return": [
+        1.6,
+        2.0
+      ]
+    },
+    "data_table_changed": false
+  },
+  "asset_validation": {
+    "duration": 2.0,
+    "montage_duration": 2.0,
+    "skeleton": "/Game/DuelistComplete/Mesh/SK_Duelist_TwinHammers_NoCoat_Skeleton.SK_Duelist_TwinHammers_NoCoat_Skeleton",
+    "bone_tracks": 746,
+    "max_quat_norm_error": 6.661338147750939e-16,
+    "max_body_rotation_step_deg": 38.69495971906205,
+    "max_body_rotation_step_bone": "r_upperarm",
+    "idle_start_error_cm": 0.0,
+    "idle_end_error_cm": 0.0,
+    "idle_end_rotation_error_deg": 3.989964780357977e-05,
+    "root_samples": {
+      "0.0": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "0.25": [
+        0.0,
+        110.0,
+        0.0
+      ],
+      "0.5": [
+        0.0,
+        220.0,
+        0.0
+      ],
+      "0.85": [
+        0.0,
+        220.0,
+        0.0
+      ],
+      "1.6": [
+        0.0,
+        220.0,
+        0.0
+      ],
+      "2.0": [
+        0.0,
+        220.0,
+        0.0
+      ]
+    },
+    "notifies": [
+      {
+        "name": "MotionWarping",
+        "time": 9.999999747378752e-05,
+        "duration": 2.0
+      },
+      {
+        "name": "Activate Ability",
+        "time": 0.0010000000474974513,
+        "duration": 1.9980000257492065
+      },
+      {
+        "name": "MVDuelistFireChain",
+        "time": 0.8500000238418579,
+        "duration": 0.0
+      }
+    ],
+    "compressed_pose_max_position_error_cm": 0.0,
+    "num_frames": 120,
+    "num_keys": 121,
+    "max_body_rotation_step_time": 1.2666666666666666,
+    "montage_properties": {
+      "SlotAnimTracks": [
+        {
+          "slotName": "DefaultSlot",
+          "animTrack": {
+            "animSegments": [
+              {
+                "cachedPlayLength": 2,
+                "animReference": {
+                  "refPath": "/Game/DuelistComplete/Animations/AnimationsSequence/AS_Duelist_DashChainPull_2s.AS_Duelist_DashChainPull_2s"
+                },
+                "startPos": 0,
+                "animStartTime": 0,
+                "animEndTime": 2,
+                "animPlayRate": 1,
+                "loopingCount": 1
+              }
+            ]
+          }
+        }
+      ],
+      "BlendIn": {
+        "customCurve": "None",
+        "blendTime": 0.07999999821186066,
+        "blendOption": "HermiteCubic"
+      },
+      "BlendOut": {
+        "customCurve": "None",
+        "blendTime": 0.11999999731779099,
+        "blendOption": "HermiteCubic"
+      },
+      "RateScale": 1
+    },
+    "passed": true
+  },
+  "saved_verification": {
+    "reload_success": true,
+    "reload_message": "",
+    "duration": 2.0,
+    "num_keys": 121,
+    "sampling": {
+      "PlatformTargetFrameRate": {
+        "default": {
+          "numerator": 60,
+          "denominator": 1
+        },
+        "perPlatform": {}
+      }
+    },
+    "notifies": [
+      {
+        "name": "MotionWarping",
+        "time": 9.999999747378752e-05,
+        "duration": 2.0,
+        "root_modifier_scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "name": "Activate Ability",
+        "time": 0.0010000000474974513,
+        "duration": 1.9980000257492065
+      },
+      {
+        "name": "MVDuelistFireChain",
+        "time": 0.8500000238418579,
+        "duration": 0.0
+      }
+    ],
+    "dirty_content": [],
+    "dirty_maps": [],
+    "remote_execution_enabled": false
+  },
+  "runtime": {
+    "errors": [],
+    "hp_before": 100,
+    "initial_boss": [
+      400.0,
+      -59.99999999999999,
+      89.65000009536743
+    ],
+    "original_table_changed": false,
+    "final_boss": [
+      620.0001795220539,
+      -59.99999999999999,
+      89.65000009536743
+    ],
+    "final_player": [
+      805.9829325566166,
+      -59.99999999999999,
+      89.65000009536743
+    ],
+    "hp_after": 91.0,
+    "input_restored": true,
+    "remaining_projectiles": 0,
+    "ended_time": 2.0877134315669537,
+    "boss_travel_cm": 220.00017952205394,
+    "seen_projectile": true,
+    "seen_pull": true,
+    "first_projectile_time": 0.8591182082891464,
+    "player_pull_cm": 294.01706744338344
+  },
+  "runtime_samples": 475,
+  "original_asset_hashes_unchanged": {
+    "Content/DuelistComplete/Animations/AM_Duelist_ChainPull.uasset": "BEF3A7A178CDCB7896D403C2CB3F310C4DA52E60A2402FEA033FD6BBD4D6193D",
+    "Content/DuelistComplete/Animations/AM_Duelist_Q.uasset": "3D7B23DD452DF13C184FE8AE2AAFD288388DD65B10E174EEA48E9A580A9D1FBE",
+    "Content/DuelistComplete/DT_DuelistBossCombatAttack.uasset": "659169D1D3BFA8F62F45290E5E15EA6FE421BD433316EC92ED72D5BE64F141CC"
+  },
+  "scope": "실제 BP_Duelist·CombatComponent·ActionComponent·임시 DataTable SkillW 행·현재 사슬 Ability·CharacterMovement·바닥 충돌",
+  "test_overrides": [
+    "PIE 인스턴스 AI 정지",
+    "초기 플레이어 거리 700cm",
+    "PIE 인스턴스 맨손 공격력 10",
+    "PIE 인스턴스 HP 100",
+    "검증 카메라"
+  ],
+  "proof_limits": [
+    "실제 공격 테이블 SkillW 몽타주 교체 없음",
+    "전체 AI 선택·네트워크·패키징 재시험 미실행, 요청 범위는 새 애니메이션 에셋 제작",
+    "C++ 변경 없음, Windows C++ 빌드 미실행·빌드 성공 보장 제외",
+    "연속 영상 대신 실제 PIE의 단계별 정지 화면"
+  ],
+  "recovered": [
+    "조사 중 PythonScriptPlugin 프로세스 예외 후 새 검증 Editor에서 복구, 당시 에셋 저장 없음",
+    "초기 루트 이름 대소문자·플랫폼 샘플링 기본값 차이 보정",
+    "원본 스케일 100의 이동 확대 재현 후 기존 RootMotionNormalize 구성 추가, 재시험에서 220cm 확인",
+    "Editor 정지 자세 캡처는 동작 증명 제외, 실제 PIE 정지 화면과 런타임 표본으로 대체"
+  ],
+  "cleanup": {
+    "pie_stopped": true,
+    "remote_execution_restored": true,
+    "dirty_content": [],
+    "dirty_maps": []
+  }
+}

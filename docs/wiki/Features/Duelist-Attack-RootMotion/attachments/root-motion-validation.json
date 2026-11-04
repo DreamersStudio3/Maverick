@@ -1,0 +1,61 @@
+{
+  "date": "2026-10-06",
+  "platform": "Windows",
+  "engine": "Unreal Engine 5.8.3",
+  "mode": "SimulateInEditor",
+  "target": "/Game/DuelistComplete/BP_Duelist",
+  "scope": "Real CombatComponent and ActionComponent rows with CharacterMovement walking and floor collision; AI disabled for controlled reproduction",
+  "before": {
+    "basic_attack_capsule_horizontal_movement_cm": 0,
+    "basic_attack_max_root_offset_cm": 506.7438792277648
+  },
+  "cases": [
+    {
+      "case": "BasicAttack",
+      "started": true,
+      "capsule_displacement_cm": 487.730758,
+      "post_end_drift_cm": 0.0,
+      "max_root_offset_cm": 1.532345,
+      "sample_count": 14
+    },
+    {
+      "case": "HammerThrow",
+      "started": true,
+      "capsule_displacement_cm": 1506.860606,
+      "post_end_drift_cm": 0.0,
+      "max_root_offset_cm": 0.67564,
+      "sample_count": 40
+    },
+    {
+      "case": "W",
+      "started": true,
+      "capsule_displacement_cm": 248.397216,
+      "post_end_drift_cm": 0.0,
+      "max_root_offset_cm": 0.353985,
+      "sample_count": 16
+    },
+    {
+      "case": "PhaseChange",
+      "started": true,
+      "capsule_displacement_cm": 18.693315,
+      "post_end_drift_cm": 0.0,
+      "max_root_offset_cm": 1.317884,
+      "sample_count": 12
+    },
+    {
+      "case": "BasicAttackInterrupted",
+      "started": true,
+      "capsule_displacement_cm": 491.01014,
+      "post_end_drift_cm": 0.0,
+      "max_root_offset_cm": 1.512213,
+      "sample_count": 9
+    }
+  ],
+  "sample_count": 91,
+  "error_count": 0,
+  "result": "passed",
+  "limitations": [
+    "StateTree row references inspected; full autonomous AI combat not exercised",
+    "Damage balance, networking and packaging not exercised; no C++ changes"
+  ]
+}

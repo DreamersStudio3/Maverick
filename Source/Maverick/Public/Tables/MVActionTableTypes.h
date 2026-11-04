@@ -62,6 +62,15 @@ enum class EMVActionHitReactionType : uint8
 	Groggy
 };
 
+UENUM(BlueprintType)
+enum class EMVHitReactionDir : uint8
+{
+	Front,
+	Left,
+	Right,
+	Back
+};
+
 namespace MVActionHitReactions
 {
 	FORCEINLINE bool IsKnockDownOrAirborne(const EMVActionHitReactionType HitReactionType)

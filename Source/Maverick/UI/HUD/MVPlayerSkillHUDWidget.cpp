@@ -166,9 +166,7 @@ void UMVPlayerSkillHUDWidget::ResolveIconAssets()
 
 		if (QChainTimer && !QIcons.IsEmpty())
 		{
-			TArray<UTexture2D*> ChainTimerIcons;
-			ChainTimerIcons.Add(QIcons[0]);
-			QChainTimer->SetIconStack(ChainTimerIcons);
+			QChainTimer->SetIconStack(QIcons);
 		}
 	}
 
@@ -188,7 +186,7 @@ void UMVPlayerSkillHUDWidget::RefreshSkillSlots()
 {
 	FMVSkillSlotRuntimeState QState;
 	const bool bQAvailable = BoundCombatComponent
-		&& BoundCombatComponent->GetSkillSlotRuntimeState(0, QState);
+		&& BoundCombatComponent->GetSkillSlotRuntimeState(EMVSkillSlot::QSkill, QState);
 	if (QSkillSlot)
 	{
 		QSkillSlot->SetRuntimeState(
@@ -200,26 +198,25 @@ void UMVPlayerSkillHUDWidget::RefreshSkillSlots()
 	if (QChainTimer)
 	{
 		const bool bShowChainTimer = bQAvailable
-			&& QState.bChainActive
+			&& QState.bChainTimerVisible
 			&& QState.ChainWindowRemaining > KINDA_SMALL_NUMBER;
 		QChainTimer->SetVisibility(
 			bShowChainTimer ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
 		QChainTimer->SetRuntimeState(
-			0,
+			QState.ChainTimerIconIndex,
 			QState.ChainWindowRemaining,
 			QState.ChainWindowDuration,
 			bQAvailable);
 	}
 
 	FMVSkillSlotRuntimeState RState;
-	const bool bRAvailable = BoundCombatComponent
-		&& BoundCombatComponent->GetSkillSlotRuntimeState(1, RState);
+	if (BoundCombatComponent)
+	{
+		BoundCombatComponent->GetSkillSlotRuntimeState(EMVSkillSlot::RSkill, RState);
+	}
+
 	if (RSkillSlot)
 	{
-		RSkillSlot->SetRuntimeState(
-			RState.ActiveStackIndex,
-			RState.CooldownRemaining,
-			RState.CooldownDuration,
-			bRAvailable);
+		RSkillSlot->SetGaugeRuntimeState(RState.ActiveStackIndex, RState.GaugeRatio, RState.bLoadoutAvailable);
 	}
 }

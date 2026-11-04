@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
+#include "Public/Struct/MVStatusEffectTypes.h"
+#include "Public/Enum/MVChainAdvancePolicy.h"
 #include "Public/Tables/MVActionRowTableTypes.h"
 
 #include "MVSkillDataTableColumn.generated.h"
@@ -48,14 +50,29 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Common", meta = (ClampMin = "0.0"))
 	float DamageMultiplier;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Speed")
+	bool bUseAttackSpeed = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Common", meta = (ClampMin = "0.0"))
+	float HpCost = 0.0f;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Common")
 	float StaminaCost = 0.0f;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Common")
 	float MpCost = 0.0f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Resource", meta = (ClampMin = "0.0"))
+	float MpRecoveryPerHit = 2.0f;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Common", meta = (ClampMin = "0.0"))
 	float GroggyDamageMultiplier;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Gauge", meta = (ClampMin = "0.0"))
+	float RSkillGaugeGainMultiplier = 1.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Status Effect")
+	TArray<FMVStatusEffectApplication> OnHitStatusEffects;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Basic")
 	EMVAttackSwingDirection SwingDirection = EMVAttackSwingDirection::None;
@@ -78,11 +95,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Chain")
 	FName NextChainName;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Poise")
+	float PoiseAmountMultiplier = 0.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skill|Chain|Skill")
 	float InterStageCooldown;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skill|Chain|Skill")
 	float InputWindowDuration;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skill|Chain|Skill")
+	EMVChainAdvancePolicy ChainAdvancePolicy = EMVChainAdvancePolicy::Immediate;
 
 };

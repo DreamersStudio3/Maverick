@@ -1,0 +1,144 @@
+{
+  "date": "2026-10-12",
+  "environment": {
+    "host": "Codex",
+    "platform": "Windows",
+    "engine": "Unreal Engine 5.8.3",
+    "configuration": "Development Editor"
+  },
+  "scope": "사용자 제작 UMVBossAttackTestWidget의 기존 4개 버튼 연결·Duelist 수동 시험",
+  "button_rows": {
+    "BaseAttackButton": "BasicAttack1",
+    "QAttackButton": "SkillQ",
+    "WAttackButton": "SkillW",
+    "PazeChangeAttackButton": "StartResonanceForTest"
+  },
+  "execution": {
+    "ordinary": "기존 CombatComponent·Ability·몽타주·Notify·DataTable 값 재사용",
+    "resonance": "HP 예약·1회 사용 표식 보존, 동일한 BeginResonance 실행 경로",
+    "manual_control": "첫 클릭부터 자동 AI 정지·컨트롤러 Tick 차단, 위젯 제거·보스 교체 시 이전 상태 복원"
+  },
+  "validation": [
+    {
+      "target": "Windows 전체 Editor 빌드",
+      "ran": true,
+      "result": "Succeeded",
+      "evidence": "Saved/BossAttackTest/build-editor.log",
+      "proves": "최종 C++ 컴파일·정상 모듈 링크",
+      "limits": "패키징·다른 플랫폼 검증 제외"
+    },
+    {
+      "target": "자동 검사",
+      "ran": true,
+      "result": "3개 통과·실패 0개",
+      "tests": [
+        {
+          "name": "Maverick.Combat.TutorialBoss.BasicAttack1",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 0
+        },
+        {
+          "name": "Maverick.Combat.BoxDamageAbility",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 0
+        },
+        {
+          "name": "Maverick.Combat.DuelistResonance",
+          "state": "Success",
+          "errors": 0,
+          "warnings": 1
+        }
+      ],
+      "warning_reason": "격리 검사 캐릭터의 사망 행 미지정 1건",
+      "proves": "기존 전투 계약과 반복 시험의 예약·1회 제한 보존",
+      "limits": "격리 게임 월드 기준, 최종 입력 보정 전 실행·이후 전투 코드 변경 없음"
+    },
+    {
+      "target": "실제 UI 클릭",
+      "ran": true,
+      "result": "4개 버튼의 시작·종료·재활성화 확인",
+      "rows_observed": [
+        "BasicAttack1",
+        "SkillQ",
+        "SkillW"
+      ],
+      "channel_entries": 2,
+      "gimmick_boss_hp": 1000,
+      "gimmick_max_hp": 1000,
+      "failure_hp": [
+        [
+          909,
+          109
+        ],
+        [
+          1000,
+          200
+        ]
+      ],
+      "proves": "기본 공격·Q·W·공명 폭주 실물 위젯 클릭, 체력 100%에서 기믹 2회, 고정 피해 800·AI 충돌 차단·공격 중 버튼 차단",
+      "limits": "Windows 단일 로컬 플레이어·BaseBossTestLevel의 별도 PIE 창 기준; 검증용 HP·공격력·위치 변경은 PIE 인스턴스만 적용·레벨 저장 제외"
+    },
+    {
+      "target": "W 사슬",
+      "ran": true,
+      "result": "투사체 생성·끌어오기·종료 후 사슬 0개·이동 입력 복구",
+      "proves": "기존 SkillW Ability·발사 Notify 연결",
+      "limits": "검증 대상 거리 700cm·공격력 10·플레이어 방어력 1 기준"
+    },
+    {
+      "target": "수동 제어 정리",
+      "ran": true,
+      "result": {
+        "before": {
+          "controller_tick": true,
+          "tree_running": true,
+          "attack_target": "None",
+          "ai_target": "None"
+        },
+        "phase_before_removal": "<MVDuelistResonancePhase.FINISHED: 4>",
+        "cursor_before": true,
+        "immediate": {
+          "tree_running": true,
+          "controller_tick": true,
+          "phase": "<MVDuelistResonancePhase.FINISHED: 4>",
+          "cursor": false
+        }
+      },
+      "proves": "위젯 제거 후 이전 실행 중 트리·컨트롤러 Tick·마우스 커서 복원",
+      "limits": "이번 PIE에서는 자연 완료 후 제거, 활성 채널 중 제거는 코드 확인·자동 검사 범위"
+    },
+    {
+      "target": "정상 모듈 재로드",
+      "ran": true,
+      "result": "전체 빌드 후 Editor의 TestBoss·AttackTable 기본값 조회, WBP_BossAttackTest·WBP_MainHUD 컴파일 통과",
+      "proves": "새 네이티브 속성·부모 클래스·4개 BindWidget 정상 로드",
+      "limits": "정상 모듈 재로드 후 PIE 재실행 제외·이전 Live Coding 상태의 PIE 실행 근거와 구분"
+    },
+    {
+      "target": "네트워크·패키징·다른 플랫폼·다중 로컬 플레이어",
+      "ran": false,
+      "result": "미실행",
+      "reason": "이번 요청은 현재 Windows의 단일 플레이어 보스 시험 UI 연결",
+      "proves": "없음",
+      "limits": "해당 환경의 동작 보장 제외"
+    }
+  ],
+  "input_fix": "CommonUI 기본 Game 입력의 커서 숨김 재현 후, 패널 표시 중 커서가 숨겨진 경우 GameAndUI 재설정·후속 클릭 확인",
+  "preservation": {
+    "user_attack_tree": "백업과 SHA256 동일·사용자 변경 보존",
+    "layout": "기존 위젯·4개 버튼 이름·HUD 배치 유지",
+    "user_unsaved_edit": "기존 미저장 ANS_ActivePoise 편집 저장·현재 파일과 저장 후 백업 SHA256 일치",
+    "backup": "Saved/BossAttackTest/backup",
+    "original_dirty_disk_backup": "ANS_ActivePoise-before-save.uasset",
+    "saved_user_edit_backup": "ANS_ActivePoise-user-edit.uasset"
+  },
+  "cleanup": {
+    "pie_stopped": true,
+    "python_remote_execution": false,
+    "editor_open": true,
+    "native_trace_logs_added": false
+  },
+  "raw_evidence": "Saved/BossAttackTest"
+}

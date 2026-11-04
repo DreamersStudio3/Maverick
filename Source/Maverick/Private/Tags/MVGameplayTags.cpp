@@ -2,13 +2,29 @@
 
 namespace MVGameplayTags
 {
+	UE_DEFINE_GAMEPLAY_TAG(AI_Event_AttackNotice, "AI.Event.AttackNotice");
 	UE_DEFINE_GAMEPLAY_TAG(Character_Player_P1, "Character.Player.P1");
 	UE_DEFINE_GAMEPLAY_TAG(Character_NPC_Enemy_E1, "Character.NPC.Enemy.E1");
 	UE_DEFINE_GAMEPLAY_TAG(Character_NPC_Enemy_NamelessPuppet, "Character.NPC.Enemy.NamelessPuppet");
 	UE_DEFINE_GAMEPLAY_TAG(Character_NPC_Neutral_N1, "Character.NPC.Neutral.N1");
 	UE_DEFINE_GAMEPLAY_TAG(Item_Weapon_BareHand, "Item.Weapon.BareHand");
 	UE_DEFINE_GAMEPLAY_TAG(Item_Weapon_OneHand_TestSword, "Item.Weapon.OneHand.TestSword");
+	UE_DEFINE_GAMEPLAY_TAG(Item_Weapon_DualSword_TestSword, "Item.Weapon.DualSword.TestSword");
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Type_Katana, "Weapon.Type.Katana");
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Type_Rapier, "Weapon.Type.Rapier");
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Type_GreatSword, "Weapon.Type.GreatSword");
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Type_TwoHandedShield, "Weapon.Type.TwoHandedShield");
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Type_Crossbow, "Weapon.Type.Crossbow");
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Type_Bow, "Weapon.Type.Bow");
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Type_Whip, "Weapon.Type.Whip");
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Type_EnergySword, "Weapon.Type.EnergySword");
 	UE_DEFINE_GAMEPLAY_TAG(Item_HealingPotion_Basic, "Item.HealingPotion.Basic");
+	UE_DEFINE_GAMEPLAY_TAG(Progression_Attribute_HP, "Progression.Attribute.HP");
+	UE_DEFINE_GAMEPLAY_TAG(Progression_Attribute_Stamina, "Progression.Attribute.Stamina");
+	UE_DEFINE_GAMEPLAY_TAG(Progression_Attribute_MP, "Progression.Attribute.MP");
+	UE_DEFINE_GAMEPLAY_TAG(Stat_MaxHP, "Stat.MaxHP");
+	UE_DEFINE_GAMEPLAY_TAG(Stat_MaxStamina, "Stat.MaxStamina");
+	UE_DEFINE_GAMEPLAY_TAG(Stat_MaxMP, "Stat.MaxMP");	
 	UE_DEFINE_GAMEPLAY_TAG(Action_Input_LightAttack, "Action.Input.LightAttack");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Input_HeavyAttack, "Action.Input.HeavyAttack");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Input_HeavyChargeAttack, "Action.Input.HeavyChargeAttack");
@@ -16,10 +32,13 @@ namespace MVGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Action_Input_Skill, "Action.Input.Skill");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Input_Skill_Q, "Action.Input.Skill.Q");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Input_Skill_R, "Action.Input.Skill.R");
+	UE_DEFINE_GAMEPLAY_TAG(Action_Input_Skill_W, "Action.Input.Skill.W");
+	UE_DEFINE_GAMEPLAY_TAG(Action_Input_Skill_E, "Action.Input.Skill.E");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Input_Guard, "Action.Input.Guard");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Input_Sprint, "Action.Input.Sprint");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Input_Dodge, "Action.Input.Dodge");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Input_UseConsumable, "Action.Input.UseConsumable");
+	UE_DEFINE_GAMEPLAY_TAG(Action_Input_WeaponSwap, "Action.Input.WeaponSwap");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Combat, "Action.Combat");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Combat_LightAttack, "Action.Combat.LightAttack");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Combat_HeavyAttack, "Action.Combat.HeavyAttack");
@@ -27,6 +46,8 @@ namespace MVGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Action_Combat_Skill, "Action.Combat.Skill");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Combat_Skill_Q, "Action.Combat.Skill.Q");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Combat_Skill_R, "Action.Combat.Skill.R");
+	UE_DEFINE_GAMEPLAY_TAG(Action_Combat_Skill_W, "Action.Combat.Skill.W");
+	UE_DEFINE_GAMEPLAY_TAG(Action_Combat_Skill_E, "Action.Combat.Skill.E");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Combat_SprintLightAttack, "Action.Combat.SprintLightAttack");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Combat_SprintHeavyAttack, "Action.Combat.SprintHeavyAttack");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Combat_DodgeLightAttack, "Action.Combat.DodgeLightAttack");
@@ -35,4 +56,25 @@ namespace MVGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(StateTreeEvent_Enemy_DodgeThreatDetected, "StateTreeEvent.Enemy.DodgeThreatDetected");
 	UE_DEFINE_GAMEPLAY_TAG(StateTreeEvent_Enemy_Groggy, "StateTreeEvent.Enemy.Groggy");
 	UE_DEFINE_GAMEPLAY_TAG(StateTreeEvent_Enemy_GroggyEnd, "StateTreeEvent.Enemy.GroggyEnd");
+
+	UE_DEFINE_GAMEPLAY_TAG(StatusEffect_Passive_StormBlade, "StatusEffect.Passive.StormBlade");
+	UE_DEFINE_GAMEPLAY_TAG(StatusEffect_Passive_IndomitableWill, "StatusEffect.Passive.IndomitableWill");
+	UE_DEFINE_GAMEPLAY_TAG(StatusEffect_Passive_FlexibleFlow, "StatusEffect.Passive.FlexibleFlow");
+	UE_DEFINE_GAMEPLAY_TAG(StatusEffect_Passive_FlexibleFlowStacks, "StatusEffect.Passive.FlexibleFlowStacks");
+	UE_DEFINE_GAMEPLAY_TAG(StatusEffect_Passive_OutsiderStep, "StatusEffect.Passive.OutsiderStep");
+	UE_DEFINE_GAMEPLAY_TAG(StatusEffect_Passive_OutsiderStepStacks, "StatusEffect.Passive.OutsiderStepStacks");
+	UE_DEFINE_GAMEPLAY_TAG(StatusEffect_Passive_TripleBolt, "StatusEffect.Passive.TripleBolt");
+	UE_DEFINE_GAMEPLAY_TAG(StatusEffect_Passive_TripleBoltMark, "StatusEffect.Passive.TripleBoltMark");
+	UE_DEFINE_GAMEPLAY_TAG(StatusEffect_Passive_BloodPrice, "StatusEffect.Passive.BloodPrice");
+	UE_DEFINE_GAMEPLAY_TAG(StatusEffect_Passive_PredatorCycle, "StatusEffect.Passive.PredatorCycle");
+	UE_DEFINE_GAMEPLAY_TAG(StatusEffect_Passive_GiantFortitude, "StatusEffect.Passive.GiantFortitude");
+	UE_DEFINE_GAMEPLAY_TAG(StatusEffect_Passive_IronWall, "StatusEffect.Passive.IronWall");
+	UE_DEFINE_GAMEPLAY_TAG(StatusEffect_Skill_ThirdHitMark, "StatusEffect.Skill.ThirdHitMark");
+	UE_DEFINE_GAMEPLAY_TAG(StatusEffect_Skill_Burn, "StatusEffect.Skill.Burn");
+	UE_DEFINE_GAMEPLAY_TAG(StatusEffect_Skill_BurnBurstCooldown, "StatusEffect.Skill.BurnBurstCooldown");
+	UE_DEFINE_GAMEPLAY_TAG(StatusEffect_Passive_StormBladeSpeed, "StatusEffect.Passive.StormBladeSpeed");
+
+	UE_DEFINE_GAMEPLAY_TAG(StatusEffect_Type_Debuff, "StatusEffect.Type.Debuff");
+
+	UE_DEFINE_GAMEPLAY_TAG(StatusEffect_Mechanic_Mark, "StatusEffect.Mechanic.Mark");
 }

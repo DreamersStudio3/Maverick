@@ -34,6 +34,10 @@ struct FMVActionCooldownState
 	bool bIsReady = true;
 };
 
+/**
+ * AI Action ID별 남은 쿨다운과 ready 상태를 보관하는 ActorComponent.
+ * StateTree에서는 GlobalSensing 또는 Global Action Cooldown Task 한 곳만 이 컴포넌트를 구성하고 tick한다.
+ */
 UCLASS(ClassGroup = (AI), meta = (BlueprintSpawnableComponent))
 class MAVERICK_API UMVActionCooldownComponent : public UActorComponent
 {

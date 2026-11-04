@@ -1,0 +1,139 @@
+{
+  "request": "FMVBossSelectAttackTask 진입 시 공격 범위 밖 대상에 SkillQ 우선 사용",
+  "date": "2026-10-09",
+  "host": "Codex",
+  "platform": "Windows x64",
+  "engine": "Unreal Engine 5.8.3",
+  "configuration": {
+    "state_tree": "/Game/DuelistComplete/ST_DuelistBoss_Attack",
+    "normal_attack_range_cm": 300,
+    "out_of_range_candidate": "AttackQ",
+    "selection_behavior": "TryEnterState",
+    "skill_q_attack_range_cm": 0,
+    "skill_q_row": "SkillQ"
+  },
+  "build": {
+    "command": "Build.bat MaverickEditor Win64 Development -Project=D:/Project/Maverick/Maverick.uproject -WaitMutex -architecture=x64",
+    "actually_ran": true,
+    "result": "Succeeded",
+    "seconds": 30.99,
+    "temporary_source_helpers_removed": true,
+    "proves": "임시 도구 제거 후 최종 C++ 컴파일·Editor 모듈 링크",
+    "excludes": [
+      "패키징",
+      "네트워크 실행"
+    ],
+    "warnings": [
+      "PropertyBindingUtils 플러그인 의존성 선언 누락",
+      "XGE 라이선스 미활성, standalone 빌드 수행"
+    ]
+  },
+  "asset_compile": {
+    "actually_ran": true,
+    "result": "succeeded",
+    "method": "UnrealEditor-Cmd MaverickBossStateTree 임시 설정 경로",
+    "asset_sha256": "585B5CD084AB73BA46BDBDB9EC75ACAE76CF48B263A6336D90BB3EBDB3662E35",
+    "proves": "지정 후보·부모 선택 방식·SkillQ 사거리 설정 저장과 StateTree 컴파일",
+    "excludes": [
+      "모든 연결 트리의 유효성"
+    ]
+  },
+  "runtime": {
+    "actually_ran": true,
+    "result": "passed",
+    "map": "/Game/Characters/NPC/BaseBoss/Level/BaseBossTestLevel",
+    "actor": "BP_Duelist",
+    "tree_scope": "실제 배치 보스의 PIE StateTreeAIComponent에 공격 트리 직접 연결",
+    "render_mode": "NullRHI",
+    "movement_and_collision": "거리 고정을 위해 PIE에서만 이동·충돌 비활성화",
+    "trials": [
+      {
+        "distance_cm": 299.0,
+        "samples": 50,
+        "selected_candidate": "BaseAttack1",
+        "forced_range_attack": false,
+        "observed_active_rows": [
+          "BasicAttack1"
+        ],
+        "first_action_observation_seconds": 0.2731800973415375,
+        "montage": "/Game/DuelistComplete/Animations/AM_Duelist_BaseAttack.AM_Duelist_BaseAttack",
+        "result": "passed"
+      },
+      {
+        "distance_cm": 300.0,
+        "samples": 80,
+        "selected_candidate": "BaseAttack2",
+        "forced_range_attack": false,
+        "observed_active_rows": [
+          "BasicAttack2"
+        ],
+        "first_action_observation_seconds": 0.014700200408697128,
+        "montage": "/Game/DuelistComplete/Animations/AM_Duelist_BaseAttack.AM_Duelist_BaseAttack",
+        "result": "passed"
+      },
+      {
+        "distance_cm": 301.0,
+        "samples": 82,
+        "selected_candidate": "AttackQ",
+        "forced_range_attack": true,
+        "observed_active_rows": [
+          "SkillQ"
+        ],
+        "first_action_observation_seconds": 0.015454601496458054,
+        "montage": "/Game/DuelistComplete/Animations/AM_Duelist_Q.AM_Duelist_Q",
+        "result": "passed"
+      },
+      {
+        "distance_cm": 800.0,
+        "samples": 80,
+        "selected_candidate": "AttackQ",
+        "forced_range_attack": true,
+        "observed_active_rows": [
+          "SkillQ"
+        ],
+        "first_action_observation_seconds": 0.015344500541687012,
+        "montage": "/Game/DuelistComplete/Animations/AM_Duelist_Q.AM_Duelist_Q",
+        "result": "passed"
+      },
+      {
+        "distance_cm": 3000.0,
+        "samples": 83,
+        "selected_candidate": "AttackQ",
+        "forced_range_attack": true,
+        "observed_active_rows": [
+          "SkillQ"
+        ],
+        "first_action_observation_seconds": 0.015189800411462784,
+        "montage": "/Game/DuelistComplete/Animations/AM_Duelist_Q.AM_Duelist_Q",
+        "result": "passed"
+      }
+    ],
+    "proves": "범위 경계 선택·하위 SkillQ 액션·AM_Duelist_Q 실행",
+    "excludes": [
+      "추적 상태부터의 전체 메인 AI 전이",
+      "몽타주 끝까지의 완료·복귀",
+      "시각 품질",
+      "공격 이동·피해·충돌 효과",
+      "모든 무작위 후보의 분포",
+      "패키징",
+      "네트워크 실행"
+    ]
+  },
+  "observed_outside_scope_errors": [
+    {
+      "asset": "/Game/Characters/NPC/BaseBoss/ST_BaseAIStateTree",
+      "observed": "Search 상태의 Boss·Boss AIController 파라미터 바인딩 오류와 컴파일·링크 실패",
+      "changed": false,
+      "impact": "검증 공격 트리에 직접 연결, 이 에셋의 런타임 유효성 보장 제외",
+      "recovery": "해당 StateTree Search 파라미터 바인딩 확인·재연결·컴파일"
+    },
+    {
+      "asset": "/Game/Table/Attack/Player/CHT_Attack_Player",
+      "observed": "Missing property binding",
+      "changed": false,
+      "impact": "보스 선택·SkillQ 액션 관측 성공, 플레이어 Chooser 유효성 보장 제외",
+      "recovery": "해당 Chooser 속성 바인딩 확인·재연결"
+    }
+  ],
+  "raw_evidence": "Saved/BossOutOfRangeSkillQ, Git 제외"
+}

@@ -72,12 +72,24 @@ void UMVFinisherComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 
 bool UMVFinisherComponent::TryHandleActionInput(FGameplayTag ActionInputTag, FVector2D ControllerSpaceInput, bool bHasMovementInput)
 {
-	if (ActionInputTag.MatchesTagExact(MVGameplayTags::Action_Input_LightAttack))
+	if (!ActionInputTag.MatchesTagExact(MVGameplayTags::Action_Input_LightAttack))
 	{
-		return TryFinisherMove();
+		return false;
 	}
 
-	return false;
+	const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
+	if (!OwnerCharacter)
+	{
+		return false;
+	}
+
+	if (OwnerCharacter->GetEquippedStyle() == EMVEquippedStyle::DualWield)
+	{
+		AActor* FinisherTarget = nullptr;
+		return CanFinisherMove(FinisherTarget);
+	}
+
+	return TryFinisherMove();
 }
 
 bool UMVFinisherComponent::TryFinisherMove()
