@@ -6,6 +6,7 @@
 #include "Character/PC/MVPlayerCharacter.h"
 #include "Combat/MVAbilityBase.h"
 #include "Combat/MVHitResolverSubsystem.h"
+#include "Combat/MVProjectileExecutionTracker.h"
 #include "Combat/Projectile/MVProjectileBase.h"
 #include "Components/MVCombatComponent.h"
 #include "Components/MVStatComponent.h"
@@ -165,7 +166,7 @@ bool FMVProjectileExecutionTest::RunTest(const FString& Parameters)
 				TestNotNull(TEXT("Second projectile shares one attack"), SecondShot);
 				Combat->HandleActionEnded(ActionTableName, ActionRowName, false);
 				TestTrue(TEXT("First projectile remains after action end"),
-					Combat->ProjectileExecutions.Contains(101));
+					Combat->FindProjectileExecution(101) != nullptr);
 				TestTrue(TEXT("Original skill cooldown started"),
 					Skill.GetMainCooldownRemaining(World->GetTimeSeconds())
 					> KINDA_SMALL_NUMBER);
@@ -178,7 +179,7 @@ bool FMVProjectileExecutionTest::RunTest(const FString& Parameters)
 					TestTrue(TEXT("Late first hit damages victim"),
 						Enemy->StatComponent->CurrentHP < EnemyHPBeforeHit);
 					const FMVProjectileExecutionRecord* FirstRecord =
-						Combat->ProjectileExecutions.Find(101);
+						Combat->FindProjectileExecution(101);
 					if (TestNotNull(TEXT("Late hit keeps execution record"), FirstRecord))
 					{
 						UMVAbilityBase* ExecutionAbility = FirstRecord->ExecutionAbility.Get();
@@ -201,12 +202,12 @@ bool FMVProjectileExecutionTest::RunTest(const FString& Parameters)
 				if (SecondShot)
 				{
 					TestTrue(TEXT("Record remains while another projectile flies"),
-						Combat->ProjectileExecutions.Contains(101));
+						Combat->FindProjectileExecution(101) != nullptr);
 					SecondShot->OnProjectileFinished.Broadcast(SecondShot, 101);
 					SecondShot->Destroy();
 				}
 				TestTrue(TEXT("First record is released after all projectiles finish"),
-					Combat->ProjectileExecutions.IsEmpty());
+					Combat->ProjectileExecutionTracker->IsEmpty());
 			}
 
 			AMVProjectileBase* StaleShot = CreateRegisteredShot(103, 3);
@@ -222,7 +223,7 @@ bool FMVProjectileExecutionTest::RunTest(const FString& Parameters)
 					TestTrue(TEXT("Old use reduces victim health"),
 						Enemy->StatComponent->CurrentHP < EnemyHPBeforeStaleHit);
 					const FMVProjectileExecutionRecord* StaleRecord =
-						Combat->ProjectileExecutions.Find(103);
+						Combat->FindProjectileExecution(103);
 					if (TestNotNull(TEXT("Stale-use record remains"), StaleRecord))
 					{
 						TestFalse(TEXT("Old use cannot refund the new skill use"),
@@ -233,7 +234,7 @@ bool FMVProjectileExecutionTest::RunTest(const FString& Parameters)
 				StaleShot->OnProjectileFinished.Broadcast(StaleShot, 103);
 				StaleShot->Destroy();
 				TestTrue(TEXT("Stale-use record is released"),
-					Combat->ProjectileExecutions.IsEmpty());
+					Combat->ProjectileExecutionTracker->IsEmpty());
 			}
 
 			AMVProjectileBase* DeathShot = CreateRegisteredShot(102, 2);
@@ -251,11 +252,11 @@ bool FMVProjectileExecutionTest::RunTest(const FString& Parameters)
 					TestTrue(TEXT("Pre-death projectile retains base damage"),
 						Enemy->StatComponent->CurrentHP < EnemyHPBeforeDeathHit);
 					const FMVProjectileExecutionRecord* DeathRecord =
-						Combat->ProjectileExecutions.Find(102);
+						Combat->FindProjectileExecution(102);
 					if (TestNotNull(TEXT("Death-boundary record remains"), DeathRecord))
 					{
 						TestFalse(TEXT("Dead shooter receives no hit reward"),
-							DeathRecord->bHadHit);
+						DeathRecord->HasHit());
 						TestFalse(TEXT("Dead shooter cannot refund"),
 							Combat->RefundSkillMainCooldownForExecution(
 								0, DeathRecord->ExecutionAbility.Get()));
@@ -265,7 +266,7 @@ bool FMVProjectileExecutionTest::RunTest(const FString& Parameters)
 				DeathShot->OnProjectileFinished.Broadcast(DeathShot, 102);
 				DeathShot->Destroy();
 				TestTrue(TEXT("Death-boundary record is released"),
-					Combat->ProjectileExecutions.IsEmpty());
+					Combat->ProjectileExecutionTracker->IsEmpty());
 			}
 		}
 	}

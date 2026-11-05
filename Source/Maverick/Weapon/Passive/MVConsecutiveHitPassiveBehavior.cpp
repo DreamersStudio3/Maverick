@@ -15,16 +15,9 @@ void UMVConsecutiveHitPassiveBehavior::OnApplied_Implementation(const FMVStatusE
 		return;
 	}
 
-	UMVStatusEffectComponent* Effects = GetOwningStatusEffectComponent();
-	AMVCharacterBase* Owner = IsValid(Effects)
-		? Cast<AMVCharacterBase>(Effects->GetOwner())
-		: nullptr;
-	UMVCombatComponent* Combat = IsValid(Owner)
-	? Owner->CombatComponent.Get()
-	: nullptr;
-	UMVStatComponent* Stats = IsValid(Owner)
-		? Owner->StatComponent.Get()
-		: nullptr;
+	AMVCharacterBase* Owner = MVWeaponPassiveConditions::ResolveOwner(*this);
+	UMVCombatComponent* Combat = IsValid(Owner) ? Owner->CombatComponent.Get() : nullptr;
+	UMVStatComponent* Stats = IsValid(Owner) ? Owner->StatComponent.Get() : nullptr;
 
 	if (!IsValid(Combat)
 		|| !IsValid(Stats)
@@ -106,7 +99,7 @@ void UMVConsecutiveHitPassiveBehavior::HandleValidatedAttackHit(
 		|| HitData.Attacker.Get() != Owner
 		|| Ability->GetOwnerCharacter() != Owner
 		|| !Combat->IsAttackFromCurrentPassiveActivation(HitData)
-		|| !Combat->IsBasicAttackAbility(Ability)
+		|| !MVWeaponPassiveConditions::MatchesAttackFilter(AttackFilter, *Combat, Ability)
 		|| Effects->FindStatusEffectHandle(
 			PassiveDefinition.Get(), Owner) != GetEffectHandle())
 	{
@@ -133,12 +126,13 @@ void UMVConsecutiveHitPassiveBehavior::HandleAttackMissed(
 	AMVCharacterBase* Owner = BoundCharacter.Get();
 	UMVCombatComponent* Combat = BoundCombatComponent.Get();
 
-	if (!IsValid(Owner)
+	if (!bResetOnAttackMissed
+		|| !IsValid(Owner)
 		|| !IsValid(Combat)
 		|| !IsValid(MissedAbility)
 		|| MissedAbility->GetOwnerCharacter() != Owner
 		|| !Combat->IsAttackFromCurrentPassiveActivation(MissedAbility)
-		|| !Combat->IsBasicAttackAbility(MissedAbility))
+		|| !MVWeaponPassiveConditions::MatchesAttackFilter(AttackFilter, *Combat, MissedAbility))
 	{
 		return;
 	}

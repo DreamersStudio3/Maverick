@@ -1,35 +1,27 @@
-#include "Weapon/Passive/WhipEnergySword/MVPredatorCyclePassiveBehavior.h"
+#include "Weapon/Passive/Common/MVRefundSkillUseOnHitBehavior.h"
 
 #include "Character/MVCharacterBase.h"
 #include "Character/NPC/Enemy/MVEnemy.h"
 #include "Combat/MVAbilityBase.h"
 #include "Components/MVCombatComponent.h"
-#include "Components/MVStatusEffectComponent.h"
+#include "Components/MVStatComponent.h"
 #include "Components/MVWeaponComponent.h"
-#include "StatusEffects/MVStatusEffectDefinition.h"
+#include "Weapon/Passive/Common/MVWeaponPassiveConditions.h"
 
-void UMVPredatorCyclePassiveBehavior::OnApplied_Implementation(const FMVStatusEffectInstance& Instance)
+void UMVRefundSkillUseOnHitBehavior::OnApplied_Implementation(const FMVStatusEffectInstance& Instance)
 {
 	if (Instance.Handle != GetEffectHandle())
 	{
 		return;
 	}
 
-	UMVStatusEffectComponent* Effects = GetOwningStatusEffectComponent();
-	AMVCharacterBase* Owner = IsValid(Effects)
-		? Cast<AMVCharacterBase>(Effects->GetOwner())
-		: nullptr;
-	UMVCombatComponent* Combat = IsValid(Owner)
-		? Owner->CombatComponent.Get()
-		: nullptr;
-	UMVStatComponent* Stats = IsValid(Owner)
-		? Owner->StatComponent.Get()
-		: nullptr;
+	AMVCharacterBase* Owner = MVWeaponPassiveConditions::ResolveOwner(*this);
+	UMVCombatComponent* Combat = IsValid(Owner) ? Owner->CombatComponent.Get() : nullptr;
+	UMVStatComponent* Stats = IsValid(Owner) ? Owner->StatComponent.Get() : nullptr;
 
 	if (!IsValid(Combat)
 		|| !IsValid(Stats)
 		|| Stats->IsDead()
-		|| !IsValid(Instance.Definition.Get())
 		|| Instance.SourceActor.Get() != Owner)
 	{
 		return;
@@ -38,14 +30,13 @@ void UMVPredatorCyclePassiveBehavior::OnApplied_Implementation(const FMVStatusEf
 	BoundOwner = Owner;
 	BoundCombatComponent = Combat;
 	BoundStatComponent = Stats;
-	PassiveDefinition = Instance.Definition.Get();
 
 	Combat->OnValidatedAttackHitAfterDamage.AddUniqueDynamic(
 		this,
-		&UMVPredatorCyclePassiveBehavior::HandleValidatedAttackHitAfterDamage);
+		&UMVRefundSkillUseOnHitBehavior::HandleValidatedAttackHitAfterDamage);
 }
 
-void UMVPredatorCyclePassiveBehavior::OnRemoved_Implementation(
+void UMVRefundSkillUseOnHitBehavior::OnRemoved_Implementation(
 	const FMVStatusEffectInstance& /*Instance*/,
 	EMVStatusEffectRemovalReason /*RemovalReason*/)
 {
@@ -53,31 +44,27 @@ void UMVPredatorCyclePassiveBehavior::OnRemoved_Implementation(
 	{
 		Combat->OnValidatedAttackHitAfterDamage.RemoveDynamic(
 			this,
-			&UMVPredatorCyclePassiveBehavior::HandleValidatedAttackHitAfterDamage);
+			&UMVRefundSkillUseOnHitBehavior::HandleValidatedAttackHitAfterDamage);
 	}
 
 	BoundOwner.Reset();
 	BoundCombatComponent.Reset();
 	BoundStatComponent.Reset();
-	PassiveDefinition.Reset();
 }
 
-void UMVPredatorCyclePassiveBehavior::HandleValidatedAttackHitAfterDamage(
+void UMVRefundSkillUseOnHitBehavior::HandleValidatedAttackHitAfterDamage(
 	const FMVResolvedHitData& HitData,
 	UMVAbilityBase* Ability)
 {
 	AMVCharacterBase* Owner = BoundOwner.Get();
 	UMVCombatComponent* Combat = BoundCombatComponent.Get();
 	UMVStatComponent* Stats = BoundStatComponent.Get();
-	UMVStatusEffectComponent* Effects = GetOwningStatusEffectComponent();
 	AMVEnemy* Enemy = Cast<AMVEnemy>(HitData.Victim.Get());
 
 	if (!IsValid(Owner)
 		|| !IsValid(Combat)
 		|| !IsValid(Stats)
 		|| Stats->IsDead()
-		|| !IsValid(Effects)
-		|| !IsValid(PassiveDefinition.Get())
 		|| !IsValid(Ability)
 		|| !IsValid(Enemy)
 		|| !IsValid(Owner->WeaponComponent.Get())
@@ -89,8 +76,7 @@ void UMVPredatorCyclePassiveBehavior::HandleValidatedAttackHitAfterDamage(
 		|| !Ability->bAbilityCostConsumed
 		|| Ability->GetAttackInstanceId() != HitData.AttackInstanceId
 		|| HitData.AttackInstanceId == INDEX_NONE
-		|| Effects->FindStatusEffectHandle(
-			PassiveDefinition.Get(), Owner) != GetEffectHandle())
+		|| !MVWeaponPassiveConditions::HasActiveSelfAppliedEffect(*this, *Owner))
 	{
 		return;
 	}
@@ -117,8 +103,8 @@ void UMVPredatorCyclePassiveBehavior::HandleValidatedAttackHitAfterDamage(
 		return;
 	}
 
-	const float Chance = FMath::IsFinite(RefundChance)
-		? FMath::Clamp(RefundChance, 0.0f, 1.0f)
+	const float Chance = FMath::IsFinite(ActivationChance)
+		? FMath::Clamp(ActivationChance, 0.0f, 1.0f)
 		: 0.0f;
 	const float Roll = FMath::FRand();
 	const bool bTriggered = Chance >= 1.0f

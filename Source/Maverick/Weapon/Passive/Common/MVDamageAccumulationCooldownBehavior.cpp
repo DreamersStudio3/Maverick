@@ -1,20 +1,17 @@
-#include "Weapon/Passive/TwoHandedShield/MVBloodPricePassiveBehavior.h"
+#include "Weapon/Passive/Common/MVDamageAccumulationCooldownBehavior.h"
 
 #include "Character/MVCharacterBase.h"
 #include "Components/MVCombatComponent.h"
-#include "Components/MVStatusEffectComponent.h"
+#include "Weapon/Passive/Common/MVWeaponPassiveConditions.h"
 
-void UMVBloodPricePassiveBehavior::OnApplied_Implementation(const FMVStatusEffectInstance& Instance)
+void UMVDamageAccumulationCooldownBehavior::OnApplied_Implementation(const FMVStatusEffectInstance& Instance)
 {
-	if (Instance.Handle != GetEffectHandle())
+	if (Instance.Handle != GetEffectHandle() || BoundStatComponent.IsValid())
 	{
 		return;
 	}
 
-	UMVStatusEffectComponent* Effects = GetOwningStatusEffectComponent();
-	AMVCharacterBase* Owner = IsValid(Effects)
-		? Cast<AMVCharacterBase>(Effects->GetOwner())
-		: nullptr;
+	AMVCharacterBase* Owner = MVWeaponPassiveConditions::ResolveOwner(*this);
 	UMVStatComponent* Stats = IsValid(Owner)
 		? Owner->StatComponent.Get()
 		: nullptr;
@@ -30,38 +27,35 @@ void UMVBloodPricePassiveBehavior::OnApplied_Implementation(const FMVStatusEffec
 	BoundStatComponent = Stats;
 
 	Stats->OnDamageApplied.AddUniqueDynamic(
-		this, &UMVBloodPricePassiveBehavior::HandleDamageApplied);
+		this, &UMVDamageAccumulationCooldownBehavior::HandleDamageApplied);
 	Stats->OnDeathStarted.AddUniqueDynamic(
-		this, &UMVBloodPricePassiveBehavior::HandleOwnerDeathStarted);
+		this, &UMVDamageAccumulationCooldownBehavior::HandleOwnerDeathStarted);
 }
 
-void UMVBloodPricePassiveBehavior::OnRemoved_Implementation(
+void UMVDamageAccumulationCooldownBehavior::OnRemoved_Implementation(
 	const FMVStatusEffectInstance& /*Instance*/,
 	EMVStatusEffectRemovalReason /*RemovalReason*/)
 {
 	if (UMVStatComponent* Stats = BoundStatComponent.Get())
 	{
 		Stats->OnDamageApplied.RemoveDynamic(
-			this, &UMVBloodPricePassiveBehavior::HandleDamageApplied);
+			this, &UMVDamageAccumulationCooldownBehavior::HandleDamageApplied);
 		Stats->OnDeathStarted.RemoveDynamic(
-			this, &UMVBloodPricePassiveBehavior::HandleOwnerDeathStarted);
+			this, &UMVDamageAccumulationCooldownBehavior::HandleOwnerDeathStarted);
 	}
 
 	BoundStatComponent.Reset();
 	AccumulatedDamageRatio = 0.0;
 }
 
-void UMVBloodPricePassiveBehavior::HandleDamageApplied(
+void UMVDamageAccumulationCooldownBehavior::HandleDamageApplied(
 	float AppliedDamage,
 	float /*PreviousHP*/,
 	float /*CurrentHP*/,
 	const FMVResolvedHitData& HitData)
 {
 	UMVStatComponent* Stats = BoundStatComponent.Get();
-	UMVStatusEffectComponent* Effects = GetOwningStatusEffectComponent();
-	AMVCharacterBase* Owner = IsValid(Effects)
-		? Cast<AMVCharacterBase>(Effects->GetOwner())
-		: nullptr;
+	AMVCharacterBase* Owner = MVWeaponPassiveConditions::ResolveOwner(*this);
 
 	if (!IsValid(Stats)
 		|| !IsValid(Owner)
@@ -71,20 +65,20 @@ void UMVBloodPricePassiveBehavior::HandleDamageApplied(
 		|| !FMath::IsFinite(AppliedDamage)
 		|| AppliedDamage <= 0.0f
 		|| !FMath::IsFinite(Stats->MaxHP)
-		|| Stats->MaxHP <= 0.0f)
+		|| Stats->MaxHP <= 0.0f
+		|| !MVWeaponPassiveConditions::HasActiveSelfAppliedEffect(*this, *Owner))
 	{
 		return;
 	}
 
 	const double Threshold = static_cast<double>(
-		FMath::Clamp(DamageThresholdRatio, 0.001f, 1.0f));
+		FMath::Clamp(AccumulatedDamageThresholdRatio, 0.001f, 1.0f));
 	const double DamageRatio =
 		static_cast<double>(AppliedDamage) / static_cast<double>(Stats->MaxHP);
 
 	AccumulatedDamageRatio += DamageRatio;
 
-	// float로 설정한 0.05와 계산 결과의 미세한 차이로
-	// 정확히 5%에 도달했을 때 발동을 놓치지 않도록 한다.
+	// 설정값과 누적값의 부동소수점 오차 때문에 경계에서 발동을 놓치지 않게 한다.
 	const int32 TriggerCount =
 		FMath::FloorToInt((AccumulatedDamageRatio + 1e-8) / Threshold);
 
@@ -96,13 +90,13 @@ void UMVBloodPricePassiveBehavior::HandleDamageApplied(
 		if (UMVCombatComponent* Combat = Owner->CombatComponent.Get())
 		{
 			Combat->ReduceOngoingSkillMainCooldowns(
-				CooldownRefundRatio,
+				CooldownReductionRatio,
 				TriggerCount);
 		}
 	}
 }
 
-void UMVBloodPricePassiveBehavior::HandleOwnerDeathStarted(const FMVDeathContext& DeathContext)
+void UMVDamageAccumulationCooldownBehavior::HandleOwnerDeathStarted(const FMVDeathContext& DeathContext)
 {
 	UMVStatComponent* Stats = BoundStatComponent.Get();
 	if (!IsValid(Stats)
