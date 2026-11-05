@@ -5,7 +5,7 @@
 
 namespace
 {
-const int32 MVWorldStateCurrentSaveVersion = 2;
+const int32 MVWorldStateCurrentSaveVersion = 3;
 
 FString WorldStateResolveFallbackSlotName(const FString& RequestedSlotName, const FString& DefaultSlotName)
 {
@@ -25,6 +25,11 @@ void UMVWorldStateSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	ResetSaveData();
 	ActiveSaveSlotName = ResolveSlotName(DefaultSaveSlotName);
 	ActiveUserIndex = DefaultUserIndex;
+	if (DoesSaveSlotExist(ActiveSaveSlotName, ActiveUserIndex)
+		&& !LoadFromSlot(ActiveSaveSlotName, ActiveUserIndex))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("WorldState: failed to load default slot %s"), *ActiveSaveSlotName);
+	}
 }
 
 void UMVWorldStateSubsystem::Deinitialize()
@@ -364,6 +369,32 @@ bool UMVWorldStateSubsystem::IsQuestCompleted(const FName QuestId) const
 {
 	const FMVQuestSaveData* QuestRecord = FindQuestRecord(QuestId);
 	return QuestRecord && QuestRecord->bCompleted;
+}
+
+bool UMVWorldStateSubsystem::RecordBossIntroCompleted(const FName IntroId, const FTransform& BossTransform)
+{
+	if (IntroId.IsNone() || BossTransform.ContainsNaN() || !BossTransform.IsValid()) return false;
+	FMVBossIntroSaveData Existing;
+	if (TryGetBossIntroCompleted(IntroId, Existing)) return true;
+	FMVBossIntroSaveData Record;
+	Record.IntroId = IntroId;
+	Record.MapName = ResolveCurrentMapName();
+	Record.BossTransform = BossTransform;
+	CurrentSaveData.BossIntros.Add(Record);
+	MarkSaveDataDirty();
+	return true;
+}
+
+bool UMVWorldStateSubsystem::TryGetBossIntroCompleted(const FName IntroId, FMVBossIntroSaveData& OutRecord) const
+{
+	OutRecord = FMVBossIntroSaveData();
+	if (IntroId.IsNone()) return false;
+	const FName MapName = ResolveCurrentMapName();
+	const FMVBossIntroSaveData* Record = CurrentSaveData.BossIntros.FindByPredicate(
+		[IntroId, MapName](const FMVBossIntroSaveData& Item) { return Item.IntroId == IntroId && Item.MapName == MapName; });
+	if (!Record) return false;
+	OutRecord = *Record;
+	return true;
 }
 
 void UMVWorldStateSubsystem::UpgradeSaveData()

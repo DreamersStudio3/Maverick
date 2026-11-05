@@ -128,6 +128,7 @@ void AMVCharacterBase::Tick(float DeltaTime)
 
 	UpdateMovement(bIsMovementActive);
 	UpdateRotation(bIsRotationActive);
+	OnLocomotionSettingsUpdated.Broadcast(bIsMovementActive, bIsRotationActive);
 }
 
 // Called to bind functionality to input

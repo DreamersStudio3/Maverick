@@ -1,12 +1,13 @@
 ---
 제목: AI StateTree
 부제목: StateTree 감지·판단·Action 실행 경계
-최근수정일: 2026-10-11
+최근수정일: 2026-11-04
 최근수정자: Codex
 관련문서:
   - "[[Architecture/document|Maverick Architecture]]"
   - "[[Features/Duelist-Chain-Pull/document|Duelist 돌진 사슬 스킬]]"
   - "[[Features/Duelist-Resonance/document|Duelist 공명 폭주]]"
+  - "[[Features/Boss-Intro/document|보스 등장 연출]]"
 ---
 
 # AI StateTree
@@ -34,8 +35,55 @@ flowchart TD
 - GlobalSensing 현재 플레이어 탐색: 별도 타깃 탐색 경로
 - StateTree Component 조립·배치: Blueprint 책임
 - 탐색 순서: Controller BrainComponent → 기타 Controller Component → Pawn Component
+- 보스 등장 대기: `AMVBossIntroTrigger`의 자동 AI 정지와 K/L 수동 활성화 허용, 실제 재생 구간만 `bBossIntroBlocked` 적용; 자연 종료 시 `SetBossCombatEnabled(true, PlayerPawn)`으로 대상 연결·전투 시작, 기존 관람 기록과 무관하게 새 플레이에서 재생
+- 명시적 AI 제어 요청의 `OnBossCombatControlRequested`로 수동 공격 시험 해제, K는 기존 대상 유지·AI 시작, L은 플레이어 대상 지정·AI 시작; [[Features/Boss-Intro/document|보스 등장 연출]]·[[Features/Boss-Attack-Test/document|보스 공격 시험 UI]] 참조
 
 ## StateTree 계약
+
+### Spline 패트롤
+
+| 구성 | 책임 / 설정 |
+|---|---|
+| `/Game/Characters/NPC/BaseBoss/Patrol/BP_PatrolPath` | Actor Blueprint의 `PatrolSpline`, 레벨에서 곡선점 편집 |
+| `AMVEnemy.PatrolPath` | 레벨에 배치한 경로 Actor 참조, 보스 Details → `AI / Patrol`에서 지정 |
+| `FMVAIPatrolTask` | Spline 연속 추종·순찰 속도/회전 설정 적용과 복구 |
+| `ST_Search_Default` → `Patrol` | 기존 `AI Patrol` Task 유지, 랜덤 목적지 이동은 Spline 추종으로 대체 |
+
+- `BaseBossTestLevel`의 `Duelist_PatrolPath`와 `BP_Duelist` 연결, 기본 8개 곡선점의 닫힌 경로 예제
+- `PatrolSpline` 점 선택·이동으로 경로 편집, `Closed Loop` 활성 시 순환·비활성 시 양 끝 왕복
+- 기본 Task 값: `PatrolSpeed = 180cm/s`, `LookAheadDistance = 120cm`, `TurnRate = 180°/s`, 열린 끝 방향 전환 거리 `AcceptanceRadius = 75cm`
+- 실제 발 위치의 최근접 Spline 거리에서 앞선 목표점 계산, `AddMovementInput` 사용; 지점 통과·순환 중 `Running` 유지
+- 순찰 상태는 StateTree 실행 상태, 설정 복구 여부는 이벤트 구독 핸들로 관리; 목표점은 Tick 내부 지역 계산
+- `LookAheadDistance`의 실제 적용 범위는 1cm부터 전체 길이의 1/4까지, 큰 값은 급커브의 경로 이탈 증가 가능
+- `AMVCharacterBase.OnLocomotionSettingsUpdated`: 공통 이동·회전 설정 갱신 이후의 연결 지점, 속도·회전 정책은 Patrol Task 소유
+- Task의 약한 이벤트 구독으로 매 갱신 뒤 순찰 설정 적용, 이동·회전 비활성 상태의 잠금 보존; 대상 발견·실패·Exit에서 구독 해제와 기존 설정 복구
+- 유효한 `AMVAIController.TargetActor` 발견 시 순찰 종료·`Succeeded` 반환, 후속 Chase 선택은 기존 StateTree 전이 책임
+- 경로 참조·Spline 부재와 10cm 미만 경로는 `Failed`, 경로 Actor에 Spline 하나 배치 필요
+- CharacterMovement의 충돌·중력 사용, NavMesh 자동 우회는 미포함; 경로를 장애물과 겹치지 않도록 배치
+
+2026-11-03 / Codex / Windows / Unreal Engine 5.8.3 실제 실행 검증
+
+- 일반 `MaverickEditor Win64 Development` 빌드 통과, XGE 라이선스 비활성·기존 `UButton::IsFocusable` 직접 접근 폐기 예정 경고 포함; 현재 Windows Editor 컴파일·링크 확인
+- 기존 `Maverick.Cinematics.BossIntro` 회귀 자동 검사 통과, 격리 월드의 게임 화면 부재 경고 2건 포함; 실제 화면 표현의 증거 범위 제외
+- 실제 `BaseBossTestLevel` PIE: 약 2,815cm 닫힌 경로 1회 순환, 준비 구간 이후 약 180cm/s 유지·순환 이음새 정지 없음 확인
+- 해당 평지 예제의 준비 구간 이후 경로 오차 최대 약 7.45cm, 급커브·임의 지형의 동일 오차 보장 제외
+- 공개 전투 제어 함수로 대상 지정 후 순찰 종료·기존 이동/회전 설정 복구 확인, 자동 시야 감지 자체의 회귀 검증 제외
+- 열린 경로 끝에서 진행 거리 감소로 왕복 확인, 순찰 중단 이후에도 기존 설정 유지로 이벤트 구독 정리 확인
+- PIE 종료 후 편집용 닫힌 경로·8개 곡선점 보존, 시험 슬롯 정리·사용자 저장 파일 SHA256와 수정 시각 복원·Python 원격 실행 설정 복구
+- 검증 범위: 현재 Windows Editor의 단일 보스·평지 예제, 패키징·네트워크 실행 미실행; 동적 장애물 자동 우회는 설계상 미지원
+
+검증 요약: [spline-patrol-validation.json](attachments/spline-patrol-validation.json)
+원본 주행 관측·빌드·회귀 검사·백업: `Saved/SplinePatrol/`, Git 제외
+
+2026-11-04 / Codex / Windows / Unreal Engine 5.8.3 정리 검증
+
+- 참조 없는 `bPatrolling`·목표점 저장 필드 제거, 적용 여부 Boolean은 구독 핸들로 통합; 순찰 기능·경로 에셋 유지
+- 일반 빌드와 두 관련 StateTree 컴파일 통과, XGE 라이선스 비활성 경고 포함; 실제 PIE의 순환·왕복·대상 지정 후 설정 복구 확인
+- 제작용 Python 스크립트 20개·이번 검증 보조 스크립트 7개·오래된 프로세스 번호 파일 1개를 보관본 생성 후 정리, 최종 관측·로그·백업 유지
+- 사용자 맵 파일 바이트·Spline 형상·저장 파일 바이트와 수정 시각 보존 확인, 패키징·네트워크·자동 시야 감지 자체의 실행 검증 제외
+
+정리 검증: [spline-patrol-cleanup-validation.json](attachments/spline-patrol-cleanup-validation.json)
+원본 관측·복원용 스크립트 보관본: `Saved/SplinePatrolCleanup/`, Git 제외
 
 ### 공격 예고 이벤트
 

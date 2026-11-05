@@ -1,0 +1,52 @@
+{
+  "date": "2026-11-02",
+  "host": "Codex",
+  "platform": "Windows",
+  "engine": "5.8.3",
+  "sequence": "/Game/DuelistComplete/Intro/MasterLS",
+  "map": "/Game/Characters/NPC/BaseBoss/Level/BaseBossTestLevel",
+  "intro_id": "Duelist_001",
+  "tag": "Boss",
+  "root_tag_bindings": [
+    {"sequence": "LS_Duelist1", "guid": "938F0240-4218-8289-B9DA-3B860DDFF29D", "sequence_id": 1363108043},
+    {"sequence": "LS_Duelist2", "guid": "938F0240-4218-8289-B9DA-3B860DDFF29D", "sequence_id": 1550275341}
+  ],
+  "editor": {
+    "master_and_map_saved": true,
+    "dirty_packages_after_validation": [],
+    "trigger_sequence_was_already_master_at_initial_inspection": true,
+    "child_sequences_modified": false
+  },
+  "pie": {
+    "executed": true,
+    "entry": "actual player overlap with placed trigger",
+    "both_bindings_resolved_to": "BP_Duelist_C_1",
+    "duration_seconds": 16.466666666666665,
+    "camera_transition": ["CineCameraActor_0", "CineCameraActor_1", "BP_ThirdPersonCharacter_C_0"],
+    "natural_completion": true,
+    "input_locks_released": true,
+    "combat_enabled_flag": true,
+    "completion_record_created_in_temporary_slot": true,
+    "full_combat_regression_tested": false
+  },
+  "known_limitation": {
+    "last_shot_end_exclusive_frame": 324,
+    "master_end_exclusive_frame": 494,
+    "empty_tail_seconds": 5.666666666666667,
+    "observed_result": "Boss returns to initial placement before MasterLS completes; that placement is recorded",
+    "last_shot_position_retention": "failed",
+    "timeline_changes": "excluded to preserve user-authored shot timing"
+  },
+  "cleanup": {
+    "pie_stopped": true,
+    "test_slots_removed": 2,
+    "default_save_sha256_and_mtime_restored": true,
+    "persisted_intro_id_unchanged": true,
+    "remote_execution_restored_to": false
+  },
+  "validation_scope": {
+    "build_and_automation_rerun": "not run: asset binding metadata only; no C++ changes",
+    "packaging_and_network": "not run; no claims for those environments"
+  },
+  "local_evidence": "Saved/MasterSequenceBinding/"
+}

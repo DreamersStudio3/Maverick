@@ -26,6 +26,7 @@ class UMVStatusEffectComponent;
 class UMVHitReaction;
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FMVOnMovementInputReceived, const FVector&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FMVOnLocomotionSettingsUpdated, bool, bool);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnChangedCharacterIsLying, bool, bIsLying);
 
@@ -53,7 +54,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnChangedCharacterIsLying, bool, 
  * 라이프사이클:
  *   1) BeginPlay -> 공용 컴포넌트 이벤트와 locomotion 보조 데이터를 초기화한다.
  *   2) AddMovementInput -> controller yaw 기준 raw 2D 입력을 누적하고 이동 입력 이벤트를 브로드캐스트한다.
- *   3) Tick -> 이동/회전/gait를 갱신하고 애니메이션 조회용 상태를 정리한다.
+ *   3) Tick -> 이동/회전/gait 갱신·조회 상태 정리 후 OnLocomotionSettingsUpdated로 실행 중 도메인 설정 적용 연결
  */
 UCLASS(Blueprintable, BlueprintType)
 class MAVERICK_API AMVCharacterBase : public ACharacter
@@ -134,6 +135,9 @@ public:
 	bool GetCharacterIsLying() const { return bIsLying; }
 
 	FMVOnMovementInputReceived OnMovementInputReceived;
+
+	/** 공통 이동·회전 설정 갱신 이후의 도메인 연결 지점, 인수는 이동 활성·회전 활성 */
+	FMVOnLocomotionSettingsUpdated OnLocomotionSettingsUpdated;
 
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|Character|Event")
 	FMVOnDamagedSignature OnDamaged;
