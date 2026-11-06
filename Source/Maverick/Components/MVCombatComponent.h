@@ -459,7 +459,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Combat|Action")
 	bool TrySkillCombatAction(EMVSkillSlot SkillSlot, FName StartSection = NAME_None);
 
-	/** AI가 선택한 전투 행의 Ability 준비와 액션 시작 진입점; 실행 중인 액션 교체 제외 */
+	// Todo: RowHandle 기반 액션은 Deprecated. 스킬 정보는 WeaponComponent에서 가져오므로 RowHandle을 이용한 접근은 금지, 추후 관련 함수 삭제 예정
 	UFUNCTION(BlueprintCallable, Category = "Action")
 	bool TryStartCombatActionFromRowHandle(const FDataTableRowHandle& RowHandle, FName StartSection = NAME_None);
 
