@@ -1,6 +1,5 @@
 #include "Combat/MVProjectileExecutionTracker.h"
 
-#include "Character/MVCharacterBase.h"
 #include "Combat/MVAbilityBase.h"
 #include "Combat/Projectile/MVProjectileBase.h"
 #include "Components/ActorComponent.h"
@@ -53,7 +52,6 @@ bool UMVProjectileExecutionTracker::Register(
 	}
 
 	Record->ActiveProjectiles.Add(ProjectileKey);
-	Projectile->OnProjectileHit.AddUniqueDynamic(this, &UMVProjectileExecutionTracker::HandleProjectileHit);
 	Projectile->OnProjectileFinished.AddUniqueDynamic(this, &UMVProjectileExecutionTracker::HandleProjectileFinished);
 	return true;
 }
@@ -113,31 +111,11 @@ void UMVProjectileExecutionTracker::Reset()
 		{
 			if (AMVProjectileBase* Projectile = ProjectileKey.ResolveObjectPtr())
 			{
-				Projectile->OnProjectileHit.RemoveDynamic(this, &UMVProjectileExecutionTracker::HandleProjectileHit);
 				Projectile->OnProjectileFinished.RemoveDynamic(this, &UMVProjectileExecutionTracker::HandleProjectileFinished);
 			}
 		}
 	}
 	Records.Reset();
-}
-
-void UMVProjectileExecutionTracker::HandleProjectileHit(
-	AMVProjectileBase* Projectile,
-	const FMVResolvedHitData& HitData)
-{
-	const UActorComponent* OwnerComponent = GetTypedOuter<UActorComponent>();
-	if (!IsValid(Projectile) || HitData.AttackInstanceId != Projectile->GetAttackInstanceId() ||
-		!IsValid(OwnerComponent) || HitData.Attacker.Get() != OwnerComponent->GetOwner())
-	{
-		return;
-	}
-
-	FMVProjectileExecutionRecord* Record = Records.Find(HitData.AttackInstanceId);
-	if (Record && Record->ActiveProjectiles.Contains(TObjectKey<AMVProjectileBase>(Projectile)))
-	{
-		Record->bHadActivatedProjectile |= Projectile->WasEverActivated();
-		Record->bHadHit = true;
-	}
 }
 
 void UMVProjectileExecutionTracker::HandleProjectileFinished(

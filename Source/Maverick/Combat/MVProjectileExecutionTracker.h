@@ -1,7 +1,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Engine/DataTable.h"
 #include "Enum/MVSkillSlot.h"
 #include "GameplayTagContainer.h"
 #include "UObject/ObjectKey.h"
@@ -9,7 +8,6 @@
 
 class AMVProjectileBase;
 class UMVAbilityBase;
-struct FMVResolvedHitData;
 
 /** 첫 탄 발사 시 고정한 공격 출처와 같은 공격에서 발사한 탄의 진행 상태. */
 USTRUCT()
@@ -21,9 +19,6 @@ struct FMVProjectileExecutionRecord
 
 	UPROPERTY(Transient)
 	TObjectPtr<UMVAbilityBase> ExecutionAbility = nullptr;
-
-	UPROPERTY(Transient)
-	FDataTableRowHandle SourceRowHandle;
 
 	EMVSkillSlot SourceSkillSlot = EMVSkillSlot::NONE;
 	uint64 SourceSlotRevision = 0;
@@ -56,7 +51,7 @@ DECLARE_DELEGATE_OneParam(FMVOnTrackedProjectileMissed, const FMVProjectileExecu
  *
  * 등록 시 실행 값을 보존하고, 공격 동작과 모든 탄이 끝나면 기록을 제거한다.
  * 빗나감 알림 중에는 패시브가 출처를 조회할 수 있도록 기록을 유지한다.
- * Combat 종료 시 탄 이벤트 구독을 해제한다.
+ * 적중은 Combat이 검증해 기록하고, Tracker는 개별 탄의 종료만 구독한다.
  */
 UCLASS()
 class UMVProjectileExecutionTracker : public UObject
@@ -77,9 +72,6 @@ public:
 
 private:
 	void Finalize(int32 AttackInstanceId);
-
-	UFUNCTION()
-	void HandleProjectileHit(AMVProjectileBase* Projectile, const FMVResolvedHitData& HitData);
 
 	UFUNCTION()
 	void HandleProjectileFinished(AMVProjectileBase* Projectile, int32 AttackInstanceId);

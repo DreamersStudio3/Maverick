@@ -1090,7 +1090,6 @@ bool UMVCombatComponent::RegisterLaunchedProjectile(
 
 	FMVProjectileExecutionRecord Source;
 	Source.SourceAbility = SourceAbility;
-	Source.SourceRowHandle = CurrentAbilityRowHandle;
 	Source.SourceSkillSlot = CurrentPreparedSkillSlot;
 	Source.SourceChainStageIndex = CurrentPreparedChainStageIndex;
 	Source.SourceSlotRevision = CurrentPreparedSlotRevision;
