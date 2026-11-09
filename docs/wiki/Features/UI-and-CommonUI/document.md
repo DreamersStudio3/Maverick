@@ -1,14 +1,15 @@
 ---
 제목: UI와 CommonUI
-부제목: UI 계층·게임 입력 복구·레벨업 창과 HUD 연결
-최근수정일: 2026-11-02
-최근수정자: "Codex"
+부제목: UI 계층·입력 복구·레벨업과 패시브 선택 창
+최근수정일: 2026-11-09
+최근수정자: "No-Jyun"
 관련문서:
   - "[[Architecture/document|Maverick Architecture]]"
   - "[[Features/Interaction-Flow/document|상호작용 흐름]]"
   - "[[Features/Progression/Level-Up/document|레벨업 프로토타입]]"
   - "[[Features/Boss-Attack-Test/document|보스 공격 시험 UI]]"
   - "[[Features/Boss-Intro/document|최초 보스 등장 연출]]"
+  - "[[Features/Combat/Weapon-Passives/document|무기 패시브]]"
 ---
 
 # UI와 CommonUI
@@ -61,6 +62,22 @@ flowchart TD
 | 재화 HUD | `UMVMainHUDWidget`이 영구 성장 변경 구독 → `UMVCurrencyStatusWidget.SetCurrency(int64)` |
 
 성장·미리보기·위젯 부모·저장·검증 범위: [[Features/Progression/Level-Up/document|레벨업 프로토타입]]
+
+## 패시브 선택 창
+
+| 구성 | 연결 |
+|---|---|
+| 창 등록 | `UMVUISettings.WeaponPassiveSelectionWindowClass` → `WBP_WeaponPassiveSelection` |
+| 창 열기·닫기 | `UMVUISubsystem.ShowWeaponPassiveSelectionWindow`·`HideWeaponPassiveSelectionWindow` |
+| 목록 행 | 보유 무기와 패시브 후보에서 `WBP_PassiveCandidateEntry` 재사용. `BPS_PassiveSelectionRow`가 어두운 배경과 마우스 상태별 색을 제공 |
+| 입력 | 방향키로 초점 이동. 후보에 초점이 있을 때 CommonUI 기본 확인 입력은 화면의 `적용`과 같은 경로 실행 |
+| 화면 갱신 | 무기 소유·장착, 후보 해금·선택, 활성 효과 변경 알림을 다음 틱에 모아 재조회 |
+| HUD와 종료 | 창 활성화 시 메인 HUD를 숨기고, 종료 시 같은 HUD의 이전 표시 상태 복구 |
+
+- 피격·사망·행동 시작·필드 전환·조종 캐릭터 변경 시 창 종료. 종료 시 등록한 입력·구독·갱신 타이머 정리
+- 창의 빈 영역을 누르면 현재 미리보기 행으로 키보드 초점 복귀. 후보가 비면 조회 중인 무기 또는 닫기 버튼으로 이동
+- Windows UE 5.8 TestMap에서 한손 시험 무기의 적용·장착 표시와 빈 영역 클릭 뒤 방향키 이동 확인
+- 화면 동작과 패시브 선택 기준은 [[Features/Combat/Weapon-Passives/document#패시브 선택 창|패시브 선택 창]] 참조
 
 ## 보스 공격 시험 패널
 
