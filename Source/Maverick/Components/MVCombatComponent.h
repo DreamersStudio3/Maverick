@@ -19,6 +19,8 @@ class AMVProjectileBase;
 class UMVProjectileExecutionTracker;
 struct FMVProjectileExecutionRecord;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMVOnActivePassiveChanged);
+
 // 기존 Ability와 패시브가 사용하는 Q/R/W/E 번호. 새 맵의 키와는 별개다.
 namespace MVCombatSkillSlots
 {
@@ -474,6 +476,10 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Maverick|Combat|Passive Skill")
 	UMVAbilityBase* GetActivePassiveSkill() const { return ActivePassiveAbilityInstance.Get(); }
+
+	/** 적용·해제·외부 종료 알림. 교체 중 여러 번 발생할 수 있으므로 수신자는 최종 상태를 조회한다. */
+	UPROPERTY(BlueprintAssignable, Category = "Maverick|Combat|Passive Skill")
+	FMVOnActivePassiveChanged OnActivePassiveChanged;
 
 	UFUNCTION(BlueprintPure, Category = "Maverick|Combat|Passive Skill")
 	FDataTableRowHandle GetActivePassiveSkillRowHandle() const { return ActivePassiveSkillRowHandle; }

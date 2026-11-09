@@ -1,6 +1,7 @@
 #include "Components/MVWeaponComponent.h"
 
 #include "Combat/MVAbilityBase.h"
+#include "Misc/ScopeExit.h"
 #include "MVActionComponent.h"
 #include "Components/MVInputManagerComponent.h"
 #include "Character/MVCharacterBase.h"
@@ -505,6 +506,10 @@ bool UMVWeaponComponent::UnlockSkill(EMVEquippedStyle EquippedStyle, FDataTableR
 
 	SkillTreeStatePtr->UnlockedSkills.Add(FMVHashDataTableRowHandle(RowHandle));
 	CurrentSkillPoints -= SkillCost;
+	if (SkillSlot == EMVSkillSlot::PassiveSkill)
+	{
+		OnPassiveOptionsChanged.Broadcast();
+	}
 
 	return true;
 }
@@ -647,6 +652,7 @@ bool UMVWeaponComponent::SelectPassive(
 	{
 		if (Candidate.SkillRowHandle == RowHandle && Candidate.bUnlocked)
 		{
+			ON_SCOPE_EXIT { OnPassiveOptionsChanged.Broadcast(); };
 			SelectedPassiveByWeaponType.Add(WeaponTypeTag, RowHandle);
 			if (CurrentWeaponState.bValid
 				&& CurrentWeaponState.WeaponTypeTag.MatchesTagExact(WeaponTypeTag))
@@ -678,6 +684,7 @@ bool UMVWeaponComponent::ClearSelectedPassive(const FGameplayTag WeaponTypeTag)
 	{
 		return false;
 	}
+	ON_SCOPE_EXIT { OnPassiveOptionsChanged.Broadcast(); };
 	if (CurrentWeaponState.bValid
 		&& CurrentWeaponState.WeaponTypeTag.MatchesTagExact(WeaponTypeTag))
 	{

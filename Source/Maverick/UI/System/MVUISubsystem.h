@@ -21,6 +21,7 @@ class UMVUILayerBase;
 class UMVWindowBase;
 class USpringArmComponent;
 class UMVLevelUpWindow;
+class UMVWeaponPassiveSelectionWindow;
 
 UCLASS()
 class MAVERICK_API UMVUISubsystem : public UGameInstanceSubsystem
@@ -60,6 +61,12 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|LevelUp")
 	bool HideLevelUpWindow();
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Weapon Passive")
+	UMVWeaponPassiveSelectionWindow* ShowWeaponPassiveSelectionWindow();
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Weapon Passive")
+	bool HideWeaponPassiveSelectionWindow();
 	
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
 	UCommonActivatableWidget* ShowLoadingWindow();
@@ -175,6 +182,8 @@ private:
 	UMVPIEActionTestWidget* OpenPIEActionTestPanel(AMVCharacterBase* TargetCharacter);
 	AMVCharacterBase* ResolvePIEActionTestTargetCharacter(AMVCharacterBase* TargetCharacter) const;
 	APlayerController* ResolvePIEActionTestPlayerController(const AMVCharacterBase* TargetCharacter) const;
+
+	UMVWeaponPassiveSelectionWindow* FindWeaponPassiveSelectionWindow(UMVUILayerBase*& OutLayer) const;
 
 	UPROPERTY(Transient)
 	TArray<TObjectPtr<UMVUILayerBase>> LayerStack;

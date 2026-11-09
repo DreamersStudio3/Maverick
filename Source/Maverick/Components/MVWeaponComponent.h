@@ -18,6 +18,7 @@ class USceneComponent;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnEquippedWeaponChanged, const FMVEquippedWeaponState&, WeaponState);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMVOnOwnedWeaponsChanged);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMVOnQuickSlotsChanged);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMVOnPassiveOptionsChanged);
 
 /** 무기 종류로 걸러진 패시브 후보의 스킬 행과 현재 해금 상태. */
 USTRUCT(BlueprintType)
@@ -166,6 +167,10 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|Weapon|Event")
 	FMVOnQuickSlotsChanged OnQuickSlotsChanged;
+
+	/** 패시브 선택 요청 완료 또는 해금 성공 시 현재 후보와 선택을 다시 읽도록 알린다. */
+	UPROPERTY(BlueprintAssignable, Category = "Maverick|Skill|Passive")
+	FMVOnPassiveOptionsChanged OnPassiveOptionsChanged;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Weapon|Default")
 	FMVWeaponTableRow BareHandWeapon;

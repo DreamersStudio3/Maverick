@@ -11,6 +11,7 @@ class UMVPopupBase;
 class UMVUILayerBase;
 class UMVWindowBase;
 class UMVLevelUpWindow;
+class UMVWeaponPassiveSelectionWindow;
 
 UCLASS(Config = Game, DefaultConfig, meta = (DisplayName = "Maverick UI Settings"))
 class MAVERICK_API UMVUISettings : public UDeveloperSettings
@@ -49,6 +50,9 @@ public:
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Window")
 	TSubclassOf<UMVLevelUpWindow> LevelUpWindowClass;
+
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Window")
+	TSubclassOf<UMVWeaponPassiveSelectionWindow> WeaponPassiveSelectionWindowClass;
 	
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Window", meta = (ClampMin = "0.0", DisplayName = "Death Overlay Hold Seconds"))
 	float DeathOverlayDuration = 1.0f;

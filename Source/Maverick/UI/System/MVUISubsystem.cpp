@@ -26,6 +26,7 @@
 #include "UI/Window/MVLoadingWindow.h"
 #include "System/Progression/MVProgressionSubsystem.h"
 #include "UI/Window/MVLevelUpWindow.h"
+#include "UI/Window/MVWeaponPassiveSelectionWindow.h"
 
 namespace
 {
@@ -1181,6 +1182,60 @@ void UMVUISubsystem::TrackActiveDialogueWindow(UMVDialogueWindow* DialogueWindow
 		ActiveDialogueWindow->OnDialogueWindowClosing.AddUniqueDynamic(this, &UMVUISubsystem::HandleDialogueWindowClosing);
 		ActiveDialogueWindow->OnDialogueWindowClosed.AddUniqueDynamic(this, &UMVUISubsystem::HandleDialogueWindowClosed);
 	}
+}
+
+UMVWeaponPassiveSelectionWindow* UMVUISubsystem::FindWeaponPassiveSelectionWindow(UMVUILayerBase*& OutLayer) const
+{
+	for (int32 Index = LayerStack.Num() - 1; Index >= 0; --Index)
+	{
+		UMVUILayerBase* Layer = LayerStack[Index];
+		if (IsValid(Layer) && Layer->IsInViewport())
+		{
+			if (auto* Window = Cast<UMVWeaponPassiveSelectionWindow>(
+				Layer->FindWindowByClass(UMVWeaponPassiveSelectionWindow::StaticClass())))
+			{
+				OutLayer = Layer;
+				return Window;
+			}
+		}
+	}
+	OutLayer = nullptr;
+	return nullptr;
+}
+
+UMVWeaponPassiveSelectionWindow* UMVUISubsystem::ShowWeaponPassiveSelectionWindow()
+{
+	const UWorld* World = GetWorld();
+	if (!World || !World->IsGameWorld()
+		|| !UMVWeaponPassiveSelectionWindow::CanOpenForPlayer(World->GetFirstPlayerController()))
+	{
+		return nullptr;
+	}
+
+	UMVUILayerBase* Layer = nullptr;
+	if (auto* Existing = FindWeaponPassiveSelectionWindow(Layer))
+	{
+		return Existing->IsFadingOut() ? nullptr : Existing;
+	}
+
+	const auto WindowClass = GetDefault<UMVUISettings>()->WeaponPassiveSelectionWindowClass;
+	return WindowClass ? Cast<UMVWeaponPassiveSelectionWindow>(PushWindowByClass(WindowClass)) : nullptr;
+}
+
+bool UMVUISubsystem::HideWeaponPassiveSelectionWindow()
+{
+	UMVUILayerBase* Layer = nullptr;
+	auto* Window = FindWeaponPassiveSelectionWindow(Layer);
+	if (!Window)
+	{
+		return false;
+	}
+	if (Window->IsActivated())
+	{
+		Window->DeactivateWidgetWithFade();
+		return true;
+	}
+	return Layer->RemoveWindow(Window);
 }
 
 UMVLevelUpWindow* UMVUISubsystem::ShowLevelUpWindow()

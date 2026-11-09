@@ -4,6 +4,7 @@
 #include "Components/MVCombatComponent.h"
 
 #include "Combat/MVAbilityBase.h"
+#include "Misc/ScopeExit.h"
 #include "Combat/MVProjectileExecutionTracker.h"
 #include "Combat/Projectile/MVProjectileAbility.h"
 #include "Combat/Projectile/MVProjectileBase.h"
@@ -249,6 +250,7 @@ bool UMVCombatComponent::ApplyPassiveSkill(const FDataTableRowHandle& PassiveSki
 	}
 
 	// 교체는 요청된 장착 상태로의 동기화다. 신규 적용 실패 시 이전 Passive를 복구하지 않는다.
+	ON_SCOPE_EXIT { OnActivePassiveChanged.Broadcast(); };
 	ClearPassiveSkill();
 
 	if (!PassiveSkillRowHandle.DataTable || PassiveSkillRowHandle.RowName.IsNone())
@@ -362,6 +364,10 @@ void UMVCombatComponent::ClearPassiveSkill()
 		&& PassiveAbilityToDeactivate->Implements<UMVAbilityInterface>())
 	{
 		IMVAbilityInterface::Execute_EndAbility(PassiveAbilityToDeactivate);
+	}
+	if (PassiveAbilityToDeactivate)
+	{
+		OnActivePassiveChanged.Broadcast();
 	}
 }
 
@@ -1150,6 +1156,10 @@ void UMVCombatComponent::NotifyProjectileAbilityStarted(const UMVAbilityBase* St
 
 void UMVCombatComponent::HandleAbilityEnded(const UMVAbilityBase* EndedAbility)
 {
+	if (EndedAbility && EndedAbility == ActivePassiveAbilityInstance.Get())
+	{
+		OnActivePassiveChanged.Broadcast();
+	}
 	if (!EndedAbility || !GetWorld())
 	{
 		return;

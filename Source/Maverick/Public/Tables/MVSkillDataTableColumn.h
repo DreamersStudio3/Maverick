@@ -10,10 +10,8 @@
 
 #include "MVSkillDataTableColumn.generated.h"
 
-/**
- * 
- */
 class UMVAbilityBase;
+class UTexture2D;
 
 UENUM(BlueprintType)
 enum class EMVAttackSwingDirection : uint8
@@ -43,6 +41,19 @@ public:
 	{
 
 	}
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	FText DisplayName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI", meta = (MultiLine = "true"))
+	FText Description;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	TSoftObjectPtr<UTexture2D> Icon;
+
+	/** 상세 영역에만 사용하는 그림. 비어 있으면 목록 아이콘을 사용한다. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	TSoftObjectPtr<UTexture2D> PreviewImage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Common")
 	TSubclassOf<UMVAbilityBase> AbilityReference;
