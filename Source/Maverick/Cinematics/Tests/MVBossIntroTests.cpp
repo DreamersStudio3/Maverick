@@ -28,6 +28,7 @@
 #include "Tracks/MovieScene3DTransformTrack.h"
 #include "System/MVWorldStateSubsystem.h"
 #include "UI/BossHUD/MVBossAttackTestWidget.h"
+#include "UI/System/MVUISubsystem.h"
 #include "Misc/ScopeExit.h"
 #include "TimerManager.h"
 
@@ -145,9 +146,16 @@ bool FMVBossIntroTest::RunTest(const FString& Parameters)
 	const TSharedRef<SWidget> MouseSlateWidget = MouseWidget->TakeWidget();
 	TestTrue(TEXT("Mouse input fixture is visible and owns input"), MouseWidget->IsVisible() && MouseWidget->CanControlMouseInput());
 	TestTrue(TEXT("Initial UI mode shows cursor"), MouseWidget->bUIMouseMode && PC->bShowMouseCursor);
+	UMVUISubsystem* UI = GI->GetSubsystem<UMVUISubsystem>();
+	if (!TestNotNull(TEXT("UI subsystem available for interaction cleanup"), UI)) return false;
+	TestFalse(TEXT("No action test panel is open or pending"), UI->IsPIEActionTestPanelActiveOrPending());
+	UI->HidePIEActionTestPanel();
+	TestTrue(TEXT("Closing an unopened action panel preserves a visible cursor"), PC->bShowMouseCursor);
 	BossIntroPressDebugKey(EKeys::LeftMouseButton);
 	TestFalse(TEXT("Viewport click enters game mode"), MouseWidget->bUIMouseMode);
 	TestFalse(TEXT("Viewport click hides cursor"), PC->bShowMouseCursor);
+	UI->HidePIEActionTestPanel();
+	TestFalse(TEXT("Closing an unopened action panel preserves a hidden cursor"), PC->bShowMouseCursor);
 	MouseWidget->NativeTick(FGeometry(), 0.016f);
 	TestFalse(TEXT("Subsequent widget tick preserves game cursor mode"), PC->bShowMouseCursor);
 	BossIntroPressDebugKey(EKeys::J);
