@@ -20,6 +20,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Layer")
 	UCommonActivatableWidget* PushWindow(TSubclassOf<UCommonActivatableWidget> WindowClass);
 
+	UCommonActivatableWidget* PushWindow(
+		TSubclassOf<UCommonActivatableWidget> WindowClass,
+		TFunctionRef<void(UCommonActivatableWidget&)> Initialize);
+
 	UFUNCTION(BlueprintPure, Category = "Maverick|UI|Layer")
 	UCommonActivatableWidget* FindWindowByClass(TSubclassOf<UCommonActivatableWidget> WindowClass) const;
 

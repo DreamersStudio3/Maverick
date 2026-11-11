@@ -12,6 +12,7 @@
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/Pawn.h"
 #include "Interaction/MVInteractableInterface.h"
+#include "Interaction/RestPoint/MVRestPointSubsystem.h"
 #include "TimerManager.h"
 #if ENABLE_DRAW_DEBUG
 #include "DrawDebugHelpers.h"
@@ -435,8 +436,15 @@ bool UMVPlayerInteractionDetector::ShouldRunDetection() const
 		return false;
 	}
 
-	const APawn* OwnerPawn = GetPlayerCharacter();
-	return OwnerPawn && OwnerPawn->IsPlayerControlled() && OwnerPawn->IsLocallyControlled();
+	const AMVPlayerCharacter* Player = GetPlayerCharacter();
+	if (!Player || !Player->IsPlayerControlled() || !Player->IsLocallyControlled())
+	{
+		return false;
+	}
+
+	const UWorld* World = GetWorld();
+	const UMVRestPointSubsystem* RestPoint = World ? World->GetSubsystem<UMVRestPointSubsystem>() : nullptr;
+	return !RestPoint || !RestPoint->IsUsingRestPoint(*Player);
 }
 
 bool UMVPlayerInteractionDetector::TryBuildCandidate(

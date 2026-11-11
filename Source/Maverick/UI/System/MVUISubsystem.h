@@ -17,6 +17,7 @@ class UMVLoadingWindow;
 class UMVMessagePopup;
 class UMVPIEActionTestWidget;
 class UMVPopupBase;
+class UMVRestPointSubsystem;
 class UMVUILayerBase;
 class UMVWindowBase;
 class USpringArmComponent;
@@ -58,6 +59,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|LevelUp")
 	UMVLevelUpWindow* ShowLevelUpWindow();
+
+	UMVLevelUpWindow* ShowLevelUpWindowForRestPoint(UMVRestPointSubsystem& Session);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|LevelUp")
 	bool HideLevelUpWindow();
@@ -184,6 +187,7 @@ private:
 	APlayerController* ResolvePIEActionTestPlayerController(const AMVCharacterBase* TargetCharacter) const;
 
 	UMVWeaponPassiveSelectionWindow* FindWeaponPassiveSelectionWindow(UMVUILayerBase*& OutLayer) const;
+	UMVLevelUpWindow* ShowLevelUpWindowInternal(UMVRestPointSubsystem* RestPointSession);
 
 	UPROPERTY(Transient)
 	TArray<TObjectPtr<UMVUILayerBase>> LayerStack;

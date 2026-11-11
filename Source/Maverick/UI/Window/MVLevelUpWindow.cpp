@@ -2,6 +2,7 @@
 
 #include "Character/PC/MVPlayerCharacter.h"
 #include "Components/MVStatComponent.h"
+#include "Interaction/RestPoint/MVRestPointSubsystem.h"
 #include "System/MVWorldStateSubsystem.h"
 #include "System/Progression/MVProgressionDefinition.h"
 #include "System/Progression/MVProgressionStatBinding.h"
@@ -21,6 +22,11 @@ UMVLevelUpWindow::UMVLevelUpWindow(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	SetIsFocusable(true);
+}
+
+void UMVLevelUpWindow::SetRestPointSession(UMVRestPointSubsystem* Session)
+{
+	RestPointSession = Session;
 }
 
 void UMVLevelUpWindow::NativeOnActivated()
@@ -262,12 +268,14 @@ void UMVLevelUpWindow::NativeConstruct()
 bool UMVLevelUpWindow::IsInteractionAllowed() const
 {
 	const AMVPlayerCharacter* Player = Cast<AMVPlayerCharacter>(GetOwningPlayerPawn());
+	const UMVRestPointSubsystem* Session = RestPointSession.Get();
 
 	return IsActivated()
 		&& !IsFadingOut()
 		&& Player
 		&& PlayerStats.Get() == Player->StatComponent
 		&& FieldTransition.IsValid()
+		&& (RestPointSession.IsExplicitlyNull() || (Session && Session->CanUseDetail()))
 		&& CanOpenForPlayer(GetOwningPlayer());
 }
 

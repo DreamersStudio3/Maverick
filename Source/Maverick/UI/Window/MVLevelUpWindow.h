@@ -11,6 +11,7 @@
 
 class UMVStatComponent;
 class UMVWorldStateSubsystem;
+class UMVRestPointSubsystem;
 class UMVLevelUpAttributeEntryWidget;
 class UMVLevelUpStatComparisonWidget;
 class UMVLevelUpStatBlockWidget;
@@ -40,6 +41,7 @@ public:
 	UMVLevelUpWindow(const FObjectInitializer& ObjectInitializer);
 	
 	static bool CanOpenForPlayer(const APlayerController* PlayerController);
+	void SetRestPointSession(UMVRestPointSubsystem* Session);
 	
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|LevelUp")
 	bool AdjustPendingRank(FGameplayTag ProgressionId, int32 Delta);
@@ -163,6 +165,7 @@ private:
 	TWeakObjectPtr<UMVWorldStateSubsystem> WorldState;
 	TWeakObjectPtr<UMVStatComponent> PlayerStats;
 	TWeakObjectPtr<UMVFieldTransitionSubsystem> FieldTransition;
+	TWeakObjectPtr<UMVRestPointSubsystem> RestPointSession;
 
 	int32 PreviewStatRevision = 0;
 	bool bCommitInProgress = false;

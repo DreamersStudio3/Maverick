@@ -20,12 +20,19 @@ void UMVUILayerBase::NativeOnInitialized()
 
 UCommonActivatableWidget* UMVUILayerBase::PushWindow(TSubclassOf<UCommonActivatableWidget> WindowClass)
 {
+	return PushWindow(WindowClass, [](UCommonActivatableWidget&) {});
+}
+
+UCommonActivatableWidget* UMVUILayerBase::PushWindow(
+	TSubclassOf<UCommonActivatableWidget> WindowClass,
+	TFunctionRef<void(UCommonActivatableWidget&)> Initialize)
+{
 	if (!WindowStack || !WindowClass)
 	{
 		return nullptr;
 	}
 
-	return WindowStack->AddWidget(WindowClass);
+	return WindowStack->AddWidget<UCommonActivatableWidget>(WindowClass, Initialize);
 }
 
 UMVPopupBase* UMVUILayerBase::PushPopup(TSubclassOf<UMVPopupBase> PopupClass)

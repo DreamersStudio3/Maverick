@@ -26,6 +26,7 @@
 #include "UI/Window/MVLoadingWindow.h"
 #include "System/Progression/MVProgressionSubsystem.h"
 #include "UI/Window/MVLevelUpWindow.h"
+#include "Interaction/RestPoint/MVRestPointSubsystem.h"
 #include "UI/Window/MVWeaponPassiveSelectionWindow.h"
 
 namespace
@@ -1240,6 +1241,16 @@ bool UMVUISubsystem::HideWeaponPassiveSelectionWindow()
 
 UMVLevelUpWindow* UMVUISubsystem::ShowLevelUpWindow()
 {
+	return ShowLevelUpWindowInternal(nullptr);
+}
+
+UMVLevelUpWindow* UMVUISubsystem::ShowLevelUpWindowForRestPoint(UMVRestPointSubsystem& Session)
+{
+	return ShowLevelUpWindowInternal(&Session);
+}
+
+UMVLevelUpWindow* UMVUISubsystem::ShowLevelUpWindowInternal(UMVRestPointSubsystem* RestPointSession)
+{
 	UWorld* World = GetWorld();
 
 	if (!World || !World->IsGameWorld())
@@ -1276,7 +1287,7 @@ UMVLevelUpWindow* UMVUISubsystem::ShowLevelUpWindow()
 
 		if (ExistingWindow)
 		{
-			return ExistingWindow->IsFadingOut()
+			return RestPointSession || ExistingWindow->IsFadingOut()
 				? nullptr
 				: ExistingWindow;
 		}
@@ -1289,7 +1300,12 @@ UMVLevelUpWindow* UMVUISubsystem::ShowLevelUpWindow()
 		return nullptr;
 	}
 
-	return Cast<UMVLevelUpWindow>(PushWindowByClass(Settings->LevelUpWindowClass));
+	UMVUILayerBase* RootLayer = GetOrCreateRootLayer(World);
+	return RootLayer ? Cast<UMVLevelUpWindow>(RootLayer->PushWindow(Settings->LevelUpWindowClass,
+		[RestPointSession](UCommonActivatableWidget& Window)
+		{
+			CastChecked<UMVLevelUpWindow>(&Window)->SetRestPointSession(RestPointSession);
+		})) : nullptr;
 }
 
 bool UMVUISubsystem::HideLevelUpWindow()

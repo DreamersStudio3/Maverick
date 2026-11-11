@@ -8,6 +8,7 @@
 #include "MVFieldTransitionSubsystem.generated.h"
 
 class AMVCharacterBase;
+class AMVRestPoint;
 class UMVActionComponent;
 class UMVDeathRespawnFlow;
 class UMVLoadingWindow;
@@ -19,7 +20,8 @@ enum class EMVFieldTransitionReason : uint8
 {
 	None,
 	DeathRespawn,
-	CheckpointTravel
+	CheckpointTravel,
+	Rest
 };
 
 UENUM(BlueprintType)
@@ -84,6 +86,8 @@ struct MAVERICK_API FMVFieldTransitionRequest
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|FieldTransition|Action")
 	FName PostTransitionStartSection = NAME_None;
+
+	uint64 RestRequestId = 0;
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnFieldTransitionPhaseChanged, EMVFieldTransitionPhase, NewPhase);
@@ -112,6 +116,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|FieldTransition|Death")
 	bool StartDeathRespawnTransition(AActor* DeadActor);
+	bool StartRestTransition(AMVRestPoint& Point, uint64 RequestId);
+	bool IsRestTransition(uint64 RequestId) const;
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|FieldTransition|Checkpoint")
 	bool StartCheckpointTravelToTransform(
@@ -157,6 +163,8 @@ private:
 	void StartAutomaticLoadingCompletion();
 	void ResetTransitionState();
 	bool ApplyTransitionDestination(const FMVFieldTransitionRequest& Request);
+	bool ApplyRestTransition();
+	void ResetPlayerCombatForField(AMVCharacterBase& Character) const;
 	void ResetPlayerStatsForTransition(AMVCharacterBase& Character) const;
 	void ResetUIToDefaultAfterTransition();
 	void RestorePlayerInputAfterTransition() const;
@@ -172,6 +180,7 @@ private:
 	FTimerHandle AutomaticLoadingTimerHandle;
 	FTimerHandle ScreenTransitionCompletionTimerHandle;
 	bool bClearedUIBeforeLoading = false;
+	bool bRestApplied = false;
 
 	UPROPERTY(Transient)
 	TObjectPtr<UMVLoadingWindow> ActiveLoadingWindow;
