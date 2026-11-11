@@ -449,6 +449,12 @@ void UMVStatComponent::ResetGroggyState()
 	SetCurrentGroggy(0.0f);
 }
 
+void UMVStatComponent::ResetCombatDamageForWorldReset()
+{
+	ResetGroggyState();
+	ResetDamageAccumulation();
+}
+
 void UMVStatComponent::SetMaxHP(float InMaxHP)
 {
 	float NewMaxHP = 0.0f;
