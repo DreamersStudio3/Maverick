@@ -1,7 +1,7 @@
 ---
 제목: Duelist 공명 폭주
 부제목: 체력 50% 이후 1회 강인도 파훼 기믹
-최근수정일: 2026-10-11
+최근수정일: 2026-11-11
 최근수정자: Codex
 관련문서:
   - "[[Features/AI-StateTree/document|AI StateTree]]"
@@ -28,7 +28,7 @@ flowchart TD
 
 | 대상 | 위치·책임 |
 |---|---|
-| HP 조건·중앙 이동·채널링·실패 피해 | `BP_Duelist`의 `Resonance` 컴포넌트, `Combat/Duelist/MVDuelistResonanceComponent` |
+| HP 조건·중앙 이동·채널링·실패 피해 | `BP_Duelist`의 `Resonance` 컴포넌트, `Combat/Boss/Duelist/MVDuelistResonanceComponent` |
 | StateTree 실행 | `ST_DuelistBoss_Attack.BossAttack.Resonanace`, `FMVDuelistResonanceTask` |
 | 예약 우선 선택 | `FMVBossSelectAttackTask.ResonanceState`, 기존 교대 배열에서 제외 |
 | 화면 경고·암전 | `UI/BossHUD/MVResonanceScreenWidget`, 입력 미소비 |

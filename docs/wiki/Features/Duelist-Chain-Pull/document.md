@@ -1,7 +1,7 @@
 ---
 제목: "Duelist 돌진 사슬 스킬"
 부제목: "전용 Ability·투사체·발사 Notify의 최소 구성"
-최근수정일: 2026-10-11
+최근수정일: 2026-11-11
 최근수정자: "Codex"
 관련문서:
   - "[[Features/Duelist-Attack-RootMotion/document|Duelist 공격 루트 이동]]"
@@ -14,7 +14,7 @@
 
 ## 소스 배치
 
-`Source/Maverick/Combat/Duelist/`: Duelist 전용 스킬 코드 통합
+`Source/Maverick/Combat/Boss/Duelist/`: Duelist 전용 스킬 코드 통합
 
 | 파일 `.h`·`.cpp` | 책임 |
 |---|---|

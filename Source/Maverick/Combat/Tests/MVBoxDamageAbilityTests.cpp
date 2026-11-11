@@ -4,6 +4,7 @@
 #include "Animation/NotifyStates/MVAnimNotifyState_Ability.h"
 #include "Character/MVCharacterBase.h"
 #include "Combat/MVBoxDamageAbility.h"
+#include "Combat/Boss/ElectricEelMan/MVElectricEelManQAbility.h"
 #include "Components/MVActionComponent.h"
 #include "Components/MVCombatComponent.h"
 #include "Components/MVStatComponent.h"
@@ -148,6 +149,54 @@ bool FMVBoxDamageAbilityTest::RunTest(const FString& Parameters)
 	TestEqual(TEXT("Reaction configuration uses the attack row groggy multiplier"), Player->StatComponent->CurrentGroggy, 125.0f);
 	AdvanceBoxTestTime();
 	TestEqual(TEXT("Airborne overlaps also apply damage only once per window"), Player->StatComponent->CurrentHP, 895.0f);
+	Notify->NotifyEnd(Boss->GetMesh(), nullptr, Reference);
+	// 공용 노티파이·피해 처리 경로로 좌우 두 판정과 공유 적중 기록 검증
+	UMVElectricEelManQAbility* TailSlam = NewObject<UMVElectricEelManQAbility>(Boss->CombatComponent);
+	TailSlam->SetOwner(Boss->CombatComponent);
+	TailSlam->InitAbility(Data);
+	TailSlam->SetAttackInstanceId(101);
+	TailSlam->BoxSize = FVector(600, 100, 100);
+	TailSlam->BoxOffset = FVector(400, 0, 0);
+	TailSlam->TailSeparation = 300.0f;
+	TailSlam->bDrawDebug = false;
+	Boss->CombatComponent->CurrentAbilityInstance = TailSlam;
+	Boss->SetActorRotation(FRotator::ZeroRotator);
+	Player->SetActorLocation(FVector(600, 0, 1000));
+	float ExpectedHP = Player->StatComponent->CurrentHP;
+	Notify->NotifyBegin(Boss->GetMesh(), nullptr, 1.0f, Reference);
+	AdvanceBoxTestTime();
+	TestTrue(TEXT("Shared notify activates the tail slam subclass"), TailSlam->bAbilityActive);
+	TestEqual(TEXT("Gap between tails excludes player"), Player->StatComponent->CurrentHP, ExpectedHP);
+	Player->SetActorLocation(FVector(600, -150, 1000));
+	AdvanceBoxTestTime();
+	ExpectedHP -= 17.5f;
+	TestEqual(TEXT("Extended left tail applies row damage"), Player->StatComponent->CurrentHP, ExpectedHP);
+	Player->SetActorLocation(FVector(600, 150, 1000));
+	AdvanceBoxTestTime();
+	TestEqual(TEXT("Crossing into right tail during same window adds no damage"), Player->StatComponent->CurrentHP, ExpectedHP);
+	Notify->NotifyEnd(Boss->GetMesh(), nullptr, Reference);
+	AdvanceBoxTestTime();
+	TestFalse(TEXT("Tail slam timer stops with notify"), TailSlam->bAbilityActive);
+	Notify->NotifyBegin(Boss->GetMesh(), nullptr, 1.0f, Reference);
+	ExpectedHP -= 17.5f;
+	TestEqual(TEXT("Right tail can hit in a new window"), Player->StatComponent->CurrentHP, ExpectedHP);
+	Notify->NotifyEnd(Boss->GetMesh(), nullptr, Reference);
+	TailSlam->TailSeparation = 0.0f;
+	Player->SetActorLocation(FVector(600, 0, 1000));
+	Notify->NotifyBegin(Boss->GetMesh(), nullptr, 1.0f, Reference);
+	ExpectedHP -= 17.5f;
+	TestEqual(TEXT("Coincident tail boxes still apply one hit"), Player->StatComponent->CurrentHP, ExpectedHP);
+	Notify->NotifyEnd(Boss->GetMesh(), nullptr, Reference);
+	Boss->SetActorRotation(FRotator(0, 90, 0));
+	Player->SetActorLocation(FVector(0, 600, 1000));
+	Notify->NotifyBegin(Boss->GetMesh(), nullptr, 1.0f, Reference);
+	ExpectedHP -= 17.5f;
+	TestEqual(TEXT("Tail boxes follow boss rotation"), Player->StatComponent->CurrentHP, ExpectedHP);
+	Notify->NotifyEnd(Boss->GetMesh(), nullptr, Reference);
+	Player->SetActorLocation(FVector(0, 900, 1000));
+	Notify->NotifyBegin(Boss->GetMesh(), nullptr, 1.0f, Reference);
+	AdvanceBoxTestTime();
+	TestEqual(TEXT("Player beyond tail length is excluded"), Player->StatComponent->CurrentHP, ExpectedHP);
 	Notify->NotifyEnd(Boss->GetMesh(), nullptr, Reference);
 	return !HasAnyErrors();
 }

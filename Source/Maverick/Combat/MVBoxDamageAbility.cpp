@@ -42,6 +42,12 @@ void UMVBoxDamageAbility::BeginDestroy()
 	Super::BeginDestroy();
 }
 
+void UMVBoxDamageAbility::GetBoxOffsets(TArray<FVector>& OutOffsets) const
+{
+	OutOffsets.Reset();
+	OutOffsets.Add(BoxOffset);
+}
+
 void UMVBoxDamageAbility::CheckBoxDamage()
 {
 	AMVCharacterBase* Character = GetOwnerCharacter();
@@ -54,13 +60,21 @@ void UMVBoxDamageAbility::CheckBoxDamage()
 	}
 
 	const FQuat Rotation = Character->GetActorQuat();
-	const FVector Center = Character->GetActorLocation() + Rotation.RotateVector(BoxOffset);
+	const FVector Origin = Character->GetActorLocation();
 	const FVector HalfExtent = BoxSize.ComponentMax(FVector(1.0f)) * 0.5f;
+	TArray<FVector> Offsets;
+	GetBoxOffsets(Offsets);
 
 	TArray<FOverlapResult> Overlaps;
 	const FCollisionQueryParams Params(SCENE_QUERY_STAT(MVBoxDamage), false, Character);
-	World->OverlapMultiByObjectType(Overlaps, Center, Rotation,
-		FCollisionObjectQueryParams(ECC_Pawn), FCollisionShape::MakeBox(HalfExtent), Params);
+	for (const FVector& Offset : Offsets)
+	{
+		TArray<FOverlapResult> BoxOverlaps;
+		const FVector Center = Origin + Rotation.RotateVector(Offset);
+		World->OverlapMultiByObjectType(BoxOverlaps, Center, Rotation,
+			FCollisionObjectQueryParams(ECC_Pawn), FCollisionShape::MakeBox(HalfExtent), Params);
+		Overlaps.Append(BoxOverlaps);
+	}
 	UMVHitResolverSubsystem* Resolver = UMVHitResolverSubsystem::Get(World);
 	bool bHit = false;
 
@@ -92,7 +106,11 @@ void UMVBoxDamageAbility::CheckBoxDamage()
 #if ENABLE_DRAW_DEBUG
 	if (bDrawDebug)
 	{
-		DrawDebugBox(World, Center, HalfExtent, Rotation, bHit ? FColor::Green : FColor::Yellow, false, 0.05f, 0, 2.0f);
+		for (const FVector& Offset : Offsets)
+		{
+			const FVector Center = Origin + Rotation.RotateVector(Offset);
+			DrawDebugBox(World, Center, HalfExtent, Rotation, bHit ? FColor::Green : FColor::Yellow, false, 0.05f, 0, 2.0f);
+		}
 	}
 #endif
 }

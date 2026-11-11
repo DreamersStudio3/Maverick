@@ -1,6 +1,6 @@
-#include "Combat/Duelist/MVAnimNotify_DuelistFireChain.h"
+#include "Combat/Boss/Duelist/MVAnimNotify_DuelistFireChain.h"
 
-#include "Combat/Duelist/MVDuelistChainPullAbility.h"
+#include "Combat/Boss/Duelist/MVDuelistChainPullAbility.h"
 #include "Components/MVCombatComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 

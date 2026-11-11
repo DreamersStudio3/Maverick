@@ -2,7 +2,7 @@
 
 #if WITH_DEV_AUTOMATION_TESTS && WITH_EDITOR
 #include "Character/MVCharacterBase.h"
-#include "Combat/Duelist/MVDuelistResonanceComponent.h"
+#include "Combat/Boss/Duelist/MVDuelistResonanceComponent.h"
 #include "Combat/MVHitResolverSubsystem.h"
 #include "Components/MVStatComponent.h"
 #include "Components/MVWeaponComponent.h"

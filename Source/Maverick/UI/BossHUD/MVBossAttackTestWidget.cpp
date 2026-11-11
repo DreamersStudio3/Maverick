@@ -2,7 +2,7 @@
 
 #include "AI/Controller/MVAIController.h"
 #include "Character/NPC/Enemy/MVEnemy.h"
-#include "Combat/Duelist/MVDuelistResonanceComponent.h"
+#include "Combat/Boss/Duelist/MVDuelistResonanceComponent.h"
 #include "Components/Button.h"
 #include "Components/MVActionComponent.h"
 #include "Components/MVCombatComponent.h"

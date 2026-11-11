@@ -1,7 +1,7 @@
 #include "AI/AITask/MVBossSelectAttackTask.h"
 
 #include "AI/Controller/MVAIController.h"
-#include "Combat/Duelist/MVDuelistResonanceComponent.h"
+#include "Combat/Boss/Duelist/MVDuelistResonanceComponent.h"
 #include "GameFramework/Pawn.h"
 #include "StateTreeExecutionContext.h"
 

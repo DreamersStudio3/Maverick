@@ -1,8 +1,8 @@
-#include "Combat/Duelist/MVDuelistChainPullAbility.h"
+#include "Combat/Boss/Duelist/MVDuelistChainPullAbility.h"
 
 #include "AI/Controller/MVAIController.h"
 #include "Character/MVCharacterBase.h"
-#include "Combat/Duelist/MVDuelistChainProjectile.h"
+#include "Combat/Boss/Duelist/MVDuelistChainProjectile.h"
 #include "Components/MVStatComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Engine/World.h"

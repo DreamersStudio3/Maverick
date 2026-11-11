@@ -1940,6 +1940,10 @@ bool UMVCombatComponent::TryStartActionWithAbility(
 	}
 
 	UMVInputManagerComponent* InputManager = Owner->InputManagerComponent;
+	if (UMVAbilityBase* Ability = ActionEntry.GetCurrentAbility(); Ability && !Ability->CanActivateAbility())
+	{
+		return false;
+	}
 	const bool bRecoveryOpen = InputManager ? InputManager->IsRecoveryEscapeWindowOpen() : true;
 	const bool bIsActionRunning = ActionComponent->IsActionRunning();
 	const bool bCanInterrupt = ActionComponent->CanInterruptActiveAction();

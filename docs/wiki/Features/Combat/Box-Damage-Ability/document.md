@@ -1,12 +1,13 @@
 ---
 제목: "박스 범위 피해 Ability"
 부제목: "공통 박스 판정과 피격 유형별 설정"
-최근수정일: 2026-10-12
+최근수정일: 2026-11-11
 최근수정자: "Codex"
 관련문서:
   - "[[Features/Combat/Combat-System/document|Maverick 전투 시스템]]"
   - "[[Features/Hit-Stat-HitReaction/document|Hit, Stat, HitReaction]]"
   - "[[Features/Duelist-Chain-Pull/document|Duelist 돌진 사슬 스킬]]"
+  - "[[Features/Electric-Eel-Man-Q/document|전기뱀장어맨 Q]]"
 ---
 
 # 박스 범위 피해 Ability
@@ -18,6 +19,8 @@
 - 부모 클래스: `UMVBoxDamageAbility`
 - 에어본 설정: `BP_BoxCollision_Airborne`, `BP_BoxCollision`의 자식 Blueprint
 - 두 Blueprint는 설정만 보유, 타이머·충돌·중복 적중·종료는 C++ 한 곳에서 처리
+- 파생 Ability는 `GetBoxOffsets`로 여러 중심 제공 가능, 기본 구현은 기존 `BoxOffset` 하나
+- 여러 박스의 겹침 결과를 모아 공통 적중 기록으로 처리, 활성 구간당 플레이어 한 번 피격
 
 ## 범위 설정
 

@@ -1,7 +1,7 @@
-#include "Combat/Duelist/MVDuelistChainProjectile.h"
+#include "Combat/Boss/Duelist/MVDuelistChainProjectile.h"
 
 #include "Character/MVCharacterBase.h"
-#include "Combat/Duelist/MVDuelistChainPullAbility.h"
+#include "Combat/Boss/Duelist/MVDuelistChainPullAbility.h"
 #include "Combat/MVHitResolverSubsystem.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InstancedStaticMeshComponent.h"

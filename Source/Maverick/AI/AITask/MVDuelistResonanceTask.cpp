@@ -1,7 +1,7 @@
 #include "AI/AITask/MVDuelistResonanceTask.h"
 
 #include "AIController.h"
-#include "Combat/Duelist/MVDuelistResonanceComponent.h"
+#include "Combat/Boss/Duelist/MVDuelistResonanceComponent.h"
 #include "StateTreeExecutionContext.h"
 
 FMVDuelistResonanceTask::FMVDuelistResonanceTask() { bShouldCallTick = true; }

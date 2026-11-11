@@ -1,4 +1,4 @@
-#include "Combat/Duelist/MVDuelistResonanceComponent.h"
+#include "Combat/Boss/Duelist/MVDuelistResonanceComponent.h"
 
 #include "AIController.h"
 #include "Animation/AnimInstance.h"

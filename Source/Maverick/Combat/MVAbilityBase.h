@@ -79,6 +79,9 @@ public:
 
 	void PrepareAbilityExecution();
 
+	// 몽타주 시작 전 특수 스킬의 사용 조건 확인, 기본 Ability는 항상 허용
+	virtual bool CanActivateAbility() { return true; }
+
 	virtual void StartAbility_Implementation(int32 AbilityIndex) override;
 	virtual void EndAbility_Implementation() override;
 
