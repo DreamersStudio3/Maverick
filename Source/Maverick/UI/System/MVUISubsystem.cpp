@@ -438,12 +438,19 @@ UMVPIEActionTestWidget* UMVUISubsystem::OpenPIEActionTestPanel(AMVCharacterBase*
 void UMVUISubsystem::HidePIEActionTestPanel()
 {
 #if !UE_BUILD_SHIPPING
+	const bool bWasPanelInViewport = ActivePIEActionTestWidget && ActivePIEActionTestWidget->IsInViewport();
 	bHasPendingPIEActionTestPanel = false;
 	PendingPIEActionTestTargetCharacter.Reset();
 	if (ActivePIEActionTestWidget)
 	{
 		ActivePIEActionTestWidget->RemoveFromParent();
 		ActivePIEActionTestWidget = nullptr;
+	}
+
+	// 상호작용 정리에서 열리지 않은 시험 패널을 닫아도 현재 메뉴의 입력은 유지한다.
+	if (!bWasPanelInViewport)
+	{
+		return;
 	}
 
 	UWorld* World = GetWorld();
