@@ -11,11 +11,13 @@
 
 class UMVStatComponent;
 class UMVWorldStateSubsystem;
-class UMVRestPointSubsystem;
+class UMVHUDWidgetBase;
 class UMVLevelUpAttributeEntryWidget;
 class UMVLevelUpStatComparisonWidget;
 class UMVLevelUpStatBlockWidget;
+class UMVRestPointSubsystem;
 class UButton;
+class UTextBlock;
 class UMVLevelUpSummaryWidget;
 class APlayerController;
 class UCommonActionWidget;
@@ -29,6 +31,7 @@ class UCommonActionWidget;
  *
  * Construct에서 확인 입력·버튼 연결, Destruct에서 연결 해제
  * 활성화 시 상태 구독·행 생성·초점 확보, 최대 체력 보정 변경 시 미리보기 갱신
+ * 활성화 동안 현재 HUD를 숨기고 비활성화·소멸 시 같은 HUD의 표시 상태 복구
  * 비활성화 시 상태 구독·행 이벤트 해제, 선택 상태와 임시 투자 폐기
  * 사망·필드 전환 시 창 닫기
  */
@@ -68,6 +71,7 @@ public:
 	TArray<FMVProgressionEntryDefinition> GetProgressionEntries() const;
 
 protected:
+	virtual void NativeOnInitialized() override;
 	virtual void NativeConstruct() override;
 	virtual void NativeOnActivated() override;
 	virtual void NativeOnDeactivated() override;
@@ -101,6 +105,15 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Maverick|UI|LevelUp", meta = (BindWidgetOptional))
 	TObjectPtr<UCommonActionWidget> CancelInputHint;
+
+	UPROPERTY(meta = (BindWidgetOptional))
+	TObjectPtr<UTextBlock> ConfirmInputLabel;
+
+	UPROPERTY(meta = (BindWidgetOptional))
+	TObjectPtr<UTextBlock> CancelInputLabel;
+
+	UPROPERTY(meta = (BindWidgetOptional))
+	TObjectPtr<UTextBlock> LevelUpTitle;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Maverick|UI|LevelUp")
 	TSubclassOf<UMVLevelUpAttributeEntryWidget> AttributeEntryClass;
@@ -112,7 +125,9 @@ protected:
 	FMVProgressionEvaluation LevelUpPreview;
 
 private:
+	void UpdateRestPointTitle();
 	void RegisterLevelUpInputActions();
+	void RefreshInputHints();
 	void UnregisterLevelUpInputActions();
 	void HandleConfirmInput(EInputEvent InputEvent);
 	bool HandleLevelUpNavigation(EUINavigation Direction);
@@ -143,6 +158,7 @@ private:
 	
 	void BindRuntimeEvents();
 	void UnbindRuntimeEvents();
+	void RestoreGameplayHUD();
 	bool IsInteractionAllowed() const;
 
 	UFUNCTION()
@@ -165,7 +181,10 @@ private:
 	TWeakObjectPtr<UMVWorldStateSubsystem> WorldState;
 	TWeakObjectPtr<UMVStatComponent> PlayerStats;
 	TWeakObjectPtr<UMVFieldTransitionSubsystem> FieldTransition;
+	TWeakObjectPtr<UMVHUDWidgetBase> SuppressedHUD;
 	TWeakObjectPtr<UMVRestPointSubsystem> RestPointSession;
+	FText OriginalTitle;
+	ESlateVisibility PreviousHUDVisibility = ESlateVisibility::Collapsed;
 
 	int32 PreviewStatRevision = 0;
 	bool bCommitInProgress = false;
