@@ -790,7 +790,7 @@ void UMVUISubsystem::HandleWorldInit(UWorld* World, const UWorld::Initialization
 	}
 
 	ClearAllUI();
-	GetOrCreateRootLayer(World);
+	// 뷰포트 준비 전의 부착을 피하고 첫 HUD·상호작용 요청에서 레이어를 만든다.
 
 	FTimerHandle PostWorldInitTimerHandle;
 	const TWeakObjectPtr<UWorld> WeakWorld = World;
