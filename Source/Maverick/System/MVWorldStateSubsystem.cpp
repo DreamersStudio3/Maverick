@@ -1,11 +1,12 @@
 #include "System/MVWorldStateSubsystem.h"
 
+#include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
 #include "System/MVWorldSaveGame.h"
 
 namespace
 {
-const int32 MVWorldStateCurrentSaveVersion = 3;
+const int32 MVWorldStateCurrentSaveVersion = 4;
 
 FString WorldStateResolveFallbackSlotName(const FString& RequestedSlotName, const FString& DefaultSlotName)
 {
@@ -46,6 +47,11 @@ UMVWorldStateSubsystem* UMVWorldStateSubsystem::Get(const UObject* WorldContextO
 	return GameInstance ? GameInstance->GetSubsystem<UMVWorldStateSubsystem>() : nullptr;
 }
 
+FName UMVWorldStateSubsystem::GetRestPointMapId(const UWorld& World)
+{
+	return FName(*UWorld::RemovePIEPrefix(World.GetOutermost()->GetName()));
+}
+
 bool UMVWorldStateSubsystem::SaveToSlot(const FString& SlotName, const int32 UserIndex)
 {
 	const FString ResolvedSlotName = ResolveSlotName(SlotName);
@@ -55,9 +61,9 @@ bool UMVWorldStateSubsystem::SaveToSlot(const FString& SlotName, const int32 Use
 		return false;
 	}
 
-	CurrentSaveData.SaveVersion = MVWorldStateCurrentSaveVersion;
-	CurrentSaveData.SavedAtUtcIso8601 = FDateTime::UtcNow().ToIso8601();
 	SaveGame->SaveData = CurrentSaveData;
+	SaveGame->SaveData.SaveVersion = MVWorldStateCurrentSaveVersion;
+	SaveGame->SaveData.SavedAtUtcIso8601 = FDateTime::UtcNow().ToIso8601();
 
 	if (!UGameplayStatics::SaveGameToSlot(SaveGame, ResolvedSlotName, UserIndex))
 	{
@@ -66,7 +72,10 @@ bool UMVWorldStateSubsystem::SaveToSlot(const FString& SlotName, const int32 Use
 
 	ActiveSaveSlotName = ResolvedSlotName;
 	ActiveUserIndex = UserIndex;
+	CurrentSaveData.SaveVersion = SaveGame->SaveData.SaveVersion;
+	CurrentSaveData.SavedAtUtcIso8601 = SaveGame->SaveData.SavedAtUtcIso8601;
 	bSaveDataDirty = false;
+	bActiveSaveFailed = false;
 	OnWorldStateSaved.Broadcast(ActiveSaveSlotName);
 	return true;
 }
@@ -74,6 +83,18 @@ bool UMVWorldStateSubsystem::SaveToSlot(const FString& SlotName, const int32 Use
 bool UMVWorldStateSubsystem::SaveToDefaultSlot()
 {
 	return SaveToSlot(DefaultSaveSlotName, DefaultUserIndex);
+}
+
+bool UMVWorldStateSubsystem::SaveActiveSlot()
+{
+	if (SaveToSlot(ActiveSaveSlotName, ActiveUserIndex))
+	{
+		return true;
+	}
+
+	bActiveSaveFailed = true;
+	UE_LOG(LogTemp, Warning, TEXT("WorldState: failed to write active slot %s."), *ActiveSaveSlotName);
+	return false;
 }
 
 bool UMVWorldStateSubsystem::LoadFromSlot(const FString& SlotName, const int32 UserIndex)
@@ -97,6 +118,7 @@ bool UMVWorldStateSubsystem::LoadFromSlot(const FString& SlotName, const int32 U
 	ActiveSaveSlotName = ResolvedSlotName;
 	ActiveUserIndex = UserIndex;
 	bSaveDataDirty = false;
+	bActiveSaveFailed = false;
 	OnPlayerProgressionChanged.Broadcast(CurrentSaveData.PlayerProgression);
 	OnWorldStateLoaded.Broadcast(ActiveSaveSlotName);
 	OnWorldStateChanged.Broadcast();
@@ -135,6 +157,7 @@ void UMVWorldStateSubsystem::ResetSaveData()
 	CurrentSaveData = FMVWorldSaveData();
 	CurrentSaveData.SaveVersion = MVWorldStateCurrentSaveVersion;
 	bSaveDataDirty = false;
+	bActiveSaveFailed = false;
 	OnPlayerProgressionChanged.Broadcast(CurrentSaveData.PlayerProgression);
 	OnWorldStateChanged.Broadcast();
 }
@@ -209,6 +232,51 @@ bool UMVWorldStateSubsystem::TryGetLastCheckpoint(FMVCheckpointSaveData& OutChec
 {
 	OutCheckpoint = CurrentSaveData.LastCheckpoint;
 	return CurrentSaveData.LastCheckpoint.bHasCheckpoint;
+}
+
+bool UMVWorldStateSubsystem::RecordRestPoint(
+	const FName RestPointId, const FName FieldId, const FTransform& Transform)
+{
+	const UWorld* World = GetWorld();
+	if (!World || RestPointId.IsNone() || FieldId.IsNone() || !Transform.IsValid())
+	{
+		return false;
+	}
+
+	const FName MapName = GetRestPointMapId(*World);
+	FMVCheckpointSaveData& Last = CurrentSaveData.LastRestPoint;
+	TArray<FMVRestPointDiscovery>& Discovered = CurrentSaveData.DiscoveredRestPoints;
+	const bool bDiscovered = Discovered.ContainsByPredicate([=](const FMVRestPointDiscovery& Point)
+	{
+		return Point.MapName == MapName && Point.FieldId == FieldId && Point.RestPointId == RestPointId;
+	});
+	if (bDiscovered && Last.bHasCheckpoint && Last.CheckpointId == RestPointId
+		&& Last.FieldId == FieldId && Last.MapName == MapName && Last.Transform.Equals(Transform))
+	{
+		return false;
+	}
+
+	if (!bDiscovered)
+	{
+		FMVRestPointDiscovery& Point = Discovered.AddDefaulted_GetRef();
+		Point.MapName = MapName;
+		Point.FieldId = FieldId;
+		Point.RestPointId = RestPointId;
+	}
+
+	Last.bHasCheckpoint = true;
+	Last.CheckpointId = RestPointId;
+	Last.FieldId = FieldId;
+	Last.MapName = MapName;
+	Last.Transform = Transform;
+	MarkSaveDataDirty();
+	return true;
+}
+
+void UMVWorldStateSubsystem::SetWeaponProgress(FMVWeaponProgressSaveData&& Progress)
+{
+	CurrentSaveData.WeaponProgress = MoveTemp(Progress);
+	MarkSaveDataDirty();
 }
 
 bool UMVWorldStateSubsystem::SetFieldObjectState(
@@ -399,6 +467,12 @@ bool UMVWorldStateSubsystem::TryGetBossIntroCompleted(const FName IntroId, FMVBo
 
 void UMVWorldStateSubsystem::UpgradeSaveData()
 {
+	if (CurrentSaveData.SaveVersion < 4)
+	{
+		CurrentSaveData.DiscoveredRestPoints.Reset();
+		CurrentSaveData.LastRestPoint = FMVCheckpointSaveData();
+		CurrentSaveData.WeaponProgress = FMVWeaponProgressSaveData();
+	}
 	if (CurrentSaveData.SaveVersion < 2)
 	{
 		CurrentSaveData.PlayerProgression = FMVPlayerProgressionSaveData();

@@ -139,6 +139,7 @@ FMVProgressionEvaluation UMVProgressionSubsystem::CommitAllocation(const TMap<FG
 
 	Evaluation.ResultRevision = NewProgression.Revision;
 
+	WorldState->SaveActiveSlot();
 	Evaluation.Diagnostic.Reset();
 	return Evaluation;
 }

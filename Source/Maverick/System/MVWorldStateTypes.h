@@ -1,6 +1,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Enum/MVEquipmentEnums.h"
+#include "Enum/MVSkillSlot.h"
 #include "Struct/MVProgressionTypes.h"
 #include "MVWorldStateTypes.generated.h"
 
@@ -99,6 +101,78 @@ struct MAVERICK_API FMVBossIntroSaveData
 };
 
 USTRUCT(BlueprintType)
+struct MAVERICK_API FMVRestPointDiscovery
+{
+	GENERATED_BODY()
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Save")
+	FName MapName;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Save")
+	FName FieldId;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Save")
+	FName RestPointId;
+};
+
+class UDataTable;
+
+/** 데이터 테이블 자산 경로와 행 이름으로 저장하며 런타임 행 포인터는 보관하지 않는다. */
+USTRUCT()
+struct MAVERICK_API FMVSavedWeaponRow
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	TSoftObjectPtr<UDataTable> Table;
+
+	UPROPERTY()
+	FName RowName;
+};
+
+USTRUCT()
+struct MAVERICK_API FMVSavedWeaponSkillStyle
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	TArray<FMVSavedWeaponRow> UnlockedRows;
+
+	UPROPERTY()
+	TMap<EMVSkillSlot, FMVSavedWeaponRow> EquippedRows;
+};
+
+USTRUCT()
+struct MAVERICK_API FMVWeaponProgressSaveData
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	bool bHasRecord = false;
+
+	UPROPERTY()
+	TMap<FGameplayTag, FMVSavedWeaponRow> OwnedWeapons;
+
+	UPROPERTY()
+	TArray<FGameplayTag> QuickSlots;
+
+	UPROPERTY()
+	FGameplayTag EquippedWeapon;
+
+	UPROPERTY()
+	int32 ActiveSlot = INDEX_NONE;
+
+	UPROPERTY()
+	TMap<EMVEquippedStyle, FMVSavedWeaponSkillStyle> SkillStyles;
+
+	UPROPERTY()
+	TMap<FGameplayTag, FMVSavedWeaponRow> SelectedPassives;
+
+	UPROPERTY()
+	int32 SkillPoints = 0;
+};
+
+USTRUCT(BlueprintType)
 struct MAVERICK_API FMVWorldSaveData
 {
 	GENERATED_BODY()
@@ -111,6 +185,15 @@ struct MAVERICK_API FMVWorldSaveData
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Save")
 	FMVCheckpointSaveData LastCheckpoint;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Save")
+	TArray<FMVRestPointDiscovery> DiscoveredRestPoints;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Save")
+	FMVCheckpointSaveData LastRestPoint;
+
+	UPROPERTY()
+	FMVWeaponProgressSaveData WeaponProgress;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Save")
 	TArray<FMVFieldObjectSaveData> FieldObjects;

@@ -12,6 +12,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "Engine/SkeletalMesh.h"
 #include "Engine/StaticMesh.h"
+#include "System/MVWorldStateSubsystem.h"
 #include "Tags/MVGameplayTags.h"
 #include "Tables/MVSkillDataTableColumn.h"
 
@@ -83,20 +84,7 @@ void UMVWeaponComponent::BeginPlay()
 		SkillTreeStates.Add(OneSkillMap->WeaponStyle, NewState);
 	}
 
-	// Todo: Replace this disabled condition with a successful SaveGame load check.
-	if (0 /* Valid SaveGame loaded */)
-	{
-		// Todo: Restore owned weapons, quick slots, equipped weapon, skill tree states,
-		// and shared skill points before applying the loaded weapon state.
-	}
-	else
-	{
-		InitSkillTreeStates();
-		if (!TryInitializeDefaultWeapon())
-		{
-			EquipBareHand();
-		}
-	}
+	InitializeWeaponProgress();
 
 	if (const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner()))
 	{
@@ -109,6 +97,11 @@ void UMVWeaponComponent::BeginPlay()
 
 void UMVWeaponComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	if (UMVWorldStateSubsystem* State = WeaponSaveState.Get())
+	{
+		State->OnWorldStateLoaded.RemoveDynamic(this, &ThisClass::HandleWeaponSaveLoaded);
+		WeaponSaveState.Reset();
+	}
 	if (const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner()))
 	{
 		if (UMVInputManagerComponent* InputManager = OwnerCharacter->InputManagerComponent)
@@ -146,23 +139,38 @@ bool UMVWeaponComponent::CycleWeapon()
 	const FGameplayTag& NextWeaponTag = QuickSlotWeaponTags[NextIndex];
 	if (!NextWeaponTag.IsValid())
 	{
+		const bool bSlotChanged = ActiveQuickSlotIndex != NextIndex;
 		ActiveQuickSlotIndex = NextIndex;
 		if (CurrentWeaponState.ItemTag.MatchesTagExact(BareHandWeapon.ItemTag))
 		{
+			if (bSlotChanged)
+			{
+				StoreWeaponProgress();
+			}
 			return false;
 		}
 
 		EquipBareHand();
+		StoreWeaponProgress();
 		return true;
 	}
 
 	if (NextWeaponTag.MatchesTagExact(CurrentWeaponState.ItemTag))
 	{
-		ActiveQuickSlotIndex = NextIndex;
+		if (ActiveQuickSlotIndex != NextIndex)
+		{
+			ActiveQuickSlotIndex = NextIndex;
+			StoreWeaponProgress();
+		}
 		return false;
 	}
 
-	return EquipQuickSlotWeapon(NextIndex);
+	if (!EquipQuickSlotWeapon(NextIndex))
+	{
+		return false;
+	}
+	StoreWeaponProgress();
+	return true;
 }
 
 bool UMVWeaponComponent::AcquireWeapon(const FDataTableRowHandle& WeaponRowHandle)
@@ -187,6 +195,7 @@ bool UMVWeaponComponent::AcquireWeapon(const FDataTableRowHandle& WeaponRowHandl
 	}
 
 	OwnedWeapons.Add(WeaponRow->ItemTag, WeaponRowHandle);
+	StoreWeaponProgress();
 	OnOwnedWeaponsChanged.Broadcast();
 	return true;
 }
@@ -220,6 +229,7 @@ bool UMVWeaponComponent::DiscardWeapon(const FGameplayTag WeaponTag)
 		EquipBareHand();
 	}
 
+	StoreWeaponProgress();
 	if (bRemovedQuickSlotReference)
 	{
 		OnQuickSlotsChanged.Broadcast();
@@ -256,6 +266,7 @@ bool UMVWeaponComponent::SetQuickSlotWeapon(const int32 SlotIndex, const FGamepl
 		return false;
 	}
 
+	StoreWeaponProgress();
 	OnQuickSlotsChanged.Broadcast();
 	return true;
 }
@@ -279,6 +290,7 @@ bool UMVWeaponComponent::ClearQuickSlotWeapon(const int32 SlotIndex)
 		EquipBareHand();
 	}
 
+	StoreWeaponProgress();
 	OnQuickSlotsChanged.Broadcast();
 	return true;
 }
@@ -506,6 +518,7 @@ bool UMVWeaponComponent::UnlockSkill(EMVEquippedStyle EquippedStyle, FDataTableR
 
 	SkillTreeStatePtr->UnlockedSkills.Add(FMVHashDataTableRowHandle(RowHandle));
 	CurrentSkillPoints -= SkillCost;
+	StoreWeaponProgress();
 	if (SkillSlot == EMVSkillSlot::PassiveSkill)
 	{
 		OnPassiveOptionsChanged.Broadcast();
@@ -559,6 +572,7 @@ bool UMVWeaponComponent::EquipSkill(EMVEquippedStyle EquippedStyle, FDataTableRo
 
 	// Equip the skill by adding it to the EquippedSkill map
 	SkillTreeStatePtr->EquippedSkill.Add(SkillSlot, RowHandle);
+	StoreWeaponProgress();
 
 	if (EquippedStyle == CurrentWeaponState.EquippedStyle)
 	{
@@ -652,7 +666,16 @@ bool UMVWeaponComponent::SelectPassive(
 	{
 		if (Candidate.SkillRowHandle == RowHandle && Candidate.bUnlocked)
 		{
-			ON_SCOPE_EXIT { OnPassiveOptionsChanged.Broadcast(); };
+			const FDataTableRowHandle* Previous = SelectedPassiveByWeaponType.Find(WeaponTypeTag);
+			const bool bChanged = !Previous || *Previous != RowHandle;
+			ON_SCOPE_EXIT
+			{
+				if (bChanged)
+				{
+					StoreWeaponProgress(true);
+				}
+				OnPassiveOptionsChanged.Broadcast();
+			};
 			SelectedPassiveByWeaponType.Add(WeaponTypeTag, RowHandle);
 			if (CurrentWeaponState.bValid
 				&& CurrentWeaponState.WeaponTypeTag.MatchesTagExact(WeaponTypeTag))
@@ -684,7 +707,11 @@ bool UMVWeaponComponent::ClearSelectedPassive(const FGameplayTag WeaponTypeTag)
 	{
 		return false;
 	}
-	ON_SCOPE_EXIT { OnPassiveOptionsChanged.Broadcast(); };
+	ON_SCOPE_EXIT
+	{
+		StoreWeaponProgress(true);
+		OnPassiveOptionsChanged.Broadcast();
+	};
 	if (CurrentWeaponState.bValid
 		&& CurrentWeaponState.WeaponTypeTag.MatchesTagExact(WeaponTypeTag))
 	{
@@ -770,10 +797,12 @@ bool UMVWeaponComponent::AddSkillPoints(const int32 Points)
 	}
 
 	CurrentSkillPoints += Points;
+	StoreWeaponProgress();
 	return true;
 }
 
-bool UMVWeaponComponent::TryEquipWeaponTag(const FGameplayTag& WeaponTag, const int32 QuickSlotIndex)
+bool UMVWeaponComponent::TryEquipWeaponTag(
+	const FGameplayTag& WeaponTag, const int32 QuickSlotIndex, const bool bRefreshCombat)
 {
 	const FDataTableRowHandle* WeaponRowHandle = OwnedWeapons.Find(WeaponTag);
 	if (!WeaponRowHandle)
@@ -796,10 +825,11 @@ bool UMVWeaponComponent::TryEquipWeaponTag(const FGameplayTag& WeaponTag, const 
 		return false;
 	}
 
-	return TryEquipWeaponRow(*WeaponRow, QuickSlotIndex);
+	return TryEquipWeaponRow(*WeaponRow, QuickSlotIndex, bRefreshCombat);
 }
 
-bool UMVWeaponComponent::TryEquipWeaponRow(const FMVWeaponTableRow& WeaponRow, const int32 QuickSlotIndex)
+bool UMVWeaponComponent::TryEquipWeaponRow(
+	const FMVWeaponTableRow& WeaponRow, const int32 QuickSlotIndex, const bool bRefreshCombat)
 {
 	FMVEquippedWeaponState NewState = MakeStateFromWeaponRow(WeaponRow);
 	if (!NewState.bValid || !CanEquipWeaponState(NewState))
@@ -813,7 +843,7 @@ bool UMVWeaponComponent::TryEquipWeaponRow(const FMVWeaponTableRow& WeaponRow, c
 			? QuickSlotIndex
 			: INDEX_NONE;
 
-	ApplyEquippedWeaponState(NewState);
+	ApplyEquippedWeaponState(NewState, bRefreshCombat);
 	return true;
 }
 
@@ -862,17 +892,17 @@ void UMVWeaponComponent::EnsureQuickSlotStorage()
 	QuickSlotWeaponTags.SetNum(FMath::Max(0, MaxQuickSlotCount));
 }
 
-void UMVWeaponComponent::EquipBareHand()
+void UMVWeaponComponent::EquipBareHand(const bool bRefreshCombat)
 {
 	FMVEquippedWeaponState NewState = MakeStateFromWeaponRow(BareHandWeapon);
 	NewState.bValid = true;
-	ApplyEquippedWeaponState(NewState);
+	ApplyEquippedWeaponState(NewState, bRefreshCombat);
 }
 
-void UMVWeaponComponent::ApplyEquippedWeaponState(const FMVEquippedWeaponState& NewState)
+void UMVWeaponComponent::ApplyEquippedWeaponState(const FMVEquippedWeaponState& NewState, const bool bRefreshCombat)
 {
 	const bool bShouldRefreshCombat =
-		!CurrentWeaponState.bValid
+		bRefreshCombat || !CurrentWeaponState.bValid
 		|| CurrentWeaponState.EquippedStyle != NewState.EquippedStyle;
 	const bool bPassiveContextChanged =
 		!CurrentWeaponState.bValid

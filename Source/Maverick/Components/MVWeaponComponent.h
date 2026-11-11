@@ -14,6 +14,8 @@
 class UMeshComponent;
 class UObject;
 class USceneComponent;
+class UMVWorldStateSubsystem;
+struct FMVWeaponProgressSaveData;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnEquippedWeaponChanged, const FMVEquippedWeaponState&, WeaponState);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMVOnOwnedWeaponsChanged);
@@ -190,13 +192,13 @@ public:
 
 private:
 	bool EquipQuickSlotWeapon(int32 SlotIndex);
-	bool TryEquipWeaponTag(const FGameplayTag& WeaponTag, int32 QuickSlotIndex);
-	bool TryEquipWeaponRow(const FMVWeaponTableRow& WeaponRow, int32 QuickSlotIndex);
+	bool TryEquipWeaponTag(const FGameplayTag& WeaponTag, int32 QuickSlotIndex, bool bRefreshCombat = false);
+	bool TryEquipWeaponRow(const FMVWeaponTableRow& WeaponRow, int32 QuickSlotIndex, bool bRefreshCombat);
 	const FMVWeaponTableRow* ResolveWeaponRow(const FDataTableRowHandle& RowHandle, const TCHAR* Context) const;
 	int32 FindQuickSlotIndexForItemTag(const FGameplayTag& ItemTag) const;
 	void EnsureQuickSlotStorage();
-	void EquipBareHand();
-	void ApplyEquippedWeaponState(const FMVEquippedWeaponState& NewState);
+	void EquipBareHand(bool bRefreshCombat = false);
+	void ApplyEquippedWeaponState(const FMVEquippedWeaponState& NewState, bool bRefreshCombat);
 	static FMVEquippedWeaponState MakeStateFromWeaponRow(const FMVWeaponTableRow& WeaponRow);
 	static FMVWeaponHitSnapshot MakeHitSnapshotFromState(const FMVEquippedWeaponState& WeaponState);
 	bool CanEquipWeaponState(const FMVEquippedWeaponState& WeaponState) const;
@@ -229,6 +231,13 @@ private:
 		const TSet<FMVWeaponSkillMapData>& Skills) const;
 	bool ResolveOwnedWeaponTypeStyle(FGameplayTag WeaponTypeTag, EMVEquippedStyle& OutputStyle) const;
 	bool IsValidPassiveCandidateRow(const FDataTableRowHandle& RowHandle) const;
+
+	void InitializeWeaponProgress();
+	void RestoreWeaponProgress(const FMVWeaponProgressSaveData& Progress);
+	void StoreWeaponProgress(bool bSaveImmediately = false) const;
+
+	UFUNCTION()
+	void HandleWeaponSaveLoaded(FString SlotName);
 	
 	// Todo: Apply Skill to CombatComponent. This function will be responsible for applying the equipped skills to the character's combat component, allowing the character to use the skills in combat.
 	//void ApplySkillToCombatComponent();
@@ -260,10 +269,13 @@ private:
 	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Skill", meta = (AllowPrivateAccess = "true"))
 	TMap<EMVEquippedStyle, FMVSkillTreeState> SkillTreeStates;
 
-	// Current session selection; later save data must persist this by weapon kind.
+	// Current selection by weapon kind.
 	UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Skill|Passive", meta = (AllowPrivateAccess = "true"))
 	TMap<FGameplayTag, FDataTableRowHandle> SelectedPassiveByWeaponType;
 
 	UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Skill", meta = (AllowPrivateAccess = "true"))
 	int32 CurrentSkillPoints = 0;
+
+	TWeakObjectPtr<UMVWorldStateSubsystem> WeaponSaveState;
+	bool bRestoringWeaponProgress = false;
 };

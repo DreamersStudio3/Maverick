@@ -252,7 +252,7 @@ bool FMVBossIntroTest::RunTest(const FString& Parameters)
 		UMVWorldStateSubsystem* ReloadState = ReloadGI->GetSubsystem<UMVWorldStateSubsystem>();
 		TestTrue(TEXT("Fresh game instance loads selected save slot"), ReloadState->LoadFromSlot(Slot, 0));
 		TestEqual(TEXT("Fresh game instance preserves legacy save compatibility"), ReloadState->GetSaveData().BossIntros.Num(), 1);
-		TestEqual(TEXT("Fresh game instance upgrades save version"), ReloadState->GetSaveData().SaveVersion, 3);
+		TestEqual(TEXT("Fresh game instance upgrades save version"), ReloadState->GetSaveData().SaveVersion, 4);
 		UWorld* ReloadWorld = ReloadGI->GetWorld();
 		ReloadGI->Shutdown();
 		if (ReloadWorld) { ReloadWorld->DestroyWorld(false); GEngine->DestroyWorldContext(ReloadWorld); }
