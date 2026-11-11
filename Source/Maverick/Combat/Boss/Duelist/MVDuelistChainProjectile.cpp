@@ -32,7 +32,7 @@ AMVDuelistChainProjectile::AMVDuelistChainProjectile()
 	Links->SetAbsolute(false, false, true);
 	Links->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> LinkMesh(
-		TEXT("/Game/DuelistComplete/Skills/SM_DuelistChainLink.SM_DuelistChainLink"));
+		TEXT("/Game/Characters/NPC/Boss/DuelistComplete/Skills/SM_DuelistChainLink.SM_DuelistChainLink"));
 	Links->SetStaticMesh(LinkMesh.Object);
 	if (LinkMesh.Object) Tip->SetMaterial(0, LinkMesh.Object->GetMaterial(0));
 }

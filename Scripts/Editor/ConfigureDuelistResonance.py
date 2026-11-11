@@ -5,7 +5,7 @@ import unreal
 
 def configure_duelist_resonance():
     assets = unreal.AssetToolsHelpers.get_asset_tools()
-    root = '/Game/DuelistComplete/Resonance'
+    root = '/Game/Characters/NPC/Boss/DuelistComplete/Resonance'
     def material(name, color, opacity):
         path = root + '/' + name
         mat = unreal.load_asset(path) if unreal.EditorAssetLibrary.does_asset_exist(path) else assets.create_asset(name, root, unreal.Material, unreal.MaterialFactoryNew())
@@ -24,7 +24,7 @@ def configure_duelist_resonance():
         return mat
     warning = material('M_ResonanceWarning', (2.5, 0.015, 0.035, 1), 0.22)
     energy = material('M_ResonanceToxicEnergy', (0.35, 6, 0.8, 1), 0.6)
-    sequences = '/Game/DuelistComplete/Animations/AnimationsSequence/'
+    sequences = '/Game/Characters/NPC/Boss/DuelistComplete/Animations/AnimationsSequence/'
     def montage(name, source_name, duration):
         sequence = unreal.load_asset(sequences + source_name)
         assert sequence, source_name
@@ -48,7 +48,7 @@ def configure_duelist_resonance():
     jump = montage('AM_Duelist_ResonanceJump', 'AS_Duelist_Evasion', 0.75)
     charge = montage('AM_Duelist_ResonanceChannel', 'AS_Duelist_PazeChange', 5)
     groggy = montage('AM_Duelist_ResonanceGroggy', 'AS_Duelist_DownIdle', 10)
-    bp = unreal.load_asset('/Game/DuelistComplete/BP_Duelist')
+    bp = unreal.load_asset('/Game/Characters/NPC/Boss/DuelistComplete/BP_Duelist')
     system = unreal.get_engine_subsystem(unreal.SubobjectDataSubsystem)
     handles = system.k2_gather_subobject_data_for_blueprint(bp)
     lib = unreal.SubobjectDataBlueprintFunctionLibrary

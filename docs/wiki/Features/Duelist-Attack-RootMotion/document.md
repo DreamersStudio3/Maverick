@@ -1,7 +1,7 @@
 ---
 제목: "Duelist 공격 루트 이동"
 부제목: "공격 종료 위치 복귀 방지와 원본 이동 거리 보존"
-최근수정일: 2026-10-06
+최근수정일: 2026-11-11
 최근수정자: "Codex"
 관련문서:
   - "[[Features/Duelist-Locomotion/document|Duelist 기본 로코모션]]"
@@ -13,7 +13,7 @@
 
 ## 원인과 처리 경로
 
-- 대상: `/Game/DuelistComplete/BP_Duelist`의 공격 종료 후 시작 위치 복귀
+- 대상: `/Game/Characters/NPC/Boss/DuelistComplete/BP_Duelist`의 공격 종료 후 시작 위치 복귀
 - 수정 전: 공격 시퀀스의 루트 추출 비활성, 메시만 이동하고 캡슐은 시작 위치 유지
 - 재현: 기본 공격의 메시 루트 최대 이동 `506.74 cm`, 캡슐 수평 이동 `0 cm`
 - 원본 루트 스케일 `100`; 일반 몽타주 루트 추출 경로에서 이동 거리 100배 확대 관찰
@@ -30,7 +30,7 @@ flowchart LR
 
 ## 에셋 설정
 
-모든 시퀀스·몽타주 위치: `/Game/DuelistComplete/Animations`
+모든 시퀀스·몽타주 위치: `/Game/Characters/NPC/Boss/DuelistComplete/Animations`
 
 | 시퀀스 | 몽타주 | 전투 행 |
 |---|---|---|

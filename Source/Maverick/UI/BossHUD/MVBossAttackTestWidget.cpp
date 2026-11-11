@@ -20,7 +20,7 @@
 UMVBossAttackTestWidget::UMVBossAttackTestWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	static ConstructorHelpers::FObjectFinder<UDataTable> Table(TEXT("/Game/DuelistComplete/DT_DuelistBossCombatAttack.DT_DuelistBossCombatAttack"));
+	static ConstructorHelpers::FObjectFinder<UDataTable> Table(TEXT("/Game/Characters/NPC/Boss/DuelistComplete/DT_DuelistBossCombatAttack.DT_DuelistBossCombatAttack"));
 	AttackTable = Table.Object;
 }
 

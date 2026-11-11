@@ -1,7 +1,7 @@
 ---
 제목: "Duelist 기본 로코모션"
 부제목: "이름 변경한 동작 자료를 활용한 방향·속도 혼합과 BP_Duelist 연결"
-최근수정일: 2026-10-06
+최근수정일: 2026-11-11
 최근수정자: "Codex"
 관련문서:
   - "[[Architecture/document|Maverick Architecture]]"
@@ -14,9 +14,9 @@
 
 | Unreal 경로 | 책임 |
 |---|---|
-| `/Game/DuelistComplete/BP_Duelist` | `MVEnemy` 기반 캐릭터, 메시의 `AnimClass`에 `ABP_Duelist_C` 지정 |
-| `/Game/DuelistComplete/Animations/ABP_Duelist` | `MVAnimInstanceBase`의 이동 자료로 자세 계산, `DefaultSlot`을 통한 몽타주 연결 지점 |
-| `/Game/DuelistComplete/Animations/BS_Duelist_Locomotion` | 대기·전후좌우 걷기·전방 달리기의 2차원 혼합 |
+| `/Game/Characters/NPC/Boss/DuelistComplete/BP_Duelist` | `MVEnemy` 기반 캐릭터, 메시의 `AnimClass`에 `ABP_Duelist_C` 지정 |
+| `/Game/Characters/NPC/Boss/DuelistComplete/Animations/ABP_Duelist` | `MVAnimInstanceBase`의 이동 자료로 자세 계산, `DefaultSlot`을 통한 몽타주 연결 지점 |
+| `/Game/Characters/NPC/Boss/DuelistComplete/Animations/BS_Duelist_Locomotion` | 대기·전후좌우 걷기·전방 달리기의 2차원 혼합 |
 
 ```mermaid
 flowchart LR
@@ -34,7 +34,7 @@ flowchart LR
 
 ## 동작 배치
 
-모든 시퀀스 위치: `/Game/DuelistComplete/Animations`
+모든 시퀀스 위치: `/Game/Characters/NPC/Boss/DuelistComplete/Animations`
 
 | 속도 | 방향 | 시퀀스 |
 |---:|---|---|

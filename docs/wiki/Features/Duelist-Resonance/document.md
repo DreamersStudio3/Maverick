@@ -32,7 +32,7 @@ flowchart TD
 | StateTree 실행 | `ST_DuelistBoss_Attack.BossAttack.Resonanace`, `FMVDuelistResonanceTask` |
 | 예약 우선 선택 | `FMVBossSelectAttackTask.ResonanceState`, 기존 교대 배열에서 제외 |
 | 화면 경고·암전 | `UI/BossHUD/MVResonanceScreenWidget`, 입력 미소비 |
-| 연출 에셋 | `/Game/DuelistComplete/Resonance`의 몽타주 3개·머티리얼 2개 |
+| 연출 에셋 | `/Game/Characters/NPC/Boss/DuelistComplete/Resonance`의 몽타주 3개·머티리얼 2개 |
 
 - `ArenaCenter`: 월드 원점 기본값, 실제 지면·캡슐 높이 보정, 전장 변경 시 컴포넌트에서 중심 위치 지정
 - `ArenaRadius`: 기본 4000cm, 중심으로부터 수평 거리 기준의 실패 피해 범위

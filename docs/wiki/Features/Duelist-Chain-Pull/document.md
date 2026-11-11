@@ -33,7 +33,7 @@
 |---|---|
 | `DT_DuelistBossCombatAttack.SkillW` | `/Script/Maverick.MVDuelistChainPullAbility` 직접 지정, `AM_Duelist_DashChainPull_2s` 연결 |
 | `ST_DuelistBoss_Attack.SkillW` | 현재 실행 가능 거리 `300 cm`, 기존 선택 분기 유지 |
-| `/Game/DuelistComplete/Skills/SM_DuelistChainLink`·`M_DuelistChain` | 교차 배치 사슬 고리·금속 재질 |
+| `/Game/Characters/NPC/Boss/DuelistComplete/Skills/SM_DuelistChainLink`·`M_DuelistChain` | 교차 배치 사슬 고리·금속 재질 |
 
 - 이전 `AM_Duelist_ChainPull`: 길이 `4.8667 s`·발사 약 `2.5191 s`·활성 약 `1.7397~3.8215 s`, 3초 동작으로 대체 후 2026-10-11 미사용 에셋 삭제 완료
 - 정리 시 현재 3초 몽타주·시퀀스·사슬 고리·재질 SHA256 보존, 새 Windows 프로세스의 `SkillW` 연결 재로드 확인; 이번 정리의 PIE 재실행 제외, [정리 검증 자료](../Duelist-Resonance/attachments/cleanup-validation.json)
@@ -49,8 +49,8 @@
 
 | 에셋 | 경로 |
 |---|---|
-| 새 시퀀스 | `/Game/DuelistComplete/Animations/AnimationsSequence/AS_Duelist_DashChainPull_2s` |
-| 새 몽타주 | `/Game/DuelistComplete/Animations/AM_Duelist_DashChainPull_2s` |
+| 새 시퀀스 | `/Game/Characters/NPC/Boss/DuelistComplete/Animations/AnimationsSequence/AS_Duelist_DashChainPull_2s` |
+| 새 몽타주 | `/Game/Characters/NPC/Boss/DuelistComplete/Animations/AM_Duelist_DashChainPull_2s` |
 
 | 구간 | 시간 | 구성 |
 |---|---:|---|

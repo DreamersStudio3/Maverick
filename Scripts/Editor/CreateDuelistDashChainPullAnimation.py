@@ -10,11 +10,11 @@ import unreal
 
 
 def create_duelist_dash_chain_pull():
-    root = '/Game/DuelistComplete/Animations'
+    root = '/Game/Characters/NPC/Boss/DuelistComplete/Animations'
     sequence_root = root + '/AnimationsSequence'
     sequence_path = sequence_root + '/AS_Duelist_DashChainPull_2s'
     montage_path = root + '/AM_Duelist_DashChainPull_2s'
-    mesh = unreal.load_asset('/Game/DuelistComplete/Mesh/SK_Duelist_TwinHammers_NoCoat')
+    mesh = unreal.load_asset('/Game/Characters/NPC/Boss/DuelistComplete/Mesh/SK_Duelist_TwinHammers_NoCoat')
     idle = unreal.load_asset(sequence_root + '/AS_Duelist_UpIdle')
     run = unreal.load_asset(sequence_root + '/AS_Duelist_Move_Run_Fwd')
     attack = unreal.load_asset(sequence_root + '/AS_Duelist_W')

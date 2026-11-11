@@ -24,7 +24,7 @@ namespace
 {
 bool MVDuelistResonanceConfigureStateTree()
 {
-	UStateTree* Tree = LoadObject<UStateTree>(nullptr, TEXT("/Game/DuelistComplete/ST_DuelistBoss_Attack.ST_DuelistBoss_Attack"));
+	UStateTree* Tree = LoadObject<UStateTree>(nullptr, TEXT("/Game/Characters/NPC/Boss/DuelistComplete/ST_DuelistBoss_Attack.ST_DuelistBoss_Attack"));
 	FObjectProperty* EditorDataProperty = FindFProperty<FObjectProperty>(UStateTree::StaticClass(), TEXT("EditorData"));
 	UStateTreeEditorData* Data = Tree && EditorDataProperty
 		? Cast<UStateTreeEditorData>(EditorDataProperty->GetObjectPropertyValue_InContainer(Tree)) : nullptr;

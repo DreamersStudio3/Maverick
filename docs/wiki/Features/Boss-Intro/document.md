@@ -1,7 +1,7 @@
 ---
 제목: 보스 등장 연출
 부제목: 진입 블록·Level Sequence·플레이별 재생과 입력 복구
-최근수정일: 2026-11-02
+최근수정일: 2026-11-11
 최근수정자: Codex
 관련문서:
   - "[[Architecture/document|Maverick 아키텍처]]"
@@ -17,10 +17,10 @@
 | 항목 | 계약 / 현재 Duelist 예제 |
 |---|---|
 | 트리거 부모 | `AMVBossIntroTrigger`, `Source/Maverick/Cinematics/Boss/` |
-| Blueprint | `/Game/DuelistComplete/BP_BossIntroTrigger` |
+| Blueprint | `/Game/Characters/NPC/Boss/DuelistComplete/BP_BossIntroTrigger` |
 | 배치 레벨 | `/Game/Characters/NPC/BaseBoss/Level/BaseBossTestLevel`, 사용자가 배치한 액터 재사용 |
 | `Boss` | 같은 레벨의 `BP_Duelist`, 배치 인스턴스에서 지정 |
-| `Intro Sequence` | `/Game/DuelistComplete/Intro/MasterLS`, 30fps·494프레임·약 16.47초 |
+| `Intro Sequence` | `/Game/Characters/NPC/Boss/DuelistComplete/Intro/MasterLS`, 30fps·494프레임·약 16.47초 |
 | `Intro Id` | `Duelist_001`, 기존 에셋 호환용 필드, 재생 조건에서 미사용 |
 | `Boss Binding Tag` | `Boss`, 시퀀스의 보스 액터 바인딩 태그와 동일 값 |
 | `TriggerBox` | `Box Extent`로 진입 범위 설정, Pawn 겹침·겹침 이벤트 활성화 유지 |

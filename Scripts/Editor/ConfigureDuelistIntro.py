@@ -18,8 +18,8 @@ def configure_duelist_intro():
         raise RuntimeError('현재 레벨의 Duelist 보스 1개 필요')
     boss = bosses[0]
     asset_tools = unreal.AssetToolsHelpers.get_asset_tools()
-    sequence_path = '/Game/DuelistComplete/Intro/LS_Duelist_Intro'
-    blueprint_path = '/Game/DuelistComplete/BP_BossIntroTrigger'
+    sequence_path = '/Game/Characters/NPC/Boss/DuelistComplete/Intro/LS_Duelist_Intro'
+    blueprint_path = '/Game/Characters/NPC/Boss/DuelistComplete/BP_BossIntroTrigger'
     start = boss.get_actor_location()
     end = start + unreal.Vector(500, 0, 0)
 
@@ -39,7 +39,7 @@ def configure_duelist_intro():
 
     sequence = unreal.load_asset(sequence_path)
     if not sequence:
-        sequence = asset_tools.create_asset('LS_Duelist_Intro', '/Game/DuelistComplete/Intro', unreal.LevelSequence, unreal.LevelSequenceFactoryNew())
+        sequence = asset_tools.create_asset('LS_Duelist_Intro', '/Game/Characters/NPC/Boss/DuelistComplete/Intro', unreal.LevelSequence, unreal.LevelSequenceFactoryNew())
         sequence.set_display_rate(unreal.FrameRate(30, 1))
         sequence.set_playback_start(0)
         sequence.set_playback_end(180)
@@ -54,7 +54,7 @@ def configure_duelist_intro():
         animation_section = animation_track.add_section()
         animation_section.set_range(0, 180)
         animation_section.set_completion_mode(unreal.MovieSceneCompletionMode.RESTORE_STATE)
-        animation = unreal.load_asset('/Game/DuelistComplete/Animations/AnimationsSequence/AS_Duelist_PazeChange')
+        animation = unreal.load_asset('/Game/Characters/NPC/Boss/DuelistComplete/Animations/AnimationsSequence/AS_Duelist_PazeChange')
         params = animation_section.get_editor_property('params')
         params.set_editor_property('animation', animation)
         animation_section.set_editor_property('params', params)
@@ -82,7 +82,7 @@ def configure_duelist_intro():
     if not blueprint:
         factory = unreal.BlueprintFactory()
         factory.set_editor_property('parent_class', unreal.load_class(None, '/Script/Maverick.MVBossIntroTrigger'))
-        blueprint = asset_tools.create_asset('BP_BossIntroTrigger', '/Game/DuelistComplete', unreal.Blueprint, factory)
+        blueprint = asset_tools.create_asset('BP_BossIntroTrigger', '/Game/Characters/NPC/Boss/DuelistComplete', unreal.Blueprint, factory)
         unreal.EditorAssetLibrary.save_loaded_asset(blueprint)
     trigger_class = unreal.load_class(None, blueprint_path + '.BP_BossIntroTrigger_C')
     existing = [a for a in actors.get_all_level_actors() if a.get_class() == trigger_class]
