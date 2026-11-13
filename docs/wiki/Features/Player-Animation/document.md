@@ -69,6 +69,14 @@ flowchart LR
 - BloodBorne 정지는 일반 시퀀스이므로 `Blend Poses by bool → Apply Additive.Base` 사용, 기존 기울기 보정만 Additive 입력 유지
 - 회피 시작 시에도 하부 로코모션 포즈가 블렌딩되므로 정지 포즈 오류가 회피 중 나타날 수 있음
 
+### 정지 후 Idle 복귀
+
+- `ABP_Base → Locomotion States → Stop → Idle`: `LocomotionStopComplete > 0.5`로 전환
+- `AS_BB_SprintAndStop_022100_Root`·`022200_Root`의 종료 0.133초 전까지 커브 0, 0.1초 전까지 1로 상승 후 유지
+- Linked Anim Layer의 중첩 정지 상태에서 메인의 Relevant Anim Time Remaining 조건이 충족되지 않아 마지막 포즈가 유지되던 경로를 종료 커브로 교체
+- 정지 모션 교체 시 새 시퀀스에도 같은 종료 커브 필요, 모션 재생 배율에 따라 종료 신호 도달 시간도 함께 변경
+- Windows UE 5.8.4에서 락온 유무별 달리기·정지 및 걷기·질주·정지 후 Idle 포즈 움직임 복구 확인
+
 ## BloodBorne 테스트 세트
 
 - 경로: `/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne`
@@ -93,3 +101,5 @@ flowchart LR
 - 질주 속도 750cm/s는 기본값 확인, 이번 실행 검증은 달리기·걷기와 레이어 연결 범위
 
 - Run 시퀀스 `Rate Scale`: 1.15, 대각선 혼합본 포함 20개에 적용, 걷기·질주 시퀀스는 기존 배율 유지
+- `AS_BB_Run_FL_Blend_Root`: FR의 좌우 반전, Manny X축 반사·좌우 뼈 교환·기준 자세 회전 보정 적용
+- FL 저장 에셋 재로드 후 25프레임의 루트·발·발끝 125표본에서 FR 반전 좌표 최대 오차 0.00016cm, 스케일 1 확인
