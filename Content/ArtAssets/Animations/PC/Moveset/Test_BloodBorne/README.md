@@ -8,8 +8,7 @@
 
 ## 게임플레이 연결
 
-- develop 병합 시 플레이어 캐릭터 충돌은 develop 버전 채택, 아래 테스트 ABP 연결 기록은 병합 이전 기준
-- 테스트 ABP와 에셋은 보관하며 현재 캐릭터에 자동 재연결하지 않음, 회피 테이블의 BloodBorne 참조는 유지
+- develop 병합 후 플레이어의 메인 ABP와 장비별 레이어를 테스트 구성으로 재연결, Mage·Hammer 분기와 회피 테이블 참조 유지
 
 - 플레이어 일반 회피 18행은 새 Dodge 폴더의 기존 몽타주 12개 참조
 - 기존 회피 몽타주의 길이·알림 보존, 시퀀스는 무기 스타일 간 공유
@@ -54,6 +53,6 @@
 ## 테스트 ABP 분리
 
 - 기존 ABP 4개는 Git 원본 상태로 복원
-- `Characters/AnimBP/ABP_Base_Test_BloodBorne` 및 `AnimLayer/*Test_BloodBorne` 3개로 동일 구조 분리
-- `BP_ThirdPersonCharacter`의 Mesh Anim Class와 `ApplyWeaponAnimationLayer` 분기 4개에 테스트 클래스 지정
+- `Characters/AnimBP/ABP_Base_Test_BloodBorne` 및 `AnimLayer/*Test_BloodBorne` 5개로 분리, Mage·Hammer 테스트 레이어는 develop 자식 설정을 유지하며 테스트 부모 사용
+- `BP_ThirdPersonCharacter`의 Mesh Anim Class와 `ApplyWeaponAnimationLayer` 분기 6개에 테스트 클래스 지정
 - 애니메이션 에셋은 공유하며 ABP·레이어만 분리, 회피 데이터테이블 연결은 유지
