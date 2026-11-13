@@ -8,13 +8,13 @@
 
 ## 게임플레이 연결
 
-- develop 병합 후 플레이어의 메인 ABP와 장비별 레이어를 테스트 구성으로 재연결, Mage·Hammer 분기와 회피 테이블 참조 유지
+- 메인 `ABP_Base`와 BloodBorne 기본 레이어 연결, Mage·Hammer 분기와 회피 테이블 참조 유지
 
 - 플레이어 일반 회피 18행은 새 Dodge 폴더의 기존 몽타주 12개 참조
 - 기존 회피 몽타주의 길이·알림 보존, 시퀀스는 무기 스타일 간 공유
 - BH·1H 이름의 몽타주는 기존 블렌드·타이밍 구분용, 별도 시퀀스 중복 없음
 - 회피 외 몽타주는 개별 모션 확인용, 로코모션은 상태 머신의 시퀀스 재생 구조 사용
-- 기본 대기·8방향 걷기/달리기·질주·정지·회전·낙하·착지를 ABP_Base_Test_BloodBorne와 Test_BloodBorne 플레이어 Anim Layer 3종에 연결
+- 기본 대기·8방향 걷기/달리기·질주·정지·회전·낙하·착지를 ABP_Base와 BloodBorne 공통·한손·쌍수 레이어에 연결
 - 넘어짐 탈출·기상 연결은 이전 상태 유지
 - 대각선 8개는 인접 원본 두 동작을 동일 정규화 시간으로 50:50 혼합한 `_Blend_Root` 파생본, 원본에 없는 대각선의 테스트용 보완
 - 착지는 004200을 Idle 000000의 첫 프레임 기준 Local Space 가산 시퀀스로 변환
@@ -44,15 +44,18 @@
 
 ## 전환·접지 보정
 
-- NormalStop의 일반 정지 시퀀스를 가산 입력에서 Base 포즈 입력으로 이동, `ABP_Base_Test_BloodBorne`와 `ABP_PlayerAnimLayerBase_Test_BloodBorne` 모두 적용
+- NormalStop의 일반 정지 시퀀스를 가산 입력에서 Base 포즈 입력으로 이동, `ABP_Base`와 `ABP_PlayerAnimLayerBase` 모두 적용
 - 정지 및 회피 몽타주 블렌딩 재현에서 뼈 스케일 최대 2048 → 약 1, 수정 후 1441표본 확인
 - Idle 000000/000001의 발목·무릎·골반 키를 Manny 접지 자세에 맞춰 보정, 발끝 XY와 뼈 길이·스케일 유지
 - Idle 000000은 골반 약 2.75–3.23 cm 하강, 원본 리타게팅 결과와 구별되는 테스트 보정본
 - 모션 편집 위치와 가산 입력 주의사항: `docs/wiki/Features/Player-Animation/document.md`
 
-## 테스트 ABP 분리
+## 기본 ABP 구성
 
-- 기존 ABP 4개는 Git 원본 상태로 복원
-- `Characters/AnimBP/ABP_Base_Test_BloodBorne` 및 `AnimLayer/*Test_BloodBorne` 5개로 분리, Mage·Hammer 테스트 레이어는 develop 자식 설정을 유지하며 테스트 부모 사용
-- `BP_ThirdPersonCharacter`의 Mesh Anim Class와 `ApplyWeaponAnimationLayer` 분기 6개에 테스트 클래스 지정
-- 애니메이션 에셋은 공유하며 ABP·레이어만 분리, 회피 데이터테이블 연결은 유지
+- `Characters/AnimBP/ABP_Base`와 접사 없는 `AnimLayer/ABP_Player*` 5개 사용
+- `BP_ThirdPersonCharacter`의 Mesh Anim Class와 장비 6개 분기를 같은 기본 구성에 연결
+- 기존 레이어와 `ABP_Base_Test_BloodBorne` 삭제, `Test_`·`_BloodBorne` 접사는 레이어 이름에서 제거
+- Mage·Hammer의 무기별 설정 유지, 공통 부모 및 MainABP 참조를 기본 구성에 맞춤
+- 방향별 속도 커브는 배율 1로 통일, 현재 기본 이동 속도는 걷기 200·달리기 500·질주 750cm/s
+
+- Run 시퀀스 `Rate Scale`: 1.15, 대각선 혼합본 포함 20개에 적용, 걷기·질주 시퀀스는 기존 배율 유지
