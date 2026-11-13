@@ -35,7 +35,7 @@ void AMVAIController::Tick(const float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	if (!bBossDebugGateInitialized)
+	if (!bBossDebugGateInitialized || bBossIntroBlocked)
 	{
 		return;
 	}
@@ -48,7 +48,7 @@ void AMVAIController::Tick(const float DeltaSeconds)
 
 	if (PlayerController->WasInputKeyJustPressed(EKeys::K))
 	{
-		SetBossPlayStartForDebug(true);
+		SetBossCombatEnabled(true, TargetActor);
 		if (UGameInstance* GameInstance = GetGameInstance())
 		{
 			if (UMVUISubsystem* UISubsystem = GameInstance->GetSubsystem<UMVUISubsystem>())
@@ -64,7 +64,7 @@ void AMVAIController::Tick(const float DeltaSeconds)
 
 	if (PlayerController->WasInputKeyJustPressed(EKeys::L))
 	{
-		SetBossAttackTargetForDebug(PlayerController->GetPawn());
+		SetBossCombatEnabled(true, PlayerController->GetPawn());
 		if (UGameInstance* GameInstance = GetGameInstance())
 		{
 			if (UMVUISubsystem* UISubsystem = GameInstance->GetSubsystem<UMVUISubsystem>())
@@ -99,55 +99,28 @@ void AMVAIController::InitializeBossDebugGate()
 	}
 }
 
-void AMVAIController::SetBossPlayStartForDebug(const bool bInBossPlayStart)
+void AMVAIController::SetBossIntroBlocked(const bool bBlocked)
 {
-	if (!IsBossDebugController() || BossPlayStart == bInBossPlayStart)
-	{
-		return;
-	}
-
-	BossPlayStart = bInBossPlayStart;
-	if (UStateTreeAIComponent* StateTreeComponent = FindBossStateTreeComponent())
-	{
-		if (BossPlayStart)
-		{
-			StateTreeComponent->StartLogic();
-		}
-		else
-		{
-			StateTreeComponent->StopLogic(TEXT("BossPlayStart is false"));
-		}
-	}
-
-	UE_LOG(
-		LogTemp,
-		Log,
-		TEXT("BossStateTrace Frame=%llu Controller=%s Pawn=%s BossPlayStart=%s StateTree=%s"),
-		GFrameCounter,
-		*GetNameSafe(this),
-		*GetNameSafe(GetPawn()),
-		BossPlayStart ? TEXT("true") : TEXT("false"),
-		BossPlayStart ? TEXT("Started") : TEXT("Stopped"));
+	bBossIntroBlocked = bBlocked;
+	if (bBlocked) SetBossCombatEnabled(false, nullptr);
 }
 
-void AMVAIController::SetBossAttackTargetForDebug(AActor* InAttackTarget)
+void AMVAIController::SetBossCombatEnabled(const bool bEnabled, AActor* CombatTarget)
 {
-	if (!IsBossDebugController())
+	if (!IsBossDebugController() || (bEnabled && bBossIntroBlocked)) return;
+	OnBossCombatControlRequested.Broadcast();
+	BossPlayStart = bEnabled;
+	TargetActor = bEnabled ? CombatTarget : nullptr;
+	WriteBossAttackTarget(TargetActor);
+	if (!bEnabled) StopMovement();
+	if (UStateTreeAIComponent* Tree = FindBossStateTreeComponent())
 	{
-		return;
+		if (bEnabled)
+		{
+			if (!Tree->IsRunning()) Tree->StartLogic();
+		}
+		else Tree->StopLogic(TEXT("Boss intro / combat disabled"));
 	}
-
-	TargetActor = InAttackTarget;
-	const bool bTargetWritten = WriteBossAttackTarget(InAttackTarget);
-	UE_LOG(
-		LogTemp,
-		Log,
-		TEXT("BossStateTrace Frame=%llu Controller=%s Pawn=%s AttackTarget=%s PropertyWrite=%s"),
-		GFrameCounter,
-		*GetNameSafe(this),
-		*GetNameSafe(GetPawn()),
-		*GetNameSafe(InAttackTarget),
-		bTargetWritten ? TEXT("Succeeded") : TEXT("Failed"));
 }
 
 bool AMVAIController::IsBossDebugController() const

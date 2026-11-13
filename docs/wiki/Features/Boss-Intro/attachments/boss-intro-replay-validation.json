@@ -1,0 +1,61 @@
+{
+  "date": "2026-11-02",
+  "host": "Codex",
+  "platform": "Windows",
+  "engine": "5.8.3",
+  "request": "관람 완료 이후 생략 기능 제거",
+  "behavior": {
+    "new_session_first_overlap_plays": true,
+    "legacy_completion_ignored": true,
+    "trigger_writes_completion_record": false,
+    "same_encounter_duplicate_blocked": true,
+    "cancelled_intro_can_retry": true,
+    "intro_id": "기존 에셋 호환용, 재생 조건 미사용"
+  },
+  "build": {
+    "target": "MaverickEditor Win64 Development",
+    "result": "Succeeded",
+    "elapsed_seconds": 43.02,
+    "warning": "XGE License not activated"
+  },
+  "automation": {
+    "executed": true,
+    "test": "Maverick.Cinematics.BossIntro",
+    "result": "Success",
+    "warnings": [
+      "LogScript: Script Msg: No game viewport was found.",
+      "LogScript: Script Msg: No game viewport was found."
+    ],
+    "scope": "격리 월드의 관람 기록 무시·재진입·중단·종료 위치·입력 복구 검사, 실제 화면 표현 보장 제외"
+  },
+  "pie": {
+    "executed": true,
+    "map": "BaseBossTestLevel",
+    "sequence": "MasterLS",
+    "legacy_record_present_before_entry": true,
+    "initial_state": "<MVBossIntroState.WAITING: 0>",
+    "after_actual_overlap": "<MVBossIntroState.PLAYING: 1>",
+    "natural_completion": true,
+    "legacy_records_unchanged": true,
+    "same_encounter_reentry_rejected": true,
+    "second_session_replayed": true,
+    "second_session_cancellation_restored_input": true,
+    "cameras": [
+      "BP_ThirdPersonCharacter_C_0",
+      "CineCameraActor_0",
+      "CineCameraActor_1",
+      "BP_ThirdPersonCharacter_C_0"
+    ]
+  },
+  "preservation": {
+    "save_sha256_and_mtime_match_original": true,
+    "map_bytes_unchanged": true,
+    "intro_id_unchanged": true,
+    "legacy_records_deleted": false
+  },
+  "existing_limitation": "MasterLS 종료 494프레임·마지막 샷 종료 324프레임 차이 약 5.67초 유지, 빈 구간에서 마지막 샷 위치 복원 한계 보정 제외",
+  "not_run": {
+    "packaged_and_network": "로컬 Editor 변경과 단일 플레이 검증 범위, 패키징·네트워크 실행 미실행"
+  },
+  "local_evidence": "Saved/BossIntroPlaybackDiagnosis/"
+}

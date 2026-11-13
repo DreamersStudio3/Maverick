@@ -16,6 +16,8 @@
 
 class UMVAbilityBase;
 class AMVProjectileBase;
+class UMVProjectileExecutionTracker;
+struct FMVProjectileExecutionRecord;
 
 // 기존 Ability와 패시브가 사용하는 Q/R/W/E 번호. 새 맵의 키와는 별개다.
 namespace MVCombatSkillSlots
@@ -421,42 +423,6 @@ struct FMVCombatHeavyChargeAttackRuntimeState
 };
 
 /**
- * 한 공격에서 발사한 탄과 원래 스킬 사용 회차를 묶는 임시 기록.
- * 첫 탄 등록 때 행·슬롯·무기·생존 회차를 고정하고, 환원 성공도 공격별로 기록한다.
- * 모든 탄과 동작이 끝난 뒤 제거한다.
- * 실제로 활성화한 탄이 하나도 없으면 빗나감 사건을 내지 않는다.
- */
-USTRUCT()
-struct FMVProjectileExecutionRecord
-{
-	GENERATED_BODY()
-
-	TWeakObjectPtr<UMVAbilityBase> SourceAbility;
-
-	UPROPERTY(Transient)
-	TObjectPtr<UMVAbilityBase> ExecutionAbility = nullptr;
-
-	TSet<AMVProjectileBase*> ActiveProjectiles;
-	UPROPERTY(Transient)
-	FDataTableRowHandle SourceRowHandle;
-	EMVSkillSlot SourceSkillSlot = EMVSkillSlot::NONE;
-	uint64 SourceSlotRevision = 0;
-	uint64 SourceSkillUseId = 0;
-	uint64 SourceLifeId = 0;
-	FGameplayTag SourceWeaponItemTag;
-	uint64 PassiveActivationId = 0;
-	int32 SourceChainStageIndex = INDEX_NONE;
-	bool bWasBasicAttack = false;
-	bool bWasRSkill = false;
-	bool bHadActivatedProjectile = false;
-	bool bHadHit = false;
-	bool bMissPending = false;
-	bool bMissNotified = false;
-	bool bActionEnded = false;
-	bool bRefundProcessed = false;
-};
-
-/**
  * 캐릭터의 공격·실행형 스킬과 장착 Passive Ability 런타임을 소유하는 전투 컴포넌트.
  *
  * 실행형 Ability는 Action·AnimNotify 흐름에서 시작·종료하고, Passive Ability는 별도 슬롯에서
@@ -466,7 +432,7 @@ struct FMVProjectileExecutionRecord
  * 무기별 Basic Attack과 장착 Skill Row는 WeaponComponent를 단일 진입점으로 조회한다.
  * 스타일 변경은 전체 액션 맵을, 아이템·종류 변경은 패시브 슬롯을 갱신한다.
  * 공격 시작 때 패시브 적용 식별값을 보관해 교체 전 공격이 새 패시브를 발동하지 않게 한다.
- * 투사체는 발사 시점의 스킬 행·구성·사용·생존 회차와 함께 기록해 동작 종료 후에도 정리한다.
+ * 투사체의 공격 기록과 동작 종료 뒤 남은 탄 관리는 내부 추적 객체에 맡긴다.
  */
 UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class MAVERICK_API UMVCombatComponent : public UActorComponent, public IMVActionInputHandlerInterface
@@ -493,7 +459,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Combat|Action")
 	bool TrySkillCombatAction(EMVSkillSlot SkillSlot, FName StartSection = NAME_None);
 
-	/** AI가 선택한 전투 행의 Ability 준비와 액션 시작 진입점; 실행 중인 액션 교체 제외 */
+	// Todo: RowHandle 기반 액션은 Deprecated. 스킬 정보는 WeaponComponent에서 가져오므로 RowHandle을 이용한 접근은 금지, 추후 관련 함수 삭제 예정
 	UFUNCTION(BlueprintCallable, Category = "Action")
 	bool TryStartCombatActionFromRowHandle(const FDataTableRowHandle& RowHandle, FName StartSection = NAME_None);
 
@@ -665,18 +631,9 @@ private:
 	bool IsProjectileSourceWeaponEquipped(
 	const FMVProjectileExecutionRecord& Record,
 	const FMVResolvedHitData& HitData) const;
+	const FMVProjectileExecutionRecord* FindProjectileExecution(int32 AttackInstanceId) const;
 	void CloseProjectileExecution(int32 AttackInstanceId);
-	void FinalizeProjectileExecution(int32 AttackInstanceId);
-
-	UFUNCTION()
-	void HandleRegisteredProjectileHit(
-		AMVProjectileBase* Projectile,
-		const FMVResolvedHitData& HitData);
-
-	UFUNCTION()
-	void HandleRegisteredProjectileFinished(
-		AMVProjectileBase* Projectile,
-		int32 AttackInstanceId);
+	void HandleTrackedProjectileMiss(const FMVProjectileExecutionRecord& Record);
 
 	UFUNCTION()
 	void HandleActionEnded(FName ActionTableName, FName ActionRowName, bool bInterrupted);
@@ -766,6 +723,6 @@ private:
 	FMVCombatHeavyChargeAttackRuntimeState HeavyChargeAttackState;
 
 	UPROPERTY(Transient)
-	TMap<int32, FMVProjectileExecutionRecord> ProjectileExecutions;
+	TObjectPtr<UMVProjectileExecutionTracker> ProjectileExecutionTracker;
 
 };

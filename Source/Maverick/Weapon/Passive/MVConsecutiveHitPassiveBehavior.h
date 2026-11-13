@@ -4,6 +4,7 @@
 #include "Components/MVStatComponent.h"
 #include "StatusEffects/MVStatusEffectBehavior.h"
 #include "Struct/MVHitTypes.h"
+#include "Weapon/Passive/Common/MVWeaponPassiveConditions.h"
 #include "MVConsecutiveHitPassiveBehavior.generated.h"
 
 class AMVCharacterBase;
@@ -12,11 +13,11 @@ class UMVCombatComponent;
 class UMVStatusEffectDefinition;
 
 /**
- * 무기 패시브가 적용된 동안 평타의 명중·빗나감과 소유자의 피격·사망을 감시한다.
- * 유효 명중마다 중첩 효과를 적용하고, 설정된 초기화 조건에서 제거한다.
- * 패시브가 제거되면 사건 구독과 자신이 만든 중첩 효과를 정리한다.
+ * 무기 패시브가 적용된 동안 지정한 공격의 유효 명중마다 별도 효과를 1중첩 적용한다.
+ * 설정에 따라 빗나감·피격 시 중첩을 제거하고, 사망·패시브 해제 시에도 중첩을 정리한다.
+ * 패시브가 제거되면 전투 사건 구독을 해제한다.
  */
-UCLASS(BlueprintType, EditInlineNew)
+UCLASS(BlueprintType, EditInlineNew, meta = (DisplayName = "Apply Stack Effect on Hit"))
 class MAVERICK_API UMVConsecutiveHitPassiveBehavior : public UMVStatusEffectBehavior
 {
 	GENERATED_BODY()
@@ -31,7 +32,12 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ConsecutiveHit")
 	TObjectPtr<UMVStatusEffectDefinition> StackEffectDefinition = nullptr;
 
-	// 유연한 흐름은 true, 추후 아웃사이더 스텝은 false로 설정한다.
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ConsecutiveHit")
+	EMVHitStackAttackFilter AttackFilter = EMVHitStackAttackFilter::BasicAttackOnly;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ConsecutiveHit")
+	bool bResetOnAttackMissed = true;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ConsecutiveHit")
 	bool bResetOnOwnerDamaged = true;
 

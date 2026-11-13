@@ -11,14 +11,16 @@
 
 ## 원본과 테스트 구성
 
-- 원본 `ABP_Base`, `ABP_PlayerAnimLayerBase`, `ABP_PlayerOneHand`, `ABP_PlayerDualWield_Test`는 블러드본 연결 이전 상태 유지
+- 공용 ABP와 플레이어 캐릭터는 develop 변경을 반영, BloodBorne 테스트 클래스는 별도 보관
 - 블러드본 전용 구성: 같은 폴더의 `ABP_Base_Test_BloodBorne`, `ABP_PlayerAnimLayerBase_Test_BloodBorne`, `ABP_PlayerOneHand_Test_BloodBorne`, `ABP_PlayerDualWield_Test_BloodBorne`
 - 테스트 레이어의 부모·MainABP 변수·Cast 참조는 테스트 클래스끼리 연결, 인터페이스 `ALI_PlayerAnimLayer` 공유
-- `BP_ThirdPersonCharacter`의 Mesh Anim Class는 `ABP_Base_Test_BloodBorne`
-- `ApplyWeaponAnimationLayer`의 맨손·한손·쌍수·기본 분기 4개도 테스트 레이어 연결
+- develop 병합 시 `BP_ThirdPersonCharacter` 충돌은 develop 버전 선택, 테스트 Anim Class 연결은 유지하지 않음
+- 테스트를 다시 연결하려면 Mesh Anim Class와 `ApplyWeaponAnimationLayer`의 장비별 레이어를 함께 변경하고 develop의 신규 무기 분기도 확인
 - 이후 블러드본 모션 수정은 테스트 클래스에서 수행, 원본 클래스는 수정하지 않음
 
-## 재생 구조
+## 테스트 구성 재생 구조
+
+아래는 분리한 테스트 ABP의 구조이며 현재 캐릭터 연결과는 별개
 
 ```mermaid
 flowchart LR
@@ -37,7 +39,7 @@ flowchart LR
 
 ## 모션 편집 위치
 
-아래 표는 원본 구성의 위치이며, 현재 블러드본 테스트 수정은 위의 대응하는 `Test_BloodBorne` 클래스에서 수행
+아래 표는 원본 구성의 위치이며, 분리한 블러드본 테스트 수정은 대응하는 `Test_BloodBorne` 클래스에서 수행
 
 | 동작 | 에셋·위치 | 교체 대상 |
 |---|---|---|
@@ -78,6 +80,8 @@ flowchart LR
 - 입력 판정 전체가 아닌 하부 로코모션과 몽타주 합성 경로의 회귀 검증
 
 ## 원본 구성으로 전환
+
+develop 병합 후 플레이어 캐릭터는 develop 버전 사용, 아래는 테스트 연결 이후의 수동 전환 참고
 
 `BP_ThirdPersonCharacter`의 Mesh Anim Class를 `ABP_Base`로 바꾸고, `ApplyWeaponAnimationLayer`의 테스트 레이어 4개를 각각 대응하는 원본 레이어로 변경
 회피는 별도 `DT_Dodge_Player`에서 선택되므로 ABP 전환만으로 회피 몽타주까지 바뀌지는 않음
