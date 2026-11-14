@@ -1,0 +1,1424 @@
+{
+  "source": "GRACEBORNE a0.2.5",
+  "source_slot_labels": "https://github.com/vawser/Smithbox/blob/main/src/Smithbox.Data/Assets/Aliases/ER/Animations.json",
+  "animations": [
+    {
+      "id": "a000_013000",
+      "category": "KnockdownAndRecovery",
+      "slot_name": "Chain Recover",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Knockdown/AS_BB_KnockdownAndRecovery_013000_Root.AS_BB_KnockdownAndRecovery_013000_Root",
+      "duration": 1.0,
+      "frames": 31
+    },
+    {
+      "id": "a000_005410",
+      "category": "KnockdownAndRecovery",
+      "slot_name": "Damage Lv 7 Small Blow Back",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Knockdown/AS_BB_KnockdownAndRecovery_005410_Root.AS_BB_KnockdownAndRecovery_005410_Root",
+      "duration": 3.5,
+      "frames": 106
+    },
+    {
+      "id": "a000_005420",
+      "category": "KnockdownAndRecovery",
+      "slot_name": "Damage Lv 7 Small Blow Left",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Knockdown/AS_BB_KnockdownAndRecovery_005420_Root.AS_BB_KnockdownAndRecovery_005420_Root",
+      "duration": 3.5,
+      "frames": 106
+    },
+    {
+      "id": "a000_005430",
+      "category": "KnockdownAndRecovery",
+      "slot_name": "Damage Lv 7 Small Blow Right",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Knockdown/AS_BB_KnockdownAndRecovery_005430_Root.AS_BB_KnockdownAndRecovery_005430_Root",
+      "duration": 3.5,
+      "frames": 106
+    },
+    {
+      "id": "a000_005450",
+      "category": "KnockdownAndRecovery",
+      "slot_name": "Damage Lv 4 Ex Large Front",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Knockdown/AS_BB_KnockdownAndRecovery_005450_Root.AS_BB_KnockdownAndRecovery_005450_Root",
+      "duration": 4.0,
+      "frames": 121
+    },
+    {
+      "id": "a000_005460",
+      "category": "KnockdownAndRecovery",
+      "slot_name": "Damage Lv 4 Ex Large Back",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Knockdown/AS_BB_KnockdownAndRecovery_005460_Root.AS_BB_KnockdownAndRecovery_005460_Root",
+      "duration": 4.0,
+      "frames": 121
+    },
+    {
+      "id": "a000_005470",
+      "category": "KnockdownAndRecovery",
+      "slot_name": "Damage Lv 4 Ex Large Left",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Knockdown/AS_BB_KnockdownAndRecovery_005470_Root.AS_BB_KnockdownAndRecovery_005470_Root",
+      "duration": 4.0,
+      "frames": 121
+    },
+    {
+      "id": "a000_005480",
+      "category": "KnockdownAndRecovery",
+      "slot_name": "Damage Lv 4 Ex Large Right",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Knockdown/AS_BB_KnockdownAndRecovery_005480_Root.AS_BB_KnockdownAndRecovery_005480_Root",
+      "duration": 4.0,
+      "frames": 121
+    },
+    {
+      "id": "a000_005700",
+      "category": "KnockdownAndRecovery",
+      "slot_name": "Damage Lv 6 Fling",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Knockdown/AS_BB_KnockdownAndRecovery_005700_Root.AS_BB_KnockdownAndRecovery_005700_Root",
+      "duration": 2.6666667461395264,
+      "frames": 81
+    },
+    {
+      "id": "a000_005710",
+      "category": "KnockdownAndRecovery",
+      "slot_name": "Damage Lv 9 Upper",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Knockdown/AS_BB_KnockdownAndRecovery_005710_Root.AS_BB_KnockdownAndRecovery_005710_Root",
+      "duration": 3.633333444595337,
+      "frames": 110
+    },
+    {
+      "id": "a000_005711",
+      "category": "KnockdownAndRecovery",
+      "slot_name": "Damage Lv 9 Upper Raduarn Of Micare",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Knockdown/AS_BB_KnockdownAndRecovery_005711_Root.AS_BB_KnockdownAndRecovery_005711_Root",
+      "duration": 3.9666666984558105,
+      "frames": 120
+    },
+    {
+      "id": "a000_020000",
+      "category": "Walk",
+      "slot_name": "Walk Front Light",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AS_BB_Walk_020000_Root.AS_BB_Walk_020000_Root",
+      "duration": 1.3666666746139526,
+      "frames": 42
+    },
+    {
+      "id": "a000_020001",
+      "category": "Walk",
+      "slot_name": "Walk Back Light",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AS_BB_Walk_020001_Root.AS_BB_Walk_020001_Root",
+      "duration": 1.7000000476837158,
+      "frames": 52
+    },
+    {
+      "id": "a000_020002",
+      "category": "Walk",
+      "slot_name": "Walk Left Light",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AS_BB_Walk_020002_Root.AS_BB_Walk_020002_Root",
+      "duration": 1.7000000476837158,
+      "frames": 52
+    },
+    {
+      "id": "a000_020003",
+      "category": "Walk",
+      "slot_name": "Walk Right Light",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AS_BB_Walk_020003_Root.AS_BB_Walk_020003_Root",
+      "duration": 1.7000000476837158,
+      "frames": 52
+    },
+    {
+      "id": "a000_020010",
+      "category": "Walk",
+      "slot_name": "Walk Front Heavy",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AS_BB_Walk_020010_Root.AS_BB_Walk_020010_Root",
+      "duration": 1.7000000476837158,
+      "frames": 52
+    },
+    {
+      "id": "a000_020011",
+      "category": "Walk",
+      "slot_name": "Walk Back Heavy",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AS_BB_Walk_020011_Root.AS_BB_Walk_020011_Root",
+      "duration": 1.7000000476837158,
+      "frames": 52
+    },
+    {
+      "id": "a000_020012",
+      "category": "Walk",
+      "slot_name": "Walk Left Heavy",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AS_BB_Walk_020012_Root.AS_BB_Walk_020012_Root",
+      "duration": 1.7000000476837158,
+      "frames": 52
+    },
+    {
+      "id": "a000_020013",
+      "category": "Walk",
+      "slot_name": "Walk Right Heavy",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AS_BB_Walk_020013_Root.AS_BB_Walk_020013_Root",
+      "duration": 1.7000000476837158,
+      "frames": 52
+    },
+    {
+      "id": "a000_020020",
+      "category": "Walk",
+      "slot_name": "Walk Front Over",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AS_BB_Walk_020020_Root.AS_BB_Walk_020020_Root",
+      "duration": 1.7000000476837158,
+      "frames": 52
+    },
+    {
+      "id": "a000_020021",
+      "category": "Walk",
+      "slot_name": "Walk Back Over",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AS_BB_Walk_020021_Root.AS_BB_Walk_020021_Root",
+      "duration": 1.7000000476837158,
+      "frames": 52
+    },
+    {
+      "id": "a000_020022",
+      "category": "Walk",
+      "slot_name": "Walk Left Over",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AS_BB_Walk_020022_Root.AS_BB_Walk_020022_Root",
+      "duration": 1.7000000476837158,
+      "frames": 52
+    },
+    {
+      "id": "a000_020023",
+      "category": "Walk",
+      "slot_name": "Walk Right Over",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AS_BB_Walk_020023_Root.AS_BB_Walk_020023_Root",
+      "duration": 1.7000000476837158,
+      "frames": 52
+    },
+    {
+      "id": "a000_020030",
+      "category": "Walk",
+      "slot_name": "Unlabelled source slot",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AS_BB_Walk_020030_Root.AS_BB_Walk_020030_Root",
+      "duration": 1.6666666269302368,
+      "frames": 51
+    },
+    {
+      "id": "a000_020031",
+      "category": "Walk",
+      "slot_name": "Unlabelled source slot",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AS_BB_Walk_020031_Root.AS_BB_Walk_020031_Root",
+      "duration": 1.6666666269302368,
+      "frames": 51
+    },
+    {
+      "id": "a000_020032",
+      "category": "Walk",
+      "slot_name": "Unlabelled source slot",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AS_BB_Walk_020032_Root.AS_BB_Walk_020032_Root",
+      "duration": 1.6666666269302368,
+      "frames": 51
+    },
+    {
+      "id": "a000_020033",
+      "category": "Walk",
+      "slot_name": "Unlabelled source slot",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AS_BB_Walk_020033_Root.AS_BB_Walk_020033_Root",
+      "duration": 1.6666666269302368,
+      "frames": 51
+    },
+    {
+      "id": "a000_020100",
+      "category": "Run",
+      "slot_name": "Run Front Light",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AS_BB_Run_020100_Root.AS_BB_Run_020100_Root",
+      "duration": 0.800000011920929,
+      "frames": 25
+    },
+    {
+      "id": "a000_020101",
+      "category": "Run",
+      "slot_name": "Run Back Light",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AS_BB_Run_020101_Root.AS_BB_Run_020101_Root",
+      "duration": 0.7333333492279053,
+      "frames": 23
+    },
+    {
+      "id": "a000_020102",
+      "category": "Run",
+      "slot_name": "Run Left Light",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AS_BB_Run_020102_Root.AS_BB_Run_020102_Root",
+      "duration": 0.7333333492279053,
+      "frames": 23
+    },
+    {
+      "id": "a000_020103",
+      "category": "Run",
+      "slot_name": "Run Right Light",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AS_BB_Run_020103_Root.AS_BB_Run_020103_Root",
+      "duration": 0.7333333492279053,
+      "frames": 23
+    },
+    {
+      "id": "a000_020110",
+      "category": "Run",
+      "slot_name": "Run Front Heavy",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AS_BB_Run_020110_Root.AS_BB_Run_020110_Root",
+      "duration": 0.800000011920929,
+      "frames": 25
+    },
+    {
+      "id": "a000_020111",
+      "category": "Run",
+      "slot_name": "Run Back Heavy",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AS_BB_Run_020111_Root.AS_BB_Run_020111_Root",
+      "duration": 0.7333333492279053,
+      "frames": 23
+    },
+    {
+      "id": "a000_020112",
+      "category": "Run",
+      "slot_name": "Run Left Heavy",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AS_BB_Run_020112_Root.AS_BB_Run_020112_Root",
+      "duration": 0.7333333492279053,
+      "frames": 23
+    },
+    {
+      "id": "a000_020113",
+      "category": "Run",
+      "slot_name": "Run Right Heavy",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AS_BB_Run_020113_Root.AS_BB_Run_020113_Root",
+      "duration": 0.7333333492279053,
+      "frames": 23
+    },
+    {
+      "id": "a000_020120",
+      "category": "Run",
+      "slot_name": "Run Front Over",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AS_BB_Run_020120_Root.AS_BB_Run_020120_Root",
+      "duration": 0.800000011920929,
+      "frames": 25
+    },
+    {
+      "id": "a000_020121",
+      "category": "Run",
+      "slot_name": "Run Back Over",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AS_BB_Run_020121_Root.AS_BB_Run_020121_Root",
+      "duration": 0.7333333492279053,
+      "frames": 23
+    },
+    {
+      "id": "a000_020122",
+      "category": "Run",
+      "slot_name": "Run Left Over",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AS_BB_Run_020122_Root.AS_BB_Run_020122_Root",
+      "duration": 0.7333333492279053,
+      "frames": 23
+    },
+    {
+      "id": "a000_020123",
+      "category": "Run",
+      "slot_name": "Run Right Over",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AS_BB_Run_020123_Root.AS_BB_Run_020123_Root",
+      "duration": 0.7333333492279053,
+      "frames": 23
+    },
+    {
+      "id": "a000_020130",
+      "category": "Run",
+      "slot_name": "Unlabelled source slot",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AS_BB_Run_020130_Root.AS_BB_Run_020130_Root",
+      "duration": 0.9666666388511658,
+      "frames": 30
+    },
+    {
+      "id": "a000_020131",
+      "category": "Run",
+      "slot_name": "Unlabelled source slot",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AS_BB_Run_020131_Root.AS_BB_Run_020131_Root",
+      "duration": 0.9666666388511658,
+      "frames": 30
+    },
+    {
+      "id": "a000_020132",
+      "category": "Run",
+      "slot_name": "Unlabelled source slot",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AS_BB_Run_020132_Root.AS_BB_Run_020132_Root",
+      "duration": 0.9666666388511658,
+      "frames": 30
+    },
+    {
+      "id": "a000_020133",
+      "category": "Run",
+      "slot_name": "Unlabelled source slot",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AS_BB_Run_020133_Root.AS_BB_Run_020133_Root",
+      "duration": 0.9666666388511658,
+      "frames": 30
+    },
+    {
+      "id": "a000_020200",
+      "category": "SprintAndStop",
+      "slot_name": "Dash Front Light",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Sprint/AS_BB_SprintAndStop_020200_Root.AS_BB_SprintAndStop_020200_Root",
+      "duration": 0.6666666865348816,
+      "frames": 21
+    },
+    {
+      "id": "a000_020210",
+      "category": "SprintAndStop",
+      "slot_name": "Dash Front Heavy",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Sprint/AS_BB_SprintAndStop_020210_Root.AS_BB_SprintAndStop_020210_Root",
+      "duration": 0.6666666865348816,
+      "frames": 21
+    },
+    {
+      "id": "a000_020220",
+      "category": "SprintAndStop",
+      "slot_name": "Dash Front Over",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Sprint/AS_BB_SprintAndStop_020220_Root.AS_BB_SprintAndStop_020220_Root",
+      "duration": 0.800000011920929,
+      "frames": 25
+    },
+    {
+      "id": "a000_020230",
+      "category": "SprintAndStop",
+      "slot_name": "Unlabelled source slot",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Sprint/AS_BB_SprintAndStop_020230_Root.AS_BB_SprintAndStop_020230_Root",
+      "duration": 0.7666666507720947,
+      "frames": 24
+    },
+    {
+      "id": "a000_022100",
+      "category": "SprintAndStop",
+      "slot_name": "Run Stop Front",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Sprint/AS_BB_SprintAndStop_022100_Root.AS_BB_SprintAndStop_022100_Root",
+      "duration": 1.0,
+      "frames": 31
+    },
+    {
+      "id": "a000_022101",
+      "category": "SprintAndStop",
+      "slot_name": "Run Stop Back",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Sprint/AS_BB_SprintAndStop_022101_Root.AS_BB_SprintAndStop_022101_Root",
+      "duration": 0.8333333134651184,
+      "frames": 26
+    },
+    {
+      "id": "a000_022102",
+      "category": "SprintAndStop",
+      "slot_name": "Run Stop Left",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Sprint/AS_BB_SprintAndStop_022102_Root.AS_BB_SprintAndStop_022102_Root",
+      "duration": 1.0,
+      "frames": 31
+    },
+    {
+      "id": "a000_022103",
+      "category": "SprintAndStop",
+      "slot_name": "Run Stop Right",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Sprint/AS_BB_SprintAndStop_022103_Root.AS_BB_SprintAndStop_022103_Root",
+      "duration": 1.2000000476837158,
+      "frames": 37
+    },
+    {
+      "id": "a000_022200",
+      "category": "SprintAndStop",
+      "slot_name": "Dash Stop",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Sprint/AS_BB_SprintAndStop_022200_Root.AS_BB_SprintAndStop_022200_Root",
+      "duration": 1.0,
+      "frames": 31
+    },
+    {
+      "id": "a000_026001",
+      "category": "Turn",
+      "slot_name": "Event 26001",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Detail/AS_BB_Turn_026001_Root.AS_BB_Turn_026001_Root",
+      "duration": 0.6666666865348816,
+      "frames": 21
+    },
+    {
+      "id": "a000_026011",
+      "category": "Turn",
+      "slot_name": "Event 26011",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Detail/AS_BB_Turn_026011_Root.AS_BB_Turn_026011_Root",
+      "duration": 0.6666666865348816,
+      "frames": 21
+    },
+    {
+      "id": "a000_026020",
+      "category": "Turn",
+      "slot_name": "Event 26020",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Detail/AS_BB_Turn_026020_Root.AS_BB_Turn_026020_Root",
+      "duration": 0.6666666865348816,
+      "frames": 21
+    },
+    {
+      "id": "a000_026021",
+      "category": "Turn",
+      "slot_name": "Event 26021",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Detail/AS_BB_Turn_026021_Root.AS_BB_Turn_026021_Root",
+      "duration": 0.7333333492279053,
+      "frames": 23
+    },
+    {
+      "id": "a000_026022",
+      "category": "Turn",
+      "slot_name": "Quick Turn Arrow Left 180 Lower",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Detail/AS_BB_Turn_026022_Root.AS_BB_Turn_026022_Root",
+      "duration": 0.6666666865348816,
+      "frames": 21
+    },
+    {
+      "id": "a000_026030",
+      "category": "Turn",
+      "slot_name": "Event 26030",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Detail/AS_BB_Turn_026030_Root.AS_BB_Turn_026030_Root",
+      "duration": 0.6666666865348816,
+      "frames": 21
+    },
+    {
+      "id": "a000_026031",
+      "category": "Turn",
+      "slot_name": "Event 26031",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Detail/AS_BB_Turn_026031_Root.AS_BB_Turn_026031_Root",
+      "duration": 0.7333333492279053,
+      "frames": 23
+    },
+    {
+      "id": "a000_026032",
+      "category": "Turn",
+      "slot_name": "Quick Turn Arrow Right 180 Lower",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Detail/AS_BB_Turn_026032_Root.AS_BB_Turn_026032_Root",
+      "duration": 0.6666666865348816,
+      "frames": 21
+    },
+    {
+      "id": "a000_026250",
+      "category": "Turn",
+      "slot_name": "Dash 180",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Detail/AS_BB_Turn_026250_Root.AS_BB_Turn_026250_Root",
+      "duration": 1.2999999523162842,
+      "frames": 40
+    },
+    {
+      "id": "a000_027104",
+      "category": "DiagonalDodge",
+      "slot_name": "Unlabelled source slot",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_DiagonalDodge_027104_Root.AS_BB_DiagonalDodge_027104_Root",
+      "duration": 1.5,
+      "frames": 46
+    },
+    {
+      "id": "a000_027105",
+      "category": "DiagonalDodge",
+      "slot_name": "Unlabelled source slot",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_DiagonalDodge_027105_Root.AS_BB_DiagonalDodge_027105_Root",
+      "duration": 1.5,
+      "frames": 46
+    },
+    {
+      "id": "a000_027106",
+      "category": "DiagonalDodge",
+      "slot_name": "Unlabelled source slot",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_DiagonalDodge_027106_Root.AS_BB_DiagonalDodge_027106_Root",
+      "duration": 1.2333333492279053,
+      "frames": 38
+    },
+    {
+      "id": "a000_027107",
+      "category": "DiagonalDodge",
+      "slot_name": "Unlabelled source slot",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_DiagonalDodge_027107_Root.AS_BB_DiagonalDodge_027107_Root",
+      "duration": 1.2333333492279053,
+      "frames": 38
+    },
+    {
+      "id": "a000_027114",
+      "category": "DiagonalDodge",
+      "slot_name": "Unlabelled source slot",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_DiagonalDodge_027114_Root.AS_BB_DiagonalDodge_027114_Root",
+      "duration": 1.6666666269302368,
+      "frames": 51
+    },
+    {
+      "id": "a000_027115",
+      "category": "DiagonalDodge",
+      "slot_name": "Unlabelled source slot",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_DiagonalDodge_027115_Root.AS_BB_DiagonalDodge_027115_Root",
+      "duration": 1.6666666269302368,
+      "frames": 51
+    },
+    {
+      "id": "a000_027116",
+      "category": "DiagonalDodge",
+      "slot_name": "Unlabelled source slot",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_DiagonalDodge_027116_Root.AS_BB_DiagonalDodge_027116_Root",
+      "duration": 1.2333333492279053,
+      "frames": 38
+    },
+    {
+      "id": "a000_027117",
+      "category": "DiagonalDodge",
+      "slot_name": "Unlabelled source slot",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_DiagonalDodge_027117_Root.AS_BB_DiagonalDodge_027117_Root",
+      "duration": 1.2333333492279053,
+      "frames": 38
+    },
+    {
+      "id": "a000_027124",
+      "category": "DiagonalDodge",
+      "slot_name": "Unlabelled source slot",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_DiagonalDodge_027124_Root.AS_BB_DiagonalDodge_027124_Root",
+      "duration": 1.5,
+      "frames": 46
+    },
+    {
+      "id": "a000_027125",
+      "category": "DiagonalDodge",
+      "slot_name": "Unlabelled source slot",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_DiagonalDodge_027125_Root.AS_BB_DiagonalDodge_027125_Root",
+      "duration": 1.5,
+      "frames": 46
+    },
+    {
+      "id": "a000_027126",
+      "category": "DiagonalDodge",
+      "slot_name": "Unlabelled source slot",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_DiagonalDodge_027126_Root.AS_BB_DiagonalDodge_027126_Root",
+      "duration": 1.6666666269302368,
+      "frames": 51
+    },
+    {
+      "id": "a000_027127",
+      "category": "DiagonalDodge",
+      "slot_name": "Unlabelled source slot",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_DiagonalDodge_027127_Root.AS_BB_DiagonalDodge_027127_Root",
+      "duration": 1.6666666269302368,
+      "frames": 51
+    },
+    {
+      "id": "a000_027134",
+      "category": "DiagonalDodge",
+      "slot_name": "Unlabelled source slot",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_DiagonalDodge_027134_Root.AS_BB_DiagonalDodge_027134_Root",
+      "duration": 2.3333332538604736,
+      "frames": 71
+    },
+    {
+      "id": "a000_027135",
+      "category": "DiagonalDodge",
+      "slot_name": "Unlabelled source slot",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_DiagonalDodge_027135_Root.AS_BB_DiagonalDodge_027135_Root",
+      "duration": 2.3333332538604736,
+      "frames": 71
+    },
+    {
+      "id": "a000_027136",
+      "category": "DiagonalDodge",
+      "slot_name": "Unlabelled source slot",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_DiagonalDodge_027136_Root.AS_BB_DiagonalDodge_027136_Root",
+      "duration": 2.3333332538604736,
+      "frames": 71
+    },
+    {
+      "id": "a000_027137",
+      "category": "DiagonalDodge",
+      "slot_name": "Unlabelled source slot",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_DiagonalDodge_027137_Root.AS_BB_DiagonalDodge_027137_Root",
+      "duration": 2.3333332538604736,
+      "frames": 71
+    },
+    {
+      "id": "a000_027500",
+      "category": "EscapeDodge",
+      "slot_name": "E Step Down Front Left",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_EscapeDodge_027500_Root.AS_BB_EscapeDodge_027500_Root",
+      "duration": 1.7000000476837158,
+      "frames": 52
+    },
+    {
+      "id": "a000_027501",
+      "category": "EscapeDodge",
+      "slot_name": "Unlabelled source slot",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_EscapeDodge_027501_Root.AS_BB_EscapeDodge_027501_Root",
+      "duration": 1.7000000476837158,
+      "frames": 52
+    },
+    {
+      "id": "a000_027502",
+      "category": "EscapeDodge",
+      "slot_name": "E Step Down Left",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_EscapeDodge_027502_Root.AS_BB_EscapeDodge_027502_Root",
+      "duration": 1.7000000476837158,
+      "frames": 52
+    },
+    {
+      "id": "a000_027503",
+      "category": "EscapeDodge",
+      "slot_name": "E Step Down Right",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_EscapeDodge_027503_Root.AS_BB_EscapeDodge_027503_Root",
+      "duration": 1.7000000476837158,
+      "frames": 52
+    },
+    {
+      "id": "a000_027504",
+      "category": "EscapeDodge",
+      "slot_name": "Unlabelled source slot",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_EscapeDodge_027504_Root.AS_BB_EscapeDodge_027504_Root",
+      "duration": 1.7000000476837158,
+      "frames": 52
+    },
+    {
+      "id": "a000_027505",
+      "category": "EscapeDodge",
+      "slot_name": "Unlabelled source slot",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_EscapeDodge_027505_Root.AS_BB_EscapeDodge_027505_Root",
+      "duration": 1.7000000476837158,
+      "frames": 52
+    },
+    {
+      "id": "a000_027506",
+      "category": "EscapeDodge",
+      "slot_name": "E Step Down Back Right",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_EscapeDodge_027506_Root.AS_BB_EscapeDodge_027506_Root",
+      "duration": 1.7000000476837158,
+      "frames": 52
+    },
+    {
+      "id": "a000_027507",
+      "category": "EscapeDodge",
+      "slot_name": "E Step Down Back Left",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_EscapeDodge_027507_Root.AS_BB_EscapeDodge_027507_Root",
+      "duration": 1.7000000476837158,
+      "frames": 52
+    },
+    {
+      "id": "a000_000000",
+      "category": "Idle",
+      "slot_name": "Idle",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Idle/AS_BB_Idle_000000_Root.AS_BB_Idle_000000_Root",
+      "duration": 4.0,
+      "frames": 121
+    },
+    {
+      "id": "a000_000001",
+      "category": "Idle",
+      "slot_name": "Unlabelled source slot",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Idle/AS_BB_Idle_000001_Root.AS_BB_Idle_000001_Root",
+      "duration": 0.03333333507180214,
+      "frames": 2
+    },
+    {
+      "id": "a000_004000",
+      "category": "FallAndLand",
+      "slot_name": "Fall Loop",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Fall/AS_BB_FallAndLand_004000_Root.AS_BB_FallAndLand_004000_Root",
+      "duration": 0.800000011920929,
+      "frames": 25
+    },
+    {
+      "id": "a000_004010",
+      "category": "FallAndLand",
+      "slot_name": "Fall Loop Face Up",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Fall/AS_BB_FallAndLand_004010_Root.AS_BB_FallAndLand_004010_Root",
+      "duration": 0.6666666865348816,
+      "frames": 21
+    },
+    {
+      "id": "a000_004020",
+      "category": "FallAndLand",
+      "slot_name": "Fall Loop Face Down",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Fall/AS_BB_FallAndLand_004020_Root.AS_BB_FallAndLand_004020_Root",
+      "duration": 1.0,
+      "frames": 31
+    },
+    {
+      "id": "a000_004050",
+      "category": "FallAndLand",
+      "slot_name": "Fall Start",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Fall/AS_BB_FallAndLand_004050_Root.AS_BB_FallAndLand_004050_Root",
+      "duration": 0.8333333134651184,
+      "frames": 26
+    },
+    {
+      "id": "a000_004060",
+      "category": "FallAndLand",
+      "slot_name": "Fall Start Face Up",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Fall/AS_BB_FallAndLand_004060_Root.AS_BB_FallAndLand_004060_Root",
+      "duration": 1.8333333730697632,
+      "frames": 56
+    },
+    {
+      "id": "a000_004070",
+      "category": "FallAndLand",
+      "slot_name": "Fall Start Face Down",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Fall/AS_BB_FallAndLand_004070_Root.AS_BB_FallAndLand_004070_Root",
+      "duration": 1.2333333492279053,
+      "frames": 38
+    },
+    {
+      "id": "a000_004080",
+      "category": "FallAndLand",
+      "slot_name": "Fall Jump Start",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Fall/AS_BB_FallAndLand_004080_Root.AS_BB_FallAndLand_004080_Root",
+      "duration": 0.6666666865348816,
+      "frames": 21
+    },
+    {
+      "id": "a000_004200",
+      "category": "FallAndLand",
+      "slot_name": "Land Default",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Fall/AS_BB_FallAndLand_004200_Root.AS_BB_FallAndLand_004200_Root",
+      "duration": 0.8333333134651184,
+      "frames": 26
+    },
+    {
+      "id": "a000_004230",
+      "category": "FallAndLand",
+      "slot_name": "Land Cat Default",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Fall/AS_BB_FallAndLand_004230_Root.AS_BB_FallAndLand_004230_Root",
+      "duration": 0.6000000238418579,
+      "frames": 19
+    },
+    {
+      "id": "a000_004240",
+      "category": "FallAndLand",
+      "slot_name": "Land Cat Middle",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Fall/AS_BB_FallAndLand_004240_Root.AS_BB_FallAndLand_004240_Root",
+      "duration": 0.7333333492279053,
+      "frames": 23
+    },
+    {
+      "id": "a000_004250",
+      "category": "FallAndLand",
+      "slot_name": "Land Cat Heavy",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Fall/AS_BB_FallAndLand_004250_Root.AS_BB_FallAndLand_004250_Root",
+      "duration": 1.5,
+      "frames": 46
+    },
+    {
+      "id": "a000_004260",
+      "category": "FallAndLand",
+      "slot_name": "Land Face Up",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Fall/AS_BB_FallAndLand_004260_Root.AS_BB_FallAndLand_004260_Root",
+      "duration": 4.566666603088379,
+      "frames": 138
+    },
+    {
+      "id": "a000_004270",
+      "category": "FallAndLand",
+      "slot_name": "Land Face Down",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Fall/AS_BB_FallAndLand_004270_Root.AS_BB_FallAndLand_004270_Root",
+      "duration": 4.566666603088379,
+      "frames": 138
+    },
+    {
+      "id": "a000_004280",
+      "category": "FallAndLand",
+      "slot_name": "Land Jump",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Fall/AS_BB_FallAndLand_004280_Root.AS_BB_FallAndLand_004280_Root",
+      "duration": 1.3333333730697632,
+      "frames": 41
+    },
+    {
+      "id": "a000_050210",
+      "category": "Heal",
+      "slot_name": "Item 28",
+      "variant": "Left",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Heal/AS_BB_Heal_Left_Root.AS_BB_Heal_Left_Root",
+      "duration": 3.0,
+      "frames": 91,
+      "edited": false
+    },
+    {
+      "id": "a000_050210",
+      "category": "Heal",
+      "slot_name": "Item 28",
+      "variant": "Heart",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Heal/AS_BB_Heal_Heart_Root.AS_BB_Heal_Heart_Root",
+      "duration": 3.0,
+      "frames": 91,
+      "edited": true
+    },
+    {
+      "id": "a000_050210",
+      "category": "Heal",
+      "slot_name": "Item 28",
+      "variant": "Skull",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Heal/AS_BB_Heal_Skull_Root.AS_BB_Heal_Skull_Root",
+      "duration": 3.0,
+      "frames": 91,
+      "edited": true
+    }
+  ],
+  "derived_getup": [
+    {
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Getup/AS_BB_Getup_FaceUp_004260_Root.AS_BB_Getup_FaceUp_004260_Root",
+      "source": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Fall/AS_BB_FallAndLand_004260_Root.AS_BB_FallAndLand_004260_Root",
+      "start_frame": 30,
+      "end_frame": 137,
+      "fps": 30,
+      "frames": 108,
+      "max_pose_error_cm": 0.0001035673652615854
+    },
+    {
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Getup/AS_BB_Getup_FaceDown_004270_Root.AS_BB_Getup_FaceDown_004270_Root",
+      "source": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Fall/AS_BB_FallAndLand_004270_Root.AS_BB_FallAndLand_004270_Root",
+      "start_frame": 40,
+      "end_frame": 137,
+      "fps": 30,
+      "frames": 98,
+      "max_pose_error_cm": 0.00031381555983235604
+    }
+  ],
+  "dodge_assets": [
+    {
+      "old": "/Game/Reference/GraceborneDodge/C0000/GameplayTest/AM_BB_1H_Backstep",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_1H_Backstep",
+      "class": "AnimMontage"
+    },
+    {
+      "old": "/Game/Reference/GraceborneDodge/C0000/GameplayTest/AM_BB_1H_Roll",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_1H_Roll",
+      "class": "AnimMontage"
+    },
+    {
+      "old": "/Game/Reference/GraceborneDodge/C0000/GameplayTest/AM_BB_1H_Step_B",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_1H_Step_B",
+      "class": "AnimMontage"
+    },
+    {
+      "old": "/Game/Reference/GraceborneDodge/C0000/GameplayTest/AM_BB_1H_Step_F",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_1H_Step_F",
+      "class": "AnimMontage"
+    },
+    {
+      "old": "/Game/Reference/GraceborneDodge/C0000/GameplayTest/AM_BB_1H_Step_L",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_1H_Step_L",
+      "class": "AnimMontage"
+    },
+    {
+      "old": "/Game/Reference/GraceborneDodge/C0000/GameplayTest/AM_BB_1H_Step_R",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_1H_Step_R",
+      "class": "AnimMontage"
+    },
+    {
+      "old": "/Game/Reference/GraceborneDodge/C0000/GameplayTest/AM_BB_BH_Backstep",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_BH_Backstep",
+      "class": "AnimMontage"
+    },
+    {
+      "old": "/Game/Reference/GraceborneDodge/C0000/GameplayTest/AM_BB_BH_Roll",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_BH_Roll",
+      "class": "AnimMontage"
+    },
+    {
+      "old": "/Game/Reference/GraceborneDodge/C0000/GameplayTest/AM_BB_BH_Step_B",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_BH_Step_B",
+      "class": "AnimMontage"
+    },
+    {
+      "old": "/Game/Reference/GraceborneDodge/C0000/GameplayTest/AM_BB_BH_Step_F",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_BH_Step_F",
+      "class": "AnimMontage"
+    },
+    {
+      "old": "/Game/Reference/GraceborneDodge/C0000/GameplayTest/AM_BB_BH_Step_L",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_BH_Step_L",
+      "class": "AnimMontage"
+    },
+    {
+      "old": "/Game/Reference/GraceborneDodge/C0000/GameplayTest/AM_BB_BH_Step_R",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_BH_Step_R",
+      "class": "AnimMontage"
+    },
+    {
+      "old": "/Game/Reference/GraceborneDodge/C0000/Manny/A_C0000_a000_027000_Manny",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_Dodge_027000_Root",
+      "class": "AnimSequence"
+    },
+    {
+      "old": "/Game/Reference/GraceborneDodge/C0000/Manny/A_C0000_a000_027010_Manny",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_Dodge_027010_Root",
+      "class": "AnimSequence"
+    },
+    {
+      "old": "/Game/Reference/GraceborneDodge/C0000/Manny/A_C0000_a000_027020_Manny",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_Dodge_027020_Root",
+      "class": "AnimSequence"
+    },
+    {
+      "old": "/Game/Reference/GraceborneDodge/C0000/Manny/A_C0000_a000_027100_Manny",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_Dodge_027100_Root",
+      "class": "AnimSequence"
+    },
+    {
+      "old": "/Game/Reference/GraceborneDodge/C0000/Manny/A_C0000_a000_027101_Manny",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_Dodge_027101_Root",
+      "class": "AnimSequence"
+    },
+    {
+      "old": "/Game/Reference/GraceborneDodge/C0000/Manny/A_C0000_a000_027102_Manny",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_Dodge_027102_Root",
+      "class": "AnimSequence"
+    },
+    {
+      "old": "/Game/Reference/GraceborneDodge/C0000/Manny/A_C0000_a000_027103_Manny",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_Dodge_027103_Root",
+      "class": "AnimSequence"
+    },
+    {
+      "old": "/Game/Reference/GraceborneDodge/C0000/Manny/A_C0000_a000_027110_Manny",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_Dodge_027110_Root",
+      "class": "AnimSequence"
+    },
+    {
+      "old": "/Game/Reference/GraceborneDodge/C0000/Manny/A_C0000_a000_027111_Manny",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_Dodge_027111_Root",
+      "class": "AnimSequence"
+    },
+    {
+      "old": "/Game/Reference/GraceborneDodge/C0000/Manny/A_C0000_a000_027112_Manny",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_Dodge_027112_Root",
+      "class": "AnimSequence"
+    },
+    {
+      "old": "/Game/Reference/GraceborneDodge/C0000/Manny/A_C0000_a000_027113_Manny",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_Dodge_027113_Root",
+      "class": "AnimSequence"
+    },
+    {
+      "old": "/Game/Reference/GraceborneDodge/C0000/Manny/A_C0000_a000_027120_Manny",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_Dodge_027120_Root",
+      "class": "AnimSequence"
+    },
+    {
+      "old": "/Game/Reference/GraceborneDodge/C0000/Manny/A_C0000_a000_027121_Manny",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_Dodge_027121_Root",
+      "class": "AnimSequence"
+    },
+    {
+      "old": "/Game/Reference/GraceborneDodge/C0000/Manny/A_C0000_a000_027122_Manny",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_Dodge_027122_Root",
+      "class": "AnimSequence"
+    },
+    {
+      "old": "/Game/Reference/GraceborneDodge/C0000/Manny/A_C0000_a000_027123_Manny",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_Dodge_027123_Root",
+      "class": "AnimSequence"
+    },
+    {
+      "old": "/Game/Reference/GraceborneAnimationSet/C0000/Manny/DiagonalDodge/A_C0000_a000_027104_Manny",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_DiagonalDodge_027104_Root",
+      "class": "AnimSequence"
+    },
+    {
+      "old": "/Game/Reference/GraceborneAnimationSet/C0000/Manny/DiagonalDodge/A_C0000_a000_027105_Manny",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_DiagonalDodge_027105_Root",
+      "class": "AnimSequence"
+    },
+    {
+      "old": "/Game/Reference/GraceborneAnimationSet/C0000/Manny/DiagonalDodge/A_C0000_a000_027106_Manny",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_DiagonalDodge_027106_Root",
+      "class": "AnimSequence"
+    },
+    {
+      "old": "/Game/Reference/GraceborneAnimationSet/C0000/Manny/DiagonalDodge/A_C0000_a000_027107_Manny",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_DiagonalDodge_027107_Root",
+      "class": "AnimSequence"
+    },
+    {
+      "old": "/Game/Reference/GraceborneAnimationSet/C0000/Manny/DiagonalDodge/A_C0000_a000_027114_Manny",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_DiagonalDodge_027114_Root",
+      "class": "AnimSequence"
+    },
+    {
+      "old": "/Game/Reference/GraceborneAnimationSet/C0000/Manny/DiagonalDodge/A_C0000_a000_027115_Manny",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_DiagonalDodge_027115_Root",
+      "class": "AnimSequence"
+    },
+    {
+      "old": "/Game/Reference/GraceborneAnimationSet/C0000/Manny/DiagonalDodge/A_C0000_a000_027116_Manny",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_DiagonalDodge_027116_Root",
+      "class": "AnimSequence"
+    },
+    {
+      "old": "/Game/Reference/GraceborneAnimationSet/C0000/Manny/DiagonalDodge/A_C0000_a000_027117_Manny",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_DiagonalDodge_027117_Root",
+      "class": "AnimSequence"
+    },
+    {
+      "old": "/Game/Reference/GraceborneAnimationSet/C0000/Manny/DiagonalDodge/A_C0000_a000_027124_Manny",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_DiagonalDodge_027124_Root",
+      "class": "AnimSequence"
+    },
+    {
+      "old": "/Game/Reference/GraceborneAnimationSet/C0000/Manny/DiagonalDodge/A_C0000_a000_027125_Manny",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_DiagonalDodge_027125_Root",
+      "class": "AnimSequence"
+    },
+    {
+      "old": "/Game/Reference/GraceborneAnimationSet/C0000/Manny/DiagonalDodge/A_C0000_a000_027126_Manny",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_DiagonalDodge_027126_Root",
+      "class": "AnimSequence"
+    },
+    {
+      "old": "/Game/Reference/GraceborneAnimationSet/C0000/Manny/DiagonalDodge/A_C0000_a000_027127_Manny",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_DiagonalDodge_027127_Root",
+      "class": "AnimSequence"
+    },
+    {
+      "old": "/Game/Reference/GraceborneAnimationSet/C0000/Manny/DiagonalDodge/A_C0000_a000_027134_Manny",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_DiagonalDodge_027134_Root",
+      "class": "AnimSequence"
+    },
+    {
+      "old": "/Game/Reference/GraceborneAnimationSet/C0000/Manny/DiagonalDodge/A_C0000_a000_027135_Manny",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_DiagonalDodge_027135_Root",
+      "class": "AnimSequence"
+    },
+    {
+      "old": "/Game/Reference/GraceborneAnimationSet/C0000/Manny/DiagonalDodge/A_C0000_a000_027136_Manny",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_DiagonalDodge_027136_Root",
+      "class": "AnimSequence"
+    },
+    {
+      "old": "/Game/Reference/GraceborneAnimationSet/C0000/Manny/DiagonalDodge/A_C0000_a000_027137_Manny",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_DiagonalDodge_027137_Root",
+      "class": "AnimSequence"
+    },
+    {
+      "old": "/Game/Reference/GraceborneAnimationSet/C0000/Manny/EscapeDodge/A_C0000_a000_027500_Manny",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_EscapeDodge_027500_Root",
+      "class": "AnimSequence"
+    },
+    {
+      "old": "/Game/Reference/GraceborneAnimationSet/C0000/Manny/EscapeDodge/A_C0000_a000_027501_Manny",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_EscapeDodge_027501_Root",
+      "class": "AnimSequence"
+    },
+    {
+      "old": "/Game/Reference/GraceborneAnimationSet/C0000/Manny/EscapeDodge/A_C0000_a000_027502_Manny",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_EscapeDodge_027502_Root",
+      "class": "AnimSequence"
+    },
+    {
+      "old": "/Game/Reference/GraceborneAnimationSet/C0000/Manny/EscapeDodge/A_C0000_a000_027503_Manny",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_EscapeDodge_027503_Root",
+      "class": "AnimSequence"
+    },
+    {
+      "old": "/Game/Reference/GraceborneAnimationSet/C0000/Manny/EscapeDodge/A_C0000_a000_027504_Manny",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_EscapeDodge_027504_Root",
+      "class": "AnimSequence"
+    },
+    {
+      "old": "/Game/Reference/GraceborneAnimationSet/C0000/Manny/EscapeDodge/A_C0000_a000_027505_Manny",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_EscapeDodge_027505_Root",
+      "class": "AnimSequence"
+    },
+    {
+      "old": "/Game/Reference/GraceborneAnimationSet/C0000/Manny/EscapeDodge/A_C0000_a000_027506_Manny",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_EscapeDodge_027506_Root",
+      "class": "AnimSequence"
+    },
+    {
+      "old": "/Game/Reference/GraceborneAnimationSet/C0000/Manny/EscapeDodge/A_C0000_a000_027507_Manny",
+      "new": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AS_BB_EscapeDodge_027507_Root",
+      "class": "AnimSequence"
+    }
+  ],
+  "montages": [
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_1H_Backstep.AM_BB_1H_Backstep",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_1H_Roll.AM_BB_1H_Roll",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_1H_Step_B.AM_BB_1H_Step_B",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_1H_Step_F.AM_BB_1H_Step_F",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_1H_Step_L.AM_BB_1H_Step_L",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_1H_Step_R.AM_BB_1H_Step_R",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_BH_Backstep.AM_BB_BH_Backstep",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_BH_Roll.AM_BB_BH_Roll",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_BH_Step_B.AM_BB_BH_Step_B",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_BH_Step_F.AM_BB_BH_Step_F",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_BH_Step_L.AM_BB_BH_Step_L",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_BH_Step_R.AM_BB_BH_Step_R",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_Dodge_027010.AM_BB_Dodge_027010",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_Dodge_027020.AM_BB_Dodge_027020",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_Dodge_027111.AM_BB_Dodge_027111",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_Dodge_027112.AM_BB_Dodge_027112",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_Dodge_027113.AM_BB_Dodge_027113",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_Dodge_027120.AM_BB_Dodge_027120",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_Dodge_027121.AM_BB_Dodge_027121",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_Dodge_027122.AM_BB_Dodge_027122",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_Dodge_027123.AM_BB_Dodge_027123",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_DiagonalDodge_027104.AM_BB_DiagonalDodge_027104",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_DiagonalDodge_027105.AM_BB_DiagonalDodge_027105",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_DiagonalDodge_027106.AM_BB_DiagonalDodge_027106",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_DiagonalDodge_027107.AM_BB_DiagonalDodge_027107",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_DiagonalDodge_027114.AM_BB_DiagonalDodge_027114",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_DiagonalDodge_027115.AM_BB_DiagonalDodge_027115",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_DiagonalDodge_027116.AM_BB_DiagonalDodge_027116",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_DiagonalDodge_027117.AM_BB_DiagonalDodge_027117",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_DiagonalDodge_027124.AM_BB_DiagonalDodge_027124",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_DiagonalDodge_027125.AM_BB_DiagonalDodge_027125",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_DiagonalDodge_027126.AM_BB_DiagonalDodge_027126",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_DiagonalDodge_027127.AM_BB_DiagonalDodge_027127",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_DiagonalDodge_027134.AM_BB_DiagonalDodge_027134",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_DiagonalDodge_027135.AM_BB_DiagonalDodge_027135",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_DiagonalDodge_027136.AM_BB_DiagonalDodge_027136",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_DiagonalDodge_027137.AM_BB_DiagonalDodge_027137",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_EscapeDodge_027500.AM_BB_EscapeDodge_027500",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_EscapeDodge_027501.AM_BB_EscapeDodge_027501",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_EscapeDodge_027502.AM_BB_EscapeDodge_027502",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_EscapeDodge_027503.AM_BB_EscapeDodge_027503",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_EscapeDodge_027504.AM_BB_EscapeDodge_027504",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_EscapeDodge_027505.AM_BB_EscapeDodge_027505",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_EscapeDodge_027506.AM_BB_EscapeDodge_027506",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Dodge/AM_BB_EscapeDodge_027507.AM_BB_EscapeDodge_027507",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Fall/AM_BB_FallAndLand_004000.AM_BB_FallAndLand_004000",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Fall/AM_BB_FallAndLand_004010.AM_BB_FallAndLand_004010",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Fall/AM_BB_FallAndLand_004020.AM_BB_FallAndLand_004020",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Fall/AM_BB_FallAndLand_004050.AM_BB_FallAndLand_004050",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Fall/AM_BB_FallAndLand_004060.AM_BB_FallAndLand_004060",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Fall/AM_BB_FallAndLand_004070.AM_BB_FallAndLand_004070",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Fall/AM_BB_FallAndLand_004080.AM_BB_FallAndLand_004080",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Fall/AM_BB_FallAndLand_004200.AM_BB_FallAndLand_004200",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Fall/AM_BB_FallAndLand_004230.AM_BB_FallAndLand_004230",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Fall/AM_BB_FallAndLand_004240.AM_BB_FallAndLand_004240",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Fall/AM_BB_FallAndLand_004250.AM_BB_FallAndLand_004250",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Fall/AM_BB_FallAndLand_004260.AM_BB_FallAndLand_004260",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Fall/AM_BB_FallAndLand_004270.AM_BB_FallAndLand_004270",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Fall/AM_BB_FallAndLand_004280.AM_BB_FallAndLand_004280",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Getup/AM_BB_Getup_FaceDown_004270.AM_BB_Getup_FaceDown_004270",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Getup/AM_BB_Getup_FaceUp_004260.AM_BB_Getup_FaceUp_004260",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Idle/AM_BB_Idle_000000.AM_BB_Idle_000000",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Idle/AM_BB_Idle_000001.AM_BB_Idle_000001",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Knockdown/AM_BB_KnockdownAndRecovery_005410.AM_BB_KnockdownAndRecovery_005410",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Knockdown/AM_BB_KnockdownAndRecovery_005420.AM_BB_KnockdownAndRecovery_005420",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Knockdown/AM_BB_KnockdownAndRecovery_005430.AM_BB_KnockdownAndRecovery_005430",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Knockdown/AM_BB_KnockdownAndRecovery_005450.AM_BB_KnockdownAndRecovery_005450",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Knockdown/AM_BB_KnockdownAndRecovery_005460.AM_BB_KnockdownAndRecovery_005460",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Knockdown/AM_BB_KnockdownAndRecovery_005470.AM_BB_KnockdownAndRecovery_005470",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Knockdown/AM_BB_KnockdownAndRecovery_005480.AM_BB_KnockdownAndRecovery_005480",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Knockdown/AM_BB_KnockdownAndRecovery_005700.AM_BB_KnockdownAndRecovery_005700",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Knockdown/AM_BB_KnockdownAndRecovery_005710.AM_BB_KnockdownAndRecovery_005710",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Knockdown/AM_BB_KnockdownAndRecovery_005711.AM_BB_KnockdownAndRecovery_005711",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Knockdown/AM_BB_KnockdownAndRecovery_013000.AM_BB_KnockdownAndRecovery_013000",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AM_BB_Run_020100.AM_BB_Run_020100",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AM_BB_Run_020101.AM_BB_Run_020101",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AM_BB_Run_020102.AM_BB_Run_020102",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AM_BB_Run_020103.AM_BB_Run_020103",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AM_BB_Run_020110.AM_BB_Run_020110",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AM_BB_Run_020111.AM_BB_Run_020111",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AM_BB_Run_020112.AM_BB_Run_020112",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AM_BB_Run_020113.AM_BB_Run_020113",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AM_BB_Run_020120.AM_BB_Run_020120",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AM_BB_Run_020121.AM_BB_Run_020121",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AM_BB_Run_020122.AM_BB_Run_020122",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AM_BB_Run_020123.AM_BB_Run_020123",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AM_BB_Run_020130.AM_BB_Run_020130",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AM_BB_Run_020131.AM_BB_Run_020131",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AM_BB_Run_020132.AM_BB_Run_020132",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AM_BB_Run_020133.AM_BB_Run_020133",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Sprint/AM_BB_SprintAndStop_020200.AM_BB_SprintAndStop_020200",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Sprint/AM_BB_SprintAndStop_020210.AM_BB_SprintAndStop_020210",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Sprint/AM_BB_SprintAndStop_020220.AM_BB_SprintAndStop_020220",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Sprint/AM_BB_SprintAndStop_020230.AM_BB_SprintAndStop_020230",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Sprint/AM_BB_SprintAndStop_022100.AM_BB_SprintAndStop_022100",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Sprint/AM_BB_SprintAndStop_022101.AM_BB_SprintAndStop_022101",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Sprint/AM_BB_SprintAndStop_022102.AM_BB_SprintAndStop_022102",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Sprint/AM_BB_SprintAndStop_022103.AM_BB_SprintAndStop_022103",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Sprint/AM_BB_SprintAndStop_022200.AM_BB_SprintAndStop_022200",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Detail/AM_BB_Turn_026001.AM_BB_Turn_026001",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Detail/AM_BB_Turn_026011.AM_BB_Turn_026011",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Detail/AM_BB_Turn_026020.AM_BB_Turn_026020",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Detail/AM_BB_Turn_026021.AM_BB_Turn_026021",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Detail/AM_BB_Turn_026022.AM_BB_Turn_026022",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Detail/AM_BB_Turn_026030.AM_BB_Turn_026030",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Detail/AM_BB_Turn_026031.AM_BB_Turn_026031",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Detail/AM_BB_Turn_026032.AM_BB_Turn_026032",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Detail/AM_BB_Turn_026250.AM_BB_Turn_026250",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AM_BB_Walk_020000.AM_BB_Walk_020000",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AM_BB_Walk_020001.AM_BB_Walk_020001",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AM_BB_Walk_020002.AM_BB_Walk_020002",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AM_BB_Walk_020003.AM_BB_Walk_020003",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AM_BB_Walk_020010.AM_BB_Walk_020010",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AM_BB_Walk_020011.AM_BB_Walk_020011",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AM_BB_Walk_020012.AM_BB_Walk_020012",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AM_BB_Walk_020013.AM_BB_Walk_020013",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AM_BB_Walk_020020.AM_BB_Walk_020020",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AM_BB_Walk_020021.AM_BB_Walk_020021",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AM_BB_Walk_020022.AM_BB_Walk_020022",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AM_BB_Walk_020023.AM_BB_Walk_020023",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AM_BB_Walk_020030.AM_BB_Walk_020030",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AM_BB_Walk_020031.AM_BB_Walk_020031",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AM_BB_Walk_020032.AM_BB_Walk_020032",
+    "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AM_BB_Walk_020033.AM_BB_Walk_020033"
+  ],
+  "derived_locomotion": [
+    {
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AS_BB_Walk_FR_Blend_Root.AS_BB_Walk_FR_Blend_Root",
+      "sources": [
+        "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AS_BB_Walk_020000_Root.AS_BB_Walk_020000_Root",
+        "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AS_BB_Walk_020003_Root.AS_BB_Walk_020003_Root"
+      ],
+      "montage": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AM_BB_Walk_FR_Blend.AM_BB_Walk_FR_Blend"
+    },
+    {
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AS_BB_Walk_FL_Blend_Root.AS_BB_Walk_FL_Blend_Root",
+      "sources": [
+        "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AS_BB_Walk_020000_Root.AS_BB_Walk_020000_Root",
+        "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AS_BB_Walk_020002_Root.AS_BB_Walk_020002_Root"
+      ],
+      "montage": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AM_BB_Walk_FL_Blend.AM_BB_Walk_FL_Blend"
+    },
+    {
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AS_BB_Walk_BR_Blend_Root.AS_BB_Walk_BR_Blend_Root",
+      "sources": [
+        "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AS_BB_Walk_020001_Root.AS_BB_Walk_020001_Root",
+        "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AS_BB_Walk_020003_Root.AS_BB_Walk_020003_Root"
+      ],
+      "montage": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AM_BB_Walk_BR_Blend.AM_BB_Walk_BR_Blend"
+    },
+    {
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AS_BB_Walk_BL_Blend_Root.AS_BB_Walk_BL_Blend_Root",
+      "sources": [
+        "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AS_BB_Walk_020001_Root.AS_BB_Walk_020001_Root",
+        "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AS_BB_Walk_020002_Root.AS_BB_Walk_020002_Root"
+      ],
+      "montage": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AM_BB_Walk_BL_Blend.AM_BB_Walk_BL_Blend"
+    },
+    {
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AS_BB_Run_FR_Blend_Root.AS_BB_Run_FR_Blend_Root",
+      "sources": [
+        "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AS_BB_Run_020100_Root.AS_BB_Run_020100_Root",
+        "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AS_BB_Run_020103_Root.AS_BB_Run_020103_Root"
+      ],
+      "montage": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AM_BB_Run_FR_Blend.AM_BB_Run_FR_Blend"
+    },
+    {
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AS_BB_Run_FL_Blend_Root.AS_BB_Run_FL_Blend_Root",
+      "sources": [
+        "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AS_BB_Run_020100_Root.AS_BB_Run_020100_Root",
+        "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AS_BB_Run_020102_Root.AS_BB_Run_020102_Root"
+      ],
+      "montage": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AM_BB_Run_FL_Blend.AM_BB_Run_FL_Blend"
+    },
+    {
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AS_BB_Run_BR_Blend_Root.AS_BB_Run_BR_Blend_Root",
+      "sources": [
+        "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AS_BB_Run_020101_Root.AS_BB_Run_020101_Root",
+        "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AS_BB_Run_020103_Root.AS_BB_Run_020103_Root"
+      ],
+      "montage": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AM_BB_Run_BR_Blend.AM_BB_Run_BR_Blend"
+    },
+    {
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AS_BB_Run_BL_Blend_Root.AS_BB_Run_BL_Blend_Root",
+      "sources": [
+        "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AS_BB_Run_020101_Root.AS_BB_Run_020101_Root",
+        "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AS_BB_Run_020102_Root.AS_BB_Run_020102_Root"
+      ],
+      "montage": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AM_BB_Run_BL_Blend.AM_BB_Run_BL_Blend"
+    }
+  ],
+  "locomotion_connections": {
+    "idleAnimation": {
+      "refPath": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Idle/AS_BB_Idle_000000_Root.AS_BB_Idle_000000_Root"
+    },
+    "sprintCycle": {
+      "refPath": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Sprint/AS_BB_SprintAndStop_020200_Root.AS_BB_SprintAndStop_020200_Root"
+    },
+    "sprintStopAnimation": {
+      "refPath": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Sprint/AS_BB_SprintAndStop_022200_Root.AS_BB_SprintAndStop_022200_Root"
+    },
+    "fallStartAnimation": {
+      "refPath": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Fall/AS_BB_FallAndLand_004050_Root.AS_BB_FallAndLand_004050_Root"
+    },
+    "fallLoopAnimation": {
+      "refPath": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Fall/AS_BB_FallAndLand_004000_Root.AS_BB_FallAndLand_004000_Root"
+    },
+    "runCycle": {
+      "f": {
+        "refPath": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AS_BB_Run_020100_Root.AS_BB_Run_020100_Root"
+      },
+      "b": {
+        "refPath": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AS_BB_Run_020101_Root.AS_BB_Run_020101_Root"
+      },
+      "l": {
+        "refPath": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AS_BB_Run_020102_Root.AS_BB_Run_020102_Root"
+      },
+      "r": {
+        "refPath": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AS_BB_Run_020103_Root.AS_BB_Run_020103_Root"
+      },
+      "fR": {
+        "refPath": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AS_BB_Run_FR_Blend_Root.AS_BB_Run_FR_Blend_Root"
+      },
+      "fL": {
+        "refPath": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AS_BB_Run_FL_Blend_Root.AS_BB_Run_FL_Blend_Root"
+      },
+      "bR": {
+        "refPath": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AS_BB_Run_BR_Blend_Root.AS_BB_Run_BR_Blend_Root"
+      },
+      "bL": {
+        "refPath": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/AS_BB_Run_BL_Blend_Root.AS_BB_Run_BL_Blend_Root"
+      }
+    },
+    "walkCycle": {
+      "f": {
+        "refPath": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AS_BB_Walk_020000_Root.AS_BB_Walk_020000_Root"
+      },
+      "b": {
+        "refPath": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AS_BB_Walk_020001_Root.AS_BB_Walk_020001_Root"
+      },
+      "l": {
+        "refPath": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AS_BB_Walk_020002_Root.AS_BB_Walk_020002_Root"
+      },
+      "r": {
+        "refPath": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AS_BB_Walk_020003_Root.AS_BB_Walk_020003_Root"
+      },
+      "fR": {
+        "refPath": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AS_BB_Walk_FR_Blend_Root.AS_BB_Walk_FR_Blend_Root"
+      },
+      "fL": {
+        "refPath": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AS_BB_Walk_FL_Blend_Root.AS_BB_Walk_FL_Blend_Root"
+      },
+      "bR": {
+        "refPath": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AS_BB_Walk_BR_Blend_Root.AS_BB_Walk_BR_Blend_Root"
+      },
+      "bL": {
+        "refPath": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/AS_BB_Walk_BL_Blend_Root.AS_BB_Walk_BL_Blend_Root"
+      }
+    },
+    "runCycleBlendSpace": {
+      "refPath": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Run/BS_BB_Run.BS_BB_Run"
+    },
+    "walkCycleBlendSpace": {
+      "refPath": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Walk/BS_BB_Walk.BS_BB_Walk"
+    }
+  },
+  "derived_landing": {
+    "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Fall/AS_BB_Land_004200_Additive",
+    "source": "AS_BB_FallAndLand_004200_Root",
+    "base_pose": "AS_BB_Idle_000000_Root frame 0",
+    "type": "LocalSpace additive"
+  },
+  "idle_grounding": [
+    {
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Idle/AS_BB_Idle_000000_Root",
+      "frames": 121,
+      "pelvis_drop_range": [
+        -3.230318307230746,
+        -2.7530694800693
+      ]
+    },
+    {
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Idle/AS_BB_Idle_000001_Root",
+      "frames": 2,
+      "pelvis_drop_range": [
+        0,
+        0
+      ]
+    }
+  ],
+  "test_animation_blueprints": {
+    "/Game/Characters/AnimBP/ABP_Base": "/Game/Characters/AnimBP/ABP_Base_Test_BloodBorne",
+    "/Game/Characters/AnimBP/AnimLayer/ABP_PlayerAnimLayerBase": "/Game/Characters/AnimBP/AnimLayer/ABP_PlayerAnimLayerBase_Test_BloodBorne",
+    "/Game/Characters/AnimBP/AnimLayer/ABP_PlayerOneHand": "/Game/Characters/AnimBP/AnimLayer/ABP_PlayerOneHand_Test_BloodBorne",
+    "/Game/Characters/AnimBP/AnimLayer/ABP_PlayerDualWield_Test": "/Game/Characters/AnimBP/AnimLayer/ABP_PlayerDualWield_Test_BloodBorne"
+  },
+  "player_binding": {
+    "blueprint": "/Game/Characters/CharacterLogic/BP_ThirdPersonCharacter",
+    "mesh_anim_class": "/Game/Characters/AnimBP/ABP_Base_Test_BloodBorne",
+    "layer_selection_function": "ApplyWeaponAnimationLayer",
+    "original_blueprints_restored": true
+  }
+}
