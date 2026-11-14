@@ -809,6 +809,36 @@
       "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Fall/AS_BB_FallAndLand_004280_Root.AS_BB_FallAndLand_004280_Root",
       "duration": 1.3333333730697632,
       "frames": 41
+    },
+    {
+      "id": "a000_050210",
+      "category": "Heal",
+      "slot_name": "Item 28",
+      "variant": "Left",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Heal/AS_BB_Heal_Left_Root.AS_BB_Heal_Left_Root",
+      "duration": 3.0,
+      "frames": 91,
+      "edited": false
+    },
+    {
+      "id": "a000_050210",
+      "category": "Heal",
+      "slot_name": "Item 28",
+      "variant": "Heart",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Heal/AS_BB_Heal_Heart_Root.AS_BB_Heal_Heart_Root",
+      "duration": 3.0,
+      "frames": 91,
+      "edited": true
+    },
+    {
+      "id": "a000_050210",
+      "category": "Heal",
+      "slot_name": "Item 28",
+      "variant": "Skull",
+      "asset": "/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Heal/AS_BB_Heal_Skull_Root.AS_BB_Heal_Skull_Root",
+      "duration": 3.0,
+      "frames": 91,
+      "edited": true
     }
   ],
   "derived_getup": [
