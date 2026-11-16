@@ -461,7 +461,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Combat|Action")
 	bool TrySkillCombatAction(EMVSkillSlot SkillSlot, FName StartSection = NAME_None);
 
-	/** AI가 선택한 전투 행의 Ability 준비와 액션 시작 진입점; 실행 중인 액션 교체 제외 */
+	/** AI 전투 행의 Ability 준비·액션 시작 진입점; 실행 중 액션 교체 제외, 향후 무기 스킬 정의 경로로 전환 */
 	UFUNCTION(BlueprintCallable, Category = "Action")
 	bool TryStartCombatActionFromRowHandle(const FDataTableRowHandle& RowHandle, FName StartSection = NAME_None);
 

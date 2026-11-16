@@ -1,5 +1,6 @@
 #include "Combat/MVProjectileExecutionTracker.h"
 
+#include "Character/MVCharacterBase.h"
 #include "Combat/MVAbilityBase.h"
 #include "Combat/Projectile/MVProjectileBase.h"
 #include "Components/ActorComponent.h"
