@@ -134,7 +134,7 @@ void UMVAbilityBase::StartAbility_Implementation(int32 AbilityIndex)
 	}
 
 	const bool bFirstCostPayment = !bAbilityCostConsumed;
-	if (bFirstCostPayment && !TryConsumeAbilityCost())
+	if (bFirstCostPayment && !IsBossAttackTest() && !TryConsumeAbilityCost())
 	{
 		return;
 	}

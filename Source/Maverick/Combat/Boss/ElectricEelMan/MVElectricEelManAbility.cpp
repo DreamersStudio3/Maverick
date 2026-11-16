@@ -14,12 +14,15 @@ bool UMVElectricEelManAbility::BeginSkill(int32 AbilityIndex, bool bUltimate)
 	auto* Character = GetOwnerCharacter();
 	if (bAbilityActive || bAbilityCostConsumed || !IsValid(Character) || Character->IsActorBeingDestroyed()
 		|| !Character->GetWorld()->IsGameWorld() || !Character->StatComponent || Character->StatComponent->IsDead()) return false;
-	auto* State = UMVElectricEelManSkillComponent::GetOrCreate(Character);
-	if (!State || (bUltimate && !State->CanUseR())) return false;
+	auto* State = IsBossAttackTest() ? nullptr : UMVElectricEelManSkillComponent::GetOrCreate(Character);
+	if (!IsBossAttackTest() && (!State || (bUltimate && !State->CanUseR()))) return false;
 	Super::StartAbility_Implementation(AbilityIndex);
 	if (!bAbilityActive) return false;
-	if (bUltimate) State->ConsumeR();
-	else State->RecordSkillUse();
+	if (State)
+	{
+		if (bUltimate) State->ConsumeR();
+		else State->RecordSkillUse();
+	}
 	SkillWorld = Character->GetWorld();
 	StartTime = SkillWorld->GetTimeSeconds();
 	SkillWorld->GetTimerManager().SetTimer(SkillTimer, this, &ThisClass::UpdateSkill, 1.0f / 60.0f, true);

@@ -1,7 +1,7 @@
 ---
 제목: "전기뱀장어맨 W E R"
 부제목: "도약 타격·돌진 포획·누적 방출"
-최근수정일: 2026-11-11
+최근수정일: 2026-11-16
 최근수정자: "Codex"
 관련문서:
   - "[[Features/Electric-Eel-Man-Q/document|전기뱀장어맨 Q]]"
@@ -31,6 +31,7 @@
 - R은 `CanActivateAbility()`를 공용 전투 컴포넌트가 몽타주 시작 전에 확인
 - R Notify 시작에서도 재검사, 비용 지불 성공 시 횟수 0으로 초기화, 충전 취소 시 소비 유지
 - 보스 사망 시 초기화, AI 조건에서는 컴포넌트의 `CanUseR()` 조회 가능
+- 공격 시험 UI의 실행은 Q/W/E 횟수를 바꾸지 않으며, R은 횟수 확인·소비 없이 시작
 
 ## W
 
@@ -70,7 +71,24 @@
 5. 이동은 Ability에서 담당하므로 몽타주 루트 이동과의 합성은 후속 연출 검증 대상
 6. StateTree의 공격 실행이 공용 `CombatComponent`의 행 실행 경로를 사용하도록 연결
 
-현재 구현은 Ability와 런타임 기능, 새 보스 몽타주·공격 테이블·StateTree 에셋 연결은 후속 적용 대상
+## Eelman 적용 에셋
+
+루트 경로는 `/Game/Characters/NPC/Boss/Eelman`. `BP_Eelman`은 `SK_Eelman`과 `ABP_Eelman`을 사용하며, `ABP_Eelman`의 `DefaultSlot`으로 공격 몽타주를 재생
+
+| 호출 이벤트 | 공격 행 | 몽타주 | Notify 활성 구간 |
+|---|---|---|---:|
+| 시험 UI 기본 공격 | `BasicAttack1` | `AM_Eelman_BasicAttack` | 오른손 0.43초, 왼손 1.10초, 양손 1.88초부터 각각 0.15초 |
+| `UseSkillQ` | `SkillQ` | `AM_Eelman_SkillQ` | 0.70–0.92초 |
+| `UseSkillW` | `SkillW` | `AM_Eelman_SkillW` | 0.35–1.10초 |
+| `UseSkillE` | `SkillE` | `AM_Eelman_SkillE` | 0.20–2.25초 |
+| `UseSkillR` | `SkillR` | `AM_Eelman_SkillR` | 0.15–5.55초 |
+
+- 모든 공격은 `DT_EelmanCombatAttack`의 행으로 공용 전투 컴포넌트를 호출
+- 기본 공격 한 번에 2.4초 3타 실행. 각 Notify 구간은 `MVBoxDamageAbility`의 전방 박스로 대상당 한 번 피해 적용
+- 배치된 보스와 Blueprint의 메시 방향을 액터 전방에 정렬. 맨손 공격력 시험값 20 기준으로 Windows PIE에서 체력 100 → 80.5 → 61 → 41.5 확인
+- `Animations/AS_Eelman_Skill*_Temp`는 Eelman 참조 자세로 만든 임시 동작. 최종 동작 교체 시 몽타주 슬롯과 Notify 구간 유지
+- 대기 자세는 스켈레톤 기본 자세 사용. 자동 공격 선택 StateTree와 E 포획 시퀀스·VFX는 후속 연결
+- 2026-11-16 Windows PIE에서 테스트 인스턴스의 AI를 끄고 네 이벤트 직접 호출. Q/W/E 몽타주와 누적, E 포획 로그, R의 0회 거절 및 9회 재생·초기화 확인
 
 ## 검증
 

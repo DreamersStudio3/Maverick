@@ -710,6 +710,17 @@ bool UMVCombatComponent::TryStartCombatActionFromRowHandle(
 	const FDataTableRowHandle& RowHandle,
 	FName StartSection)
 {
+	return TryStartDirectCombatAction(RowHandle, StartSection, false);
+}
+
+bool UMVCombatComponent::TryStartBossAttackTest(const FDataTableRowHandle& RowHandle)
+{
+	return TryStartDirectCombatAction(RowHandle, NAME_None, true);
+}
+
+bool UMVCombatComponent::TryStartDirectCombatAction(
+	const FDataTableRowHandle& RowHandle, FName StartSection, const bool bForBossAttackTest)
+{
 	const AMVCharacterBase* Character = Cast<AMVCharacterBase>(GetOwner());
 	if (!Character || !Character->ActionComponent || Character->ActionComponent->IsActionRunning()
 		|| !IsValidSkillActionRowHandle(RowHandle, TEXT("TryStartCombatActionFromRowHandle")))
@@ -719,7 +730,7 @@ bool UMVCombatComponent::TryStartCombatActionFromRowHandle(
 
 	const FMVSkillDataTableColumn* Row = RowHandle.DataTable->FindRow<FMVSkillDataTableColumn>(
 		RowHandle.RowName, TEXT("TryStartCombatActionFromRowHandle"));
-	if (!Row || !Row->bEnabled || !CanConsumeActionCost(Row))
+	if (!Row || !Row->bEnabled || (!bForBossAttackTest && !CanConsumeActionCost(Row)))
 	{
 		return false;
 	}
@@ -730,6 +741,10 @@ bool UMVCombatComponent::TryStartCombatActionFromRowHandle(
 		return false;
 	}
 
+	if (UMVAbilityBase* Ability = Entry.GetCurrentAbility())
+	{
+		Ability->bBossAttackTest = bForBossAttackTest;
+	}
 	DirectActionEntry = MoveTemp(Entry);
 	return TryStartActionWithAbility(DirectActionEntry, RowHandle, StartSection);
 }

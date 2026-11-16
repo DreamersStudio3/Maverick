@@ -30,10 +30,12 @@ void UMVBossAttackTestWidget::NativeConstruct()
 	BaseAttackButton->OnClicked.AddUniqueDynamic(this, &ThisClass::HandleBaseAttackClicked);
 	QAttackButton->OnClicked.AddUniqueDynamic(this, &ThisClass::HandleQAttackClicked);
 	WAttackButton->OnClicked.AddUniqueDynamic(this, &ThisClass::HandleWAttackClicked);
+	if (EAttackButton) EAttackButton->OnClicked.AddUniqueDynamic(this, &ThisClass::HandleEAttackClicked);
+	if (RAttackButton) RAttackButton->OnClicked.AddUniqueDynamic(this, &ThisClass::HandleRAttackClicked);
 	PazeChangeAttackButton->OnClicked.AddUniqueDynamic(this, &ThisClass::HandlePazeChangeAttackClicked);
-	for (UButton* Button : {BaseAttackButton.Get(), QAttackButton.Get(), WAttackButton.Get(), PazeChangeAttackButton.Get()})
+	for (UButton* Button : {BaseAttackButton.Get(), QAttackButton.Get(), WAttackButton.Get(), EAttackButton.Get(), RAttackButton.Get(), PazeChangeAttackButton.Get()})
 	{
-		Button->IsFocusable = false;
+		if (Button) Button->IsFocusable = false;
 	}
 	if (APlayerController* Player = GetOwningPlayer())
 	{
@@ -49,6 +51,8 @@ void UMVBossAttackTestWidget::NativeDestruct()
 	BaseAttackButton->OnClicked.RemoveDynamic(this, &ThisClass::HandleBaseAttackClicked);
 	QAttackButton->OnClicked.RemoveDynamic(this, &ThisClass::HandleQAttackClicked);
 	WAttackButton->OnClicked.RemoveDynamic(this, &ThisClass::HandleWAttackClicked);
+	if (EAttackButton) EAttackButton->OnClicked.RemoveDynamic(this, &ThisClass::HandleEAttackClicked);
+	if (RAttackButton) RAttackButton->OnClicked.RemoveDynamic(this, &ThisClass::HandleRAttackClicked);
 	PazeChangeAttackButton->OnClicked.RemoveDynamic(this, &ThisClass::HandlePazeChangeAttackClicked);
 	ReleaseManualControl();
 	if (APlayerController* Player = GetOwningPlayer())
@@ -161,19 +165,38 @@ bool UMVBossAttackTestWidget::CanStartTest() const
 {
 	const AMVAIController* AI = IsValid(TestBoss) ? Cast<AMVAIController>(TestBoss->GetController()) : nullptr;
 	if (AI && AI->bBossIntroBlocked) return false;
-	if (!IsValid(TestBoss) || !TestBoss->StatComponent || TestBoss->StatComponent->IsDead()
-		|| TestBoss->StatComponent->IsGroggy() || !TestBoss->CombatComponent || !TestBoss->ActionComponent
-		|| TestBoss->ActionComponent->IsActionRunning()) return false;
-	const UMVDuelistResonanceComponent* Resonance = TestBoss->FindComponentByClass<UMVDuelistResonanceComponent>();
-	return !Resonance || !Resonance->IsResonanceActive();
+	return IsValid(TestBoss) && TestBoss->StatComponent && !TestBoss->StatComponent->IsDead()
+		&& TestBoss->CombatComponent && TestBoss->ActionComponent;
+}
+
+bool UMVBossAttackTestWidget::HasAttackRow(const FName RowName) const
+{
+	if (!AttackTable || !AttackTable->GetRowStruct()
+		|| !AttackTable->GetRowStruct()->IsChildOf(FMVSkillDataTableColumn::StaticStruct())) return false;
+	const auto* Row = AttackTable->FindRow<FMVSkillDataTableColumn>(RowName, TEXT("BossAttackTest"), false);
+	return Row && Row->bEnabled && !Row->Montage.IsNull();
+}
+
+void UMVBossAttackTestWidget::StopCurrentTestAction()
+{
+	if (auto* Resonance = TestBoss->FindComponentByClass<UMVDuelistResonanceComponent>())
+	{
+		if (Resonance->IsResonanceActive()) Resonance->CancelResonance();
+	}
+	if (TestBoss->ActionComponent->IsActionRunning()) TestBoss->ActionComponent->CancelActiveAction(0.0f);
 }
 
 void UMVBossAttackTestWidget::RefreshButtons()
 {
 	const bool bReady = CanStartTest();
-	for (UButton* Button : {BaseAttackButton.Get(), QAttackButton.Get(), WAttackButton.Get(), PazeChangeAttackButton.Get()})
+	if (BaseAttackButton) BaseAttackButton->SetIsEnabled(bReady && HasAttackRow(TEXT("BasicAttack1")));
+	if (QAttackButton) QAttackButton->SetIsEnabled(bReady && HasAttackRow(TEXT("SkillQ")));
+	if (WAttackButton) WAttackButton->SetIsEnabled(bReady && HasAttackRow(TEXT("SkillW")));
+	if (EAttackButton) EAttackButton->SetIsEnabled(bReady && HasAttackRow(TEXT("SkillE")));
+	if (RAttackButton) RAttackButton->SetIsEnabled(bReady && HasAttackRow(TEXT("SkillR")));
+	if (PazeChangeAttackButton)
 	{
-		if (Button) Button->SetIsEnabled(bReady);
+		PazeChangeAttackButton->SetIsEnabled(bReady && TestBoss->FindComponentByClass<UMVDuelistResonanceComponent>() != nullptr);
 	}
 }
 
@@ -235,18 +258,21 @@ void UMVBossAttackTestWidget::ReleaseManualControl(const bool bRestoreAI)
 
 void UMVBossAttackTestWidget::ExecuteAttack(FName RowName)
 {
-	if (!ResolveBoss() || !CanStartTest() || !AttackTable) return;
+	if (!ResolveBoss() || !CanStartTest() || !HasAttackRow(RowName)) return;
 	AcquireManualControl();
+	StopCurrentTestAction();
 	FDataTableRowHandle Row;
 	Row.DataTable = AttackTable;
 	Row.RowName = RowName;
-	TestBoss->CombatComponent->TryStartCombatActionFromRowHandle(Row);
+	TestBoss->CombatComponent->TryStartBossAttackTest(Row);
 	RefreshButtons();
 }
 
 void UMVBossAttackTestWidget::HandleBaseAttackClicked() { ExecuteAttack(TEXT("BasicAttack1")); }
 void UMVBossAttackTestWidget::HandleQAttackClicked() { ExecuteAttack(TEXT("SkillQ")); }
 void UMVBossAttackTestWidget::HandleWAttackClicked() { ExecuteAttack(TEXT("SkillW")); }
+void UMVBossAttackTestWidget::HandleEAttackClicked() { ExecuteAttack(TEXT("SkillE")); }
+void UMVBossAttackTestWidget::HandleRAttackClicked() { ExecuteAttack(TEXT("SkillR")); }
 
 void UMVBossAttackTestWidget::HandlePazeChangeAttackClicked()
 {
@@ -254,6 +280,7 @@ void UMVBossAttackTestWidget::HandlePazeChangeAttackClicked()
 	UMVDuelistResonanceComponent* Resonance = TestBoss->FindComponentByClass<UMVDuelistResonanceComponent>();
 	if (!Resonance) return;
 	AcquireManualControl();
+	StopCurrentTestAction();
 	Resonance->StartResonanceForTest();
 	RefreshButtons();
 }

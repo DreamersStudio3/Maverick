@@ -71,7 +71,8 @@ bool UMVDuelistResonanceComponent::StartResonanceForTest()
 
 bool UMVDuelistResonanceComponent::BeginResonance(bool bForTest)
 {
-	if ((!bForTest && !IsResonancePending()) || IsResonanceActive() || !Character || !Stat || Stat->IsDead() || Stat->IsGroggy()) return false;
+	if (IsResonanceActive() || !Character || !Stat || Stat->IsDead()
+		|| (!bForTest && (!IsResonancePending() || Stat->IsGroggy()))) return false;
 	if (!bForTest)
 	{
 		bPending = false;

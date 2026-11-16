@@ -5,7 +5,7 @@ void UMVElectricEelManQAbility::StartAbility_Implementation(int32 AbilityIndex)
 {
 	const bool bFirstActivation = !bAbilityCostConsumed;
 	Super::StartAbility_Implementation(AbilityIndex);
-	if (bFirstActivation && bAbilityCostConsumed)
+	if (bFirstActivation && bAbilityCostConsumed && !IsBossAttackTest())
 	{
 		if (auto* State = UMVElectricEelManSkillComponent::GetOrCreate(GetOwnerCharacter()))
 			State->RecordSkillUse();

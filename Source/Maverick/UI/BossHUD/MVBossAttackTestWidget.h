@@ -11,10 +11,10 @@ class UButton;
 class UStateTreeAIComponent;
 
 /**
- * 기본 공격·Q·W·공명 폭주 시험 버튼과 기존 전투 실행 경로 연결
+ * 기본 공격·Q/W/E/R·특수 기믹 시험 버튼과 기존 전투 실행 경로 연결
  * 생성 시 버튼 구독, 게임 배경 클릭으로 커서 숨김·화면 고정, J 키로 UI 조작 복귀
  * 클릭 시 StateTree 수동 제어 확보, Controller Tick 유지로 K·L 전투 복귀 허용
- * 보스 미지정 시 가장 가까운 Duelist 탐색, 공격·그로기·공명 실행 중 재입력 차단
+ * 보스 미지정 시 가장 가까운 Duelist 탐색, 버튼 클릭 시 진행 중 동작을 정리하고 새 시험 실행
  * 제거·보스 교체 시 시험 액션 정리와 기존 AI·대상·입력 복원; 공격 판정은 기존 Ability 책임
  */
 UCLASS()
@@ -54,6 +54,12 @@ protected:
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	TObjectPtr<UButton> WAttackButton;
 
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional))
+	TObjectPtr<UButton> EAttackButton;
+
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional))
+	TObjectPtr<UButton> RAttackButton;
+
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	TObjectPtr<UButton> PazeChangeAttackButton;
 
@@ -62,10 +68,14 @@ private:
 	UFUNCTION() void HandleBaseAttackClicked();
 	UFUNCTION() void HandleQAttackClicked();
 	UFUNCTION() void HandleWAttackClicked();
+	UFUNCTION() void HandleEAttackClicked();
+	UFUNCTION() void HandleRAttackClicked();
 	UFUNCTION() void HandlePazeChangeAttackClicked();
 	void ExecuteAttack(FName RowName);
 	AMVEnemy* ResolveBoss();
 	bool CanStartTest() const;
+	bool HasAttackRow(FName RowName) const;
+	void StopCurrentTestAction();
 	void AcquireManualControl();
 	void ReleaseManualControl(bool bRestoreAI = true);
 	void RefreshButtons();

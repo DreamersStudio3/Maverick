@@ -1,7 +1,7 @@
 ---
 제목: 보스 공격 시험 UI
 부제목: Duelist의 4개 수동 실행 버튼과 기존 전투 경로
-최근수정일: 2026-11-02
+최근수정일: 2026-11-16
 최근수정자: Codex
 관련문서:
   - "[[Features/UI-and-CommonUI/document|UI와 CommonUI]]"
@@ -18,17 +18,25 @@
 - 위젯: `/Game/UI/HUD/WBP_BossAttackTest`, 기존 `WBP_MainHUD`의 자식 배치 유지
 - `TestBoss`: 직접 지정 또는 `SetTestBoss`, 미지정 시 플레이어와 가장 가까운 공명 폭주 컴포넌트 보유 Duelist 탐색
 - `AttackTable`: 기본 `DT_DuelistBossCombatAttack`, 위젯 기본값에서 변경 가능
+- Eelman 시험 설정: 위젯 기본값은 `DT_EelmanCombatAttack`. `Event Construct`에서 `Get Actor of Class(BP_Eelman)` 결과를 `Set Test Boss`에 전달
+- 2026-11-16 Windows UE 5.8.4 Development Editor 빌드 성공. `BaseBossTestLevel` PIE의 실제 버튼 이벤트 방송으로 Eelman 기본 공격·Q/W/E/R 재생 및 Duelist 공명 시작 확인
+- 기본 공격·E 피해 각 19.5, R의 9회 활성화·발동 후 초기화 확인. Q/W/R 적중 피해와 물리 마우스 클릭은 미검증. 결과는 `Saved/eelman_six_verify.json`에 보관
+- 시험 제한 해제 후 Windows UE 5.8.4 Editor 빌드와 PIE에서 0회 R 시작·충전 중 R 재시작·Q 전환 확인. 같은 PIE에서 일반 R 실행은 계속 거절. 결과는 `Saved/boss_test_unrestricted_verify.json`에 보관
 
 | 사용자 제작 버튼 | 실행 대상 |
 |---|---|
-| `BaseAttackButton` | `BasicAttack1` |
+| `BaseAttackButton` | `BasicAttack1`. Eelman은 임시 몽타주와 전방 박스 판정 사용 |
 | `QAttackButton` | `SkillQ` |
 | `WAttackButton` | `SkillW`, 기존 돌진·사슬 Ability·발사 Notify |
+| `EAttackButton` | `SkillE` |
+| `RAttackButton` | `SkillR`, 시험 UI에서는 누적 없이 즉시 사용 |
 | `PazeChangeAttackButton` | `StartResonanceForTest`, 기존 공명 폭주 실행 경로 |
+
+공격 행이 없거나 비활성 상태면 해당 버튼 비활성화. 공명 폭주 버튼은 공명 컴포넌트를 가진 보스에서 활성화
 
 ```mermaid
 flowchart LR
-    Click["버튼 클릭"] --> Guard["보스 생존·그로기·진행 중 액션 검사"]
+    Click["버튼 클릭"] --> Guard["대상 생존·등장 연출·공격 설정 검사"]
     Guard --> Manual["자동 AI 정지·플레이어 대상 지정"]
     Manual --> Combat["CombatComponent · 기존 공격 행"]
     Combat --> Ability["몽타주·Notify·Ability·피해"]
@@ -37,8 +45,8 @@ flowchart LR
 
 ## 실행·수명 계약
 
-- 일반 공격: `TryStartCombatActionFromRowHandle`, DataTable의 대미지·재생 속도·자원 비용과 기존 Notify 판정 재사용
-- 사망·그로기·액션·공명 폭주 진행 중 버튼 비활성화와 요청 차단, 종료 후 재활성화
+- 시험 공격: `TryStartBossAttackTest`, DataTable의 피해·재생 속도와 기존 Notify 판정 재사용, 자원 비용 생략
+- 새 시험 클릭 시 현재 액션과 공명 폭주를 정리한 뒤 선택한 공격 실행. 대상 사망·부재·등장 연출 중에는 차단
 - 등장 블록 진입 전·자동 AI 실행 중에도 준비 상태의 시험 버튼 사용 허용, 실제 시퀀스 재생 중에만 등장 연출 차단 적용
 - 첫 클릭부터 수동 시험 제어 유지: 기존 StateTree 실행 여부·두 공격 대상 보관 후 트리 정지, 컨트롤러 Tick 유지로 `K`·`L` 입력 처리 지속
 - `OnBossCombatControlRequested`: K/L·등장 연출 등 명시적 전투 제어 요청 직전에 시험 액션·공명 정리와 수동 소유권 해제, 요청자가 이후 대상·AI 상태 적용
@@ -57,7 +65,7 @@ flowchart LR
 ## 공명 폭주 반복 시험
 
 - `StartResonanceForTest`·일반 `StartResonance`는 동일한 `BeginResonance`·도약·채널링·피해·암전 경로 사용
-- 시험 시작: HP 50% 예약·1회 사용 표식 변경 제외, 생존·그로기·이미 활성 상태 검사 유지
+- 시험 시작: HP 50% 예약·1회 사용 표식 변경 제외. 이미 실행 중이면 위젯에서 종료 후 재시작
 - 실제 전투: HP 50% 예약·1회 사용 제한·StateTree `Resonanace` 경로 보존, 시험 실행 중 일반 경로의 중복 시작 차단
 - 시험 중 발생한 정상 HP 예약은 보존; 위젯 제거 후 자동 AI에서 원래 기믹 실행 가능
 - 실패 피해와 플레이어 사망도 실제 전투와 동일, 시험 버튼의 자동 체력 회복 제외

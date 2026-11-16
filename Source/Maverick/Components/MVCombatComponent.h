@@ -462,6 +462,7 @@ public:
 	// Todo: RowHandle 기반 액션은 Deprecated. 스킬 정보는 WeaponComponent에서 가져오므로 RowHandle을 이용한 접근은 금지, 추후 관련 함수 삭제 예정
 	UFUNCTION(BlueprintCallable, Category = "Action")
 	bool TryStartCombatActionFromRowHandle(const FDataTableRowHandle& RowHandle, FName StartSection = NAME_None);
+	bool TryStartBossAttackTest(const FDataTableRowHandle& RowHandle);
 
 	UFUNCTION(BlueprintPure, Category = "Maverick|Combat|Skill UI")
 	bool GetSkillSlotRuntimeState(EMVSkillSlot SkillSlot, FMVSkillSlotRuntimeState& OutState) const;
@@ -573,6 +574,7 @@ private:
 	FMVSkillEntry DirectActionEntry;
 
 	bool BuildSkillEntryFromRowHandle(const FDataTableRowHandle& StartingRowHandle, FMVSkillEntry& OutEntry);
+	bool TryStartDirectCombatAction(const FDataTableRowHandle& RowHandle, FName StartSection, bool bForBossAttackTest);
 	bool IsValidSkillActionRowHandle(const FDataTableRowHandle& RowHandle, const TCHAR* Context) const;
 	bool IsCurrentAbilityAction(FName ActionTableName, FName ActionRowName) const;
 	bool TryStartActionWithAbility(

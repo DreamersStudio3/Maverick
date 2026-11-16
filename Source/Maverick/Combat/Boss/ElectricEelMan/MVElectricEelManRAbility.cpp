@@ -4,6 +4,7 @@
 
 bool UMVElectricEelManRAbility::CanActivateAbility()
 {
+	if (IsBossAttackTest()) return true;
 	auto* Character = GetOwnerCharacter();
 	auto* State = IsValid(Character) ? Character->FindComponentByClass<UMVElectricEelManSkillComponent>() : nullptr;
 	return State && State->CanUseR();
