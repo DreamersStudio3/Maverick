@@ -1,7 +1,7 @@
 ---
 제목: "전기뱀장어맨 W E R"
 부제목: "도약 타격·돌진 포획·누적 방출"
-최근수정일: 2026-11-16
+최근수정일: 2026-11-18
 최근수정자: "Codex"
 관련문서:
   - "[[Features/Electric-Eel-Man-Q/document|전기뱀장어맨 Q]]"
@@ -89,6 +89,13 @@
 - `Animations/AS_Eelman_Skill*_Temp`는 Eelman 참조 자세로 만든 임시 동작. 최종 동작 교체 시 몽타주 슬롯과 Notify 구간 유지
 - 대기 자세는 스켈레톤 기본 자세 사용. 자동 공격 선택 StateTree와 E 포획 시퀀스·VFX는 후속 연결
 - 2026-11-16 Windows PIE에서 테스트 인스턴스의 AI를 끄고 네 이벤트 직접 호출. Q/W/E 몽타주와 누적, E 포획 로그, R의 0회 거절 및 9회 재생·초기화 확인
+
+## Manny 대기 동작 리타겟
+
+- 리타겟 전용 에셋은 `Animations/RetargetAnimations/Normalized`. `RTG_MannyToEelman_Normalized`의 대상은 별도 Skeleton을 사용하는 `SK_Eelman_Retarget`
+- 기존 메시를 FBX로 내보낸 후 Blender에서 Armature 스케일 적용. Unreal 가져오기에서 cm 단위를 보정해 원래 크기 유지, 기준 `root` 스케일은 100에서 1로 정규화
+- 포즈 초기화와 대상 자동 정렬 후 대기 동작용 `Run IK Rig`·`Root Motion` 비활성화. 이동 동작은 발 접촉과 루트 이동을 따로 검증해야 함
+- Windows UE 5.8.4 에디터에서 `AS_Eelman_1H_Idle`의 저장 전 원시 자세 5개 검증. 머리·골반·발 높이와 루트 스케일 검사 통과, 기존 `BP_Eelman`에는 미적용
 
 ## 검증
 

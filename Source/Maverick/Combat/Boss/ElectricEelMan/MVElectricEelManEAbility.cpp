@@ -76,14 +76,29 @@ void UMVElectricEelManEAbility::TickSkill(float Elapsed)
 }
 void UMVElectricEelManEAbility::StopExecution()
 {
-	if (LockedInput.IsValid()) LockedInput->EndGameplayInputBlock();
+	if (LockedInput.IsValid())
+		LockedInput->EndGameplayInputBlock();
+
 	LockedInput.Reset();
+
 	auto* Player = Target.Get();
-	if (VictimMovement.IsValid() && IsValid(Player) && !Player->IsActorBeingDestroyed()
-		&& Player->StatComponent && !Player->StatComponent->IsDead())
+
+	if (VictimMovement.IsValid() && IsValid(Player) &&
+		!Player->IsActorBeingDestroyed() &&
+		Player->StatComponent && !Player->StatComponent->IsDead())
+	{
 		VictimMovement->SetMovementMode(VictimMode, VictimCustomMode);
+
+		// 플레이어 Z 좌표 200cm 상승
+		FVector NewLocation = Player->GetActorLocation();
+		NewLocation.Z += 200.0f;
+
+		Player->SetActorLocation(NewLocation);
+	}
+
 	VictimMovement.Reset();
 	Target.Reset();
 	GrabTime = -1.0f;
+
 	Super::StopExecution();
 }
