@@ -11,6 +11,7 @@
 #include "Components/MVInputManagerComponent.h"
 #include "Interface/MVActionInputHandlerInterface.h"
 #include "Struct/MVHitTypes.h"
+#include "Weapon/Skill/MVSkillSelectionTypes.h"
 
 #include "MVCombatComponent.generated.h"
 
@@ -58,12 +59,21 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FMVOnValidatedAttackHit, const FMVR
 DECLARE_MULTICAST_DELEGATE_TwoParams(FMVOnModifyOutgoingAttackDamage, const FMVResolvedHitData&, float&);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FMVOnModifyOutgoingCriticalChance, const FMVResolvedHitData&, float&);
 
+/**
+ * 한 슬롯의 구성과 실행 상태. Combat이 보관하며 구성 변경 성공 시에만 교체한다.
+ * Ready는 전체 연계 인스턴스를, Prototype은 표와 시작 행만 보관한다.
+ * LoadoutRevision은 이전 투사체 결과가 새 구성의 실행 상태를 바꾸지 못하게 구분한다.
+ */
 USTRUCT(BlueprintType)
 struct FMVSkillEntry
 {
 	GENERATED_BODY()
 
 public:
+	/** Prototype은 선택 행만 보존하고 실행 인스턴스를 만들지 않는다. */
+	UPROPERTY(BlueprintReadOnly, Category = "Skill")
+	EMVSkillImplementationState ImplementationState = EMVSkillImplementationState::Ready;
+
 	// Indicates if this is a chained skill
 	UPROPERTY(BlueprintReadOnly, Category = "Skill")
 	bool bIsChained = false;
@@ -435,6 +445,7 @@ struct FMVCombatHeavyChargeAttackRuntimeState
  * 스타일 변경은 전체 액션 맵을, 아이템·종류 변경은 패시브 슬롯을 갱신한다.
  * 공격 시작 때 패시브 적용 식별값을 보관해 교체 전 공격이 새 패시브를 발동하지 않게 한다.
  * 투사체의 공격 기록과 동작 종료 뒤 남은 탄 관리는 내부 추적 객체에 맡긴다.
+ * QWER 선택 교체는 진행 상태와 전체 정의 검증 뒤 확정하며 Prototype 실행과 비용 지불을 차단한다.
  */
 UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class MAVERICK_API UMVCombatComponent : public UActorComponent, public IMVActionInputHandlerInterface
@@ -535,6 +546,9 @@ public:
 	void ChangeWeapon(EMVEquippedStyle NewStyle);
 
 	void RefreshSkillSlot(EMVSkillSlot SkillSlot);
+	/** 진행 중 상태 확인과 전체 구성 성공 뒤 한 슬롯만 교체. 실패 시 기존 자료 유지. */
+	EMVSkillSelectionStatus TryReplaceSkillSlot(EMVSkillSlot Slot, const FDataTableRowHandle& Row);
+	bool IsSkillSlotExecutable(EMVSkillSlot Slot) const;
 
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|Combat|Event")
 	FMVOnCombatActionEvent OnCombatActionStarted;
@@ -579,6 +593,8 @@ private:
 	FMVSkillEntry DirectActionEntry;
 
 	bool BuildSkillEntryFromRowHandle(const FDataTableRowHandle& StartingRowHandle, FMVSkillEntry& OutEntry);
+	bool PrepareSelectedSkillEntry(const FDataTableRowHandle& Row, FMVSkillEntry& OutEntry);
+	friend class FMVSkillSafeReplacementTest;
 	bool IsValidSkillActionRowHandle(const FDataTableRowHandle& RowHandle, const TCHAR* Context) const;
 	bool IsCurrentAbilityAction(FName ActionTableName, FName ActionRowName) const;
 	bool TryStartActionWithAbility(

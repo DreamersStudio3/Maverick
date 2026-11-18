@@ -62,6 +62,8 @@ public:
 	bool Register(AMVProjectileBase* Projectile, const FMVProjectileExecutionRecord& Source);
 	const FMVProjectileExecutionRecord* Find(int32 AttackInstanceId) const;
 	bool IsEmpty() const { return Records.IsEmpty(); }
+	/** 같은 슬롯의 과거 구성까지 포함, 동작 또는 탄의 결과가 끝나지 않은 기록 조회. */
+	bool HasPendingSkillSlot(EMVSkillSlot Slot) const;
 	bool TryConsumeRefund(int32 AttackInstanceId);
 	bool QueueMiss(int32 AttackInstanceId, const UMVAbilityBase* SourceAbility);
 	void MarkHit(int32 AttackInstanceId);

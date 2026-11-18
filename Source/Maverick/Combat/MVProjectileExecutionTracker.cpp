@@ -74,6 +74,15 @@ bool UMVProjectileExecutionTracker::TryConsumeRefund(int32 AttackInstanceId)
 	return true;
 }
 
+bool UMVProjectileExecutionTracker::HasPendingSkillSlot(const EMVSkillSlot Slot) const
+{
+	for (const auto& Pair : Records)
+	{
+		if (!Pair.Value.bWasBasicAttack && Pair.Value.SourceSkillSlot == Slot) return true;
+	}
+	return false;
+}
+
 bool UMVProjectileExecutionTracker::QueueMiss(int32 AttackInstanceId, const UMVAbilityBase* SourceAbility)
 {
 	FMVProjectileExecutionRecord* Record = Records.Find(AttackInstanceId);
