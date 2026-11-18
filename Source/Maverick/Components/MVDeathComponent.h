@@ -68,7 +68,6 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnDeathPresentationEvent, AActor*
  *
  * 소유하지 않는 책임:
  *   - HP 차감, lethal 판정, dead state 확정은 UMVStatComponent가 담당한다.
- *   - non-lethal HitReaction과 lethal KD/AB의 pre-death HitReaction 선택은 UMVHitReactionComponent가 담당한다.
  *   - montage 재생 자체와 Action 이벤트 브로드캐스트는 UMVActionComponent가 담당한다.
  *   - dissolve material, Dynamic Material Instance, mesh hide/restore 같은 세부 시각 효과 구현은 UMVDeathDissolveEffect가 담당한다.
  *   - 플레이어 사망 UI gate는 UMVDeathRespawnFlow가 구독하고, 로딩/필드 리셋/체크포인트 이동은

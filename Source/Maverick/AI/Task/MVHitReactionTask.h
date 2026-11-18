@@ -7,7 +7,7 @@
 #include "MVHitReactionTask.generated.h"
 
 class UMVActionComponent;
-class UMVHitReactionComponent;
+class UMVHitReaction;
 
 USTRUCT()
 struct FMVHitReactionTaskInstanceData
@@ -42,14 +42,18 @@ struct FMVHitReactionTaskInstanceData
 	TObjectPtr<UMVActionComponent> ActionComponent = nullptr;
 
 	UPROPERTY(Transient)
-	TObjectPtr<UMVHitReactionComponent> HitReactionComponent = nullptr;
+	TObjectPtr<UMVHitReaction> HitReactionComponent = nullptr;
 
+	int32 StartedActionInstanceId = INDEX_NONE;
 	FName StartedActionTableName = NAME_None;
 	FName StartedActionRowName = NAME_None;
 };
 
 /**
- * StateTree task that starts hit reaction through UMVHitReactionComponent.
+ * StateTree task that starts hit reaction through UMVHitReaction.
+ * Tracks only the new primary action instance started by HandleHitEvent;
+ * additive reactions do not create a primary action to wait for.
+ * UMVHitReaction owns the Groggy action lifetime across StateTree exits.
  *
  * Bind `HitData` from the StateTree parameter or event data that carries
  * `FMVResolvedHitData`.

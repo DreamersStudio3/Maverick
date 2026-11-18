@@ -363,6 +363,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Poise")
 	void SetInitialPoise(float InitialPoise);
 
+	// Groggy가 발생할지 예측하는 함수: True이면 Groggy 발생, False이면 Groggy 미발생
+	bool PredictGroggyResult(float GroggyDamageAmount) const;
+
 	// 효과별 강인도 증가율을 등록하고, 제거할 때 이 효과의 고유 번호만 사용
 	FGuid AddPoiseModifier(float BonusRatio);
 	bool RemovePoiseModifier(FGuid ModifierHandle);

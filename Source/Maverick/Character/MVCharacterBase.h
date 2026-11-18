@@ -127,7 +127,7 @@ public:
 	void SetCharacterMovementRotationActive(bool bMovementActive, bool bRotationActive);
 
 	UFUNCTION(BlueprintPure, Category = "Maverick|Character|State")
-	bool IsCharacterMovementActive() const { return bIsMovementActive; }
+	bool IsCharacterMovementActive() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Character|State")
 	void SetCharacterIsLying(bool bNewIsLying);
