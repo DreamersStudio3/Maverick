@@ -1,7 +1,7 @@
 ---
 제목: "Maverick 전투 시스템"
 부제목: "현재 공격 실행 흐름과 공격·스킬 구성"
-최근수정일: 2026-10-21
+최근수정일: 2026-11-16
 최근수정자: "Kwon-Nahoo-Man"
 관련문서:
   - "[[Architecture/document|Maverick Architecture]]"
@@ -30,7 +30,7 @@ flowchart TD
     Hit --> Resolver["UMVHitResolverSubsystem<br/>피해·그로기·피격 결과 계산"]
     Resolver --> Damaged["AMVCharacterBase::OnHitResolved<br/>OnDamaged 브로드캐스트"]
     Damaged --> Stat["UMVStatComponent<br/>HP·Groggy·Death"]
-    Damaged --> Reaction["UMVHitReactionComponent<br/>피격 표현·행동 취소"]
+    Damaged --> Reaction["UMVHitReaction<br/>피격 표현·행동 취소"]
     Action --> End["Montage 종료<br/>체인·쿨다운 갱신"]
 ```
 
