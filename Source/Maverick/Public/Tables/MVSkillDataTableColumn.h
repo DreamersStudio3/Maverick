@@ -6,6 +6,7 @@
 #include "Engine/DataTable.h"
 #include "Public/Struct/MVStatusEffectTypes.h"
 #include "Public/Enum/MVChainAdvancePolicy.h"
+#include "Public/Enum/MVSkillImplementationState.h"
 #include "Public/Tables/MVActionRowTableTypes.h"
 
 #include "MVSkillDataTableColumn.generated.h"
@@ -27,6 +28,10 @@ struct FMVSkillDataTableColumn : public FMVActionRow
 	GENERATED_BODY()
 
 public:
+	/** 그림 완성 여부와 분리된 실행 준비 상태. 기존 행은 Ready 유지. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skill")
+	EMVSkillImplementationState ImplementationState = EMVSkillImplementationState::Ready;
+
 	FMVSkillDataTableColumn()
 		: DamageMultiplier(1.0f)
 		, GroggyDamageMultiplier(1.0f)
