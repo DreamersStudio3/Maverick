@@ -2,6 +2,13 @@
 
 #include "CommonInputSubsystem.h"
 #include "CommonUITypes.h"
+#include "Engine/LocalPlayer.h"
+#include "UI/System/MVCommonUIInputData.h"
+
+FDataTableRowHandle MVMenuInputHint::GetBackAction(const ULocalPlayer* LocalPlayer)
+{
+	return GetMutableDefault<UMVCommonUIInputData>()->GetBackActionForWorld(LocalPlayer ? LocalPlayer->GetWorld() : nullptr);
+}
 
 FText MVMenuInputHint::MakeActionLabel(
 	const ULocalPlayer* LocalPlayer, const FDataTableRowHandle& Action, const FText& Label)

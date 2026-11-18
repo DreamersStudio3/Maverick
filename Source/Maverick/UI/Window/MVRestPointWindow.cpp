@@ -442,7 +442,7 @@ void UMVRestPointWindow::RefreshInputHints()
 	const UCommonInputSettings& Settings = ICommonInputModule::GetSettings();
 	InputGuide->SetText(FText::Format(NSLOCTEXT("MVRestPoint", "InputGuide", "{0} · {1} · {2}"), NavigationHint,
 		MVMenuInputHint::MakeActionLabel(GetOwningLocalPlayer(), Settings.GetDefaultClickAction(), NSLOCTEXT("MVRestPoint", "ConfirmHint", "선택")),
-		MVMenuInputHint::MakeActionLabel(GetOwningLocalPlayer(), Settings.GetDefaultBackAction(), NSLOCTEXT("MVRestPoint", "BackHint", "돌아가기"))));
+		MVMenuInputHint::MakeActionLabel(GetOwningLocalPlayer(), MVMenuInputHint::GetBackAction(GetOwningLocalPlayer()), NSLOCTEXT("MVRestPoint", "BackHint", "돌아가기"))));
 }
 
 void UMVRestPointWindow::BuildNativeMenu()

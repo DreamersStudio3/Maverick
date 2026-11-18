@@ -847,7 +847,7 @@ void UMVLevelUpWindow::RegisterLevelUpInputActions()
 
 	if (CancelInputHint)
 	{
-		CancelInputHint->SetInputAction(InputSettings.GetDefaultBackAction());
+		CancelInputHint->SetInputAction(MVMenuInputHint::GetBackAction(GetOwningLocalPlayer()));
 	}
 }
 
@@ -872,7 +872,7 @@ void UMVLevelUpWindow::RefreshInputHints()
 		Text->SetText(bHasIcon ? Label : MVMenuInputHint::MakeActionLabel(GetOwningLocalPlayer(), Action, Label));
 	};
 	UpdateLabel(ConfirmInputHint, ConfirmInputLabel, Settings.GetDefaultClickAction(), NSLOCTEXT("MVLevelUp", "ConfirmHint", "확정"));
-	UpdateLabel(CancelInputHint, CancelInputLabel, Settings.GetDefaultBackAction(), NSLOCTEXT("MVLevelUp", "CancelHint", "돌아가기"));
+	UpdateLabel(CancelInputHint, CancelInputLabel, MVMenuInputHint::GetBackAction(GetOwningLocalPlayer()), NSLOCTEXT("MVLevelUp", "CancelHint", "돌아가기"));
 }
 
 void UMVLevelUpWindow::UnregisterLevelUpInputActions()
