@@ -5,10 +5,16 @@
 #include "MVUILayerBase.generated.h"
 
 class UCommonActivatableWidget;
+class UCommonActivatableWidgetContainerBase;
 class UCommonActivatableWidgetStack;
 class UMVPopupBase;
 class UOverlay;
 
+/**
+ * HUD·창 스택·알림의 표시 계층을 소유하고 창 생성 전에 필요한 문맥을 연결한다.
+ * 스택에 창이 있거나 화면 전환 중이면 기본 입력 위젯의 메뉴 차단을 유지한다.
+ * 마지막 창의 전환이 끝나면 차단을 해제하며 실제 입력 적용은 CommonUI가 담당한다.
+ */
 UCLASS(Blueprintable)
 class MAVERICK_API UMVUILayerBase : public UMVWidgetBase
 {
@@ -67,6 +73,10 @@ protected:
 private:
 	void BuildNativeLayerTree();
 	void AddFullScreenOverlayChild(UOverlay* RootOverlay, UWidget* ChildWidget) const;
+	void RefreshWindowInputBlock();
+	void HandleWindowTransitionChanged(UCommonActivatableWidgetContainerBase* Container, bool bIsTransitioning);
+	void HandleDisplayedWindowChanged(UCommonActivatableWidget* Window);
+	bool bWindowStackTransitioning = false;
 
 	UPROPERTY(Transient)
 	TObjectPtr<UCommonActivatableWidget> GameplayInputWidget;

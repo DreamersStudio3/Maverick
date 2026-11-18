@@ -16,6 +16,12 @@ void UMVUILayerBase::NativeOnInitialized()
 	{
 		BuildNativeLayerTree();
 	}
+	if (WindowStack)
+	{
+		WindowStack->OnTransitioningChanged.AddUObject(this, &ThisClass::HandleWindowTransitionChanged);
+		WindowStack->OnDisplayedWidgetChanged().AddUObject(this, &ThisClass::HandleDisplayedWindowChanged);
+		RefreshWindowInputBlock();
+	}
 }
 
 UCommonActivatableWidget* UMVUILayerBase::PushWindow(TSubclassOf<UCommonActivatableWidget> WindowClass)
@@ -32,7 +38,32 @@ UCommonActivatableWidget* UMVUILayerBase::PushWindow(
 		return nullptr;
 	}
 
-	return WindowStack->AddWidget<UCommonActivatableWidget>(WindowClass, Initialize);
+	if (UMVGameplayInputWidget* Input = Cast<UMVGameplayInputWidget>(GameplayInputWidget))
+	{
+		Input->SetMenuInputBlocked(true);
+	}
+	UCommonActivatableWidget* Window = WindowStack->AddWidget<UCommonActivatableWidget>(WindowClass, Initialize);
+	RefreshWindowInputBlock();
+	return Window;
+}
+
+void UMVUILayerBase::RefreshWindowInputBlock()
+{
+	if (UMVGameplayInputWidget* Input = Cast<UMVGameplayInputWidget>(GameplayInputWidget))
+	{
+		Input->SetMenuInputBlocked(WindowStack && (bWindowStackTransitioning || WindowStack->GetNumWidgets() > 0));
+	}
+}
+
+void UMVUILayerBase::HandleWindowTransitionChanged(UCommonActivatableWidgetContainerBase* Container, const bool bIsTransitioning)
+{
+	bWindowStackTransitioning = bIsTransitioning;
+	RefreshWindowInputBlock();
+}
+
+void UMVUILayerBase::HandleDisplayedWindowChanged(UCommonActivatableWidget* Window)
+{
+	RefreshWindowInputBlock();
 }
 
 UMVPopupBase* UMVUILayerBase::PushPopup(TSubclassOf<UMVPopupBase> PopupClass)
