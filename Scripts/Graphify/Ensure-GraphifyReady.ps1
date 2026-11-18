@@ -7,7 +7,7 @@ param(
 $ErrorActionPreference = "Stop"
 
 $projectRoot = (Resolve-Path (Join-Path $PSScriptRoot "../..")).Path
-$dependencyResult = & (Join-Path $projectRoot "Scripts/Agent/Ensure-AgentDependencies.ps1") -HostName $HostName
+$dependencyResult = & (Join-Path $projectRoot "Scripts/Agent/Ensure-AgentDependencies.ps1")
 $graphifyPython = $dependencyResult.GraphifyPython
 $graphRoot = Join-Path $projectRoot "graphify-out"
 $graphPath = Join-Path $graphRoot "graph.json"
@@ -28,10 +28,10 @@ if ($currentMode -ne $expectedMode -and (Test-Path $graphRoot)) {
 Push-Location $projectRoot
 try {
     if (Test-Path $graphPath) {
-        & $graphifyPython -m graphify update . --no-cluster
+        & $graphifyPython -m graphify update . --no-cluster | Out-Host
     }
     else {
-        & $graphifyPython -m graphify extract . --code-only --no-cluster
+        & $graphifyPython -m graphify extract . --code-only --no-cluster | Out-Host
     }
 
     if ($LASTEXITCODE -ne 0) {
