@@ -3,6 +3,7 @@
 
 #include "Components/MVHitReaction.h"
 
+
 #include "Chooser.h"
 #include "ChooserFunctionLibrary.h"
 #include "GameFramework/Character.h"
@@ -58,32 +59,26 @@ void UMVHitReaction::BeginPlay()
 		InputManagerComponent->RegisterActionInputHandler(this, MVActionInputHandlerPriorities::HitReaction);
 	}
 
+	if (StatComponent)
+	{
+		StatComponent->OnDead.AddUniqueDynamic(this, &UMVHitReaction::CancelGroggyAction);
+	}
 }
 
 void UMVHitReaction::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	Super::EndPlay(EndPlayReason);
-	if (OwnerCharacter)
+	CancelGroggyAction();
+	ClearHitSequence();
+	if (StatComponent)
 	{
-		OwnerCharacter->MovementModeChangedDelegate.RemoveDynamic(this, &UMVHitReaction::OwnerCharacterLandEvent);
+		StatComponent->OnDead.RemoveDynamic(this, &UMVHitReaction::CancelGroggyAction);
 	}
-
-	if(HitSequenceTimerHandle.IsValid())
-	{
-		GetWorld()->GetTimerManager().ClearTimer(HitSequenceTimerHandle);
-	}
-
-	if(GetUpTimerHandle.IsValid())
-	{
-		GetWorld()->GetTimerManager().ClearTimer(GetUpTimerHandle);
-	}
-	if(InputManagerComponent)
+	if (InputManagerComponent)
 	{
 		InputManagerComponent->UnregisterActionInputHandler(this);
 	}
-
+	Super::EndPlay(EndPlayReason);
 }
-
 
 // Called every frame
 void UMVHitReaction::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -95,7 +90,7 @@ void UMVHitReaction::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 
 void UMVHitReaction::HandleHitEvent(const FMVResolvedHitData& HitData)
 {
-	if (!IsValid(HitReactionChooser))
+	if (!ActionComponent || !IsValid(HitReactionChooser))
 	{
 		return;
 	}
@@ -110,9 +105,6 @@ void UMVHitReaction::HandleHitEvent(const FMVResolvedHitData& HitData)
 	{
 		return;
 	}
-	
-	
-	
 
 	// Chooser Table에 사용할 Input 생성
 	FMHitReactionChooserInput ChooserInput;
@@ -124,6 +116,12 @@ void UMVHitReaction::HandleHitEvent(const FMVResolvedHitData& HitData)
 		ChooserInput.bIsAir = OwnerCharacter->GetCharacterMovement()->IsFalling();
 	}
 	ChooserInput.bIsGroggy = StatComponent->IsGroggy();
+	const bool bStartGroggy = ChooserInput.bIsGroggy && HitData.HitReactionType == EMVActionHitReactionType::Groggy;
+	if (bStartGroggy && IsManagingGroggyAction(ActionComponent->GetActiveActionInstanceId())
+		&& StatComponent->OnGroggyEnded.IsAlreadyBound(this, &UMVHitReaction::EndGroggySequence))
+	{
+		return;
+	}
 	
 	// Chooser Table의 Context 생성 -> Chooser Table에서의 Input과 Output을 꽂아주는 것
 	FChooserEvaluationContext ChooserContext;
@@ -171,14 +169,23 @@ void UMVHitReaction::HandleHitEvent(const FMVResolvedHitData& HitData)
 
 	// HitReaction에 맞는 Getup RowHandle을 저장 -> 추후에 Getup Action을 Play할 때 사용
 	// AdditiveCondition이 true인 경우에는 Getup RowHandle을 저장하지 않음 -> 가장 최근 HitReaction의 Getup RowHandle을 저장해야함
-	if (GetupRowHandle.IsNull() == false)
+	if (bStartGroggy)
+	{
+		if (BeginGroggySequence(HitReactionRowHandle))
+		{
+			ApplyHitReactionLaunch(HitData.HitDirection, HitData.HitLaunchData);
+		}
+		return;
+	}
+
+	if (!ChooserInput.bIsGroggy && !GetupRowHandle.IsNull())
 	{
 		SelectedGetupRowHandle = GetupRowHandle;
 	}
 
 
 	// AdditiveCondition은 Additive Play를 해야하는 조건을 의미함
-	bool AdditiveCondition = ChooserInput.bIsAir || ChooserInput.bIsGroggy || !ChooserInput.bPoiseBreak;
+	const bool AdditiveCondition = ChooserInput.bIsAir || ChooserInput.bIsGroggy || !ChooserInput.bPoiseBreak;
 
 	// RowHandle이 있는 경우 -> 이 부분에서는 RowHandle에 있는 Montage를 Play해야함
 	// PoiseBreak이 true인 경우에는 후처리 추가	-> Action Rotate, Launch, HitSequence(KnockDown, Airborne)
@@ -286,7 +293,7 @@ bool UMVHitReaction::PlayHitReaction(const FDataTableRowHandle& HitReactionRowHa
 
 void UMVHitReaction::AdjustActionRotation(const FMHitReactionChooserInput& ChooserInput, const AActor* Attacker, bool AdditiveCondition)
 {
-	if (AdditiveCondition)
+	if (AdditiveCondition || !IsValid(Attacker))
 	{
 		return;
 	}
@@ -413,8 +420,67 @@ bool UMVHitReaction::BeginHitSequence(const FMVResolvedHitData& HitData)
 		false);
 
 	OwnerCharacter->SetCharacterMovementRotationActive(false, false);
+	bHitSequenceMovementRestricted = true;
 
 	return true;
+}
+
+bool UMVHitReaction::BeginGroggySequence(const FDataTableRowHandle& RowHandle)
+{
+	if (!OwnerCharacter || !StartGroggyAction(RowHandle))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Groggy reaction did not start. Owner=%s Row=%s"),
+			*GetNameSafe(GetOwner()), *RowHandle.RowName.ToString());
+		return false;
+	}
+
+	ClearHitSequence();
+	OwnerCharacter->SetCharacterIsLying(false);
+	StatComponent->OnGroggyEnded.AddUniqueDynamic(this, &UMVHitReaction::EndGroggySequence);
+	ActionComponent->OnActionEnded.AddUniqueDynamic(this, &UMVHitReaction::HandleGroggyActionEnded);
+	ActionComponent->OnActiveActionReplacementFinished.AddUObject(this, &UMVHitReaction::HandleGroggyActionReplacementFinished);
+	return true;
+}
+
+bool UMVHitReaction::StartGroggyAction(const FDataTableRowHandle& RowHandle, const FName StartSection)
+{
+	const bool bStarted = ActionComponent->TryTransitionActionFromRowHandle(
+		RowHandle, StartSection, 0.1f, EMVActionDomain::HitReaction);
+	const int32 ActiveId = ActionComponent->GetActiveActionInstanceId();
+	if (!bStarted || ActiveId == INDEX_NONE || ActionComponent->GetActiveActionRowName() != RowHandle.RowName)
+	{
+		return false;
+	}
+
+	GroggyActionInstanceId = ActiveId;
+	GroggyRowHandle = RowHandle;
+	ActionComponent->SetActiveActionLocomotionRestricted(ActiveId, true);
+	return true;
+}
+
+bool UMVHitReaction::IsManagingGroggyAction(const int32 ActionInstanceId) const
+{
+	return GroggyActionInstanceId != INDEX_NONE && GroggyActionInstanceId == ActionInstanceId;
+}
+
+void UMVHitReaction::ClearHitSequence()
+{
+	if (OwnerCharacter)
+	{
+		UnbindCharacterMovementEvent(false);
+	}
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().ClearTimer(HitSequenceTimerHandle);
+		World->GetTimerManager().ClearTimer(GetUpTimerHandle);
+	}
+	if (bHitSequenceMovementRestricted && OwnerCharacter)
+	{
+		OwnerCharacter->SetCharacterMovementRotationActive(true, true);
+	}
+	bHitSequenceMovementRestricted = false;
+	bCanGetUp = false;
+	SelectedGetupRowHandle = FDataTableRowHandle();
 }
 
 void UMVHitReaction::OwnerCharacterLandEvent(ACharacter* Character, EMovementMode PrevMovementMode, uint8 PreviousCustomMode)
@@ -476,6 +542,7 @@ void UMVHitReaction::GetUpCharacter()
 {
 	// BlockMovementInput 해제
 	OwnerCharacter->SetCharacterMovementRotationActive(true, true);
+	bHitSequenceMovementRestricted = false;
 
 	// 다른 입력 시 Getup 실행
 	ActionComponent->CancelActiveAction();
@@ -491,5 +558,89 @@ void UMVHitReaction::UnbindCharacterMovementEvent(bool bNewState)
 		OwnerCharacter->MovementModeChangedDelegate.RemoveDynamic(this, &UMVHitReaction::OwnerCharacterLandEvent);
 		OwnerCharacter->OnChangedCharacterIsLying.RemoveDynamic(this, &UMVHitReaction::UnbindCharacterMovementEvent);
 	}
+}
+
+void UMVHitReaction::EndGroggySequence()
+{
+	StatComponent->OnGroggyEnded.RemoveDynamic(this, &UMVHitReaction::EndGroggySequence);
+	const int32 ActiveId = ActionComponent->GetActiveActionInstanceId();
+	if (!IsManagingGroggyAction(ActiveId))
+	{
+		ClearGroggySequence();
+		return;
+	}
+	if (StatComponent->IsDead())
+	{
+		CancelGroggyAction();
+		return;
+	}
+
+	ActionComponent->SetActiveActionLocomotionRestricted(ActiveId, false);
+	if (!ActionComponent->TryJumpActiveActionSection(GroggySequenceEndSectionName))
+	{
+		ClearGroggySequence();
+		ActionComponent->CancelActiveAction();
+	}
+}
+
+void UMVHitReaction::HandleGroggyActionEnded(FName, FName, bool)
+{
+	const int32 ActiveId = ActionComponent->GetActiveActionInstanceId();
+	if (!ActionComponent->IsActionReplacementInProgress(GroggyActionInstanceId) && !IsManagingGroggyAction(ActiveId))
+	{
+		ClearGroggySequence();
+	}
+}
+
+void UMVHitReaction::HandleGroggyActionReplacementFinished(
+	const int32 PreviousActionId, const FName PreviousSection, const bool bStarted)
+{
+	if (!IsManagingGroggyAction(PreviousActionId))
+	{
+		return;
+	}
+
+	if (bStarted)
+	{
+		ClearGroggySequence();
+		return;
+	}
+
+	if (ActionComponent->GetActiveActionInstanceId() == PreviousActionId)
+	{
+		return;
+	}
+
+	const FDataTableRowHandle PreviousGroggyRow = GroggyRowHandle;
+	if (ActionComponent->IsActionRunning() || StatComponent->IsDead() || !StatComponent->IsGroggy()
+		|| !StartGroggyAction(PreviousGroggyRow, PreviousSection))
+	{
+		ClearGroggySequence();
+	}
+}
+
+void UMVHitReaction::CancelGroggyAction()
+{
+	const bool bGroggyActionActive = ActionComponent && IsManagingGroggyAction(ActionComponent->GetActiveActionInstanceId());
+	ClearGroggySequence();
+	if (bGroggyActionActive)
+	{
+		ActionComponent->CancelActiveAction();
+	}
+}
+
+void UMVHitReaction::ClearGroggySequence()
+{
+	if (StatComponent)
+	{
+		StatComponent->OnGroggyEnded.RemoveDynamic(this, &UMVHitReaction::EndGroggySequence);
+	}
+	if (ActionComponent)
+	{
+		ActionComponent->OnActionEnded.RemoveDynamic(this, &UMVHitReaction::HandleGroggyActionEnded);
+		ActionComponent->OnActiveActionReplacementFinished.RemoveAll(this);
+	}
+	GroggyActionInstanceId = INDEX_NONE;
+	GroggyRowHandle = FDataTableRowHandle();
 }
 

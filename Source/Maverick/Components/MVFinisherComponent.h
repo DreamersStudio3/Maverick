@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "GameplayTagContainer.h"
+#include "Public/Enum/MVEquipmentEnums.h"
 #include "Interface/MVFinisherTargetDataInterface.h"
 #include "Interface/MVActionInputHandlerInterface.h"
 
@@ -18,24 +19,20 @@ struct FMVFinisherChooserInput
 public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Character"))
-	FGameplayTagContainer AttackerTag;
+	EMVEquippedStyle WeaponType = EMVEquippedStyle::None;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Character"))
 	FGameplayTagContainer VictimTag;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Item.Weapon"))
-	FGameplayTagContainer WeaponTag;
-
 	bool IsValid() const
 	{
-		return AttackerTag.IsValid() && VictimTag.IsValid() && WeaponTag.IsValid();
+		return WeaponType != EMVEquippedStyle::None && VictimTag.IsValid();
 	}
 	
 	void Reset()
 	{
-		AttackerTag.Reset();
+		WeaponType = EMVEquippedStyle::None;
 		VictimTag.Reset();
-		WeaponTag.Reset();
 	}
 };
 
@@ -64,6 +61,11 @@ public:
 
 class UMVAbilityBase;
 
+/**
+ * 약공격 입력에서 그로기 대상을 찾고 Attacker·Victim 액션의 짝 실행을 조율한다.
+ * 두 실행을 확인한 뒤 공격 데이터와 대상 그로기를 갱신한다.
+ * Victim으로 넘긴 이동·회전 제한은 해당 액션의 수명을 따른다.
+ */
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class MAVERICK_API UMVFinisherComponent : public UActorComponent, public IMVFinisherTargetDataInterface, public IMVActionInputHandlerInterface
 {

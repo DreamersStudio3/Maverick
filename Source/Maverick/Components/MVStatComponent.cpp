@@ -7,6 +7,7 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "System/Progression/MVProgressionStatBinding.h"
+#include "MVStatComponent.h"
 
 namespace
 {
@@ -444,7 +445,6 @@ void UMVStatComponent::ResetDeathState()
 
 void UMVStatComponent::ResetGroggyState()
 {
-	bIsGroggy = false;
 	RecentDamageCooldownRemaining = 0.0f;
 	SetCurrentGroggy(0.0f);
 }
@@ -1111,14 +1111,14 @@ void UMVStatComponent::SetMaxGroggy(float InMaxGroggy)
 	const float PreviousCurrentGroggy = CurrentGroggy;
 	MaxGroggy = MVStatNonNegative(InMaxGroggy);
 	CurrentGroggy = MVStatClampCurrent(CurrentGroggy, MaxGroggy);
-	if (MaxGroggy <= 0.0f || CurrentGroggy < MaxGroggy)
-	{
-		bIsGroggy = false;
-	}
-
 	if (!FMath::IsNearlyEqual(PreviousMaxGroggy, MaxGroggy) || !FMath::IsNearlyEqual(PreviousCurrentGroggy, CurrentGroggy))
 	{
 		OnGroggyChanged.Broadcast(CurrentGroggy, MaxGroggy);
+	}
+
+	if (MaxGroggy <= 0.0f || CurrentGroggy < MaxGroggy)
+	{
+		BroadcastGroggyEnded();
 	}
 }
 
@@ -1175,6 +1175,16 @@ void UMVStatComponent::SetInitialPoise(float InitialPoise)
 		return;
 	}
 	ConstantPoise = InitialCharacterPoise;
+}
+
+bool UMVStatComponent::PredictGroggyResult(float GroggyDamageAmount) const
+{
+	const float Damage = MVStatNonNegative(GroggyDamageAmount);
+	return !bIsDead
+		&& !bIsGroggy
+		&& MaxGroggy > 0.0f
+		&& Damage > 0.0f
+		&& CurrentGroggy + Damage >= MaxGroggy;
 }
 
 FGuid UMVStatComponent::AddPoiseModifier(float BonusRatio)
@@ -1404,6 +1414,10 @@ void UMVStatComponent::BroadcastDeathStarted(const EMVDeathReason Reason)
 
 	OnDeathStarted.Broadcast(DeathContext);
 	OnDead.Broadcast();
+	if (bIsGroggy)
+	{
+		ResetGroggyState();
+	}
 }
 
 void UMVStatComponent::BroadcastGroggyEnded()

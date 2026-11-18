@@ -126,9 +126,12 @@ void AMVCharacterBase::Tick(float DeltaTime)
 	Gait = DesiredGait();
 	UpdateRecoverableStats(DeltaTime);
 
-	UpdateMovement(bIsMovementActive);
-	UpdateRotation(bIsRotationActive);
-	OnLocomotionSettingsUpdated.Broadcast(bIsMovementActive, bIsRotationActive);
+	const bool bActionRestrictsLocomotion = ActionComponent && ActionComponent->IsActiveActionLocomotionRestricted();
+	const bool bMovementActive = bIsMovementActive && !bActionRestrictsLocomotion;
+	const bool bRotationActive = bIsRotationActive && !bActionRestrictsLocomotion;
+	UpdateMovement(bMovementActive);
+	UpdateRotation(bRotationActive);
+	OnLocomotionSettingsUpdated.Broadcast(bMovementActive, bRotationActive);
 }
 
 // Called to bind functionality to input
@@ -308,6 +311,11 @@ bool AMVCharacterBase::OnHitResolved(const FMVResolvedHitData& HitData)
 
 	OnDamaged.Broadcast(HitData);
 	return true;
+}
+
+bool AMVCharacterBase::IsCharacterMovementActive() const
+{
+	return bIsMovementActive && (!ActionComponent || !ActionComponent->IsActiveActionLocomotionRestricted());
 }
 
 void AMVCharacterBase::SetCharacterMovementRotationActive(bool bMovementActive, bool bRotationActive)

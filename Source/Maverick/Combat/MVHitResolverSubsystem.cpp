@@ -2,7 +2,6 @@
 
 #include "Character/MVCharacterBase.h"
 #include "Combat/MVAbilityBase.h"
-#include "Components/MVHitReactionComponent.h"
 #include "Components/MVStatComponent.h"
 #include "Components/MVWeaponComponent.h"
 #include "Components/MVCombatComponent.h"
@@ -155,23 +154,21 @@ bool UMVHitResolverSubsystem::BuildResolvedHitData(
 	OutHitData.FinalDamage = ResolveFinalDamage(AttackerStat, VictimDefence, RawDamage, CriticalChance);
 	OutHitData.PoiseDamage = ResolveNonNegativeStat(Request.PoiseDamage);
 	OutHitData.PoiseBreak = VictimStat->PredictPoiseBreak(Request.PoiseDamage);
+
 	if (VictimStat->IsPoiseBreakGroggyWindowActive())
 	{
-		// 기존 공격의 GroggyDamage를 강인도 피해로 사용, 명시적인 PoiseDamage 우선
-		OutHitData.PoiseDamage = OutHitData.PoiseDamage > 0.0f ? OutHitData.PoiseDamage : GroggyDamage;
-		OutHitData.PoiseBreak = VictimStat->PredictPoiseBreak(OutHitData.PoiseDamage);
-		OutHitData.HitReactionType = OutHitData.PoiseBreak ? EMVActionHitReactionType::Groggy : EMVActionHitReactionType::None;
-		OutHitData.GroggyDamage = OutHitData.PoiseBreak ? FMath::Max(1.0f, VictimStat->MaxGroggy - VictimStat->CurrentGroggy) : 0.0f;
+		if (OutHitData.PoiseBreak)
+		{
+			OutHitData.HitReactionType = EMVActionHitReactionType::Groggy;
+			OutHitData.GroggyDamage = OutHitData.PoiseBreak ? FMath::Max(1.0f, VictimStat->MaxGroggy - VictimStat->CurrentGroggy) : 0.0f;
+		}
 		return true;
 	}
 
-	// Todo: Groggy 해결하면서 HitReactionComponent 부분을 삭제, 수정해야함
-	const UMVHitReactionComponent* HitReactionComponent = Victim->FindComponentByClass<UMVHitReactionComponent>();
-	const bool bCanTriggerGroggy = HitReactionComponent && HitReactionComponent->CanTriggerGroggy(OutHitData);
-	if (bCanTriggerGroggy)
-	{
-		OutHitData.HitReactionType = EMVActionHitReactionType::Groggy;
-	}
+	// Victim의 Groggy 상태를 고려하여 HitReactionType을 결정
+	OutHitData.HitReactionType = VictimStat->PredictGroggyResult(OutHitData.GroggyDamage)
+		? EMVActionHitReactionType::Groggy
+		: Request.HitReactionType;
 
 	return true;
 }
