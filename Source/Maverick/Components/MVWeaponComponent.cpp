@@ -15,6 +15,7 @@
 #include "System/MVWorldStateSubsystem.h"
 #include "Tags/MVGameplayTags.h"
 #include "Tables/MVSkillDataTableColumn.h"
+#include "Weapon/Skill/MVSkillSelectionData.h"
 
 namespace
 {
@@ -564,22 +565,8 @@ bool UMVWeaponComponent::EquipSkill(EMVEquippedStyle EquippedStyle, FDataTableRo
 			&& SelectPassive(CurrentWeaponState.WeaponTypeTag, RowHandle);
 	}
 
-	if (const FDataTableRowHandle* EquippedSkill = SkillTreeStatePtr->EquippedSkill.Find(SkillSlot);
-		EquippedSkill && *EquippedSkill == RowHandle)
-	{
-		return true;
-	}
-
-	// Equip the skill by adding it to the EquippedSkill map
-	SkillTreeStatePtr->EquippedSkill.Add(SkillSlot, RowHandle);
-	StoreWeaponProgress();
-
-	if (EquippedStyle == CurrentWeaponState.EquippedStyle)
-	{
-		RefreshOwnerCombatSkillSlot(SkillSlot);
-	}
-
-	return true;
+	const auto Result = TryEquipActiveSkill(EquippedStyle, SkillSlot, RowHandle);
+	return Result == EMVSkillSelectionStatus::Changed || Result == EMVSkillSelectionStatus::Unchanged;
 }
 
 TArray<FMVPassiveSkillCandidate> UMVWeaponComponent::GetPassiveCandidates(const FGameplayTag WeaponTypeTag) const
@@ -673,6 +660,8 @@ bool UMVWeaponComponent::SelectPassive(
 				if (bChanged)
 				{
 					StoreWeaponProgress(true);
+					EMVEquippedStyle Style;
+					if (ResolveOwnedWeaponTypeStyle(WeaponTypeTag, Style)) BroadcastSkillSelectionChanged(Style, EMVSkillSlot::PassiveSkill, WeaponTypeTag);
 				}
 				OnPassiveOptionsChanged.Broadcast();
 			};
@@ -710,6 +699,8 @@ bool UMVWeaponComponent::ClearSelectedPassive(const FGameplayTag WeaponTypeTag)
 	ON_SCOPE_EXIT
 	{
 		StoreWeaponProgress(true);
+		EMVEquippedStyle Style;
+		if (ResolveOwnedWeaponTypeStyle(WeaponTypeTag, Style)) BroadcastSkillSelectionChanged(Style, EMVSkillSlot::PassiveSkill, WeaponTypeTag);
 		OnPassiveOptionsChanged.Broadcast();
 	};
 	if (CurrentWeaponState.bValid
@@ -777,7 +768,7 @@ bool UMVWeaponComponent::IsValidPassiveCandidateRow(const FDataTableRowHandle& R
 	}
 	const FMVSkillDataTableColumn* SkillData = RowHandle.DataTable->FindRow<FMVSkillDataTableColumn>(
 		RowHandle.RowName, TEXT("UMVWeaponComponent::IsValidPassiveCandidateRow"), false);
-	return SkillData && SkillData->AbilityReference
+	return SkillData && SkillData->ImplementationState == EMVSkillImplementationState::Ready && SkillData->AbilityReference
 		&& FMath::IsNearlyZero(SkillData->HpCost)
 		&& FMath::IsNearlyZero(SkillData->StaminaCost)
 		&& FMath::IsNearlyZero(SkillData->MpCost)
@@ -1391,6 +1382,12 @@ void UMVWeaponComponent::InitSkillSlotState(
 	const EMVSkillSlot SkillSlot,
 	const TSet<FMVWeaponSkillMapData>& Skills) const
 {
+	if (MVSkillSelectionData::IsActiveSlot(SkillSlot))
+	{
+		const auto* Map = SkillBlueprint.Find(SkillTreeState.EquippedStyle);
+		if (Map && *Map) MVSkillSelectionData::InitializeActiveSlot(**Map, SkillSlot, SkillTreeState);
+		return;
+	}
 	bool bFoundAutoUnlockedSkill = false;
 
 	for (const FMVWeaponSkillMapData& Skill : Skills)

@@ -4,6 +4,9 @@
 #include "Engine/World.h"
 #include "GameFramework/PlayerController.h"
 #include "System/MVWorldStateSubsystem.h"
+#include "Weapon/Skill/MVSkillSelectionData.h"
+#include "Weapon/Skill/MVSkillExecutionData.h"
+#include "Public/Tables/MVSkillDataTableColumn.h"
 
 namespace
 {
@@ -97,7 +100,8 @@ void UMVWeaponComponent::RestoreWeaponProgress(const FMVWeaponProgressSaveData& 
 	for (const auto& Owned : Progress.OwnedWeapons)
 	{
 		const FDataTableRowHandle Handle = MVWeaponProgressResolveRow(Owned.Value);
-		const FMVWeaponTableRow* Row = Handle.DataTable
+		const FMVWeaponTableRow* Row = Handle.DataTable && Handle.DataTable->GetRowStruct()
+			&& Handle.DataTable->GetRowStruct()->IsChildOf(FMVWeaponTableRow::StaticStruct())
 			? ResolveWeaponRow(Handle, TEXT("RestoreWeaponProgress")) : nullptr;
 		if (Owned.Key.IsValid() && Row && Row->ItemTag == Owned.Key && Row->ItemTag != BareHandWeapon.ItemTag)
 		{
@@ -129,8 +133,10 @@ void UMVWeaponComponent::RestoreWeaponProgress(const FMVWeaponProgressSaveData& 
 		{
 			const FDataTableRowHandle Row = MVWeaponProgressResolveRow(Key);
 			const EMVSkillSlot Slot = Row.DataTable ? (*Map)->FindSkillSlot(Row) : EMVSkillSlot::NONE;
-			if (Slot != EMVSkillSlot::NONE
-				&& (Slot != EMVSkillSlot::PassiveSkill || IsValidPassiveCandidateRow(Row)))
+			const auto Candidates = (*Map)->GetSortedSkillCandidates(Slot);
+			TArray<FName> ChainRows;
+			if (Candidates.ContainsByPredicate([&](const auto& Candidate) { return Candidate.SkillRowHandle.RowHandle == Row; })
+				&& (Slot == EMVSkillSlot::PassiveSkill ? IsValidPassiveCandidateRow(Row) : MVSkillExecutionData::ValidateDefinition(Row, ChainRows)))
 			{
 				State->UnlockedSkills.Add(FMVHashDataTableRowHandle(Row));
 			}
@@ -138,12 +144,15 @@ void UMVWeaponComponent::RestoreWeaponProgress(const FMVWeaponProgressSaveData& 
 
 		for (const auto& Equipped : Style.Value.EquippedRows)
 		{
-			if (Equipped.Key == EMVSkillSlot::NONE || Equipped.Key == EMVSkillSlot::PassiveSkill)
+			if (!MVSkillSelectionData::IsActiveSlot(Equipped.Key))
 			{
 				continue;
 			}
 			const FDataTableRowHandle Row = MVWeaponProgressResolveRow(Equipped.Value);
-			if (Row.DataTable && (*Map)->FindSkillSlot(Row) == Equipped.Key
+			const auto Candidates = (*Map)->GetSortedSkillCandidates(Equipped.Key);
+			TArray<FName> ChainRows;
+			if (Row.DataTable && Candidates.ContainsByPredicate([&](const auto& Candidate) { return Candidate.SkillRowHandle.RowHandle == Row; })
+				&& MVSkillExecutionData::ValidateDefinition(Row, ChainRows)
 				&& State->UnlockedSkills.Contains(FMVHashDataTableRowHandle(Row)))
 			{
 				State->EquippedSkill.Add(Equipped.Key, Row);
@@ -186,13 +195,11 @@ void UMVWeaponComponent::RestoreWeaponProgress(const FMVWeaponProgressSaveData& 
 	OnPassiveOptionsChanged.Broadcast();
 }
 
-void UMVWeaponComponent::StoreWeaponProgress(const bool bSaveImmediately) const
+EMVSkillSelectionSaveStatus UMVWeaponComponent::StoreWeaponProgress(const bool bSaveImmediately) const
 {
 	UMVWorldStateSubsystem* State = WeaponSaveState.Get();
-	if (bRestoringWeaponProgress || !State)
-	{
-		return;
-	}
+	if (bRestoringWeaponProgress) return EMVSkillSelectionSaveStatus::SuppressedDuringRestore;
+	if (!State) return EMVSkillSelectionSaveStatus::Unavailable;
 
 	FMVWeaponProgressSaveData Progress;
 	Progress.bHasRecord = true;
@@ -223,8 +230,9 @@ void UMVWeaponComponent::StoreWeaponProgress(const bool bSaveImmediately) const
 	}
 
 	State->SetWeaponProgress(MoveTemp(Progress));
-	if (bSaveImmediately)
+	if (bSaveImmediately && !bDeferSkillSelectionSave)
 	{
-		State->SaveActiveSlot();
+		return State->SaveActiveSlot() ? EMVSkillSelectionSaveStatus::Saved : EMVSkillSelectionSaveStatus::Failed;
 	}
+	return EMVSkillSelectionSaveStatus::NotRequested;
 }
