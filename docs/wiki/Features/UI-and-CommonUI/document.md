@@ -1,8 +1,8 @@
 ---
 제목: UI와 CommonUI
-부제목: UI 계층·입력 복구·레벨업과 패시브 선택 창
-최근수정일: 2026-11-09
-최근수정자: "No-Jyun"
+부제목: UI 계층·입력 복구·성장과 스킬 선택·QWER 전투 표시
+최근수정일: 2026-11-17
+최근수정자: "Codex"
 관련문서:
   - "[[Architecture/document|Maverick Architecture]]"
   - "[[Features/Interaction-Flow/document|상호작용 흐름]]"
@@ -10,6 +10,7 @@
   - "[[Features/Boss-Attack-Test/document|보스 공격 시험 UI]]"
   - "[[Features/Boss-Intro/document|최초 보스 등장 연출]]"
   - "[[Features/Combat/Weapon-Passives/document|무기 패시브]]"
+  - "[[Features/Combat/Weapon-Skill-Selection/document|패시브·QWER 통합 스킬 선택]]"
 ---
 
 # UI와 CommonUI
@@ -36,6 +37,19 @@ flowchart TD
 | Window | CommonUI Activatable Stack, Modal, Back, Focus, Input 수명주기 |
 | Popup·HUD | 단일 Overlay, Stack Activation 비소유 |
 | WBP Blueprint | Widget Tree, Animation, 화면 Binding |
+
+## QWER 전투 표시
+
+- `UMVPlayerSkillHUDWidget`: 공통 슬롯 정의 순서로 Q·W·E·R 표시, 현재 전투 스타일의 선택 행을 무기 컴포넌트에서 조회
+- `MVSkillHUDPresentation`: 선택 행·연계 행을 읽어 단계별 그림과 준비 상태 구성, 그림 누락도 같은 인덱스에 대체 그림 유지
+- `UMVSkillSlotWidget`: 사각 그림·슬롯 문자·상태와 그림 아래 사용 키 표시, 미완성은 `준비 중`, 빈 선택은 `미선택`
+- 선택·무기·입력 장치·키 설정 변경 때 고정 자료 갱신, 매 프레임에는 대기시간·Q 연계 시간·R 게이지만 반영
+- `SkillInputBindings`: 슬롯과 실제 `UInputAction`·보조키 동작 연결, 적용된 Enhanced Input 키 조회로 안내 구성
+- 기본 W·E는 `IA_SkillModifier`와 약공격·강공격 동작의 조합, 문자 W·E를 사용 키로 고정하지 않음
+- 현재 장치에 키가 없거나 보조키 연결이 없으면 `미지정`, 터치 사용 키 안내는 미지원
+- Construct에서 알림 구독, Destruct·컴포넌트 교체에서 해제, 새 플레이어 소유 시 새 컴포넌트에 연결
+- `WBP_PlayerSkillHUD`·`WBP_SkillSlot`과 C++ 기본 배치 모두 지원, 전투 입력·선택·저장 규칙 변경 없음
+- 구현 결과·검증 범위: [[Features/Combat/Weapon-Skill-Selection/document|통합 스킬 선택 설계]]의 6단계 적용 결과
 
 ## 사망과 필드 전환
 

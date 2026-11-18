@@ -1,9 +1,10 @@
 ---
 제목: "휴식 거점 시스템 설계"
-부제목: "기존 레벨업 화면의 외형 수정과 패시브 화면을 유지하는 거점 연결"
-최근수정일: 2026-11-11
-최근수정자: "No-Jyun"
+부제목: "휴식·레벨업·통합 스킬 선택과 저장·부활 연결"
+최근수정일: 2026-11-18
+최근수정자: "Codex"
 관련문서:
+  - "[[Features/Combat/Weapon-Skill-Selection/document|패시브·QWER 통합 스킬 선택 설계]]"
   - "[[Architecture/document|Maverick 아키텍처]]"
   - "[[Features/Interaction-Flow/document|상호작용 흐름]]"
   - "[[Features/UI-and-CommonUI/document|UI와 CommonUI]]"
@@ -22,9 +23,18 @@
 - 기능 이름은 `휴식 거점`, 시안의 장소 이름 `잿빛 성소`는 임시 표시 이름
 - 1인 플레이 기준, 여러 사람이 함께 접속하는 기능과 다른 맵으로의 이동은 후속 범위
 - 기존 레벨업 UI는 기능을 유지하고 [레벨업 시안](attachments/level-up.png)에 맞춰 배치·색·글자·강조 표시 수정
-- 기존 패시브 선택 UI는 화면·입력·선택 동작을 그대로 유지, 거점 메뉴에서 기존 열기 API 호출만 연결
-- 신규 사용 스킬 선택 화면과 사용 스킬·패시브 통합 탭은 이번 구현 범위에서 제외
+- 최초 거점 구현에서는 기존 패시브 선택 UI를 유지하고 열기 API만 연결했으며, 통합 탭은 제외했음
+- 이후 별도 [통합 스킬 선택 작업](../Combat/Weapon-Skill-Selection/document.md)에서 패시브·Q·W·E·R 선택과 HUD 표시를 확장함. 현재 연결은 아래 참고
 - 거점 목록은 새로 제작하고, 기존 상세 화면 중 외형 변경 대상은 레벨업 UI로 한정
+
+## 현재 스킬 선택 연결 — 2026-11-18
+
+- 메뉴는 `휴식하기`·`레벨업`·`스킬 선택`·`떠나기`. `ShowWeaponSkillSelectionWindow`가 기존 자산 경로를 유지하며 패시브·QWER 다섯 탭을 엶
+- 닫기 버튼 없이 일반 실행은 Esc, 에디터 PIE는 Backspace로 상세 화면에서 거점으로 돌아옴. 게임패드 뒤로 가기도 공통 UI 입력 경로 사용
+- 거점·레벨업·스킬 선택 사이에서는 거점 세션이 게임 입력 차단과 커서 표시를 유지함. 창이 바뀌는 순간 이동·공격이 다시 들어오지 않도록 같은 차단 수명을 공유
+- 거리 이탈·피해·체크포인트 이동·사망 시 상세 창과 거점 세션을 정리함. 사망·이동 처리 자체가 가진 입력 차단은 해당 처리 완료까지 유지
+- 선택 저장은 기존 버전 4 형식 유지. 저장 실패는 화면에서 알리고 저장만 다시 시도할 수 있음
+- Windows 11 / UE 5.8.1의 최종 실행 결과·시험 자료·미검증 범위는 [스킬 선택 문서의 7단계 결과](../Combat/Weapon-Skill-Selection/document.md#7단계-적용-결과--2026-11-18)에서 함께 관리. 아래 최초 조사와 단계별 결과는 당시 상태의 기록
 
 ## 최초 조사 판정 (2026-11-09)
 
@@ -581,6 +591,55 @@ Windows / Unreal Engine 5.8.1 / `TestMap`, 분리된 `UserDir`와 `Saved_RestPoi
 
 - 실행 근거: 로컬 `Saved/Logs/RestPointCursor-Trace2.log`, `RestPointCursor-Final.log`, `RestPointCursor-Verified-Build.log`, `RestPointCursor-Verified.log`
 - 핵심 결과: `CURSOR_MOVING_AND_LATE_CLEANUP_PASS`, `CURSOR_LEVELUP_RETURN_PASS`, `CURSOR_PASSIVE_MOUSE_ROUNDTRIP_PASS`, `CURSOR_LEAVE_GAME_INPUT_PASS`, `CURSOR_REAL_DEBUG_PANEL_PASS`
+
+## 화면 전환 중 게임 입력 차단 (2026-11-16)
+
+- 원인: CommonUI가 이전 창을 끈 뒤 다음 창을 켜는 사이 기본 `MVGameplayInputWidget`의 게임용 설정 적용, 약 0.2초간 이동·시점 차단 해제
+- 거점 세션의 액션 차단은 유지됐지만 컨트롤러의 이동·시점과 창 전환용 입력 설정까지 보호하지 못함
+- `MVUILayerBase`가 창 추가 전에 기본 입력을 메뉴용으로 바꾸고, 창이 있거나 전환 중이면 차단 유지
+- `MVGameplayInputWidget`의 메뉴용 대체 설정은 이동·시점 차단, 마우스 캡처 해제와 커서 표시 유지
+- 마지막 창의 전환이 끝나면 게임용 설정 복원, 다른 메뉴가 입력을 맡고 있으면 해당 메뉴의 설정 유지
+- 기존 패시브 선택 화면·선택 로직·Blueprint 수정 없음, 임시 추적 코드 제거
+
+Windows / Unreal Engine 5.8.1 / `TestMap`, 별도 `UserDir`와 `Saved_RestInputTransition` 저장 경로에서 실행
+연속 이동·시점 값은 Enhanced Input에 주입, 메뉴 선택·복귀 일부는 함수 호출, Windows 키·마우스는 `computer-use`로 전달
+
+| 결과 | 실제 실행·증명 범위 | 미증명 범위·제약 |
+|---|---|---|
+| 재현 | 추적 빌드의 거점 첫 진입·레벨업 복귀·패시브 진입에서 게임용 설정과 이동·시점 차단 해제 확인, 연속 주입 중 위치·시점 변화 발생 | 실제 키를 계속 누르는 원래 입력 순서와 모든 전환 조합의 반복 재현은 미실행 |
+| 통과 | 최종 빌드 PIE에서 첫 진입·레벨업 왕복·패시브 왕복·휴식 복귀 720프레임, 이동·시점 연속 주입에도 위치·시점 불변과 커서 표시·입력 차단 유지 | 실제 키 누름 유지·모든 전투 입력·패키지·다른 운영체제·실물 게임패드는 미실행 |
+| 통과 | 같은 PIE에서 떠나기 뒤 이동·시점 차단 해제, 위치·시점 변화와 거점 세션 입력 차단 해제 확인 | 외부 메뉴가 동시에 열린 조합·플레이어 교체·월드 종료는 이번 검사에서 미실행 |
+| 통과·제한 있음 | 중간 수정 빌드에서 Windows 마우스로 기존 패시브 왕복·떠나기, 메뉴 중 `1` 입력 뒤 장착 칸·무기 식별자 불변, 입력 추적의 메뉴 모드·게임 입력 거부 확인 | 최종 빌드는 임시 로그 제거만 반영, 무기 객체 자체의 비교로 실패한 시험은 식별자 비교로 정정, 모든 액션 키 조합은 미증명 |
+| 통과 | 최종 `MaverickEditor Win64 Development` 빌드, `Maverick.UI.MenuInputGuard`와 `Maverick.Cinematics.BossIntro` 자동 검사 실행 | 전체 검사 묶음·패키지 빌드 미실행, 기존 `PropertyBindingUtils` 의존성·버튼 사용 중단 예정 경고 유지 |
+| 통과·제한 있음 | Graphify 0.9.38 직접 CLI 증분 갱신·조회, 7,530 노드·14,489 연결과 관련 원본 대조 | 구문 분석 경고 248개·무노드 파일 39개·스킬 버전 경고, 프로젝트 조회 스크립트의 기존 오류 유지, 그래프 전체 완전성 미증명 |
+| 통과 | 작업 전후 SHA-256 비교로 실제 저장 두 파일·`TestMap`·플레이어 Blueprint 동일 확인 | 이번 작업 전부터 있던 다른 변경의 내용·정상 동작은 검사 범위 밖 |
+
+- 실행 근거: 로컬 `Saved/Logs/RestPointInputTransition/Trace.log`, `Fixed.log`, `CaptureTrace.log`, `Final-Build.log`, `Final.log`, `baseline.json`
+- 핵심 결과: `REST_INPUT_ALL_TRANSITION_FRAMES_PASS 720`, `REST_INPUT_GAMEPLAY_RESTORED_PASS`, `REST_INPUT_OS_WEAPON_BLOCK_PASS`
+- 반복 검사 도구: 로컬 `Saved/Logs/RestPointInputTransition/verify.py`, 실제 저장 경로 사용을 거부하는 검사 포함
+
+## 상세 화면 닫기 키 통일 (2026-11-16)
+
+- 패시브 선택의 `CloseButton`·버튼 전용 장식 제거, 본문과 선택·적용·해제 규칙 유지
+- 버튼 안의 문구를 독립된 `CancelInputLabel`로 옮겨 현재 장치·실행 환경의 닫기 키 표시
+- `UMVCommonUIInputData`가 PIE에만 `Backspace` 행을 제공, 기본 행을 복사해 키보드 키만 교체하고 게임패드 정보 유지
+- `MVActivatableWidgetBase`가 PIE 창 구성 때 대체 닫기 입력을 등록하고 해체 때 해제, 기존 창별 뒤로 가기 처리로 연결
+- 패시브·레벨업·거점 안내에 같은 입력 행 사용, 일반 실행은 기존 `Esc` 유지, 에디터 전역 PIE 종료 키 변경 없음
+
+Windows / Unreal Engine 5.8.1 / `TestMap`, 별도 `UserDir`와 `Saved_PassiveWindowBackInput` 저장 경로에서 실행
+키·마우스는 `computer-use`의 Windows 입력으로 전달, 시험용 명령창에서 창을 여는 호출과 실제 닫기 키 입력을 구분
+
+| 결과 | 실제 실행·증명 범위 | 미증명 범위·제약 |
+|---|---|---|
+| 통과 | 수정한 패시브 UI 자산 컴파일·저장, 1280×720에서 버튼 제거와 PIE `[Backspace]`·일반 실행 `[Esc]` 안내 시각 확인 | 다른 해상도·실물 게임패드·모든 장치 그림의 표시 검사는 미실행 |
+| 통과 | PIE의 Windows `Backspace`로 패시브·레벨업 → 거점 복귀, 이동·시점 차단 유지, 거점 닫기 뒤 PIE 유지와 게임 입력 복원 | 명령창으로 초점이 옮겨진 상태의 초기 키 검사는 통과로 계산하지 않음 |
+| 통과 | 별도 `-game`에서 Windows `Esc`로 패시브·레벨업 → 거점 복귀, 복귀 시 이동·시점 차단 유지 | 패키지 실행·다른 운영체제 미실행, 엔진 시험 도구 초기화 오류는 범위 밖 |
+| 미검증 | 일반 실행의 마지막 거점 닫기 뒤 입력 복원은 게임 창 종료와 겹쳐 판정 제외, 해당 복원은 PIE에서 확인 | 종료 중 생긴 시험 완료 표식을 정상 게임 상태의 통과 근거로 사용하지 않음 |
+| 통과·제한 있음 | `MaverickEditor Win64 Development` 빌드, `Maverick.UI.MenuInputGuard` 자동 검사, 적용·후보 생성 함수의 작업 전후 원문 비교 | 현재 시험 무기에 패시브 후보가 없어 선택·적용·해제 전체 실행 회귀는 미실행, 기존 의존성·버튼 경고 유지 |
+| 통과·제한 있음 | Graphify 0.9.38 증분 갱신·관련 조회, 7,540 노드·14,510 연결과 원본 대조 | 구문 분석 경고 248개·무노드 39개·스킬 버전 경고 유지, 그래프 전체 완전성 미증명 |
+
+- 실행 근거: 로컬 `Saved/Logs/PassiveWindowBackInput/Build.log`, `Final-Build.log`, `Editor.log`, `Game-Verified.log`, `final-result.json`
+- 실제 저장·지도·플레이어 Blueprint는 작업 전후 SHA-256 비교, 시험 완료 후 화면 캡처 세션 정리
 
 ## 구현 시 인수 검사
 

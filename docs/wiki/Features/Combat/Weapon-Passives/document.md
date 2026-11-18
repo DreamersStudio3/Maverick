@@ -4,6 +4,7 @@
 최근수정일: 2026-11-09
 최근수정자: "No-Jyun"
 관련문서:
+  - "[[Features/Combat/Weapon-Skill-Selection/document|패시브·QWER 통합 스킬 선택 설계]]"
   - "[[Features/Combat/Combat-System/document|Maverick 전투 시스템]]"
   - "[[Features/Combat/Status-Effect-System/document|상태 효과 시스템]]"
   - "[[Features/Combat/Weapon-Swap/document|플레이어 무기 교체]]"
@@ -51,6 +52,12 @@ flowchart LR
 - 창은 `UMVWeaponComponent`에 선택·해제를 요청한 뒤 저장된 선택과 `UMVCombatComponent`의 활성 패시브를 다시 조회
 - 선택만 반영되고 효과 적용에 실패하면 `선택됨 · 미적용`으로 표시하며 같은 후보 재시도 가능
 - 후보의 이름·설명·아이콘·상세 그림은 스킬 행의 UI 필드 사용. 상세 그림이 비어 있으면 아이콘 표시
+- 별도 닫기 버튼 없이 일반 실행은 `Esc`, PIE는 `Backspace`로 닫기. 오른쪽 아래에 현재 닫기 키 표시
+- 닫기 버튼으로 향하던 초점 이동 제거. 적용 불가 상태는 목록 안에서 이동하고, 무기·후보가 모두 없으면 창 자체를 초점 대상으로 사용
+- 닫기 키는 레벨업·거점과 같은 공통 입력 사용. 거점에서 연 경우에는 닫은 뒤 거점으로 복귀하며 선택·적용·해제 규칙 유지
+
+2026-11-16 Windows / UE 5.8.1에서 UI 자산 컴파일·빌드, PIE `Backspace`와 별도 게임 실행 `Esc`의 패시브·레벨업 복귀 확인
+시험 무기에 후보가 없어 빈 목록의 표시·닫기·무기 행 초점을 확인한 범위. 후보 선택·적용·해제 전체 회귀와 실물 게임패드·패키지 빌드는 미실행
 
 ## 월광의 응집
 
