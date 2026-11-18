@@ -1,11 +1,12 @@
 ---
 제목: Hit, Stat, HitReaction
 부제목: 적중 계산·수치 피해·피격 표현의 책임 분리
-최근수정일: 2026-10-12
-최근수정자: Codex
+최근수정일: 2026-11-18
+최근수정자: "Kwon-Nahoo-Man"
 관련문서:
   - "[[Architecture/document|Maverick Architecture]]"
   - "[[Features/Combat/Combat-System/document|Maverick 전투 시스템]]"
+  - "[[Features/Combat/Finisher/document|그로기 Finisher]]"
   - "[[Features/Duelist-Resonance/document|Duelist 공명 폭주]]"
 ---
 
@@ -22,7 +23,10 @@ flowchart TD
     Resolved --> Character["AMVCharacterBase::OnHitResolved"]
     Character --> Damaged["OnDamaged"]
     Damaged --> Stat["StatComponent"]
-    Damaged --> Reaction["HitReactionComponent"]
+    Damaged -->|Player| Reaction["UMVHitReaction::HandleHitEvent"]
+    Damaged -->|Enemy| EnemyEvent["OnEnemyDamaged"]
+    EnemyEvent -. "StateTree 이벤트 연결" .-> Task["MVHitReactionTask"]
+    Task --> Reaction
     Stat --> Death["OnDeathStarted"]
 ```
 
@@ -35,14 +39,105 @@ flowchart TD
 | `UMVCombatComponent` | 현재 공격의 `OnHitConfirmed` 체인 단계 전진; 발사체별 원래 공격 기록과 지연 적중·빗나감 결과 관리 |
 | `AMVCharacterBase::OnHitResolved` | CharacterIndex 확인과 `OnDamaged` 방송 |
 | StatComponent | 수치 피해, Groggy, Lethal Latch, `OnDeathStarted` 소유 |
-| HitReactionComponent | Row·Section, Interrupt, 무적, KD·AB Recovery 표현 |
+| `UMVHitReaction` | Chooser Row 선택, 일반·Additive 피격, Groggy와 착지·기상 시퀀스 |
+
+## UMVHitReaction
+
+### 진입과 소유권
+
+- 캐릭터 기본 구성 요소, 플레이어는 `OnDamaged`에서 직접 호출하고 적은 `OnEnemyDamaged`를 받은 StateTree Task에서 호출
+- `BeginPlay`에서 Character·Stat·Action·InputManager 캐시와 입력·사망 구독 등록
+- `EndPlay`에서 소유한 Groggy 액션과 구독·타이머·입력 등록 정리
+- `HandleHitEvent`는 Action·Chooser·Stat 누락, 반응 타입 `None`, 사망 상태에서 종료
+
+### Chooser 계약
+
+| 입력·출력 | 현재 구현 |
+|---|---|
+| `FMHitReactionChooserInput.HitReactionType` | 전달된 피해 데이터의 반응 타입 |
+| `HitReactionDir` | 수평 `-ImpactNormal`과 캐릭터 전방·우측 내적으로 F/B/R/L 분류 |
+| `bPoiseBreak` | HitResolver가 계산한 강인도 파괴 예측값 |
+| `bIsAir` / `bIsGroggy` | 이동 컴포넌트의 `IsFalling()` / Stat의 `IsGroggy()` |
+| Struct 출력 | 피격 Row와 기상 Row의 `FDataTableRowHandle` |
+| Object 출력 | 피격 Row가 없을 때 사용할 fallback DataTable |
+
+피격 Row가 없으면 Object 출력을 동기 로드하고 `Fallback` Row를 Additive 재생한 뒤 종료
+Stat이 Groggy인 동안 추가 피격은 기존 기상 Row를 보존
+
+### 피격 실행
+
+```mermaid
+flowchart TD
+    Chooser["Chooser 평가"] --> Row{"피격 Row 존재?"}
+    Row -->|아니오| Fallback["출력 DataTable의 Fallback Row<br/>Additive 재생"]
+    Row -->|예| Groggy{"Stat Groggy 활성<br/>결과 타입 Groggy?"}
+    Groggy -->|예| GroggyStart["Groggy 주 액션 진입<br/>진행 중인 시퀀스는 유지"]
+    Groggy -->|아니오| Branch{"공중 또는 그로기<br/>또는 강인도 미파괴?"}
+    Branch -->|예| Additive["Additive 재생"]
+    Branch -->|아니오| Prepare["누움 상태 해제 · 방향 회전 · Launch"]
+    Prepare --> Sequence{"KnockDown / Airborne?"}
+    Sequence -->|예| Begin["착지 시퀀스 시작<br/>이동·회전 비활성"]
+    Sequence -->|아니오| Play["기존 액션 취소 → 일반 피격 액션 시작"]
+    Begin --> Play
+```
+
+| 처리 | 현재 계약 |
+|---|---|
+| 방향 회전 | 공격자 방향 기준, Back 0°·Right 90°·Front 180°·Left 270° 보정 |
+| Launch | `HitDirection` 수평 정규화, 수평 속도 `LaunchDistance / LaunchDuration`, 수직 속도 음수 제한 |
+| KnockDown·Airborne 시작 | 기존 시퀀스 타이머·구독 정리, 기상 차단, 0.5초 뒤 낙하 상태 검사 |
+| 0.5초 후 공중 | 이동 모드·누움 상태 변경 이벤트 구독, 착지 대기 |
+| 0.5초 후 지상 또는 착지 | `Land` 섹션 전환, 실패 시 액션 취소; 누움 상태 설정과 기상 지연 시작 |
+| 구독 중 다시 낙하 | `Fall` 섹션 전환, 실패 시 액션 취소; 기상 타이머 제거·기상 차단 |
+| 기상 입력 | 누워 있고 `bIsFalling == false`, 지연 종료 후 유효한 Dodge 이외 입력 태그로 기상 |
+| 기상 실행 | 이동·회전 활성화, 현재 액션 취소 후 저장한 기상 Row 시작, 누움 상태 해제 |
+
+`CanGetupDelay`는 현재 `int32`, 기본값 1초이며 타이머 종료는 기상 허용만 설정
+구형 착지 감지·기상 요청 Notify 없이 컴포넌트의 타이머와 이동 모드 이벤트로 진행
+
+### StateTree 연결
+
+- `MVHitReactionEnterCondition`: 현재 `UMVHitReaction` 존재 여부 검사
+- `MVHitReactionTask`는 `HandleHitEvent` 호출 전후 실행 ID를 비교해 새 주 액션을 추적
+- StateTree 이탈 시 일반 피격 액션은 설정에 따라 취소 가능하며, Groggy 액션의 수명은 HitReaction이 계속 관리
+- Additive·fallback에서 Task 결과는 `bFailWhenReactionNotStarted` 설정에 따름
+
+### 검증 경계
+
+현재 C++와 이벤트 바인딩 기준 계약이며, Blueprint의 Chooser Row·Montage Section·StateTree 이벤트 배선은 에디터 검증 대상
+
+## 그로기 상태 계약
+
+- 공격 요청의 `HitReactionType`에는 `Groggy`를 지정하지 않음 — 공격 데이터·호출자가 지키는 입력 계약
+- `Groggy`는 HitResolver가 그로기 조건 충족 시 확정하는 결과 타입이며, 요청 시 선택하는 공격 반응 타입이 아님
+- 일반 공격의 `BuildResolvedHitData`: `PredictGroggyResult`로 양수 피해 누적 후 최대치 도달을 예측하면 결과 타입을 `Groggy`로 변경
+- `StatComponent`: 양수 그로기 피해 누적 후 결과 타입이 `Groggy`이고 게이지가 최대일 때 실제 상태 진입, 사망·기존 그로기 상태는 제외
+- `ResolveDirectDamage`는 일반 공격의 예측·타입 변환 경로를 거치지 않음
+
+### Groggy 표현 수명
+
+```mermaid
+flowchart TD
+    Stat["Stat이 Groggy 진입"] --> Start["Groggy 피격 Row의 주 액션 시작"]
+    Start --> Loop["실행 ID 저장 · OnGroggyEnded 구독<br/>이전 착지·기상 시퀀스 정리 · 이동·회전 제한"]
+    Loop -->|게이지 0 또는 Stat 리셋| End["Stat 해제 · 구독 해제<br/>소유한 실행의 End 전환"]
+    Loop -->|Action 교체 성공| Replaced["Groggy 구독·실행 기록 정리"]
+    Loop -->|Action 교체 실패로 기존 실행 종료| Restore["이전 Groggy Row·섹션 복구 시도"]
+    Loop -->|사망·외부 중단| Cleanup["Groggy 소유 기록과 구독 정리"]
+    End -->|사망·몽타주 종료| Cleanup
+```
+
+- 그로기 중 추가 피격의 Groggy 피해는 누적하지 않으며, 남은 지속 시간은 Stat 게이지 감소율로 결정
+- 자연 회복 직후 `IsGroggy=false`이며 소유한 액션의 이동·회전 제한은 `End` 전환 시 해제
+- 명시적 액션 교체 중에는 종료 기록을 보존하고, ActionComponent가 알린 이전 실행 ID가 일치할 때 교체 결과를 처리
+- 사망 시 HitReaction은 기록과 현재 ID가 일치하는 Groggy 액션만 중단하고, Stat은 남은 그로기를 해제
+- 이동·회전 제한은 활성 실행에 귀속되며, `ActionComponent`가 해당 실행을 종료할 때 해제
 
 ### 한정된 강인도 소진 구간
 
-- `BeginPoiseBreakGroggyWindow`·`EndPoiseBreakGroggyWindow`: 기존 강인도·추가 강인도·회복 타이머 보관·복원, 구간 중 자동 회복·Notify 보정 차단
-- `HitResolver`: 명시적인 `PoiseDamage` 우선, 미지정 시 계산된 `GroggyDamage`를 강인도 감소에 사용
-- 소진 전 그로기 게이지 누적·일반 피격 반응 제외, 소진 타격을 실제 `Groggy`로 변환
-- 현재 사용처: Duelist 공명 폭주 채널링의 강인도 40, 구간 정리 책임은 실행 컴포넌트
+- `BeginPoiseBreakGroggyWindow`·`EndPoiseBreakGroggyWindow`: 기존 수치·회복 타이머 보관·복원, 구간 중 강인도 자동 회복·액션 보정 차단
+- 구간 중 일반 그로기 최대치 예측은 생략하고, 요청의 `PoiseDamage`로 예측한 `PoiseBreak` 발생 시에만 `Groggy` 타입과 최대치 충족 피해량 설정
+- 강인도 미파괴 시 요청 반응 타입과 계산된 그로기 피해 유지; 게이지 누적만으로 진입하지 않으며 구간 정리는 호출자 책임
 
 ## 피해·방향 계산 계약
 
@@ -56,7 +151,7 @@ flowchart TD
 
 ## 무적 적용 범위
 
-- 무적 검사: HitReaction 경로
+- 현재 `UMVHitReaction::HandleHitEvent`의 무적 거절 분기는 주석 처리 상태
 - Resolver·Stat 피해 적용: 무적 검사와 분리
 
 ## 플레이어 피해 로그
