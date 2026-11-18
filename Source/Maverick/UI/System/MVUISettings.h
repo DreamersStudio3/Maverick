@@ -51,7 +51,8 @@ public:
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Window")
 	TSubclassOf<UMVLevelUpWindow> LevelUpWindowClass;
 
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Window")
+	/** 공통 스킬 창의 자산 연결. 기존 설정 키와 호환 자식 타입을 유지한다. */
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Window", meta = (DisplayName = "Weapon Skill Selection Window Class"))
 	TSubclassOf<UMVWeaponPassiveSelectionWindow> WeaponPassiveSelectionWindowClass;
 	
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Window", meta = (ClampMin = "0.0", DisplayName = "Death Overlay Hold Seconds"))

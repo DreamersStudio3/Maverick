@@ -23,6 +23,7 @@ class UMVWindowBase;
 class USpringArmComponent;
 class UMVLevelUpWindow;
 class UMVWeaponPassiveSelectionWindow;
+class UMVWeaponSkillSelectionWindow;
 
 UCLASS()
 class MAVERICK_API UMVUISubsystem : public UGameInstanceSubsystem
@@ -67,6 +68,12 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Weapon Passive")
 	UMVWeaponPassiveSelectionWindow* ShowWeaponPassiveSelectionWindow();
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Skill Selection")
+	UMVWeaponSkillSelectionWindow* ShowWeaponSkillSelectionWindow();
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Skill Selection")
+	bool HideWeaponSkillSelectionWindow();
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Weapon Passive")
 	bool HideWeaponPassiveSelectionWindow();
@@ -187,6 +194,7 @@ private:
 	APlayerController* ResolvePIEActionTestPlayerController(const AMVCharacterBase* TargetCharacter) const;
 
 	UMVWeaponPassiveSelectionWindow* FindWeaponPassiveSelectionWindow(UMVUILayerBase*& OutLayer) const;
+	UMVWeaponSkillSelectionWindow* FindWeaponSkillSelectionWindow(UMVUILayerBase*& OutLayer) const;
 	UMVLevelUpWindow* ShowLevelUpWindowInternal(UMVRestPointSubsystem* RestPointSession);
 
 	UPROPERTY(Transient)

@@ -17,7 +17,7 @@
 #include "UI/System/MVUISubsystem.h"
 #include "UI/Window/MVRestPointWindow.h"
 #include "UI/Window/MVLevelUpWindow.h"
-#include "UI/Window/MVWeaponPassiveSelectionWindow.h"
+#include "UI/Window/MVWeaponSkillSelectionWindow.h"
 
 bool UMVRestPointSubsystem::DoesSupportWorldType(EWorldType::Type WorldType) const
 {
@@ -213,8 +213,8 @@ bool UMVRestPointSubsystem::OpenDetail(const UMVRestPointWindow& Window, EMVRest
 	}
 	else
 	{
-		UMVWeaponPassiveSelectionWindow* Passive = UI->ShowWeaponPassiveSelectionWindow();
-		if (Passive && Layer->FindWindowByClass(UMVWeaponPassiveSelectionWindow::StaticClass()) == Passive)
+		UMVWeaponSkillSelectionWindow* Passive = UI->ShowWeaponSkillSelectionWindow();
+		if (Passive && Layer->FindWindowByClass(UMVWeaponSkillSelectionWindow::StaticClass()) == Passive)
 		{
 			ActiveDetail = Passive;
 		}

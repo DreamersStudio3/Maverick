@@ -489,7 +489,7 @@ void UMVRestPointWindow::BuildNativeMenu()
 	};
 	RestButton = AddButton(NSLOCTEXT("MVRestPoint", "Rest", "휴식하기"));
 	LevelUpButton = AddButton(NSLOCTEXT("MVRestPoint", "LevelUp", "레벨업"));
-	PassiveSkillsButton = AddButton(NSLOCTEXT("MVRestPoint", "PassiveSkills", "패시브 스킬"));
+	PassiveSkillsButton = AddButton(NSLOCTEXT("MVRestPoint", "SkillSelection", "스킬 선택"));
 	RetrySaveButton = AddButton(NSLOCTEXT("MVRestPoint", "RetrySave", "저장 다시 시도"));
 	RetrySaveButton->SetVisibility(ESlateVisibility::Collapsed);
 	LeaveButton = AddButton(NSLOCTEXT("MVRestPoint", "Leave", "떠나기"));

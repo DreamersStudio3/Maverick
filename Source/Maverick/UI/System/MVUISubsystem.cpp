@@ -1192,15 +1192,15 @@ void UMVUISubsystem::TrackActiveDialogueWindow(UMVDialogueWindow* DialogueWindow
 	}
 }
 
-UMVWeaponPassiveSelectionWindow* UMVUISubsystem::FindWeaponPassiveSelectionWindow(UMVUILayerBase*& OutLayer) const
+UMVWeaponSkillSelectionWindow* UMVUISubsystem::FindWeaponSkillSelectionWindow(UMVUILayerBase*& OutLayer) const
 {
 	for (int32 Index = LayerStack.Num() - 1; Index >= 0; --Index)
 	{
 		UMVUILayerBase* Layer = LayerStack[Index];
 		if (IsValid(Layer) && Layer->IsInViewport())
 		{
-			if (auto* Window = Cast<UMVWeaponPassiveSelectionWindow>(
-				Layer->FindWindowByClass(UMVWeaponPassiveSelectionWindow::StaticClass())))
+			if (auto* Window = Cast<UMVWeaponSkillSelectionWindow>(
+				Layer->FindWindowByClass(UMVWeaponSkillSelectionWindow::StaticClass())))
 			{
 				OutLayer = Layer;
 				return Window;
@@ -1211,29 +1211,29 @@ UMVWeaponPassiveSelectionWindow* UMVUISubsystem::FindWeaponPassiveSelectionWindo
 	return nullptr;
 }
 
-UMVWeaponPassiveSelectionWindow* UMVUISubsystem::ShowWeaponPassiveSelectionWindow()
+UMVWeaponSkillSelectionWindow* UMVUISubsystem::ShowWeaponSkillSelectionWindow()
 {
 	const UWorld* World = GetWorld();
 	if (!World || !World->IsGameWorld()
-		|| !UMVWeaponPassiveSelectionWindow::CanOpenForPlayer(World->GetFirstPlayerController()))
+		|| !UMVWeaponSkillSelectionWindow::CanOpenForPlayer(World->GetFirstPlayerController()))
 	{
 		return nullptr;
 	}
 
 	UMVUILayerBase* Layer = nullptr;
-	if (auto* Existing = FindWeaponPassiveSelectionWindow(Layer))
+	if (auto* Existing = FindWeaponSkillSelectionWindow(Layer))
 	{
 		return Existing->IsFadingOut() ? nullptr : Existing;
 	}
 
 	const auto WindowClass = GetDefault<UMVUISettings>()->WeaponPassiveSelectionWindowClass;
-	return WindowClass ? Cast<UMVWeaponPassiveSelectionWindow>(PushWindowByClass(WindowClass)) : nullptr;
+	return WindowClass ? Cast<UMVWeaponSkillSelectionWindow>(PushWindowByClass(WindowClass)) : nullptr;
 }
 
-bool UMVUISubsystem::HideWeaponPassiveSelectionWindow()
+bool UMVUISubsystem::HideWeaponSkillSelectionWindow()
 {
 	UMVUILayerBase* Layer = nullptr;
-	auto* Window = FindWeaponPassiveSelectionWindow(Layer);
+	auto* Window = FindWeaponSkillSelectionWindow(Layer);
 	if (!Window)
 	{
 		return false;
@@ -1244,6 +1244,21 @@ bool UMVUISubsystem::HideWeaponPassiveSelectionWindow()
 		return true;
 	}
 	return Layer->RemoveWindow(Window);
+}
+
+UMVWeaponPassiveSelectionWindow* UMVUISubsystem::FindWeaponPassiveSelectionWindow(UMVUILayerBase*& OutLayer) const
+{
+	return Cast<UMVWeaponPassiveSelectionWindow>(FindWeaponSkillSelectionWindow(OutLayer));
+}
+
+UMVWeaponPassiveSelectionWindow* UMVUISubsystem::ShowWeaponPassiveSelectionWindow()
+{
+	return Cast<UMVWeaponPassiveSelectionWindow>(ShowWeaponSkillSelectionWindow());
+}
+
+bool UMVUISubsystem::HideWeaponPassiveSelectionWindow()
+{
+	return HideWeaponSkillSelectionWindow();
 }
 
 UMVLevelUpWindow* UMVUISubsystem::ShowLevelUpWindow()
