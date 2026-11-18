@@ -2,6 +2,8 @@
 .git/
 .agents/
 .codex/
+.agent-tools/
+docs/wiki/.obsidian/
 .idea/
 .vs/
 graphify-out/
