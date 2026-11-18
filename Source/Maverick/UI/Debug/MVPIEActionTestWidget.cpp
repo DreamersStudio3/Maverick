@@ -7,7 +7,6 @@
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
 #include "Components/MVEnemyDodgeTokenComponent.h"
-#include "Components/MVHitReactionComponent.h"
 #include "Components/MVStatComponent.h"
 #include "Components/MVWeaponComponent.h"
 #include "Components/TextBlock.h"
@@ -18,6 +17,7 @@
 #include "GameFramework/PlayerController.h"
 #include "InputCoreTypes.h"
 #include "Struct/MVHitTypes.h"
+#include "Tables/MVActionTableTypes.h"
 #include "UI/System/MVUISubsystem.h"
 
 struct FMVPIEActionTestSpec
@@ -110,33 +110,33 @@ float PIEActionTestMakeDamageMultiplier(const float DesiredDamage, const float A
 		: 0.0f;
 }
 
-EMVHitReactionDirection PIEActionTestDirectionFromIndex(const int32 DirectionIndex)
+EMVHitReactionDir PIEActionTestDirectionFromIndex(const int32 DirectionIndex)
 {
 	switch (DirectionIndex)
 	{
 	case 1:
-		return EMVHitReactionDirection::Back;
+		return EMVHitReactionDir::Back;
 	case 2:
-		return EMVHitReactionDirection::Left;
+		return EMVHitReactionDir::Left;
 	case 3:
-		return EMVHitReactionDirection::Right;
+		return EMVHitReactionDir::Right;
 	case 0:
 	default:
-		return EMVHitReactionDirection::Front;
+		return EMVHitReactionDir::Front;
 	}
 }
 
-FString PIEActionTestDirectionToken(const EMVHitReactionDirection Direction)
+FString PIEActionTestDirectionToken(const EMVHitReactionDir Direction)
 {
 	switch (Direction)
 	{
-	case EMVHitReactionDirection::Back:
+	case EMVHitReactionDir::Back:
 		return TEXT("B");
-	case EMVHitReactionDirection::Left:
+	case EMVHitReactionDir::Left:
 		return TEXT("L");
-	case EMVHitReactionDirection::Right:
+	case EMVHitReactionDir::Right:
 		return TEXT("R");
-	case EMVHitReactionDirection::Front:
+	case EMVHitReactionDir::Front:
 	default:
 		return TEXT("F");
 	}
@@ -144,21 +144,21 @@ FString PIEActionTestDirectionToken(const EMVHitReactionDirection Direction)
 
 FVector PIEActionTestResolveHitDirectionForFlinch(
 	const AMVCharacterBase& Target,
-	const EMVHitReactionDirection Direction)
+	const EMVHitReactionDir Direction)
 {
 	FVector HitSourceDirection = Target.GetActorForwardVector().GetSafeNormal2D();
 	switch (Direction)
 	{
-	case EMVHitReactionDirection::Back:
+	case EMVHitReactionDir::Back:
 		HitSourceDirection = -Target.GetActorForwardVector().GetSafeNormal2D();
 		break;
-	case EMVHitReactionDirection::Left:
+	case EMVHitReactionDir::Left:
 		HitSourceDirection = -Target.GetActorRightVector().GetSafeNormal2D();
 		break;
-	case EMVHitReactionDirection::Right:
+	case EMVHitReactionDir::Right:
 		HitSourceDirection = Target.GetActorRightVector().GetSafeNormal2D();
 		break;
-	case EMVHitReactionDirection::Front:
+	case EMVHitReactionDir::Front:
 	default:
 		HitSourceDirection = Target.GetActorForwardVector().GetSafeNormal2D();
 		break;
@@ -395,7 +395,7 @@ void UMVPIEActionTestWidget::ExecuteDirectionalFlinchTest(const int32 DirectionI
 		return;
 	}
 
-	const EMVHitReactionDirection Direction = PIEActionTestDirectionFromIndex(DirectionIndex);
+	const EMVHitReactionDir Direction = PIEActionTestDirectionFromIndex(DirectionIndex);
 	const FVector HitDirection = PIEActionTestResolveHitDirectionForFlinch(*Target, Direction);
 	if (HitDirection.IsNearlyZero())
 	{

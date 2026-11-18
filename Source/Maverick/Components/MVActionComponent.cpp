@@ -318,6 +318,44 @@ bool UMVActionComponent::TryTransitionActionFromRowHandleWithPlayRate(
 	return TryStartResolvedAction(ActionTableName, ActionRowName, *ActionRow, StartSection, ActionDomain, PlayRateMultiplier);
 }
 
+bool UMVActionComponent::TryReplaceActiveActionFromRowHandle(const FDataTableRowHandle ReplacementRowHandle)
+{
+	if (ActionBeingReplacedId != INDEX_NONE)
+	{
+		return false;
+	}
+
+	const int32 PreviousActionId = GetActiveActionInstanceId();
+	if (PreviousActionId == INDEX_NONE)
+	{
+		return TryTransitionActionFromRowHandle(ReplacementRowHandle);
+	}
+
+	const UAnimInstance* AnimInstance = GetOwnerAnimInstance();
+	const FName PreviousSection = AnimInstance
+		? AnimInstance->Montage_GetCurrentSection(ActiveActionMontage) : NAME_None;
+	const bool bPreviousActionRestrictedLocomotion = IsActiveActionLocomotionRestricted();
+
+	bool bStarted;
+	{
+		TGuardValue<int32> ReplacementGuard(ActionBeingReplacedId, PreviousActionId);
+		bStarted = TryTransitionActionFromRowHandle(ReplacementRowHandle)
+			&& GetActiveActionRowName() == ReplacementRowHandle.RowName;
+	}
+
+	if (bStarted && bPreviousActionRestrictedLocomotion)
+	{
+		SetActiveActionLocomotionRestricted(GetActiveActionInstanceId(), true);
+	}
+	OnActiveActionReplacementFinished.Broadcast(PreviousActionId, PreviousSection, bStarted);
+	return bStarted;
+}
+
+bool UMVActionComponent::IsActionReplacementInProgress(const int32 ActionInstanceId) const
+{
+	return ActionInstanceId != INDEX_NONE && ActionBeingReplacedId == ActionInstanceId;
+}
+
 void UMVActionComponent::FinishActiveAction(bool bInterrupted)
 {
 	if (!IsActionRunning())
@@ -333,6 +371,7 @@ void UMVActionComponent::FinishActiveAction(bool bInterrupted)
 	ActiveActionDomain = EMVActionDomain::None;
 	ActiveActionInstanceId = INDEX_NONE;
 	bActiveActionCanBeInterrupted = true;
+	bActiveActionLocomotionRestricted = false;
 
 	// Reset any input-related state owned by InputManager
 	if (AActor* Owner = GetOwner())
@@ -362,6 +401,14 @@ void UMVActionComponent::CancelActiveAction(const float BlendOutTime)
 	if (AnimInstance && MontageToStop)
 	{
 		AnimInstance->Montage_Stop(FMath::Max(0.0f, BlendOutTime), MontageToStop);
+	}
+}
+
+void UMVActionComponent::SetActiveActionLocomotionRestricted(const int32 ActionInstanceId, const bool bRestricted)
+{
+	if (IsActionRunning() && ActiveActionInstanceId == ActionInstanceId)
+	{
+		bActiveActionLocomotionRestricted = bRestricted;
 	}
 }
 

@@ -3,7 +3,7 @@
 #include "AIController.h"
 #include "Character/MVCharacterBase.h"
 #include "Components/MVActionComponent.h"
-#include "Components/MVHitReactionComponent.h"
+#include "Components/MVHitReaction.h"
 #include "StateTreeExecutionContext.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogMVHitReactionTask, Log, All);
@@ -23,20 +23,6 @@ APawn* HitReactionTaskResolveOwner(FStateTreeExecutionContext& Context, const TO
 	}
 
 	return Cast<APawn>(Context.GetOwner());
-}
-
-bool HitReactionTaskIsHitReactionActionTableName(
-	const EMVActionHitReactionType HitReactionType,
-	const FName ActionTableName)
-{
-	const FString TableName = ActionTableName.ToString();
-	if (TableName.StartsWith(TEXT("HR_")))
-	{
-		return true;
-	}
-
-	return HitReactionType == EMVActionHitReactionType::Groggy
-		&& TableName.StartsWith(TEXT("Groggy_"));
 }
 
 void HitReactionTaskLogTrace(
@@ -76,7 +62,8 @@ bool HitReactionTaskIsStartedActionRunning(const FMVHitReactionTaskInstanceData&
 		return false;
 	}
 
-	return InstanceData.ActionComponent->GetActiveActionTableName() == InstanceData.StartedActionTableName
+	return InstanceData.ActionComponent->GetActiveActionInstanceId() == InstanceData.StartedActionInstanceId
+		&& InstanceData.ActionComponent->GetActiveActionTableName() == InstanceData.StartedActionTableName
 		&& InstanceData.ActionComponent->GetActiveActionRowName() == InstanceData.StartedActionRowName;
 }
 
@@ -111,6 +98,7 @@ EStateTreeRunStatus FMVHitReactionTask::EnterState(
 	FInstanceDataType& InstanceData = Context.GetInstanceData<FInstanceDataType>(*this);
 	InstanceData.ActionComponent = nullptr;
 	InstanceData.HitReactionComponent = nullptr;
+	InstanceData.StartedActionInstanceId = INDEX_NONE;
 	InstanceData.StartedActionTableName = NAME_None;
 	InstanceData.StartedActionRowName = NAME_None;
 	HitReactionTaskLogTrace(TEXT("Enter"), InstanceData);
@@ -135,7 +123,7 @@ EStateTreeRunStatus FMVHitReactionTask::EnterState(
 		return EStateTreeRunStatus::Failed;
 	}
 
-	InstanceData.HitReactionComponent = Owner->FindComponentByClass<UMVHitReactionComponent>();
+	InstanceData.HitReactionComponent = Owner->FindComponentByClass<UMVHitReaction>();
 	if (!InstanceData.HitReactionComponent)
 	{
 		HitReactionTaskLogTrace(TEXT("Rejected_MissingHitReactionComponent"), InstanceData, Owner);
@@ -144,15 +132,19 @@ EStateTreeRunStatus FMVHitReactionTask::EnterState(
 
 	InstanceData.ActionComponent = Owner->FindComponentByClass<UMVActionComponent>();
 
-	HitReactionTaskLogTrace(TEXT("BeforeHandleDamaged"), InstanceData, Owner);
-	InstanceData.HitReactionComponent->HandleDamaged(InstanceData.HitData);
-	HitReactionTaskLogTrace(TEXT("AfterHandleDamaged"), InstanceData, Owner);
+	const int32 PreviousActionInstanceId = InstanceData.ActionComponent
+		? InstanceData.ActionComponent->GetActiveActionInstanceId() : INDEX_NONE;
+
+	HitReactionTaskLogTrace(TEXT("BeforeHandleHitEvent"), InstanceData, Owner);
+	InstanceData.HitReactionComponent->HandleHitEvent(InstanceData.HitData);
+	HitReactionTaskLogTrace(TEXT("AfterHandleHitEvent"), InstanceData, Owner);
 
 	if (InstanceData.ActionComponent && InstanceData.ActionComponent->IsActionRunning())
 	{
 		const FName ActiveActionTableName = InstanceData.ActionComponent->GetActiveActionTableName();
-		if (HitReactionTaskIsHitReactionActionTableName(InstanceData.HitData.HitReactionType, ActiveActionTableName))
+		if (InstanceData.ActionComponent->GetActiveActionInstanceId() != PreviousActionInstanceId)
 		{
+			InstanceData.StartedActionInstanceId = InstanceData.ActionComponent->GetActiveActionInstanceId();
 			InstanceData.StartedActionTableName = ActiveActionTableName;
 			InstanceData.StartedActionRowName = InstanceData.ActionComponent->GetActiveActionRowName();
 			HitReactionTaskLogTrace(TEXT("StartedHitReactionAction"), InstanceData, Owner);
@@ -161,7 +153,7 @@ EStateTreeRunStatus FMVHitReactionTask::EnterState(
 				: EStateTreeRunStatus::Succeeded;
 		}
 
-		HitReactionTaskLogTrace(TEXT("Rejected_ActiveActionIsNotHitReaction"), InstanceData, Owner);
+		HitReactionTaskLogTrace(TEXT("ReactionDidNotStartNewAction"), InstanceData, Owner);
 	}
 
 	HitReactionTaskLogTrace(TEXT("Rejected_ReactionNotStarted"), InstanceData, Owner);
@@ -189,7 +181,9 @@ void FMVHitReactionTask::ExitState(
 	FInstanceDataType& InstanceData = Context.GetInstanceData<FInstanceDataType>(*this);
 	if (InstanceData.bCancelReactionOnExit
 		&& InstanceData.bWaitForActionEnd
-		&& HitReactionTaskIsStartedActionRunning(InstanceData))
+		&& HitReactionTaskIsStartedActionRunning(InstanceData)
+		&& (!InstanceData.HitReactionComponent
+			|| !InstanceData.HitReactionComponent->IsManagingGroggyAction(InstanceData.StartedActionInstanceId)))
 	{
 		HitReactionTaskLogTrace(TEXT("Exit_CancelRunningReaction"), InstanceData);
 		InstanceData.ActionComponent->CancelActiveAction(InstanceData.ExitCancelBlendOutTime);

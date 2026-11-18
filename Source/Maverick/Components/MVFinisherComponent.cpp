@@ -83,12 +83,6 @@ bool UMVFinisherComponent::TryHandleActionInput(FGameplayTag ActionInputTag, FVe
 		return false;
 	}
 
-	if (OwnerCharacter->GetEquippedStyle() == EMVEquippedStyle::DualWield)
-	{
-		AActor* FinisherTarget = nullptr;
-		return CanFinisherMove(FinisherTarget);
-	}
-
 	return TryFinisherMove();
 }
 
@@ -119,8 +113,12 @@ bool UMVFinisherComponent::TryFinisherMove()
 	}
 
 	// Play Animation
-	if (!SendAnimation(HitActor,AttackerRowHandle,VictimRowHandle))
+	if (!SendAnimation(HitActor, AttackerRowHandle, VictimRowHandle))
 	{
+		if (AMVCharacterBase* Attacker = Cast<AMVCharacterBase>(GetOwner()))
+		{
+			Attacker->MotionWarpingComponent->RemoveWarpTarget(TEXT("Attacker"));
+		}
 		return false;
 	}
 
@@ -243,7 +241,7 @@ bool UMVFinisherComponent::CheckThisActorGroggy(const AActor* HitActor) const
 		return false;
 	}
 
-	if(!StatComponent->IsGroggy())
+	if (StatComponent->IsDead() || !StatComponent->IsGroggy())
 	{
 		return false;
 	}
@@ -279,7 +277,7 @@ bool UMVFinisherComponent::FindFinisherAnimation(
 	// If Owner and Target are not CharacterBase, return false
 	AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
 	AMVCharacterBase* TargetCharacter = Cast<AMVCharacterBase>(HitActor);
-	if (!OwnerCharacter || !TargetCharacter)
+	if (!OwnerCharacter || !TargetCharacter || !OwnerCharacter->WeaponComponent)
 	{
 		return false;
 	}
@@ -288,8 +286,7 @@ bool UMVFinisherComponent::FindFinisherAnimation(
 
 	// Input for the AttackerChooser 
 	FMVFinisherChooserInput Input;
-	Input.WeaponTag.AddTag(OwnerCharacter->WeaponComponent->GetEquippedWeaponState().ItemTag);
-	Input.AttackerTag.AddTag(OwnerCharacter->CharacterIndexCode);
+	Input.WeaponType = OwnerCharacter->WeaponComponent->GetEquippedStyle();
 	Input.VictimTag.AddTag(TargetCharacter->CharacterIndexCode);
 
 	// Output for the chooser
@@ -419,24 +416,28 @@ bool UMVFinisherComponent::SetWarpTarget(const AActor* HitActor)
 
 bool UMVFinisherComponent::SendAnimation(AActor* HitActor, const FDataTableRowHandle& AttackerRowHandle, const FDataTableRowHandle& VictimRowHandle)
 {
-	// Attacker Action Play
-	UMVActionComponent* ActionComp = GetOwner()->FindComponentByClass<UMVActionComponent>();
-	if (!ActionComp)
+	UMVActionComponent* AttackerAction = GetOwner()->FindComponentByClass<UMVActionComponent>();
+	UMVActionComponent* VictimAction = HitActor->FindComponentByClass<UMVActionComponent>();
+	if (!AttackerAction || !VictimAction)
 	{
 		return false;
 	}
-	// Attacker's Action Can Play even if HitActor doesn't have ActionComponent(But returns false)
-	ActionComp->TryTransitionActionFromRowHandle(AttackerRowHandle);
-
-	// Victim Action Play
-	ActionComp = HitActor->FindComponentByClass<UMVActionComponent>();
-	if (!ActionComp)
+	if (!AttackerAction->TryTransitionActionFromRowHandle(AttackerRowHandle))
 	{
 		return false;
 	}
-	ActionComp->TryTransitionActionFromRowHandle(VictimRowHandle);
 
-	return true;
+	const int32 AttackerActionId = AttackerAction->GetActiveActionInstanceId();
+	if (VictimAction->TryReplaceActiveActionFromRowHandle(VictimRowHandle))
+	{
+		return true;
+	}
+
+	if (AttackerAction->GetActiveActionInstanceId() == AttackerActionId)
+	{
+		AttackerAction->CancelActiveAction();
+	}
+	return false;
 }
 
 void UMVFinisherComponent::SetAttackData(const FDataTableRowHandle& AttackDataRowHandle)
@@ -500,6 +501,7 @@ void UMVFinisherComponent::ResetTargetGroggy()
 		return;
 	}
 
+	// Todo: Check What this part does.
 	if (UMVEnemyDodgeTokenComponent* DodgeTokenComponent = TargetCharacter->FindComponentByClass<UMVEnemyDodgeTokenComponent>())
 	{
 		DodgeTokenComponent->NotifyGroggyEndedByFinisher();
