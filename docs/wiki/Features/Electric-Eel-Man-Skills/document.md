@@ -1,7 +1,7 @@
 ---
 제목: "전기뱀장어맨 W E R"
 부제목: "도약 타격·돌진 포획·누적 방출"
-최근수정일: 2026-11-18
+최근수정일: 2026-11-19
 최근수정자: "Codex"
 관련문서:
   - "[[Features/Electric-Eel-Man-Q/document|전기뱀장어맨 Q]]"
@@ -96,6 +96,15 @@
 - 기존 메시를 FBX로 내보낸 후 Blender에서 Armature 스케일 적용. Unreal 가져오기에서 cm 단위를 보정해 원래 크기 유지, 기준 `root` 스케일은 100에서 1로 정규화
 - 포즈 초기화와 대상 자동 정렬 후 대기 동작용 `Run IK Rig`·`Root Motion` 비활성화. 이동 동작은 발 접촉과 루트 이동을 따로 검증해야 함
 - Windows UE 5.8.4 에디터에서 `AS_Eelman_1H_Idle`의 저장 전 원시 자세 5개 검증. 머리·골반·발 높이와 루트 스케일 검사 통과, 기존 `BP_Eelman`에는 미적용
+
+## Eelman 로코모션
+
+- `Animations/Locomotion/BS_Eelman_Locomotion`: 방향 -180~180°, 속도 0~450cm/s. 대기와 4방향 걷기 180cm/s·달리기 450cm/s, 후진 경계 포함 15개 표본
+- `ABP_Eelman_Locomotion`: 공용 `MVAnimInstanceBase`의 GroundSpeed 및 Velocity·ActorRotation으로 계산한 방향 → Blend Space → DefaultSlot → 최종 자세
+- `BP_Eelman`과 배치 인스턴스의 Mesh·AnimClass에 정규화 메시와 전용 AnimBP 적용. 메시 Yaw -90°로 원본 Manny 동작 방향과 액터 전방 일치
+- `DT_EelmanCombatAttack`은 같은 폴더의 정규화 공격 몽타주 참조. 이전 시퀀스의 root 스케일 100을 1로, 하위 본 로컬 이동은 100배로 변환해 모델 공간 자세 보존. 기존 공격 Notify 복사
+- Windows UE 5.8.4 PIE에서 속도 입력별 자세 평가·메시 스케일과 기본 공격 몽타주·3개 Notify 확인. 이동 속도는 시험 중 직접 주입, 실제 AI 추격·발 접촉·전투 전체 회귀는 별도 검증 범위
+- 이동 시작·정지 및 제자리 회전 전용 동작은 후속 범위. 원본 공격과 적용 전 BP·테이블 백업은 `Saved/EelmanLocomotionBackup` 보관
 
 ## 검증
 

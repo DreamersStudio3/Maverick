@@ -1,7 +1,7 @@
 ---
 제목: AI StateTree
 부제목: StateTree 감지·판단·Action 실행 경계
-최근수정일: 2026-11-04
+최근수정일: 2026-11-19
 최근수정자: Codex
 관련문서:
   - "[[Architecture/document|Maverick Architecture]]"
@@ -37,6 +37,16 @@ flowchart TD
 - 탐색 순서: Controller BrainComponent → 기타 Controller Component → Pawn Component
 - 보스 등장 대기: `AMVBossIntroTrigger`의 자동 AI 정지와 K/L 수동 활성화 허용, 실제 재생 구간만 `bBossIntroBlocked` 적용; 자연 종료 시 `SetBossCombatEnabled(true, PlayerPawn)`으로 대상 연결·전투 시작, 기존 관람 기록과 무관하게 새 플레이에서 재생
 - 명시적 AI 제어 요청의 `OnBossCombatControlRequested`로 수동 공격 시험 해제, K는 기존 대상 유지·AI 시작, L은 플레이어 대상 지정·AI 시작; [[Features/Boss-Intro/document|보스 등장 연출]]·[[Features/Boss-Attack-Test/document|보스 공격 시험 UI]] 참조
+
+## 보스 트리 초기화 실패 복구
+
+- 증상: K·L 활성화 후에도 `IsRunning=false`, `The State Tree schema is not ready to run` 오류
+- 확인된 원인: 상위 트리의 Search·Attack 연결 대상이 실행 가능한 컴파일 상태를 갖추지 못해 상위 트리 컴파일 실패
+- 복구 순서: `ST_Search_Default` → 보스별 `ST_*Boss_Attack` → 보스별 `ST_*BossAIStateTree` 컴파일·저장
+- Eelman 상위 트리의 Attack 연결 대상: `ST_EelmanBoss_Attack`, Duelist 공격 트리 연결 제거
+- Windows UE 5.8 PIE 검증: K 입력 후 두 보스 스플라인 이동·속도 180cm/s, L 입력 후 플레이어 대상 지정·이동 확인
+- 검증 범위: 현재 `BaseBossTestLevel` 배치 인스턴스와 K·L 입력, 패트롤·추적 전환 / 모든 맵과 전체 공격 패턴은 미검증
+- 측정 자료: [보스 이동 복구 검증](attachments/boss-movement-recovery-validation.json)
 
 ## StateTree 계약
 

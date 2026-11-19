@@ -1,0 +1,86 @@
+{
+  "environment": "Windows / Unreal Engine 5.8 / BaseBossTestLevel",
+  "K": [
+    {
+      "boss": "BP_Duelist_C_1",
+      "enabled": true,
+      "running": true,
+      "target": "None",
+      "moved": 640.5613957677741,
+      "speed": 179.99999999999946
+    },
+    {
+      "boss": "BP_Eelman_C_4",
+      "enabled": true,
+      "running": true,
+      "target": "None",
+      "moved": 491.7763271429989,
+      "speed": 180.00000000000267
+    }
+  ],
+  "L": [
+    {
+      "boss": "BP_Duelist_C_1",
+      "enabled": true,
+      "running": true,
+      "target": "<Object '/Game/Characters/NPC/BaseBoss/Level/UEDPIE_0_BaseBossTestLevel.BaseBossTestLevel:PersistentLevel.BP_ThirdPersonCharacter_C_0' (0x000001D2F752B400) Class 'BP_ThirdPersonCharacter_C'>",
+      "moved": 647.616152242257,
+      "speed": 1104.1737764489844
+    },
+    {
+      "boss": "BP_Eelman_C_4",
+      "enabled": true,
+      "running": true,
+      "target": "<Object '/Game/Characters/NPC/BaseBoss/Level/UEDPIE_0_BaseBossTestLevel.BaseBossTestLevel:PersistentLevel.BP_ThirdPersonCharacter_C_0' (0x000001D2F752B400) Class 'BP_ThirdPersonCharacter_C'>",
+      "moved": 1266.8950416122484,
+      "speed": 1104.1737764489847
+    }
+  ],
+  "movement": {
+    "patrol": [
+      {
+        "boss": "BP_Duelist_C_1",
+        "enabled": true,
+        "running": true,
+        "target": "None",
+        "moved": 772.4482725724786,
+        "speed": 179.9999999999984,
+        "location": "<Struct 'Vector' (0x000001D0D272F0D0) {x: 1072.076615, y: -440.774680, z: 89.650000}>"
+      },
+      {
+        "boss": "BP_Eelman_C_4",
+        "enabled": true,
+        "running": true,
+        "target": "None",
+        "moved": 1481.7564372369975,
+        "speed": 179.9999999999992,
+        "location": "<Struct 'Vector' (0x000001D0D272F710) {x: -1425.440088, y: 1992.038836, z: 89.650000}>"
+      }
+    ],
+    "chase": [
+      {
+        "boss": "BP_Duelist_C_1",
+        "enabled": true,
+        "running": true,
+        "target": "<Object '/Game/Characters/NPC/BaseBoss/Level/UEDPIE_0_BaseBossTestLevel.BaseBossTestLevel:PersistentLevel.BP_ThirdPersonCharacter_C_0' (0x000001D3172E3000) Class 'BP_ThirdPersonCharacter_C'>",
+        "moved": 1129.768388307655,
+        "speed": 226.3803977379441,
+        "location": "<Struct 'Vector' (0x000001D0D272EA40) {x: 5.318760, y: -68.747409, z: 89.650000}>"
+      },
+      {
+        "boss": "BP_Eelman_C_4",
+        "enabled": true,
+        "running": true,
+        "target": "<Object '/Game/Characters/NPC/BaseBoss/Level/UEDPIE_0_BaseBossTestLevel.BaseBossTestLevel:PersistentLevel.BP_ThirdPersonCharacter_C_0' (0x000001D3172E3000) Class 'BP_ThirdPersonCharacter_C'>",
+        "moved": 2429.429313193324,
+        "speed": 226.38039773794395,
+        "location": "<Struct 'Vector' (0x000001D0D272F4E0) {x: 41.217176, y: 55.277814, z: 89.650000}>"
+      }
+    ]
+  },
+  "unverified": [
+    "모든 맵",
+    "전체 공격 패턴"
+  ],
+  "cpp_changed": false
+}
