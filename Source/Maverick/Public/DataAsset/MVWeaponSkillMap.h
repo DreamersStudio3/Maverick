@@ -12,7 +12,7 @@
 
 #include "MVWeaponSkillMap.generated.h"
 
-/** 무기 스타일에 고정된 7종 Basic Attack 시작 Row 모음. */
+/** 무기 스타일에 고정된 4종 Basic Attack 시작 Row 모음. */
 USTRUCT(BlueprintType)
 struct FMVWeaponBasicAttackMap
 {
@@ -26,15 +26,6 @@ struct FMVWeaponBasicAttackMap
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Basic Attack")
 	FDataTableRowHandle SprintLightAttack;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Basic Attack")
-	FDataTableRowHandle HeavyAttack;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Basic Attack")
-	FDataTableRowHandle DodgeHeavyAttack;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Basic Attack")
-	FDataTableRowHandle SprintHeavyAttack;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Basic Attack")
 	FDataTableRowHandle ChargeAttack;

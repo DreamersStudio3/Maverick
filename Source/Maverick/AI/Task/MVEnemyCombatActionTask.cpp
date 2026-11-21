@@ -46,9 +46,9 @@ bool EnemyCombatActionTaskTryStartAction(FMVEnemyCombatActionTaskInstanceData& I
 	switch (InstanceData.ActionKind)
 	{
 	case EMVEnemyCombatActionKind::HeavyAttack:
-		return InstanceData.CombatComponent->TryBasicCombatAction(
-			EMVCombatActionTypes::HeavyAttack,
-			InstanceData.StartSection);
+		// return InstanceData.CombatComponent->TryBasicCombatAction(
+		//     EMVCombatActionTypes::HeavyAttack, InstanceData.StartSection);
+		return false;
 
 	case EMVEnemyCombatActionKind::Skill:
 		return InstanceData.CombatComponent->TrySkillCombatAction(

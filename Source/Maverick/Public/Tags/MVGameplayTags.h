@@ -28,9 +28,6 @@ namespace MVGameplayTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Stat_MaxStamina);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Stat_MaxMP);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_LightAttack);
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_HeavyAttack);
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_HeavyChargeAttack);
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_ChargeAttack);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_Skill);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_Skill_Q);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_Skill_R);
@@ -43,7 +40,6 @@ namespace MVGameplayTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Input_WeaponSwap);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Combat);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Combat_LightAttack);
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Combat_HeavyAttack);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Combat_ChargeAttack);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Combat_Skill);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Combat_Skill_Q);
@@ -51,9 +47,7 @@ namespace MVGameplayTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Combat_Skill_W);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Combat_Skill_E);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Combat_SprintLightAttack);
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Combat_SprintHeavyAttack);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Combat_DodgeLightAttack);
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Action_Combat_DodgeHeavyAttack);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StateTreeEvent_Enemy_Hit);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StateTreeEvent_Enemy_DodgeThreatDetected);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(StateTreeEvent_Enemy_Groggy);

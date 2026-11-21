@@ -487,6 +487,12 @@ bool UMVInputManagerComponent::TryRouteBufferedHoldActionInput()
 	const bool bHasMovementInput = BufferedActionInput.bHasMovementInput;
 	const bool bWasReleased = BufferedActionInput.bHoldReleased;
 
+	if (BufferedActionInput.bHoldCanceled)
+	{
+		ClearBufferedActionInput();
+		return false;
+	}
+
 	if (bWasReleased)
 	{
 		if (!TryRouteActionInput(ActionInputTag, ControllerSpaceInput, bHasMovementInput))

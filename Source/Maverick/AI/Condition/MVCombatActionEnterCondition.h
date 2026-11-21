@@ -38,7 +38,8 @@ struct FMVCombatActionEnterConditionInstanceData
 	EMVCombatContextEnterMode Mode = EMVCombatContextEnterMode::Action;
 
 	UPROPERTY(EditAnywhere, Category = "Input|Action")
-	EMVCombatActionTypes ActionType = EMVCombatActionTypes::HeavyAttack;
+	// EMVCombatActionTypes ActionType = EMVCombatActionTypes::HeavyAttack;
+	EMVCombatActionTypes ActionType = EMVCombatActionTypes::None;
 
 	UPROPERTY(EditAnywhere, Category = "Input|Action")
 	FName CooldownActionId = NAME_None;

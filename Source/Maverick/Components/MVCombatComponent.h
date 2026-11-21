@@ -408,18 +408,18 @@ struct FMVSkillSlotRuntimeState
 	float GaugeRatio = 0.0f;
 };
 
+class UMVActionComponent;
 class UMVStatComponent;
 
-struct FMVCombatHeavyChargeAttackRuntimeState
+/** 확정 전 Charge LeadIn의 Action Instance와 확정 조건. 해제·취소·교체 시 초기화한다. */
+struct FMVCombatChargePreparation
 {
-	bool bActive = false;
-	bool bCommitted = false;
-	float StartedWorldTime = 0.0f;
+	int32 ActionInstanceId = INDEX_NONE;
+	int32 ChargeStageIndex = INDEX_NONE;
+	double StartedWorldTime = 0.0;
 	float CommitTime = 0.0f;
-	FName ChargeActionTableName = NAME_None;
-	EMVCombatActionTypes ChargeActionType = EMVCombatActionTypes::None;
-	int32 ChargeChainStageIndex = INDEX_NONE;
-	FDataTableRowHandle ChargeRowHandle;
+	float AttackPlayRate = 1.0f;
+	FName AttackSection;
 };
 
 /**
@@ -556,10 +556,10 @@ protected:
 		bool bHasMovementInput) override;
 	bool ChooseTryCombatAction(FGameplayTag ActionInputTag);
 	bool IsCombatActionInputTag(FGameplayTag ActionInputTag) const;
-	bool IsHeavyChargeActionInputTag(FGameplayTag ActionInputTag) const;
 
 	bool CanStartCombatAction() const;
-	bool TryBasicAttack(EMVCombatActionTypes InActionType, FName StartSection = NAME_None);
+	bool TryBasicAttack(EMVCombatActionTypes ActionType, FName StartSection = NAME_None,
+		bool bForceTransition = false, float BlendOutTime = 0.1f);
 	bool TrySkill(EMVSkillSlot SkillSlot, FName StartSection = NAME_None);
 
 	// Call when Beginplay or Change Weapon Style
@@ -590,6 +590,8 @@ private:
 	void HandleOwnerDeathStarted(const FMVDeathContext& DeathContext);
 	bool CanConsumeActionCost(const FMVSkillDataTableColumn* SkillData) const;
 	bool IsBasicAttackActionType(EMVCombatActionTypes ActionType) const;
+	void ResetExpiredBasicAttackChain(double CurrentTime);
+	int32 SelectBasicAttackStage(EMVCombatActionTypes ActionType, const FMVSkillEntry& Entry) const;
 	int32 SelectBasicAttackChainStageForSwing(const FMVSkillEntry& ActionEntry) const;
 	const FMVSkillDataTableColumn* GetBasicAttackSkillDataAtStage(const FMVSkillEntry& ActionEntry, int32 ChainStageIndex) const;
 	void UpdateLastBasicAttackSwingDirection(const FDataTableRowHandle& RowHandle);
@@ -600,21 +602,13 @@ private:
 		EMVCombatActionTypes ActionType,
 		int32 StartedChainStageIndex,
 		float CurrentTime);
-	bool IsHeavyChargeBasicAttackType(EMVCombatActionTypes ActionType) const;
-	int32 ResolveHeavyChargeStartChainStageIndex(const FMVSkillEntry& ChargeEntry) const;
-	int32 ResolveHeavyChargeEarlyReleaseChainStageIndex(const FMVSkillEntry& HeavyEntry) const;
-	bool TryBeginHeavyChargeAttack(float HeldSeconds);
-	bool TryUpdateHeavyChargeAttack(float HeldSeconds);
-	bool TryReleaseHeavyChargeAttack(float HeldSeconds, bool bCanceled);
-	bool TryCommitHeavyChargeAttack(float HeldSeconds);
-	bool TryEarlyReleaseHeavyChargeAttack(float HeldSeconds);
-	bool IsHeavyChargeActionRunning() const;
-	float ResolveHeavyChargeCommitTime(const FMVSkillDataTableColumn* ChargeSkillData) const;
-	bool ResolveHeavyChargeEarlyReleaseRow(
-		FMVSkillEntry*& OutHeavyEntry,
-		FDataTableRowHandle& OutHeavyRowHandle,
-		int32& OutHeavyChainStageIndex);
-	void ResetHeavyChargeAttackState();
+	bool TryBeginLightOrChargeAttack();
+	bool TryBeginChargePreparation();
+	bool TryCommitChargeAttack(float HeldSeconds);
+	bool TryReleaseChargePreparation(float HeldSeconds, bool bCanceled);
+	void TransitionChargePreparationToLight();
+	UMVActionComponent* FindPreparingChargeAction() const;
+	void CancelChargePreparation();
 	EMVCombatActionTypes ResolveContextualBasicAttackActionType(EMVCombatActionTypes RequestedActionType);
 	void MarkContextualBasicAttackStarted(EMVCombatActionTypes StartedActionType);
 	void BroadcastCombatActionStarted(
@@ -622,9 +616,7 @@ private:
 		EMVSkillSlot SkillSlot);
 	void UpdateContextualBasicAttackResets();
 	int32 GetDodgeAttackContextInstanceId() const;
-	bool IsDodgeAttackContext() const;
 	bool IsSprintAttackContext() const;
-	bool ShouldSuppressChargeAttackInputForSprint() const;
 	bool HasReachedSprintAttackSpeed() const;
 	bool IsCurrentAttackHit(const FMVResolvedHitData& HitData) const;
 	bool CanApplyOutgoingAttackModifiers(const FMVResolvedHitData& HitData) const;
@@ -640,7 +632,7 @@ private:
 
 public:
 
-	// LightAttack, HeavyAttack, ChargeAttack, and contextual sprint/dodge attacks
+	// LightAttack, ChargeAttack, and contextual sprint/dodge attacks
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Logic")
 	TMap<EMVCombatActionTypes, FMVSkillEntry>BasicAttackMap;
 
@@ -656,11 +648,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Sprint", meta = (ClampMin = "0.0", ClampMax = "1.0"))
 	float SprintAttackMinSpeedRatio = 0.9f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|HeavyCharge", meta = (ClampMin = "0.0", Units = "s"))
-	float DefaultHeavyChargeCommitTime = 0.5f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Charge", meta = (ClampMin = "0.0", Units = "s"))
+	float DefaultChargeCommitTime = 0.5f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|HeavyCharge")
-	FName HeavyChargeStartSection = TEXT("LeadIn");
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Charge")
+	FName ChargePreparationSection = TEXT("LeadIn");
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat|R Skill Gauge")
 	bool bUseRSkillGauge = false;
@@ -700,7 +692,6 @@ public:
 private:
 	double LastBasicAttackedTime = 0.0;
 	friend class FMVProjectileExecutionTest;
-	EMVCombatActionTypes ActiveBasicAttackType = EMVCombatActionTypes::None;
 	TObjectPtr<UMVStatComponent> StatComponent;
 
 	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = "Maverick|Combat|Passive Skill", meta = (AllowPrivateAccess = "true"))
@@ -720,7 +711,8 @@ private:
 	int32 ConsumedDodgeContextActionInstanceId = INDEX_NONE;
 	int32 PendingDodgeContextActionInstanceId = INDEX_NONE;
 	EMVAttackSwingDirection LastBasicAttackSwingDirection = EMVAttackSwingDirection::None;
-	FMVCombatHeavyChargeAttackRuntimeState HeavyChargeAttackState;
+	FMVCombatChargePreparation ChargePreparation;
+	int32 NextLightChargeStageIndex = 0;
 
 	UPROPERTY(Transient)
 	TObjectPtr<UMVProjectileExecutionTracker> ProjectileExecutionTracker;

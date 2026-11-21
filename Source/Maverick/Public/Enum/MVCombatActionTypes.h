@@ -6,31 +6,25 @@
 UENUM(BlueprintType)
 enum class EMVCombatActionTypes : uint8
 {
-	None UMETA(DisplayName = "None"),
-	LightAttack UMETA(DisplayName = "LightAttack"),
-	HeavyAttack UMETA(DisplayName = "HeavyAttack"),
-	ChargeAttack UMETA(DisplayName = "ChargeAttack"),
-	Skill UMETA(DisplayName = "Skill"),
-	Dodge UMETA(DisplayName = "Dodge"),
-	Guard UMETA(DisplayName = "Guard"),
-	UseComsumable UMETA(DisplayName = "UseComsumable"),
-	SprintLightAttack UMETA(DisplayName = "SprintLightAttack"),
-	SprintHeavyAttack UMETA(DisplayName = "SprintHeavyAttack"),
-	DodgeLightAttack UMETA(DisplayName = "DodgeLightAttack"),
-	DodgeHeavyAttack UMETA(DisplayName = "DodgeHeavyAttack")
+	None = 0 UMETA(DisplayName = "None"),
+	LightAttack = 1 UMETA(DisplayName = "LightAttack"),
+	ChargeAttack = 3 UMETA(DisplayName = "ChargeAttack"),
+	Skill = 4 UMETA(DisplayName = "Skill"),
+	Dodge = 5 UMETA(DisplayName = "Dodge"),
+	Guard = 6 UMETA(DisplayName = "Guard"),
+	UseComsumable = 7 UMETA(DisplayName = "UseComsumable"),
+	SprintLightAttack = 8 UMETA(DisplayName = "SprintLightAttack"),
+	DodgeLightAttack = 10 UMETA(DisplayName = "DodgeLightAttack")
 };
 
 UENUM(BlueprintType)
 enum class EMVCombatAttackTypes : uint8
 {
-	LightAttack UMETA(DisplayName = "LightAttack"),
-	HeavyAttack UMETA(DisplayName = "HeavyAttack"),
-	ChargeAttack UMETA(DisplayName = "ChargeAttack"),
-	Skill UMETA(DisplayName = "Skill"),
-	SprintLightAttack UMETA(DisplayName = "SprintLightAttack"),
-	SprintHeavyAttack UMETA(DisplayName = "SprintHeavyAttack"),
-	DodgeLightAttack UMETA(DisplayName = "DodgeLightAttack"),
-	DodgeHeavyAttack UMETA(DisplayName = "DodgeHeavyAttack")
+	LightAttack = 0 UMETA(DisplayName = "LightAttack"),
+	ChargeAttack = 2 UMETA(DisplayName = "ChargeAttack"),
+	Skill = 3 UMETA(DisplayName = "Skill"),
+	SprintLightAttack = 4 UMETA(DisplayName = "SprintLightAttack"),
+	DodgeLightAttack = 6 UMETA(DisplayName = "DodgeLightAttack")
 };
 
 // 공격 유형
