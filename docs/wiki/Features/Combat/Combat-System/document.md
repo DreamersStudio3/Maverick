@@ -1,7 +1,7 @@
 ---
 제목: "Maverick 전투 시스템"
 부제목: "현재 공격 실행 흐름과 공격·스킬 구성"
-최근수정일: 2026-11-16
+최근수정일: 2026-11-21
 최근수정자: "Kwon-Nahoo-Man"
 관련문서:
   - "[[Architecture/document|Maverick Architecture]]"
@@ -34,23 +34,28 @@ flowchart TD
     Action --> End["Montage 종료<br/>체인·쿨다운 갱신"]
 ```
 
-## 공격 종류
+## 플레이어 기본 공격
 
 무기 교체·스타일별 공격 선택·듀얼 소드 손별 판정: [[Features/Combat/Weapon-Swap/document|플레이어 무기 교체]]
 
 | 분류 | 현재 동작 |
 |---|---|
-| 약공격 | 연속 Row 기반 기본 연계 |
-| 강공격 | 연속 Row 기반 강공격과 누르기 유지 조기 해제 분기 |
-| 차지공격 | 누르기 유지 후 확정 시간 도달 시 실행 |
-| 전력질주 공격 | 전력질주 문맥에서 약·강 입력을 전용 Row로 치환 |
-| 회피 공격 | 회피 문맥에서 약·강 입력을 전용 Row로 치환 |
+| Light | Charge 확정 전 좌클릭 해제 시 실행, Charge 사용 불가 시 누름 즉시 실행 |
+| Charge | 좌클릭 누름에 `LeadIn` 시작, 유지 시간이 기준에 도달하면 공격 섹션 1회 확정 |
+| Sprint Light | 전력질주 조건 충족 시 누름 즉시 실행 |
+| Dodge Light | 회피 후속 조건 충족 시 누름 즉시 실행, 전력질주보다 우선 |
+
+- 무기별 `FMVWeaponBasicAttackMap`에 네 시작 Row 저장
+- `ChargeCommitTime` 양수값 우선, 미지정 시 `DefaultChargeCommitTime` 0.5초 적용
+- 조기 해제 시 Charge 행의 `EarlyReleaseStartSection`과 `EarlyReleaseBlendOutTime` 적용, Light 몽타주에 해당 섹션이 없으면 행의 기본 시작 위치 사용
+- Light와 Charge는 다음 단계를 공유하며 공격 확정 시 한 번 전진. 해당 계열에 단계가 없으면 첫 행 사용
+- Charge 준비·확정 시 전체 스태미나 비용 확인, 실제 비용은 공격 구간의 Ability Notify에서 차감
 
 ## 스킬 시스템
 
 - 입력 인덱스: Q `Skill0`, R `Skill1`, W `Skill2`, E `Skill3`
 - 런타임 맵 키: Q `QSkill`, R `RSkill`, W `WSkill`, E `ESkill`
-- 조합 입력: Shift+좌클릭 W, Shift+우클릭 E
+- 입력: 우클릭 Q, Shift+좌클릭 W, Shift+우클릭 E
 - 현재 무기 스타일과 슬롯을 기준으로 WeaponComponent의 장착 Row 조회
 - 미등록·미지원 스킬 입력 즉시 소비로 Action 종료·무기 교체 후 지연 실행 차단
 - `NextChainName`으로 단일 스킬과 연속 스킬 구성

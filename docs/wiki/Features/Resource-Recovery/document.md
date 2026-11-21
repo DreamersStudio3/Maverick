@@ -1,8 +1,8 @@
 ---
 제목: "기본 재화 회복과 소비"
 부제목: "HP·MP·스태미나 회복, 비치명 HP 비용, Exhaustion 계약"
-최근수정일: 2026-09-29
-최근수정자: "No-Jyun"
+최근수정일: 2026-11-21
+최근수정자: "Kwon-Nahoo-Man"
 관련문서:
   - "[[Architecture/document|Maverick 아키텍처]]"
   - "[[Features/Combat/Skill/document|플레이어 스킬 구조]]"
@@ -25,6 +25,7 @@
 
 - HP 비용 부족: 행동 선택·Ability 소비 경로 모두 차단, HP 비용으로 자살 불가
 - 비용 판정: HP·MP·스태미나 사전 검사 후 소비, 스태미나는 양수 잔량이 있으면 부분 소비 허용
+- 플레이어 Charge 준비·확정은 `StaminaCost` 이상의 잔량 필요, 비용 부족 시 가능한 Light 실행
 - 적중 MP 수급: 플레이어 제어 공격자, 활성 Ability·현재 `AttackInstanceId` 일치, 적 캐릭터·양수 피해 조건
 
 ## 회복 차단과 책임

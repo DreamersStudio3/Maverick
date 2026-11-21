@@ -1,8 +1,8 @@
 ---
 제목: "플레이어 스킬 구조"
 부제목: "Q 적중 연계, R 적중 충전형 게이지, W·E 조합 입력의 실행 계약"
-최근수정일: 2026-11-17
-최근수정자: "Codex"
+최근수정일: 2026-11-21
+최근수정자: "Kwon-Nahoo-Man"
 관련문서:
   - "[[Features/Combat/Combat-System/document|Maverick 전투 시스템]]"
   - "[[Features/Hit-Stat-HitReaction/document|Hit, Stat, HitReaction]]"
@@ -23,7 +23,7 @@
 
 | 논리 스킬 | 입력 태그 | 입력 인덱스 | `SkillMap` 키 | 실제 입력 |
 |---|---|---:|---|---|
-| Q | `Action.Input.Skill.Q` | `Skill0` | `EMVSkillSlot::QSkill` | Q |
+| Q | `Action.Input.Skill.Q` | `Skill0` | `EMVSkillSlot::QSkill` | 우클릭 |
 | R | `Action.Input.Skill.R` | `Skill1` | `EMVSkillSlot::RSkill` | R |
 | W | `Action.Input.Skill.W` | `Skill2` | `EMVSkillSlot::WSkill` | Shift+좌클릭 |
 | E | `Action.Input.Skill.E` | `Skill3` | `EMVSkillSlot::ESkill` | Shift+우클릭 |
@@ -31,10 +31,11 @@
 - `Action.Combat.Skill.W`·`Action.Combat.Skill.E`: WeaponComponent의 현재 스타일 W·E 장착 Row 사용
 - `Skill0`~`Skill3`은 입력 전달용 인덱스이며, 런타임 엔트리는 `EMVSkillSlot`으로 식별
 - `IA_SkillModifier`: `Started`에서 활성화, `Completed`·`Canceled`에서 해제
-- 좌클릭: 시작 시점의 Modifier 상태에 따라 약공격과 W 중 하나 제출
-- 우클릭: 시작 시점에 `HeavyCharge`·`SkillE` 경로를 고정하고 이후 입력 phase는 선택한 경로로만 전달
+- 좌클릭: 누름 시 Light·Charge 경로나 W 1회 제출 결정
+- 우클릭: 누름 시 Modifier 상태에 따라 Q 또는 E 1회 제출. 키보드 Q 바인딩 해제
+- 게임패드: 오른쪽 숄더로 Light·Charge, 오른쪽 트리거로 Q 또는 Modifier 조합 E 제출
 - 미등록·미지원 스킬 입력: 즉시 소비하여 무기 교체나 Action 종료 후 지연 실행 차단
-- 플레이어 사망 시작: Modifier 상태, 우클릭 경로, Action 입력 버퍼 초기화
+- 플레이어 사망 시작: Modifier 상태, 좌클릭 유지 경로, Action 입력 버퍼 초기화
 - QWER 전투 HUD는 선택 행의 그림과 실제 사용 키 표시, Ability·애니메이션·비용·쿨다운 데이터 조정은 별도 범위
 
 ## Q 스킬 적중 연계
