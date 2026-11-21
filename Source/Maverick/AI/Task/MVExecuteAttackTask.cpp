@@ -53,13 +53,15 @@ FGameplayTag ExecuteAttackResolveActionTypeTag(const FMVActionRequest& ActionReq
 	{
 		return RowNameString.Contains(TEXT("Light"), ESearchCase::IgnoreCase)
 			? MVGameplayTags::Action_Combat_DodgeLightAttack
-			: MVGameplayTags::Action_Combat_DodgeHeavyAttack;
+			// : MVGameplayTags::Action_Combat_DodgeHeavyAttack;
+			: FGameplayTag();
 	}
 	if (RowNameString.Contains(TEXT("Sprint"), ESearchCase::IgnoreCase))
 	{
 		return RowNameString.Contains(TEXT("Light"), ESearchCase::IgnoreCase)
 			? MVGameplayTags::Action_Combat_SprintLightAttack
-			: MVGameplayTags::Action_Combat_SprintHeavyAttack;
+			// : MVGameplayTags::Action_Combat_SprintHeavyAttack;
+			: FGameplayTag();
 	}
 	if (RowNameString.Contains(TEXT("Charge"), ESearchCase::IgnoreCase))
 	{
@@ -67,7 +69,8 @@ FGameplayTag ExecuteAttackResolveActionTypeTag(const FMVActionRequest& ActionReq
 	}
 	if (RowNameString.Contains(TEXT("Heavy"), ESearchCase::IgnoreCase))
 	{
-		return MVGameplayTags::Action_Combat_HeavyAttack;
+		// return MVGameplayTags::Action_Combat_HeavyAttack;
+		return FGameplayTag();
 	}
 	if (RowNameString.Contains(TEXT("Light"), ESearchCase::IgnoreCase))
 	{
