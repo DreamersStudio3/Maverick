@@ -304,6 +304,42 @@ bool AMVCharacterBase::IsInvincible() const
 	return InvincibilityCount > 0;
 }
 
+int32 AMVCharacterBase::RegisterNextHitBlock(const FMVOnNextHitBlocked& OnBlocked)
+{
+	if (OnNextHitBlocked.IsBound() || !OnBlocked.IsBound())
+	{
+		return INDEX_NONE;
+	}
+
+	NextHitBlockGeneration = NextHitBlockGeneration == MAX_int32 ? 1 : NextHitBlockGeneration + 1;
+	ActiveHitBlockId = NextHitBlockGeneration;
+	OnNextHitBlocked = OnBlocked;
+	return ActiveHitBlockId;
+}
+
+void AMVCharacterBase::UnregisterNextHitBlock(int32 RegistrationId)
+{
+	if (RegistrationId != INDEX_NONE && RegistrationId == ActiveHitBlockId)
+	{
+		ActiveHitBlockId = INDEX_NONE;
+		OnNextHitBlocked.Unbind();
+	}
+}
+
+bool AMVCharacterBase::TryConsumeNextHitBlock(FMVResolvedHitData& HitData)
+{
+	if (!OnNextHitBlocked.IsBound())
+	{
+		return false;
+	}
+
+	const FMVOnNextHitBlocked Callback = OnNextHitBlocked;
+	UnregisterNextHitBlock(ActiveHitBlockId);
+	HitData.bBlocked = true;
+	Callback.ExecuteIfBound(HitData);
+	return true;
+}
+
 bool AMVCharacterBase::OnHitResolved(const FMVResolvedHitData& HitData)
 {
 	if (HitData.VictimCharacterIndexCode.IsValid() && HitData.VictimCharacterIndexCode != CharacterIndexCode)

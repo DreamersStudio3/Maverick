@@ -1065,13 +1065,44 @@ void UMVCombatComponent::NotifyProjectileAbilityStarted(const UMVAbilityBase* St
 	}
 }
 
+bool UMVCombatComponent::BeginAbilityFollowUp(const UMVAbilityBase* Ability)
+{
+	if (!IsValid(Ability) || CurrentAbilityInstance.Get() != Ability || !Ability->bAbilityActive
+		|| Ability->GetAttackInstanceId() == INDEX_NONE
+		|| Ability->GetAttackInstanceId() != CurrentAttackInstanceId
+		|| !bCurrentAbilityAwaitingCompletion || CurrentAttackLifeId != CurrentLifeId)
+	{
+		return false;
+	}
+
+	FollowUpAttackInstanceId = CurrentAttackInstanceId;
+	return true;
+}
+
+bool UMVCombatComponent::IsAbilityFollowUpActive(const UMVAbilityBase* Ability, int32 AttackInstanceId) const
+{
+	return AttackInstanceId != INDEX_NONE
+		&& FollowUpAttackInstanceId == AttackInstanceId
+		&& CurrentAttackInstanceId == AttackInstanceId
+		&& CurrentAbilityInstance.Get() == Ability;
+}
+
+void UMVCombatComponent::FinishAbilityFollowUp(const UMVAbilityBase* Ability, int32 AttackInstanceId)
+{
+	if (IsAbilityFollowUpActive(Ability, AttackInstanceId))
+	{
+		FollowUpAttackInstanceId = INDEX_NONE;
+		HandleAbilityEnded(Ability);
+	}
+}
+
 void UMVCombatComponent::HandleAbilityEnded(const UMVAbilityBase* EndedAbility)
 {
 	if (EndedAbility && EndedAbility == ActivePassiveAbilityInstance.Get())
 	{
 		OnActivePassiveChanged.Broadcast();
 	}
-	if (!EndedAbility || !GetWorld())
+	if (!EndedAbility || !GetWorld() || IsAbilityFollowUpActive(EndedAbility, EndedAbility->GetAttackInstanceId()))
 	{
 		return;
 	}
@@ -1337,7 +1368,8 @@ bool UMVCombatComponent::IsCurrentAttackHit(
 		&& bCurrentAbilityAwaitingCompletion
 		&& CurrentAttackLifeId == CurrentLifeId
 		&& IsValid(CurrentAbilityInstance.Get())
-		&& CurrentAbilityInstance->bAbilityActive
+		&& (CurrentAbilityInstance->bAbilityActive ||
+			IsAbilityFollowUpActive(CurrentAbilityInstance.Get(), HitData.AttackInstanceId))
 		&& HitData.AttackInstanceId != INDEX_NONE
 		&& HitData.AttackInstanceId == CurrentAttackInstanceId;
 }
@@ -1521,11 +1553,13 @@ void UMVCombatComponent::HandleActionEnded(
 	}
 
 	UMVAbilityBase* EndedAbility = CurrentAbilityInstance.Get();
+	const int32 EndedAttackId = CurrentAttackInstanceId;
 	if (EndedAbility && EndedAbility->bAbilityActive)
 	{
 		IMVAbilityInterface::Execute_EndAbility(EndedAbility);
 	}
 
+	FinishAbilityFollowUp(EndedAbility, EndedAttackId);
 	if (bCurrentAbilityAwaitingCompletion && CurrentAbilityInstance.Get() == EndedAbility)
 	{
 		HandleAbilityEnded(EndedAbility);
@@ -1882,6 +1916,7 @@ bool UMVCombatComponent::TryStartActionWithAbility(
 		if (PreviousAbilityInstance && PreviousAbilityInstance->Implements<UMVAbilityInterface>())
 		{
 			IMVAbilityInterface::Execute_EndAbility(PreviousAbilityInstance);
+			FinishAbilityFollowUp(PreviousAbilityInstance, PreviousAbilityInstance->GetAttackInstanceId());
 			CloseProjectileExecution(PreviousAbilityInstance->GetAttackInstanceId());
 		}
 

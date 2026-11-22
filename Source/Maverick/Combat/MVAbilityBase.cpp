@@ -60,7 +60,7 @@ void UMVAbilityBase::ApplyHitLaunchDataToResolveRequest(FMVHitResolveRequest& Re
 
 void UMVAbilityBase::ApplyOnHitStatusEffect(const FMVResolvedHitData& HitData)
 {
-	if (AbilityData.OnHitStatusEffects.IsEmpty())
+	if (HitData.bBlocked || AbilityData.OnHitStatusEffects.IsEmpty())
 	{
 		return;
 	}
@@ -119,6 +119,7 @@ void UMVAbilityBase::ApplyOnHitStatusEffect(const FMVResolvedHitData& HitData)
 
 void UMVAbilityBase::PrepareAbilityExecution()
 {
+	AbilityNotifyInstanceId = INDEX_NONE;
 	bAbilityActive = false;
 	bAbilityCostConsumed = false;
 	SourceSkillIndex = INDEX_NONE;

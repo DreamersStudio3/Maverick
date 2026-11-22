@@ -84,6 +84,10 @@ void UMVTutorialBossBasicAttackAbility::TraceAttack()
 	bool bHit = false;
 	for (const FHitResult& Hit : Hits)
 	{
+		if (!bAbilityActive)
+		{
+			break;
+		}
 		AMVCharacterBase* Victim = Cast<AMVCharacterBase>(Hit.GetActor());
 		if (!IsValid(Victim) || !Victim->IsPlayerControlled() || Victim->IsInvincible() || HitActors.Contains(Victim)
 			|| (Victim->StatComponent && Victim->StatComponent->IsDead()))
@@ -114,7 +118,7 @@ void UMVTutorialBossBasicAttackAbility::TraceAttack()
 			UE_LOG(LogTemp, Display, TEXT("[BossBasicAttack] Hit Frame=%llu Owner=%s Victim=%s AttackId=%d Damage=%.1f"),
 				GFrameCounter, *GetNameSafe(Character), *GetNameSafe(Victim), GetAttackInstanceId(), Resolved.FinalDamage);
 		}
-		else
+		else if (!Resolved.bBlocked)
 		{
 			HitActors.Remove(Victim);
 		}

@@ -79,6 +79,9 @@ public:
 
 	void PrepareAbilityExecution();
 
+	void SetAbilityNotifyInstanceId(int32 InstanceId) { AbilityNotifyInstanceId = InstanceId; }
+	int32 GetAbilityNotifyInstanceId() const { return AbilityNotifyInstanceId; }
+
 	virtual void StartAbility_Implementation(int32 AbilityIndex) override;
 	virtual void EndAbility_Implementation() override;
 
@@ -123,4 +126,5 @@ public:
 
 private:
 	bool TryConsumeAbilityCost();
+	int32 AbilityNotifyInstanceId = INDEX_NONE;
 };

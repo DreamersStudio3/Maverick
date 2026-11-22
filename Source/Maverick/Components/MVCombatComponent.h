@@ -520,6 +520,9 @@ public:
 		const UMVAbilityBase* SourceAbility);
 
 	void HandleAbilityEnded(const UMVAbilityBase* EndedAbility);
+	bool BeginAbilityFollowUp(const UMVAbilityBase* Ability);
+	bool IsAbilityFollowUpActive(const UMVAbilityBase* Ability, int32 AttackInstanceId) const;
+	void FinishAbilityFollowUp(const UMVAbilityBase* Ability, int32 AttackInstanceId);
 
 	// 같은 동작의 다음 발사 Notify가 시작되면 종료 대기 상태를 다시 연다.
 	void NotifyProjectileAbilityStarted(const UMVAbilityBase* StartedAbility);
@@ -702,6 +705,7 @@ public:
 
 	int32 NextAttackInstanceId = 0;
 	int32 CurrentAttackInstanceId = INDEX_NONE;
+	int32 FollowUpAttackInstanceId = INDEX_NONE;
 	uint64 NextSkillSlotRevision = 0;
 	uint64 NextSkillUseId = 0;
 	uint64 CurrentLifeId = 1;

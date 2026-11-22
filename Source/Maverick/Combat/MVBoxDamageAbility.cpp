@@ -87,7 +87,7 @@ void UMVBoxDamageAbility::CheckBoxDamage()
 		HitActors.Add(Victim);
 		FMVResolvedHitData Resolved;
 		if (Resolver->ResolveAttackHit(Request, Resolved)) bHit = true;
-		else HitActors.Remove(Victim);
+		else if (!Resolved.bBlocked) HitActors.Remove(Victim);
 	}
 #if ENABLE_DRAW_DEBUG
 	if (bDrawDebug)

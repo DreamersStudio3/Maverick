@@ -30,6 +30,7 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FMVOnMovementInputReceived, const FVector&);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FMVOnLocomotionSettingsUpdated, bool, bool);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnChangedCharacterIsLying, bool, bIsLying);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FMVOnNextHitBlocked, const FMVResolvedHitData&, HitData);
 
 /**
  * 공통 캐릭터 런타임 본체.
@@ -43,6 +44,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnChangedCharacterIsLying, bool, 
  *     장비 스타일을 갱신한다.
  *   - CombatComponent를 통해 공통 캐릭터 전투 액션 실행 경로를 제공한다.
  *   - WeaponComponent를 통해 맨손 포함 현재 장착 무기 상태를 공통 캐릭터 런타임에 연결한다.
+ *   - 1회 피격 차단을 등록 번호로 관리하고, 소비 시 등록을 먼저 지운 뒤 콜백을 실행한다.
  *   - HitResolver가 전달한 결과의 CharacterIndexCode를 확인한 뒤 OnDamaged를 브로드캐스트한다.
  *   - ACharacter의 BeginPlay, Tick, AddMovementInput 진입점에서 초기 데이터 로드,
  *     매 프레임 locomotion/gait 갱신, 이동 입력 캐싱과 OnMovementInputReceived 브로드캐스트를 담당한다.
@@ -119,6 +121,15 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Maverick|Character|State")
 	bool IsInvincible() const;
+
+	/** 차단 성공 콜백을 등록하고 등록 번호를 반환한다. 이미 등록되어 있으면 INDEX_NONE을 반환한다. */
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Character|Damage")
+	int32 RegisterNextHitBlock(const FMVOnNextHitBlocked& OnBlocked);
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Character|Damage")
+	void UnregisterNextHitBlock(int32 RegistrationId);
+
+	bool TryConsumeNextHitBlock(FMVResolvedHitData& HitData);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Character|Damage")
 	bool OnHitResolved(const FMVResolvedHitData& HitData);
@@ -197,6 +208,9 @@ private:
 	
 private:
 	int32 InvincibilityCount = 0;
+	int32 NextHitBlockGeneration = 0;
+	int32 ActiveHitBlockId = INDEX_NONE;
+	FMVOnNextHitBlocked OnNextHitBlocked;
 	FVector2D ControllerSpaceMovementInput = FVector2D::ZeroVector;
 	uint64 ControllerSpaceMovementInputFrame = 0;
 	bool bIsMovementActive = true;

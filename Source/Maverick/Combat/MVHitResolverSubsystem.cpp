@@ -71,6 +71,11 @@ bool UMVHitResolverSubsystem::ResolveDirectDamage(const FMVDirectDamageRequest& 
 		return false;
 	}
 
+	if (OutHitData.Victim->TryConsumeNextHitBlock(OutHitData))
+	{
+		return false;
+	}
+
 	return DispatchResolvedHit(OutHitData);
 }
 
@@ -84,7 +89,7 @@ bool UMVHitResolverSubsystem::BuildResolvedHitData(
 	AMVCharacterBase* Victim = Request.Victim.Get();
 
 	// Todo: 자기 자신의 체력을 깎는 공격을 허용할지 여부를 결정해야 함
-	if (!Attacker || !Victim /*|| Attacker == Victim*/)
+	if (!IsValid(Attacker) || !IsValid(Victim) /*|| Attacker == Victim*/)
 	{
 		return false;
 	}
@@ -102,6 +107,18 @@ bool UMVHitResolverSubsystem::BuildResolvedHitData(
 	: ResolveNonNegativeStat(FallbackAttackPower);
 
 	if (Request.bUseSourceWeaponSnapshot && !Request.SourceWeaponSnapshot.bValid)
+	{
+		return false;
+	}
+
+	OutHitData.Attacker = Attacker;
+	OutHitData.Victim = Victim;
+	OutHitData.AttackInstanceId = Request.AttackInstanceId;
+	OutHitData.Origin = EMVResolvedHitOrigin::AttackCollision;
+	OutHitData.AttackerCharacterIndexCode = Attacker->GetCharacterIndexCode();
+	OutHitData.VictimCharacterIndexCode = Victim->GetCharacterIndexCode();
+	OutHitData.HitLocation = Request.HitLocation;
+	if (!VictimStat->IsDead() && Victim->TryConsumeNextHitBlock(OutHitData))
 	{
 		return false;
 	}
@@ -126,12 +143,6 @@ bool UMVHitResolverSubsystem::BuildResolvedHitData(
 	const float RawDamage = WeaponAttackPower * DamageMultiplier;
 	const float GroggyDamage = WeaponAttackPower * GroggyDamageMultiplier;
 
-	OutHitData.Attacker = Attacker;
-	OutHitData.Victim = Victim;
-	OutHitData.AttackInstanceId = Request.AttackInstanceId;
-	OutHitData.Origin = EMVResolvedHitOrigin::AttackCollision;
-	OutHitData.AttackerCharacterIndexCode = Attacker->GetCharacterIndexCode();
-	OutHitData.VictimCharacterIndexCode = Victim->GetCharacterIndexCode();
 	OutHitData.CharacterAttackPower = BaseAttackPower;
 	OutHitData.WeaponSnapshot = WeaponSnapshot;
 	OutHitData.WeaponAttackPower = WeaponAttackPower;
@@ -141,7 +152,6 @@ bool UMVHitResolverSubsystem::BuildResolvedHitData(
 	OutHitData.GroggyDamage = GroggyDamage;
 	OutHitData.HitReactionType = Request.HitReactionType;
 	OutHitData.HitLaunchData = Request.HitLaunchData;
-	OutHitData.HitLocation = Request.HitLocation;
 	OutHitData.ImpactNormal = Request.ImpactNormal.IsNearlyZero()
 		? FVector::ZeroVector
 		: Request.ImpactNormal.GetSafeNormal();

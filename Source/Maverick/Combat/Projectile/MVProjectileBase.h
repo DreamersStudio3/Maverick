@@ -47,6 +47,7 @@ public:
     bool ActivateProjectile();
 
     bool IsHomingEnabled() const { return bEnableHoming; }
+    const FMVProjectileLaunchContext& GetLaunchContext() const { return LaunchContext; }
     const USphereComponent* GetTargetingCollision() const { return Collision.Get(); }
 
     int32 GetAttackInstanceId() const { return LaunchContext.AttackInstanceId; }
@@ -62,6 +63,9 @@ public:
 
 protected:
     virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
+    UFUNCTION(BlueprintImplementableEvent, Category = "Maverick|Projectile", meta = (DisplayName = "Projectile Hit Delivered"))
+    void ReceiveProjectileHit(const FMVResolvedHitData& HitData);
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Projectile|Components")
     TObjectPtr<USphereComponent> Collision;

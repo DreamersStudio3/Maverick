@@ -19,7 +19,7 @@ class UMVStatComponent;
  *
  * 라이프사이클:
  *   1) ResolveAttackHit -> 필터링 완료된 공격자/피격자와 공격 배율 요청을 받는다.
- *   2) 공격자의 현재 무기 스냅샷과 요청에 포함된 공격 배율을 읽어 FMVResolvedHitData를 채운다.
+ *   2) 유효한 요청에 1회 방어가 있으면 배율 보정과 방송 전에 차단하고 bBlocked를 반환한다.
  *   3) OnHitResolved를 브로드캐스트하고 피격자 CharacterBase.OnHitResolved로 결과를 전달한다.
  *   4) 피격자의 OnDamaged 처리가 끝나면 OnHitDeliveryFinished를 브로드캐스트한다.
  */

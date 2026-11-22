@@ -1,6 +1,7 @@
 #include "Animation/NotifyStates/MVAnimNotifyState_Ability.h"
 
 #include "Combat/MVAbilityBase.h"
+#include "Animation/AnimNotifyQueue.h"
 #include "Components/MVCombatComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Interface/MVAbilityInterface.h"
@@ -68,15 +69,24 @@ void UMVAnimNotifyState_Ability::NotifyBegin(
 	const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
+	BeginAbilityNotify(MeshComp, Animation, EventReference, AbilityIndex, AbilityClass);
+}
 
+void UMVAnimNotifyState_Ability::BeginAbilityNotify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation,
+	const FAnimNotifyEventReference& EventReference, int32 InAbilityIndex, TSubclassOf<UMVAbilityBase> InAbilityClass)
+{
 	UMVCombatComponent* CombatComponent = FindAbilityNotifyCombatComponent(MeshComp);
 	UMVAbilityBase* CurrentAbility = CombatComponent ? CombatComponent->CurrentAbilityInstance.Get() : nullptr;
-	if (!MVAbilityNotifyCanRunAbilityNotifyState(CombatComponent, CurrentAbility, AbilityClass, TEXT("Begin"), Animation))
+	if (!MVAbilityNotifyCanRunAbilityNotifyState(CombatComponent, CurrentAbility, InAbilityClass, TEXT("Begin"), Animation))
 	{
 		return;
 	}
 
-	IMVAbilityInterface::Execute_StartAbility(CurrentAbility, AbilityIndex);
+	if (!CurrentAbility->bAbilityActive)
+	{
+		CurrentAbility->SetAbilityNotifyInstanceId(EventReference.GetNotifyInstanceID());
+	}
+	IMVAbilityInterface::Execute_StartAbility(CurrentAbility, InAbilityIndex);
 }
 
 void UMVAnimNotifyState_Ability::NotifyEnd(
@@ -85,15 +95,24 @@ void UMVAnimNotifyState_Ability::NotifyEnd(
 	const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyEnd(MeshComp, Animation, EventReference);
+	EndAbilityNotify(MeshComp, Animation, EventReference, AbilityClass);
+}
 
+void UMVAnimNotifyState_Ability::EndAbilityNotify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation,
+	const FAnimNotifyEventReference& EventReference, TSubclassOf<UMVAbilityBase> InAbilityClass)
+{
 	UMVCombatComponent* CombatComponent = FindAbilityNotifyCombatComponent(MeshComp);
 	UMVAbilityBase* CurrentAbility = CombatComponent ? CombatComponent->CurrentAbilityInstance.Get() : nullptr;
-	if (!MVAbilityNotifyCanRunAbilityNotifyState(CombatComponent, CurrentAbility, AbilityClass, TEXT("End"), Animation))
+	if (!MVAbilityNotifyCanRunAbilityNotifyState(CombatComponent, CurrentAbility, InAbilityClass, TEXT("End"), Animation))
 	{
 		return;
 	}
 
-	IMVAbilityInterface::Execute_EndAbility(CurrentAbility);
+	if (CurrentAbility->GetAbilityNotifyInstanceId() == EventReference.GetNotifyInstanceID())
+	{
+		CurrentAbility->SetAbilityNotifyInstanceId(INDEX_NONE);
+		IMVAbilityInterface::Execute_EndAbility(CurrentAbility);
+	}
 }
 
 FString UMVAnimNotifyState_Ability::GetNotifyName_Implementation() const
