@@ -23,6 +23,7 @@
 #include "UI/System/MVUISettings.h"
 #include "UI/Window/MVDeathOverlayWindow.h"
 #include "UI/Window/MVDialogueWindow.h"
+#include "UI/Window/MVInventoryWindow.h"
 #include "UI/Window/MVLoadingWindow.h"
 #include "System/Progression/MVProgressionSubsystem.h"
 #include "UI/Window/MVLevelUpWindow.h"
@@ -75,6 +76,18 @@ void MVUISubsystemAdvanceLoadingTestCardCommand(const TArray<FString>& Args, UWo
 }
 
 #if !UE_BUILD_SHIPPING
+static FAutoConsoleCommandWithWorld MVUISubsystemShowInventoryConsoleCommand(
+	TEXT("MV.UI.Inventory.Show"),
+	TEXT("Open the field menu and inventory preview."),
+	FConsoleCommandWithWorldDelegate::CreateLambda([](UWorld* World)
+	{
+		UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr;
+		if (UMVUISubsystem* UI = GameInstance ? GameInstance->GetSubsystem<UMVUISubsystem>() : nullptr)
+		{
+			UI->ShowInventoryWindow();
+		}
+	}));
+
 static FAutoConsoleCommandWithWorldAndArgs MVUISubsystemShowLoadingTestConsoleCommand(
 	TEXT("MV.UI.LoadingTest.Show"),
 	TEXT("Show a persistent loading window for UI testing. Pass 'native' to use the C++ fallback layout."),
@@ -205,6 +218,35 @@ UCommonActivatableWidget* UMVUISubsystem::PushWindowByClass(TSubclassOf<UMVWindo
 	}
 
 	return Layer->PushWindow(WindowClass);
+}
+
+UMVInventoryWindow* UMVUISubsystem::ShowInventoryWindow()
+{
+	UWorld* World = GetWorld();
+	APlayerController* Player = World ? World->GetFirstPlayerController() : nullptr;
+	if (!World || !World->IsGameWorld() || !UMVInventoryWindow::CanOpenForPlayer(Player)
+		|| !GetDefault<UMVInventoryWindow>()->HasPresentation())
+	{
+		return nullptr;
+	}
+
+	UMVUILayerBase* Layer = GetOrCreateRootLayer(World);
+	if (!Layer)
+	{
+		return nullptr;
+	}
+	if (auto* Existing = Cast<UMVInventoryWindow>(Layer->FindWindowByClass(UMVInventoryWindow::StaticClass())))
+	{
+		return Existing->IsFadingOut() ? nullptr : Existing;
+	}
+	for (const UMVUILayerBase* OpenLayer : LayerStack)
+	{
+		if (IsValid(OpenLayer) && OpenLayer->IsInViewport() && OpenLayer->HasWindowInput())
+		{
+			return nullptr;
+		}
+	}
+	return Cast<UMVInventoryWindow>(Layer->PushWindow(UMVInventoryWindow::StaticClass()));
 }
 
 UMVPopupBase* UMVUISubsystem::PushPopupByClass(TSubclassOf<UMVPopupBase> PopupClass)

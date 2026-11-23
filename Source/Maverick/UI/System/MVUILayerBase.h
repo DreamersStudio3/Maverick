@@ -2,13 +2,22 @@
 
 #include "CoreMinimal.h"
 #include "UI/Base/MVWidgetBase.h"
+#include "Widgets/CommonActivatableWidgetContainer.h"
 #include "MVUILayerBase.generated.h"
 
 class UCommonActivatableWidget;
-class UCommonActivatableWidgetContainerBase;
-class UCommonActivatableWidgetStack;
 class UMVPopupBase;
 class UOverlay;
+
+/** 전환 대상이 제거되면 아래쪽 창 또는 기본 게임 화면으로 돌아가는 기본 창 스택. */
+UCLASS()
+class UMVWindowStack : public UCommonActivatableWidgetStack
+{
+	GENERATED_BODY()
+
+public:
+	UMVWindowStack(const FObjectInitializer& ObjectInitializer);
+};
 
 /**
  * HUD·창 스택·알림의 표시 계층을 소유하고 창 생성 전에 필요한 문맥을 연결한다.
@@ -35,6 +44,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Layer")
 	bool RemoveWindow(UCommonActivatableWidget* Window);
+
+	bool HasWindowInput() const;
 	
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Layer")
 	UMVPopupBase* PushPopup(TSubclassOf<UMVPopupBase> PopupClass);

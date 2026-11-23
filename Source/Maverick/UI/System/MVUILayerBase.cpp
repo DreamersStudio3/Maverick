@@ -8,6 +8,12 @@
 #include "Widgets/CommonActivatableWidgetContainer.h"
 #include "UI/System/MVGameplayInputWidget.h"
 
+UMVWindowStack::UMVWindowStack(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+{
+	TransitionFallbackStrategy = ECommonSwitcherTransitionFallbackStrategy::Previous;
+}
+
 void UMVUILayerBase::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
@@ -47,11 +53,16 @@ UCommonActivatableWidget* UMVUILayerBase::PushWindow(
 	return Window;
 }
 
+bool UMVUILayerBase::HasWindowInput() const
+{
+	return WindowStack && (bWindowStackTransitioning || WindowStack->GetNumWidgets() > 0);
+}
+
 void UMVUILayerBase::RefreshWindowInputBlock()
 {
 	if (UMVGameplayInputWidget* Input = Cast<UMVGameplayInputWidget>(GameplayInputWidget))
 	{
-		Input->SetMenuInputBlocked(WindowStack && (bWindowStackTransitioning || WindowStack->GetNumWidgets() > 0));
+		Input->SetMenuInputBlocked(HasWindowInput());
 	}
 }
 
@@ -204,7 +215,7 @@ void UMVUILayerBase::BuildNativeLayerTree()
 		TEXT("GameplayInputWidget"));
 
 	WindowStack = WidgetTree->ConstructWidget<UCommonActivatableWidgetStack>(
-		UCommonActivatableWidgetStack::StaticClass(),
+		UMVWindowStack::StaticClass(),
 		TEXT("WindowStack"));
 
 	HUDLayer = WidgetTree->ConstructWidget<UOverlay>(

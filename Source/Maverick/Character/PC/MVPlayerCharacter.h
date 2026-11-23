@@ -28,6 +28,7 @@ class UMVPlayerProgression;
  *   - 락온 대상이 있을 때 질주/회피 구간의 pawn rotation extension tick 억제를 관리한다.
  *   - 설정으로 켜고 끄는 플레이어 HP 자동재생, 기본 비활성.
  *   - 저장된 플레이어 성장 상태를 현재 StatComponent에 연결한다.
+ *   - 플레이어 런타임 소지품을 InventoryComponent에 연결한다.
  *
  * 라이프사이클:
  *   1) 생성자 -> 플레이어 전용 서브모듈과 성장 브리지를 기본 서브오브젝트로 생성한다.
@@ -61,12 +62,14 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 	virtual void UpdateRecoverableStats(float DeltaTime) override;
 	virtual bool CanUseSprint() const override;
 	virtual bool ShouldForceWalkGait() const override;
 
 private:
 	virtual void BindDamageHandlers() override;
+	void OpenInventoryMenu();
 	void CacheSprintActionData();
 	float CalculateSprintStaminaDrain(float DeltaTime) const;
 	float ResolveSprintStaminaCostPerSecond() const;
@@ -92,7 +95,7 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Instanced, Category = "PlayerCharacter")
 	TObjectPtr<UMVPlayerProgression> PlayerProgression;
-	
+
 	UPROPERTY(BlueprintReadOnly, Category = "LocomotionData|Stamina")
 	uint8 bIsSprintBlockedByStamina : 1;
 

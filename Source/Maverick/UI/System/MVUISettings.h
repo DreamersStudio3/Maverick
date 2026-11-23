@@ -4,6 +4,7 @@
 #include "Engine/DeveloperSettings.h"
 #include "MVUISettings.generated.h"
 
+class UInputAction;
 class UMVHUDWidgetBase;
 class UMVDialogueWindow;
 class UMVMessagePopup;
@@ -47,6 +48,9 @@ public:
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Window")
 	TSubclassOf<UMVWindowBase> SkillTreeWindowClass;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Window|Inventory")
+	TObjectPtr<UInputAction> InventoryMenuAction;
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Window")
 	TSubclassOf<UMVLevelUpWindow> LevelUpWindowClass;

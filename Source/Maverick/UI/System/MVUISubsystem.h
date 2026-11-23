@@ -13,6 +13,7 @@ class AMVCharacterBase;
 class UMVDialogueWindow;
 class UMVHUDWidgetBase;
 class UMVInteractionPromptPopup;
+class UMVInventoryWindow;
 class UMVLoadingWindow;
 class UMVMessagePopup;
 class UMVPIEActionTestWidget;
@@ -65,6 +66,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|LevelUp")
 	bool HideLevelUpWindow();
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Inventory")
+	UMVInventoryWindow* ShowInventoryWindow();
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Weapon Passive")
 	UMVWeaponPassiveSelectionWindow* ShowWeaponPassiveSelectionWindow();
