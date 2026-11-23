@@ -62,6 +62,10 @@ void UMVRestPointWindow::NativeOnInitialized()
 	{
 		PassiveSkillsButton->OnClicked.AddUniqueDynamic(this, &ThisClass::HandlePassiveSkillsClicked);
 	}
+	if (WeaponSlotsButton)
+	{
+		WeaponSlotsButton->OnClicked.AddUniqueDynamic(this, &ThisClass::HandleWeaponSlotsClicked);
+	}
 	if (RetrySaveButton)
 	{
 		RetrySaveButton->OnClicked.AddUniqueDynamic(this, &ThisClass::HandleRetrySaveClicked);
@@ -287,6 +291,10 @@ void UMVRestPointWindow::HandleConfirmInput()
 	{
 		HandlePassiveSkillsClicked();
 	}
+	else if (Button && Button == WeaponSlotsButton)
+	{
+		HandleWeaponSlotsClicked();
+	}
 	else if (Button && Button == RetrySaveButton)
 	{
 		HandleRetrySaveClicked();
@@ -300,7 +308,8 @@ void UMVRestPointWindow::HandleConfirmInput()
 UButton* UMVRestPointWindow::GetCurrentMenuButton() const
 {
 	APlayerController* Controller = GetOwningPlayer();
-	for (UButton* Button : { RestButton.Get(), LevelUpButton.Get(), PassiveSkillsButton.Get(), RetrySaveButton.Get(), LeaveButton.Get() })
+	for (UButton* Button : { RestButton.Get(), LevelUpButton.Get(), PassiveSkillsButton.Get(),
+		WeaponSlotsButton.Get(), RetrySaveButton.Get(), LeaveButton.Get() })
 	{
 		if (Button && Button->HasUserFocus(Controller))
 		{
@@ -317,8 +326,9 @@ UButton* UMVRestPointWindow::MoveMenuSelection(EUINavigation Direction)
 		return nullptr;
 	}
 
-	TArray<UButton*, TInlineAllocator<5>> Buttons;
-	for (UButton* Button : { RestButton.Get(), LevelUpButton.Get(), PassiveSkillsButton.Get(), RetrySaveButton.Get(), LeaveButton.Get() })
+	TArray<UButton*, TInlineAllocator<6>> Buttons;
+	for (UButton* Button : { RestButton.Get(), LevelUpButton.Get(), PassiveSkillsButton.Get(),
+		WeaponSlotsButton.Get(), RetrySaveButton.Get(), LeaveButton.Get() })
 	{
 		if (Button && Button->GetIsEnabled() && Button->IsVisible())
 		{
@@ -362,6 +372,11 @@ void UMVRestPointWindow::HandleLevelUpClicked()
 void UMVRestPointWindow::HandlePassiveSkillsClicked()
 {
 	OpenDetail(EMVRestPointDetail::PassiveSkills, PassiveSkillsButton);
+}
+
+void UMVRestPointWindow::HandleWeaponSlotsClicked()
+{
+	OpenDetail(EMVRestPointDetail::WeaponSlots, WeaponSlotsButton);
 }
 
 void UMVRestPointWindow::RefreshSaveStatus()
@@ -477,9 +492,9 @@ void UMVRestPointWindow::BuildNativeMenu()
 	RestPointName = MVRestMenuMakeLabel(*WidgetTree, FText::GetEmpty(), 23, MVRestMenuIvory);
 	Entries->AddChildToVerticalBox(RestPointName)->SetPadding(FMargin(0, 8, 0, 24));
 
-	const auto AddButton = [this, Entries](const FText& Label)
+	const auto AddButton = [this, Entries](const FText& Label, FName Name = NAME_None)
 	{
-		UButton* Button = WidgetTree->ConstructWidget<UButton>();
+		UButton* Button = WidgetTree->ConstructWidget<UButton>(UButton::StaticClass(), Name);
 		Button->SetBackgroundColor(MVRestMenuButtonColor);
 		UTextBlock* ButtonLabel = MVRestMenuMakeLabel(*WidgetTree, Label, 23, MVRestMenuIvory);
 		ButtonLabel->SetAutoWrapText(false);
@@ -490,6 +505,7 @@ void UMVRestPointWindow::BuildNativeMenu()
 	RestButton = AddButton(NSLOCTEXT("MVRestPoint", "Rest", "휴식하기"));
 	LevelUpButton = AddButton(NSLOCTEXT("MVRestPoint", "LevelUp", "레벨업"));
 	PassiveSkillsButton = AddButton(NSLOCTEXT("MVRestPoint", "SkillSelection", "스킬 선택"));
+	WeaponSlotsButton = AddButton(NSLOCTEXT("MVRestPoint", "WeaponSlots", "무기 퀵슬롯"), TEXT("WeaponSlotsButton"));
 	RetrySaveButton = AddButton(NSLOCTEXT("MVRestPoint", "RetrySave", "저장 다시 시도"));
 	RetrySaveButton->SetVisibility(ESlateVisibility::Collapsed);
 	LeaveButton = AddButton(NSLOCTEXT("MVRestPoint", "Leave", "떠나기"));

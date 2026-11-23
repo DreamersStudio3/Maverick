@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "Struct/MVHitTypes.h"
 #include "Subsystems/WorldSubsystem.h"
 #include "MVRestPointSubsystem.generated.h"
@@ -11,6 +12,7 @@ class UCommonActivatableWidget;
 class UMVHUDWidgetBase;
 class UMVInputManagerComponent;
 class UMVRestPointWindow;
+class UMVRestWeaponSlotWindow;
 class UMVStatComponent;
 class UMVUILayerBase;
 enum class ESlateVisibility : uint8;
@@ -19,13 +21,22 @@ struct FMVCheckpointSaveData;
 enum class EMVRestPointDetail : uint8
 {
 	LevelUp,
-	PassiveSkills
+	PassiveSkills,
+	WeaponSlots
+};
+
+enum class EMVRestWeaponSlotResult : uint8
+{
+	Rejected,
+	Saved,
+	SaveFailed
 };
 
 /**
  * 현재 월드에서 로컬 플레이어의 거점 이용을 한 번에 하나만 관리한다.
  * CommonUI 목록과 상세 창을 소유하며, 두 화면을 오가는 동안 HUD와 게임 입력을 차단한다.
- * 피격·이탈·전환 시 창과 차단을 정리하고 월드 종료 때 피격 구독을 해제한다.
+ * 슬롯 편성은 확정 시 활성 상세 창·현재 플레이어·거점 안전을 검증한다.
+ * 피격·이탈·전환 시 창과 차단을 정리하고 월드 종료 때 구독을 해제한다.
  */
 UCLASS()
 class MAVERICK_API UMVRestPointSubsystem : public UTickableWorldSubsystem
@@ -48,6 +59,8 @@ public:
 	bool IsRestPending() const { return PendingRestRequestId != 0; }
 	const FText& GetRestStatus() const { return RestStatus; }
 	bool CanUseDetail() const;
+	EMVRestWeaponSlotResult CommitWeaponSlot(const UMVRestWeaponSlotWindow& Window, int32 SlotIndex,
+		FGameplayTag ExpectedWeapon, FGameplayTag WeaponTag);
 	bool TryResolveRespawnAnchor(const FMVCheckpointSaveData& Record, FTransform& OutTransform) const;
 	bool IsUsingRestPoint(const AMVPlayerCharacter& Player) const;
 	FText GetEntryBlockReason(const AMVRestPoint& RestPoint, const AMVPlayerCharacter& Player) const;
@@ -65,6 +78,9 @@ private:
 	UFUNCTION()
 	void HandleDamage(float AppliedDamage, float PreviousHP, float CurrentHP, const FMVResolvedHitData& HitData);
 
+	UFUNCTION()
+	void HandleWeaponSlotHit(const FMVResolvedHitData& HitData);
+
 	TWeakObjectPtr<AMVRestPoint> ActiveRestPoint;
 	TWeakObjectPtr<AMVPlayerCharacter> ActivePlayer;
 	TWeakObjectPtr<UMVRestPointWindow> ActiveWindow;
@@ -72,6 +88,7 @@ private:
 	TWeakObjectPtr<UMVUILayerBase> ActiveLayer;
 	TWeakObjectPtr<UMVInputManagerComponent> BlockedInput;
 	TWeakObjectPtr<UMVStatComponent> ObservedStats;
+	TWeakObjectPtr<AMVPlayerCharacter> ObservedPlayer;
 	TWeakObjectPtr<UMVHUDWidgetBase> SuppressedHUD;
 	ESlateVisibility PreviousHUDVisibility{};
 	TOptional<double> LastDamageAt;

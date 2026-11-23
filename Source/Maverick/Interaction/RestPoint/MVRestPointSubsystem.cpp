@@ -5,6 +5,7 @@
 #include "Components/MVActionComponent.h"
 #include "Components/MVInputManagerComponent.h"
 #include "Components/MVStatComponent.h"
+#include "Components/MVWeaponComponent.h"
 #include "Engine/GameInstance.h"
 #include "Engine/World.h"
 #include "EngineUtils.h"
@@ -16,6 +17,7 @@
 #include "UI/System/MVUILayerBase.h"
 #include "UI/System/MVUISubsystem.h"
 #include "UI/Window/MVRestPointWindow.h"
+#include "UI/Window/MVRestWeaponSlotWindow.h"
 #include "UI/Window/MVLevelUpWindow.h"
 #include "UI/Window/MVWeaponSkillSelectionWindow.h"
 
@@ -207,19 +209,57 @@ bool UMVRestPointSubsystem::OpenDetail(const UMVRestPointWindow& Window, EMVRest
 	}
 
 	TGuardValue<bool> OpeningGuard(bOpeningDetail, true);
-	if (Detail == EMVRestPointDetail::LevelUp)
+	switch (Detail)
 	{
+	case EMVRestPointDetail::LevelUp:
 		ActiveDetail = UI->ShowLevelUpWindowForRestPoint(*this);
-	}
-	else
+		break;
+	case EMVRestPointDetail::PassiveSkills:
 	{
 		UMVWeaponSkillSelectionWindow* Passive = UI->ShowWeaponSkillSelectionWindow();
 		if (Passive && Layer->FindWindowByClass(UMVWeaponSkillSelectionWindow::StaticClass()) == Passive)
 		{
 			ActiveDetail = Passive;
 		}
+		break;
+	}
+	case EMVRestPointDetail::WeaponSlots:
+		if (!ActivePlayer->WeaponComponent)
+		{
+			return false;
+		}
+		if (!Layer->PushWindow(UMVRestWeaponSlotWindow::StaticClass(), [this](UCommonActivatableWidget& Widget)
+		{
+			auto* Slots = CastChecked<UMVRestWeaponSlotWindow>(&Widget);
+			ActiveDetail = Slots;
+			Slots->SetSession(*this, *ActivePlayer.Get());
+		}))
+		{
+			ActiveDetail.Reset();
+		}
+		break;
 	}
 	return ActiveDetail.IsValid();
+}
+
+EMVRestWeaponSlotResult UMVRestPointSubsystem::CommitWeaponSlot(const UMVRestWeaponSlotWindow& Window,
+	const int32 SlotIndex, const FGameplayTag ExpectedWeapon, const FGameplayTag WeaponTag)
+{
+	const UMVUILayerBase* Layer = ActiveLayer.Get();
+	const AMVPlayerCharacter* Player = ActivePlayer.Get();
+	if (ActiveDetail.Get() != &Window || !Window.IsActivated() || Window.IsFadingOut()
+		|| !Layer || !Layer->IsInViewport() || Layer->FindWindowByClass(UCommonActivatableWidget::StaticClass()) != &Window
+		|| !Player || Window.GetOwningPlayerPawn() != Player || !CanUseDetail() || !Player->WeaponComponent)
+	{
+		return EMVRestWeaponSlotResult::Rejected;
+	}
+
+	bool bSaved = false;
+	if (!Player->WeaponComponent->ChangeRestPointQuickSlot(SlotIndex, ExpectedWeapon, WeaponTag, bSaved))
+	{
+		return EMVRestWeaponSlotResult::Rejected;
+	}
+	return bSaved ? EMVRestWeaponSlotResult::Saved : EMVRestWeaponSlotResult::SaveFailed;
 }
 
 bool UMVRestPointSubsystem::CanUseDetail() const
@@ -355,7 +395,7 @@ bool UMVRestPointSubsystem::IsUsingRestPoint(const AMVPlayerCharacter& Player) c
 void UMVRestPointSubsystem::ObservePlayer(AMVPlayerCharacter* Player)
 {
 	UMVStatComponent* Stats = Player ? Player->StatComponent.Get() : nullptr;
-	if (ObservedStats.Get() == Stats)
+	if (ObservedPlayer.Get() == Player && ObservedStats.Get() == Stats)
 	{
 		return;
 	}
@@ -365,6 +405,15 @@ void UMVRestPointSubsystem::ObservePlayer(AMVPlayerCharacter* Player)
 		PreviousStats->OnDamageApplied.RemoveDynamic(this, &ThisClass::HandleDamage);
 	}
 
+	if (AMVPlayerCharacter* PreviousPlayer = ObservedPlayer.Get())
+	{
+		PreviousPlayer->OnDamaged.RemoveDynamic(this, &ThisClass::HandleWeaponSlotHit);
+	}
+	ObservedPlayer = Player;
+	if (Player)
+	{
+		Player->OnDamaged.AddUniqueDynamic(this, &ThisClass::HandleWeaponSlotHit);
+	}
 	ObservedStats = Stats;
 	LastDamageAt.Reset();
 	if (Stats)
@@ -379,6 +428,14 @@ void UMVRestPointSubsystem::HandleDamage(
 	if (AppliedDamage > 0.0f)
 	{
 		LastDamageAt = GetWorld()->GetTimeSeconds();
+		Close();
+	}
+}
+
+void UMVRestPointSubsystem::HandleWeaponSlotHit(const FMVResolvedHitData& HitData)
+{
+	if (Cast<UMVRestWeaponSlotWindow>(ActiveDetail.Get()))
+	{
 		Close();
 	}
 }

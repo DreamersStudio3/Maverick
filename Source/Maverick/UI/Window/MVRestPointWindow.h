@@ -52,6 +52,9 @@ protected:
 	TObjectPtr<UButton> PassiveSkillsButton;
 
 	UPROPERTY(meta = (BindWidgetOptional))
+	TObjectPtr<UButton> WeaponSlotsButton;
+
+	UPROPERTY(meta = (BindWidgetOptional))
 	TObjectPtr<UButton> RetrySaveButton;
 
 	UPROPERTY(meta = (BindWidgetOptional))
@@ -80,6 +83,9 @@ private:
 
 	UFUNCTION()
 	void HandlePassiveSkillsClicked();
+
+	UFUNCTION()
+	void HandleWeaponSlotsClicked();
 
 	UFUNCTION()
 	void HandleRetrySaveClicked();
