@@ -449,7 +449,12 @@ void UMVWeaponSkillSelectionWindow::RebuildCandidates(bool bFocusCandidates)
 	RefreshSlotTabs();
 	SharingScopeText->SetText(ViewedSlot == EMVSkillSlot::PassiveSkill
 		? LOCTEXT("TypeScope", "이 무기 종류에 공통 적용") : LOCTEXT("StyleScope", "이 무기 스타일에 공통 적용"));
-	for (const auto& Candidate : Weapons.GetSkillCandidates(Context))
+	auto Candidates = Weapons.GetSkillCandidates(Context);
+	Candidates.StableSort([](const FMVSkillSelectionCandidate& A, const FMVSkillSelectionCandidate& B)
+	{
+		return A.bSelected && !B.bSelected;
+	});
+	for (const auto& Candidate : Candidates)
 	{
 		const auto* Skill = Candidate.Row.GetRow<FMVSkillDataTableColumn>(TEXT("SkillSelection.Candidate"));
 		if (!Skill) continue;
@@ -468,7 +473,7 @@ void UMVWeaponSkillSelectionWindow::RebuildCandidates(bool bFocusCandidates)
 		const bool bCanApply = Candidate.bUnlocked && !Candidate.bSelected;
 		Entry->SetCandidate(Candidate.Row, *Skill, State, bCanApply, MissingArtwork);
 		AddEntry(Entry);
-		if (!Initial || Candidate.bSelected) Initial = Entry;
+		if (!Initial) Initial = Entry;
 	}
 	if (ViewedSlot == EMVSkillSlot::PassiveSkill && (Initial || bHasSelection))
 	{
