@@ -18,7 +18,7 @@
 
 namespace
 {
-constexpr float MVWeaponSkillConeCheckInterval = 0.05f;
+constexpr float MVWeaponSkillAreaCheckInterval = 0.05f;
 constexpr double MVWeaponSkillConeHalfAngleCosine = 0.86602540378443865;
 
 #if WITH_EDITOR && ENABLE_DRAW_DEBUG
@@ -29,12 +29,11 @@ TAutoConsoleVariable<int32> CVarMVWeaponSkillConeDebugDraw(
 	1,
 	TEXT("Draw the weapon skill cone and report its hits in PIE. 0: off, 1: on."));
 
-constexpr float MVWeaponSkillConeDebugSnapshotLifetime = 1.25f;
+constexpr float MVWeaponSkillAreaDebugSnapshotLifetime = 1.25f;
 
-bool MVWeaponSkillConeShouldDraw(const UWorld& World)
-{
-	return World.WorldType == EWorldType::PIE && CVarMVWeaponSkillConeDebugDraw.GetValueOnGameThread() != 0;
-}
+TAutoConsoleVariable<int32> CVarMVWeaponSkillCircleDebugDraw(
+	TEXT("maverick.WeaponSkillCircle.DebugDraw"), 1,
+	TEXT("Draw the weapon skill circle and report its hits in PIE. 0: off, 1: on."));
 
 void MVWeaponSkillDrawDebugCone(
 	const UWorld& World, const FVector& Origin, const FVector& Forward,
@@ -117,57 +116,93 @@ void MVWeaponSkillApplyGroundPull(AMVCharacterBase* Victim, const FVector& Desti
 UMVWeaponSkillConeWindow* UMVWeaponSkillConeWindow::OpenWeaponSkillCone(UMVAbilityBase* Ability, float Radius,
 	UMVWeaponSkillConeWindow* ExistingWindow, float AirborneStartDistance)
 {
-	AMVCharacterBase* Owner = IsValid(Ability) ? Ability->GetOwnerCharacter() : nullptr;
-	UWorld* World = IsValid(Owner) ? Owner->GetWorld() : nullptr;
-	const UCapsuleComponent* Capsule = Owner ? Owner->GetCapsuleComponent() : nullptr;
-	if (!World || !World->IsGameWorld() || !Capsule || !Ability->bAbilityActive || !(Radius > 0.0f))
+	if (!IsValid(Ability) || !Ability->bAbilityActive || !(Radius > 0.0f))
 	{
 		return nullptr;
 	}
-
-	if (IsValid(ExistingWindow) && ExistingWindow->WindowWorld.IsValid()
-		&& ExistingWindow->SourceAbility.Get() == Ability && ExistingWindow->AttackId == Ability->GetAttackInstanceId())
+	if (IsValid(ExistingWindow) && ExistingWindow->IsOpenFor(Ability))
 	{
 		return ExistingWindow;
 	}
+	auto* Window = NewObject<UMVWeaponSkillConeWindow>(Ability);
+	return Window->Open(Ability, EShape::Cone, Radius, AirborneStartDistance) ? Window : nullptr;
+}
 
-	UMVWeaponSkillConeWindow* Window = NewObject<UMVWeaponSkillConeWindow>(Ability);
-	Window->SourceAbility = Ability;
-	Window->WindowWorld = World;
-	Window->AttackId = Ability->GetAttackInstanceId();
-	Window->Origin = Capsule->GetComponentLocation();
-	Window->Forward = Owner->GetActorForwardVector().GetSafeNormal2D();
-	Window->HalfHeight = Capsule->GetScaledCapsuleHalfHeight();
-	Window->Range = Radius;
-	Window->AirborneRange = FMath::Max(0.0f, AirborneStartDistance);
+bool UMVWeaponSkillAreaWindow::IsOpenFor(const UMVAbilityBase* Ability) const
+{
+	return WindowWorld.IsValid() && SourceAbility.Get() == Ability && AttackId == Ability->GetAttackInstanceId();
+}
+
+bool UMVWeaponSkillAreaWindow::Open(UMVAbilityBase* Ability, EShape InShape, float OuterRadius, float InnerRadius)
+{
+	AMVCharacterBase* Owner = Ability->GetOwnerCharacter();
+	UWorld* World = IsValid(Owner) ? Owner->GetWorld() : nullptr;
+	const UCapsuleComponent* Capsule = World ? Owner->GetCapsuleComponent() : nullptr;
+	if (!Capsule || !World->IsGameWorld() || !FMath::IsFinite(OuterRadius) || OuterRadius <= 0.0f
+		|| !FMath::IsFinite(InnerRadius))
+	{
+		return false;
+	}
+	SourceAbility = Ability;
+	WindowWorld = World;
+	AttackId = Ability->GetAttackInstanceId();
+	Origin = Capsule->GetComponentLocation();
+	Forward = Owner->GetActorForwardVector().GetSafeNormal2D();
+	HalfHeight = Capsule->GetScaledCapsuleHalfHeight();
+	Shape = InShape;
+	Range = OuterRadius;
+	AirborneRange = FMath::Max(0.0f, InnerRadius);
 
 #if WITH_EDITOR && ENABLE_DRAW_DEBUG
-	if (MVWeaponSkillConeShouldDraw(*World))
+	if (ShouldDraw(*World))
 	{
-		MVWeaponSkillDrawDebugCone(*World, Window->Origin, Window->Forward, Window->Range,
-			Window->HalfHeight, Window->AirborneRange, MVWeaponSkillConeDebugSnapshotLifetime);
+		DrawArea(*World, MVWeaponSkillAreaDebugSnapshotLifetime);
 		UE_LOG(LogMVWeaponSkillCone, Display,
-			TEXT("WeaponSkillConeTrace Begin Frame=%llu Owner=%s AttackId=%d Origin=%s Forward=%s Radius=%.1f HalfHeight=%.1f AirborneStart=%.1f"),
-			GFrameCounter, *GetNameSafe(Owner), Window->AttackId, *Window->Origin.ToCompactString(),
-			*Window->Forward.ToCompactString(), Window->Range, Window->HalfHeight, Window->AirborneRange);
+			TEXT("%s Begin Frame=%llu Owner=%s AttackId=%d Origin=%s Forward=%s Radius=%.1f HalfHeight=%.1f AirborneStart=%.1f"),
+			Shape == EShape::Circle ? TEXT("WeaponSkillCircleTrace") : TEXT("WeaponSkillConeTrace"),
+			GFrameCounter, *GetNameSafe(Owner), AttackId, *Origin.ToCompactString(),
+			*Forward.ToCompactString(), Range, HalfHeight, AirborneRange);
 	}
 #endif
-
-	World->GetTimerManager().SetTimer(Window->CheckTimer, Window,
-		&UMVWeaponSkillConeWindow::CheckCone, MVWeaponSkillConeCheckInterval, true);
-	Window->CheckCone();
-	return Window;
+	World->GetTimerManager().SetTimer(CheckTimer, this, &UMVWeaponSkillAreaWindow::CheckArea, MVWeaponSkillAreaCheckInterval, true);
+	CheckArea();
+	return true;
 }
+
+#if WITH_EDITOR && ENABLE_DRAW_DEBUG
+bool UMVWeaponSkillAreaWindow::ShouldDraw(const UWorld& World) const
+{
+	const auto& Toggle = Shape == EShape::Circle ? CVarMVWeaponSkillCircleDebugDraw : CVarMVWeaponSkillConeDebugDraw;
+	return World.WorldType == EWorldType::PIE && Toggle.GetValueOnGameThread() != 0;
+}
+
+void UMVWeaponSkillAreaWindow::DrawArea(const UWorld& World, float Lifetime) const
+{
+	if (Shape == EShape::Cone)
+	{
+		MVWeaponSkillDrawDebugCone(World, Origin, Forward, Range, HalfHeight, AirborneRange, Lifetime);
+		return;
+	}
+	const FVector HeightOffset = FVector::UpVector * HalfHeight;
+	DrawDebugCylinder(&World, Origin - HeightOffset, Origin + HeightOffset, Range, 64,
+		FColor::Cyan, false, Lifetime, 0, 1.5f);
+	if (AirborneRange > 0.0 && AirborneRange <= Range)
+	{
+		DrawDebugCircle(&World, Origin, AirborneRange, 64, FColor::Yellow, false, Lifetime, 0, 1.5f,
+			FVector::ForwardVector, FVector::RightVector, false);
+	}
+}
+#endif
 
 void UMVWeaponSkillConeWindow::CloseWeaponSkillCone(UMVWeaponSkillConeWindow* Window)
 {
 	if (IsValid(Window))
 	{
-		Window->CloseCone();
+		Window->Close();
 	}
 }
 
-void UMVWeaponSkillConeWindow::CloseCone()
+void UMVWeaponSkillAreaWindow::Close()
 {
 	if (UWorld* World = WindowWorld.Get())
 	{
@@ -177,13 +212,13 @@ void UMVWeaponSkillConeWindow::CloseCone()
 	HitCharacters.Reset();
 }
 
-void UMVWeaponSkillConeWindow::BeginDestroy()
+void UMVWeaponSkillAreaWindow::BeginDestroy()
 {
-	CloseCone();
+	Close();
 	Super::BeginDestroy();
 }
 
-void UMVWeaponSkillConeWindow::CheckCone()
+void UMVWeaponSkillAreaWindow::CheckArea()
 {
 	UMVAbilityBase* Ability = SourceAbility.Get();
 	AMVCharacterBase* Owner = Ability ? Ability->GetOwnerCharacter() : nullptr;
@@ -191,7 +226,7 @@ void UMVWeaponSkillConeWindow::CheckCone()
 	if (!World || !IsValid(Owner) || !IsValid(Owner->StatComponent.Get()) || Owner->StatComponent->IsDead()
 		|| !Ability->bAbilityActive || Ability->GetAttackInstanceId() != AttackId)
 	{
-		CloseCone();
+		Close();
 		return;
 	}
 
@@ -202,10 +237,10 @@ void UMVWeaponSkillConeWindow::CheckCone()
 	}
 
 #if WITH_EDITOR && ENABLE_DRAW_DEBUG
-	const bool bDrawCone = MVWeaponSkillConeShouldDraw(*World);
-	if (bDrawCone)
+	const bool bDrawArea = ShouldDraw(*World);
+	if (bDrawArea)
 	{
-		MVWeaponSkillDrawDebugCone(*World, Origin, Forward, Range, HalfHeight, AirborneRange, MVWeaponSkillConeCheckInterval * 2.0f);
+		DrawArea(*World, MVWeaponSkillAreaCheckInterval * 2.0f);
 	}
 #endif
 
@@ -219,7 +254,7 @@ void UMVWeaponSkillConeWindow::CheckCone()
 	FMVHitResolveRequest Request = UMVWeaponSkillSupport::MakeAreaHitRequest(*Ability, *Owner);
 	for (const FOverlapResult& Overlap : Overlaps)
 	{
-		if (!Ability->bAbilityActive || Ability->GetAttackInstanceId() != AttackId)
+		if (!WindowWorld.IsValid() || !Ability->bAbilityActive || Ability->GetAttackInstanceId() != AttackId)
 		{
 			break;
 		}
@@ -232,8 +267,9 @@ void UMVWeaponSkillConeWindow::CheckCone()
 		const FVector Center = Victim->GetCapsuleComponent()->GetComponentLocation();
 		const FVector Offset = Center - Origin;
 		const double DistanceSquared = Offset.SizeSquared2D();
-		if (FMath::Abs(Offset.Z) > HalfHeight || DistanceSquared <= 0.0 || DistanceSquared > FMath::Square(Range)
-			|| FVector::DotProduct(Offset, Forward) < FMath::Sqrt(DistanceSquared) * MVWeaponSkillConeHalfAngleCosine)
+		if (FMath::Abs(Offset.Z) > HalfHeight || DistanceSquared > FMath::Square(Range)
+			|| (Shape == EShape::Cone && (DistanceSquared <= 0.0 ||
+				FVector::DotProduct(Offset, Forward) < FMath::Sqrt(DistanceSquared) * MVWeaponSkillConeHalfAngleCosine)))
 		{
 			continue;
 		}
@@ -246,12 +282,13 @@ void UMVWeaponSkillConeWindow::CheckCone()
 		FMVResolvedHitData ResolvedHit;
 		[[maybe_unused]] const bool bResolved = Resolver->ResolveAttackHit(Request, ResolvedHit);
 #if WITH_EDITOR && ENABLE_DRAW_DEBUG
-		if (bDrawCone)
+		if (bDrawArea)
 		{
 			const FColor HitColor = bResolved ? FColor::Green : (ResolvedHit.bBlocked ? FColor::Orange : FColor::Red);
-			DrawDebugSphere(World, Center, 18.0f, 8, HitColor, false, MVWeaponSkillConeDebugSnapshotLifetime);
+			DrawDebugSphere(World, Center, 18.0f, 8, HitColor, false, MVWeaponSkillAreaDebugSnapshotLifetime);
 			UE_LOG(LogMVWeaponSkillCone, Display,
-				TEXT("WeaponSkillConeTrace Hit Frame=%llu Owner=%s Target=%s AttackId=%d Distance=%.1f Request=%s Delivered=%d Blocked=%d"),
+				TEXT("%s Hit Frame=%llu Owner=%s Target=%s AttackId=%d Distance=%.1f Request=%s Delivered=%d Blocked=%d"),
+				Shape == EShape::Circle ? TEXT("WeaponSkillCircleTrace") : TEXT("WeaponSkillConeTrace"),
 				GFrameCounter, *GetNameSafe(Owner), *GetNameSafe(Victim), AttackId, FMath::Sqrt(DistanceSquared),
 				*UEnum::GetValueAsString(Request.HitReactionType), bResolved, ResolvedHit.bBlocked);
 		}

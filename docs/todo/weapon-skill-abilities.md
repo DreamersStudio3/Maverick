@@ -1,14 +1,20 @@
-# 신규 무기 스킬 Ability 1~3번
+# 신규 무기 스킬 Ability 1~4번
 
-- 목표: 무기 스킬 1~3번과 2번 발사체 생성 및 검증. 4번은 별도 작업
-- 상태: 1~3번 구현 및 기존 검증 완료. 2번 GroundPull의 대상 몽타주 재생 중 이동 문제 미해결. 기본 로드아웃의 영구 지정은 에셋 선택 대기
-- 위키 검토: 갱신 예정: `docs/wiki/Features/Combat/Combat-System/document.md`
-- 검증: UE 5.8 Development Editor unity 빌드, BP 10개 컴파일, 투사체·HitResolver 자동화 4종 통과. 기본 및 추가 PIE 각각 31개·17개 확인 통과. 테스트 Row 값 원복
+- 목표: 무기 스킬 1~4번과 2번 발사체 생성 및 검증
+- 상태: 1~4번 구현, 4번 PIE 검증 완료. 2번 GroundPull의 대상 몽타주 재생 중 이동 문제와 3번 추가 확인은 진행 중. 4번 한손검 Q는 테스트용 임시 연결 후 복원
+- 위키 검토: 4번 갱신 완료 `docs/wiki/Features/Combat/Combat-System/document.md`
+- 검증: 1~3번 UE 5.8 Development Editor unity 빌드, BP 10개 컴파일, 투사체·HitResolver 자동화 4종 통과. 기본 및 추가 PIE 각각 31개·17개 확인 통과. 테스트 Row 값 원복
 
 ## 에셋과 실행 경로
 
-- 신규 Ability: `BP_WeaponSkillCone`, `BP_WeaponSkillPull`, `BP_WeaponSkillCounter`. 발사체: `BP_WeaponSkillPullProjectile`
+- 신규 Ability: `BP_WeaponSkillCone`, `BP_WeaponSkillPull`, `BP_WeaponSkillCounter`, `BP_WeaponSkillCircle`. 발사체: `BP_WeaponSkillPullProjectile`
 - 참고 에셋: `Content/Characters/Components/Combat/Abilities/BP_MeleeAttack.uasset`, 같은 폴더의 `BP_TestProjectileAbility.uasset`, `Content/Characters/Components/Combat/Projectile/BP_TestStraightProjectile.uasset`
+
+## Ability Blueprint 피해 배율 조정
+
+- [x] `Class Defaults → Settings → Damage`에 `Damage Multiplier`, `Poise Amount Multiplier`, `Groggy Damage Multiplier` 노출. `InitAbility`에서 체크한 항목만 BP 값으로 덮어쓰고, 기본 상태에서는 기존 스킬 Row 배율 유지
+- [x] `Player_GreatSword.SkillE`의 `AbilityReference`를 `BP_WeaponSkillCounter`로 변경. `AM_PC_GS_E`의 기존 Notify 호출과 호환 확인. 나머지 Row 필드 보존 확인
+- [x] Development Editor 빌드와 세 Ability BP 컴파일 통과. 새 인스턴스에서 Row 유지, Poise 단독 덮어쓰기, 0 설정 및 Row 재초기화 검증
 
 ## PIE 진입 경로 — 기본 무기 Q·W·E
 
@@ -64,7 +70,23 @@
 - 배치: 캐릭터 쪽 박스 면의 중앙이 캡슐 원점에 놓이고 판정은 그 면에서 전방으로 확장. 박스 중심은 캡슐 원점 + 정면 × 전방 깊이의 절반
 - 확정 치수: 좌우 폭 500·높이 300·전방 깊이 100 cm(중심 전방 50 cm). 반격 성공 당시의 캡슐 위치와 정면 고정. 즉시 1회 검사 후 0.05초 간격 검사
 
-## 파일별 변경 내역
+## 4번 캐릭터 중심 원형 공격
+
+- 상태: `UMVWeaponSkillCircleAbility`와 자식 `BP_WeaponSkillCircle` 구현·검증 완료. `MVWeaponSkillSupport.h/.cpp`의 공용 영역 검사·적중 추적·타이머 정리를 부채꼴과 공유
+- 시전 시작의 캡슐 중심과 반높이 고정. 대상 캡슐 중심의 수평 거리 0 이상 700 cm 미만은 `Flinch`, 700 이상 1000 cm 이하는 `Airborne`. 높이 차는 캡슐 반높이 이하까지 포함
+- `BP_WeaponSkillCircle`의 Class Defaults에서 `InnerRadius`와 `OuterRadius` 각각 편집. 부채꼴과 같은 공용 적중 요청·Row 배율·BP 덮어쓰기·Launch 사용
+- Notify 시작 즉시 검사 후 종료까지 0.05초마다 검사. 도중 진입 포함, 재진입과 두 영역 사이 이동은 대상별 1회
+- 한손검 Q `Yone_Attack.SkillQ`에 PIE 임시 연결 후 복원. 원래 Ability `BP_MeleeAttack`, 몽타주 `AM_1H_Yone_SkillA_1`의 `ANS_ActiveAbility` 시작 0.46744초·지속 0.05059초
+
+### 4번 검증
+
+- [x] UE 5.8 `MaverickEditor Win64 Development` 빌드 및 검증 코드 분리 후 최종 빌드 통과. 원형·부채꼴 BP 컴파일 통과
+- [x] CharacterSolo PIE에서 0·후방 699 cm `Flinch`, 700·850·후방 1000 cm `Airborne` 전달 및 HP 감소. 1001 cm 제외. 높이 차 ±88 cm 포함, ±89 cm 제외
+- [x] 기본 700/1000 cm 및 BP 기본값을 300/600 cm로 변경한 경우 노란 내원·청록 외원의 실제 디버그 선 좌표 검증. 변경 후 299 cm `Flinch`, 300·600 cm `Airborne`, 601 cm 제외. Row 피해 배율 1.75 유지, BP 3.25 덮어쓰기 및 실제 피해 증가 확인
+- [x] 시전자 2400 cm 이동 후 원래 중심에 진입한 대상 1회 적중, 새 중심 쪽 대상 제외. 이탈 후 다른 영역으로 재진입 시 중복 없음. Notify 종료·명시적 종료 후 진입 제외, 재시전 적중. 별도 PIE에서 실제 Q 몽타주 활성 중 취소 시 Ability 종료. 기존 부채꼴 전방 적중·후방 제외 확인
+- [x] 한손검 Q → `Yone_Attack.SkillQ` → `AM_1H_Yone_SkillA_1` → 기존 `ANS_ActiveAbility`로 실제 적중. 메모리의 테스트 참조를 `BP_MeleeAttack`으로 복원하고 테이블 파일의 검증 전후 SHA-256 일치 확인. 결과 로그 `Saved/Logs/WeaponSkillCirclePIE.log`
+
+## 파일별 변경 내역 — 1~3번
 
 ### C++ 추가 4개
 
@@ -136,4 +158,3 @@
 - [x] 차단 API 자동화: 이전 등록 번호의 해제로 새 등록 유지, 비관통탄 차단 후 같은 프레임의 직접 피해 정상 전달
 - [x] 반격 공격 PIE: 성공 직후 및 0.05·0.45초에 진입한 대상별 `Knockback` 1회, 시전자 이동·회전 뒤 영역 고정, 0.55초 이후 진입 제외, 같은 공격 번호 귀속, 미피격 종료 정산 1회
 - [ ] 추가 확인: 반격 디버그 박스 시각 검사, Launch·상태 효과·공격자 보상 각각의 장면 재현
-- [ ] 4번은 스킬명·판정 방식·활성 구간·적중 효과를 받은 뒤 BP와 검증 항목 작성
