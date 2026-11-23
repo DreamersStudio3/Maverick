@@ -150,6 +150,7 @@ struct MAVERICK_API FMVWeaponProgressSaveData
 	UPROPERTY()
 	bool bHasRecord = false;
 
+	// 4버전 저장에서만 읽는 이전 무기 소유 자료
 	UPROPERTY()
 	TMap<FGameplayTag, FMVSavedWeaponRow> OwnedWeapons;
 
@@ -170,6 +171,19 @@ struct MAVERICK_API FMVWeaponProgressSaveData
 
 	UPROPERTY()
 	int32 SkillPoints = 0;
+};
+
+/** 기록 유무를 따로 저장해 처음 시작하는 가방과 저장된 빈 가방을 구분한다. */
+USTRUCT()
+struct MAVERICK_API FMVInventorySaveData
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	bool bHasRecord = false;
+
+	UPROPERTY()
+	TMap<FGameplayTag, int32> ItemCounts;
 };
 
 USTRUCT(BlueprintType)
@@ -194,6 +208,9 @@ struct MAVERICK_API FMVWorldSaveData
 
 	UPROPERTY()
 	FMVWeaponProgressSaveData WeaponProgress;
+
+	UPROPERTY()
+	FMVInventorySaveData Inventory;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Save")
 	TArray<FMVFieldObjectSaveData> FieldObjects;

@@ -1,11 +1,26 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Enum/MVItemEnums.h"
+#include "GameplayTagContainer.h"
 #include "Subsystems/EngineSubsystem.h"
 #include "Tables/MVTableTypes.h"
 #include "MVTableManager.generated.h"
 
 class UDataTable;
+
+/** 아이템 원본 행, 보유 한도, 목록 표시 분류. 테이블을 다시 읽으면 함께 갱신된다. */
+struct FMVInventoryItemDefinition
+{
+	FDataTableRowHandle Row;
+	int32 StackLimit = MAX_int32;
+	FName InventoryGroupId;
+	EMVInventoryGroupCategory InventoryGroupCategory = EMVInventoryGroupCategory::Other;
+	int32 InventoryGroupSortOrder = 0;
+	int32 InventorySortOrder = 0;
+};
+
+DECLARE_MULTICAST_DELEGATE(FMVOnInventoryItemDefinitionsReloaded);
 
 UCLASS()
 class MAVERICK_API UMVTableManager : public UEngineSubsystem
@@ -44,6 +59,8 @@ public:
 
 	const UDataTable* FindDataTable(FName TableName) const;
 	const FMVTableManifestRow* FindManifestRow(FName TableName) const;
+	const FMVInventoryItemDefinition* FindInventoryItemDefinition(FGameplayTag ItemTag) const;
+	FMVOnInventoryItemDefinitionsReloaded OnInventoryItemDefinitionsReloaded;
 
 	template<typename RowType>
 	const RowType* FindRow(FName TableName, const FString& RowKey) const
@@ -92,6 +109,7 @@ public:
 
 private:
 	bool LoadAllTables();
+	void RebuildInventoryItemIndex();
 	void AddLoadError(const FString& Message);
 	const uint8* FindRawRow(FName TableName, const FString& RowKey, const UScriptStruct*& OutRowStruct) const;
 	const FProperty* FindProperty(FName TableName, const FString& RowKey, const FString& FieldName, const uint8*& OutRowData) const;
@@ -105,6 +123,7 @@ private:
 	TMap<FName, TObjectPtr<UDataTable>> LoadedTables;
 
 	TMap<FName, FMVTableManifestRow> ManifestRows;
+	TMap<FGameplayTag, FMVInventoryItemDefinition> InventoryItemIndex;
 	TArray<FString> LastLoadErrors;
 	bool bLoaded = false;
 };

@@ -8,6 +8,7 @@
 #include "Engine/GameInstance.h"
 #include "Combat/MVAbilityBase.h"
 #include "Components/MVWeaponComponent.h"
+#include "Components/MVInventoryComponent.h"
 #include "System/MVWorldStateSubsystem.h"
 #include "Public/Tags/MVGameplayTags.h"
 #include "Public/Tables/MVSkillDataTableColumn.h"
@@ -25,6 +26,7 @@ bool FMVSkillSelectionPersistenceTest::RunTest(const FString& Parameters)
 	const auto MakeWeapons = [&]()
 	{
 		auto* Weapons = NewObject<UMVWeaponComponent>();
+		Weapons->Inventory = NewObject<UMVInventoryComponent>(Weapons);
 		auto* Map = DuplicateObject<UMVWeaponSkillMap>(Fixture, Weapons);
 		Map->WeaponStyle = EMVEquippedStyle::OneHand;
 		Weapons->SkillBlueprint.Add(Map->WeaponStyle, Map);
@@ -47,8 +49,10 @@ bool FMVSkillSelectionPersistenceTest::RunTest(const FString& Parameters)
 		auto* Save = MakeSave();
 		if (!TestTrue(TEXT("Fresh process loads disk"), Save->LoadFromSlot(Slot, 0))) return false;
 		auto* Weapons = MakeWeapons();
-		Weapons->RestoreWeaponProgress(Save->GetWeaponProgress());
-		TestEqual(TEXT("Version remains four"), Save->GetSaveData().SaveVersion, 4);
+		Weapons->RestoreWeaponProgress(Save->GetWeaponProgress(), Save->GetSaveData().Inventory);
+		TestEqual(TEXT("Save version is five"), Save->GetSaveData().SaveVersion, 5);
+		TestTrue(TEXT("Empty inventory survives restart"),
+			Save->GetSaveData().Inventory.bHasRecord && Weapons->Inventory->GetItems().IsEmpty());
 		TestTrue(TEXT("Other world state survives"), Save->GetWorldFlag(TEXT("SkillSelectionSentinel"), false));
 		for (const auto& SlotDefinition : MVSkillSelectionData::GetSlots())
 		{
@@ -83,7 +87,7 @@ bool FMVSkillSelectionPersistenceTest::RunTest(const FString& Parameters)
 	FDataTableRowHandle WeaponRow;
 	WeaponRow.DataTable = WeaponTable;
 	WeaponRow.RowName = TEXT("Owned");
-	Weapons->AcquireWeapon(WeaponRow);
+	TestTrue(TEXT("Acquire fixture sword"), Weapons->AcquireWeapon(WeaponRow));
 	FMVSkillSelectionContext Context;
 	Context.ItemTag = Weapon.ItemTag;
 	Context.WeaponType = Weapon.WeaponTypeTag;
@@ -131,7 +135,8 @@ bool FMVSkillSelectionPersistenceTest::RunTest(const FString& Parameters)
 	TestTrue(TEXT("Passive reports save success"), Weapons->TrySelectSkill(Context, Passive).SaveStatus == EMVSkillSelectionSaveStatus::Saved);
 	auto* Loaded = MakeSave();
 	TestTrue(TEXT("New subsystem reloads disk"), Loaded->LoadFromSlot(SlotName, 0));
-	Weapons->RestoreWeaponProgress(Loaded->GetWeaponProgress());
+	const FMVInventorySaveData SavedItems = Loaded->GetSaveData().Inventory;
+	Weapons->RestoreWeaponProgress(Loaded->GetWeaponProgress(), SavedItems);
 	TestTrue(TEXT("Passive restored"), Weapons->GetSelectedPassive(Weapon.WeaponTypeTag, Selected) && Selected == Passive);
 	TestTrue(TEXT("Owned weapon preserved"), Weapons->IsWeaponOwned(Weapon.ItemTag));
 	TestTrue(TEXT("Unrelated flag preserved"), Loaded->GetWorldFlag(TEXT("SkillSelectionSentinel"), false));
@@ -144,7 +149,7 @@ bool FMVSkillSelectionPersistenceTest::RunTest(const FString& Parameters)
 	auto& SavedStyle = Invalid.SkillStyles.FindChecked(EMVEquippedStyle::OneHand);
 	SavedStyle.EquippedRows.FindChecked(EMVSkillSlot::QSkill).RowName = TEXT("RemovedRow");
 	SavedStyle.EquippedRows.FindChecked(EMVSkillSlot::WSkill) = SavedStyle.EquippedRows.FindChecked(EMVSkillSlot::ESkill);
-	Weapons->RestoreWeaponProgress(Invalid);
+	Weapons->RestoreWeaponProgress(Invalid, SavedItems);
 	TestFalse(TEXT("Removed Prototype falls back to empty"), Weapons->GetEquippedSkillRow(EMVEquippedStyle::OneHand, EMVSkillSlot::QSkill, Selected));
 	TestFalse(TEXT("Moved slot is rejected"), Weapons->GetEquippedSkillRow(EMVEquippedStyle::OneHand, EMVSkillSlot::WSkill, Selected));
 	TestTrue(TEXT("Other slot retained"), Weapons->GetEquippedSkillRow(EMVEquippedStyle::OneHand, EMVSkillSlot::RSkill, Selected));
@@ -168,34 +173,35 @@ bool FMVSkillSelectionPersistenceTest::RunTest(const FString& Parameters)
 	Map->DefaultSkillRows.Add(EMVSkillSlot::QSkill, Broken);
 	for (int32 Repeat = 0; Repeat < 3; ++Repeat)
 	{
-		Weapons->RestoreWeaponProgress(Invalid);
+		Weapons->RestoreWeaponProgress(Invalid, SavedItems);
 		TestTrue(TEXT("Invalid default uses deterministic complete Ready fallback"), Weapons->GetEquippedSkillRow(EMVEquippedStyle::OneHand, EMVSkillSlot::QSkill, Selected) && Selected == AReady);
 	}
 	FMVSavedWeaponRow PaidKey;
 	PaidKey.Table = Passives;
 	PaidKey.RowName = Paid.RowName;
 	SavedStyle.EquippedRows.FindChecked(EMVSkillSlot::QSkill) = PaidKey;
-	Weapons->RestoreWeaponProgress(Invalid);
+	Weapons->RestoreWeaponProgress(Invalid, SavedItems);
 	TestTrue(TEXT("Unrecorded paid unlock cannot restore"), Weapons->GetEquippedSkillRow(EMVEquippedStyle::OneHand, EMVSkillSlot::QSkill, Selected) && Selected == AReady);
 	SavedStyle.UnlockedRows.Add(PaidKey);
-	Weapons->RestoreWeaponProgress(Invalid);
+	Weapons->RestoreWeaponProgress(Invalid, SavedItems);
 	TestTrue(TEXT("Recorded paid unlock restores without spending"), Weapons->GetEquippedSkillRow(EMVEquippedStyle::OneHand, EMVSkillSlot::QSkill, Selected) && Selected == Paid && Weapons->GetSkillPoints() == Invalid.SkillPoints);
 	FMVSkillDataTableColumn InvalidPassive = PassiveData;
 	InvalidPassive.ImplementationState = EMVSkillImplementationState::Prototype;
 	Passives->AddRow(TEXT("Passive"), InvalidPassive);
-	Weapons->RestoreWeaponProgress(Invalid);
+	Weapons->RestoreWeaponProgress(Invalid, SavedItems);
 	TestFalse(TEXT("Prototype passive cannot restore even with an Ability"), Weapons->GetSelectedPassive(Weapon.WeaponTypeTag, Selected));
 	Passives->AddRow(TEXT("Passive"), PassiveData);
 
 	// 새 프로세스가 읽을 수 있는 영구 행만 마지막에 저장한다.
 	FMVWeaponProgressSaveData Restart = Loaded->GetWeaponProgress();
-	Restart.OwnedWeapons.Reset();
+	FMVInventorySaveData EmptyInventory;
+	EmptyInventory.bHasRecord = true;
 	Restart.SelectedPassives.Reset();
 	for (auto& Style : Restart.SkillStyles)
 	{
 		Style.Value.UnlockedRows.RemoveAll([](const auto& Key) { return !Key.Table.ToSoftObjectPath().GetLongPackageName().StartsWith(TEXT("/Game/")); });
 	}
-	Save->SetWeaponProgress(MoveTemp(Restart));
+	Save->SetPlayerItemProgress(MoveTemp(EmptyInventory), MoveTemp(Restart));
 	TestTrue(TEXT("Write durable restart fixture"), Save->SaveActiveSlot());
 	TestTrue(TEXT("Publish generated slot name"), FFileHelper::SaveStringToFile(SlotName, *Manifest));
 	Weapons->OnSkillSelectionChanged.Clear();

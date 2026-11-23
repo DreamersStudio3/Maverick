@@ -45,7 +45,7 @@ public:
 	bool HasFailedActiveSave() const { return bActiveSaveFailed; }
 	bool RecordRestPoint(FName RestPointId, FName FieldId, const FTransform& Transform);
 	const FMVWeaponProgressSaveData& GetWeaponProgress() const { return CurrentSaveData.WeaponProgress; }
-	void SetWeaponProgress(FMVWeaponProgressSaveData&& Progress);
+	void SetPlayerItemProgress(FMVInventorySaveData&& Inventory, FMVWeaponProgressSaveData&& Weapons);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|WorldState|Save")
 	bool LoadFromSlot(const FString& SlotName, int32 UserIndex);

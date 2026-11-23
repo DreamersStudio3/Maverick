@@ -1,6 +1,7 @@
 #include "Components/MVWeaponComponent.h"
 
 #include "Character/PC/MVPlayerCharacter.h"
+#include "Components/MVInventoryComponent.h"
 #include "Engine/World.h"
 #include "GameFramework/PlayerController.h"
 #include "System/MVWorldStateSubsystem.h"
@@ -53,7 +54,8 @@ void UMVWeaponComponent::InitializeWeaponProgress()
 	}
 	else
 	{
-		RestoreWeaponProgress(FMVWeaponProgressSaveData());
+		RestoreWeaponProgress(FMVWeaponProgressSaveData(), FMVInventorySaveData());
+		NotifyWeaponProgressRestored();
 	}
 }
 
@@ -61,19 +63,28 @@ void UMVWeaponComponent::HandleWeaponSaveLoaded(FString SlotName)
 {
 	if (UMVWorldStateSubsystem* State = WeaponSaveState.Get())
 	{
-		const bool bHadRecord = State->GetWeaponProgress().bHasRecord;
-		RestoreWeaponProgress(State->GetWeaponProgress());
-		if (!bHadRecord)
+		const FMVWeaponProgressSaveData Progress = State->GetWeaponProgress();
+		const FMVInventorySaveData SavedItems = State->GetSaveData().Inventory;
+		RestoreWeaponProgress(Progress, SavedItems);
+		if (!Progress.bHasRecord || !SavedItems.bHasRecord
+			|| (Inventory && !SavedItems.ItemCounts.OrderIndependentCompareEqual(Inventory->GetItems()))
+			|| Progress.QuickSlots != QuickSlotWeaponTags || Progress.ActiveSlot != ActiveQuickSlotIndex
+			|| Progress.EquippedWeapon != CurrentWeaponState.ItemTag)
 		{
 			StoreWeaponProgress();
 		}
+		NotifyWeaponProgressRestored();
 	}
 }
 
-void UMVWeaponComponent::RestoreWeaponProgress(const FMVWeaponProgressSaveData& Progress)
+void UMVWeaponComponent::RestoreWeaponProgress(
+	const FMVWeaponProgressSaveData& Progress, const FMVInventorySaveData& InventoryProgress)
 {
 	TGuardValue<bool> RestoreGuard(bRestoringWeaponProgress, true);
-	OwnedWeapons.Reset();
+	if (Inventory)
+	{
+		Inventory->RestorePlayerItems(InventoryProgress, Progress);
+	}
 	QuickSlotWeaponTags.Reset();
 	EnsureQuickSlotStorage();
 	ActiveQuickSlotIndex = INDEX_NONE;
@@ -89,7 +100,7 @@ void UMVWeaponComponent::RestoreWeaponProgress(const FMVWeaponProgressSaveData& 
 
 	if (!Progress.bHasRecord)
 	{
-		if (!TryInitializeDefaultWeapon())
+		if (InventoryProgress.bHasRecord || !TryInitializeDefaultWeapon())
 		{
 			EquipBareHand();
 		}
@@ -97,26 +108,19 @@ void UMVWeaponComponent::RestoreWeaponProgress(const FMVWeaponProgressSaveData& 
 	}
 
 	CurrentSkillPoints = FMath::Max(0, Progress.SkillPoints);
-	for (const auto& Owned : Progress.OwnedWeapons)
-	{
-		const FDataTableRowHandle Handle = MVWeaponProgressResolveRow(Owned.Value);
-		const FMVWeaponTableRow* Row = Handle.DataTable && Handle.DataTable->GetRowStruct()
-			&& Handle.DataTable->GetRowStruct()->IsChildOf(FMVWeaponTableRow::StaticStruct())
-			? ResolveWeaponRow(Handle, TEXT("RestoreWeaponProgress")) : nullptr;
-		if (Owned.Key.IsValid() && Row && Row->ItemTag == Owned.Key && Row->ItemTag != BareHandWeapon.ItemTag)
-		{
-			OwnedWeapons.Add(Owned.Key, Handle);
-		}
-	}
-
 	TSet<FGameplayTag> Assigned;
 	for (int32 Index = 0; Index < FMath::Min(QuickSlotWeaponTags.Num(), Progress.QuickSlots.Num()); ++Index)
 	{
 		const FGameplayTag& Tag = Progress.QuickSlots[Index];
-		if (OwnedWeapons.Contains(Tag) && !Assigned.Contains(Tag))
+		if (IsWeaponOwned(Tag) && !Assigned.Contains(Tag))
 		{
 			QuickSlotWeaponTags[Index] = Tag;
 			Assigned.Add(Tag);
+		}
+		else if (Tag.IsValid())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Weapon restore: unavailable or duplicate weapon %s in slot %d."),
+				*Tag.ToString(), Index);
 		}
 	}
 
@@ -182,7 +186,9 @@ void UMVWeaponComponent::RestoreWeaponProgress(const FMVWeaponProgressSaveData& 
 		}
 	}
 
-	if (!TryEquipWeaponTag(Progress.EquippedWeapon, Progress.ActiveSlot, true))
+	if (!QuickSlotWeaponTags.IsValidIndex(Progress.ActiveSlot)
+		|| QuickSlotWeaponTags[Progress.ActiveSlot] != Progress.EquippedWeapon
+		|| !TryEquipWeaponTag(Progress.EquippedWeapon, Progress.ActiveSlot, true))
 	{
 		if (QuickSlotWeaponTags.IsValidIndex(Progress.ActiveSlot) && !QuickSlotWeaponTags[Progress.ActiveSlot].IsValid())
 		{
@@ -190,9 +196,17 @@ void UMVWeaponComponent::RestoreWeaponProgress(const FMVWeaponProgressSaveData& 
 		}
 		EquipBareHand(true);
 	}
+}
+
+void UMVWeaponComponent::NotifyWeaponProgressRestored()
+{
 	OnOwnedWeaponsChanged.Broadcast();
 	OnQuickSlotsChanged.Broadcast();
 	OnPassiveOptionsChanged.Broadcast();
+	if (Inventory)
+	{
+		Inventory->OnInventoryChanged.Broadcast(FGameplayTag());
+	}
 }
 
 EMVSkillSelectionSaveStatus UMVWeaponComponent::StoreWeaponProgress(const bool bSaveImmediately) const
@@ -208,10 +222,6 @@ EMVSkillSelectionSaveStatus UMVWeaponComponent::StoreWeaponProgress(const bool b
 	Progress.ActiveSlot = ActiveQuickSlotIndex;
 	Progress.SkillPoints = CurrentSkillPoints;
 
-	for (const auto& Owned : OwnedWeapons)
-	{
-		Progress.OwnedWeapons.Add(Owned.Key, MVWeaponProgressMakeRowKey(Owned.Value));
-	}
 	for (const auto& Style : SkillTreeStates)
 	{
 		FMVSavedWeaponSkillStyle& SavedStyle = Progress.SkillStyles.Add(Style.Key);
@@ -229,7 +239,13 @@ EMVSkillSelectionSaveStatus UMVWeaponComponent::StoreWeaponProgress(const bool b
 		Progress.SelectedPassives.Add(Passive.Key, MVWeaponProgressMakeRowKey(Passive.Value));
 	}
 
-	State->SetWeaponProgress(MoveTemp(Progress));
+	FMVInventorySaveData SavedItems;
+	if (Inventory)
+	{
+		SavedItems.bHasRecord = true;
+		SavedItems.ItemCounts = Inventory->GetItems();
+	}
+	State->SetPlayerItemProgress(MoveTemp(SavedItems), MoveTemp(Progress));
 	if (bSaveImmediately && !bDeferSkillSelectionSave)
 	{
 		return State->SaveActiveSlot() ? EMVSkillSelectionSaveStatus::Saved : EMVSkillSelectionSaveStatus::Failed;

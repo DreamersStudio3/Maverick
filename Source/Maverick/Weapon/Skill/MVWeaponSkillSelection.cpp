@@ -11,8 +11,8 @@ EMVSkillSelectionStatus UMVWeaponComponent::ValidateSkillSelectionContext(const 
 	if (!Context.ItemTag.IsValid() || (Context.Slot == EMVSkillSlot::PassiveSkill && !Context.WeaponType.IsValid())
 		|| (Context.Slot != EMVSkillSlot::PassiveSkill && !MVSkillSelectionData::IsActiveSlot(Context.Slot)))
 		return EMVSkillSelectionStatus::InvalidContext;
-	const auto* Owned = OwnedWeapons.Find(Context.ItemTag);
-	const FMVWeaponTableRow* Weapon = Owned ? ResolveWeaponRow(*Owned, TEXT("SkillSelection.Context")) : nullptr;
+	const FDataTableRowHandle Owned = FindOwnedWeaponRow(Context.ItemTag);
+	const FMVWeaponTableRow* Weapon = Owned.IsNull() ? nullptr : ResolveWeaponRow(Owned, TEXT("SkillSelection.Context"));
 	// 맨손은 소유 목록 밖의 내부 기본 무기지만, 현재 장착 문맥에 한해 기존 패시브 조회를 유지한다.
 	if (!Weapon && Context.ItemTag == BareHandWeapon.ItemTag && CurrentWeaponState.bValid
 		&& CurrentWeaponState.ItemTag == Context.ItemTag && CurrentWeaponState.EquippedStyle == EMVEquippedStyle::BareHand)

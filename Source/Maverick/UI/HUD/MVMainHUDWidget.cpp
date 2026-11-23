@@ -21,6 +21,7 @@ void UMVMainHUDWidget::NativeOnInitialized()
 	Super::NativeOnInitialized();
 
 	BuildNativeWidgetTree();
+	EnsureHealingPotionQuickSlot();
 	EnsurePlayerSkillHUD();
 }
 
@@ -118,7 +119,6 @@ void UMVMainHUDWidget::BuildNativeWidgetTree()
 
 	UCanvasPanel* RootCanvas = WidgetTree->ConstructWidget<UCanvasPanel>(UCanvasPanel::StaticClass(), TEXT("HUDRoot"));
 	PlayerStatus = WidgetTree->ConstructWidget<UMVPlayerStatusWidget>(UMVPlayerStatusWidget::StaticClass(), TEXT("PlayerStatus"));
-	HPSlot = WidgetTree->ConstructWidget<UMVQuickSlotWidget>(UMVQuickSlotWidget::StaticClass(), TEXT("HPSlot"));
 	PlayerSkillHUD = WidgetTree->ConstructWidget<UMVPlayerSkillHUDWidget>(
 		UMVPlayerSkillHUDWidget::StaticClass(),
 		TEXT("PlayerSkillHUD"));
@@ -133,14 +133,6 @@ void UMVMainHUDWidget::BuildNativeWidgetTree()
 		PlayerStatusSlot->SetPosition(FVector2D(32.0f, 32.0f));
 	}
 
-	if (UCanvasPanelSlot* HPSlotCanvasSlot = RootCanvas->AddChildToCanvas(HPSlot))
-	{
-		HPSlotCanvasSlot->SetAnchors(FAnchors(0.0f, 1.0f));
-		HPSlotCanvasSlot->SetAlignment(FVector2D(0.0f, 1.0f));
-		HPSlotCanvasSlot->SetAutoSize(true);
-		HPSlotCanvasSlot->SetPosition(FVector2D(32.0f, -32.0f));
-	}
-
 	if (UCanvasPanelSlot* SkillHUDSlot = RootCanvas->AddChildToCanvas(PlayerSkillHUD))
 	{
 		SkillHUDSlot->SetAnchors(FAnchors(0.5f, 1.0f));
@@ -148,6 +140,26 @@ void UMVMainHUDWidget::BuildNativeWidgetTree()
 		SkillHUDSlot->SetAutoSize(true);
 		SkillHUDSlot->SetPosition(PlayerSkillHUDCanvasOffset);
 	}
+}
+
+void UMVMainHUDWidget::EnsureHealingPotionQuickSlot()
+{
+	if (HPSlot || !WidgetTree)
+	{
+		return;
+	}
+	UCanvasPanel* RootCanvas = Cast<UCanvasPanel>(WidgetTree->RootWidget);
+	if (!RootCanvas)
+	{
+		return;
+	}
+
+	HPSlot = WidgetTree->ConstructWidget<UMVQuickSlotWidget>(UMVQuickSlotWidget::StaticClass(), TEXT("HPSlot"));
+	UCanvasPanelSlot* PotionSlot = RootCanvas->AddChildToCanvas(HPSlot);
+	PotionSlot->SetAnchors(FAnchors(0.0f, 1.0f));
+	PotionSlot->SetAlignment(FVector2D(0.0f, 1.0f));
+	PotionSlot->SetAutoSize(true);
+	PotionSlot->SetPosition(FVector2D(32.0f, -32.0f));
 }
 
 void UMVMainHUDWidget::EnsurePlayerSkillHUD()

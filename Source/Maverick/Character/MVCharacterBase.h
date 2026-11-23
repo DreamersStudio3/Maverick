@@ -20,6 +20,7 @@ class UMVCombatComponent;
 class UMVDeathComponent;
 class UMVInputManagerComponent;
 class UMVWeaponComponent;
+class UMVInventoryComponent;
 class UCurveFloat;
 class UMotionWarpingComponent;
 class UMVStatusEffectComponent;
@@ -162,6 +163,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UMVWeaponComponent> WeaponComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<UMVInventoryComponent> InventoryComponent;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UMotionWarpingComponent> MotionWarpingComponent;

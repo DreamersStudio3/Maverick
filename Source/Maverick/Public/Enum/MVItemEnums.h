@@ -22,3 +22,12 @@ enum class EMVEquipmentSlot : uint8
 	Armor UMETA(DisplayName = "Armor"),
 	Accessory UMETA(DisplayName = "Accessory")
 };
+
+UENUM(BlueprintType)
+enum class EMVInventoryGroupCategory : uint8
+{
+	Weapons UMETA(DisplayName = "Weapons"),
+	Consumables UMETA(DisplayName = "Consumables"),
+	Materials UMETA(DisplayName = "Materials"),
+	Other UMETA(DisplayName = "Other")
+};

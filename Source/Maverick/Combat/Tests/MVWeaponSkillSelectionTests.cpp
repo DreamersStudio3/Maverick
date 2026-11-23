@@ -2,6 +2,7 @@
 
 #include "Misc/AutomationTest.h"
 #include "Components/MVWeaponComponent.h"
+#include "Components/MVInventoryComponent.h"
 #include "Combat/MVAbilityBase.h"
 #include "Public/Tables/MVSkillDataTableColumn.h"
 #include "Public/Tags/MVGameplayTags.h"
@@ -15,6 +16,7 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(
 bool FMVWeaponSkillSelectionRequestsTest::RunTest(const FString& Parameters)
 {
 	UMVWeaponComponent* Weapons = NewObject<UMVWeaponComponent>();
+	Weapons->Inventory = NewObject<UMVInventoryComponent>(Weapons);
 	UDataTable* Skills = NewObject<UDataTable>();
 	Skills->RowStruct = FMVSkillDataTableColumn::StaticStruct();
 	const auto MakeSkill = [&](const TCHAR* Name, bool bPrototype)
@@ -131,7 +133,7 @@ bool FMVWeaponSkillSelectionRequestsTest::RunTest(const FString& Parameters)
 	TestTrue(TEXT("Current style without combat bridge fails safely"), Weapons->TrySelectSkill(Context, Q2).Status == EMVSkillSelectionStatus::ApplyFailed);
 	TestTrue(TEXT("Runtime reject preserves choice"), Weapons->GetSelectedSkill(Context, Selected) && Selected == Q1);
 	TestEqual(TEXT("Rejected request has no event"), Events, BeforeReject);
-	Weapons->OwnedWeapons.Remove(Context.ItemTag);
+	TestTrue(TEXT("Discard removes the owned weapon from inventory"), Weapons->DiscardWeapon(Context.ItemTag));
 	TestTrue(TEXT("Ownership rechecked at request"), Weapons->TrySelectSkill(Context, Q2).Status == EMVSkillSelectionStatus::WeaponNotOwned);
 	TestEqual(TEXT("Stale ownership query empty"), Weapons->GetSkillCandidates(Context).Num(), 0);
 	TestTrue(TEXT("Request never changes equipped item"), Weapons->GetEquippedWeaponState().ItemTag == InitialWeapon.ItemTag);

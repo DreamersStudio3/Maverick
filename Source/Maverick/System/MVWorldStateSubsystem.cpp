@@ -6,7 +6,7 @@
 
 namespace
 {
-const int32 MVWorldStateCurrentSaveVersion = 4;
+const int32 MVWorldStateCurrentSaveVersion = 5;
 
 FString WorldStateResolveFallbackSlotName(const FString& RequestedSlotName, const FString& DefaultSlotName)
 {
@@ -273,9 +273,10 @@ bool UMVWorldStateSubsystem::RecordRestPoint(
 	return true;
 }
 
-void UMVWorldStateSubsystem::SetWeaponProgress(FMVWeaponProgressSaveData&& Progress)
+void UMVWorldStateSubsystem::SetPlayerItemProgress(FMVInventorySaveData&& Inventory, FMVWeaponProgressSaveData&& Weapons)
 {
-	CurrentSaveData.WeaponProgress = MoveTemp(Progress);
+	CurrentSaveData.Inventory = MoveTemp(Inventory);
+	CurrentSaveData.WeaponProgress = MoveTemp(Weapons);
 	MarkSaveDataDirty();
 }
 

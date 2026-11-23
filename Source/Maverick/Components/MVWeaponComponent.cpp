@@ -4,6 +4,7 @@
 #include "Misc/ScopeExit.h"
 #include "MVActionComponent.h"
 #include "Components/MVInputManagerComponent.h"
+#include "Components/MVInventoryComponent.h"
 #include "Character/MVCharacterBase.h"
 #include "Components/MVCombatComponent.h"
 #include "Components/MVStatComponent.h"
@@ -54,6 +55,11 @@ void UMVWeaponComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+	Inventory = GetOwner() ? GetOwner()->FindComponentByClass<UMVInventoryComponent>() : nullptr;
+	if (Inventory)
+	{
+		Inventory->WeaponOwner = this;
+	}
 	EnsureQuickSlotStorage();
 
 	for (UMVWeaponSkillMap* OneSkillMap : WeaponSkillMaps)
@@ -98,6 +104,10 @@ void UMVWeaponComponent::BeginPlay()
 
 void UMVWeaponComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	if (Inventory && Inventory->WeaponOwner.Get() == this)
+	{
+		Inventory->WeaponOwner.Reset();
+	}
 	if (UMVWorldStateSubsystem* State = WeaponSaveState.Get())
 	{
 		State->OnWorldStateLoaded.RemoveDynamic(this, &ThisClass::HandleWeaponSaveLoaded);
@@ -176,122 +186,105 @@ bool UMVWeaponComponent::CycleWeapon()
 
 bool UMVWeaponComponent::AcquireWeapon(const FDataTableRowHandle& WeaponRowHandle)
 {
-	const FMVWeaponTableRow* WeaponRow = ResolveWeaponRow(
-		WeaponRowHandle,
-		TEXT("UMVWeaponComponent::AcquireWeapon"));
-	if (!WeaponRow || !WeaponRow->ItemTag.IsValid())
-	{
-		UE_LOG(
-			LogTemp,
-			Warning,
-			TEXT("Cannot acquire weapon because its row or ItemTag is invalid. DataTable=%s Row=%s."),
-			*GetNameSafe(WeaponRowHandle.DataTable),
-			*WeaponRowHandle.RowName.ToString());
-		return false;
-	}
-
-	if (OwnedWeapons.Contains(WeaponRow->ItemTag))
-	{
-		return false;
-	}
-
-	OwnedWeapons.Add(WeaponRow->ItemTag, WeaponRowHandle);
-	StoreWeaponProgress();
-	OnOwnedWeaponsChanged.Broadcast();
-	return true;
+	return Inventory && Inventory->TryAddWeapon(WeaponRowHandle);
 }
 
 bool UMVWeaponComponent::DiscardWeapon(const FGameplayTag WeaponTag)
 {
-	const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
-	if (OwnerCharacter && OwnerCharacter->ActionComponent && OwnerCharacter->ActionComponent->IsActionRunning())
-	{
-		return false;
-	}
+	return IsWeaponOwned(WeaponTag) && Inventory->TryRemoveItem(WeaponTag);
+}
 
-	if (!WeaponTag.IsValid() || !OwnedWeapons.Contains(WeaponTag))
-	{
-		return false;
-	}
+bool UMVWeaponComponent::CanRemoveOwnedWeapon() const
+{
+	const auto* Character = Cast<AMVCharacterBase>(GetOwner());
+	return !Character || !Character->ActionComponent || !Character->ActionComponent->IsActionRunning();
+}
 
-	bool bRemovedQuickSlotReference = false;
-	for (FGameplayTag& QuickSlotWeaponTag : QuickSlotWeaponTags)
+void UMVWeaponComponent::HandleInventoryItemChanged(const FGameplayTag ItemTag, const bool bWeapon)
+{
+	bool bSlotsChanged = false;
+	bool bWasEquipped = false;
+	if (bWeapon && Inventory->GetItemCount(ItemTag) == 0)
 	{
-		if (QuickSlotWeaponTag.MatchesTagExact(WeaponTag))
+		for (FGameplayTag& Slot : QuickSlotWeaponTags)
 		{
-			QuickSlotWeaponTag = FGameplayTag();
-			bRemovedQuickSlotReference = true;
+			if (Slot == ItemTag)
+			{
+				Slot = FGameplayTag();
+				bSlotsChanged = true;
+			}
+		}
+		bWasEquipped = CurrentWeaponState.ItemTag == ItemTag;
+		if (bWasEquipped)
+		{
+			EquipBareHand(false, false);
 		}
 	}
 
-	OwnedWeapons.Remove(WeaponTag);
-	if (CurrentWeaponState.ItemTag.MatchesTagExact(WeaponTag))
-	{
-		EquipBareHand();
-	}
-
 	StoreWeaponProgress();
-	if (bRemovedQuickSlotReference)
+	if (bWasEquipped)
+	{
+		OnEquippedWeaponChanged.Broadcast(CurrentWeaponState);
+	}
+	if (bSlotsChanged)
 	{
 		OnQuickSlotsChanged.Broadcast();
 	}
-	OnOwnedWeaponsChanged.Broadcast();
-	return true;
+	if (bWeapon)
+	{
+		OnOwnedWeaponsChanged.Broadcast();
+	}
 }
 
-bool UMVWeaponComponent::SetQuickSlotWeapon(const int32 SlotIndex, const FGameplayTag WeaponTag)
+bool UMVWeaponComponent::ChangeRestPointQuickSlot(
+	const int32 SlotIndex, const FGameplayTag ExpectedWeapon, const FGameplayTag WeaponTag, bool& bSaved)
 {
-	const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
-	if (OwnerCharacter && OwnerCharacter->ActionComponent && OwnerCharacter->ActionComponent->IsActionRunning())
+	bSaved = false;
+	if (bRestoringWeaponProgress || !CanRemoveOwnedWeapon() || !QuickSlotWeaponTags.IsValidIndex(SlotIndex)
+		|| QuickSlotWeaponTags[SlotIndex] != ExpectedWeapon || WeaponTag == ExpectedWeapon)
 	{
 		return false;
 	}
 
-	EnsureQuickSlotStorage();
-	if (!QuickSlotWeaponTags.IsValidIndex(SlotIndex) || !WeaponTag.IsValid() || !OwnedWeapons.Contains(WeaponTag))
+	FMVEquippedWeaponState NewState;
+	if (WeaponTag.IsValid())
 	{
-		return false;
+		if (FindQuickSlotIndexForItemTag(WeaponTag) != INDEX_NONE)
+		{
+			return false;
+		}
+		const FDataTableRowHandle Handle = FindOwnedWeaponRow(WeaponTag);
+		const auto* Row = Handle.IsNull() ? nullptr : ResolveWeaponRow(Handle, TEXT("Rest point weapon slots"));
+		if (!Row || Row->ItemTag != WeaponTag)
+		{
+			return false;
+		}
+		NewState = MakeStateFromWeaponRow(*Row);
+		if (!CanEquipWeaponState(NewState))
+		{
+			return false;
+		}
 	}
 
-	const int32 ExistingSlotIndex = FindQuickSlotIndexForItemTag(WeaponTag);
-	if (ExistingSlotIndex != INDEX_NONE)
-	{
-		return false;
-	}
-
-	const FGameplayTag PreviousWeaponTag = QuickSlotWeaponTags[SlotIndex];
 	QuickSlotWeaponTags[SlotIndex] = WeaponTag;
-	if (ActiveQuickSlotIndex == SlotIndex && !TryEquipWeaponTag(WeaponTag, SlotIndex))
+	const bool bActiveSlot = ActiveQuickSlotIndex == SlotIndex;
+	if (bActiveSlot)
 	{
-		QuickSlotWeaponTags[SlotIndex] = PreviousWeaponTag;
-		return false;
+		if (WeaponTag.IsValid())
+		{
+			ApplyEquippedWeaponState(NewState, false, false);
+		}
+		else
+		{
+			EquipBareHand(false, false);
+		}
 	}
 
-	StoreWeaponProgress();
-	OnQuickSlotsChanged.Broadcast();
-	return true;
-}
-
-bool UMVWeaponComponent::ClearQuickSlotWeapon(const int32 SlotIndex)
-{
-	const AMVCharacterBase* OwnerCharacter = Cast<AMVCharacterBase>(GetOwner());
-	if (OwnerCharacter && OwnerCharacter->ActionComponent && OwnerCharacter->ActionComponent->IsActionRunning())
+	bSaved = StoreWeaponProgress(true) == EMVSkillSelectionSaveStatus::Saved;
+	if (bActiveSlot)
 	{
-		return false;
+		OnEquippedWeaponChanged.Broadcast(CurrentWeaponState);
 	}
-
-	if (!QuickSlotWeaponTags.IsValidIndex(SlotIndex) || !QuickSlotWeaponTags[SlotIndex].IsValid())
-	{
-		return false;
-	}
-
-	QuickSlotWeaponTags[SlotIndex] = FGameplayTag();
-	if (ActiveQuickSlotIndex == SlotIndex)
-	{
-		EquipBareHand();
-	}
-
-	StoreWeaponProgress();
 	OnQuickSlotsChanged.Broadcast();
 	return true;
 }
@@ -321,12 +314,29 @@ bool UMVWeaponComponent::TryHandleActionInput(FGameplayTag ActionInputTag, FVect
 
 TMap<FGameplayTag, FDataTableRowHandle> UMVWeaponComponent::GetOwnedWeapons() const
 {
-	return OwnedWeapons;
+	TMap<FGameplayTag, FDataTableRowHandle> Weapons;
+	if (Inventory)
+	{
+		for (const auto& Item : Inventory->GetItems())
+		{
+			const FDataTableRowHandle Row = Inventory->FindWeaponDefinition(Item.Key);
+			if (!Row.IsNull())
+			{
+				Weapons.Add(Item.Key, Row);
+			}
+		}
+	}
+	return Weapons;
+}
+
+FDataTableRowHandle UMVWeaponComponent::FindOwnedWeaponRow(const FGameplayTag WeaponTag) const
+{
+	return Inventory ? Inventory->FindOwnedWeaponRow(WeaponTag) : FDataTableRowHandle();
 }
 
 bool UMVWeaponComponent::IsWeaponOwned(const FGameplayTag WeaponTag) const
 {
-	return WeaponTag.IsValid() && OwnedWeapons.Contains(WeaponTag);
+	return !FindOwnedWeaponRow(WeaponTag).IsNull();
 }
 
 TArray<FGameplayTag> UMVWeaponComponent::GetQuickSlotWeapons() const
@@ -746,7 +756,7 @@ bool UMVWeaponComponent::ResolveOwnedWeaponTypeStyle(
 	{
 		return false;
 	}
-	for (const TPair<FGameplayTag, FDataTableRowHandle>& OwnedWeapon : OwnedWeapons)
+	for (const TPair<FGameplayTag, FDataTableRowHandle>& OwnedWeapon : GetOwnedWeapons())
 	{
 		const FMVWeaponTableRow* Row = ResolveWeaponRow(
 			OwnedWeapon.Value, TEXT("UMVWeaponComponent::ResolveOwnedWeaponTypeStyle"));
@@ -795,14 +805,14 @@ bool UMVWeaponComponent::AddSkillPoints(const int32 Points)
 bool UMVWeaponComponent::TryEquipWeaponTag(
 	const FGameplayTag& WeaponTag, const int32 QuickSlotIndex, const bool bRefreshCombat)
 {
-	const FDataTableRowHandle* WeaponRowHandle = OwnedWeapons.Find(WeaponTag);
-	if (!WeaponRowHandle)
+	const FDataTableRowHandle WeaponRowHandle = FindOwnedWeaponRow(WeaponTag);
+	if (WeaponRowHandle.IsNull())
 	{
 		return false;
 	}
 
 	const FMVWeaponTableRow* WeaponRow = ResolveWeaponRow(
-		*WeaponRowHandle,
+		WeaponRowHandle,
 		TEXT("UMVWeaponComponent::TryEquipWeaponTag"));
 	if (!WeaponRow || !WeaponRow->ItemTag.MatchesTagExact(WeaponTag))
 	{
@@ -811,8 +821,8 @@ bool UMVWeaponComponent::TryEquipWeaponTag(
 			Warning,
 			TEXT("Owned weapon row no longer matches its key. Key=%s DataTable=%s Row=%s."),
 			*WeaponTag.ToString(),
-			*GetNameSafe(WeaponRowHandle->DataTable),
-			*WeaponRowHandle->RowName.ToString());
+			*GetNameSafe(WeaponRowHandle.DataTable),
+			*WeaponRowHandle.RowName.ToString());
 		return false;
 	}
 
@@ -883,14 +893,15 @@ void UMVWeaponComponent::EnsureQuickSlotStorage()
 	QuickSlotWeaponTags.SetNum(FMath::Max(0, MaxQuickSlotCount));
 }
 
-void UMVWeaponComponent::EquipBareHand(const bool bRefreshCombat)
+void UMVWeaponComponent::EquipBareHand(const bool bRefreshCombat, const bool bBroadcast)
 {
 	FMVEquippedWeaponState NewState = MakeStateFromWeaponRow(BareHandWeapon);
 	NewState.bValid = true;
-	ApplyEquippedWeaponState(NewState, bRefreshCombat);
+	ApplyEquippedWeaponState(NewState, bRefreshCombat, bBroadcast);
 }
 
-void UMVWeaponComponent::ApplyEquippedWeaponState(const FMVEquippedWeaponState& NewState, const bool bRefreshCombat)
+void UMVWeaponComponent::ApplyEquippedWeaponState(
+	const FMVEquippedWeaponState& NewState, const bool bRefreshCombat, const bool bBroadcast)
 {
 	const bool bShouldRefreshCombat =
 		bRefreshCombat || !CurrentWeaponState.bValid
@@ -936,7 +947,10 @@ void UMVWeaponComponent::ApplyEquippedWeaponState(const FMVEquippedWeaponState& 
 		StatComponent->EndMaxHPModifierBatch();
 	}
 	ApplyWeaponVisual();
-	OnEquippedWeaponChanged.Broadcast(CurrentWeaponState);
+	if (bBroadcast)
+	{
+		OnEquippedWeaponChanged.Broadcast(CurrentWeaponState);
+	}
 }
 
 FMVEquippedWeaponState UMVWeaponComponent::MakeStateFromWeaponRow(const FMVWeaponTableRow& WeaponRow)
@@ -1038,19 +1052,24 @@ bool UMVWeaponComponent::TryInitializeDefaultWeapon()
 	}
 
 	const FGameplayTag DefaultWeaponTag = WeaponRow->ItemTag;
-	if (!AcquireWeapon(DefaultWeaponRow) && !OwnedWeapons.Contains(DefaultWeaponTag))
+	if (!Inventory || (!Inventory->TryAddWeapon(DefaultWeaponRow, false) && !IsWeaponOwned(DefaultWeaponTag)))
 	{
 		return false;
 	}
 
-	if (!SetQuickSlotWeapon(0, DefaultWeaponTag)
-		&& (!QuickSlotWeaponTags.IsValidIndex(0)
-			|| !QuickSlotWeaponTags[0].MatchesTagExact(DefaultWeaponTag)))
+	if (!QuickSlotWeaponTags.IsValidIndex(0))
 	{
 		return false;
 	}
 
-	return EquipQuickSlotWeapon(0);
+	QuickSlotWeaponTags[0] = DefaultWeaponTag;
+	if (EquipQuickSlotWeapon(0))
+	{
+		return true;
+	}
+
+	QuickSlotWeaponTags[0] = FGameplayTag();
+	return false;
 }
 
 bool UMVWeaponComponent::ValidateWeaponMesh(const UObject& WeaponMesh, const FGameplayTag& ItemTag) const
