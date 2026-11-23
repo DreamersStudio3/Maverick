@@ -1,7 +1,7 @@
 ---
 제목: "Maverick 전투 시스템"
 부제목: "현재 공격 실행 흐름과 공격·스킬 구성"
-최근수정일: 2026-11-21
+최근수정일: 2026-11-23
 최근수정자: "Kwon-Nahoo-Man"
 관련문서:
   - "[[Architecture/document|Maverick Architecture]]"
@@ -65,6 +65,13 @@ flowchart TD
 - Ability Notify 최초 시작 시 비용 차감, 종료 시 체인·쿨다운 갱신
 - HUD에 사용 가능 상태·연속 단계·입력 창·남은 쿨다운 투영
 - Q 적중 연계·R 게이지·W/E 조합 입력 계약: [[Features/Combat/Skill/document|플레이어 스킬 구조]]
+
+### 무기 스킬 4번 · 캐릭터 중심 원형 공격
+
+- `BP_WeaponSkillCircle`의 Class Defaults → Settings → Circle에서 `Inner Radius`(기본 700 cm)와 `Outer Radius`(기본 1000 cm) 조정
+- 대상 캡슐 중심까지의 수평 거리 기준. 내원 미만은 `Flinch`, 내원 경계부터 외원 경계까지는 `Airborne` 요청. 대상 중심의 높이 차는 시전자 캡슐 반높이 이하까지 포함
+- `ANS_ActiveAbility` 시작 시 시전자 캡슐 위치·높이 고정. 즉시 1회 검사 후 0.05초마다 360도 검사. 구간 중 진입 포함, 재진입과 영역 간 이동을 합해 대상별 1회
+- PIE 표시 기본 활성. 노란 원은 내원 경계, 청록 원통은 외원과 높이 범위. `WeaponSkillCircleTrace`에 요청 반응과 전달 결과 기록. `maverick.WeaponSkillCircle.DebugDraw 0`으로 표시·로그 해제
 
 ## Passive 스킬 생명주기
 
