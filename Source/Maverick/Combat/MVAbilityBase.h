@@ -15,7 +15,7 @@
  * CombatComponent가 액션 테이블 row에서 생성해 몽타주 NotifyState 동안 실행하는 Ability 기본 객체.
  *
  * 책임:
- *   - 스킬 row 데이터와 소유 CombatComponent를 보관한다.
+ *   - 소유 CombatComponent와 스킬 row 데이터를 보관하고, 선택한 피해 배율에 Ability 기본값을 적용한다.
  *   - 공격별 HitReaction Launch 값을 Ability 기본값 또는 Blueprint override로 제공한다.
  *   - 액션 실행 중 첫 StartAbility 시점에 Ability 비용을 한 번 소모하고 활성 상태로 전환한다.
  *   - EndAbility 시점에 현재 Notify 구간의 활성 상태를 닫고 체인/쿨다운 타이밍 갱신을 알린다.
@@ -123,6 +123,28 @@ public:
 
 	UPROPERTY(Transient)
 	float ConsumedMPThisExecution = 0.0f;
+
+protected:
+	UPROPERTY(EditDefaultsOnly, Category = "Settings|Damage", meta = (InlineEditConditionToggle))
+	bool bOverrideDamageMultiplier = false;
+
+	/** 무기 AttackPower로 HP 피해를 계산할 때 사용할 배율. 체크를 끄면 스킬 Row 값을 사용한다. */
+	UPROPERTY(EditDefaultsOnly, Category = "Settings|Damage", meta = (EditCondition = "bOverrideDamageMultiplier", ClampMin = "0.0", DisplayName = "Damage Multiplier"))
+	float DamageMultiplierOverride = 1.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Settings|Damage", meta = (InlineEditConditionToggle))
+	bool bOverridePoiseAmountMultiplier = false;
+
+	/** 무기 WeaponPoise에 곱할 배율. 체크를 끄면 스킬 Row 값을 사용한다. */
+	UPROPERTY(EditDefaultsOnly, Category = "Settings|Damage", meta = (EditCondition = "bOverridePoiseAmountMultiplier", ClampMin = "0.0", DisplayName = "Poise Amount Multiplier"))
+	float PoiseAmountMultiplierOverride = 0.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Settings|Damage", meta = (InlineEditConditionToggle))
+	bool bOverrideGroggyDamageMultiplier = false;
+
+	/** 무기 AttackPower로 그로기 누적량을 계산할 때 사용할 배율. 체크를 끄면 스킬 Row 값을 사용한다. */
+	UPROPERTY(EditDefaultsOnly, Category = "Settings|Damage", meta = (EditCondition = "bOverrideGroggyDamageMultiplier", ClampMin = "0.0", DisplayName = "Groggy Damage Multiplier"))
+	float GroggyDamageMultiplierOverride = 1.0f;
 
 private:
 	bool TryConsumeAbilityCost();
