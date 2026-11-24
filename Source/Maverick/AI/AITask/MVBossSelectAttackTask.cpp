@@ -1,6 +1,7 @@
 #include "AI/AITask/MVBossSelectAttackTask.h"
 
 #include "AI/Controller/MVAIController.h"
+#include "Combat/Boss/Duelist/MVDuelistApproachComponent.h"
 #include "Combat/Boss/Duelist/MVDuelistResonanceComponent.h"
 #include "GameFramework/Pawn.h"
 #include "StateTreeExecutionContext.h"
@@ -76,6 +77,14 @@ EStateTreeRunStatus FMVBossSelectAttackTask::Tick(FStateTreeExecutionContext& Co
 	FInstanceDataType& Data = Context.GetInstanceData<FInstanceDataType>(*this);
 	if (!Data.bTransitionRequested)
 	{
+		const AMVAIController* Controller = Cast<AMVAIController>(Context.GetOwner());
+		const APawn* Pawn = Controller ? Controller->GetPawn() : nullptr;
+		const auto* Approach = Pawn ? Pawn->FindComponentByClass<UMVDuelistApproachComponent>() : nullptr;
+		if (Approach && Approach->CanContinue(Controller->TargetActor)
+			&& !Approach->TurnTowards(Controller->TargetActor, DeltaTime))
+		{
+			return EStateTreeRunStatus::Running;
+		}
 		Data.bTransitionRequested = true;
 		if (Data.bResonanceSelected)
 		{

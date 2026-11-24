@@ -3,6 +3,12 @@
 #include "AI/AITask/FMVBossExecuteAttackTask.h"
 #include "AI/AITask/MVBossSelectAttackTask.h"
 #include "AI/AITask/MVDuelistResonanceTask.h"
+#include "AI/AITask/MVDuelistApproachTask.h"
+#include "Combat/Boss/Duelist/MVDuelistApproachComponent.h"
+#include "Engine/SimpleConstructionScript.h"
+#include "Engine/SCS_Node.h"
+#include "Kismet2/BlueprintEditorUtils.h"
+#include "Kismet2/KismetEditorUtilities.h"
 #include "AI/Controller/MVAIController.h"
 #include "AssetToolsModule.h"
 #include "Engine/AssetManager.h"
@@ -89,6 +95,60 @@ bool BossBasicAttackSaveAsset(UObject* Asset)
 	Args.TopLevelFlags = RF_Public | RF_Standalone;
 	Args.Error = GError;
 	return UPackage::SavePackage(Package, Asset, *Filename, Args);
+}
+
+bool MVDuelistConfigureApproach()
+{
+	const FString Root = TEXT("/Game/Characters/NPC/Boss/DuelistComplete/");
+	UStateTree* Tree = LoadObject<UStateTree>(nullptr, *(Root + TEXT("ST_DuelistBossAIStateTree.ST_DuelistBossAIStateTree")));
+	UBlueprint* BP = LoadObject<UBlueprint>(nullptr, *(Root + TEXT("BP_Duelist.BP_Duelist")));
+	const FObjectProperty* Prop = FindFProperty<FObjectProperty>(UStateTree::StaticClass(), TEXT("EditorData"));
+	auto* Data = Tree && Prop ? Cast<UStateTreeEditorData>(Prop->GetObjectPropertyValue_InContainer(Tree)) : nullptr;
+	if (!BP || !BP->SimpleConstructionScript || !Data || Data->SubTrees.IsEmpty()) return false;
+	auto FindChild = [](UStateTreeState* Parent, FName Name) -> UStateTreeState*
+	{
+		if (Parent)
+			for (UStateTreeState* Child : Parent->Children)
+				if (Child && Child->Name == Name) return Child;
+		return nullptr;
+	};
+	UStateTreeState* Alive = FindChild(Data->SubTrees[0], TEXT("Alive"));
+	UStateTreeState* Chase = FindChild(Alive, TEXT("Chase"));
+	UStateTreeState* Attack = FindChild(Alive, TEXT("Attack"));
+	UStateTreeState* Search = FindChild(Alive, TEXT("Search"));
+	if (!Chase || !Attack || !Search) return false;
+	// 명령줄 편집기에서는 연결 트리의 스키마를 상위 트리보다 먼저 준비한다.
+	for (UStateTreeState* Linked : {Search, Attack})
+	{
+		UStateTree* SubTree = Linked->LinkedAsset;
+		if (!SubTree) return false;
+		if (SubTree->IsReadyToRun()) continue;
+		UStateTreeEditingSubsystem::ValidateStateTree(SubTree);
+		FStateTreeCompilerLog SubLog;
+		if (!UStateTreeEditingSubsystem::CompileStateTree(SubTree, SubLog)) return false;
+	}
+	if (!FindChild(Alive, TEXT("ApproachDash")))
+	{
+		UStateTreeState& Dash = Alive->AddChildState(TEXT("ApproachDash"));
+		Dash.AddEnterCondition<FMVDuelistCanApproach>();
+		Dash.AddTask<FMVDuelistApproachTask>();
+		Chase->AddTransition(EStateTreeTransitionTrigger::OnTick, EStateTreeTransitionType::GotoState, &Dash);
+		Dash.AddTransition(EStateTreeTransitionTrigger::OnStateSucceeded, EStateTreeTransitionType::GotoState, Attack);
+		Dash.AddTransition(EStateTreeTransitionTrigger::OnStateFailed, EStateTreeTransitionType::GotoState, Chase);
+	}
+	UStateTreeEditingSubsystem::ValidateStateTree(Tree);
+	FStateTreeCompilerLog Log;
+	if (!UStateTreeEditingSubsystem::CompileStateTree(Tree, Log) || !Tree->IsReadyToRun()) return false;
+	USimpleConstructionScript* SCS = BP->SimpleConstructionScript;
+	if (!SCS->GetAllNodes().ContainsByPredicate([](const USCS_Node* Node)
+		{ return Node && Node->ComponentClass == UMVDuelistApproachComponent::StaticClass(); }))
+	{
+		SCS->AddNode(SCS->CreateNode(UMVDuelistApproachComponent::StaticClass(), TEXT("ApproachDash")));
+		FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(BP);
+		FKismetEditorUtilities::CompileBlueprint(BP);
+		if (BP->Status == BS_Error || !BossBasicAttackSaveAsset(BP)) return false;
+	}
+	return BossBasicAttackSaveAsset(Tree);
 }
 
 bool BossBasicAttackConfigure(bool bVerifyOnly)
@@ -458,6 +518,7 @@ UMaverickBossStateTreeCommandlet::UMaverickBossStateTreeCommandlet()
 
 int32 UMaverickBossStateTreeCommandlet::Main(const FString& Params)
 {
+	if (FParse::Param(*Params, TEXT("DuelistApproachOnly"))) return MVDuelistConfigureApproach() ? 0 : 1;
 	if (FParse::Param(*Params, TEXT("ResonanceOnly"))) return MVDuelistResonanceConfigureStateTree() ? 0 : 1;
 	if (FParse::Param(*Params, TEXT("FixBasicAttackState")))
 	{

@@ -1,7 +1,7 @@
 ---
 제목: AI StateTree
 부제목: StateTree 감지·판단·Action 실행 경계
-최근수정일: 2026-11-19
+최근수정일: 2026-11-24
 최근수정자: Codex
 관련문서:
   - "[[Architecture/document|Maverick Architecture]]"
@@ -125,6 +125,18 @@ flowchart TD
 - 거리 미달·대상 부재·대상 변경·새 Chase 진입 시 누적 시간 초기화; 유지 진입에서는 시간 보존, Chase 종료 시 `StopMovement`
 - 기존 `AI MoveTo` 도착 성공도 즉시 공격 전환 가능; 감시 성공 이후 공격 종류 선택·공격 사거리 검사는 기존 공격 트리 책임
 - 공용 `STT_Chase` 수정 없이 Duelist 메인 AI에만 감시 Task 배치
+
+### Duelist 접근 대시
+
+- 대시 이동 중 몸은 현재 대상 쪽으로 초당 최대 360도 회전한다. 공격 선택 시 같은 속도로 남은 각도를 2도 이내까지 좁힌 뒤 공격 전이를 요청한다. 속도는 `BP_Duelist`의 `ApproachDash → Turn Rate`에서 조절한다. 대상 없는 탐색 순찰의 회전은 `AI Patrol`이 담당한다.
+- 대시 중에는 본체 메시의 각 머터리얼 슬롯에 발광 머터리얼을 적용하고, 종료·중단 시 기존 머터리얼을 복원한다. 기본 발광색은 주황색이며 `BP_Duelist`의 `ApproachDash → Dash Color`에서 조절한다.
+- `ST_DuelistBossAIStateTree.Alive.Chase`에서 매 Tick `ApproachDash` 진입 검사, 실행·재사용 시각은 `BP_Duelist.ApproachDash` 컴포넌트 소유
+- 초기 수치: 수평 거리 300cm 초과부터 530cm까지, 높이 차는 이동 컴포넌트의 최대 단차 이내. 지상·시야·행동 가능 상태와 캡슐 경로·발밑 지면 확인
+- 시작 시 대상에서 230cm 떨어진 목표점을 고정하고 0.30초 동안 최대 300cm 전진, 시작 기준 재사용 간격 2초
+- 캐릭터 이동 컴포넌트의 루트 모션 소스로 이동, 기존 Duelist 이동 혼합 애니메이션으로 표현. 방어 회피 토큰·스킬 행·피해 판정과 독립
+- 종료 시 같은 대상이 실제 3차원 사거리 300cm 이내이고 시야가 열려 있으면 기존 `Attack`, 대상 이탈·교체·중단 시 `Chase`. 상태 이탈 시 전용 이동 소스 해제
+- 편집기 플레이 직전에 이미 로드된 Duelist 트리의 실행 준비 상태를 확인한다. 필요할 때만 검색·공격 연결 트리부터 메인 트리 순으로 메모리에서 컴파일한다.
+- `BaseBossTestLevel`에서 505cm 앞에 플레이어를 두고 검증했다. 제자리에 있으면 `Chase → ApproachDash → Attack`, 대시 도중 뒤로 빠지면 `Chase → ApproachDash → Chase`로 전환했다.
 
 ### Duelist 범위 밖 SkillQ 선택
 
