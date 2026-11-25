@@ -66,6 +66,17 @@ AMVPlayerCharacter::AMVPlayerCharacter()
 	bIsSprintBlockedByStamina = false;
 }
 
+void AMVPlayerCharacter::PossessedBy(AController* NewController)
+{
+	auto* PlayerController = Cast<APlayerController>(NewController);
+	UGameInstance* Instance = GetGameInstance();
+	if (UMVUISubsystem* UI = PlayerController && Instance ? Instance->GetSubsystem<UMVUISubsystem>() : nullptr)
+	{
+		UI->BindItemAcquisitionPlayer(*this, *PlayerController);
+	}
+	Super::PossessedBy(NewController);
+}
+
 // Called when the game starts or when spawned
 void AMVPlayerCharacter::BeginPlay()
 {

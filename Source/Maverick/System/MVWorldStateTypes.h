@@ -184,6 +184,9 @@ struct MAVERICK_API FMVInventorySaveData
 
 	UPROPERTY()
 	TMap<FGameplayTag, int32> ItemCounts;
+
+	UPROPERTY()
+	TSet<FGameplayTag> DiscoveredItems;
 };
 
 USTRUCT(BlueprintType)

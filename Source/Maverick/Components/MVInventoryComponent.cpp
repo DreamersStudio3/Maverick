@@ -55,7 +55,9 @@ EMVInventoryGrantResult UMVInventoryComponent::TryGrantItem(const FGameplayTag I
 	const EMVInventoryGrantResult Result = CheckGrantItem(ItemTag, Quantity);
 	if (Result == EMVInventoryGrantResult::Added)
 	{
+		const FMVItemAcquisition Acquisition{ItemTag, Quantity, !DiscoveredItems.Contains(ItemTag)};
 		UpdateItemCount(ItemTag, GetItemCount(ItemTag) + Quantity);
+		OnItemAcquired.Broadcast(Acquisition);
 	}
 	return Result;
 }
@@ -77,19 +79,30 @@ EMVInventoryGrantResult UMVInventoryComponent::TryGrantPlacedPickup(
 	}
 
 	const int32 PreviousQuantity = GetItemCount(ItemTag);
+	const FMVItemAcquisition Acquisition{ItemTag, Quantity, !DiscoveredItems.Contains(ItemTag)};
 	UpdateItemCount(ItemTag, PreviousQuantity + Quantity, false);
 	if (!State->TryCommitPlacedPickup(FieldId, PickupId, BuildSaveData()))
 	{
 		UpdateItemCount(ItemTag, PreviousQuantity, false);
+		if (Acquisition.bFirstAcquisition)
+		{
+			DiscoveredItems.Remove(ItemTag);
+		}
 		return EMVInventoryGrantResult::PlacedPickupUnavailable;
 	}
 
-	if (IsWeaponItem(ItemTag))
+	NotifyCommittedAcquisition(Acquisition);
+	return EMVInventoryGrantResult::Added;
+}
+
+void UMVInventoryComponent::NotifyCommittedAcquisition(const FMVItemAcquisition& Acquisition)
+{
+	if (UMVWeaponComponent* Weapons = WeaponOwner.Get(); Weapons && IsWeaponItem(Acquisition.ItemTag))
 	{
 		Weapons->OnOwnedWeaponsChanged.Broadcast();
 	}
-	OnInventoryChanged.Broadcast(ItemTag);
-	return EMVInventoryGrantResult::Added;
+	OnInventoryChanged.Broadcast(Acquisition.ItemTag);
+	OnItemAcquired.Broadcast(Acquisition);
 }
 
 EMVInventoryGrantResult UMVInventoryComponent::CheckGrantItem(const FGameplayTag ItemTag, const int32 Quantity) const
@@ -148,6 +161,10 @@ bool UMVInventoryComponent::TryAddWeapon(const FDataTableRowHandle& Handle, cons
 		if (FindWeaponDefinition(Row->ItemTag) != Handle)
 		{
 			return false;
+		}
+		if (bNotify)
+		{
+			return TryGrantItem(Row->ItemTag, 1) == EMVInventoryGrantResult::Added;
 		}
 	}
 	else
@@ -208,6 +225,7 @@ void UMVInventoryComponent::UpdateItemCount(const FGameplayTag ItemTag, const in
 	else
 	{
 		Items.Add(ItemTag, Quantity);
+		DiscoveredItems.Add(ItemTag);
 	}
 	if (bNotify)
 	{
@@ -224,12 +242,14 @@ FMVInventorySaveData UMVInventoryComponent::BuildSaveData() const
 	FMVInventorySaveData Snapshot;
 	Snapshot.bHasRecord = true;
 	Snapshot.ItemCounts = Items;
+	Snapshot.DiscoveredItems = DiscoveredItems;
 	return Snapshot;
 }
 
 void UMVInventoryComponent::RestorePlayerItems(const FMVInventorySaveData& Inventory, const FMVWeaponProgressSaveData& Weapons)
 {
 	Items.Reset();
+	DiscoveredItems = Inventory.DiscoveredItems;
 	const UMVTableManager* Tables = UMVTableManager::Get(this);
 	if (Inventory.bHasRecord)
 	{
@@ -244,7 +264,7 @@ void UMVInventoryComponent::RestorePlayerItems(const FMVInventorySaveData& Inven
 			}
 			if (Pair.Value > 0 && Limit > 0)
 			{
-				Items.Add(Pair.Key, FMath::Min(Pair.Value, Limit));
+				UpdateItemCount(Pair.Key, FMath::Min(Pair.Value, Limit), false);
 			}
 		}
 		return;
@@ -258,7 +278,7 @@ void UMVInventoryComponent::RestorePlayerItems(const FMVInventorySaveData& Inven
 			if (!Definition.IsNull() && Definition.RowName == Pair.Value.RowName
 				&& Definition.DataTable == Pair.Value.Table.LoadSynchronous())
 			{
-				Items.Add(Pair.Key, 1);
+				UpdateItemCount(Pair.Key, 1, false);
 			}
 			else
 			{
@@ -278,6 +298,6 @@ void UMVInventoryComponent::RestorePlayerItems(const FMVInventorySaveData& Inven
 	if (const FMVInventoryItemDefinition* Potion = Tables ? Tables->FindInventoryItemDefinition(PotionTag) : nullptr;
 		MVInventoryIsHealingPotionDefinition(Potion) && PotionCount > 0 && Potion->StackLimit > 0)
 	{
-		Items.Add(PotionTag, FMath::Min(PotionCount, Potion->StackLimit));
+		UpdateItemCount(PotionTag, FMath::Min(PotionCount, Potion->StackLimit), false);
 	}
 }

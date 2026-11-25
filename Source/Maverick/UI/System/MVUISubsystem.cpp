@@ -10,12 +10,14 @@
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "HAL/IConsoleManager.h"
+#include "System/MVWorldStateSubsystem.h"
 #include "Tables/MVDialogueTableTypes.h"
 #include "Tables/MVTableManager.h"
 #include "Tables/MVUIMessageTableTypes.h"
 #include "UI/Base/MVHUDWidgetBase.h"
 #include "UI/Base/MVPopupBase.h"
 #include "UI/Base/MVWindowBase.h"
+#include "UI/Notification/MVItemAcquisitionNotifications.h"
 #include "UI/Popup/MVInteractionPromptPopup.h"
 #include "UI/Popup/MVMessagePopup.h"
 #include "UI/Debug/MVPIEActionTestWidget.h"
@@ -109,15 +111,31 @@ void UMVUISubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 
+	Collection.InitializeDependency<UMVWorldStateSubsystem>();
+	ItemAcquisitionNotifications = NewObject<UMVItemAcquisitionNotifications>(this);
+	ItemAcquisitionNotifications->Initialize(*this);
 	FWorldDelegates::OnPostWorldInitialization.AddUObject(this, &UMVUISubsystem::HandleWorldInit);
 }
 
 void UMVUISubsystem::Deinitialize()
 {
 	FWorldDelegates::OnPostWorldInitialization.RemoveAll(this);
+	if (ItemAcquisitionNotifications)
+	{
+		ItemAcquisitionNotifications->Shutdown();
+		ItemAcquisitionNotifications = nullptr;
+	}
 	ClearAllUI();
 
 	Super::Deinitialize();
+}
+
+void UMVUISubsystem::BindItemAcquisitionPlayer(AMVPlayerCharacter& Player, APlayerController& Controller)
+{
+	if (ItemAcquisitionNotifications)
+	{
+		ItemAcquisitionNotifications->BindPlayer(Player, Controller);
+	}
 }
 
 UMVUILayerBase* UMVUISubsystem::GetOrCreateRootLayer(UWorld* InWorld)
@@ -164,6 +182,10 @@ UMVUILayerBase* UMVUISubsystem::PushLayer(UWorld* InWorld)
 	NewLayer->AddToViewport(BaseZOrder + LayerStack.Num() * ZOrderStep);
 	NewLayer->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	LayerStack.Add(NewLayer);
+	if (ItemAcquisitionNotifications)
+	{
+		ItemAcquisitionNotifications->AttachLayer(*NewLayer);
+	}
 	return NewLayer;
 }
 
@@ -174,10 +196,18 @@ void UMVUISubsystem::PopLayer()
 		return;
 	}
 
+	if (ItemAcquisitionNotifications)
+	{
+		ItemAcquisitionNotifications->DetachLayer();
+	}
 	if (UMVUILayerBase* TopLayer = LayerStack.Pop())
 	{
 		TopLayer->ClearLayer();
 		TopLayer->RemoveFromParent();
+	}
+	if (ItemAcquisitionNotifications && !LayerStack.IsEmpty() && IsValid(LayerStack.Last()))
+	{
+		ItemAcquisitionNotifications->AttachLayer(*LayerStack.Last());
 	}
 
 	CachedHUD = nullptr;
@@ -766,6 +796,10 @@ void UMVUISubsystem::ClearAllUI(bool bUseFadeOut)
 
 void UMVUISubsystem::ClearAllUIInternal(bool bUseFadeOut)
 {
+	if (ItemAcquisitionNotifications)
+	{
+		ItemAcquisitionNotifications->DetachLayer();
+	}
 	for (UMVUILayerBase* Layer : LayerStack)
 	{
 		if (!Layer)

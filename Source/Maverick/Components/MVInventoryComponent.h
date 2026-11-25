@@ -22,11 +22,21 @@ enum class EMVInventoryGrantResult : uint8
 	PlacedPickupUnavailable
 };
 
+/** 지급이 실제로 확정된 아이템과 수량을 전달한다. */
+struct FMVItemAcquisition
+{
+	FGameplayTag ItemTag;
+	int32 GrantedQuantity = 0;
+	bool bFirstAcquisition = false;
+};
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnInventoryChanged, FGameplayTag, ItemTag);
+DECLARE_MULTICAST_DELEGATE_OneParam(FMVOnItemAcquired, const FMVItemAcquisition&);
 
 /**
  * 캐릭터의 소유 아이템과 수량을 태그로 관리한다.
  * 테이블 정의와 보유 한도를 검사하고, NPC 무기에는 캐릭터별 무기 행을 허용한다.
+ * 저장 복원은 소지 수량과 발견 기록을 교체한다. 실제 지급에 성공한 경우에만 습득 신호를 보낸다.
  */
 UCLASS(BlueprintType, ClassGroup = (Maverick))
 class MAVERICK_API UMVInventoryComponent : public UActorComponent
@@ -50,6 +60,8 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|Inventory")
 	FMVOnInventoryChanged OnInventoryChanged;
 
+	FMVOnItemAcquired OnItemAcquired;
+
 private:
 	friend class UMVPlayerConsumable;
 	friend class UMVWeaponComponent;
@@ -61,12 +73,14 @@ private:
 	bool SetPotionCount(FGameplayTag ItemTag, int32 Quantity);
 	EMVInventoryGrantResult CheckGrantItem(FGameplayTag ItemTag, int32 Quantity) const;
 	void UpdateItemCount(FGameplayTag ItemTag, int32 Quantity, bool bNotify = true);
+	void NotifyCommittedAcquisition(const FMVItemAcquisition& Acquisition);
 	FMVInventorySaveData BuildSaveData() const;
 	void RestorePlayerItems(const FMVInventorySaveData& Inventory, const FMVWeaponProgressSaveData& Weapons);
 
 	UPROPERTY(Transient)
 	TMap<FGameplayTag, int32> Items;
 
+	TSet<FGameplayTag> DiscoveredItems;
 
 	UPROPERTY(Transient)
 	TMap<FGameplayTag, FDataTableRowHandle> LocalWeaponDefinitions;

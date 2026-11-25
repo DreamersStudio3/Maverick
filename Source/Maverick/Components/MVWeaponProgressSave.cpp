@@ -67,7 +67,8 @@ void UMVWeaponComponent::HandleWeaponSaveLoaded(FString SlotName)
 		const FMVInventorySaveData SavedItems = State->GetSaveData().Inventory;
 		RestoreWeaponProgress(Progress, SavedItems);
 		if (!Progress.bHasRecord || !SavedItems.bHasRecord
-			|| (Inventory && !SavedItems.ItemCounts.OrderIndependentCompareEqual(Inventory->GetItems()))
+			|| (Inventory && (!SavedItems.ItemCounts.OrderIndependentCompareEqual(Inventory->GetItems())
+				|| !SavedItems.DiscoveredItems.Includes(Inventory->DiscoveredItems)))
 			|| Progress.QuickSlots != QuickSlotWeaponTags || Progress.ActiveSlot != ActiveQuickSlotIndex
 			|| Progress.EquippedWeapon != CurrentWeaponState.ItemTag)
 		{
@@ -239,12 +240,7 @@ EMVSkillSelectionSaveStatus UMVWeaponComponent::StoreWeaponProgress(const bool b
 		Progress.SelectedPassives.Add(Passive.Key, MVWeaponProgressMakeRowKey(Passive.Value));
 	}
 
-	FMVInventorySaveData SavedItems;
-	if (Inventory)
-	{
-		SavedItems.bHasRecord = true;
-		SavedItems.ItemCounts = Inventory->GetItems();
-	}
+	FMVInventorySaveData SavedItems = Inventory ? Inventory->BuildSaveData() : FMVInventorySaveData();
 	State->SetPlayerItemProgress(MoveTemp(SavedItems), MoveTemp(Progress));
 	if (bSaveImmediately && !bDeferSkillSelectionSave)
 	{

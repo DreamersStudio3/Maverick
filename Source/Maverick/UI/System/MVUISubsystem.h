@@ -10,10 +10,13 @@
 class UCommonActivatableWidget;
 class UCameraComponent;
 class AMVCharacterBase;
+class AMVPlayerCharacter;
+class APlayerController;
 class UMVDialogueWindow;
 class UMVHUDWidgetBase;
 class UMVInteractionPromptPopup;
 class UMVInventoryWindow;
+class UMVItemAcquisitionNotifications;
 class UMVLoadingWindow;
 class UMVMessagePopup;
 class UMVPIEActionTestWidget;
@@ -34,6 +37,8 @@ class MAVERICK_API UMVUISubsystem : public UGameInstanceSubsystem
 public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
+
+	void BindItemAcquisitionPlayer(AMVPlayerCharacter& Player, APlayerController& Controller);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
 	UMVUILayerBase* GetOrCreateRootLayer(UWorld* InWorld = nullptr);
@@ -204,6 +209,9 @@ private:
 
 	UPROPERTY(Transient)
 	TArray<TObjectPtr<UMVUILayerBase>> LayerStack;
+
+	UPROPERTY(Transient)
+	TObjectPtr<UMVItemAcquisitionNotifications> ItemAcquisitionNotifications;
 
 	UPROPERTY(Transient)
 	TObjectPtr<UMVHUDWidgetBase> CachedHUD;

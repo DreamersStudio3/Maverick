@@ -6,6 +6,7 @@
 
 class UInputAction;
 class UMVHUDWidgetBase;
+class UMVItemAcquisitionPanel;
 class UMVDialogueWindow;
 class UMVMessagePopup;
 class UMVPopupBase;
@@ -33,6 +34,9 @@ public:
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "HUD")
 	TSubclassOf<UMVHUDWidgetBase> DefaultHUDClass;
+
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "HUD")
+	TSubclassOf<UMVItemAcquisitionPanel> ItemAcquisitionPanelClass;
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Window")
 	TSubclassOf<UMVWindowBase> TitleWindowClass;

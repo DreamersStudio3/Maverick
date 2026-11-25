@@ -190,6 +190,7 @@ void UMVWorldStateSubsystem::ResetSaveData()
 	CurrentSaveData.SaveVersion = MVWorldStateCurrentSaveVersion;
 	bSaveDataDirty = false;
 	bActiveSaveFailed = false;
+	OnWorldStateReset.Broadcast();
 	OnPlayerProgressionChanged.Broadcast(CurrentSaveData.PlayerProgression);
 	OnWorldStateChanged.Broadcast();
 }

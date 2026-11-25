@@ -135,6 +135,8 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|WorldState|Event")
 	FMVOnWorldStateChanged OnWorldStateChanged;
 
+	FSimpleMulticastDelegate OnWorldStateReset;
+
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|WorldState|Event")
 	FMVOnWorldStateSlotEvent OnWorldStateSaved;
 

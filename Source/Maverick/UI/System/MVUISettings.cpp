@@ -2,6 +2,7 @@
 
 #include "InputAction.h"
 #include "UI/HUD/MVMainHUDWidget.h"
+#include "UI/Notification/MVItemAcquisitionPanel.h"
 #include "UI/Popup/MVBossClearPopup.h"
 #include "UI/Popup/MVInteractionPromptPopup.h"
 #include "UI/Popup/MVMessagePopup.h"
