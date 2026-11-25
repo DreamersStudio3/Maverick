@@ -1,5 +1,7 @@
 #include "Combat/MVWeaponSkillSupport.h"
 
+#include "Animation/AnimInstance.h"
+#include "Animation/AnimMontage.h"
 #include "Character/MVCharacterBase.h"
 #include "Character/PC/MVPlayerCharacter.h"
 #include "Combat/MVHitResolverSubsystem.h"
@@ -8,6 +10,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/MVStatComponent.h"
 #include "Components/MVWeaponComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "DrawDebugHelpers.h"
 #include "Engine/OverlapResult.h"
 #include "Engine/World.h"
@@ -18,6 +21,8 @@
 
 namespace
 {
+DEFINE_LOG_CATEGORY_STATIC(LogMVWeaponSkillGroundPull, Log, All);
+
 constexpr float MVWeaponSkillAreaCheckInterval = 0.05f;
 constexpr double MVWeaponSkillConeHalfAngleCosine = 0.86602540378443865;
 
@@ -84,6 +89,42 @@ void MVWeaponSkillDrawDebugCone(
 }
 #endif
 
+// 각 끌기의 Push는 시작 시점에 기록한 몽타주 인스턴스에서만 해제한다. (MVWeaponSkillApplyGroundPull에서만 사용하는 내부타입)
+struct FMVGroundPullMontageRestore
+{
+	TWeakObjectPtr<UAnimInstance> AnimInstance;
+	int32 MontageInstanceID;
+	TWeakObjectPtr<UCharacterMovementComponent> Movement;
+	uint16 SourceID;
+	double EndTime;
+
+	void CheckForEnd() const
+	{
+		UAnimInstance* Anim = AnimInstance.Get();
+		FAnimMontageInstance* Montage = Anim ? Anim->GetMontageInstanceForID(MontageInstanceID) : nullptr;
+		if (!Montage)
+		{
+			return;
+		}
+
+		UCharacterMovementComponent* Move = Movement.Get();
+		UWorld* World = Move ? Move->GetWorld() : nullptr;
+		const TSharedPtr<FRootMotionSource> Source = Move ? Move->GetRootMotionSourceByID(SourceID) : nullptr;
+		if (World && World->GetTimeSeconds() < EndTime && Source
+			&& !Source->Status.HasFlag(ERootMotionSourceStatusFlags::Finished)
+			&& !Source->Status.HasFlag(ERootMotionSourceStatusFlags::MarkedForRemoval))
+		{
+			World->GetTimerManager().SetTimerForNextTick([Restore = *this] { Restore.CheckForEnd(); });
+			return;
+		}
+
+		Montage->PopDisableRootMotion();
+		UE_LOG(LogMVWeaponSkillGroundPull, Verbose,
+			TEXT("GroundPullTrace Restore Frame=%llu Target=%s SourceID=%u MontageInstanceID=%d"),
+			GFrameCounter, *GetNameSafe(Anim->GetOwningActor()), SourceID, MontageInstanceID);
+	}
+};
+
 void MVWeaponSkillApplyGroundPull(AMVCharacterBase* Victim, const FVector& Destination, float Duration)
 {
 	if (!IsValid(Victim) || !IsValid(Victim->StatComponent.Get()) || Victim->StatComponent->IsDead())
@@ -109,7 +150,22 @@ void MVWeaponSkillApplyGroundPull(AMVCharacterBase* Victim, const FVector& Desti
 	Pull->Settings.UnSetFlag(ERootMotionSourceSettingsFlags::DisablePartialEndTick);
 	Pull->FinishVelocityParams.Mode = ERootMotionFinishVelocityMode::SetVelocity;
 	Pull->FinishVelocityParams.SetVelocity = FVector::ZeroVector;
-	Movement->ApplyRootMotionSource(Pull);
+	const uint16 SourceID = Movement->ApplyRootMotionSource(Pull);
+	const USkeletalMeshComponent* Mesh = Victim->GetMesh();
+	UAnimInstance* Anim = Mesh ? Mesh->GetAnimInstance() : nullptr;
+	FAnimMontageInstance* Montage = Anim ? Anim->GetRootMotionMontageInstance() : nullptr;
+	UE_LOG(LogMVWeaponSkillGroundPull, Verbose,
+		TEXT("GroundPullTrace Start Frame=%llu Target=%s SourceID=%u MontageInstanceID=%d Start=%s Destination=%s Duration=%.3f"),
+		GFrameCounter, *GetNameSafe(Victim), SourceID, Montage ? Montage->GetInstanceID() : INDEX_NONE,
+		*Start.ToCompactString(), *Destination.ToCompactString(), Duration);
+	if (SourceID != static_cast<uint16>(ERootMotionSourceID::Invalid) && Montage)
+	{
+		UWorld* World = Victim->GetWorld();
+		const FMVGroundPullMontageRestore Restore{Anim, Montage->GetInstanceID(), Movement, SourceID,
+			World->GetTimeSeconds() + Duration};
+		Montage->PushDisableRootMotion();
+		World->GetTimerManager().SetTimerForNextTick([Restore] { Restore.CheckForEnd(); });
+	}
 }
 }
 
