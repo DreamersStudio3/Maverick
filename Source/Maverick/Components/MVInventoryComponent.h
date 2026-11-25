@@ -64,6 +64,7 @@ public:
 
 private:
 	friend class UMVPlayerConsumable;
+	friend class UMVEnemyRewardSubsystem;
 	friend class UMVWeaponComponent;
 
 	bool TryAddWeapon(const FDataTableRowHandle& Row, bool bNotify = true);
@@ -73,6 +74,8 @@ private:
 	bool SetPotionCount(FGameplayTag ItemTag, int32 Quantity);
 	EMVInventoryGrantResult CheckGrantItem(FGameplayTag ItemTag, int32 Quantity) const;
 	void UpdateItemCount(FGameplayTag ItemTag, int32 Quantity, bool bNotify = true);
+	bool PrepareForEnemyRewards(const UMVWorldStateSubsystem& State);
+	int32 ApplyEnemyRewardItem(FGameplayTag ItemTag, int32 Quantity, TArray<FMVItemAcquisition>& Acquisitions);
 	void NotifyCommittedAcquisition(const FMVItemAcquisition& Acquisition);
 	FMVInventorySaveData BuildSaveData() const;
 	void RestorePlayerItems(const FMVInventorySaveData& Inventory, const FMVWeaponProgressSaveData& Weapons);

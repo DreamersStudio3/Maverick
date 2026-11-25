@@ -61,6 +61,12 @@ void UMVWeaponComponent::InitializeWeaponProgress()
 
 void UMVWeaponComponent::HandleWeaponSaveLoaded(FString SlotName)
 {
+	const UWorld* World = GetWorld();
+	const APlayerController* Controller = World ? World->GetFirstPlayerController() : nullptr;
+	if (Controller && Controller->GetPawn() && Controller->GetPawn() != GetOwner())
+	{
+		return;
+	}
 	if (UMVWorldStateSubsystem* State = WeaponSaveState.Get())
 	{
 		const FMVWeaponProgressSaveData Progress = State->GetWeaponProgress();

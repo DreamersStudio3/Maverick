@@ -47,6 +47,9 @@ public:
 	const FMVWeaponProgressSaveData& GetWeaponProgress() const { return CurrentSaveData.WeaponProgress; }
 	void SetPlayerItemProgress(FMVInventorySaveData&& Inventory, FMVWeaponProgressSaveData&& Weapons);
 	bool TryCommitPlacedPickup(FName FieldId, FName PickupId, FMVInventorySaveData&& Inventory);
+	void QueueEnemyReward(FMVPendingEnemyReward&& Reward);
+	void CommitEnemyRewardGrants(TArray<FMVPendingEnemyReward>&& Remaining, FMVInventorySaveData&& Inventory);
+	uint64 GetSaveDataGeneration() const { return SaveDataGeneration; }
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|WorldState|Save")
 	bool LoadFromSlot(const FString& SlotName, int32 UserIndex);
@@ -176,4 +179,5 @@ private:
 
 	bool bSaveDataDirty = false;
 	bool bActiveSaveFailed = false;
+	uint64 SaveDataGeneration = 0;
 };

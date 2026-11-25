@@ -95,6 +95,44 @@ EMVInventoryGrantResult UMVInventoryComponent::TryGrantPlacedPickup(
 	return EMVInventoryGrantResult::Added;
 }
 
+bool UMVInventoryComponent::PrepareForEnemyRewards(const UMVWorldStateSubsystem& State)
+{
+	UMVWeaponComponent* Weapons = WeaponOwner.Get();
+	if (Weapons && !Weapons->WeaponSaveState.IsValid())
+	{
+		// 새 폰은 이전 폰이 조종되는 동안 BeginPlay를 마칠 수 있다.
+		Weapons->InitializeWeaponProgress();
+	}
+	return Weapons && Weapons->WeaponSaveState.Get() == &State && !Weapons->bRestoringWeaponProgress
+		&& State.GetSaveData().Inventory.bHasRecord;
+}
+
+int32 UMVInventoryComponent::ApplyEnemyRewardItem(const FGameplayTag ItemTag, const int32 Quantity,
+	TArray<FMVItemAcquisition>& Acquisitions)
+{
+	const UMVTableManager* Tables = UMVTableManager::Get(this);
+	const FMVInventoryItemDefinition* Definition = Tables ? Tables->FindInventoryItemDefinition(ItemTag) : nullptr;
+	if (!Definition || Quantity <= 0)
+	{
+		return Quantity;
+	}
+
+	const int32 Current = GetItemCount(ItemTag);
+	if (Current > 0 && IsWeaponItem(ItemTag))
+	{
+		return 0;
+	}
+
+	const int32 ToGrant = FMath::Min(Quantity, FMath::Max(0, Definition->StackLimit - Current));
+	if (ToGrant > 0 && CheckGrantItem(ItemTag, ToGrant) == EMVInventoryGrantResult::Added)
+	{
+		Acquisitions.Add({ItemTag, ToGrant, !DiscoveredItems.Contains(ItemTag)});
+		UpdateItemCount(ItemTag, Current + ToGrant, false);
+		return Quantity - ToGrant;
+	}
+	return Quantity;
+}
+
 void UMVInventoryComponent::NotifyCommittedAcquisition(const FMVItemAcquisition& Acquisition)
 {
 	if (UMVWeaponComponent* Weapons = WeaponOwner.Get(); Weapons && IsWeaponItem(Acquisition.ItemTag))

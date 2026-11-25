@@ -145,6 +145,7 @@ bool UMVWorldStateSubsystem::LoadFromSlot(const FString& SlotName, const int32 U
 	}
 
 	CurrentSaveData = WorldSaveGame->SaveData;
+	++SaveDataGeneration;
 	UpgradeSaveData();
 	
 	ActiveSaveSlotName = ResolvedSlotName;
@@ -187,6 +188,7 @@ bool UMVWorldStateSubsystem::DoesSaveSlotExist(const FString& SlotName, const in
 void UMVWorldStateSubsystem::ResetSaveData()
 {
 	CurrentSaveData = FMVWorldSaveData();
+	++SaveDataGeneration;
 	CurrentSaveData.SaveVersion = MVWorldStateCurrentSaveVersion;
 	bSaveDataDirty = false;
 	bActiveSaveFailed = false;
@@ -198,6 +200,7 @@ void UMVWorldStateSubsystem::ResetSaveData()
 void UMVWorldStateSubsystem::ApplySaveData(const FMVWorldSaveData& InSaveData)
 {
 	CurrentSaveData = InSaveData;
+	++SaveDataGeneration;
 	UpgradeSaveData();
 	OnPlayerProgressionChanged.Broadcast(CurrentSaveData.PlayerProgression);
 	MarkSaveDataDirty();
@@ -331,6 +334,20 @@ bool UMVWorldStateSubsystem::TryCommitPlacedPickup(
 	SaveActiveSlot();
 	OnWorldStateChanged.Broadcast();
 	return true;
+}
+
+void UMVWorldStateSubsystem::QueueEnemyReward(FMVPendingEnemyReward&& Reward)
+{
+	CurrentSaveData.PendingEnemyRewards.Add(MoveTemp(Reward));
+	bSaveDataDirty = true;
+}
+
+void UMVWorldStateSubsystem::CommitEnemyRewardGrants(
+	TArray<FMVPendingEnemyReward>&& Remaining, FMVInventorySaveData&& Inventory)
+{
+	CurrentSaveData.PendingEnemyRewards = MoveTemp(Remaining);
+	CurrentSaveData.Inventory = MoveTemp(Inventory);
+	bSaveDataDirty = true;
 }
 
 bool UMVWorldStateSubsystem::SetFieldObjectState(

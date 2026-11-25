@@ -4,6 +4,7 @@
 #include "Enum/MVEquipmentEnums.h"
 #include "Enum/MVSkillSlot.h"
 #include "Struct/MVProgressionTypes.h"
+#include "Tables/MVEnemyDropTableTypes.h"
 #include "MVWorldStateTypes.generated.h"
 
 /**
@@ -189,6 +190,19 @@ struct MAVERICK_API FMVInventorySaveData
 	TSet<FGameplayTag> DiscoveredItems;
 };
 
+/** 한 번의 처치에서 아직 받지 못한 품목과 수량. 순서는 보상 행을 따른다. */
+USTRUCT()
+struct MAVERICK_API FMVPendingEnemyReward
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FGuid DefeatId;
+
+	UPROPERTY()
+	TArray<FMVGuaranteedEnemyDrop> Items;
+};
+
 USTRUCT(BlueprintType)
 struct MAVERICK_API FMVWorldSaveData
 {
@@ -214,6 +228,9 @@ struct MAVERICK_API FMVWorldSaveData
 
 	UPROPERTY()
 	FMVInventorySaveData Inventory;
+
+	UPROPERTY()
+	TArray<FMVPendingEnemyReward> PendingEnemyRewards;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Save")
 	TArray<FMVFieldObjectSaveData> FieldObjects;
