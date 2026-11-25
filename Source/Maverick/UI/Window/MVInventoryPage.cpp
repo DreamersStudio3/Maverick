@@ -23,9 +23,9 @@
 #include "Components/VerticalBoxSlot.h"
 #include "Engine/Texture2D.h"
 #include "GameFramework/PlayerController.h"
-#include "Styling/CoreStyle.h"
 #include "Tables/MVItemTableTypes.h"
 #include "Tables/MVTableManager.h"
+#include "UI/System/MVUIFont.h"
 
 #define LOCTEXT_NAMESPACE "MVInventoryPage"
 
@@ -71,24 +71,6 @@ UTexture2D* MVInventoryPageResolveIcon(const FMVItemTableRow& Row, UTexture2D* F
 {
 	UTexture2D* Icon = Row.Icon.LoadSynchronous();
 	return Icon ? Icon : Fallback;
-}
-
-void MVInventoryPageSetItemFont(UTextBlock& TextBlock)
-{
-	FSlateFontInfo Font = TextBlock.GetFont();
-	const FCompositeFont* Original = Font.GetCompositeFont();
-	if (!Original || !Original->FallbackTypeface.Typeface.Fonts.IsEmpty())
-	{
-		return;
-	}
-
-	// 이식한 서체와 크기를 유지하고, 없는 글자는 엔진 기본 글꼴에서 찾는다.
-	const TSharedRef<FStandaloneCompositeFont> Composite = MakeShared<FStandaloneCompositeFont>();
-	static_cast<FCompositeFont&>(Composite.Get()) = *Original;
-	Composite->FallbackTypeface = FCoreStyle::GetDefaultFont()->FallbackTypeface;
-	Font.FontObject = nullptr;
-	Font.CompositeFont = Composite;
-	TextBlock.SetFont(Font);
 }
 
 FButtonStyle MVInventoryPageButtonStyle(FSlateBrush Background)
@@ -166,8 +148,8 @@ void UMVInventoryPage::NativeOnInitialized()
 		return;
 	}
 
-	MVInventoryPageSetItemFont(*ItemName);
-	MVInventoryPageSetItemFont(*Description);
+	MVUIFont::AddDefaultFallback(*ItemName);
+	MVUIFont::AddDefaultFallback(*Description);
 	if (UOverlay* Information = Cast<UOverlay>(Description->GetParent()))
 	{
 		DescriptionScroll = WidgetTree->ConstructWidget<UScrollBox>(UScrollBox::StaticClass(), TEXT("InventoryDescriptionScroll"));
