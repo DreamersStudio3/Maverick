@@ -19,6 +19,9 @@ class MAVERICK_API AMVFieldEnemySpawnPoint : public AActor
 public:
 	AMVFieldEnemySpawnPoint();
 
+	FName GetFieldId() const { return FieldId; }
+	FName GetSpawnId() const { return SpawnId; }
+
 	static bool CanResetField(UWorld& World, FName Field);
 	static FName ResolveDeathResetField(UWorld& World, FName PreferredField);
 	static bool ResetField(UWorld& World, FName Field, const AActor* Player);

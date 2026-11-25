@@ -15,6 +15,15 @@ enum class EMVItemType : uint8
 };
 
 UENUM(BlueprintType)
+enum class EMVItemRarity : uint8
+{
+	UseItemType UMETA(DisplayName = "종류에 따름"),
+	Common,
+	Rare,
+	Epic
+};
+
+UENUM(BlueprintType)
 enum class EMVEquipmentSlot : uint8
 {
 	None UMETA(DisplayName = "None"),

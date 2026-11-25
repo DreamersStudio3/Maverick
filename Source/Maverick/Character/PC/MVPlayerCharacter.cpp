@@ -123,6 +123,11 @@ void AMVPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	if (InteractionDetector && PlayerInputComponent)
+	{
+		InteractionDetector->BindSelectionInput(*PlayerInputComponent);
+	}
+
 	UEnhancedInputComponent* Input = Cast<UEnhancedInputComponent>(PlayerInputComponent);
 	const UInputAction* InventoryMenuAction = GetDefault<UMVUISettings>()->InventoryMenuAction;
 	if (Input && InventoryMenuAction)

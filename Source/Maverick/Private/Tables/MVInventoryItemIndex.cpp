@@ -25,13 +25,14 @@ void UMVTableManager::RebuildInventoryItemIndex()
 		const UScriptStruct* RowType;
 		FName DefaultGroup;
 		EMVInventoryGroupCategory DefaultGroupCategory;
+		EMVItemRarity DefaultRarity;
 	} ItemTables[] = {
 		{ TEXT("Weapons_Player"), FMVWeaponTableRow::StaticStruct(),
-			TEXT("Weapons.Other"), EMVInventoryGroupCategory::Weapons },
+			TEXT("Weapons.Other"), EMVInventoryGroupCategory::Weapons, EMVItemRarity::Epic },
 		{ TEXT("Items_Consumable"), FMVHealingPotionTableRow::StaticStruct(),
-			TEXT("Consumables.Potion"), EMVInventoryGroupCategory::Consumables },
+			TEXT("Consumables.Potion"), EMVInventoryGroupCategory::Consumables, EMVItemRarity::Common },
 		{ TEXT("Items_Materials"), FMVItemTableRow::StaticStruct(),
-			TEXT("Materials.General"), EMVInventoryGroupCategory::Materials }
+			TEXT("Materials.General"), EMVInventoryGroupCategory::Materials, EMVItemRarity::Rare }
 	};
 
 	TSet<FGameplayTag> DuplicateTags;
@@ -93,6 +94,7 @@ void UMVTableManager::RebuildInventoryItemIndex()
 			FMVInventoryItemDefinition& Definition = InventoryItemIndex.Add(Row->ItemTag);
 			Definition.Row.DataTable = Table;
 			Definition.Row.RowName = Pair.Key;
+			Definition.Rarity = Row->Rarity == EMVItemRarity::UseItemType ? Entry.DefaultRarity : Row->Rarity;
 			Definition.InventoryGroupId = Entry.DefaultGroup;
 			Definition.InventorySortOrder = Row->InventorySortOrder;
 			const auto* Group = DefaultGroup;

@@ -249,6 +249,15 @@ UMVInventoryWindow* UMVUISubsystem::ShowInventoryWindow()
 	return Cast<UMVInventoryWindow>(Layer->PushWindow(UMVInventoryWindow::StaticClass()));
 }
 
+bool UMVUISubsystem::HasInventoryWindow() const
+{
+	return LayerStack.ContainsByPredicate([](const UMVUILayerBase* Layer)
+	{
+		return IsValid(Layer) && Layer->IsInViewport()
+			&& Layer->FindWindowByClass(UMVInventoryWindow::StaticClass()) != nullptr;
+	});
+}
+
 UMVPopupBase* UMVUISubsystem::PushPopupByClass(TSubclassOf<UMVPopupBase> PopupClass)
 {
 	UMVUILayerBase* Layer = GetOrCreateRootLayer();

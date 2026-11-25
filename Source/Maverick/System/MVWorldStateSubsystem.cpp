@@ -4,6 +4,13 @@
 #include "Kismet/GameplayStatics.h"
 #include "System/MVWorldSaveGame.h"
 
+#if PLATFORM_WINDOWS
+#include "HAL/FileManager.h"
+#include "Misc/FileHelper.h"
+#include "Misc/Paths.h"
+#include "Windows/WindowsHWrapper.h"
+#endif
+
 namespace
 {
 const int32 MVWorldStateCurrentSaveVersion = 5;
@@ -16,6 +23,31 @@ FString WorldStateResolveFallbackSlotName(const FString& RequestedSlotName, cons
 	}
 
 	return DefaultSlotName.IsEmpty() ? FString(TEXT("MaverickDefault")) : DefaultSlotName;
+}
+
+bool MVWorldStateWriteSlot(UMVWorldSaveGame& SaveGame, const FString& SlotName, const int32 UserIndex)
+{
+#if PLATFORM_WINDOWS
+	// Windows의 기본 SaveGame과 같은 경로·형식을 사용한다. 쓰기가 끝난 파일만 기존 슬롯과 교체한다.
+	TArray<uint8> Bytes;
+	if (!UGameplayStatics::SaveGameToMemory(&SaveGame, Bytes))
+	{
+		return false;
+	}
+
+	const FString Destination = FPaths::ConvertRelativePathToFull(FPaths::ProjectSavedDir() / TEXT("SaveGames") / (SlotName + TEXT(".sav")));
+	const FString Temporary = Destination + TEXT(".") + FGuid::NewGuid().ToString(EGuidFormats::Digits) + TEXT(".tmp");
+	if (FFileHelper::SaveArrayToFile(Bytes, *Temporary)
+		&& ::MoveFileExW(*Temporary, *Destination, MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH))
+	{
+		return true;
+	}
+
+	IFileManager::Get().Delete(*Temporary, false, false, true);
+	return false;
+#else
+	return UGameplayStatics::SaveGameToSlot(&SaveGame, SlotName, UserIndex);
+#endif
 }
 }
 
@@ -65,7 +97,7 @@ bool UMVWorldStateSubsystem::SaveToSlot(const FString& SlotName, const int32 Use
 	SaveGame->SaveData.SaveVersion = MVWorldStateCurrentSaveVersion;
 	SaveGame->SaveData.SavedAtUtcIso8601 = FDateTime::UtcNow().ToIso8601();
 
-	if (!UGameplayStatics::SaveGameToSlot(SaveGame, ResolvedSlotName, UserIndex))
+	if (!MVWorldStateWriteSlot(*SaveGame, ResolvedSlotName, UserIndex))
 	{
 		return false;
 	}
@@ -278,6 +310,26 @@ void UMVWorldStateSubsystem::SetPlayerItemProgress(FMVInventorySaveData&& Invent
 	CurrentSaveData.Inventory = MoveTemp(Inventory);
 	CurrentSaveData.WeaponProgress = MoveTemp(Weapons);
 	MarkSaveDataDirty();
+}
+
+bool UMVWorldStateSubsystem::TryCommitPlacedPickup(
+	const FName FieldId, const FName PickupId, FMVInventorySaveData&& Inventory)
+{
+	if (FieldId.IsNone() || PickupId.IsNone() || !Inventory.bHasRecord || FindFieldObjectRecord(FieldId, PickupId))
+	{
+		return false;
+	}
+
+	FMVFieldObjectSaveData& Record = CurrentSaveData.FieldObjects.AddDefaulted_GetRef();
+	Record.FieldId = FieldId;
+	Record.ObjectId = PickupId;
+	Record.bConsumed = true;
+	Record.StateId = TEXT("Consumed");
+	CurrentSaveData.Inventory = MoveTemp(Inventory);
+	bSaveDataDirty = true;
+	SaveActiveSlot();
+	OnWorldStateChanged.Broadcast();
+	return true;
 }
 
 bool UMVWorldStateSubsystem::SetFieldObjectState(

@@ -132,6 +132,7 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Maverick|UI")
 	bool CanUseInteractionPrompt() const;
+	bool HasInventoryWindow() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
 	void RestoreDialogueCameraZoom(float DurationOverride = -1.0f);

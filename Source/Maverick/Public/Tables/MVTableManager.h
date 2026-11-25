@@ -14,6 +14,7 @@ struct FMVInventoryItemDefinition
 {
 	FDataTableRowHandle Row;
 	int32 StackLimit = MAX_int32;
+	EMVItemRarity Rarity = EMVItemRarity::Common;
 	FName InventoryGroupId;
 	EMVInventoryGroupCategory InventoryGroupCategory = EMVInventoryGroupCategory::Other;
 	int32 InventoryGroupSortOrder = 0;

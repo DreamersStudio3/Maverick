@@ -25,6 +25,9 @@ struct MAVERICK_API FMVItemTableRow : public FMVTableRowBase
 	EMVItemType ItemType = EMVItemType::None;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Item")
+	EMVItemRarity Rarity = EMVItemRarity::UseItemType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Item")
 	FText DisplayName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Item", meta = (MultiLine = "true"))

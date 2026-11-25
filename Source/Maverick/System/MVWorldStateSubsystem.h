@@ -46,6 +46,7 @@ public:
 	bool RecordRestPoint(FName RestPointId, FName FieldId, const FTransform& Transform);
 	const FMVWeaponProgressSaveData& GetWeaponProgress() const { return CurrentSaveData.WeaponProgress; }
 	void SetPlayerItemProgress(FMVInventorySaveData&& Inventory, FMVWeaponProgressSaveData&& Weapons);
+	bool TryCommitPlacedPickup(FName FieldId, FName PickupId, FMVInventorySaveData&& Inventory);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|WorldState|Save")
 	bool LoadFromSlot(const FString& SlotName, int32 UserIndex);

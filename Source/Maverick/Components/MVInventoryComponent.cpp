@@ -3,6 +3,7 @@
 #include "Character/PC/Consumable/MVPlayerConsumable.h"
 #include "Character/PC/MVPlayerCharacter.h"
 #include "Components/MVWeaponComponent.h"
+#include "System/MVWorldStateSubsystem.h"
 #include "System/MVWorldStateTypes.h"
 #include "Tables/MVHealingPotionTableTypes.h"
 #include "Tables/MVTableManager.h"
@@ -46,21 +47,68 @@ FAutoConsoleCommandWithWorldAndArgs MVInventoryGrantConsoleCommand(
 
 bool UMVInventoryComponent::TryAddItem(const FGameplayTag ItemTag, const int32 Quantity)
 {
+	return TryGrantItem(ItemTag, Quantity) == EMVInventoryGrantResult::Added;
+}
+
+EMVInventoryGrantResult UMVInventoryComponent::TryGrantItem(const FGameplayTag ItemTag, const int32 Quantity)
+{
+	const EMVInventoryGrantResult Result = CheckGrantItem(ItemTag, Quantity);
+	if (Result == EMVInventoryGrantResult::Added)
+	{
+		UpdateItemCount(ItemTag, GetItemCount(ItemTag) + Quantity);
+	}
+	return Result;
+}
+
+EMVInventoryGrantResult UMVInventoryComponent::TryGrantPlacedPickup(
+	const FGameplayTag ItemTag, const int32 Quantity, const FName FieldId, const FName PickupId)
+{
+	const EMVInventoryGrantResult Result = CheckGrantItem(ItemTag, Quantity);
+	if (Result != EMVInventoryGrantResult::Added)
+	{
+		return Result;
+	}
+
+	UMVWeaponComponent* Weapons = WeaponOwner.Get();
+	UMVWorldStateSubsystem* State = Weapons ? Weapons->WeaponSaveState.Get() : nullptr;
+	if (!State || Weapons->bRestoringWeaponProgress)
+	{
+		return EMVInventoryGrantResult::PlacedPickupUnavailable;
+	}
+
+	const int32 PreviousQuantity = GetItemCount(ItemTag);
+	UpdateItemCount(ItemTag, PreviousQuantity + Quantity, false);
+	if (!State->TryCommitPlacedPickup(FieldId, PickupId, BuildSaveData()))
+	{
+		UpdateItemCount(ItemTag, PreviousQuantity, false);
+		return EMVInventoryGrantResult::PlacedPickupUnavailable;
+	}
+
+	if (IsWeaponItem(ItemTag))
+	{
+		Weapons->OnOwnedWeaponsChanged.Broadcast();
+	}
+	OnInventoryChanged.Broadcast(ItemTag);
+	return EMVInventoryGrantResult::Added;
+}
+
+EMVInventoryGrantResult UMVInventoryComponent::CheckGrantItem(const FGameplayTag ItemTag, const int32 Quantity) const
+{
 	const UMVTableManager* Tables = UMVTableManager::Get(this);
 	const FMVInventoryItemDefinition* Definition = Tables ? Tables->FindInventoryItemDefinition(ItemTag) : nullptr;
 	if (!Definition || Quantity <= 0)
 	{
-		return false;
+		return EMVInventoryGrantResult::InvalidItemOrQuantity;
 	}
 
 	const int32 Current = GetItemCount(ItemTag);
 	if (Quantity > Definition->StackLimit - Current)
 	{
-		return false;
+		const bool bAlreadyOwnedWeapon = Current > 0 && IsWeaponItem(ItemTag);
+		return bAlreadyOwnedWeapon ? EMVInventoryGrantResult::WeaponAlreadyOwned : EMVInventoryGrantResult::CarryLimit;
 	}
 
-	UpdateItemCount(ItemTag, Current + Quantity);
-	return true;
+	return EMVInventoryGrantResult::Added;
 }
 
 bool UMVInventoryComponent::TryRemoveItem(const FGameplayTag ItemTag, const int32 Quantity)
@@ -152,7 +200,7 @@ bool UMVInventoryComponent::SetPotionCount(const FGameplayTag ItemTag, const int
 
 void UMVInventoryComponent::UpdateItemCount(const FGameplayTag ItemTag, const int32 Quantity, const bool bNotify)
 {
-	const bool bWeapon = IsWeaponItem(ItemTag);
+	const bool bWeapon = bNotify && IsWeaponItem(ItemTag);
 	if (Quantity == 0)
 	{
 		Items.Remove(ItemTag);
@@ -169,6 +217,14 @@ void UMVInventoryComponent::UpdateItemCount(const FGameplayTag ItemTag, const in
 		}
 		OnInventoryChanged.Broadcast(ItemTag);
 	}
+}
+
+FMVInventorySaveData UMVInventoryComponent::BuildSaveData() const
+{
+	FMVInventorySaveData Snapshot;
+	Snapshot.bHasRecord = true;
+	Snapshot.ItemCounts = Items;
+	return Snapshot;
 }
 
 void UMVInventoryComponent::RestorePlayerItems(const FMVInventorySaveData& Inventory, const FMVWeaponProgressSaveData& Weapons)

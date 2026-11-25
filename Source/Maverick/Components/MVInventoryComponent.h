@@ -8,15 +8,25 @@
 
 class UMVPlayerConsumable;
 class UMVWeaponComponent;
+class UMVWorldStateSubsystem;
 struct FMVInventorySaveData;
 struct FMVWeaponProgressSaveData;
+
+/** 드랍과 같은 호출부가 지급 실패 이유를 안내하는 데 사용하는 결과. */
+enum class EMVInventoryGrantResult : uint8
+{
+	Added,
+	InvalidItemOrQuantity,
+	CarryLimit,
+	WeaponAlreadyOwned,
+	PlacedPickupUnavailable
+};
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnInventoryChanged, FGameplayTag, ItemTag);
 
 /**
  * 캐릭터의 소유 아이템과 수량을 태그로 관리한다.
  * 테이블 정의와 보유 한도를 검사하고, NPC 무기에는 캐릭터별 무기 행을 허용한다.
- * 저장 복원은 수량을 일괄 교체한다. 일반 변경은 장착과 저장 자료를 일치시킨 뒤 알린다.
  */
 UCLASS(BlueprintType, ClassGroup = (Maverick))
 class MAVERICK_API UMVInventoryComponent : public UActorComponent
@@ -26,6 +36,8 @@ class MAVERICK_API UMVInventoryComponent : public UActorComponent
 public:
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Inventory")
 	bool TryAddItem(FGameplayTag ItemTag, int32 Quantity = 1);
+	EMVInventoryGrantResult TryGrantItem(FGameplayTag ItemTag, int32 Quantity);
+	EMVInventoryGrantResult TryGrantPlacedPickup(FGameplayTag ItemTag, int32 Quantity, FName FieldId, FName PickupId);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Inventory")
 	bool TryRemoveItem(FGameplayTag ItemTag, int32 Quantity = 1);
@@ -47,11 +59,14 @@ private:
 	FDataTableRowHandle FindWeaponDefinition(FGameplayTag ItemTag) const;
 	bool IsWeaponItem(FGameplayTag ItemTag) const;
 	bool SetPotionCount(FGameplayTag ItemTag, int32 Quantity);
+	EMVInventoryGrantResult CheckGrantItem(FGameplayTag ItemTag, int32 Quantity) const;
 	void UpdateItemCount(FGameplayTag ItemTag, int32 Quantity, bool bNotify = true);
+	FMVInventorySaveData BuildSaveData() const;
 	void RestorePlayerItems(const FMVInventorySaveData& Inventory, const FMVWeaponProgressSaveData& Weapons);
 
 	UPROPERTY(Transient)
 	TMap<FGameplayTag, int32> Items;
+
 
 	UPROPERTY(Transient)
 	TMap<FGameplayTag, FDataTableRowHandle> LocalWeaponDefinitions;
