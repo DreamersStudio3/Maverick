@@ -203,6 +203,7 @@ private:
 	friend class FMVWeaponSkillSelectionRequestsTest;
 	friend class FMVSkillSafeReplacementTest;
 	friend class FMVSkillSelectionPersistenceTest;
+	friend class FMVItemAcquisitionTest;
 	EMVSkillSelectionStatus TryEquipActiveSkill(EMVEquippedStyle Style, EMVSkillSlot Slot, const FDataTableRowHandle& Row, EMVSkillSelectionSaveStatus* OutSaveStatus = nullptr);
 	EMVSkillSelectionStatus ValidateSkillSelectionContext(const FMVSkillSelectionContext& Context) const;
 	void BroadcastSkillSelectionChanged(EMVEquippedStyle Style, EMVSkillSlot Slot, FGameplayTag WeaponType = FGameplayTag());

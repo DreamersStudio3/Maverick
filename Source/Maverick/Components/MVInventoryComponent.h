@@ -66,6 +66,7 @@ private:
 	friend class UMVPlayerConsumable;
 	friend class UMVEnemyRewardSubsystem;
 	friend class UMVWeaponComponent;
+	friend class FMVItemAcquisitionTest;
 
 	bool TryAddWeapon(const FDataTableRowHandle& Row, bool bNotify = true);
 	FDataTableRowHandle FindOwnedWeaponRow(FGameplayTag ItemTag) const;
