@@ -1,6 +1,7 @@
 #include "AI/AITask/MVChaseDistanceAttackTask.h"
 
 #include "AI/Controller/MVAIController.h"
+#include "Combat/Boss/Duelist/MVDuelistApproachComponent.h"
 #include "GameFramework/Pawn.h"
 #include "StateTreeExecutionContext.h"
 
@@ -27,6 +28,10 @@ EStateTreeRunStatus FMVChaseDistanceAttackTask::Tick(FStateTreeExecutionContext&
 	const AMVAIController* Controller = Cast<AMVAIController>(Context.GetOwner());
 	const APawn* Pawn = Controller ? Controller->GetPawn() : nullptr;
 	AActor* Target = Controller ? Controller->TargetActor : nullptr;
+	if (const auto* Approach = Pawn ? Pawn->FindComponentByClass<UMVDuelistApproachComponent>() : nullptr)
+	{
+		return Approach->IsInAttackRange(Target) ? EStateTreeRunStatus::Succeeded : EStateTreeRunStatus::Running;
+	}
 	if (Data.TrackedTarget.Get() != Target)
 	{
 		Data.ElapsedTime = 0.0f;

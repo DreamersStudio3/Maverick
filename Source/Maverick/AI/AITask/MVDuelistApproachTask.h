@@ -43,3 +43,22 @@ struct FMVDuelistApproachTask : public FStateTreeTaskCommonBase
 	virtual EStateTreeRunStatus Tick(FStateTreeExecutionContext& Context, float DeltaTime) const override;
 	virtual void ExitState(FStateTreeExecutionContext& Context, const FStateTreeTransitionResult& Transition) const override;
 };
+
+USTRUCT()
+struct FMVDuelistEvasionData
+{
+	GENERATED_BODY()
+	TWeakObjectPtr<class UMVDuelistDodgeChanceComponent> Dodge;
+};
+
+/** 회피 몽타주 재생 동안 Duelist의 다음 전투 상태 진입을 보류한다. */
+USTRUCT(meta=(DisplayName="Wait For Duelist Evasion"))
+struct FMVDuelistWaitForEvasion : public FStateTreeTaskCommonBase
+{
+	GENERATED_BODY()
+	using FInstanceDataType = FMVDuelistEvasionData;
+	virtual const UStruct* GetInstanceDataType() const override { return FInstanceDataType::StaticStruct(); }
+	virtual EStateTreeRunStatus EnterState(FStateTreeExecutionContext& Context, const FStateTreeTransitionResult& Transition) const override;
+	FMVDuelistWaitForEvasion() { bShouldCallTick = true; }
+	virtual EStateTreeRunStatus Tick(FStateTreeExecutionContext& Context, float DeltaTime) const override;
+};

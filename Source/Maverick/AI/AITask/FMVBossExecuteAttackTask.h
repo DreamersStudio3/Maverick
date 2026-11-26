@@ -51,6 +51,9 @@ struct FMVBossExecuteAttackTaskInstanceData
 	UPROPERTY(EditAnywhere, Category = "Input|Attack", meta = (ClampMin = "0", Units = "cm"))
 	float AttackRange = 300.0f;
 
+	UPROPERTY(EditAnywhere, Category = "Input|Attack")
+	bool bDashFollowUp = false;
+
 	UPROPERTY(EditAnywhere, Category = "Input|Context")
 	FMVAICombatContext CombatContext;
 
@@ -63,6 +66,9 @@ struct FMVBossExecuteAttackTaskInstanceData
 	UPROPERTY(Transient)
 	TObjectPtr<UAnimMontage> ActiveMontage = nullptr;
 
+	TWeakObjectPtr<class UMVDuelistApproachComponent> WindupApproach;
+	TWeakObjectPtr<AActor> WindupTarget;
+	float WindupTurnRemaining = 0.f;
 	bool bCustomMontageStopOnExit = true;
 	FName StartedActionTableName = NAME_None;
 	FName StartedActionRowName = NAME_None;

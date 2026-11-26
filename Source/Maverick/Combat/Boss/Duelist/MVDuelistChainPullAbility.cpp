@@ -25,7 +25,7 @@ void UMVDuelistChainPullAbility::StartAbility_Implementation(int32 AbilityIndex)
 	if (!bAbilityActive) return;
 	bFired = false;
 	const FVector Direction = (Target->GetActorLocation() - Character->GetActorLocation()).GetSafeNormal2D();
-	if (!Direction.IsNearlyZero()) Character->SetActorRotation(Direction.Rotation());
+	if ((!Controller || !Controller->BossPlayStart) && !Direction.IsNearlyZero()) Character->SetActorRotation(Direction.Rotation());
 }
 
 void UMVDuelistChainPullAbility::FireChain()

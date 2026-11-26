@@ -5,6 +5,7 @@
 #include "AI/AITask/MVDuelistResonanceTask.h"
 #include "AI/AITask/MVDuelistApproachTask.h"
 #include "Combat/Boss/Duelist/MVDuelistApproachComponent.h"
+#include "Combat/Boss/Duelist/MVDuelistDodgeChanceComponent.h"
 #include "Engine/SimpleConstructionScript.h"
 #include "Engine/SCS_Node.h"
 #include "Kismet2/BlueprintEditorUtils.h"
@@ -127,6 +128,12 @@ bool MVDuelistConfigureApproach()
 		FStateTreeCompilerLog SubLog;
 		if (!UStateTreeEditingSubsystem::CompileStateTree(SubTree, SubLog)) return false;
 	}
+	UStateTreeState* Evasion = FindChild(Data->SubTrees[0], TEXT("Evasion"));
+	if (!Evasion) return false;
+	Evasion->TasksCompletion = EStateTreeTaskCompletionType::All;
+	if (!Evasion->Tasks.ContainsByPredicate([](const FStateTreeEditorNode& Node)
+		{ return Node.Node.GetScriptStruct() == FMVDuelistWaitForEvasion::StaticStruct(); }))
+		Evasion->AddTask<FMVDuelistWaitForEvasion>();
 	if (!FindChild(Alive, TEXT("ApproachDash")))
 	{
 		UStateTreeState& Dash = Alive->AddChildState(TEXT("ApproachDash"));
@@ -136,6 +143,22 @@ bool MVDuelistConfigureApproach()
 		Dash.AddTransition(EStateTreeTransitionTrigger::OnStateSucceeded, EStateTreeTransitionType::GotoState, Attack);
 		Dash.AddTransition(EStateTreeTransitionTrigger::OnStateFailed, EStateTreeTransitionType::GotoState, Chase);
 	}
+	UStateTreeState* Dash = FindChild(Alive, TEXT("ApproachDash"));
+	UStateTreeState* FollowUp = FindChild(Alive, TEXT("DashFollowUp"));
+	if (!FollowUp)
+	{
+		UDataTable* Table = LoadObject<UDataTable>(nullptr, *(Root + TEXT("DT_DuelistBossCombatAttack.DT_DuelistBossCombatAttack")));
+		if (!Table || !Table->FindRow<FMVSkillDataTableColumn>(TEXT("BasicAttack1"), TEXT("DashFollowUp"))) return false;
+		FollowUp = &Alive->AddChildState(TEXT("DashFollowUp"));
+		auto& Task = FollowUp->AddTask<FMVBossExecuteAttackTask>().GetInstanceData();
+		Task.AttackRow.DataTable = Table;
+		Task.AttackRow.RowName = TEXT("BasicAttack1");
+		Task.AttackRange = 0.f;
+		Task.bDashFollowUp = true;
+		FollowUp->AddTransition(EStateTreeTransitionTrigger::OnStateCompleted, EStateTreeTransitionType::GotoState, Chase);
+	}
+	for (auto& Link : Dash->Transitions)
+		if (Link.Trigger == EStateTreeTransitionTrigger::OnStateSucceeded) Link.State = FollowUp->GetLinkToState();
 	UStateTreeEditingSubsystem::ValidateStateTree(Tree);
 	FStateTreeCompilerLog Log;
 	if (!UStateTreeEditingSubsystem::CompileStateTree(Tree, Log) || !Tree->IsReadyToRun()) return false;
@@ -518,6 +541,18 @@ UMaverickBossStateTreeCommandlet::UMaverickBossStateTreeCommandlet()
 
 int32 UMaverickBossStateTreeCommandlet::Main(const FString& Params)
 {
+	if (FParse::Param(*Params, TEXT("DuelistDodgeChanceOnly")))
+	{
+		UBlueprint* BP = LoadObject<UBlueprint>(nullptr, TEXT("/Game/Characters/NPC/Boss/DuelistComplete/BP_Duelist.BP_Duelist"));
+		if (!BP || !BP->SimpleConstructionScript) return 1;
+		USimpleConstructionScript* SCS = BP->SimpleConstructionScript;
+		if (SCS->GetAllNodes().ContainsByPredicate([](const USCS_Node* Node)
+			{ return Node && Node->ComponentClass == UMVDuelistDodgeChanceComponent::StaticClass(); })) return 0;
+		SCS->AddNode(SCS->CreateNode(UMVDuelistDodgeChanceComponent::StaticClass(), TEXT("DodgeChance")));
+		FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(BP);
+		FKismetEditorUtilities::CompileBlueprint(BP);
+		return BP->Status != BS_Error && BossBasicAttackSaveAsset(BP) ? 0 : 1;
+	}
 	if (FParse::Param(*Params, TEXT("DuelistApproachOnly"))) return MVDuelistConfigureApproach() ? 0 : 1;
 	if (FParse::Param(*Params, TEXT("ResonanceOnly"))) return MVDuelistResonanceConfigureStateTree() ? 0 : 1;
 	if (FParse::Param(*Params, TEXT("FixBasicAttackState")))

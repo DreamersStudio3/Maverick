@@ -42,6 +42,8 @@ EStateTreeRunStatus FMVBossSelectAttackTask::EnterState(
 		return EStateTreeRunStatus::Failed;
 	}
 	const APawn* Pawn = Controller->GetPawn();
+	const auto* Approach = Pawn ? Pawn->FindComponentByClass<UMVDuelistApproachComponent>() : nullptr;
+	if (Approach && !Approach->IsInAttackRange(Controller->TargetActor)) return EStateTreeRunStatus::Running;
 	const UMVDuelistResonanceComponent* Resonance = Pawn ? Pawn->FindComponentByClass<UMVDuelistResonanceComponent>() : nullptr;
 	if (Resonance && Resonance->IsResonancePending() && Data.ResonanceState.LinkType == EStateTreeTransitionType::GotoState)
 	{
@@ -52,7 +54,7 @@ EStateTreeRunStatus FMVBossSelectAttackTask::EnterState(
 	const AActor* Target = Controller->TargetActor;
 	const float TargetDistance = IsValid(Pawn) && IsValid(Target) && !Target->IsActorBeingDestroyed()
 		? Pawn->GetDistanceTo(Target) : -1.0f;
-	if (TargetDistance > Data.NormalAttackRange && !Data.OutOfRangeAttackName.IsNone())
+	if (!Approach && TargetDistance > Data.NormalAttackRange && !Data.OutOfRangeAttackName.IsNone())
 	{
 		Data.SelectedIndex = Data.Choices.IndexOfByPredicate([&Data](const FMVBossAttackChoice& Choice)
 		{
@@ -80,11 +82,12 @@ EStateTreeRunStatus FMVBossSelectAttackTask::Tick(FStateTreeExecutionContext& Co
 		const AMVAIController* Controller = Cast<AMVAIController>(Context.GetOwner());
 		const APawn* Pawn = Controller ? Controller->GetPawn() : nullptr;
 		const auto* Approach = Pawn ? Pawn->FindComponentByClass<UMVDuelistApproachComponent>() : nullptr;
-		if (Approach && Approach->CanContinue(Controller->TargetActor)
-			&& !Approach->TurnTowards(Controller->TargetActor, DeltaTime))
+		if (Approach && (!Approach->IsInAttackRange(Controller->TargetActor) || Data.SelectedAttack.IsNone()))
 		{
-			return EStateTreeRunStatus::Running;
+			Context.RequestTransition(FStateTreeTransitionRequest(FStateTreeStateHandle::Succeeded));
+			return EStateTreeRunStatus::Succeeded;
 		}
+		if (Approach && Approach->CanContinue(Controller->TargetActor)) Approach->TurnTowards(Controller->TargetActor, DeltaTime);
 		Data.bTransitionRequested = true;
 		if (Data.bResonanceSelected)
 		{

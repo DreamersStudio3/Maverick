@@ -25,6 +25,7 @@ public:
 	UPROPERTY(EditAnywhere, Category="Approach", meta=(ClampMin="1", Units="deg/s")) float TurnRate = 360.f;
 
 	bool TurnTowards(const AActor* Target, float DeltaSeconds) const;
+	bool IsInAttackRange(const AActor* Target) const;
 	bool FindDestination(const AActor* Target, FVector& OutDestination) const;
 	bool StartApproach(AActor* Target);
 	bool IsMoving() const;

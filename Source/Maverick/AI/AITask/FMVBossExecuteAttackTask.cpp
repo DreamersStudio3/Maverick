@@ -1,5 +1,6 @@
 #include "AI/AITask/FMVBossExecuteAttackTask.h"
 
+#include "Combat/Boss/Duelist/MVDuelistApproachComponent.h"
 #include "AIController.h"
 #include "AI/Controller/MVAIController.h"
 #include "Components/MVActionComponent.h"
@@ -24,6 +25,7 @@ EStateTreeRunStatus FMVBossExecuteAttackTask::EnterState(
 	const FStateTreeTransitionResult& Transition) const
 {
 	FInstanceDataType& InstanceData = Context.GetInstanceData<FInstanceDataType>(*this);
+	InstanceData.WindupTurnRemaining = 0.f;
 	InstanceData.ActionComponent = nullptr;
 	InstanceData.AnimInstance = nullptr;
 	InstanceData.ActiveMontage = nullptr;
@@ -48,6 +50,20 @@ EStateTreeRunStatus FMVBossExecuteAttackTask::EnterState(
 	bool bHasTarget = InstanceData.CombatContext.bHasTarget;
 	if (const AMVAIController* AIController = Cast<AMVAIController>(Context.GetOwner()))
 	{
+		auto* Approach = Owner ? Owner->FindComponentByClass<UMVDuelistApproachComponent>() : nullptr;
+		if (InstanceData.bDashFollowUp && (!Approach || !Approach->CanContinue(AIController->TargetActor)))
+			return EStateTreeRunStatus::Failed;
+		if (!InstanceData.bDashFollowUp && Approach && !Approach->IsInAttackRange(AIController->TargetActor))
+		{
+			Context.RequestTransition(FStateTreeTransitionRequest(FStateTreeStateHandle::Succeeded));
+			return EStateTreeRunStatus::Succeeded;
+		}
+		if (Approach)
+		{
+			InstanceData.WindupApproach = Approach;
+			InstanceData.WindupTarget = AIController->TargetActor;
+			InstanceData.WindupTurnRemaining = 0.15f;
+		}
 		if (const AActor* TargetActor = AIController->TargetActor; Owner && TargetActor)
 		{
 			bHasTarget = true;
@@ -149,7 +165,19 @@ EStateTreeRunStatus FMVBossExecuteAttackTask::EnterState(
 // 완료 후 Chase·메인 트리 복귀 목적지는 StateTree 전이 설정 책임
 EStateTreeRunStatus FMVBossExecuteAttackTask::Tick(FStateTreeExecutionContext& Context, const float DeltaTime) const
 {
-	const FInstanceDataType& InstanceData = Context.GetInstanceData<FInstanceDataType>(*this);
+	FInstanceDataType& InstanceData = Context.GetInstanceData<FInstanceDataType>(*this);
+	if (InstanceData.bDashFollowUp)
+	{
+		const AMVAIController* Controller = Cast<AMVAIController>(Context.GetOwner());
+		if (!Controller || !InstanceData.WindupTarget.IsValid() || Controller->TargetActor != InstanceData.WindupTarget.Get())
+			return EStateTreeRunStatus::Failed;
+	}
+	if (InstanceData.WindupTurnRemaining > 0.f && InstanceData.WindupApproach.IsValid() && InstanceData.WindupTarget.IsValid())
+	{
+		const float Step = FMath::Min(DeltaTime, InstanceData.WindupTurnRemaining);
+		InstanceData.WindupTurnRemaining -= Step;
+		InstanceData.WindupApproach->TurnTowards(InstanceData.WindupTarget.Get(), Step);
+	}
 	if (InstanceData.ActiveMontage && InstanceData.AnimInstance)
 	{
 		if (InstanceData.AnimInstance->Montage_IsPlaying(InstanceData.ActiveMontage))
@@ -175,7 +203,7 @@ EStateTreeRunStatus FMVBossExecuteAttackTask::Tick(FStateTreeExecutionContext& C
 		return EStateTreeRunStatus::Running;
 	}
 
-	Context.RequestTransition(FStateTreeTransitionRequest(FStateTreeStateHandle::Succeeded));
+	if (!InstanceData.bDashFollowUp) Context.RequestTransition(FStateTreeTransitionRequest(FStateTreeStateHandle::Succeeded));
 	return EStateTreeRunStatus::Succeeded;
 }
 

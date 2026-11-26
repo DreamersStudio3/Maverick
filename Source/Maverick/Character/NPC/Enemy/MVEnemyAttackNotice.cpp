@@ -1,5 +1,6 @@
 #include "Character/NPC/Enemy/MVEnemy.h"
 
+#include "Combat/Boss/Duelist/MVDuelistDodgeChanceComponent.h"
 #include "AIController.h"
 #include "Components/StateTreeComponent.h"
 #include "Struct/MVAIDodgeTypes.h"
@@ -36,6 +37,8 @@ bool AMVEnemy::ReceiveAttackNotice(const FMVAIDodgeRequest& Notice)
 	{
 		if (IsValid(StateTree) && StateTree->IsRunning())
 		{
+			auto* DodgeChance = FindComponentByClass<UMVDuelistDodgeChanceComponent>();
+			if (DodgeChance && !DodgeChance->ShouldEvade(Notice.ThreatActor)) return false;
 			StateTree->SendStateTreeEvent(MVGameplayTags::AI_Event_AttackNotice,
 				FConstStructView::Make(Notice), TEXT("AttackNotice"));
 			return true;
