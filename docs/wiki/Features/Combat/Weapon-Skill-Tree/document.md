@@ -1,9 +1,10 @@
 ---
 제목: "무기 스타일별 스킬 트리"
 부제목: "무기 동작 정의와 스타일별 스킬 진행·전투 동기화 계약"
-최근수정일: 2026-10-21
+최근수정일: 2026-11-16
 최근수정자: "Kwon-Nahoo-Man"
 관련문서:
+  - "[[Features/Combat/Weapon-Skill-Selection/document|패시브·QWER 통합 스킬 선택 설계]]"
   - "[[Features/Combat/Skill/document|플레이어 스킬 구조]]"
   - "[[Features/Combat/Weapon-Swap/document|플레이어 무기 교체]]"
   - "[[Features/Combat/Combat-System/document|Maverick 전투 시스템]]"

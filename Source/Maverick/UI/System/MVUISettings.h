@@ -4,13 +4,16 @@
 #include "Engine/DeveloperSettings.h"
 #include "MVUISettings.generated.h"
 
+class UInputAction;
 class UMVHUDWidgetBase;
+class UMVItemAcquisitionPanel;
 class UMVDialogueWindow;
 class UMVMessagePopup;
 class UMVPopupBase;
 class UMVUILayerBase;
 class UMVWindowBase;
 class UMVLevelUpWindow;
+class UMVWeaponPassiveSelectionWindow;
 
 UCLASS(Config = Game, DefaultConfig, meta = (DisplayName = "Maverick UI Settings"))
 class MAVERICK_API UMVUISettings : public UDeveloperSettings
@@ -32,6 +35,9 @@ public:
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "HUD")
 	TSubclassOf<UMVHUDWidgetBase> DefaultHUDClass;
 
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "HUD")
+	TSubclassOf<UMVItemAcquisitionPanel> ItemAcquisitionPanelClass;
+
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Window")
 	TSubclassOf<UMVWindowBase> TitleWindowClass;
 
@@ -47,8 +53,15 @@ public:
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Window")
 	TSubclassOf<UMVWindowBase> SkillTreeWindowClass;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Window|Inventory")
+	TObjectPtr<UInputAction> InventoryMenuAction;
+
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Window")
 	TSubclassOf<UMVLevelUpWindow> LevelUpWindowClass;
+
+	/** 공통 스킬 창의 자산 연결. 기존 설정 키와 호환 자식 타입을 유지한다. */
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Window", meta = (DisplayName = "Weapon Skill Selection Window Class"))
+	TSubclassOf<UMVWeaponPassiveSelectionWindow> WeaponPassiveSelectionWindowClass;
 	
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Window", meta = (ClampMin = "0.0", DisplayName = "Death Overlay Hold Seconds"))
 	float DeathOverlayDuration = 1.0f;

@@ -3,16 +3,24 @@
 #include "Character/MVCharacterBase.h"
 #include "Character/PC/MVPlayerCharacter.h"
 #include "Components/ActorComponent.h"
+#include "Components/InputComponent.h"
 #include "Components/MVStatComponent.h"
 #include "Components/PrimitiveComponent.h"
+#include "Engine/LocalPlayer.h"
 #include "Engine/EngineTypes.h"
 #include "Engine/GameInstance.h"
 #include "Engine/OverlapResult.h"
 #include "Engine/World.h"
+#include "EnhancedInputSubsystems.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/Pawn.h"
+#include "InputAction.h"
+#include "Interaction/ItemPickup/MVItemPickup.h"
 #include "Interaction/MVInteractableInterface.h"
+#include "Interaction/RestPoint/MVRestPointSubsystem.h"
+#include "System/MVFieldTransitionSubsystem.h"
 #include "TimerManager.h"
+#include "UObject/ConstructorHelpers.h"
 #if ENABLE_DRAW_DEBUG
 #include "DrawDebugHelpers.h"
 #endif
@@ -21,6 +29,8 @@
 
 UMVPlayerInteractionDetector::UMVPlayerInteractionDetector()
 {
+	static const ConstructorHelpers::FObjectFinder<UInputAction> Action(TEXT("/Game/Input/Actions/IA_Interact.IA_Interact"));
+	InteractInputAction = Action.Object;
 	DefaultPromptText = NSLOCTEXT("MaverickInteraction", "DefaultInteractPrompt", "Interact");
 	InteractionObjectChannels = {
 		ECC_WorldDynamic,
@@ -49,6 +59,21 @@ void UMVPlayerInteractionDetector::Initialize(AMVPlayerCharacter& InOwnerCharact
 	OwnerPlayerCharacter = &InOwnerCharacter;
 	bInitialized = true;
 	TimeUntilNextDetection = 0.0f;
+}
+
+void UMVPlayerInteractionDetector::BindSelectionInput(UInputComponent& Input)
+{
+	for (const FKey Key : { EKeys::Up, EKeys::Down })
+	{
+		FInputKeyBinding Binding(FInputChord(Key), IE_Pressed);
+		Binding.bConsumeInput = false;
+		const int32 Offset = Key == EKeys::Up ? -1 : 1;
+		Binding.KeyDelegate.GetDelegateForManualSet().BindWeakLambda(this, [this, Offset]()
+		{
+			SelectInteractableByOffset(Offset);
+		});
+		Input.KeyBindings.Add(MoveTemp(Binding));
+	}
 }
 
 void UMVPlayerInteractionDetector::Deinitialize()
@@ -101,7 +126,7 @@ void UMVPlayerInteractionDetector::SetInteractionDetectionEnabled(bool bInEnable
 
 void UMVPlayerInteractionDetector::RefreshInteractable()
 {
-	if (!ShouldRunDetection())
+	if (!CanDetectInteractables())
 	{
 		ClearFocusedInteractable();
 		return;
@@ -423,7 +448,7 @@ bool UMVPlayerInteractionDetector::SelectPreviousInteractable()
 	return SelectInteractableByOffset(-1);
 }
 
-bool UMVPlayerInteractionDetector::ShouldRunDetection() const
+bool UMVPlayerInteractionDetector::CanDetectInteractables() const
 {
 	if (!bDetectionEnabled || !bInitialized)
 	{
@@ -435,8 +460,20 @@ bool UMVPlayerInteractionDetector::ShouldRunDetection() const
 		return false;
 	}
 
-	const APawn* OwnerPawn = GetPlayerCharacter();
-	return OwnerPawn && OwnerPawn->IsPlayerControlled() && OwnerPawn->IsLocallyControlled();
+	const AMVPlayerCharacter* Player = GetPlayerCharacter();
+	if (!Player || !Player->IsPlayerControlled() || !Player->IsLocallyControlled())
+	{
+		return false;
+	}
+
+	const UWorld* World = GetWorld();
+	const UMVRestPointSubsystem* RestPoint = World ? World->GetSubsystem<UMVRestPointSubsystem>() : nullptr;
+	const UMVFieldTransitionSubsystem* Transition = UMVFieldTransitionSubsystem::Get(Player);
+	const UGameInstance* Instance = Player->GetGameInstance();
+	const auto* UI = Instance ? Instance->GetSubsystem<UMVUISubsystem>() : nullptr;
+	return (!RestPoint || !RestPoint->IsUsingRestPoint(*Player))
+		&& (!Transition || !Transition->IsTransitionRunning())
+		&& (!UI || !UI->HasInventoryWindow());
 }
 
 bool UMVPlayerInteractionDetector::TryBuildCandidate(
@@ -452,6 +489,7 @@ bool UMVPlayerInteractionDetector::TryBuildCandidate(
 	}
 
 	AActor* InteractableActor = ResolveInteractableActor(InteractableObject, OverlapComponent);
+	const bool bIsPickup = Cast<AMVItemPickup>(InteractableObject) != nullptr;
 
 	const FVector CandidateLocation = OverlapComponent
 		? OverlapComponent->Bounds.Origin
@@ -474,7 +512,7 @@ bool UMVPlayerInteractionDetector::TryBuildCandidate(
 	{
 		Dot = FVector::DotProduct(ViewDirection, DirectionToCandidate);
 		const float MinDot = FMath::Cos(FMath::DegreesToRadians(FMath::Clamp(DetectionHalfAngle, 0.0f, 180.0f)));
-		if (Dot < MinDot)
+		if (!bIsPickup && Dot < MinDot)
 		{
 			return false;
 		}
@@ -485,7 +523,7 @@ bool UMVPlayerInteractionDetector::TryBuildCandidate(
 	OutCandidate.InteractableComponent = OverlapComponent;
 	OutCandidate.Location = CandidateLocation;
 
-	if (bRequireLineOfSight && !HasLineOfSight(OutCandidate))
+	if (bRequireLineOfSight && !bIsPickup && !HasLineOfSight(OutCandidate))
 	{
 		return false;
 	}
@@ -836,7 +874,7 @@ void UMVPlayerInteractionDetector::UpdateDialogueEscapeState()
 
 void UMVPlayerInteractionDetector::LockInteractionUntilInputReleased()
 {
-	if (InteractionInputKey.IsValid() && IsInteractionInputHeld())
+	if (IsInteractionInputHeld())
 	{
 		bWaitForInteractionInputRelease = true;
 	}
@@ -849,7 +887,7 @@ void UMVPlayerInteractionDetector::UpdateInteractionInputReleaseGate()
 		return;
 	}
 
-	if (!InteractionInputKey.IsValid() || !IsInteractionInputHeld())
+	if (!IsInteractionInputHeld())
 	{
 		bWaitForInteractionInputRelease = false;
 	}
@@ -857,9 +895,29 @@ void UMVPlayerInteractionDetector::UpdateInteractionInputReleaseGate()
 
 bool UMVPlayerInteractionDetector::IsInteractionInputHeld() const
 {
-	const UWorld* World = GetWorld();
-	const APlayerController* PlayerController = World ? World->GetFirstPlayerController() : nullptr;
-	return PlayerController && InteractionInputKey.IsValid() && PlayerController->IsInputKeyDown(InteractionInputKey);
+	const AMVPlayerCharacter* Player = GetPlayerCharacter();
+	const auto* Controller = Player ? Cast<APlayerController>(Player->GetController()) : nullptr;
+	return Controller && GetInteractionInputKeys().ContainsByPredicate([Controller](const FKey& Key)
+	{
+		return Controller->IsInputKeyDown(Key);
+	});
+}
+
+TArray<FKey> UMVPlayerInteractionDetector::GetInteractionInputKeys() const
+{
+	const AMVPlayerCharacter* Player = GetPlayerCharacter();
+	const auto* Controller = Player ? Cast<APlayerController>(Player->GetController()) : nullptr;
+	const ULocalPlayer* LocalPlayer = Controller ? Controller->GetLocalPlayer() : nullptr;
+	const auto* Input = LocalPlayer ? LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>() : nullptr;
+	if (Input && InteractInputAction)
+	{
+		TArray<FKey> Keys = Input->QueryKeysMappedToAction(InteractInputAction);
+		if (!Keys.IsEmpty())
+		{
+			return Keys;
+		}
+	}
+	return { InteractionInputKey.IsValid() ? InteractionInputKey : EKeys::E };
 }
 
 int32 UMVPlayerInteractionDetector::FindCandidateIndex(UObject* InteractableObject) const
@@ -960,7 +1018,9 @@ void UMVPlayerInteractionDetector::UpdateInteractionPrompt()
 	{
 		PromptData.PromptText = DefaultPromptText;
 	}
-	PromptData.InputKey = InteractionInputKey;
+	const TArray<FKey> Keys = GetInteractionInputKeys();
+	const FKey* KeyboardKey = Keys.FindByPredicate([](const FKey& Key) { return !Key.IsGamepadKey(); });
+	PromptData.InputKey = KeyboardKey ? *KeyboardKey : Keys[0];
 	PromptData.CandidateIndex = SelectedCandidateIndex != INDEX_NONE ? SelectedCandidateIndex : 0;
 	PromptData.CandidateCount = InteractionCandidates.Num();
 

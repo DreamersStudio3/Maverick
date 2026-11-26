@@ -4,7 +4,9 @@
 #include "Components/MVCombatComponent.h"
 
 #include "Combat/MVAbilityBase.h"
+#include "Misc/ScopeExit.h"
 #include "Combat/MVProjectileExecutionTracker.h"
+#include "Weapon/Skill/MVSkillExecutionData.h"
 #include "Combat/Projectile/MVProjectileAbility.h"
 #include "Combat/Projectile/MVProjectileBase.h"
 #include "Components/MVActionComponent.h"
@@ -249,6 +251,7 @@ bool UMVCombatComponent::ApplyPassiveSkill(const FDataTableRowHandle& PassiveSki
 	}
 
 	// 교체는 요청된 장착 상태로의 동기화다. 신규 적용 실패 시 이전 Passive를 복구하지 않는다.
+	ON_SCOPE_EXIT { OnActivePassiveChanged.Broadcast(); };
 	ClearPassiveSkill();
 
 	if (!PassiveSkillRowHandle.DataTable || PassiveSkillRowHandle.RowName.IsNone())
@@ -363,6 +366,10 @@ void UMVCombatComponent::ClearPassiveSkill()
 	{
 		IMVAbilityInterface::Execute_EndAbility(PassiveAbilityToDeactivate);
 	}
+	if (PassiveAbilityToDeactivate)
+	{
+		OnActivePassiveChanged.Broadcast();
+	}
 }
 
 
@@ -404,7 +411,7 @@ bool UMVCombatComponent::GetSkillSlotRuntimeState(
 	const bool bChainRuntimeActive = SkillEntry->bChainActive;
 	const bool bInputWindowActive = bChainRuntimeActive	&& SkillEntry->IsInputWindowValid(CurrentTime);
 
-	OutState.bAvailable = SkillEntry->SkillRowNames.Num() > 0;
+	OutState.bAvailable = IsSkillSlotExecutable(SkillSlot);
 	OutState.bChainActive = bInputWindowActive;
 	OutState.bChainTimerVisible =
 		bInputWindowActive
@@ -682,7 +689,7 @@ bool UMVCombatComponent::TrySkillCombatAction(
 	const EMVSkillSlot SkillSlot,
 	const FName StartSection)
 {
-	if (!MVCombatIsActiveSkillSlot(SkillSlot) || !CanStartCombatAction())
+	if (!IsSkillSlotExecutable(SkillSlot) || !CanStartCombatAction())
 	{
 		return false;
 	}
@@ -730,7 +737,7 @@ bool UMVCombatComponent::TryStartDirectCombatAction(
 
 	const FMVSkillDataTableColumn* Row = RowHandle.DataTable->FindRow<FMVSkillDataTableColumn>(
 		RowHandle.RowName, TEXT("TryStartCombatActionFromRowHandle"));
-	if (!Row || !Row->bEnabled || (!bForBossAttackTest && !CanConsumeActionCost(Row)))
+	if (!Row || Row->ImplementationState != EMVSkillImplementationState::Ready || !Row->bEnabled || !CanConsumeActionCost(Row))
 	{
 		return false;
 	}
@@ -796,7 +803,7 @@ bool UMVCombatComponent::ChooseTryCombatAction(const FGameplayTag ActionInputTag
 	if (ActionInputTag.MatchesTag(MVGameplayTags::Action_Input_Skill))
 	{
 		const EMVSkillSlot SkillSlot = MVCombatResolveSkillSlotFromInputTag(ActionInputTag);
-		if (SkillSlot == EMVSkillSlot::NONE || !SkillMap.Contains(SkillSlot))
+		if (!IsSkillSlotExecutable(SkillSlot))
 		{
 			// 알 수 없는 스킬 입력은 실행 대상이 아니거나 현재 장비에 등록되지 않은 스킬 입력은 즉시 소비
 			return true;
@@ -958,6 +965,7 @@ bool UMVCombatComponent::TryBasicAttack(
 
 bool UMVCombatComponent::TrySkill(const EMVSkillSlot SkillSlot, FName StartSection)
 {
+	if (!IsSkillSlotExecutable(SkillSlot)) return false;
 	FMVSkillEntry* ActionEntry = SkillMap.Find(SkillSlot);
 	if (!ActionEntry)
 	{
@@ -1105,7 +1113,6 @@ bool UMVCombatComponent::RegisterLaunchedProjectile(
 
 	FMVProjectileExecutionRecord Source;
 	Source.SourceAbility = SourceAbility;
-	Source.SourceRowHandle = CurrentAbilityRowHandle;
 	Source.SourceSkillSlot = CurrentPreparedSkillSlot;
 	Source.SourceChainStageIndex = CurrentPreparedChainStageIndex;
 	Source.SourceSlotRevision = CurrentPreparedSlotRevision;
@@ -1166,6 +1173,10 @@ void UMVCombatComponent::NotifyProjectileAbilityStarted(const UMVAbilityBase* St
 
 void UMVCombatComponent::HandleAbilityEnded(const UMVAbilityBase* EndedAbility)
 {
+	if (EndedAbility && EndedAbility == ActivePassiveAbilityInstance.Get())
+	{
+		OnActivePassiveChanged.Broadcast();
+	}
 	if (!EndedAbility || !GetWorld())
 	{
 		return;
@@ -1773,8 +1784,6 @@ void UMVCombatComponent::RefreshSkillSlot(const EMVSkillSlot SkillSlot)
 		return;
 	}
 
-	SkillMap.Remove(SkillSlot);
-
 	if (!WeaponComponent)
 	{
 		UE_LOG(LogMVCombatComponent, Warning, TEXT("RefreshSkillSlot: WeaponComponent not found."));
@@ -1783,6 +1792,7 @@ void UMVCombatComponent::RefreshSkillSlot(const EMVSkillSlot SkillSlot)
 
 	if (!WeaponComponent->GetEquippedSkillRow(CurrentWeaponStyle, SkillSlot, SkillRowHandle))
 	{
+		SkillMap.Remove(SkillSlot);
 		UE_LOG(
 			LogMVCombatComponent,
 			Verbose,
@@ -1793,7 +1803,7 @@ void UMVCombatComponent::RefreshSkillSlot(const EMVSkillSlot SkillSlot)
 	}
 
 	FMVSkillEntry SkillEntry;
-	if (!BuildSkillEntryFromRowHandle(SkillRowHandle, SkillEntry))
+	if (!PrepareSelectedSkillEntry(SkillRowHandle, SkillEntry))
 	{
 		UE_LOG(
 			LogMVCombatComponent,
@@ -1827,68 +1837,69 @@ void UMVCombatComponent::ChangeWeapon(EMVEquippedStyle NewStyle)
 
 bool UMVCombatComponent::BuildSkillEntryFromRowHandle(const FDataTableRowHandle& StartingRowHandle, FMVSkillEntry& OutEntry)
 {
-	if (!IsValidSkillActionRowHandle(StartingRowHandle, TEXT("BuildSkillEntryFromRowHandle")))
+	OutEntry = {};
+	TArray<FName> Rows;
+	if (!MVSkillExecutionData::ValidateDefinition(StartingRowHandle, Rows, false)) return false;
+	FMVSkillEntry Prepared;
+	Prepared.DataTable = const_cast<UDataTable*>(StartingRowHandle.DataTable.Get());
+	for (const FName Name : Rows)
 	{
-		return false;
+		const auto* Row = StartingRowHandle.DataTable->FindRow<FMVSkillDataTableColumn>(Name, TEXT("BuildSkillEntry"), false);
+		UMVAbilityBase* Ability = NewObject<UMVAbilityBase>(this, Row->AbilityReference);
+		if (!Ability) return false;
+		Ability->SetOwner(this);
+		Ability->InitAbility(*Row);
+		Prepared.AbilityInstances.Add(Ability);
+		Prepared.SkillRowNames.Add(Name);
+		if (Prepared.AbilityInstances.Num() == 1) Prepared.MainCooldownDuration = Row->CooldownDuration;
 	}
+	Prepared.bIsChained = Prepared.AbilityInstances.Num() > 1;
+	OutEntry = MoveTemp(Prepared);
+	return true;
+}
 
-	OutEntry = FMVSkillEntry();
-	OutEntry.DataTable = const_cast<UDataTable*>(StartingRowHandle.DataTable.Get());
-
-	const UDataTable* CurrentDT = StartingRowHandle.DataTable.Get();
-	FName CurrentName = StartingRowHandle.RowName;
-	int32 ChainLength = 0;
-	int32 MaxChainLength = 100;
-
-	while (!CurrentName.IsNone() && ChainLength < MaxChainLength)
+bool UMVCombatComponent::PrepareSelectedSkillEntry(const FDataTableRowHandle& Row, FMVSkillEntry& OutEntry)
+{
+	OutEntry = {};
+	TArray<FName> Rows;
+	if (!MVSkillExecutionData::ValidateDefinition(Row, Rows)) return false;
+	const auto* Data = Row.DataTable->FindRow<FMVSkillDataTableColumn>(Row.RowName, TEXT("PrepareSelectedSkill"), false);
+	if (Data->ImplementationState == EMVSkillImplementationState::Prototype)
 	{
-		FMVSkillDataTableColumn* RowData = CurrentDT->FindRow<FMVSkillDataTableColumn>(CurrentName, TEXT("BuildSkillEntryFromRowHandle"));
-		if (!RowData || !RowData->AbilityReference)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("MVCombatComponent::BuildSkillEntryFromRowHandle - Invalid row '%s'"), *CurrentName.ToString());
-			break;
-		}
-
-		if (ChainLength == 0)
-		{
-			OutEntry.MainCooldownDuration = RowData->CooldownDuration;
-		}
-
-		// Create ability instance
-		UMVAbilityBase* AbilityInstance = NewObject<UMVAbilityBase>(this, RowData->AbilityReference);
-		if (AbilityInstance)
-		{
-			AbilityInstance->SetOwner(this);
-			AbilityInstance->InitAbility(*RowData);
-			OutEntry.AbilityInstances.Add(AbilityInstance);
-			OutEntry.SkillRowNames.Add(CurrentName);
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("MVCombatComponent::BuildSkillEntryFromRowHandle - Failed to create ability for row '%s'"), *CurrentName.ToString());
-			break;
-		}
-
-		// Move to next row in chain
-		if (RowData->bIsChained && !RowData->NextChainName.IsNone())
-		{
-			CurrentName = RowData->NextChainName;
-		}
-		else
-		{
-			CurrentName = NAME_None;
-		}
-
-		ChainLength++;
+		OutEntry.ImplementationState = EMVSkillImplementationState::Prototype;
+		OutEntry.DataTable = const_cast<UDataTable*>(Row.DataTable.Get());
+		OutEntry.SkillRowNames.Add(Row.RowName);
+		return true;
 	}
+	return BuildSkillEntryFromRowHandle(Row, OutEntry);
+}
 
-	if (!CurrentName.IsNone() && ChainLength >= MaxChainLength)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("MVCombatComponent::BuildSkillEntryFromRowHandle - Chain exceeded max length. StartRow='%s'"), *StartingRowHandle.RowName.ToString());
-	}
+bool UMVCombatComponent::IsSkillSlotExecutable(const EMVSkillSlot Slot) const
+{
+	const auto* Entry = SkillMap.Find(Slot);
+	const auto* Data = Entry ? Entry->GetCurrentSkillData() : nullptr;
+	return MVCombatIsActiveSkillSlot(Slot) && Entry && Entry->ImplementationState == EMVSkillImplementationState::Ready
+		&& Data && Data->ImplementationState == EMVSkillImplementationState::Ready && Data->bEnabled && Entry->GetCurrentAbility();
+}
 
-	OutEntry.bIsChained = OutEntry.AbilityInstances.Num() > 1;
-	return OutEntry.AbilityInstances.Num() > 0;
+EMVSkillSelectionStatus UMVCombatComponent::TryReplaceSkillSlot(const EMVSkillSlot Slot, const FDataTableRowHandle& Row)
+{
+	if (!MVCombatIsActiveSkillSlot(Slot)) return EMVSkillSelectionStatus::InvalidCandidate;
+	const auto* Existing = SkillMap.Find(Slot);
+	if (Existing && Existing->DataTable == Row.DataTable && !Existing->SkillRowNames.IsEmpty() && Existing->SkillRowNames[0] == Row.RowName)
+		return EMVSkillSelectionStatus::Unchanged;
+	const auto* Character = Cast<AMVCharacterBase>(GetOwner());
+	if ((Character && Character->ActionComponent && Character->ActionComponent->IsActionRunning())
+		|| (CurrentPreparedSkillSlot == Slot && bCurrentAbilityAwaitingCompletion)) return EMVSkillSelectionStatus::ActionRunning;
+	const float Time = GetWorld() ? GetWorld()->GetTimeSeconds() : 0.0f;
+	if (Existing && !Existing->IsMainCooldownReady(Time)) return EMVSkillSelectionStatus::CooldownActive;
+	if (Existing && Existing->bChainActive && Existing->IsInputWindowValid(Time)) return EMVSkillSelectionStatus::ChainActive;
+	if (ProjectileExecutionTracker && ProjectileExecutionTracker->HasPendingSkillSlot(Slot)) return EMVSkillSelectionStatus::ProjectilePending;
+	FMVSkillEntry Prepared;
+	if (!PrepareSelectedSkillEntry(Row, Prepared)) return EMVSkillSelectionStatus::InvalidExecutionData;
+	Prepared.LoadoutRevision = ++NextSkillSlotRevision;
+	SkillMap.Add(Slot, MoveTemp(Prepared));
+	return EMVSkillSelectionStatus::Changed;
 }
 
 bool UMVCombatComponent::IsValidSkillActionRowHandle(const FDataTableRowHandle& RowHandle, const TCHAR* Context) const
@@ -1966,6 +1977,7 @@ bool UMVCombatComponent::TryStartActionWithAbility(
 	const FMVSkillDataTableColumn* SpeedRow =
 		RowHandle.DataTable->FindRow<FMVSkillDataTableColumn>(
 			RowHandle.RowName, TEXT("TryStartActionWithAbility"), false);
+	if (!SpeedRow || SpeedRow->ImplementationState != EMVSkillImplementationState::Ready || !SpeedRow->bEnabled) return false;
 	const bool bUseAttackSpeed = SpeedRow && SpeedRow->bUseAttackSpeed;
 
 	const auto GetPlayRateMultiplier = [this, bUseAttackSpeed]() -> float
@@ -2144,7 +2156,7 @@ void UMVCombatComponent::HandleOwnerDeathStarted(const FMVDeathContext& /*DeathC
 
 bool UMVCombatComponent::CanConsumeActionCost(const FMVSkillDataTableColumn* SkillData) const
 {
-	if (!SkillData)
+	if (!SkillData || SkillData->ImplementationState != EMVSkillImplementationState::Ready || !SkillData->bEnabled)
 	{
 		return false;
 	}

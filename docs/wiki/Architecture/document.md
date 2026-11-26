@@ -1,8 +1,8 @@
 ---
 제목: Maverick 아키텍처
 부제목: 런타임 흐름과 도메인 책임 경계
-최근수정일: 2026-11-02
-최근수정자: "Chang-Hoo-Park"
+최근수정일: 2026-11-19
+최근수정자: "No-Jyun"
 관련문서:
   - "[[Convention/Header-Documentation/document|C++ 헤더 책임 문서화]]"
   - "[[Features/Combat/Combat-System/document|Maverick 전투 시스템]]"
@@ -24,10 +24,12 @@ flowchart TD
     AITasks -->|SelectAndExecute| Action["UMVActionComponent"]
     AITasks -->|EnemyCombatAction| Combat["UMVCombatComponent"]
     Handlers --> Combat
-    Handlers --> Weapon["UMVWeaponComponent<br/>무기 소유·퀵슬롯·장착 검증"]
+    Handlers --> Weapon["UMVWeaponComponent<br/>퀵슬롯·장착 검증"]
     Weapon -->|공격·장착 Skill Row / ChangeWeapon| Combat
     Weapon --> WeaponVisual["무기 메시·장착 변경 이벤트<br/>스타일별 Anim Layer"]
     Handlers --> PlayerDomains["Dodge / Consumable / Finisher"]
+    Inventory["UMVInventoryComponent<br/>태그별 소유와 수량"] -->|소유 무기 확인| Weapon
+    PlayerDomains -->|포션 수량 차감| Inventory
     Combat --> Action
     PlayerDomains --> Action
     Action --> Montage["Montage + AnimNotify"]
@@ -45,6 +47,7 @@ flowchart TD
     Death --> Respawn["UMVDeathRespawnFlow"]
     Respawn --> Transition["UMVFieldTransitionSubsystem"]
     Transition --> WorldState["UMVWorldStateSubsystem"]
+    Weapon -->|가방과 장비 기록 갱신| WorldState
     Transition --> UI["UMVUISubsystem"]
     Tables["CSV / 직접 관리 DataTable"] --> TableManager["UMVTableManager"]
     TableManager --> RuntimeConsumers["Action / Stat / Death / HitReaction"]
@@ -55,7 +58,7 @@ flowchart TD
 | 경로 | 책임과 주요 진입점 |
 |---|---|
 | `Character/` | Actor 조립과 플레이어·NPC 특화 브리지<br/>`AMVCharacterBase`, `AMVPlayerCharacter`, `AMVEnemy` |
-| `Components/` | Input, Action, Combat, Stat, HitReaction, Death, Weapon, Finisher 상태 소유 |
+| `Components/` | Input, Action, Combat, Stat, HitReaction, Death, Inventory, Weapon, Finisher 상태 소유 |
 | `Combat/` | 공격 실행 객체와 월드 단위 적중 계산<br/>`UMVAbilityBase`, `UMVHitResolverSubsystem` |
 | `AI/` | StateTree 공유 문맥, Evaluator, Condition, Task, Perception Controller |
 | `Animation/` | AnimInstance와 Montage 구간을 도메인 API로 연결하는 Notify·NotifyState |
@@ -78,17 +81,24 @@ flowchart TD
 | `UMVDeathComponent` | Actor 단위 사망 표현 |
 | `UMVHitReactionComponent` | 피격 Row, Interrupt, Groggy, Recovery 표현 |
 | `UMVInputManagerComponent` | 입력 Snapshot, 짧은 Buffer, 우선순위 처리기 배분 |
-| `UMVWeaponComponent` | 교체 입력·소유 무기·퀵슬롯·장착 상태·무기 메시·적중 Snapshot·스타일별 공격·Skill Row 원천 |
+| `UMVInventoryComponent` | 아이템 태그별 소유·수량·보유 한도 관리, 가방과 HUD에 변경 알림 |
+| `UMVWeaponComponent` | 교체 입력·퀵슬롯·장착 상태·무기 메시·적중 Snapshot·스타일별 공격·Skill Row 원천 |
 | `UMotionWarpingComponent` | Action·Montage 공간 보정 |
 
 ### WeaponComponent 경계
 
-- `OwnedWeapons`: 무기 소유권의 단일 정본, 퀵슬롯은 소유 태그만 참조
+- 퀵슬롯은 인벤토리가 보유한 무기 태그만 참조. NPC 기본 무기는 NPC에 지정한 무기 행 사용
 - `CurrentWeaponState`: 장착 Row에서 복사한 전투·메시 상태, HitResolver의 Snapshot 원천
 - `WeaponSkillMaps`: 에디터에서 구성하는 스타일별 `UMVWeaponSkillMap` 목록
 - `SkillBlueprint`: `BeginPlay`에서 `WeaponSkillMaps`를 `EMVEquippedStyle` key로 색인
 - `SkillTreeStates`: 스타일별 해금·장착 스킬 런타임 상태와 조회·변경 API 원천
 - 맨손: 소유 목록과 퀵슬롯에 포함하지 않는 내부 장착 fallback
+
+### 플레이어 가방과 저장
+
+- 회복약 효과 적용 시 가방에서 1개 차감. HUD와 인벤토리에서 같은 수량 조회
+- 휴식·부활 시 회복약만 기본 수량으로 복구
+- 5버전 저장에 가방과 무기 진행 기록을 함께 반영. 4버전 무기 보유 기록은 가방으로 옮기고, 저장된 빈 가방은 그대로 복원
 
 ### 플레이어
 

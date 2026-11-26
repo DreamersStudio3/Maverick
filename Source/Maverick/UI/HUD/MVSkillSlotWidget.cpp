@@ -8,6 +8,7 @@
 #include "Components/OverlaySlot.h"
 #include "Components/SizeBox.h"
 #include "Components/TextBlock.h"
+#include "Components/VerticalBox.h"
 #include "Engine/Texture2D.h"
 #include "UI/HUD/MVCooldownOverlayWidget.h"
 
@@ -27,6 +28,28 @@ void UMVSkillSlotWidget::SetHotKeyText(FText InHotKeyText)
 {
 	HotKeyText = MoveTemp(InHotKeyText);
 	ApplyHotKeyText();
+}
+
+void UMVSkillSlotWidget::SetStatusText(FText InStatusText)
+{
+	StatusText = MoveTemp(InStatusText);
+	if (StatusTextBlock)
+	{
+		StatusTextBlock->SetText(StatusText);
+		StatusTextBlock->SetVisibility(StatusText.IsEmpty() ? ESlateVisibility::Collapsed : ESlateVisibility::HitTestInvisible);
+	}
+	SetRenderOpacity(bAvailable ? 1.0f : (StatusText.IsEmpty() ? 0.42f : 0.75f));
+}
+
+void UMVSkillSlotWidget::SetSlotLabel(FText InLabel)
+{
+	SlotLabel = MoveTemp(InLabel);
+	if (SlotLabelTextBlock) SlotLabelTextBlock->SetText(SlotLabel);
+}
+
+UTexture2D* UMVSkillSlotWidget::GetDisplayedIcon() const
+{
+	return IconStack.IsValidIndex(ActiveStackIndex) ? IconStack[ActiveStackIndex].Get() : nullptr;
 }
 
 void UMVSkillSlotWidget::SetRuntimeState(
@@ -56,7 +79,7 @@ void UMVSkillSlotWidget::SetRuntimeState(
 
 	if (bAvailabilityChanged)
 	{
-		SetRenderOpacity(bAvailable ? 1.0f : 0.42f);
+		SetRenderOpacity(bAvailable ? 1.0f : (StatusText.IsEmpty() ? 0.42f : 0.75f));
 	}
 }
 
@@ -84,6 +107,9 @@ void UMVSkillSlotWidget::NativeOnInitialized()
 	{
 		ApplyNativeFrameStyle();
 	}
+	EnsureStatusLabels();
+	SetStatusText(StatusText);
+	SetSlotLabel(SlotLabel);
 
 	ApplySlotSize();
 	ApplyIcon();
@@ -199,6 +225,57 @@ void UMVSkillSlotWidget::ApplyHotKeyText()
 	if (HotKeyTextBlock)
 	{
 		HotKeyTextBlock->SetText(HotKeyText);
+		if (KeyLabelSizeBox) KeyLabelSizeBox->SetVisibility(HotKeyText.IsEmpty() ? ESlateVisibility::Collapsed : ESlateVisibility::HitTestInvisible);
+		HotKeyTextBlock->SetAutoWrapText(true);
+		HotKeyTextBlock->SetJustification(ETextJustify::Center);
+		auto Font = HotKeyTextBlock->GetFont();
+		Font.Size = HotKeyText.ToString().Len() > 5 ? 10 : 14;
+		HotKeyTextBlock->SetFont(Font);
+		if (auto* OverlaySlot = Cast<UOverlaySlot>(HotKeyTextBlock->Slot))
+		{
+			OverlaySlot->SetHorizontalAlignment(HAlign_Fill);
+			OverlaySlot->SetPadding(FMargin(1, 0, 1, 2));
+		}
+	}
+}
+
+void UMVSkillSlotWidget::EnsureStatusLabels()
+{
+	auto* Overlay = WidgetTree ? Cast<UOverlay>(WidgetTree->FindWidget(TEXT("SlotOverlay"))) : nullptr;
+	if (!Overlay) return;
+	const auto AddLabel = [this, Overlay](TObjectPtr<UTextBlock>& Target, const TCHAR* Name, EHorizontalAlignment Horizontal, EVerticalAlignment Vertical)
+	{
+		if (Target) return;
+		Target = WidgetTree->ConstructWidget<UTextBlock>(UTextBlock::StaticClass(), Name);
+		auto Font = Target->GetFont();
+		Font.Size = 11;
+		Target->SetFont(Font);
+		Target->SetColorAndOpacity(FSlateColor(FLinearColor(1, 0.9f, 0.65f, 1)));
+		Target->SetShadowColorAndOpacity(FLinearColor::Black);
+		Target->SetShadowOffset(FVector2D(1, 1));
+		Target->SetVisibility(ESlateVisibility::HitTestInvisible);
+		auto* LabelSlot = Overlay->AddChildToOverlay(Target);
+		LabelSlot->SetHorizontalAlignment(Horizontal);
+		LabelSlot->SetVerticalAlignment(Vertical);
+		LabelSlot->SetPadding(FMargin(2));
+	};
+	AddLabel(StatusTextBlock, TEXT("StatusTextBlock"), HAlign_Center, VAlign_Bottom);
+	AddLabel(SlotLabelTextBlock, TEXT("SlotLabelTextBlock"), HAlign_Left, VAlign_Top);
+	if (StatusTextBlock)
+	{
+		if (auto* StatusSlot = Cast<UOverlaySlot>(StatusTextBlock->Slot)) StatusSlot->SetVerticalAlignment(VAlign_Bottom);
+	}
+	// 사용 키는 사각 그림 아래에 두어 상태 안내와 긴 조합 키가 겹치지 않게 한다.
+	if (HotKeyTextBlock && SlotSizeBox && WidgetTree->RootWidget == SlotSizeBox)
+	{
+		HotKeyTextBlock->RemoveFromParent();
+		auto* Column = WidgetTree->ConstructWidget<UVerticalBox>(UVerticalBox::StaticClass(), TEXT("SkillSlotColumn"));
+		WidgetTree->RootWidget = Column;
+		Column->AddChildToVerticalBox(SlotSizeBox);
+		KeyLabelSizeBox = WidgetTree->ConstructWidget<USizeBox>(USizeBox::StaticClass(), TEXT("KeyLabelSizeBox"));
+		KeyLabelSizeBox->SetHeightOverride(28);
+		KeyLabelSizeBox->SetContent(HotKeyTextBlock);
+		Column->AddChildToVerticalBox(KeyLabelSizeBox);
 	}
 }
 
@@ -209,4 +286,5 @@ void UMVSkillSlotWidget::ApplySlotSize()
 		SlotSizeBox->SetWidthOverride(DesiredSlotSize);
 		SlotSizeBox->SetHeightOverride(DesiredSlotSize);
 	}
+	if (KeyLabelSizeBox) KeyLabelSizeBox->SetWidthOverride(DesiredSlotSize);
 }

@@ -28,6 +28,7 @@
 #include "Tracks/MovieScene3DTransformTrack.h"
 #include "System/MVWorldStateSubsystem.h"
 #include "UI/BossHUD/MVBossAttackTestWidget.h"
+#include "UI/System/MVUISubsystem.h"
 #include "Misc/ScopeExit.h"
 #include "TimerManager.h"
 
@@ -145,9 +146,16 @@ bool FMVBossIntroTest::RunTest(const FString& Parameters)
 	const TSharedRef<SWidget> MouseSlateWidget = MouseWidget->TakeWidget();
 	TestTrue(TEXT("Mouse input fixture is visible and owns input"), MouseWidget->IsVisible() && MouseWidget->CanControlMouseInput());
 	TestTrue(TEXT("Initial UI mode shows cursor"), MouseWidget->bUIMouseMode && PC->bShowMouseCursor);
+	UMVUISubsystem* UI = GI->GetSubsystem<UMVUISubsystem>();
+	if (!TestNotNull(TEXT("UI subsystem available for interaction cleanup"), UI)) return false;
+	TestFalse(TEXT("No action test panel is open or pending"), UI->IsPIEActionTestPanelActiveOrPending());
+	UI->HidePIEActionTestPanel();
+	TestTrue(TEXT("Closing an unopened action panel preserves a visible cursor"), PC->bShowMouseCursor);
 	BossIntroPressDebugKey(EKeys::LeftMouseButton);
 	TestFalse(TEXT("Viewport click enters game mode"), MouseWidget->bUIMouseMode);
 	TestFalse(TEXT("Viewport click hides cursor"), PC->bShowMouseCursor);
+	UI->HidePIEActionTestPanel();
+	TestFalse(TEXT("Closing an unopened action panel preserves a hidden cursor"), PC->bShowMouseCursor);
 	MouseWidget->NativeTick(FGeometry(), 0.016f);
 	TestFalse(TEXT("Subsequent widget tick preserves game cursor mode"), PC->bShowMouseCursor);
 	BossIntroPressDebugKey(EKeys::J);
@@ -252,7 +260,7 @@ bool FMVBossIntroTest::RunTest(const FString& Parameters)
 		UMVWorldStateSubsystem* ReloadState = ReloadGI->GetSubsystem<UMVWorldStateSubsystem>();
 		TestTrue(TEXT("Fresh game instance loads selected save slot"), ReloadState->LoadFromSlot(Slot, 0));
 		TestEqual(TEXT("Fresh game instance preserves legacy save compatibility"), ReloadState->GetSaveData().BossIntros.Num(), 1);
-		TestEqual(TEXT("Fresh game instance upgrades save version"), ReloadState->GetSaveData().SaveVersion, 3);
+		TestEqual(TEXT("Fresh game instance upgrades save version"), ReloadState->GetSaveData().SaveVersion, 5);
 		UWorld* ReloadWorld = ReloadGI->GetWorld();
 		ReloadGI->Shutdown();
 		if (ReloadWorld) { ReloadWorld->DestroyWorld(false); GEngine->DestroyWorldContext(ReloadWorld); }

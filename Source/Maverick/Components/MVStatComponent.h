@@ -187,6 +187,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Stat|Groggy")
 	void ResetGroggyState();
+	void ResetCombatDamageForWorldReset();
 
 	void TickRecoverableStats(float DeltaTime, bool bAllowStaminaRecovery);
 

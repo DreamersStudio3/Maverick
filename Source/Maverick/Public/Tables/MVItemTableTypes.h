@@ -25,6 +25,9 @@ struct MAVERICK_API FMVItemTableRow : public FMVTableRowBase
 	EMVItemType ItemType = EMVItemType::None;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Item")
+	EMVItemRarity Rarity = EMVItemRarity::UseItemType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Item")
 	FText DisplayName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Item", meta = (MultiLine = "true"))
@@ -32,4 +35,26 @@ struct MAVERICK_API FMVItemTableRow : public FMVTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Item")
 	TSoftObjectPtr<UTexture2D> Icon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Item|Inventory")
+	FName InventoryGroupId;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Item|Inventory")
+	int32 InventorySortOrder = 0;
+};
+
+/** DT_InventoryGroups의 행 이름으로 연결하는 목록 표시 분류와 정렬 순서. */
+USTRUCT(BlueprintType)
+struct MAVERICK_API FMVInventoryGroupTableRow : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Item|Inventory")
+	EMVInventoryGroupCategory Category = EMVInventoryGroupCategory::Other;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Item|Inventory")
+	FText DisplayName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Item|Inventory")
+	int32 SortOrder = 0;
 };

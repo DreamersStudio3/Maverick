@@ -7,6 +7,7 @@
 
 class AActor;
 class AMVPlayerCharacter;
+class UInputComponent;
 class UPrimitiveComponent;
 class UWorld;
 
@@ -42,6 +43,7 @@ public:
 	virtual UWorld* GetWorld() const override;
 
 	void Initialize(AMVPlayerCharacter& InOwnerCharacter);
+	void BindSelectionInput(UInputComponent& Input);
 	void Deinitialize();
 	void Tick(float DeltaTime);
 
@@ -59,6 +61,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Interaction")
 	bool TryInteract();
+	bool CanDetectInteractables() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Interaction")
 	bool SelectNextInteractable();
@@ -109,6 +112,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Interaction")
 	FKey InteractionInputKey = EKeys::Invalid;
 
+	UPROPERTY()
+	TObjectPtr<class UInputAction> InteractInputAction;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|Interaction")
 	FText DefaultPromptText;
 
@@ -127,7 +133,6 @@ private:
 
 	AMVPlayerCharacter* GetPlayerCharacter() const;
 	AActor* GetOwnerActor() const;
-	bool ShouldRunDetection() const;
 	bool TryBuildCandidate(UPrimitiveComponent* OverlapComponent, const FVector& Origin, const FVector& ViewDirection, FMVInteractionCandidate& OutCandidate) const;
 	bool HasLineOfSight(const FMVInteractionCandidate& Candidate) const;
 	UObject* FindInteractableObject(UPrimitiveComponent* OverlapComponent) const;
@@ -152,6 +157,7 @@ private:
 	void LockInteractionUntilInputReleased();
 	void UpdateInteractionInputReleaseGate();
 	bool IsInteractionInputHeld() const;
+	TArray<FKey> GetInteractionInputKeys() const;
 	int32 FindCandidateIndex(UObject* InteractableObject) const;
 	bool SelectInteractableByOffset(int32 Offset);
 	bool SetSelectedCandidateIndex(int32 NewIndex);

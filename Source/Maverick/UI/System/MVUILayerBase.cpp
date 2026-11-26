@@ -8,6 +8,12 @@
 #include "Widgets/CommonActivatableWidgetContainer.h"
 #include "UI/System/MVGameplayInputWidget.h"
 
+UMVWindowStack::UMVWindowStack(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+{
+	TransitionFallbackStrategy = ECommonSwitcherTransitionFallbackStrategy::Previous;
+}
+
 void UMVUILayerBase::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
@@ -16,16 +22,59 @@ void UMVUILayerBase::NativeOnInitialized()
 	{
 		BuildNativeLayerTree();
 	}
+	if (WindowStack)
+	{
+		WindowStack->OnTransitioningChanged.AddUObject(this, &ThisClass::HandleWindowTransitionChanged);
+		WindowStack->OnDisplayedWidgetChanged().AddUObject(this, &ThisClass::HandleDisplayedWindowChanged);
+		RefreshWindowInputBlock();
+	}
 }
 
 UCommonActivatableWidget* UMVUILayerBase::PushWindow(TSubclassOf<UCommonActivatableWidget> WindowClass)
+{
+	return PushWindow(WindowClass, [](UCommonActivatableWidget&) {});
+}
+
+UCommonActivatableWidget* UMVUILayerBase::PushWindow(
+	TSubclassOf<UCommonActivatableWidget> WindowClass,
+	TFunctionRef<void(UCommonActivatableWidget&)> Initialize)
 {
 	if (!WindowStack || !WindowClass)
 	{
 		return nullptr;
 	}
 
-	return WindowStack->AddWidget(WindowClass);
+	if (UMVGameplayInputWidget* Input = Cast<UMVGameplayInputWidget>(GameplayInputWidget))
+	{
+		Input->SetMenuInputBlocked(true);
+	}
+	UCommonActivatableWidget* Window = WindowStack->AddWidget<UCommonActivatableWidget>(WindowClass, Initialize);
+	RefreshWindowInputBlock();
+	return Window;
+}
+
+bool UMVUILayerBase::HasWindowInput() const
+{
+	return WindowStack && (bWindowStackTransitioning || WindowStack->GetNumWidgets() > 0);
+}
+
+void UMVUILayerBase::RefreshWindowInputBlock()
+{
+	if (UMVGameplayInputWidget* Input = Cast<UMVGameplayInputWidget>(GameplayInputWidget))
+	{
+		Input->SetMenuInputBlocked(HasWindowInput());
+	}
+}
+
+void UMVUILayerBase::HandleWindowTransitionChanged(UCommonActivatableWidgetContainerBase* Container, const bool bIsTransitioning)
+{
+	bWindowStackTransitioning = bIsTransitioning;
+	RefreshWindowInputBlock();
+}
+
+void UMVUILayerBase::HandleDisplayedWindowChanged(UCommonActivatableWidget* Window)
+{
+	RefreshWindowInputBlock();
 }
 
 UMVPopupBase* UMVUILayerBase::PushPopup(TSubclassOf<UMVPopupBase> PopupClass)
@@ -166,7 +215,7 @@ void UMVUILayerBase::BuildNativeLayerTree()
 		TEXT("GameplayInputWidget"));
 
 	WindowStack = WidgetTree->ConstructWidget<UCommonActivatableWidgetStack>(
-		UCommonActivatableWidgetStack::StaticClass(),
+		UMVWindowStack::StaticClass(),
 		TEXT("WindowStack"));
 
 	HUDLayer = WidgetTree->ConstructWidget<UOverlay>(

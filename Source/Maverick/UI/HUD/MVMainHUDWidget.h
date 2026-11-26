@@ -86,6 +86,7 @@ protected:
 
 private:
 	void BuildNativeWidgetTree();
+	void EnsureHealingPotionQuickSlot();
 	void EnsurePlayerSkillHUD();
 	void BindPlayerConsumable(UMVPlayerConsumable* Consumable);
 	void ApplyHealingPotionQuickSlotView();

@@ -15,10 +15,28 @@ enum class EMVItemType : uint8
 };
 
 UENUM(BlueprintType)
+enum class EMVItemRarity : uint8
+{
+	UseItemType UMETA(DisplayName = "종류에 따름"),
+	Common,
+	Rare,
+	Epic
+};
+
+UENUM(BlueprintType)
 enum class EMVEquipmentSlot : uint8
 {
 	None UMETA(DisplayName = "None"),
 	Weapon UMETA(DisplayName = "Weapon"),
 	Armor UMETA(DisplayName = "Armor"),
 	Accessory UMETA(DisplayName = "Accessory")
+};
+
+UENUM(BlueprintType)
+enum class EMVInventoryGroupCategory : uint8
+{
+	Weapons UMETA(DisplayName = "Weapons"),
+	Consumables UMETA(DisplayName = "Consumables"),
+	Materials UMETA(DisplayName = "Materials"),
+	Other UMETA(DisplayName = "Other")
 };

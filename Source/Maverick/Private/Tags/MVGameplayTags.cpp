@@ -19,6 +19,7 @@ namespace MVGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Weapon_Type_Whip, "Weapon.Type.Whip");
 	UE_DEFINE_GAMEPLAY_TAG(Weapon_Type_EnergySword, "Weapon.Type.EnergySword");
 	UE_DEFINE_GAMEPLAY_TAG(Item_HealingPotion_Basic, "Item.HealingPotion.Basic");
+	UE_DEFINE_GAMEPLAY_TAG(Item_Material_IronShard, "Item.Material.IronShard");
 	UE_DEFINE_GAMEPLAY_TAG(Progression_Attribute_HP, "Progression.Attribute.HP");
 	UE_DEFINE_GAMEPLAY_TAG(Progression_Attribute_Stamina, "Progression.Attribute.Stamina");
 	UE_DEFINE_GAMEPLAY_TAG(Progression_Attribute_MP, "Progression.Attribute.MP");

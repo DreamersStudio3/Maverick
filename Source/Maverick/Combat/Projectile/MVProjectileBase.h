@@ -50,6 +50,8 @@ public:
     const USphereComponent* GetTargetingCollision() const { return Collision.Get(); }
 
     int32 GetAttackInstanceId() const { return LaunchContext.AttackInstanceId; }
+	const AActor* GetLaunchAttacker() const;
+	FName GetResetFieldId() const { return ResetFieldId; }
 	bool WasEverActivated() const { return bEverActivated; }
 
     UPROPERTY(BlueprintAssignable, Category = "Maverick|Projectile|Event")
@@ -81,6 +83,7 @@ protected:
 
     UPROPERTY(Transient)
     FMVProjectileLaunchContext LaunchContext;
+	FName ResetFieldId;
 
 private:
     UFUNCTION()

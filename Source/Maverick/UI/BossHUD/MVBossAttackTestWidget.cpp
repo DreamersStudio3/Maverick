@@ -13,6 +13,7 @@
 #include "EngineUtils.h"
 #include "GameFramework/PlayerController.h"
 #include "Input/CommonUIActionRouterBase.h"
+#include "Input/CommonUIInputTypes.h"
 #include "InputCoreTypes.h"
 #include "UI/System/MVGameplayInputWidget.h"
 #include "UObject/ConstructorHelpers.h"
@@ -96,6 +97,8 @@ bool UMVBossAttackTestWidget::CanControlMouseInput() const
 	{
 		if (const UCommonUIActionRouterBase* Router = LocalPlayer->GetSubsystem<UCommonUIActionRouterBase>())
 		{
+			// 창 교체 중에는 기본 위젯이 잠시 메뉴 입력을 맡는다.
+			if (Router->GetActiveInputMode() == ECommonInputMode::Menu) return false;
 			const UCommonActivatableWidget* ActiveWidget = Router->GetLeafmostActivatableWidget();
 			if (ActiveWidget && !ActiveWidget->IsA<UMVGameplayInputWidget>()) return false;
 		}

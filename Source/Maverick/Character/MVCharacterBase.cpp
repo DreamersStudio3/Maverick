@@ -8,6 +8,7 @@
 #include "Components/MVInputManagerComponent.h"
 #include "Components/MVStatComponent.h"
 #include "Components/MVWeaponComponent.h"
+#include "Components/MVInventoryComponent.h"
 #include "Components/MVHitReaction.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -78,6 +79,7 @@ AMVCharacterBase::AMVCharacterBase()
 	DeathComponent = CreateDefaultSubobject<UMVDeathComponent>(TEXT("DeathComponent"));
 	HitReactionComponent = CreateDefaultSubobject<UMVHitReaction>(TEXT("HitReactionComponent"));
 	InputManagerComponent = CreateDefaultSubobject<UMVInputManagerComponent>(TEXT("InputManagerComponent"));
+	InventoryComponent = CreateDefaultSubobject<UMVInventoryComponent>(TEXT("Inventory"));
 	WeaponComponent = CreateDefaultSubobject<UMVWeaponComponent>(TEXT("WeaponComponent"));
 	MotionWarpingComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarpingComponent"));
 	StatusEffectComponent = CreateDefaultSubobject<UMVStatusEffectComponent>(TEXT("StatusEffectComponent"));

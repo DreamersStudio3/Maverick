@@ -165,6 +165,12 @@ bool FMVProjectileExecutionTest::RunTest(const FString& Parameters)
 				AMVProjectileBase* SecondShot = CreateRegisteredShot(101, 1);
 				TestNotNull(TEXT("Second projectile shares one attack"), SecondShot);
 				Combat->HandleActionEnded(ActionTableName, ActionRowName, false);
+				TestTrue(TEXT("Pending flight blocks its slot"), Combat->ProjectileExecutionTracker->HasPendingSkillSlot(EMVSkillSlot::QSkill));
+				TestFalse(TEXT("Pending flight does not block other slots"), Combat->ProjectileExecutionTracker->HasPendingSkillSlot(EMVSkillSlot::WSkill));
+				const float SavedCooldownEnd = Skill.MainCooldownEndTime;
+				Skill.MainCooldownEndTime = -1.0f;
+				TestTrue(TEXT("Selection waits for projectile result"), Combat->TryReplaceSkillSlot(EMVSkillSlot::QSkill, {}) == EMVSkillSelectionStatus::ProjectilePending);
+				Skill.MainCooldownEndTime = SavedCooldownEnd;
 				TestTrue(TEXT("First projectile remains after action end"),
 					Combat->FindProjectileExecution(101) != nullptr);
 				TestTrue(TEXT("Original skill cooldown started"),
@@ -182,6 +188,8 @@ bool FMVProjectileExecutionTest::RunTest(const FString& Parameters)
 						Combat->FindProjectileExecution(101);
 					if (TestNotNull(TEXT("Late hit keeps execution record"), FirstRecord))
 					{
+						TestTrue(TEXT("Combat records the late hit before the projectile hit event"),
+							FirstRecord->HasHit());
 						UMVAbilityBase* ExecutionAbility = FirstRecord->ExecutionAbility.Get();
 						if (TestNotNull(TEXT("Late execution ability"), ExecutionAbility))
 						{
@@ -208,6 +216,7 @@ bool FMVProjectileExecutionTest::RunTest(const FString& Parameters)
 				}
 				TestTrue(TEXT("First record is released after all projectiles finish"),
 					Combat->ProjectileExecutionTracker->IsEmpty());
+				TestFalse(TEXT("Finished flights no longer block slot"), Combat->ProjectileExecutionTracker->HasPendingSkillSlot(EMVSkillSlot::QSkill));
 			}
 
 			AMVProjectileBase* StaleShot = CreateRegisteredShot(103, 3);
@@ -251,18 +260,18 @@ bool FMVProjectileExecutionTest::RunTest(const FString& Parameters)
 				{
 					TestTrue(TEXT("Pre-death projectile retains base damage"),
 						Enemy->StatComponent->CurrentHP < EnemyHPBeforeDeathHit);
+					DeathShot->OnProjectileHit.Broadcast(DeathShot, DeathHit);
 					const FMVProjectileExecutionRecord* DeathRecord =
 						Combat->FindProjectileExecution(102);
 					if (TestNotNull(TEXT("Death-boundary record remains"), DeathRecord))
 					{
-						TestFalse(TEXT("Dead shooter receives no hit reward"),
-						DeathRecord->HasHit());
+						TestFalse(TEXT("Projectile hit event cannot confirm a dead shooter's attack"),
+							DeathRecord->HasHit());
 						TestFalse(TEXT("Dead shooter cannot refund"),
 							Combat->RefundSkillMainCooldownForExecution(
 								0, DeathRecord->ExecutionAbility.Get()));
 					}
 				}
-				DeathShot->OnProjectileHit.Broadcast(DeathShot, DeathHit);
 				DeathShot->OnProjectileFinished.Broadcast(DeathShot, 102);
 				DeathShot->Destroy();
 				TestTrue(TEXT("Death-boundary record is released"),

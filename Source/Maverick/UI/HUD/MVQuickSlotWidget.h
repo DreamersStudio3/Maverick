@@ -42,6 +42,7 @@ public:
 	void UpdateCountAndLocked(int32 NewCount, bool bLocked);
 
 protected:
+	virtual void NativeOnInitialized() override;
 	virtual void NativePreConstruct() override;
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional), Category = "Maverick|UI|QuickSlot")
