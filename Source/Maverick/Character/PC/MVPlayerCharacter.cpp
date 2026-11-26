@@ -9,13 +9,21 @@
 #include "Components/MVCombatComponent.h"
 #include "Components/MVHitReactionComponent.h"
 #include "Components/MVStatComponent.h"
+#include "Engine/GameInstance.h"
+#include "Engine/LocalPlayer.h"
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
+#include "EnhancedPlayerInput.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/PlayerController.h"
 #include "LockOnTargetComponent.h"
 #include "LockOnTargetExtensions/PawnRotationExtension.h"
 #include "Tables/MVTableManager.h"
 #include "Tags/MVGameplayTags.h"
 #include "Camera/CameraShakeBase.h"
 #include "Progression/MVPlayerProgression.h"
+#include "UI/System/MVUISettings.h"
+#include "UI/System/MVUISubsystem.h"
 
 namespace
 {
@@ -56,6 +64,17 @@ AMVPlayerCharacter::AMVPlayerCharacter()
 		CombatComponent->RSkillGaugeGainPerHit = 10.0f;
 	}
 	bIsSprintBlockedByStamina = false;
+}
+
+void AMVPlayerCharacter::PossessedBy(AController* NewController)
+{
+	auto* PlayerController = Cast<APlayerController>(NewController);
+	UGameInstance* Instance = GetGameInstance();
+	if (UMVUISubsystem* UI = PlayerController && Instance ? Instance->GetSubsystem<UMVUISubsystem>() : nullptr)
+	{
+		UI->BindItemAcquisitionPlayer(*this, *PlayerController);
+	}
+	Super::PossessedBy(NewController);
 }
 
 // Called when the game starts or when spawned
@@ -109,6 +128,53 @@ void AMVPlayerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	}
 
 	Super::EndPlay(EndPlayReason);
+}
+
+void AMVPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	if (InteractionDetector && PlayerInputComponent)
+	{
+		InteractionDetector->BindSelectionInput(*PlayerInputComponent);
+	}
+
+	UEnhancedInputComponent* Input = Cast<UEnhancedInputComponent>(PlayerInputComponent);
+	const UInputAction* InventoryMenuAction = GetDefault<UMVUISettings>()->InventoryMenuAction;
+	if (Input && InventoryMenuAction)
+	{
+		Input->BindAction(InventoryMenuAction, ETriggerEvent::Started, this, &ThisClass::OpenInventoryMenu);
+	}
+}
+
+void AMVPlayerCharacter::OpenInventoryMenu()
+{
+	const APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	const ULocalPlayer* LocalPlayer = PlayerController ? PlayerController->GetLocalPlayer() : nullptr;
+	const auto* Input = LocalPlayer ? LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>() : nullptr;
+	const UInputAction* Action = GetDefault<UMVUISettings>()->InventoryMenuAction;
+	const UEnhancedPlayerInput* PlayerInput = Input ? Input->GetPlayerInput() : nullptr;
+	if (!Action || !PlayerInput)
+	{
+		return;
+	}
+
+	// 메뉴가 키를 소비한 뒤에는 엔진이 첫 반복을 새 누름으로 보정할 수 있다.
+	const TArray<FKey> Keys = Input->QueryKeysMappedToAction(Action);
+	if (!Keys.ContainsByPredicate([PlayerInput](const FKey& Key)
+	{
+		const FKeyState* State = PlayerInput->GetKeyState(Key);
+		return State && !State->EventCounts[IE_Pressed].IsEmpty() && State->EventCounts[IE_Repeat].IsEmpty();
+	}))
+	{
+		return;
+	}
+
+	UGameInstance* Instance = GetGameInstance();
+	if (UMVUISubsystem* UI = Instance ? Instance->GetSubsystem<UMVUISubsystem>() : nullptr)
+	{
+		UI->ShowInventoryWindow();
+	}
 }
 
 void AMVPlayerCharacter::UpdateRecoverableStats(const float DeltaTime)

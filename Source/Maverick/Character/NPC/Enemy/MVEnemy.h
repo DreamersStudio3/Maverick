@@ -28,6 +28,8 @@ public:
 	bool ReceiveAttackNotice(const FMVAIDodgeRequest& Notice);
 
 	void HideBoundBossHUD();
+	FName GetResetFieldId() const { return ResetFieldId; }
+	void SetResetFieldId(FName FieldId) { ResetFieldId = FieldId; }
 
 	/** 공격 대상의 수평 방향, 대상 부재·동일 수평 위치에서는 현재 회전 유지 */
 	UFUNCTION(BlueprintPure, Category = "AI|Target")
@@ -57,4 +59,5 @@ protected:
 
 	FTimerHandle BossHUDBindRetryTimerHandle;
 	TWeakObjectPtr<UMVMainHUDWidget> BoundBossHUD;
+	FName ResetFieldId;
 };

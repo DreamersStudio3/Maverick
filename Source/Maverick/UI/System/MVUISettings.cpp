@@ -1,6 +1,8 @@
 #include "UI/System/MVUISettings.h"
 
+#include "InputAction.h"
 #include "UI/HUD/MVMainHUDWidget.h"
+#include "UI/Notification/MVItemAcquisitionPanel.h"
 #include "UI/Popup/MVBossClearPopup.h"
 #include "UI/Popup/MVInteractionPromptPopup.h"
 #include "UI/Popup/MVMessagePopup.h"
@@ -11,9 +13,14 @@
 #include "UI/Window/MVLoadingWindow.h"
 #include "UI/Window/MVSkillTreeWindow.h"
 #include "UI/Window/MVTitleWindow.h"
+#include "UObject/ConstructorHelpers.h"
 
 UMVUISettings::UMVUISettings()
 {
+	static const ConstructorHelpers::FObjectFinder<UInputAction> MenuAction(
+		TEXT("/Game/Input/Actions/IA_InventoryMenu.IA_InventoryMenu"));
+	InventoryMenuAction = MenuAction.Object;
+
 	RootLayerClass = UMVUILayerBase::StaticClass();
 	DefaultHUDClass = UMVMainHUDWidget::StaticClass();
 	TitleWindowClass = UMVTitleWindow::StaticClass();

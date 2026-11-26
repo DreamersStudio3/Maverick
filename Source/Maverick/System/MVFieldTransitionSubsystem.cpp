@@ -6,14 +6,24 @@
 #include "Components/MVActionComponent.h"
 #include "Components/MVDeathComponent.h"
 #include "Components/MVStatComponent.h"
+#include "Components/MVCombatComponent.h"
+#include "Components/MVStatusEffectComponent.h"
+#include "Components/MVWeaponComponent.h"
+#include "Engine/World.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/GameModeBase.h"
 #include "GameFramework/Pawn.h"
 #include "GameFramework/PlayerController.h"
+#include "Interaction/RestPoint/MVRestPointSubsystem.h"
+#include "Interaction/RestPoint/MVRestPoint.h"
+#include "Kismet/GameplayStatics.h"
 #include "System/MVDeathRespawnFlow.h"
+#include "System/MVFieldEnemySpawnPoint.h"
 #include "System/MVFieldTransitionSettings.h"
 #include "System/MVWorldStateSubsystem.h"
 #include "System/MVWorldStateTypes.h"
 #include "UI/System/MVUISubsystem.h"
+#include "UI/System/MVUISettings.h"
 #include "UI/Window/MVLoadingWindow.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogMVFieldTransitionSubsystem, Log, All);
@@ -30,6 +40,14 @@ FName MVFieldTransitionActionTableNameFromDataTable(const UDataTable* DataTable)
 	FString TableName = DataTable->GetName();
 	TableName.RemoveFromStart(TEXT("DT_"));
 	return FName(*TableName);
+}
+
+bool MVFieldTransitionTryPlaceAtCheckpoint(UWorld& World, AMVCharacterBase& Character, const FTransform& Transform)
+{
+	FVector Location = Transform.GetLocation();
+	const FRotator Rotation = Transform.Rotator();
+	return Transform.IsValid() && World.FindTeleportSpot(&Character, Location, Rotation)
+		&& Character.SetActorLocationAndRotation(Location, Rotation, false, nullptr, ETeleportType::TeleportPhysics);
 }
 }
 
@@ -67,7 +85,8 @@ UMVFieldTransitionSubsystem* UMVFieldTransitionSubsystem::Get(const UObject* Wor
 
 bool UMVFieldTransitionSubsystem::StartTransition(const FMVFieldTransitionRequest& Request)
 {
-	if (TransitionPhase != EMVFieldTransitionPhase::Idle)
+	if (TransitionPhase != EMVFieldTransitionPhase::Idle
+		|| (Request.Reason == EMVFieldTransitionReason::Rest && Request.RestRequestId == 0))
 	{
 		return false;
 	}
@@ -94,14 +113,55 @@ void UMVFieldTransitionSubsystem::BeginLoadingReset()
 	ClearUIBeforeLoadingIfNeeded();
 
 	UMVUISubsystem* UISubsystem = GetUISubsystem();
-	ActiveLoadingWindow = UISubsystem
-		? Cast<UMVLoadingWindow>(UISubsystem->ShowLoadingWindow())
-		: nullptr;
+	ActiveLoadingWindow = nullptr;
+	if (UISubsystem)
+	{
+		if (ActiveTransitionRequest.Reason == EMVFieldTransitionReason::Rest)
+		{
+			const UMVUISettings* Settings = GetDefault<UMVUISettings>();
+			ActiveLoadingWindow = Cast<UMVLoadingWindow>(UISubsystem->PushWindowByClass(Settings->LoadingWindowClass));
+		}
+		else
+		{
+			ActiveLoadingWindow = Cast<UMVLoadingWindow>(UISubsystem->ShowLoadingWindow());
+		}
+	}
 
 	UpdateTransitionProgress(0.15f, NSLOCTEXT("MaverickFieldTransition", "LoadingPrepare", "필드 전환 준비 중"));
-	UpdateTransitionProgress(0.45f, NSLOCTEXT("MaverickFieldTransition", "FieldReset", "필드 상태 초기화 생략"));
+	UpdateTransitionProgress(0.45f, ActiveTransitionRequest.Reason == EMVFieldTransitionReason::CheckpointTravel
+		? NSLOCTEXT("MaverickFieldTransition", "FieldResetSkipped", "이동 위치 확인 중")
+		: NSLOCTEXT("MaverickFieldTransition", "FieldReset", "필드 초기화 준비 중"));
 	UpdateTransitionProgress(0.75f, NSLOCTEXT("MaverickFieldTransition", "WorldState", "저장 상태 적용 준비"));
 	StartAutomaticLoadingCompletion();
+}
+
+bool UMVFieldTransitionSubsystem::StartRestTransition(AMVRestPoint& Point, const uint64 RequestId)
+{
+	UWorld* World = GetWorld();
+	AMVCharacterBase* Character = ResolvePlayerCharacter(World);
+	const FTransform Anchor = Point.GetRespawnTransform();
+	FVector SafeLocation = Anchor.GetLocation();
+	if (!World || !Character || Point.GetWorld() != World || IsTransitionRunning()
+		|| !Anchor.IsValid() || !World->FindTeleportSpot(Character, SafeLocation, Anchor.Rotator())
+		|| !AMVFieldEnemySpawnPoint::CanResetField(*World, Point.GetFieldId()))
+	{
+		return false;
+	}
+
+	FMVFieldTransitionRequest Request;
+	Request.Reason = EMVFieldTransitionReason::Rest;
+	Request.TargetFieldId = Point.GetFieldId();
+	Request.RestRequestId = RequestId;
+	Request.bClearUIBeforeLoading = false;
+	Request.bResetUIToDefaultOnComplete = false;
+	Request.bRestoreInputOnComplete = false;
+	return StartTransition(Request);
+}
+
+bool UMVFieldTransitionSubsystem::IsRestTransition(const uint64 RequestId) const
+{
+	return RequestId != 0 && ActiveTransitionRequest.Reason == EMVFieldTransitionReason::Rest
+		&& ActiveTransitionRequest.RestRequestId == RequestId && IsTransitionRunning();
 }
 
 bool UMVFieldTransitionSubsystem::StartDeathRespawnTransition(AActor* DeadActor)
@@ -115,6 +175,26 @@ bool UMVFieldTransitionSubsystem::StartDeathRespawnTransition(AActor* DeadActor)
 	Request.bClearUIBeforeLoading = false;
 	Request.bResetUIToDefaultOnComplete = true;
 	Request.bRestoreInputOnComplete = true;
+	if (UWorld* World = GetWorld())
+	{
+		FName PreferredField;
+		if (const UMVWorldStateSubsystem* State = GetWorldState())
+		{
+			const FMVWorldSaveData& Save = State->GetSaveData();
+			const UMVRestPointSubsystem* Rest = World->GetSubsystem<UMVRestPointSubsystem>();
+			FTransform Anchor;
+			if (Rest && Rest->TryResolveRespawnAnchor(Save.LastRestPoint, Anchor))
+			{
+				PreferredField = Save.LastRestPoint.FieldId;
+			}
+			else if (Save.LastCheckpoint.bHasCheckpoint && (Save.LastCheckpoint.MapName.IsNone()
+				|| Save.LastCheckpoint.MapName == FName(*UGameplayStatics::GetCurrentLevelName(World, true))))
+			{
+				PreferredField = Save.LastCheckpoint.FieldId;
+			}
+		}
+		Request.TargetFieldId = AMVFieldEnemySpawnPoint::ResolveDeathResetField(*World, PreferredField);
+	}
 	if (const UMVFieldTransitionSettings* Settings = GetDefault<UMVFieldTransitionSettings>())
 	{
 		Request.PostTransitionActionRow = Settings->DeathRespawnPostTransitionActionRow;
@@ -134,7 +214,7 @@ bool UMVFieldTransitionSubsystem::StartCheckpointTravelToTransform(
 		UMVWorldStateSubsystem* WorldState = GetWorldState();
 		if (!WorldState
 			|| !WorldState->SetLastCheckpoint(CheckpointId, FieldId, TargetTransform, NAME_None)
-			|| !WorldState->SaveToDefaultSlot())
+			|| !WorldState->SaveActiveSlot())
 		{
 			return false;
 		}
@@ -164,13 +244,28 @@ bool UMVFieldTransitionSubsystem::StartCheckpointTravelToTransform(
 
 void UMVFieldTransitionSubsystem::CompleteTransition()
 {
-	if (TransitionPhase == EMVFieldTransitionPhase::Idle)
+	if (TransitionPhase != EMVFieldTransitionPhase::LoadingReset)
 	{
 		return;
 	}
-	if (TransitionPhase == EMVFieldTransitionPhase::PreTransition)
+	if (ActiveTransitionRequest.Reason == EMVFieldTransitionReason::Rest
+		&& ActiveLoadingWindow && !ActiveLoadingWindow->IsActivated())
 	{
+		// 같은 거점 스택의 진입 전환 전에 닫으면 나중에 로딩창이 다시 활성화된다.
+		ActiveLoadingWindow->OnActivated().RemoveAll(this);
+		ActiveLoadingWindow->OnActivated().AddWeakLambda(this, [this]()
+		{
+			if (UWorld* World = GetWorld())
+			{
+				AutomaticLoadingTimerHandle = World->GetTimerManager().SetTimerForNextTick(
+					this, &UMVFieldTransitionSubsystem::CompleteTransition);
+			}
+		});
 		return;
+	}
+	if (ActiveLoadingWindow)
+	{
+		ActiveLoadingWindow->OnActivated().RemoveAll(this);
 	}
 
 	if (UWorld* World = GetWorld())
@@ -180,11 +275,28 @@ void UMVFieldTransitionSubsystem::CompleteTransition()
 	}
 
 	SetTransitionPhase(EMVFieldTransitionPhase::Relocating);
-	UpdateTransitionProgress(1.0f, NSLOCTEXT("MaverickFieldTransition", "Complete", "전환 위치 적용"));
-	ApplyTransitionDestination(ActiveTransitionRequest);
-	if (AMVCharacterBase* Character = ResolvePlayerCharacter(GetWorld()))
+	if (ActiveTransitionRequest.Reason == EMVFieldTransitionReason::Rest)
 	{
-		TryPreparePostTransitionAction(*Character, ActiveTransitionRequest);
+		bRestApplied = ApplyRestTransition();
+		UpdateTransitionProgress(1.0f, bRestApplied
+			? NSLOCTEXT("MaverickFieldTransition", "RestApplied", "회복 완료")
+			: NSLOCTEXT("MaverickFieldTransition", "RestFailed", "휴식을 완료하지 못했습니다"));
+	}
+	else
+	{
+		UWorld* World = GetWorld();
+		AMVCharacterBase* Character = ResolvePlayerCharacter(World);
+		if (World && ActiveTransitionRequest.Reason == EMVFieldTransitionReason::DeathRespawn
+			&& !AMVFieldEnemySpawnPoint::ResetField(*World, ActiveTransitionRequest.TargetFieldId, Character))
+		{
+			UE_LOG(LogMVFieldTransitionSubsystem, Warning, TEXT("Enemy reset incomplete during death respawn."));
+		}
+		UpdateTransitionProgress(1.0f, NSLOCTEXT("MaverickFieldTransition", "Complete", "전환 위치 적용"));
+		const bool bDestinationApplied = ApplyTransitionDestination(ActiveTransitionRequest);
+		if (Character && bDestinationApplied)
+		{
+			TryPreparePostTransitionAction(*Character, ActiveTransitionRequest);
+		}
 	}
 
 	float ScreenTransitionDelaySeconds = 0.0f;
@@ -237,8 +349,17 @@ void UMVFieldTransitionSubsystem::FinishTransitionAfterScreenChange()
 	}
 	ResumePreparedPostTransitionAction();
 
+	const uint64 RestRequestId = ActiveTransitionRequest.RestRequestId;
+	const bool bApplied = bRestApplied;
 	ResetTransitionState();
 	SetTransitionPhase(EMVFieldTransitionPhase::Idle);
+	if (UWorld* World = GetWorld(); World && RestRequestId != 0)
+	{
+		if (UMVRestPointSubsystem* Rest = World->GetSubsystem<UMVRestPointSubsystem>())
+		{
+			Rest->FinishRestRequest(RestRequestId, bApplied);
+		}
+	}
 }
 
 bool UMVFieldTransitionSubsystem::SetLastCheckpointFromActor(
@@ -258,7 +379,7 @@ bool UMVFieldTransitionSubsystem::SetLastCheckpointFromActor(
 		return false;
 	}
 
-	return !bSaveImmediately || WorldState->SaveToDefaultSlot();
+	return !bSaveImmediately || WorldState->SaveActiveSlot();
 }
 
 void UMVFieldTransitionSubsystem::HandlePreTransitionActionEnded(
@@ -367,7 +488,7 @@ void UMVFieldTransitionSubsystem::UpdateTransitionProgress(const float Progress,
 
 void UMVFieldTransitionSubsystem::StartAutomaticLoadingCompletion()
 {
-	if (!bCompleteLoadingAutomatically)
+	if (!bCompleteLoadingAutomatically && ActiveTransitionRequest.Reason != EMVFieldTransitionReason::Rest)
 	{
 		return;
 	}
@@ -396,6 +517,10 @@ void UMVFieldTransitionSubsystem::StartAutomaticLoadingCompletion()
 
 void UMVFieldTransitionSubsystem::ResetTransitionState()
 {
+	if (ActiveLoadingWindow)
+	{
+		ActiveLoadingWindow->OnActivated().RemoveAll(this);
+	}
 	if (UWorld* World = GetWorld())
 	{
 		World->GetTimerManager().ClearTimer(AutomaticLoadingTimerHandle);
@@ -407,6 +532,24 @@ void UMVFieldTransitionSubsystem::ResetTransitionState()
 	ActiveTransitionRequest = FMVFieldTransitionRequest();
 	ActiveLoadingWindow = nullptr;
 	bClearedUIBeforeLoading = false;
+	bRestApplied = false;
+}
+
+bool UMVFieldTransitionSubsystem::ApplyRestTransition()
+{
+	UWorld* World = GetWorld();
+	UMVRestPointSubsystem* Rest = World ? World->GetSubsystem<UMVRestPointSubsystem>() : nullptr;
+	AMVCharacterBase* Character = ResolvePlayerCharacter(World);
+	const uint64 RequestId = ActiveTransitionRequest.RestRequestId;
+	if (!Rest || !Character || !Rest->IsRestRequestValid(RequestId)
+		|| !AMVFieldEnemySpawnPoint::ResetField(*World, ActiveTransitionRequest.TargetFieldId, Character)
+		|| !IsValid(Character) || !Rest->IsRestRequestValid(RequestId))
+	{
+		return false;
+	}
+
+	ResetPlayerStatsForTransition(*Character);
+	return true;
 }
 
 bool UMVFieldTransitionSubsystem::ApplyTransitionDestination(const FMVFieldTransitionRequest& Request)
@@ -423,24 +566,42 @@ bool UMVFieldTransitionSubsystem::ApplyTransitionDestination(const FMVFieldTrans
 		Character->DeathComponent->ResetDeathPresentationForRespawn();
 	}
 
-	bool bHasDestination = Request.bHasTargetTransform;
-	FTransform Destination = Request.TargetTransform;
+	bool bAppliedDestination = false;
 	if (Request.bUseLastCheckpoint)
 	{
-		if (UMVWorldStateSubsystem* WorldState = GetWorldState())
+		if (const UMVWorldStateSubsystem* WorldState = GetWorldState())
 		{
-			FMVCheckpointSaveData Checkpoint;
-			if (WorldState->TryGetLastCheckpoint(Checkpoint))
+			const FMVWorldSaveData& Save = WorldState->GetSaveData();
+			const FMVCheckpointSaveData& RestPoint = Save.LastRestPoint;
+			const FMVCheckpointSaveData& Checkpoint = Save.LastCheckpoint;
+			if (RestPoint.bHasCheckpoint)
 			{
-				Destination = Checkpoint.Transform;
-				bHasDestination = true;
+				FTransform Anchor;
+				const UMVRestPointSubsystem* Rest = World->GetSubsystem<UMVRestPointSubsystem>();
+				bAppliedDestination = Rest && Rest->TryResolveRespawnAnchor(RestPoint, Anchor)
+					&& MVFieldTransitionTryPlaceAtCheckpoint(*World, *Character, Anchor);
+			}
+			else if (Checkpoint.bHasCheckpoint && (Checkpoint.MapName.IsNone()
+				|| Checkpoint.MapName == FName(*UGameplayStatics::GetCurrentLevelName(World, true))))
+			{
+				bAppliedDestination = MVFieldTransitionTryPlaceAtCheckpoint(*World, *Character, Checkpoint.Transform);
+			}
+		}
+
+		if (!bAppliedDestination)
+		{
+			AGameModeBase* GameMode = World->GetAuthGameMode();
+			AActor* Start = GameMode ? GameMode->FindPlayerStart(Character->GetController()) : nullptr;
+			bAppliedDestination = Start && MVFieldTransitionTryPlaceAtCheckpoint(*World, *Character, Start->GetActorTransform());
+			if (!bAppliedDestination)
+			{
+				UE_LOG(LogMVFieldTransitionSubsystem, Warning, TEXT("No usable respawn destination in %s."), *World->GetMapName());
 			}
 		}
 	}
-
-	if (bHasDestination)
+	else if (Request.bHasTargetTransform)
 	{
-		Character->SetActorTransform(Destination, false, nullptr, ETeleportType::TeleportPhysics);
+		bAppliedDestination = Character->SetActorTransform(Request.TargetTransform, false, nullptr, ETeleportType::TeleportPhysics);
 	}
 
 	if (UCharacterMovementComponent* MovementComponent = Character->GetCharacterMovement())
@@ -453,7 +614,7 @@ bool UMVFieldTransitionSubsystem::ApplyTransitionDestination(const FMVFieldTrans
 		ResetPlayerStatsForTransition(*Character);
 	}
 
-	return true;
+	return bAppliedDestination || (!Request.bUseLastCheckpoint && !Request.bHasTargetTransform);
 }
 
 void UMVFieldTransitionSubsystem::ResetPlayerStatsForTransition(AMVCharacterBase& Character) const
@@ -465,10 +626,11 @@ void UMVFieldTransitionSubsystem::ResetPlayerStatsForTransition(AMVCharacterBase
 	}
 
 	StatComponent->ResetDeathState();
+	ResetPlayerCombatForField(Character);
 	StatComponent->SetCurrentHP(StatComponent->MaxHP);
 	StatComponent->SetCurrentStamina(StatComponent->MaxStamina);
 	StatComponent->SetCurrentMP(StatComponent->MaxMP);
-	StatComponent->SetCurrentGroggy(0.0f);
+	StatComponent->ResetCombatDamageForWorldReset();
 
 	AMVPlayerCharacter* PlayerCharacter = Cast<AMVPlayerCharacter>(&Character);
 	if (UMVPlayerConsumable* Consumable =
@@ -478,6 +640,36 @@ void UMVFieldTransitionSubsystem::ResetPlayerStatsForTransition(AMVCharacterBase
 	}
 }
 
+void UMVFieldTransitionSubsystem::ResetPlayerCombatForField(AMVCharacterBase& Character) const
+{
+	UMVCombatComponent* Combat = Character.FindComponentByClass<UMVCombatComponent>();
+	UMVStatComponent* Stats = Character.StatComponent.Get();
+	Stats->BeginMaxHPModifierBatch();
+	if (Combat)
+	{
+		Combat->ClearPassiveSkill();
+	}
+	if (UMVStatusEffectComponent* Effects = Character.StatusEffectComponent.Get())
+	{
+		TArray<FMVStatusEffectHandle> TimedEffects;
+		for (const FMVStatusEffectInstance& Effect : Effects->GetActiveEffects())
+		{
+			if (Effect.HasExpiration())
+			{
+				TimedEffects.Add(Effect.Handle);
+			}
+		}
+		for (const FMVStatusEffectHandle Handle : TimedEffects)
+		{
+			Effects->RemoveStatusEffect(Handle, EMVStatusEffectRemovalReason::Cleared);
+		}
+	}
+	if (Combat)
+	{
+		Combat->RefreshSkillSlot(EMVSkillSlot::PassiveSkill);
+	}
+	Stats->EndMaxHPModifierBatch();
+}
 void UMVFieldTransitionSubsystem::ResetUIToDefaultAfterTransition()
 {
 	if (UMVUISubsystem* UISubsystem = GetUISubsystem())

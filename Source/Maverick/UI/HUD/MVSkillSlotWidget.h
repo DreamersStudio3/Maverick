@@ -12,11 +12,9 @@ class UTextBlock;
 class UTexture2D;
 
 /**
- * Equal-size player skill slot with a stage-aware icon stack and radial cooldown.
- *
- * PlayerSkillHUD supplies the active chain index and cooldown values each frame.
- * The icon brush is changed only when the active stack index changes, while the
- * cooldown overlay receives the continuously changing remaining ratio.
+ * 전투 HUD의 한 슬롯. 연계 그림·사용 키·선택 상태·원형 대기시간을 표시한다.
+ * 초기화 시 기본 배치를 만들거나 Blueprint 배치의 상태 안내를 보완한다.
+ * 그림은 단계 변경 때, 연속 수치는 호출자가 전달한 값으로 갱신하며 전투 상태를 소유하지 않는다.
  */
 UCLASS(Blueprintable)
 class MAVERICK_API UMVSkillSlotWidget : public UMVWidgetBase
@@ -29,6 +27,16 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Skill")
 	void SetHotKeyText(FText InHotKeyText);
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Skill")
+	void SetStatusText(FText InStatusText);
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Skill")
+	void SetSlotLabel(FText InLabel);
+	UFUNCTION(BlueprintPure, Category = "Maverick|UI|Skill")
+	FText GetStatusText() const { return StatusText; }
+	UFUNCTION(BlueprintPure, Category = "Maverick|UI|Skill")
+	FText GetHotKeyText() const { return HotKeyText; }
+	UFUNCTION(BlueprintPure, Category = "Maverick|UI|Skill")
+	UTexture2D* GetDisplayedIcon() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Skill")
 	void SetRuntimeState(int32 InActiveStackIndex, float CooldownRemaining, float CooldownDuration, bool bInAvailable);
@@ -57,6 +65,10 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional), Category = "Maverick|UI|Skill")
 	TObjectPtr<UTextBlock> HotKeyTextBlock;
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional), Category = "Maverick|UI|Skill")
+	TObjectPtr<UTextBlock> StatusTextBlock;
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional), Category = "Maverick|UI|Skill")
+	TObjectPtr<UTextBlock> SlotLabelTextBlock;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|UI|Skill", meta = (ClampMin = "1.0"))
 	float DesiredSlotSize = 72.0f;
@@ -82,11 +94,15 @@ private:
 	void ApplyIcon();
 	void ApplyHotKeyText();
 	void ApplySlotSize();
+	void EnsureStatusLabels();
 
 	UPROPERTY(Transient)
 	TArray<TObjectPtr<UTexture2D>> IconStack;
 
 	FText HotKeyText;
+	FText StatusText;
+	FText SlotLabel;
+	UPROPERTY(Transient) TObjectPtr<USizeBox> KeyLabelSizeBox;
 	int32 ActiveStackIndex = 0;
 	bool bAvailable = true;
 };

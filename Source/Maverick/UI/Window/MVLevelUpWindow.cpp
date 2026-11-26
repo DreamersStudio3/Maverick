@@ -2,18 +2,26 @@
 
 #include "Character/PC/MVPlayerCharacter.h"
 #include "Components/MVStatComponent.h"
+#include "Engine/GameInstance.h"
+#include "Interaction/RestPoint/MVRestPoint.h"
+#include "Interaction/RestPoint/MVRestPointSubsystem.h"
 #include "System/MVWorldStateSubsystem.h"
 #include "System/Progression/MVProgressionDefinition.h"
 #include "System/Progression/MVProgressionStatBinding.h"
 #include "System/Progression/MVProgressionSubsystem.h"
+#include "UI/Base/MVHUDWidgetBase.h"
 #include "UI/LevelUp/MVLevelUpAttributeEntryWidget.h"
 #include "UI/LevelUp/MVLevelUpStatComparisonWidget.h"
 #include "UI/LevelUp/MVLevelUpStatBlockWidget.h"
 #include "Components/Button.h"
+#include "Components/TextBlock.h"
 #include "UI/LevelUp/MVLevelUpSummaryWidget.h"
+#include "UI/System/MVUISubsystem.h"
 #include "GameFramework/PlayerController.h"
 #include "CommonActionWidget.h"
+#include "CommonInputSubsystem.h"
 #include "ICommonInputModule.h"
+#include "UI/System/MVMenuInputHint.h"
 #include "Input/CommonUIInputTypes.h"
 #include "InputCoreTypes.h"
 
@@ -21,6 +29,33 @@ UMVLevelUpWindow::UMVLevelUpWindow(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	SetIsFocusable(true);
+}
+
+void UMVLevelUpWindow::SetRestPointSession(UMVRestPointSubsystem* Session)
+{
+	RestPointSession = Session;
+}
+
+void UMVLevelUpWindow::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
+	if (LevelUpTitle)
+	{
+		OriginalTitle = LevelUpTitle->GetText();
+	}
+}
+
+void UMVLevelUpWindow::UpdateRestPointTitle()
+{
+	if (LevelUpTitle)
+	{
+		const UMVRestPointSubsystem* Session = RestPointSession.Get();
+		const AMVRestPoint* RestPoint = Session ? Session->GetActiveRestPoint() : nullptr;
+		LevelUpTitle->SetText(RestPoint && !RestPoint->GetDisplayName().IsEmpty()
+			? FText::Format(NSLOCTEXT("MVLevelUp", "RestPointTitle", "{0} · {1}"),
+				OriginalTitle, RestPoint->GetDisplayName())
+			: OriginalTitle);
+	}
 }
 
 void UMVLevelUpWindow::NativeOnActivated()
@@ -36,6 +71,25 @@ void UMVLevelUpWindow::NativeOnActivated()
 		return;
 	}
 
+	UpdateRestPointTitle();
+	RefreshInputHints();
+	if (UCommonInputSubsystem* Input = UCommonInputSubsystem::Get(GetOwningLocalPlayer()))
+	{
+		Input->OnInputMethodChangedNative.RemoveAll(this);
+		Input->OnInputMethodChangedNative.AddWeakLambda(this, [this](ECommonInputType) { RefreshInputHints(); });
+	}
+
+	UGameInstance* Instance = GetGameInstance();
+	if (UMVUISubsystem* UI = Instance ? Instance->GetSubsystem<UMVUISubsystem>() : nullptr)
+	{
+		if (UMVHUDWidgetBase* HUD = UI->GetMainHUD())
+		{
+			SuppressedHUD = HUD;
+			PreviousHUDVisibility = HUD->GetVisibility();
+			HUD->SetVisibility(ESlateVisibility::Collapsed);
+		}
+	}
+
 	RebuildLevelUpRows();
 	RefreshLevelUpPreview();
 	SetUserFocus(GetOwningPlayer());
@@ -43,6 +97,10 @@ void UMVLevelUpWindow::NativeOnActivated()
 
 void UMVLevelUpWindow::NativeOnDeactivated()
 {
+	if (UCommonInputSubsystem* Input = UCommonInputSubsystem::Get(GetOwningLocalPlayer()))
+	{
+		Input->OnInputMethodChangedNative.RemoveAll(this);
+	}
 	if (ConfirmButton)
 	{
 		ConfirmButton->SetIsEnabled(false);
@@ -50,6 +108,7 @@ void UMVLevelUpWindow::NativeOnDeactivated()
 
 	ClearLevelUpRows();
 	UnbindRuntimeEvents();
+	RestoreGameplayHUD();
 
 	PendingRanks.Reset();
 	LevelUpPreview = FMVProgressionEvaluation();
@@ -59,6 +118,10 @@ void UMVLevelUpWindow::NativeOnDeactivated()
 
 void UMVLevelUpWindow::NativeDestruct()
 {
+	if (UCommonInputSubsystem* Input = UCommonInputSubsystem::Get(GetOwningLocalPlayer()))
+	{
+		Input->OnInputMethodChangedNative.RemoveAll(this);
+	}
 	UnregisterLevelUpInputActions();
 	
 	if (ConfirmButton)
@@ -70,9 +133,25 @@ void UMVLevelUpWindow::NativeDestruct()
 
 	ClearLevelUpRows();
 	UnbindRuntimeEvents();
+	RestoreGameplayHUD();
 	PendingRanks.Reset();
 
 	Super::NativeDestruct();
+}
+
+void UMVLevelUpWindow::RestoreGameplayHUD()
+{
+	if (UMVHUDWidgetBase* HUD = SuppressedHUD.Get())
+	{
+		UGameInstance* Instance = GetGameInstance();
+		UMVUISubsystem* UI = Instance ? Instance->GetSubsystem<UMVUISubsystem>() : nullptr;
+		if (UI && UI->GetMainHUD() == HUD)
+		{
+			HUD->SetVisibility(PreviousHUDVisibility);
+		}
+	}
+
+	SuppressedHUD.Reset();
 }
 
 bool UMVLevelUpWindow::AdjustPendingRank(const FGameplayTag ProgressionId, const int32 Delta)
@@ -262,12 +341,14 @@ void UMVLevelUpWindow::NativeConstruct()
 bool UMVLevelUpWindow::IsInteractionAllowed() const
 {
 	const AMVPlayerCharacter* Player = Cast<AMVPlayerCharacter>(GetOwningPlayerPawn());
+	const UMVRestPointSubsystem* Session = RestPointSession.Get();
 
 	return IsActivated()
 		&& !IsFadingOut()
 		&& Player
 		&& PlayerStats.Get() == Player->StatComponent
 		&& FieldTransition.IsValid()
+		&& (RestPointSession.IsExplicitlyNull() || (Session && Session->CanUseDetail()))
 		&& CanOpenForPlayer(GetOwningPlayer());
 }
 
@@ -766,8 +847,32 @@ void UMVLevelUpWindow::RegisterLevelUpInputActions()
 
 	if (CancelInputHint)
 	{
-		CancelInputHint->SetInputAction(InputSettings.GetDefaultBackAction());
+		CancelInputHint->SetInputAction(MVMenuInputHint::GetBackAction(GetOwningLocalPlayer()));
 	}
+}
+
+void UMVLevelUpWindow::RefreshInputHints()
+{
+	const UCommonInputSettings& Settings = ICommonInputModule::GetSettings();
+	const auto UpdateLabel = [this](UCommonActionWidget* Hint, UTextBlock* Text,
+		const FDataTableRowHandle& Action, const FText& Label)
+	{
+		if (!Text)
+		{
+			return;
+		}
+		bool bHasIcon = false;
+		if (Hint)
+		{
+			Hint->SetInputAction(Action);
+			const FSlateBrush Icon = Hint->GetIcon();
+			bHasIcon = Icon.DrawAs != ESlateBrushDrawType::NoDrawType
+				&& (Icon.GetResourceObject() || !Icon.GetResourceName().IsNone());
+		}
+		Text->SetText(bHasIcon ? Label : MVMenuInputHint::MakeActionLabel(GetOwningLocalPlayer(), Action, Label));
+	};
+	UpdateLabel(ConfirmInputHint, ConfirmInputLabel, Settings.GetDefaultClickAction(), NSLOCTEXT("MVLevelUp", "ConfirmHint", "확정"));
+	UpdateLabel(CancelInputHint, CancelInputLabel, MVMenuInputHint::GetBackAction(GetOwningLocalPlayer()), NSLOCTEXT("MVLevelUp", "CancelHint", "돌아가기"));
 }
 
 void UMVLevelUpWindow::UnregisterLevelUpInputActions()

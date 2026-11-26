@@ -2,19 +2,33 @@
 
 #include "CoreMinimal.h"
 #include "UI/Base/MVWidgetBase.h"
+#include "Enum/MVSkillSlot.h"
+#include "Struct/MVWeaponTypes.h"
 #include "MVPlayerSkillHUDWidget.generated.h"
 
 class UMVCombatComponent;
 class UMVSkillSlotWidget;
 class UTexture2D;
+class UInputAction;
+class UMVWeaponComponent;
+class UEnhancedInputLocalPlayerSubsystem;
+struct FMVSkillSelectionContext;
+
+/** 화면 슬롯과 실제 입력 동작의 연결. 보조키는 Blueprint의 W/E 분기와 같은 동작을 가리킨다. */
+USTRUCT(BlueprintType)
+struct FMVSkillHUDInputBinding
+{
+	GENERATED_BODY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) EMVSkillSlot Slot = EMVSkillSlot::NONE;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) TSoftObjectPtr<UInputAction> Action;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) TSoftObjectPtr<UInputAction> Modifier;
+};
 
 /**
- * Player-facing Q/R skill HUD positioned below the boss status area.
- *
- * The widget polls CombatComponent because the radial mask needs a continuous
- * cooldown ratio. Q uses the component's active chain stage to select one of
- * three configured icons; R uses a single configured icon. Both slots always
- * share the same size and spacing.
+ * 현재 무기의 QWER 선택과 사용 키를 표시하는 전투 HUD.
+ * 선택·무기·입력 변경 때 그림과 안내를 다시 읽고, 매 프레임에는 연계·대기시간·게이지만 읽는다.
+ * Construct에서 무기·입력 알림을 구독하고 Destruct/재연결에서 이전 구독을 해제한다.
+ * 선택·비용·게이지를 변경하지 않으며 미완성 선택은 그림과 준비 중 상태만 표시한다.
  */
 UCLASS(Blueprintable)
 class MAVERICK_API UMVPlayerSkillHUDWidget : public UMVWidgetBase
@@ -29,6 +43,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Skill")
 	void UnbindCombatComponent();
+	UFUNCTION(BlueprintPure, Category = "Maverick|UI|Skill")
+	UMVSkillSlotWidget* GetSkillSlot(EMVSkillSlot InSkillSlot) const;
 
 protected:
 	virtual void NativeOnInitialized() override;
@@ -38,6 +54,10 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional), Category = "Maverick|UI|Skill")
 	TObjectPtr<UMVSkillSlotWidget> QSkillSlot;
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional), Category = "Maverick|UI|Skill")
+	TObjectPtr<UMVSkillSlotWidget> WSkillSlot;
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional), Category = "Maverick|UI|Skill")
+	TObjectPtr<UMVSkillSlotWidget> ESkillSlot;
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional), Category = "Maverick|UI|Skill")
 	TObjectPtr<UMVSkillSlotWidget> RSkillSlot;
@@ -57,23 +77,36 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|UI|Skill", meta = (ClampMin = "0.0"))
 	float ChainTimerGap = 2.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|UI|Skill|Icons")
+	/** 이전 Blueprint 직렬화 호환용. 실제 그림은 선택 행에서 읽는다. */
+	UPROPERTY(meta = (DeprecatedProperty, DeprecationMessage = "Icons now come from selected skill rows"))
 	TArray<TSoftObjectPtr<UTexture2D>> QSkillIconAssets;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|UI|Skill|Icons")
+	UPROPERTY(meta = (DeprecatedProperty, DeprecationMessage = "Icons now come from selected skill rows"))
 	TArray<TSoftObjectPtr<UTexture2D>> RSkillIconAssets;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|UI|Skill")
+	TSoftObjectPtr<UTexture2D> FallbackSkillIcon;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maverick|UI|Skill|Input")
+	TArray<FMVSkillHUDInputBinding> SkillInputBindings;
 
 private:
 	bool BuildNativeWidgetTree();
-	void ResolveIconAssets();
+	void RefreshPresentation();
 	void RefreshSkillSlots();
+	void HandleSelectionChanged(const FMVSkillSelectionContext& Scope);
+	void BindInputNotifications();
+	void UnbindInputNotifications();
+	UFUNCTION() void RefreshInputHints();
+	UFUNCTION() void HandleWeaponChanged(const FMVEquippedWeaponState& State);
+	UFUNCTION() void HandlePawnChanged(APawn* Previous, APawn* Next);
 
 	UPROPERTY(Transient)
-	TObjectPtr<UMVCombatComponent> BoundCombatComponent;
+	TWeakObjectPtr<UMVCombatComponent> BoundCombatComponent;
 
 	UPROPERTY(Transient)
-	TArray<TObjectPtr<UTexture2D>> ResolvedQSkillIcons;
+	TWeakObjectPtr<UMVWeaponComponent> BoundWeaponComponent;
 
 	UPROPERTY(Transient)
-	TArray<TObjectPtr<UTexture2D>> ResolvedRSkillIcons;
+	TWeakObjectPtr<UEnhancedInputLocalPlayerSubsystem> BoundInputSubsystem;
+	FDelegateHandle SelectionChangedHandle;
+	EMVEquippedStyle DisplayedStyle = EMVEquippedStyle::None;
 };

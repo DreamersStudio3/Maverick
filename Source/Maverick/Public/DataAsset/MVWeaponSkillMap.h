@@ -116,6 +116,19 @@ public:
 	TSet<FMVWeaponSkillMapData> ESkill;
 	UPROPERTY(EditAnywhere)
 	TSet<FMVWeaponSkillMapData> RSkill;
+
+	/** QWER의 무료 Ready 기본 행. 미설정 시 유효 후보를 정렬해 결정한다. */
+	UPROPERTY(EditAnywhere, Category = "Skills|Defaults")
+	TMap<EMVSkillSlot, FDataTableRowHandle> DefaultSkillRows;
+
+	const TSet<FMVWeaponSkillMapData>* GetSkillCandidates(EMVSkillSlot Slot) const;
+	TArray<FMVWeaponSkillMapData> GetSortedSkillCandidates(EMVSkillSlot Slot) const;
+	bool GetDefaultSkillRow(EMVSkillSlot Slot, FDataTableRowHandle& OutRow) const;
+	/** 후보 형식·중복 슬롯·기본 행 오류 수집. 게임 상태와 자산을 수정하지 않는다. */
+	bool ValidateSkillCandidates(TArray<FString>& OutErrors) const;
+#if WITH_EDITOR
+	virtual EDataValidationResult IsDataValid(FDataValidationContext& Context) const override;
+#endif
 	
 public:
 	bool GetBasicAttackRow(EMVCombatActionTypes ActionType, FDataTableRowHandle& OutRowHandle) const;

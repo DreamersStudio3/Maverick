@@ -7,7 +7,7 @@
 /**
  * 플레이어 회복약 슬롯의 런타임 상태.
  *
- * PlayerCharacter의 회복약 서브모듈이 이 상태를 소유하고 QuickSlotWidget에는 표시용 데이터로 변환해 전달한다.
+ * 회복약 서브모듈이 사용 설정과 인벤토리 수량을 합쳐 HUD에 전달한다.
  */
 USTRUCT(BlueprintType)
 struct MAVERICK_API FMVHealingPotionRuntimeState

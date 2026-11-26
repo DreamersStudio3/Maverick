@@ -1,7 +1,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Enum/MVEquipmentEnums.h"
+#include "Enum/MVSkillSlot.h"
 #include "Struct/MVProgressionTypes.h"
+#include "Tables/MVEnemyDropTableTypes.h"
 #include "MVWorldStateTypes.generated.h"
 
 /**
@@ -99,6 +102,112 @@ struct MAVERICK_API FMVBossIntroSaveData
 };
 
 USTRUCT(BlueprintType)
+struct MAVERICK_API FMVRestPointDiscovery
+{
+	GENERATED_BODY()
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Save")
+	FName MapName;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Save")
+	FName FieldId;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Save")
+	FName RestPointId;
+};
+
+class UDataTable;
+
+/** 데이터 테이블 자산 경로와 행 이름으로 저장하며 런타임 행 포인터는 보관하지 않는다. */
+USTRUCT()
+struct MAVERICK_API FMVSavedWeaponRow
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	TSoftObjectPtr<UDataTable> Table;
+
+	UPROPERTY()
+	FName RowName;
+};
+
+USTRUCT()
+struct MAVERICK_API FMVSavedWeaponSkillStyle
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	TArray<FMVSavedWeaponRow> UnlockedRows;
+
+	UPROPERTY()
+	TMap<EMVSkillSlot, FMVSavedWeaponRow> EquippedRows;
+};
+
+USTRUCT()
+struct MAVERICK_API FMVWeaponProgressSaveData
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	bool bHasRecord = false;
+
+	// 4버전 저장에서만 읽는 이전 무기 소유 자료
+	UPROPERTY()
+	TMap<FGameplayTag, FMVSavedWeaponRow> OwnedWeapons;
+
+	UPROPERTY()
+	TArray<FGameplayTag> QuickSlots;
+
+	UPROPERTY()
+	FGameplayTag EquippedWeapon;
+
+	UPROPERTY()
+	int32 ActiveSlot = INDEX_NONE;
+
+	UPROPERTY()
+	TMap<EMVEquippedStyle, FMVSavedWeaponSkillStyle> SkillStyles;
+
+	UPROPERTY()
+	TMap<FGameplayTag, FMVSavedWeaponRow> SelectedPassives;
+
+	UPROPERTY()
+	int32 SkillPoints = 0;
+};
+
+/** 기록 유무를 따로 저장해 처음 시작하는 가방과 저장된 빈 가방을 구분한다. */
+USTRUCT()
+struct MAVERICK_API FMVInventorySaveData
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	bool bHasRecord = false;
+
+	UPROPERTY()
+	TMap<FGameplayTag, int32> ItemCounts;
+
+	UPROPERTY()
+	TSet<FGameplayTag> DiscoveredItems;
+};
+
+/** 한 번의 처치에서 아직 받지 못한 품목과 수량. 순서는 보상 행을 따른다. */
+USTRUCT()
+struct MAVERICK_API FMVPendingEnemyReward
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FGuid DefeatId;
+
+	// 저장을 다시 불러와도 처치 직후의 표시 간격을 이어간다. 이전 저장의 기본값은 이미 지급 가능하다.
+	UPROPERTY()
+	FDateTime AvailableAtUtc = FDateTime::MinValue();
+
+	UPROPERTY()
+	TArray<FMVGuaranteedEnemyDrop> Items;
+};
+
+USTRUCT(BlueprintType)
 struct MAVERICK_API FMVWorldSaveData
 {
 	GENERATED_BODY()
@@ -111,6 +220,21 @@ struct MAVERICK_API FMVWorldSaveData
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Save")
 	FMVCheckpointSaveData LastCheckpoint;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Save")
+	TArray<FMVRestPointDiscovery> DiscoveredRestPoints;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Save")
+	FMVCheckpointSaveData LastRestPoint;
+
+	UPROPERTY()
+	FMVWeaponProgressSaveData WeaponProgress;
+
+	UPROPERTY()
+	FMVInventorySaveData Inventory;
+
+	UPROPERTY()
+	TArray<FMVPendingEnemyReward> PendingEnemyRewards;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Save")
 	TArray<FMVFieldObjectSaveData> FieldObjects;

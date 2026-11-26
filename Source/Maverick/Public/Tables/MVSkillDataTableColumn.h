@@ -6,14 +6,13 @@
 #include "Engine/DataTable.h"
 #include "Public/Struct/MVStatusEffectTypes.h"
 #include "Public/Enum/MVChainAdvancePolicy.h"
+#include "Public/Enum/MVSkillImplementationState.h"
 #include "Public/Tables/MVActionRowTableTypes.h"
 
 #include "MVSkillDataTableColumn.generated.h"
 
-/**
- * 
- */
 class UMVAbilityBase;
+class UTexture2D;
 
 UENUM(BlueprintType)
 enum class EMVAttackSwingDirection : uint8
@@ -29,6 +28,10 @@ struct FMVSkillDataTableColumn : public FMVActionRow
 	GENERATED_BODY()
 
 public:
+	/** 그림 완성 여부와 분리된 실행 준비 상태. 기존 행은 Ready 유지. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skill")
+	EMVSkillImplementationState ImplementationState = EMVSkillImplementationState::Ready;
+
 	FMVSkillDataTableColumn()
 		: DamageMultiplier(1.0f)
 		, GroggyDamageMultiplier(1.0f)
@@ -43,6 +46,19 @@ public:
 	{
 
 	}
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	FText DisplayName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI", meta = (MultiLine = "true"))
+	FText Description;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	TSoftObjectPtr<UTexture2D> Icon;
+
+	/** 상세 영역에만 사용하는 그림. 비어 있으면 목록 아이콘을 사용한다. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	TSoftObjectPtr<UTexture2D> PreviewImage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Common")
 	TSubclassOf<UMVAbilityBase> AbilityReference;

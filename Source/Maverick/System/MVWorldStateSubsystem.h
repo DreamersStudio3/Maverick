@@ -31,12 +31,25 @@ public:
 	virtual void Deinitialize() override;
 
 	static UMVWorldStateSubsystem* Get(const UObject* WorldContextObject);
+	static FName GetRestPointMapId(const UWorld& World);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|WorldState|Save")
 	bool SaveToSlot(const FString& SlotName, int32 UserIndex);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|WorldState|Save")
 	bool SaveToDefaultSlot();
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|WorldState|Save")
+	bool SaveActiveSlot();
+
+	bool HasFailedActiveSave() const { return bActiveSaveFailed; }
+	bool RecordRestPoint(FName RestPointId, FName FieldId, const FTransform& Transform);
+	const FMVWeaponProgressSaveData& GetWeaponProgress() const { return CurrentSaveData.WeaponProgress; }
+	void SetPlayerItemProgress(FMVInventorySaveData&& Inventory, FMVWeaponProgressSaveData&& Weapons);
+	bool TryCommitPlacedPickup(FName FieldId, FName PickupId, FMVInventorySaveData&& Inventory);
+	void QueueEnemyReward(FMVPendingEnemyReward&& Reward);
+	void CommitEnemyRewardGrants(TArray<FMVPendingEnemyReward>&& Remaining, FMVInventorySaveData&& Inventory);
+	uint64 GetSaveDataGeneration() const { return SaveDataGeneration; }
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|WorldState|Save")
 	bool LoadFromSlot(const FString& SlotName, int32 UserIndex);
@@ -125,6 +138,8 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|WorldState|Event")
 	FMVOnWorldStateChanged OnWorldStateChanged;
 
+	FSimpleMulticastDelegate OnWorldStateReset;
+
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|WorldState|Event")
 	FMVOnWorldStateSlotEvent OnWorldStateSaved;
 
@@ -163,4 +178,6 @@ private:
 	FMVWorldSaveData CurrentSaveData;
 
 	bool bSaveDataDirty = false;
+	bool bActiveSaveFailed = false;
+	uint64 SaveDataGeneration = 0;
 };

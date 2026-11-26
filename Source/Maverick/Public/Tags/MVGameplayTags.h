@@ -21,6 +21,7 @@ namespace MVGameplayTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Type_Whip);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Type_EnergySword);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Item_HealingPotion_Basic);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Item_Material_IronShard);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Progression_Attribute_HP);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Progression_Attribute_Stamina);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Progression_Attribute_MP);

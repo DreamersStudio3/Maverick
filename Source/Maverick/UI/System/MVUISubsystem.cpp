@@ -10,12 +10,14 @@
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "HAL/IConsoleManager.h"
+#include "System/MVWorldStateSubsystem.h"
 #include "Tables/MVDialogueTableTypes.h"
 #include "Tables/MVTableManager.h"
 #include "Tables/MVUIMessageTableTypes.h"
 #include "UI/Base/MVHUDWidgetBase.h"
 #include "UI/Base/MVPopupBase.h"
 #include "UI/Base/MVWindowBase.h"
+#include "UI/Notification/MVItemAcquisitionNotifications.h"
 #include "UI/Popup/MVInteractionPromptPopup.h"
 #include "UI/Popup/MVMessagePopup.h"
 #include "UI/Debug/MVPIEActionTestWidget.h"
@@ -23,9 +25,12 @@
 #include "UI/System/MVUISettings.h"
 #include "UI/Window/MVDeathOverlayWindow.h"
 #include "UI/Window/MVDialogueWindow.h"
+#include "UI/Window/MVInventoryWindow.h"
 #include "UI/Window/MVLoadingWindow.h"
 #include "System/Progression/MVProgressionSubsystem.h"
 #include "UI/Window/MVLevelUpWindow.h"
+#include "Interaction/RestPoint/MVRestPointSubsystem.h"
+#include "UI/Window/MVWeaponPassiveSelectionWindow.h"
 
 namespace
 {
@@ -73,6 +78,18 @@ void MVUISubsystemAdvanceLoadingTestCardCommand(const TArray<FString>& Args, UWo
 }
 
 #if !UE_BUILD_SHIPPING
+static FAutoConsoleCommandWithWorld MVUISubsystemShowInventoryConsoleCommand(
+	TEXT("MV.UI.Inventory.Show"),
+	TEXT("Open the field menu and inventory preview."),
+	FConsoleCommandWithWorldDelegate::CreateLambda([](UWorld* World)
+	{
+		UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr;
+		if (UMVUISubsystem* UI = GameInstance ? GameInstance->GetSubsystem<UMVUISubsystem>() : nullptr)
+		{
+			UI->ShowInventoryWindow();
+		}
+	}));
+
 static FAutoConsoleCommandWithWorldAndArgs MVUISubsystemShowLoadingTestConsoleCommand(
 	TEXT("MV.UI.LoadingTest.Show"),
 	TEXT("Show a persistent loading window for UI testing. Pass 'native' to use the C++ fallback layout."),
@@ -94,15 +111,31 @@ void UMVUISubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 
+	Collection.InitializeDependency<UMVWorldStateSubsystem>();
+	ItemAcquisitionNotifications = NewObject<UMVItemAcquisitionNotifications>(this);
+	ItemAcquisitionNotifications->Initialize(*this);
 	FWorldDelegates::OnPostWorldInitialization.AddUObject(this, &UMVUISubsystem::HandleWorldInit);
 }
 
 void UMVUISubsystem::Deinitialize()
 {
 	FWorldDelegates::OnPostWorldInitialization.RemoveAll(this);
+	if (ItemAcquisitionNotifications)
+	{
+		ItemAcquisitionNotifications->Shutdown();
+		ItemAcquisitionNotifications = nullptr;
+	}
 	ClearAllUI();
 
 	Super::Deinitialize();
+}
+
+void UMVUISubsystem::BindItemAcquisitionPlayer(AMVPlayerCharacter& Player, APlayerController& Controller)
+{
+	if (ItemAcquisitionNotifications)
+	{
+		ItemAcquisitionNotifications->BindPlayer(Player, Controller);
+	}
 }
 
 UMVUILayerBase* UMVUISubsystem::GetOrCreateRootLayer(UWorld* InWorld)
@@ -149,6 +182,10 @@ UMVUILayerBase* UMVUISubsystem::PushLayer(UWorld* InWorld)
 	NewLayer->AddToViewport(BaseZOrder + LayerStack.Num() * ZOrderStep);
 	NewLayer->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	LayerStack.Add(NewLayer);
+	if (ItemAcquisitionNotifications)
+	{
+		ItemAcquisitionNotifications->AttachLayer(*NewLayer);
+	}
 	return NewLayer;
 }
 
@@ -159,10 +196,18 @@ void UMVUISubsystem::PopLayer()
 		return;
 	}
 
+	if (ItemAcquisitionNotifications)
+	{
+		ItemAcquisitionNotifications->DetachLayer();
+	}
 	if (UMVUILayerBase* TopLayer = LayerStack.Pop())
 	{
 		TopLayer->ClearLayer();
 		TopLayer->RemoveFromParent();
+	}
+	if (ItemAcquisitionNotifications && !LayerStack.IsEmpty() && IsValid(LayerStack.Last()))
+	{
+		ItemAcquisitionNotifications->AttachLayer(*LayerStack.Last());
 	}
 
 	CachedHUD = nullptr;
@@ -203,6 +248,44 @@ UCommonActivatableWidget* UMVUISubsystem::PushWindowByClass(TSubclassOf<UMVWindo
 	}
 
 	return Layer->PushWindow(WindowClass);
+}
+
+UMVInventoryWindow* UMVUISubsystem::ShowInventoryWindow()
+{
+	UWorld* World = GetWorld();
+	APlayerController* Player = World ? World->GetFirstPlayerController() : nullptr;
+	if (!World || !World->IsGameWorld() || !UMVInventoryWindow::CanOpenForPlayer(Player)
+		|| !GetDefault<UMVInventoryWindow>()->HasPresentation())
+	{
+		return nullptr;
+	}
+
+	UMVUILayerBase* Layer = GetOrCreateRootLayer(World);
+	if (!Layer)
+	{
+		return nullptr;
+	}
+	if (auto* Existing = Cast<UMVInventoryWindow>(Layer->FindWindowByClass(UMVInventoryWindow::StaticClass())))
+	{
+		return Existing->IsFadingOut() ? nullptr : Existing;
+	}
+	for (const UMVUILayerBase* OpenLayer : LayerStack)
+	{
+		if (IsValid(OpenLayer) && OpenLayer->IsInViewport() && OpenLayer->HasWindowInput())
+		{
+			return nullptr;
+		}
+	}
+	return Cast<UMVInventoryWindow>(Layer->PushWindow(UMVInventoryWindow::StaticClass()));
+}
+
+bool UMVUISubsystem::HasInventoryWindow() const
+{
+	return LayerStack.ContainsByPredicate([](const UMVUILayerBase* Layer)
+	{
+		return IsValid(Layer) && Layer->IsInViewport()
+			&& Layer->FindWindowByClass(UMVInventoryWindow::StaticClass()) != nullptr;
+	});
 }
 
 UMVPopupBase* UMVUISubsystem::PushPopupByClass(TSubclassOf<UMVPopupBase> PopupClass)
@@ -436,12 +519,19 @@ UMVPIEActionTestWidget* UMVUISubsystem::OpenPIEActionTestPanel(AMVCharacterBase*
 void UMVUISubsystem::HidePIEActionTestPanel()
 {
 #if !UE_BUILD_SHIPPING
+	const bool bWasPanelInViewport = ActivePIEActionTestWidget && ActivePIEActionTestWidget->IsInViewport();
 	bHasPendingPIEActionTestPanel = false;
 	PendingPIEActionTestTargetCharacter.Reset();
 	if (ActivePIEActionTestWidget)
 	{
 		ActivePIEActionTestWidget->RemoveFromParent();
 		ActivePIEActionTestWidget = nullptr;
+	}
+
+	// 상호작용 정리에서 열리지 않은 시험 패널을 닫아도 현재 메뉴의 입력은 유지한다.
+	if (!bWasPanelInViewport)
+	{
+		return;
 	}
 
 	UWorld* World = GetWorld();
@@ -706,6 +796,10 @@ void UMVUISubsystem::ClearAllUI(bool bUseFadeOut)
 
 void UMVUISubsystem::ClearAllUIInternal(bool bUseFadeOut)
 {
+	if (ItemAcquisitionNotifications)
+	{
+		ItemAcquisitionNotifications->DetachLayer();
+	}
 	for (UMVUILayerBase* Layer : LayerStack)
 	{
 		if (!Layer)
@@ -788,7 +882,7 @@ void UMVUISubsystem::HandleWorldInit(UWorld* World, const UWorld::Initialization
 	}
 
 	ClearAllUI();
-	GetOrCreateRootLayer(World);
+	// 뷰포트 준비 전의 부착을 피하고 첫 HUD·상호작용 요청에서 레이어를 만든다.
 
 	FTimerHandle PostWorldInitTimerHandle;
 	const TWeakObjectPtr<UWorld> WeakWorld = World;
@@ -1183,7 +1277,86 @@ void UMVUISubsystem::TrackActiveDialogueWindow(UMVDialogueWindow* DialogueWindow
 	}
 }
 
+UMVWeaponSkillSelectionWindow* UMVUISubsystem::FindWeaponSkillSelectionWindow(UMVUILayerBase*& OutLayer) const
+{
+	for (int32 Index = LayerStack.Num() - 1; Index >= 0; --Index)
+	{
+		UMVUILayerBase* Layer = LayerStack[Index];
+		if (IsValid(Layer) && Layer->IsInViewport())
+		{
+			if (auto* Window = Cast<UMVWeaponSkillSelectionWindow>(
+				Layer->FindWindowByClass(UMVWeaponSkillSelectionWindow::StaticClass())))
+			{
+				OutLayer = Layer;
+				return Window;
+			}
+		}
+	}
+	OutLayer = nullptr;
+	return nullptr;
+}
+
+UMVWeaponSkillSelectionWindow* UMVUISubsystem::ShowWeaponSkillSelectionWindow()
+{
+	const UWorld* World = GetWorld();
+	if (!World || !World->IsGameWorld()
+		|| !UMVWeaponSkillSelectionWindow::CanOpenForPlayer(World->GetFirstPlayerController()))
+	{
+		return nullptr;
+	}
+
+	UMVUILayerBase* Layer = nullptr;
+	if (auto* Existing = FindWeaponSkillSelectionWindow(Layer))
+	{
+		return Existing->IsFadingOut() ? nullptr : Existing;
+	}
+
+	const auto WindowClass = GetDefault<UMVUISettings>()->WeaponPassiveSelectionWindowClass;
+	return WindowClass ? Cast<UMVWeaponSkillSelectionWindow>(PushWindowByClass(WindowClass)) : nullptr;
+}
+
+bool UMVUISubsystem::HideWeaponSkillSelectionWindow()
+{
+	UMVUILayerBase* Layer = nullptr;
+	auto* Window = FindWeaponSkillSelectionWindow(Layer);
+	if (!Window)
+	{
+		return false;
+	}
+	if (Window->IsActivated())
+	{
+		Window->DeactivateWidgetWithFade();
+		return true;
+	}
+	return Layer->RemoveWindow(Window);
+}
+
+UMVWeaponPassiveSelectionWindow* UMVUISubsystem::FindWeaponPassiveSelectionWindow(UMVUILayerBase*& OutLayer) const
+{
+	return Cast<UMVWeaponPassiveSelectionWindow>(FindWeaponSkillSelectionWindow(OutLayer));
+}
+
+UMVWeaponPassiveSelectionWindow* UMVUISubsystem::ShowWeaponPassiveSelectionWindow()
+{
+	return Cast<UMVWeaponPassiveSelectionWindow>(ShowWeaponSkillSelectionWindow());
+}
+
+bool UMVUISubsystem::HideWeaponPassiveSelectionWindow()
+{
+	return HideWeaponSkillSelectionWindow();
+}
+
 UMVLevelUpWindow* UMVUISubsystem::ShowLevelUpWindow()
+{
+	return ShowLevelUpWindowInternal(nullptr);
+}
+
+UMVLevelUpWindow* UMVUISubsystem::ShowLevelUpWindowForRestPoint(UMVRestPointSubsystem& Session)
+{
+	return ShowLevelUpWindowInternal(&Session);
+}
+
+UMVLevelUpWindow* UMVUISubsystem::ShowLevelUpWindowInternal(UMVRestPointSubsystem* RestPointSession)
 {
 	UWorld* World = GetWorld();
 
@@ -1221,7 +1394,7 @@ UMVLevelUpWindow* UMVUISubsystem::ShowLevelUpWindow()
 
 		if (ExistingWindow)
 		{
-			return ExistingWindow->IsFadingOut()
+			return RestPointSession || ExistingWindow->IsFadingOut()
 				? nullptr
 				: ExistingWindow;
 		}
@@ -1234,7 +1407,12 @@ UMVLevelUpWindow* UMVUISubsystem::ShowLevelUpWindow()
 		return nullptr;
 	}
 
-	return Cast<UMVLevelUpWindow>(PushWindowByClass(Settings->LevelUpWindowClass));
+	UMVUILayerBase* RootLayer = GetOrCreateRootLayer(World);
+	return RootLayer ? Cast<UMVLevelUpWindow>(RootLayer->PushWindow(Settings->LevelUpWindowClass,
+		[RestPointSession](UCommonActivatableWidget& Window)
+		{
+			CastChecked<UMVLevelUpWindow>(&Window)->SetRestPointSession(RestPointSession);
+		})) : nullptr;
 }
 
 bool UMVUISubsystem::HideLevelUpWindow()

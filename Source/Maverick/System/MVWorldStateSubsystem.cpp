@@ -1,11 +1,19 @@
 #include "System/MVWorldStateSubsystem.h"
 
+#include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
 #include "System/MVWorldSaveGame.h"
 
+#if PLATFORM_WINDOWS
+#include "HAL/FileManager.h"
+#include "Misc/FileHelper.h"
+#include "Misc/Paths.h"
+#include "Windows/WindowsHWrapper.h"
+#endif
+
 namespace
 {
-const int32 MVWorldStateCurrentSaveVersion = 3;
+const int32 MVWorldStateCurrentSaveVersion = 5;
 
 FString WorldStateResolveFallbackSlotName(const FString& RequestedSlotName, const FString& DefaultSlotName)
 {
@@ -15,6 +23,31 @@ FString WorldStateResolveFallbackSlotName(const FString& RequestedSlotName, cons
 	}
 
 	return DefaultSlotName.IsEmpty() ? FString(TEXT("MaverickDefault")) : DefaultSlotName;
+}
+
+bool MVWorldStateWriteSlot(UMVWorldSaveGame& SaveGame, const FString& SlotName, const int32 UserIndex)
+{
+#if PLATFORM_WINDOWS
+	// Windows의 기본 SaveGame과 같은 경로·형식을 사용한다. 쓰기가 끝난 파일만 기존 슬롯과 교체한다.
+	TArray<uint8> Bytes;
+	if (!UGameplayStatics::SaveGameToMemory(&SaveGame, Bytes))
+	{
+		return false;
+	}
+
+	const FString Destination = FPaths::ConvertRelativePathToFull(FPaths::ProjectSavedDir() / TEXT("SaveGames") / (SlotName + TEXT(".sav")));
+	const FString Temporary = Destination + TEXT(".") + FGuid::NewGuid().ToString(EGuidFormats::Digits) + TEXT(".tmp");
+	if (FFileHelper::SaveArrayToFile(Bytes, *Temporary)
+		&& ::MoveFileExW(*Temporary, *Destination, MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH))
+	{
+		return true;
+	}
+
+	IFileManager::Get().Delete(*Temporary, false, false, true);
+	return false;
+#else
+	return UGameplayStatics::SaveGameToSlot(&SaveGame, SlotName, UserIndex);
+#endif
 }
 }
 
@@ -46,6 +79,11 @@ UMVWorldStateSubsystem* UMVWorldStateSubsystem::Get(const UObject* WorldContextO
 	return GameInstance ? GameInstance->GetSubsystem<UMVWorldStateSubsystem>() : nullptr;
 }
 
+FName UMVWorldStateSubsystem::GetRestPointMapId(const UWorld& World)
+{
+	return FName(*UWorld::RemovePIEPrefix(World.GetOutermost()->GetName()));
+}
+
 bool UMVWorldStateSubsystem::SaveToSlot(const FString& SlotName, const int32 UserIndex)
 {
 	const FString ResolvedSlotName = ResolveSlotName(SlotName);
@@ -55,18 +93,21 @@ bool UMVWorldStateSubsystem::SaveToSlot(const FString& SlotName, const int32 Use
 		return false;
 	}
 
-	CurrentSaveData.SaveVersion = MVWorldStateCurrentSaveVersion;
-	CurrentSaveData.SavedAtUtcIso8601 = FDateTime::UtcNow().ToIso8601();
 	SaveGame->SaveData = CurrentSaveData;
+	SaveGame->SaveData.SaveVersion = MVWorldStateCurrentSaveVersion;
+	SaveGame->SaveData.SavedAtUtcIso8601 = FDateTime::UtcNow().ToIso8601();
 
-	if (!UGameplayStatics::SaveGameToSlot(SaveGame, ResolvedSlotName, UserIndex))
+	if (!MVWorldStateWriteSlot(*SaveGame, ResolvedSlotName, UserIndex))
 	{
 		return false;
 	}
 
 	ActiveSaveSlotName = ResolvedSlotName;
 	ActiveUserIndex = UserIndex;
+	CurrentSaveData.SaveVersion = SaveGame->SaveData.SaveVersion;
+	CurrentSaveData.SavedAtUtcIso8601 = SaveGame->SaveData.SavedAtUtcIso8601;
 	bSaveDataDirty = false;
+	bActiveSaveFailed = false;
 	OnWorldStateSaved.Broadcast(ActiveSaveSlotName);
 	return true;
 }
@@ -74,6 +115,18 @@ bool UMVWorldStateSubsystem::SaveToSlot(const FString& SlotName, const int32 Use
 bool UMVWorldStateSubsystem::SaveToDefaultSlot()
 {
 	return SaveToSlot(DefaultSaveSlotName, DefaultUserIndex);
+}
+
+bool UMVWorldStateSubsystem::SaveActiveSlot()
+{
+	if (SaveToSlot(ActiveSaveSlotName, ActiveUserIndex))
+	{
+		return true;
+	}
+
+	bActiveSaveFailed = true;
+	UE_LOG(LogTemp, Warning, TEXT("WorldState: failed to write active slot %s."), *ActiveSaveSlotName);
+	return false;
 }
 
 bool UMVWorldStateSubsystem::LoadFromSlot(const FString& SlotName, const int32 UserIndex)
@@ -92,11 +145,13 @@ bool UMVWorldStateSubsystem::LoadFromSlot(const FString& SlotName, const int32 U
 	}
 
 	CurrentSaveData = WorldSaveGame->SaveData;
+	++SaveDataGeneration;
 	UpgradeSaveData();
 	
 	ActiveSaveSlotName = ResolvedSlotName;
 	ActiveUserIndex = UserIndex;
 	bSaveDataDirty = false;
+	bActiveSaveFailed = false;
 	OnPlayerProgressionChanged.Broadcast(CurrentSaveData.PlayerProgression);
 	OnWorldStateLoaded.Broadcast(ActiveSaveSlotName);
 	OnWorldStateChanged.Broadcast();
@@ -133,8 +188,11 @@ bool UMVWorldStateSubsystem::DoesSaveSlotExist(const FString& SlotName, const in
 void UMVWorldStateSubsystem::ResetSaveData()
 {
 	CurrentSaveData = FMVWorldSaveData();
+	++SaveDataGeneration;
 	CurrentSaveData.SaveVersion = MVWorldStateCurrentSaveVersion;
 	bSaveDataDirty = false;
+	bActiveSaveFailed = false;
+	OnWorldStateReset.Broadcast();
 	OnPlayerProgressionChanged.Broadcast(CurrentSaveData.PlayerProgression);
 	OnWorldStateChanged.Broadcast();
 }
@@ -142,6 +200,7 @@ void UMVWorldStateSubsystem::ResetSaveData()
 void UMVWorldStateSubsystem::ApplySaveData(const FMVWorldSaveData& InSaveData)
 {
 	CurrentSaveData = InSaveData;
+	++SaveDataGeneration;
 	UpgradeSaveData();
 	OnPlayerProgressionChanged.Broadcast(CurrentSaveData.PlayerProgression);
 	MarkSaveDataDirty();
@@ -209,6 +268,86 @@ bool UMVWorldStateSubsystem::TryGetLastCheckpoint(FMVCheckpointSaveData& OutChec
 {
 	OutCheckpoint = CurrentSaveData.LastCheckpoint;
 	return CurrentSaveData.LastCheckpoint.bHasCheckpoint;
+}
+
+bool UMVWorldStateSubsystem::RecordRestPoint(
+	const FName RestPointId, const FName FieldId, const FTransform& Transform)
+{
+	const UWorld* World = GetWorld();
+	if (!World || RestPointId.IsNone() || FieldId.IsNone() || !Transform.IsValid())
+	{
+		return false;
+	}
+
+	const FName MapName = GetRestPointMapId(*World);
+	FMVCheckpointSaveData& Last = CurrentSaveData.LastRestPoint;
+	TArray<FMVRestPointDiscovery>& Discovered = CurrentSaveData.DiscoveredRestPoints;
+	const bool bDiscovered = Discovered.ContainsByPredicate([=](const FMVRestPointDiscovery& Point)
+	{
+		return Point.MapName == MapName && Point.FieldId == FieldId && Point.RestPointId == RestPointId;
+	});
+	if (bDiscovered && Last.bHasCheckpoint && Last.CheckpointId == RestPointId
+		&& Last.FieldId == FieldId && Last.MapName == MapName && Last.Transform.Equals(Transform))
+	{
+		return false;
+	}
+
+	if (!bDiscovered)
+	{
+		FMVRestPointDiscovery& Point = Discovered.AddDefaulted_GetRef();
+		Point.MapName = MapName;
+		Point.FieldId = FieldId;
+		Point.RestPointId = RestPointId;
+	}
+
+	Last.bHasCheckpoint = true;
+	Last.CheckpointId = RestPointId;
+	Last.FieldId = FieldId;
+	Last.MapName = MapName;
+	Last.Transform = Transform;
+	MarkSaveDataDirty();
+	return true;
+}
+
+void UMVWorldStateSubsystem::SetPlayerItemProgress(FMVInventorySaveData&& Inventory, FMVWeaponProgressSaveData&& Weapons)
+{
+	CurrentSaveData.Inventory = MoveTemp(Inventory);
+	CurrentSaveData.WeaponProgress = MoveTemp(Weapons);
+	MarkSaveDataDirty();
+}
+
+bool UMVWorldStateSubsystem::TryCommitPlacedPickup(
+	const FName FieldId, const FName PickupId, FMVInventorySaveData&& Inventory)
+{
+	if (FieldId.IsNone() || PickupId.IsNone() || !Inventory.bHasRecord || FindFieldObjectRecord(FieldId, PickupId))
+	{
+		return false;
+	}
+
+	FMVFieldObjectSaveData& Record = CurrentSaveData.FieldObjects.AddDefaulted_GetRef();
+	Record.FieldId = FieldId;
+	Record.ObjectId = PickupId;
+	Record.bConsumed = true;
+	Record.StateId = TEXT("Consumed");
+	CurrentSaveData.Inventory = MoveTemp(Inventory);
+	bSaveDataDirty = true;
+	SaveActiveSlot();
+	OnWorldStateChanged.Broadcast();
+	return true;
+}
+
+void UMVWorldStateSubsystem::QueueEnemyReward(FMVPendingEnemyReward&& Reward)
+{
+	CurrentSaveData.PendingEnemyRewards.Add(MoveTemp(Reward));
+	bSaveDataDirty = true;
+}
+
+void UMVWorldStateSubsystem::CommitEnemyRewardGrants(
+	TArray<FMVPendingEnemyReward>&& Remaining, FMVInventorySaveData&& Inventory)
+{
+	CurrentSaveData.PendingEnemyRewards = MoveTemp(Remaining);
+	CurrentSaveData.Inventory = MoveTemp(Inventory);
+	bSaveDataDirty = true;
 }
 
 bool UMVWorldStateSubsystem::SetFieldObjectState(
@@ -399,6 +538,12 @@ bool UMVWorldStateSubsystem::TryGetBossIntroCompleted(const FName IntroId, FMVBo
 
 void UMVWorldStateSubsystem::UpgradeSaveData()
 {
+	if (CurrentSaveData.SaveVersion < 4)
+	{
+		CurrentSaveData.DiscoveredRestPoints.Reset();
+		CurrentSaveData.LastRestPoint = FMVCheckpointSaveData();
+		CurrentSaveData.WeaponProgress = FMVWeaponProgressSaveData();
+	}
 	if (CurrentSaveData.SaveVersion < 2)
 	{
 		CurrentSaveData.PlayerProgression = FMVPlayerProgressionSaveData();

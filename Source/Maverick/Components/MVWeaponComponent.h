@@ -8,16 +8,24 @@
 #include "Tables/MVWeaponTableTypes.h"
 #include "Interface/MVActionInputHandlerInterface.h"
 #include "DataAsset/MVWeaponSkillMap.h"
+#include "Weapon/Skill/MVSkillSelectionTypes.h"
 
 #include "MVWeaponComponent.generated.h"
 
 class UMeshComponent;
 class UObject;
 class USceneComponent;
+class UMVInventoryComponent;
+class UMVRestPointSubsystem;
+class UMVWorldStateSubsystem;
+struct FMVInventorySaveData;
+struct FMVWeaponProgressSaveData;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMVOnEquippedWeaponChanged, const FMVEquippedWeaponState&, WeaponState);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMVOnOwnedWeaponsChanged);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMVOnQuickSlotsChanged);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMVOnPassiveOptionsChanged);
+DECLARE_MULTICAST_DELEGATE_OneParam(FMVOnSkillSelectionChanged, const FMVSkillSelectionContext&);
 
 /** 무기 종류로 걸러진 패시브 후보의 스킬 행과 현재 해금 상태. */
 USTRUCT(BlueprintType)
@@ -36,19 +44,10 @@ struct FMVPassiveSkillCandidate
 };
 
 /**
- * 캐릭터의 무기 소유권, 퀵슬롯, 현재 장착 상태와 스타일별 스킬 진행을 관리하는 컴포넌트.
- *
- * OwnedWeapons를 소유 여부의 단일 정본으로 유지하고 QuickSlotWeaponTags는 그 key만 참조한다.
- * Q/W/E/R 해금·장착은 EMVEquippedStyle별로 공유하고 스킬 포인트는 모든 스타일이 함께 사용한다.
- * 패시브 후보는 스타일 트리에서 무기 종류로 거르고, 선택한 한 행은 종류별로 보관한다.
- * 장착 스타일이 바뀔 때 CharacterBase의 EquippedStyle과 CombatComponent의 액션 맵을 동기화한다.
- * 맨손은 소유 목록과 퀵슬롯에 넣지 않는 내부 fallback이며, 실제 무기 메시에는 필수 Trace 소켓이 있어야 한다.
- *
- * 라이프사이클:
- *   1) 생성자 -> 기본 맨손 무기 row 값을 준비한다.
- *   2) BeginPlay -> 스킬맵과 진행 상태를 준비하고, 저장 상태가 없을 때만 DefaultWeaponRow 또는 맨손을 장착한다.
- *   3) 공개 장착은 CycleWeapon으로 제한하고, 퀵슬롯이 참조하는 row를 내부에서 검증한 뒤 관련 상태와 이벤트를 갱신한다.
- *   4) HitResolver가 타격 확정 시점에 CaptureWeaponHitSnapshot으로 히트 전용 사본을 만든다.
+ * 인벤토리의 소유 태그를 참조해 퀵슬롯, 장착, 무기 스킬 진행을 관리한다.
+ * BeginPlay에서 소지품을 먼저 읽고 슬롯, 장착, 스타일별 QWER와 종류별 패시브를 복원한다.
+ * 필드에서는 기존 슬롯을 순환한다. 편성은 유효한 거점 상세 창을 확인한 서브시스템에서 요청한다.
+ * 무기 회수 시 슬롯을 비우고 장착 중이면 맨손으로 전환한다. 장착·가방 기록을 함께 저장한다.
  */
 UCLASS(ClassGroup = (Maverick), meta = (BlueprintSpawnableComponent))
 class MAVERICK_API UMVWeaponComponent : public UActorComponent, public IMVActionInputHandlerInterface
@@ -72,12 +71,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Weapon|Ownership")
 	bool DiscardWeapon(FGameplayTag WeaponTag);
-
-	UFUNCTION(BlueprintCallable, Category = "Maverick|Weapon|Quick Slot")
-	bool SetQuickSlotWeapon(int32 SlotIndex, FGameplayTag WeaponTag);
-
-	UFUNCTION(BlueprintCallable, Category = "Maverick|Weapon|Quick Slot")
-	bool ClearQuickSlotWeapon(int32 SlotIndex);
 
 	virtual bool TryHandleActionInput(FGameplayTag ActionInputTag, FVector2D ControllerSpaceInput, bool bHasMovementInput) override;
 
@@ -151,6 +144,23 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Skill|Passive")
 	bool ClearSelectedPassive(FGameplayTag WeaponTypeTag);
 
+	UFUNCTION(BlueprintPure, Category = "Maverick|Skill|Selection")
+	TArray<FMVSkillSelectionCandidate> GetSkillCandidates(const FMVSkillSelectionContext& Context) const;
+
+	UFUNCTION(BlueprintPure, Category = "Maverick|Skill|Selection")
+	bool GetSelectedSkill(const FMVSkillSelectionContext& Context, FDataTableRowHandle& Output) const;
+
+	/** 빈 행 요청은 패시브 선택 해제에만 사용한다. */
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Skill|Selection")
+	FMVSkillSelectionResult TrySelectSkill(const FMVSkillSelectionContext& Context, FDataTableRowHandle Row);
+
+	/** 현재 선택을 재적용하지 않고 저장 자료와 디스크만 갱신한다. */
+	UFUNCTION(BlueprintCallable, Category = "Maverick|Skill|Selection")
+	EMVSkillSelectionSaveStatus RetrySkillSelectionSave();
+
+	/** 종류별 패시브 또는 스타일별 QWER 실제 변경에만 발행, 같은 행 재요청은 제외. */
+	FMVOnSkillSelectionChanged OnSkillSelectionChanged;
+
 	UFUNCTION(BlueprintPure, Category = "Maverick|Skill")
 	int32 GetSkillPoints() const;
 
@@ -166,6 +176,10 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|Weapon|Event")
 	FMVOnQuickSlotsChanged OnQuickSlotsChanged;
+
+	/** 패시브 선택 요청 완료 또는 해금 성공 시 현재 후보와 선택을 다시 읽도록 알린다. */
+	UPROPERTY(BlueprintAssignable, Category = "Maverick|Skill|Passive")
+	FMVOnPassiveOptionsChanged OnPassiveOptionsChanged;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Weapon|Default")
 	FMVWeaponTableRow BareHandWeapon;
@@ -184,14 +198,27 @@ public:
 	TArray<TObjectPtr<UMVWeaponSkillMap>> WeaponSkillMaps;
 
 private:
+	friend class UMVInventoryComponent;
+	friend class UMVRestPointSubsystem;
+	friend class FMVWeaponSkillSelectionRequestsTest;
+	friend class FMVSkillSafeReplacementTest;
+	friend class FMVSkillSelectionPersistenceTest;
+	friend class FMVItemAcquisitionTest;
+	EMVSkillSelectionStatus TryEquipActiveSkill(EMVEquippedStyle Style, EMVSkillSlot Slot, const FDataTableRowHandle& Row, EMVSkillSelectionSaveStatus* OutSaveStatus = nullptr);
+	EMVSkillSelectionStatus ValidateSkillSelectionContext(const FMVSkillSelectionContext& Context) const;
+	void BroadcastSkillSelectionChanged(EMVEquippedStyle Style, EMVSkillSlot Slot, FGameplayTag WeaponType = FGameplayTag());
+	FDataTableRowHandle FindOwnedWeaponRow(FGameplayTag WeaponTag) const;
+	bool CanRemoveOwnedWeapon() const;
+	void HandleInventoryItemChanged(FGameplayTag ItemTag, bool bWeapon);
+	bool ChangeRestPointQuickSlot(int32 SlotIndex, FGameplayTag ExpectedWeapon, FGameplayTag WeaponTag, bool& bSaved);
 	bool EquipQuickSlotWeapon(int32 SlotIndex);
-	bool TryEquipWeaponTag(const FGameplayTag& WeaponTag, int32 QuickSlotIndex);
-	bool TryEquipWeaponRow(const FMVWeaponTableRow& WeaponRow, int32 QuickSlotIndex);
+	bool TryEquipWeaponTag(const FGameplayTag& WeaponTag, int32 QuickSlotIndex, bool bRefreshCombat = false);
+	bool TryEquipWeaponRow(const FMVWeaponTableRow& WeaponRow, int32 QuickSlotIndex, bool bRefreshCombat);
 	const FMVWeaponTableRow* ResolveWeaponRow(const FDataTableRowHandle& RowHandle, const TCHAR* Context) const;
 	int32 FindQuickSlotIndexForItemTag(const FGameplayTag& ItemTag) const;
 	void EnsureQuickSlotStorage();
-	void EquipBareHand();
-	void ApplyEquippedWeaponState(const FMVEquippedWeaponState& NewState);
+	void EquipBareHand(bool bRefreshCombat = false, bool bBroadcast = true);
+	void ApplyEquippedWeaponState(const FMVEquippedWeaponState& NewState, bool bRefreshCombat, bool bBroadcast = true);
 	static FMVEquippedWeaponState MakeStateFromWeaponRow(const FMVWeaponTableRow& WeaponRow);
 	static FMVWeaponHitSnapshot MakeHitSnapshotFromState(const FMVEquippedWeaponState& WeaponState);
 	bool CanEquipWeaponState(const FMVEquippedWeaponState& WeaponState) const;
@@ -224,6 +251,14 @@ private:
 		const TSet<FMVWeaponSkillMapData>& Skills) const;
 	bool ResolveOwnedWeaponTypeStyle(FGameplayTag WeaponTypeTag, EMVEquippedStyle& OutputStyle) const;
 	bool IsValidPassiveCandidateRow(const FDataTableRowHandle& RowHandle) const;
+
+	void InitializeWeaponProgress();
+	void RestoreWeaponProgress(const FMVWeaponProgressSaveData& Progress, const FMVInventorySaveData& InventoryProgress);
+	void NotifyWeaponProgressRestored();
+	EMVSkillSelectionSaveStatus StoreWeaponProgress(bool bSaveImmediately = false) const;
+
+	UFUNCTION()
+	void HandleWeaponSaveLoaded(FString SlotName);
 	
 	// Todo: Apply Skill to CombatComponent. This function will be responsible for applying the equipped skills to the character's combat component, allowing the character to use the skills in combat.
 	//void ApplySkillToCombatComponent();
@@ -232,8 +267,8 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Weapon", meta = (AllowPrivateAccess = "true"))
 	FMVEquippedWeaponState CurrentWeaponState;
 
-	UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Weapon|Ownership", meta = (AllowPrivateAccess = "true"))
-	TMap<FGameplayTag, FDataTableRowHandle> OwnedWeapons;
+	UPROPERTY(Transient)
+	TObjectPtr<UMVInventoryComponent> Inventory;
 
 	UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Weapon|Quick Slot", meta = (AllowPrivateAccess = "true"))
 	TArray<FGameplayTag> QuickSlotWeaponTags;
@@ -255,10 +290,14 @@ private:
 	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Skill", meta = (AllowPrivateAccess = "true"))
 	TMap<EMVEquippedStyle, FMVSkillTreeState> SkillTreeStates;
 
-	// Current session selection; later save data must persist this by weapon kind.
+	// Current selection by weapon kind.
 	UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Skill|Passive", meta = (AllowPrivateAccess = "true"))
 	TMap<FGameplayTag, FDataTableRowHandle> SelectedPassiveByWeaponType;
 
 	UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category = "Maverick|Skill", meta = (AllowPrivateAccess = "true"))
 	int32 CurrentSkillPoints = 0;
+
+	TWeakObjectPtr<UMVWorldStateSubsystem> WeaponSaveState;
+	bool bRestoringWeaponProgress = false;
+	bool bDeferSkillSelectionSave = false;
 };

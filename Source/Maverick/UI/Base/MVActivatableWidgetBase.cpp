@@ -1,5 +1,35 @@
 #include "UI/Base/MVActivatableWidgetBase.h"
 
+#include "Engine/World.h"
+#include "UI/System/MVMenuInputHint.h"
+#include "Input/CommonUIInputTypes.h"
+
+void UMVActivatableWidgetBase::NativeConstruct()
+{
+	Super::NativeConstruct();
+#if WITH_EDITOR
+	if (bIsBackHandler && GetWorld() && GetWorld()->WorldType == EWorldType::PIE)
+	{
+		FBindUIActionArgs Args(MVMenuInputHint::GetBackAction(GetOwningLocalPlayer()), false,
+			FSimpleDelegate::CreateUObject(this, &ThisClass::HandleBackAction));
+		Args.InputMode = ECommonInputMode::Menu;
+		Args.bConsumeInput = true;
+		PIEBackInputBinding = RegisterUIActionBinding(Args);
+	}
+#endif
+}
+
+void UMVActivatableWidgetBase::NativeDestruct()
+{
+	if (PIEBackInputBinding.IsValid())
+	{
+		RemoveActionBinding(PIEBackInputBinding);
+		PIEBackInputBinding.Unregister();
+		PIEBackInputBinding = {};
+	}
+	Super::NativeDestruct();
+}
+
 UMVActivatableWidgetBase::UMVActivatableWidgetBase(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {

@@ -10,17 +10,24 @@
 class UCommonActivatableWidget;
 class UCameraComponent;
 class AMVCharacterBase;
+class AMVPlayerCharacter;
+class APlayerController;
 class UMVDialogueWindow;
 class UMVHUDWidgetBase;
 class UMVInteractionPromptPopup;
+class UMVInventoryWindow;
+class UMVItemAcquisitionNotifications;
 class UMVLoadingWindow;
 class UMVMessagePopup;
 class UMVPIEActionTestWidget;
 class UMVPopupBase;
+class UMVRestPointSubsystem;
 class UMVUILayerBase;
 class UMVWindowBase;
 class USpringArmComponent;
 class UMVLevelUpWindow;
+class UMVWeaponPassiveSelectionWindow;
+class UMVWeaponSkillSelectionWindow;
 
 UCLASS()
 class MAVERICK_API UMVUISubsystem : public UGameInstanceSubsystem
@@ -30,6 +37,8 @@ class MAVERICK_API UMVUISubsystem : public UGameInstanceSubsystem
 public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
+
+	void BindItemAcquisitionPlayer(AMVPlayerCharacter& Player, APlayerController& Controller);
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
 	UMVUILayerBase* GetOrCreateRootLayer(UWorld* InWorld = nullptr);
@@ -58,8 +67,25 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|LevelUp")
 	UMVLevelUpWindow* ShowLevelUpWindow();
 
+	UMVLevelUpWindow* ShowLevelUpWindowForRestPoint(UMVRestPointSubsystem& Session);
+
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|LevelUp")
 	bool HideLevelUpWindow();
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Inventory")
+	UMVInventoryWindow* ShowInventoryWindow();
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Weapon Passive")
+	UMVWeaponPassiveSelectionWindow* ShowWeaponPassiveSelectionWindow();
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Skill Selection")
+	UMVWeaponSkillSelectionWindow* ShowWeaponSkillSelectionWindow();
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Skill Selection")
+	bool HideWeaponSkillSelectionWindow();
+
+	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Weapon Passive")
+	bool HideWeaponPassiveSelectionWindow();
 	
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
 	UCommonActivatableWidget* ShowLoadingWindow();
@@ -111,6 +137,7 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Maverick|UI")
 	bool CanUseInteractionPrompt() const;
+	bool HasInventoryWindow() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI")
 	void RestoreDialogueCameraZoom(float DurationOverride = -1.0f);
@@ -176,8 +203,15 @@ private:
 	AMVCharacterBase* ResolvePIEActionTestTargetCharacter(AMVCharacterBase* TargetCharacter) const;
 	APlayerController* ResolvePIEActionTestPlayerController(const AMVCharacterBase* TargetCharacter) const;
 
+	UMVWeaponPassiveSelectionWindow* FindWeaponPassiveSelectionWindow(UMVUILayerBase*& OutLayer) const;
+	UMVWeaponSkillSelectionWindow* FindWeaponSkillSelectionWindow(UMVUILayerBase*& OutLayer) const;
+	UMVLevelUpWindow* ShowLevelUpWindowInternal(UMVRestPointSubsystem* RestPointSession);
+
 	UPROPERTY(Transient)
 	TArray<TObjectPtr<UMVUILayerBase>> LayerStack;
+
+	UPROPERTY(Transient)
+	TObjectPtr<UMVItemAcquisitionNotifications> ItemAcquisitionNotifications;
 
 	UPROPERTY(Transient)
 	TObjectPtr<UMVHUDWidgetBase> CachedHUD;

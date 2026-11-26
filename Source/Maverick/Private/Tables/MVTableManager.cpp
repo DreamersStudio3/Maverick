@@ -126,6 +126,7 @@ void UMVTableManager::Initialize(FSubsystemCollectionBase& Collection)
 
 void UMVTableManager::Deinitialize()
 {
+	InventoryItemIndex.Reset();
 	ManifestTable = nullptr;
 	LoadedTables.Reset();
 	ManifestRows.Reset();
@@ -142,6 +143,7 @@ UMVTableManager* UMVTableManager::Get(const UObject* WorldContext)
 void UMVTableManager::ReloadAllTables()
 {
 	LoadAllTables();
+	OnInventoryItemDefinitionsReloaded.Broadcast();
 }
 
 bool UMVTableManager::HasTable(FName TableName) const
@@ -367,6 +369,7 @@ bool UMVTableManager::GetRowJson(FName TableName, const FString& RowKey, FString
 
 bool UMVTableManager::LoadAllTables()
 {
+	InventoryItemIndex.Reset();
 	ManifestTable = nullptr;
 	LoadedTables.Reset();
 	ManifestRows.Reset();
@@ -412,6 +415,7 @@ bool UMVTableManager::LoadAllTables()
 		ManifestRows.Add(ManifestRow->TableName, *ManifestRow);
 	}
 
+	RebuildInventoryItemIndex();
 	bLoaded = true;
 	UE_LOG(LogMVTableManager, Log, TEXT("[MVTableManager] Loaded %d table(s)."), LoadedTables.Num());
 	return LastLoadErrors.IsEmpty();

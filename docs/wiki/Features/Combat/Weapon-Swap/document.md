@@ -1,8 +1,8 @@
 ---
 제목: "플레이어 무기 교체"
 부제목: "한손검·듀얼 소드 장착 전환과 스타일별 애니메이션·손별 공격 판정"
-최근수정일: 2026-10-20
-최근수정자: "Kwon-Nahoo-Man"
+최근수정일: 2026-11-19
+최근수정자: "No-Jyun"
 관련문서:
   - "[[Architecture/document|Maverick 아키텍처]]"
   - "[[Features/Input-to-Action/document|입력에서 Action 실행까지]]"
@@ -21,7 +21,8 @@
 | 계층 | 책임 |
 |---|---|
 | `UMVInputManagerComponent` | 입력 수집·버퍼·우선순위별 처리기 호출 |
-| `UMVWeaponComponent` | 소유 무기·퀵슬롯·장착 상태·교체 가능 여부·무기 메시 관리 |
+| `UMVInventoryComponent` | 태그별 무기 소유 관리 |
+| `UMVWeaponComponent` | 퀵슬롯·장착 상태·교체 가능 여부·무기 메시 관리 |
 | `UMVCombatComponent` | 장착 스타일에 대응하는 전투 데이터·공격 선택 |
 | `BP_ThirdPersonCharacter` | 입력 전달·장착 변경 이벤트·애니메이션 레이어·무기 소켓 좌표 제공 |
 | `BP_DualWeapon_MeleeAttack` | 손별 트레이스 활성 상태·피격 기록·적중 요청 |
@@ -43,27 +44,20 @@ Blueprint는 입력 태그 전달, InputManager는 처리기 배분, WeaponCompo
 
 | 상태 | 계약 |
 |---|---|
-| `OwnedWeapons` | `FGameplayTag`를 key로 `FDataTableRowHandle`을 보관하는 무기 소유권의 단일 정본 |
+| `UMVInventoryComponent` | `FGameplayTag`별 무기 보유 수량 1개, 정의는 무기 DataTable에서 조회 |
 | `QuickSlotWeaponTags` | 소유 무기 key만 참조하는 고정 슬롯 배열, 기본 최대 2개 |
 | `ActiveQuickSlotIndex` | 현재 장착에 사용한 퀵슬롯 위치, 활성 슬롯을 비워도 위치 유지 |
 | `CurrentWeaponState` | 장착 Row에서 복사한 전투·메시 런타임 상태 |
 
-`AcquireWeapon`은 유효한 무기 Row의 `ItemTag`로 소유 목록에만 추가
-같은 태그의 중복 획득은 기존 Row Handle을 유지하고 거부
-`BeginPlay`에서 스킬맵과 진행 상태를 먼저 준비하고 유효한 SaveGame이 없을 때만 `DefaultWeaponRow`를 소유 목록과 첫 퀵슬롯에 등록한 뒤 장착
-SaveGame 복원 경로에서는 저장된 소유 무기·퀵슬롯·장착 무기를 적용하고 버린 기본 무기를 다시 획득하지 않는 계약
-현재 복원 분기는 `if (0)`과 `Todo:`로 비활성화
-
-`SetQuickSlotWeapon`은 슬롯 범위·소유 여부·다른 슬롯 중복을 검증
-활성 슬롯 교체는 새 무기 장착 검증까지 성공해야 확정하며, 실패하면 기존 슬롯 유지
-`ClearQuickSlotWeapon`은 뒤 슬롯을 당기지 않고 해당 위치를 비우며 활성 슬롯이면 즉시 맨손 전환
-
-`DiscardWeapon`은 모든 퀵슬롯 참조를 먼저 비운 뒤 소유 목록에서 제거
-장착 중인 무기를 버리면 다른 무기를 자동 장착하지 않고 맨손 전환
-맨손은 소유 목록과 퀵슬롯에 포함하지 않는 내부 fallback
+- `AcquireWeapon`은 무기를 가방에 추가. 같은 태그의 중복 획득 거부
+- 새 게임은 `DefaultWeaponRow`를 가방과 첫 퀵슬롯에 넣어 장착. 저장 복원은 소지품을 읽은 뒤 슬롯·장착·스킬 순서로 적용
+- 4버전 소유 기록은 무기 태그와 테이블 행을 대조해 가방 수량으로 이전. 5버전에서 비어 있다고 기록된 가방은 빈 상태로 복원
+- 무기 회수 시 해당 슬롯을 비우고, 장착 중인 무기는 맨손으로 전환. 맨손은 내부 기본 장착 상태
+- 휴식 거점의 `무기 퀵슬롯`에서만 등록·교체·해제. 필드의 시험용 T 입력은 무기 지급에 사용
+- 활성 슬롯의 교체는 즉시 장착. 무기 소유·중복·메시 검증을 통과한 변경만 적용하고 가방·퀵슬롯·장착을 함께 저장
 
 외부의 명시적 장착 함수는 `CycleWeapon`만 공개하고 모든 무기 장착은 퀵슬롯을 통해 수행
-`EquipQuickSlotWeapon`, Row 장착, 맨손 장착은 내부 순환·초기화·fallback 경로에서만 사용
+`EquipQuickSlotWeapon`, Row 장착, 맨손 장착은 내부 순환·초기화·거점 편성·장착 실패 복구에 사용
 
 실제 소유 변경은 `OnOwnedWeaponsChanged`, 퀵슬롯 변경은 `OnQuickSlotsChanged` 발행
 두 이벤트는 컨테이너를 복사하지 않으며 수신 측에서 조회 함수로 현재 상태 확인
@@ -74,15 +68,13 @@ SaveGame 복원 경로에서는 저장된 소유 무기·퀵슬롯·장착 무�
 |---|---|---|
 | 무기 순환 | `CycleWeapon` | 장착 변경을 거부하고 `false` 반환 |
 | 소유 관리 | `AcquireWeapon`, `DiscardWeapon` | 획득은 허용, 버리기는 거부 |
-| 퀵슬롯 관리 | `SetQuickSlotWeapon`, `ClearQuickSlotWeapon` | 두 요청 모두 거부 |
 | 소유 조회 | `GetOwnedWeapons`, `IsWeaponOwned` | 상태 변경 없음 |
 | 퀵슬롯 조회 | `GetQuickSlotWeapons`, `GetActiveQuickSlotIndex` | 상태 변경 없음 |
 | 장착 상태 조회 | `GetEquippedWeaponState`, `GetEquippedWeaponAttackPower`, `GetEquippedStyle`, `GetWeaponRangeType` | 상태 변경 없음 |
 | 적중 Snapshot | `CaptureWeaponHitSnapshot` | 현재 장착 상태 Snapshot 반환 |
 
-`DiscardWeapon`, `SetQuickSlotWeapon`, `ClearQuickSlotWeapon`은 호출 결과로 장착 무기가 바뀔 수 있어 Action 진행 중 요청 전체를 거부
-`AcquireWeapon`은 소유 목록만 변경하고 장착 상태를 바꾸지 않아 Action 진행 중에도 허용
-차단된 요청은 상태와 변경 이벤트를 유지한 채 `false` 반환
+Action 진행 중에는 장착 순환과 무기 회수를 거부하고 `false` 반환
+`AcquireWeapon`은 가방만 갱신하므로 Action 진행 중에도 허용
 
 `TryHandleActionInput`은 `Action.Input.WeaponSwap`을 `CycleWeapon`으로 전달하는 입력 인터페이스 경계
 입력 외 시스템도 `CycleWeapon`을 직접 호출할 수 있도록 공개 API 유지
@@ -103,7 +95,7 @@ flowchart TD
     Empty -->|예, 현재 맨손| IndexOnly["활성 인덱스만 갱신<br/>장착 생략 / false"]
     Empty -->|아니오| Same{"현재와 같은 무기인가"}
     Same -->|예| IndexOnly
-    Same -->|아니오| Resolve["OwnedWeapons에서 Row Handle 해석"]
+    Same -->|아니오| Resolve["가방 소유 확인 후 무기 행 조회"]
     Resolve --> Validate{"Row·무기 데이터 검증"}
     Validate -->|실패| Keep
     Validate -->|성공| Apply["인덱스·장착 상태 반영"]

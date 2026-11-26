@@ -81,6 +81,10 @@ bool AMVProjectileBase::InitializeProjectile(const FMVProjectileLaunchContext& C
 
 	LaunchContext = Context;
 	LaunchContext.LaunchDirection = Direction.GetSafeNormal();
+	if (const AMVEnemy* Enemy = Cast<AMVEnemy>(Attacker))
+	{
+		ResetFieldId = Enemy->GetResetFieldId();
+	}
 
 	SetOwner(Attacker);
 	SetInstigator(Attacker);
@@ -88,6 +92,11 @@ bool AMVProjectileBase::InitializeProjectile(const FMVProjectileLaunchContext& C
 
 	bInitialized = true;
 	return true;
+}
+
+const AActor* AMVProjectileBase::GetLaunchAttacker() const
+{
+	return LaunchContext.Attacker.Get();
 }
 
 bool AMVProjectileBase::ActivateProjectile()

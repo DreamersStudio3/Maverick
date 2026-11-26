@@ -6,6 +6,10 @@
 #include "UI/Base/MVUIFadeController.h"
 #include "MVActivatableWidgetBase.generated.h"
 
+/**
+ * 활성 창의 입력 설정·초점·페이드 종료를 연결한다.
+ * PIE에서는 구성 시 대체 닫기 입력을 등록하고 해체 시 해제한다. 실제 닫기는 창별 뒤로 가기 처리를 따른다.
+ */
 UCLASS(Abstract, Blueprintable)
 class MAVERICK_API UMVActivatableWidgetBase : public UCommonActivatableWidget
 {
@@ -41,6 +45,8 @@ public:
 	virtual TOptional<FUIInputConfig> GetDesiredInputConfig() const override;
 
 protected:
+	virtual void NativeConstruct() override;
+	virtual void NativeDestruct() override;
 	virtual void NativeOnActivated() override;
 	virtual void NativeOnDeactivated() override;
 	virtual UWidget* NativeGetDesiredFocusTarget() const override;
@@ -85,5 +91,6 @@ protected:
 	float FadeOutSeconds = 0.12f;
 
 private:
+	FUIActionBindingHandle PIEBackInputBinding;
 	FMVUIFadeController FadeController;
 };

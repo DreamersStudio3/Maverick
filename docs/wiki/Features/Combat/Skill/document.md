@@ -1,13 +1,14 @@
 ---
 제목: "플레이어 스킬 구조"
 부제목: "Q 적중 연계, R 적중 충전형 게이지, W·E 조합 입력의 실행 계약"
-최근수정일: 2026-10-21
-최근수정자: "Kwon-Nahoo-Man"
+최근수정일: 2026-11-17
+최근수정자: "Codex"
 관련문서:
   - "[[Features/Combat/Combat-System/document|Maverick 전투 시스템]]"
   - "[[Features/Hit-Stat-HitReaction/document|Hit, Stat, HitReaction]]"
   - "[[Features/Input-to-Action/document|입력에서 Action 실행까지]]"
   - "[[Features/Resource-Recovery/document|기본 재화 회복과 소비]]"
+  - "[[Features/Combat/Weapon-Skill-Selection/document|패시브·QWER 통합 스킬 선택]]"
 ---
 
 # 플레이어 스킬 구조
@@ -34,7 +35,7 @@
 - 우클릭: 시작 시점에 `HeavyCharge`·`SkillE` 경로를 고정하고 이후 입력 phase는 선택한 경로로만 전달
 - 미등록·미지원 스킬 입력: 즉시 소비하여 무기 교체나 Action 종료 후 지연 실행 차단
 - 플레이어 사망 시작: Modifier 상태, 우클릭 경로, Action 입력 버퍼 초기화
-- 현재 범위: W·E 전용 HUD 제외, Ability·애니메이션·비용·쿨다운 데이터 후속 조정
+- QWER 전투 HUD는 선택 행의 그림과 실제 사용 키 표시, Ability·애니메이션·비용·쿨다운 데이터 조정은 별도 범위
 
 ## Q 스킬 적중 연계
 
@@ -76,6 +77,9 @@ flowchart TD
 - Q1·Q2 재시도: 전체 마감 유지와 시도별 쿨다운 재시작의 동시 적용
 
 ### HUD
+
+- 메인 슬롯은 현재 선택 행과 그 연계 행의 `Icon` 사용, 누락은 공통 대체 그림으로 표시하며 단계 순서 유지
+- 미완성 선택은 아이콘·`준비 중` 표시, 실행 불가 상태를 대기시간이나 미충전 R 게이지로 표시하지 않음
 
 | 표시 | 기준 |
 |---|---|
