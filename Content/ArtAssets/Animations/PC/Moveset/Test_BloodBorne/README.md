@@ -1,0 +1,75 @@
+# BloodBorne 테스트 Moveset
+
+- 위치: `/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne`
+- 구성: Manny 루트 모션 시퀀스 129개, 착지 가산 시퀀스 1개, 몽타주 135개, 이동 BlendSpace 2개
+- 명명: 시퀀스 `AS_BB_<종류>_<원본 ID>_Root`, 몽타주 `AM_BB_*`
+- 분류: Detail / Dodge / Idle / Walk / Run / Sprint / Fall / Knockdown / Getup / Heal
+- 기존 BareHand·OneHand·DualWield 에셋 유지, 동일 회피 시퀀스의 테스트 사본 6개 통합
+
+## 게임플레이 연결
+
+- 메인 `ABP_Base`와 BloodBorne 기본 레이어 연결, Mage·Hammer 분기와 회피 테이블 참조 유지
+
+- 플레이어 일반 회피 18행은 새 Dodge 폴더의 기존 몽타주 12개 참조
+- 기존 회피 몽타주의 길이·알림 보존, 시퀀스는 무기 스타일 간 공유
+- BH·1H 이름의 몽타주는 기존 블렌드·타이밍 구분용, 별도 시퀀스 중복 없음
+- 회피·회복 외 몽타주는 개별 모션 확인용, 로코모션은 상태 머신의 시퀀스 재생 구조 사용
+- 기본 대기·8방향 걷기/달리기·질주·정지·회전·낙하·착지를 ABP_Base와 BloodBorne 공통·한손·쌍수 레이어에 연결
+- 넘어짐 탈출·기상 연결은 이전 상태 유지
+- 대각선은 인접 원본 두 동작을 동일 정규화 시간으로 50:50 혼합한 `_Blend_Root` 파생본, Run FL은 발 겹침 완화를 위해 FR 좌우 반전으로 대체
+- Run FL은 Manny X축 반사와 좌우 뼈 교환 적용, 기존 에셋 경로·0.8초 길이·Rate Scale 1.15 유지
+- 착지는 004200을 Idle 000000의 첫 프레임 기준 Local Space 가산 시퀀스로 변환
+- 시퀀스 Force Root Lock 적용, 몽타주의 루트 모션과 기존 가산 기울기·AimOffset 유지
+- 제자리 회전 보간 시간은 90도 20/30초, 180도 22/30초를 사용
+
+## 지원 자료
+
+- 소스 메시·스켈레톤: `/Game/ArtAssets/Mannequins/Meshes/Test_BloodBorne`
+- IK Rig·리타게터: `/Game/ArtAssets/Mannequins/Rigs/Test_BloodBorne`
+- 원본 스켈레톤 시퀀스 132개: 위 Rigs 폴더의 `SourceAnimations`
+- 원본: GRACEBORNE a0.2.5 `c0000`, 출처 슬롯명은 원본 게임의 분류이며 모드 입력 선택 규칙과 별개
+- ID·구간·에셋 경로: `asset-index.json`
+
+## 검증 범위
+
+- 전체 이동 에셋 로드, 시퀀스 길이·스켈레톤·루트 모션 설정 및 몽타주 참조 검증
+- 기존 회피 몽타주 12개의 알림 개수·길이 및 DataTable 비참조 필드 보존
+- 기상 FaceUp: `a000_004260` 30–137프레임, FaceDown: `a000_004270` 40–137프레임 분리본
+- 원본 모션 길이와 궤적 보존, 발 접촉·무기 그립·전환 체감 보정 미포함
+
+## 로코모션 연결 검증
+
+- Windows UE 5.8.4에서 4개 ABP 재로드·컴파일 및 시퀀스/BlendSpace 참조 확인
+- PIE 한손 플레이어의 8방향 걷기/달리기·전방 질주·정지·낙하/착지 실행, 111개 표본에서 루트와 캐릭터의 수평 거리 0 cm
+- 맨손·쌍수는 클래스 기본값 검증, 실제 무기 전환과 대각선 발 접촉·회피 후 블렌딩 체감은 별도 확인 필요
+
+## 전환·접지 보정
+
+- NormalStop의 일반 정지 시퀀스를 가산 입력에서 Base 포즈 입력으로 이동, `ABP_Base`와 `ABP_PlayerAnimLayerBase` 모두 적용
+- 정지 및 회피 몽타주 블렌딩 재현에서 뼈 스케일 최대 2048 → 약 1, 수정 후 1441표본 확인
+- Idle 000000/000001의 발목·무릎·골반 키를 Manny 접지 자세에 맞춰 보정, 발끝 XY와 뼈 길이·스케일 유지
+- Idle 000000은 골반 약 2.75–3.23 cm 하강, 원본 리타게팅 결과와 구별되는 테스트 보정본
+- 모션 편집 위치와 가산 입력 주의사항: `docs/wiki/Features/Player-Animation/document.md`
+
+## 기본 ABP 구성
+
+- `Characters/AnimBP/ABP_Base`와 접사 없는 `AnimLayer/ABP_Player*` 5개 사용
+- `BP_ThirdPersonCharacter`의 Mesh Anim Class와 장비 6개 분기를 같은 기본 구성에 연결
+- 기존 레이어와 `ABP_Base_Test_BloodBorne` 삭제, `Test_`·`_BloodBorne` 접사는 레이어 이름에서 제거
+- Mage·Hammer의 무기별 설정 유지, 공통 부모 및 MainABP 참조를 기본 구성에 맞춤
+- 방향별 속도 커브는 배율 1로 통일, 현재 기본 이동 속도는 걷기 200·달리기 500·질주 750cm/s
+
+- Run 시퀀스 `Rate Scale`: 1.15, 대각선 혼합본 포함 20개에 적용, 걷기·질주 시퀀스는 기존 배율 유지
+
+## 회복 모션 시안
+
+- `Heal/AS_BB_Heal_Left_Root`: `c0000_a00_hi.anibnd.dcx`의 `a000_050210`, 왼쪽 허벅지 회복 동작
+- `Heal/AS_BB_Heal_Heart_Root`, `AS_BB_Heal_Skull_Root`: 원본에서 왼팔·손목·왼손 IK 궤적을 편집한 심장·두개골 변형
+- 각 시퀀스에 대응하는 `AM_BB_Heal_Left`, `AM_BB_Heal_Heart`, `AM_BB_Heal_Skull` 포함
+- 모두 91키·30fps·3초·Rate Scale 1, 시작·종료 자세와 몸통·하체 유지
+- 허벅지 원본은 `DT_Props_P1.Items_HealingPotion`에 연결, 심장·두개골은 미연결 시안
+- `AM_BB_Heal_Left`: UpperBody 슬롯, 1초에 회복 알림, 1.668–3초에 회피 전환 창
+- 회복 중 이동·회복량·소모 수량·실패 액션 설정 유지, 소품 및 손가락 그립 추가 보정 미포함
+- 변형은 팔 궤적 검토용 첫 시안, 실제 주사기 메시 기준 바늘 끝 접촉 검증 미포함
+
+- Windows UE 5.8.4 PIE: 새 회복 몽타주 재생, 1초에 HP 30→60·수량 3→2의 단일 변경, 액션 종료 확인

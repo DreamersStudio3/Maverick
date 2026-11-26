@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900">
+<rect width="1400" height="900" fill="#101b28"/>
+<style>text{font-family:'Malgun Gothic',Arial,sans-serif;fill:#e9f1f8} .small{font-size:20px;fill:#a9bdcd} .label{font-size:24px} .dim{stroke:#a9bdcd;stroke-width:2;fill:none}</style>
+<text x="60" y="70" font-size="34" font-weight="bold">MAVERICK · 실험동 메트릭 v0</text>
+<text x="60" y="110" class="small">2026-11-15 | 치수 검증용 블록아웃 | 평면은 이상적 원형 개념도</text>
+<circle cx="390" cy="455" r="272" fill="#344353" stroke="#d0d8dd" stroke-width="3"/>
+<circle cx="390" cy="455" r="176" fill="#167785"/>
+<circle cx="390" cy="455" r="128" fill="#101b28" stroke="#8bd4d8" stroke-width="2"/>
+<g class="small"><text x="320" y="449">중앙 공동</text><text x="326" y="483">지름 32m</text></g>
+<rect x="566" y="423" width="80" height="64" fill="#4aa66d"/>
+<rect x="118" y="407" width="96" height="96" fill="#d88741"/>
+<rect x="364" y="215" width="52" height="64" fill="#e2bc46"/>
+<rect x="364" y="631" width="52" height="64" fill="#e2bc46"/>
+<path d="M118 770H662 M118 758V782 M662 758V782" class="dim"/>
+<text x="261" y="811" class="label">전체 외경 약 68m</text>
+<path d="M390 455H518 M518 455H566" stroke="#d4e3ed" stroke-width="2" stroke-dasharray="5 5"/>
+<text x="466" y="560" class="small">회랑 깊이 6m</text>
+<text x="427" y="323" class="small">실험실 띠 깊이 12m</text>
+<text x="60" y="155" class="label">01 / 평면 치수</text>
+<text x="760" y="155" class="label">02 / 단면과 캐릭터 기준</text>
+<g fill="#48596a"><rect x="780" y="260" width="540" height="40"/><rect x="780" y="460" width="540" height="40"/><rect x="780" y="660" width="540" height="40"/></g>
+<path d="M1290 300V460 M1278 300H1302 M1278 460H1302" class="dim"/>
+<text x="1080" y="390" class="label">유효 높이 4m</text>
+<path d="M810 260V460 M798 260H822 M798 460H822" class="dim"/>
+<text x="835" y="355" class="label">층고 5m</text>
+<text x="835" y="485" class="small">슬래브 1m</text>
+<rect x="920" y="590" width="27.2" height="70.4" rx="13.6" fill="#74bfdb"/>
+<text x="975" y="610" class="small">캡슐 68 × 176cm</text>
+<text x="975" y="644" class="small">카메라 3m / FOV 90°</text>
+<text x="780" y="754" class="label">문 2 × 3m · 계단 폭 3m</text>
+<text x="780" y="790" class="small">단높이 15.625cm / 단너비 32cm</text>
+<text x="780" y="824" class="small">16단 × 2개 구간 = 층고 5m</text>
+<text x="60" y="865" class="small">회색 구조 · 청록 이동 · 주황 전투 · 노랑 수직 연결 · 초록 시작</text>
+</svg>

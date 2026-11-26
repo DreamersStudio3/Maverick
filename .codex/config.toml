@@ -1,2 +1,4 @@
+notify = ['C:\Users\mindo\AppData\Local\OpenAI\Codex\runtimes\cua_node\bbc9141fe9f920ac\bin\node_modules\@oai\sky\bin\windows\codex-computer-use.exe', "turn-ended"]
+
 [mcp_servers.unreal-mcp]
 url = "http://127.0.0.1:8001/mcp"
