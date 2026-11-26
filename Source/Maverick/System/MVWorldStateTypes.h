@@ -199,6 +199,10 @@ struct MAVERICK_API FMVPendingEnemyReward
 	UPROPERTY()
 	FGuid DefeatId;
 
+	// 저장을 다시 불러와도 처치 직후의 표시 간격을 이어간다. 이전 저장의 기본값은 이미 지급 가능하다.
+	UPROPERTY()
+	FDateTime AvailableAtUtc = FDateTime::MinValue();
+
 	UPROPERTY()
 	TArray<FMVGuaranteedEnemyDrop> Items;
 };

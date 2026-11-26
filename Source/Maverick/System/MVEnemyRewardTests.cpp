@@ -62,6 +62,7 @@ private:
 	int32 Step = 0;
 	double AdvanceAfter = 0.0;
 	double DisplayDeadline = 0.0;
+	FDateTime DeathTriggeredAtUtc;
 	TSet<FObjectKey> SeenCards;
 	TSet<FObjectKey> SeenRows;
 };
@@ -121,11 +122,18 @@ bool FMVCheckDirectEnemyReward::Begin(UWorld& World, UMVWorldStateSubsystem& Sta
 	Point->FinishSpawning(EnemyTransform);
 
 	Enemy->StatComponent->SetCurrentHP(Enemy->StatComponent->MaxHP);
+	DeathTriggeredAtUtc = FDateTime::UtcNow();
 	Enemy->StatComponent->SetCurrentHP(0.0f);
 	FMVDeathContext Duplicate;
 	Duplicate.DeadActor = Enemy;
 	Enemy->StatComponent->OnDeathStarted.Broadcast(Duplicate);
 	CheckSavedSlot(Slot, Limit - 1, 4);
+	const auto& Pending = State.GetSaveData().PendingEnemyRewards;
+	if (Test.TestEqual(TEXT("Queued once on death"), Pending.Num(), 1))
+	{
+		const double Delay = (Pending[0].AvailableAtUtc - DeathTriggeredAtUtc).GetTotalSeconds();
+		Test.TestTrue(TEXT("Death schedules a 2.5-second grant"), Delay >= 2.5 && Delay <= 3.0);
+	}
 	Test.TestFalse(TEXT("Direct reward spawns no pickup"), static_cast<bool>(TActorIterator<AMVItemPickup>(&World)));
 
 	if (!Test.TestTrue(TEXT("Switch test slots before delivery"), State.LoadFromSlot(Slot + TEXT("_Other"), 0)))
@@ -240,6 +248,13 @@ bool FMVCheckDirectEnemyReward::Update()
 		Test.TestEqual(TEXT("No acquisition in the second slot"), Acquisitions->Num(), 0);
 		return !Test.TestTrue(TEXT("Reload original test slot"), State->LoadFromSlot(Slot, 0));
 	case 2:
+		Test.TestEqual(TEXT("Reload preserves the wait before delivery"), Inventory->GetItemCount(MVRewardTestShard()), Limit - 1);
+		Test.TestEqual(TEXT("No acquisition during presentation delay"), Acquisitions->Num(), 0);
+		Test.TestNull(TEXT("No acquisition panel before the grant"), FindPanel(*World));
+		Inventory->OnInventoryChanged.Broadcast(MVRewardTestShard());
+		AdvanceAfter = Now + 2.8;
+		return false;
+	case 3:
 		Test.TestEqual(TEXT("Partial grant fills free space"), Inventory->GetItemCount(MVRewardTestShard()), Limit);
 		if (Test.TestEqual(TEXT("One partial grant event"), Acquisitions->Num(), 1))
 		{
@@ -249,9 +264,9 @@ bool FMVCheckDirectEnemyReward::Update()
 		CheckSavedSlot(Slot, Limit, 3);
 		AdvanceAfter = Now + 3.7;
 		return false;
-	case 3:
-		return !Test.TestTrue(TEXT("Make room for pending shards"), Inventory->TryRemoveItem(MVRewardTestShard(), 3));
 	case 4:
+		return !Test.TestTrue(TEXT("Make room for pending shards"), Inventory->TryRemoveItem(MVRewardTestShard(), 3));
+	case 5:
 		if (Test.TestEqual(TEXT("Pending grant event received once"), Acquisitions->Num(), 2))
 		{
 			Test.TestEqual(TEXT("Pending grant quantity"), (*Acquisitions)[1].GrantedQuantity, 3);
@@ -260,7 +275,7 @@ bool FMVCheckDirectEnemyReward::Update()
 		CheckDisplay(*World, 3);
 		CheckSavedSlot(Slot, Limit, 0);
 		return !Test.TestTrue(TEXT("Reload after completing grant"), State->LoadFromSlot(Slot, 0));
-	case 5:
+	case 6:
 	{
 		const FGameplayTag Weapon = MVGameplayTags::Item_Weapon_DualSword_TestSword;
 		Test.TestEqual(TEXT("Owned weapon present"), Inventory->GetItemCount(Weapon), 1);
@@ -268,9 +283,10 @@ bool FMVCheckDirectEnemyReward::Update()
 		FMVEnemyDropTableRow DuplicateWeapon;
 		DuplicateWeapon.GuaranteedDrops.AddDefaulted_GetRef().ItemTag = Weapon;
 		World->GetSubsystem<UMVEnemyRewardSubsystem>()->SubmitReward(DuplicateWeapon, FDataTableRowHandle());
+		AdvanceAfter = Now + 2.8;
 		return false;
 	}
-	case 6:
+	case 7:
 	{
 		Test.TestEqual(TEXT("Duplicate weapon emits no new acquisition"), Acquisitions->Num(), 2);
 		CheckSavedSlot(Slot, Limit, 0);
@@ -290,7 +306,13 @@ bool FMVCheckDirectEnemyReward::Update()
 		World->GetSubsystem<UMVEnemyRewardSubsystem>()->SubmitReward(*Row, Handle);
 		return false;
 	}
-	case 7:
+	case 8:
+		Test.TestEqual(TEXT("Inventory changes do not release a new reward early"), Inventory->GetItemCount(MVRewardTestShard()), Limit - 4);
+		Test.TestEqual(TEXT("No four-unit signal during the delay"), Acquisitions->Num(), 2);
+		Test.TestNull(TEXT("No panel during the four-unit reward delay"), FindPanel(*World));
+		AdvanceAfter = Now + 2.8;
+		return false;
+	case 9:
 		if (Test.TestEqual(TEXT("Four granted items use one acquisition event"), Acquisitions->Num(), 3))
 		{
 			Test.TestEqual(TEXT("Complete grant quantity"), (*Acquisitions)[2].GrantedQuantity, 4);

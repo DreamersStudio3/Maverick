@@ -10,6 +10,11 @@
 #include "Tables/MVTableManager.h"
 #include "Tables/MVWeaponTableTypes.h"
 
+namespace
+{
+constexpr double MVEnemyRewardPresentationDelaySeconds = 2.5;
+}
+
 bool UMVEnemyRewardSubsystem::DoesSupportWorldType(const EWorldType::Type WorldType) const
 {
 	return WorldType == EWorldType::Game || WorldType == EWorldType::PIE;
@@ -41,6 +46,7 @@ void UMVEnemyRewardSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 void UMVEnemyRewardSubsystem::Deinitialize()
 {
 	GetWorld()->GetTimerManager().ClearTimer(RetryTimer);
+	GetWorld()->GetTimerManager().ClearTimer(AvailabilityTimer);
 	if (UGameInstance* Instance = GetWorld()->GetGameInstance())
 	{
 		Instance->GetOnPawnControllerChanged().RemoveDynamic(this, &ThisClass::HandlePawnControllerChanged);
@@ -88,6 +94,7 @@ void UMVEnemyRewardSubsystem::SubmitReward(const FMVEnemyDropTableRow& Row, cons
 	if (!Reward.Items.IsEmpty())
 	{
 		Reward.DefeatId = FGuid::NewGuid();
+		Reward.AvailableAtUtc = FDateTime::UtcNow() + FTimespan::FromSeconds(MVEnemyRewardPresentationDelaySeconds);
 		State->QueueEnemyReward(MoveTemp(Reward));
 		// 지급 직전 슬롯을 바꾸거나 플레이어가 함께 사망해도 접수한 보상은 이 슬롯에 남는다.
 		State->SaveActiveSlot();
@@ -119,7 +126,12 @@ UMVInventoryComponent* UMVEnemyRewardSubsystem::ObserveLocalInventory()
 void UMVEnemyRewardSubsystem::SchedulePendingRewards()
 {
 	const UMVWorldStateSubsystem* State = UMVWorldStateSubsystem::Get(this);
-	if (!RetryTimer.IsValid() && State && !State->GetSaveData().PendingEnemyRewards.IsEmpty())
+	if (!State || State->GetSaveData().PendingEnemyRewards.IsEmpty())
+	{
+		GetWorld()->GetTimerManager().ClearTimer(AvailabilityTimer);
+		return;
+	}
+	if (!RetryTimer.IsValid())
 	{
 		RetryTimer = GetWorld()->GetTimerManager().SetTimerForNextTick(this, &ThisClass::DeliverPendingRewards);
 	}
@@ -128,6 +140,7 @@ void UMVEnemyRewardSubsystem::SchedulePendingRewards()
 void UMVEnemyRewardSubsystem::DeliverPendingRewards()
 {
 	RetryTimer.Invalidate();
+	GetWorld()->GetTimerManager().ClearTimer(AvailabilityTimer);
 	UMVWorldStateSubsystem* State = UMVWorldStateSubsystem::Get(this);
 	const UMVFieldTransitionSubsystem* Transition = UMVFieldTransitionSubsystem::Get(this);
 	if (!State || State->GetSaveData().PendingEnemyRewards.IsEmpty() || (Transition && Transition->IsTransitionRunning()))
@@ -135,10 +148,29 @@ void UMVEnemyRewardSubsystem::DeliverPendingRewards()
 		return;
 	}
 
+	const FDateTime Now = FDateTime::UtcNow();
+	FDateTime NextAvailability = FDateTime::MaxValue();
+	bool bHasAvailableReward = false;
+	for (const FMVPendingEnemyReward& Reward : State->GetSaveData().PendingEnemyRewards)
+	{
+		if (Reward.AvailableAtUtc <= Now)
+		{
+			bHasAvailableReward = true;
+		}
+		else
+		{
+			NextAvailability = FMath::Min(NextAvailability, Reward.AvailableAtUtc);
+		}
+	}
+	if (NextAvailability != FDateTime::MaxValue())
+	{
+		const float Seconds = FMath::Max(0.01f, static_cast<float>((NextAvailability - Now).GetTotalSeconds()));
+		GetWorld()->GetTimerManager().SetTimer(AvailabilityTimer, this, &ThisClass::SchedulePendingRewards, Seconds, false);
+	}
 	UMVInventoryComponent* Inventory = ObserveLocalInventory();
 	const auto* Player = Inventory ? Cast<AMVPlayerCharacter>(Inventory->GetOwner()) : nullptr;
 	if (!Player || !Player->HasActorBegunPlay() || !Player->StatComponent || Player->StatComponent->IsDead()
-		|| !Inventory->PrepareForEnemyRewards(*State))
+		|| !Inventory->PrepareForEnemyRewards(*State) || !bHasAvailableReward)
 	{
 		return;
 	}
@@ -148,6 +180,10 @@ void UMVEnemyRewardSubsystem::DeliverPendingRewards()
 	bool bChanged = false;
 	for (FMVPendingEnemyReward& Reward : Remaining)
 	{
+		if (Reward.AvailableAtUtc > Now)
+		{
+			continue;
+		}
 		for (FMVGuaranteedEnemyDrop& Item : Reward.Items)
 		{
 			const int32 Previous = Item.Quantity;

@@ -14,7 +14,8 @@ struct FDataTableRowHandle;
 struct FMVEnemyDropTableRow;
 
 /**
- * 적 사망 보상을 현재 슬롯에 접수하고, 이 월드의 로컬 플레이어 가방에 지급한다.
+ * 적 사망 보상과 지급 가능 시각을 현재 슬롯에 접수한다.
+ * 처치 연출 간격이 지나면 이 월드의 로컬 플레이어 가방에 지급한다.
  * 소지 한도나 전환 때문에 남은 수량은 슬롯에 보관하고 가방이 준비되거나 변경될 때 재시도한다.
  */
 UCLASS()
@@ -46,4 +47,5 @@ private:
 
 	TWeakObjectPtr<UMVInventoryComponent> ObservedInventory;
 	FTimerHandle RetryTimer;
+	FTimerHandle AvailabilityTimer;
 };
