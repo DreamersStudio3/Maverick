@@ -594,6 +594,7 @@ private:
 	FMVSkillEntry DirectActionEntry;
 
 	bool BuildSkillEntryFromRowHandle(const FDataTableRowHandle& StartingRowHandle, FMVSkillEntry& OutEntry);
+	bool TryStartDirectCombatAction(const FDataTableRowHandle& RowHandle, FName StartSection, bool bForBossAttackTest);
 	bool PrepareSelectedSkillEntry(const FDataTableRowHandle& Row, FMVSkillEntry& OutEntry);
 	friend class FMVSkillSafeReplacementTest;
 	bool IsValidSkillActionRowHandle(const FDataTableRowHandle& RowHandle, const TCHAR* Context) const;

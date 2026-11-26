@@ -31,6 +31,7 @@ void UMVMainHUDWidget::NativeConstruct()
 
 	if (!IsDesignTime())
 	{
+		if (!BoundBossStat.IsValid()) HideBossHPBar();
 		BindWorldState();
 		RefreshHUD();
 	}
@@ -85,6 +86,7 @@ void UMVMainHUDWidget::BindBossStatus(UMVStatComponent* BossStatComponent, FText
 
 	if (BossHPBar)
 	{
+		BoundBossStat = BossStatComponent;
 		BossHPBar->BindToStatComponent(BossStatComponent, BossName);
 	}
 }
@@ -102,10 +104,16 @@ void UMVMainHUDWidget::UpdateBossStatus(float CurrentHP, float MaxHP)
 	}
 }
 
+bool UMVMainHUDWidget::IsShowingBoss(const UMVStatComponent* Stat) const
+{
+	return Stat && BoundBossStat.Get() == Stat;
+}
+
 void UMVMainHUDWidget::HideBossHPBar()
 {
 	if (BossHPBar)
 	{
+		BoundBossStat.Reset();
 		BossHPBar->ResetBossBar();
 	}
 }

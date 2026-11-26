@@ -44,6 +44,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Boss")
 	void HideBossHPBar();
+	bool IsShowingBoss(const UMVStatComponent* Stat) const;
 
 	UFUNCTION(BlueprintCallable, Category = "Maverick|UI|Boss")
 	void MarkBossPatrolComplete();
@@ -100,6 +101,7 @@ private:
 	UFUNCTION()
 	void HandleHealingPotionStateChanged(const FMVHealingPotionRuntimeState& HealingPotionState);
 
+	TWeakObjectPtr<UMVStatComponent> BoundBossStat;
 	FText CachedBossName;
 
 	UPROPERTY(Transient)

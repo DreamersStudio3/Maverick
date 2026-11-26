@@ -3,6 +3,7 @@
 
 #include "Character/NPC/Enemy/MVEnemy.h"
 
+#include "AI/Controller/MVAIController.h"
 #include "Components/MVStatComponent.h"
 #include "Engine/World.h"
 #include "Tags/MVGameplayTags.h"
@@ -57,6 +58,14 @@ void AMVEnemy::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 void AMVEnemy::BindBossHUDToMainHUD()
 {
+	const AMVAIController* AI = Cast<AMVAIController>(GetController());
+	const APawn* Player = AI ? Cast<APawn>(AI->TargetActor) : nullptr;
+	if (!StatComponent || StatComponent->IsDead() || !Player || !Player->IsPlayerControlled())
+	{
+		if (auto* HUD = BoundBossHUD.Get(); HUD && HUD->IsShowingBoss(StatComponent)) HUD->HideBossHPBar();
+		BoundBossHUD.Reset();
+		return;
+	}
 	if (!StatComponent)
 	{
 		return;
@@ -74,7 +83,7 @@ void AMVEnemy::BindBossHUDToMainHUD()
 			BoundBossHUD = MainHUD;
 		}
 
-		GetWorldTimerManager().ClearTimer(BossHUDBindRetryTimerHandle);
+
 	}
 }
 
@@ -94,7 +103,7 @@ void AMVEnemy::HideBoundBossHUD()
 
 	if (UMVMainHUDWidget* MainHUD = BoundBossHUD.Get())
 	{
-		MainHUD->HideBossHPBar();
+		if (MainHUD->IsShowingBoss(StatComponent)) MainHUD->HideBossHPBar();
 	}
 
 	BoundBossHUD.Reset();

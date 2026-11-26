@@ -7,6 +7,7 @@
 void UMVBossHPBarWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
+	ResetBossBar();
 
 	if (GroggyBar)
 	{

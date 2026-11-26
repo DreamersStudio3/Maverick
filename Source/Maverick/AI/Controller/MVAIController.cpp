@@ -155,20 +155,20 @@ void AMVAIController::OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors)
 {
 	for (AActor* Actor : UpdatedActors)
 	{
-		if (!Actor)
+		if (!IsValid(Actor) || !Cast<APawn>(Actor) || !Cast<APawn>(Actor)->IsPlayerControlled())
 		{
 			continue;
 		}
 
 		const FActorPerceptionInfo* info = AIPerceptionComponent->GetActorInfo(*Actor);
 
-		if (info->LastSensedStimuli.Num() > 0 && info->LastSensedStimuli[0].WasSuccessfullySensed())
+		if (info && info->LastSensedStimuli.Num() > 0 && info->LastSensedStimuli[0].WasSuccessfullySensed())
 		{
 			TargetActor = Actor; //적 발견 
 		}
 		else
 		{
-			TargetActor = nullptr; //적 놓침
+			if (TargetActor == Actor) TargetActor = nullptr; //적 놓침
 		}
 		
 	}

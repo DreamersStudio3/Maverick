@@ -134,3 +134,8 @@ flowchart TD
 - 시험 UI 버튼 클릭은 게임 배경 클릭 판정에서 제외
 - 보스 등장 대기에는 시험 허용, 실제 재생의 `bBossIntroBlocked` 활성 시 수동 공격 차단·패널의 마우스 입력 강제 설정 제외; 연출 입력·카메라 복구는 [[Features/Boss-Intro/document|최초 보스 등장 연출]] 소유
 - 버튼 연결·공명 반복 시험·검증 범위: [[Features/Boss-Attack-Test/document|보스 공격 시험 UI]]
+
+### 보스 인지와 체력바
+
+- 적의 AI 대상이 플레이어일 때만 MainHUD의 BossHPBar에 해당 적의 StatComponent를 연결한다. 인지를 잃거나 사망하면 자신이 연결한 체력바만 숨긴다. 0.1초 주기로 HUD 생성 지연과 대상 변화를 확인한다.
+- BossHPBar 초기화 시 ResetBossBar로 Collapsed 상태를 적용한다. MainHUD 생성 시에도 연결 보스가 없으면 숨김 상태를 적용한다.
