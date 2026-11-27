@@ -1,5 +1,7 @@
 # BloodBorne 테스트 Moveset
 
+[Graceborne 모션 Q&A — CSV 읽는 법, TAE, 무기·손가락 애니메이션, 리타겟 원본](Weapons/README.md#자주-묻는-질문)
+
 - 위치: `/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne`
 - 이동·회피·회복 세트: Manny 시퀀스 132개(루트 모션 활성 129개, 일반 회복 1개, 착지·회복 가산 2개), 몽타주 135개, 이동 BlendSpace 2개
 - 무기 세트: Graceborne 0.2.5 무기별 공격·변형·사격 Manny 시퀀스 1,098개. [무기별 모션 목록](Weapons/README.md)
