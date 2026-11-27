@@ -1,8 +1,8 @@
 ---
 제목: "그로기 Finisher"
 부제목: "Attacker·Victim 짝 애니메이션 선택과 실행 책임"
-최근수정일: 2026-11-18
-최근수정자: "Kwon-Nahoo-Man"
+최근수정일: 2026-11-27
+최근수정자: "Codex"
 관련문서:
   - "[[Architecture/document|Maverick 아키텍처]]"
   - "[[Features/Combat/Combat-System/document|Maverick 전투 시스템]]"
@@ -15,7 +15,8 @@
 ## 핵심
 
 - `UMVFinisherComponent`: 그로기 대상 탐색과 Attacker·Victim 짝 애니메이션 실행 요청 담당
-- `BeginPlay`에서 약공격 입력 처리기로 등록, `EndPlay`에서 해제
+- 약공격 홀드의 `Started`에서 Combat보다 먼저 피니셔 시도. 실패하면 같은 입력으로 Light·Charge 판정 진행
+- 성공하면 같은 누름의 후속 입력을 `Completed` 또는 `Canceled`까지 소비. 다음 누름에서 대상 재평가
 
 ## 실행 흐름
 
@@ -51,5 +52,3 @@ flowchart TD
 ## 구현 근거
 
 [MVFinisherComponent.h](../../../../../Source/Maverick/Components/MVFinisherComponent.h) · [MVFinisherComponent.cpp](../../../../../Source/Maverick/Components/MVFinisherComponent.cpp)
-
-현재 C++ 구현 기준 문서이며 Chooser·Montage 에셋 연결과 실제 재생 타이밍은 Editor 검증 범위
