@@ -3,7 +3,7 @@
 - 위치: `/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne`
 - 이동·회피·회복 세트: Manny 시퀀스 132개(루트 모션 활성 129개, 일반 회복 1개, 착지·회복 가산 2개), 몽타주 135개, 이동 BlendSpace 2개
 - 무기 세트: Graceborne 0.2.5 무기별 공격·변형·사격 Manny 시퀀스 1,098개. [무기별 모션 목록](Weapons/README.md)
-- 명명: 시퀀스 `AS_BB_<종류>_<원본 ID>_Root`, 몽타주 `AM_BB_*`
+- 명명: 시퀀스 `AS_GB_<종류>_<원본 ID>_Root`, 몽타주 `AM_GB_*`
 - 분류: Turn / AdapterDodge / DiagonalDodge / EscapeDodge / Idle / Walk / Run / SprintAndStop / FallAndLand / KnockdownAndRecovery / Heal
 - 기존 BareHand·OneHand·DualWield 에셋 유지, 동일 회피 시퀀스의 테스트 사본 6개 통합
 
@@ -67,12 +67,12 @@
 
 ## 회복 모션 시안
 
-- `Heal/AS_BB_Heal_Left_Root`: `c0000_a00_hi.anibnd.dcx`의 `a000_050210`, 왼쪽 허벅지 회복 동작
-- `Heal/AS_BB_Heal_Heart_Root`, `AS_BB_Heal_Skull_Root`: 원본에서 왼팔·손목·왼손 IK 궤적을 편집한 심장·두개골 변형
-- 각 시퀀스에 대응하는 `AM_BB_Heal_Left`, `AM_BB_Heal_Heart`, `AM_BB_Heal_Skull` 포함
+- `Heal/AS_GB_Heal_Left_Root`: `c0000_a00_hi.anibnd.dcx`의 `a000_050210`, 왼쪽 허벅지 회복 동작
+- `Heal/AS_GB_Heal_Heart_Root`, `AS_GB_Heal_Skull_Root`: 원본에서 왼팔·손목·왼손 IK 궤적을 편집한 심장·두개골 변형
+- 각 시퀀스에 대응하는 `AM_GB_Heal_Left`, `AM_GB_Heal_Heart`, `AM_GB_Heal_Skull` 포함
 - 모두 91키·30fps·3초·Rate Scale 1, 시작·종료 자세와 몸통·하체 유지
 - 허벅지 원본은 `DT_Props_P1.Items_HealingPotion`에 연결, 심장·두개골은 미연결 시안
-- `AM_BB_Heal_Left`: UpperBody 슬롯, 1초에 회복 알림, 1.668–3초에 회피 전환 창
+- `AM_GB_Heal_Left`: UpperBody 슬롯, 1초에 회복 알림, 1.668–3초에 회피 전환 창
 - 회복 중 이동·회복량·소모 수량·실패 액션 설정 유지, 소품 및 손가락 그립 추가 보정 미포함
 - 변형은 팔 궤적 검토용 첫 시안, 실제 주사기 메시 기준 바늘 끝 접촉 검증 미포함
 
