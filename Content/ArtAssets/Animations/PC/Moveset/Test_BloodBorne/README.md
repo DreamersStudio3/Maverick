@@ -4,14 +4,14 @@
 - 이동·회피·회복 세트: Manny 시퀀스 132개(루트 모션 활성 129개, 일반 회복 1개, 착지·회복 가산 2개), 몽타주 135개, 이동 BlendSpace 2개
 - 무기 세트: Graceborne 0.2.5 무기별 공격·변형·사격 Manny 시퀀스 1,098개. [무기별 모션 목록](Weapons/README.md)
 - 명명: 시퀀스 `AS_BB_<종류>_<원본 ID>_Root`, 몽타주 `AM_BB_*`
-- 분류: Detail / Dodge / Idle / Walk / Run / Sprint / Fall / Knockdown / Getup / Heal
+- 분류: Turn / AdapterDodge / DiagonalDodge / EscapeDodge / Idle / Walk / Run / SprintAndStop / FallAndLand / KnockdownAndRecovery / Heal
 - 기존 BareHand·OneHand·DualWield 에셋 유지, 동일 회피 시퀀스의 테스트 사본 6개 통합
 
 ## 게임플레이 연결
 
 - 메인 `ABP_Base`와 BloodBorne 기본 레이어 연결, Mage·Hammer 분기와 회피 테이블 참조 유지
 
-- 플레이어 일반 회피 18행은 새 Dodge 폴더의 기존 몽타주 12개 참조
+- 플레이어 일반 회피 18행은 새 AdapterDodge 폴더의 기존 몽타주 12개 참조
 - 기존 회피 몽타주의 길이·알림 보존, 시퀀스는 무기 스타일 간 공유
 - BH·1H 이름의 몽타주는 기존 블렌드·타이밍 구분용, 별도 시퀀스 중복 없음
 - 회피·회복 외 몽타주는 개별 모션 확인용, 로코모션은 상태 머신의 시퀀스 재생 구조 사용
@@ -27,7 +27,7 @@
 
 - 소스 메시·스켈레톤: `/Game/ArtAssets/Mannequins/Meshes/Test_BloodBorne`
 - IK Rig·리타게터: `/Game/ArtAssets/Mannequins/Rigs/Test_BloodBorne`
-- 원본 스켈레톤 시퀀스 132개: 위 Rigs 폴더의 `SourceAnimations`
+- 리타겟 전 C0000 이동·회복 시퀀스 132개는 프로젝트에서 제거. 기본 회피는 AdapterDodge, 기상 분리본은 원본과 같은 FallAndLand에 배치
 - 원본: GRACEBORNE a0.2.5 `c0000`, 출처 슬롯명은 원본 게임의 분류이며 모드 입력 선택 규칙과 별개
 - ID·구간·에셋 경로: `asset-index.json`
 
