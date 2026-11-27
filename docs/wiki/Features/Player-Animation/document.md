@@ -1,7 +1,7 @@
 ---
 제목: "플레이어 애니메이션 교체"
 부제목: "기본 로코모션 레이어와 액션 몽타주의 편집 위치"
-최근수정일: 2026-11-14
+최근수정일: 2026-11-27
 최근수정자: "Codex"
 관련문서:
   - "[[Architecture/document|Maverick Architecture]]"
@@ -80,8 +80,13 @@ flowchart LR
 ## BloodBorne 테스트 세트
 
 - 경로: `/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne`
-- Idle 000000/000001: Manny의 접지된 대기 자세를 기준으로 발목·발끝 높이 보정, 두 관절 다리 계산으로 무릎과 골반 조정, 뼈 스케일 유지
+- Idle 000000/000001: Manny 맨손 대기 `AS_Idle`의 발목·발볼 뼈 높이를 기준으로 무릎과 골반 조정, 뼈 스케일 유지
+- `BaseBossTestLevel` 평지에서 대기 2개·걷기 20개의 프레임별 Manny 메시 최저점을 측정해 골반 높이 보정. 지지발의 목표 여유 높이 0.08 cm, 기존 루트 궤적 유지
+- PIE 대기 발바닥 최저점 약 1.96 cm → 0.07–0.08 cm. 전방 걷기 정속 구간 최저점은 지면 기준 −0.11~+0.18 cm, 출발 블렌드에서 일시적인 발 침투 관측
 - Idle 보정은 시퀀스 내부 키 수정이며 공통 스켈레톤·캐릭터 메시 스케일 변경 없음
+- Graceborne 무기 1,098개와 이동·회피·회복 등 나머지 132개의 Manny 타깃 포즈는 `RTG_C0000_to_Manny`의 `GroundedFeet`. 기존 `Default Pose`에서 양쪽 발끝을 10° 올리고 골반을 1.5 cm 낮춘 설정
+- 기본 이동 시퀀스 갱신 후 대각선 혼합과 Run FL 좌우 반전 재생성. Idle 2개의 접지, 잘라낸 기상 구간, 착지·회복 가산 기준과 편집된 회복 팔 동작 유지
+- 무기 시퀀스에 이 보정을 다시 적용할 때는 골반·양쪽 발목·발볼 트랙을 갱신하고 기존 루트 모션과 손 트랙을 보존한다. [무기 모션 목록](../../../../Content/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Weapons/README.md)
 - Windows UE 5.8.4에서 정지와 회피 몽타주 전환 추적: 수정 전 손 스케일 최대 2048, 수정 후 약 1
 - 입력 판정 전체가 아닌 하부 로코모션과 몽타주 합성 경로의 회귀 검증
 
