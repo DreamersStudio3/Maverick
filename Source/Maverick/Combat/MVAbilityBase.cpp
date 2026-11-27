@@ -45,6 +45,18 @@ AMVCharacterBase* UMVAbilityBase::GetOwnerCharacter()
 void UMVAbilityBase::InitAbility(const FMVSkillDataTableColumn& Data)
 {
 	AbilityData = Data;
+	if (bOverrideDamageMultiplier)
+	{
+		AbilityData.DamageMultiplier = FMath::Max(0.0f, DamageMultiplierOverride);
+	}
+	if (bOverridePoiseAmountMultiplier)
+	{
+		AbilityData.PoiseAmountMultiplier = FMath::Max(0.0f, PoiseAmountMultiplierOverride);
+	}
+	if (bOverrideGroggyDamageMultiplier)
+	{
+		AbilityData.GroggyDamageMultiplier = FMath::Max(0.0f, GroggyDamageMultiplierOverride);
+	}
 	PrepareAbilityExecution();
 }
 
@@ -60,7 +72,7 @@ void UMVAbilityBase::ApplyHitLaunchDataToResolveRequest(FMVHitResolveRequest& Re
 
 void UMVAbilityBase::ApplyOnHitStatusEffect(const FMVResolvedHitData& HitData)
 {
-	if (AbilityData.OnHitStatusEffects.IsEmpty())
+	if (HitData.bBlocked || AbilityData.OnHitStatusEffects.IsEmpty())
 	{
 		return;
 	}
@@ -119,6 +131,7 @@ void UMVAbilityBase::ApplyOnHitStatusEffect(const FMVResolvedHitData& HitData)
 
 void UMVAbilityBase::PrepareAbilityExecution()
 {
+	AbilityNotifyInstanceId = INDEX_NONE;
 	bAbilityActive = false;
 	bAbilityCostConsumed = false;
 	SourceSkillIndex = INDEX_NONE;

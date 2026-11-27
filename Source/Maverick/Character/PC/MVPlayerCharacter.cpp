@@ -7,7 +7,6 @@
 #include "Character/PC/InteractionDetector/MVPlayerInteractionDetector.h"
 #include "Components/MVActionComponent.h"
 #include "Components/MVCombatComponent.h"
-#include "Components/MVHitReactionComponent.h"
 #include "Components/MVStatComponent.h"
 #include "Engine/GameInstance.h"
 #include "Engine/LocalPlayer.h"
@@ -398,12 +397,6 @@ FName AMVPlayerCharacter::ResolveSprintActionRowName() const
 void AMVPlayerCharacter::BindDamageHandlers()
 {
 	Super::BindDamageHandlers();
-	
-	if (HitReactionComponent)
-	{
-		//OnDamaged.RemoveDynamic(HitReactionComponent, &UMVHitReactionComponent::HandleDamaged);
-		//OnDamaged.AddUniqueDynamic(HitReactionComponent, &UMVHitReactionComponent::HandleDamaged);
-	}
 }
 
 // Called every frame

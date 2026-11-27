@@ -128,9 +128,12 @@ void AMVCharacterBase::Tick(float DeltaTime)
 	Gait = DesiredGait();
 	UpdateRecoverableStats(DeltaTime);
 
-	UpdateMovement(bIsMovementActive);
-	UpdateRotation(bIsRotationActive);
-	OnLocomotionSettingsUpdated.Broadcast(bIsMovementActive, bIsRotationActive);
+	const bool bActionRestrictsLocomotion = ActionComponent && ActionComponent->IsActiveActionLocomotionRestricted();
+	const bool bMovementActive = bIsMovementActive && !bActionRestrictsLocomotion;
+	const bool bRotationActive = bIsRotationActive && !bActionRestrictsLocomotion;
+	UpdateMovement(bMovementActive);
+	UpdateRotation(bRotationActive);
+	OnLocomotionSettingsUpdated.Broadcast(bMovementActive, bRotationActive);
 }
 
 // Called to bind functionality to input
@@ -301,6 +304,42 @@ bool AMVCharacterBase::IsInvincible() const
 	return InvincibilityCount > 0;
 }
 
+int32 AMVCharacterBase::RegisterNextHitBlock(const FMVOnNextHitBlocked& OnBlocked)
+{
+	if (OnNextHitBlocked.IsBound() || !OnBlocked.IsBound())
+	{
+		return INDEX_NONE;
+	}
+
+	NextHitBlockGeneration = NextHitBlockGeneration == MAX_int32 ? 1 : NextHitBlockGeneration + 1;
+	ActiveHitBlockId = NextHitBlockGeneration;
+	OnNextHitBlocked = OnBlocked;
+	return ActiveHitBlockId;
+}
+
+void AMVCharacterBase::UnregisterNextHitBlock(int32 RegistrationId)
+{
+	if (RegistrationId != INDEX_NONE && RegistrationId == ActiveHitBlockId)
+	{
+		ActiveHitBlockId = INDEX_NONE;
+		OnNextHitBlocked.Unbind();
+	}
+}
+
+bool AMVCharacterBase::TryConsumeNextHitBlock(FMVResolvedHitData& HitData)
+{
+	if (!OnNextHitBlocked.IsBound())
+	{
+		return false;
+	}
+
+	const FMVOnNextHitBlocked Callback = OnNextHitBlocked;
+	UnregisterNextHitBlock(ActiveHitBlockId);
+	HitData.bBlocked = true;
+	Callback.ExecuteIfBound(HitData);
+	return true;
+}
+
 bool AMVCharacterBase::OnHitResolved(const FMVResolvedHitData& HitData)
 {
 	if (HitData.VictimCharacterIndexCode.IsValid() && HitData.VictimCharacterIndexCode != CharacterIndexCode)
@@ -310,6 +349,11 @@ bool AMVCharacterBase::OnHitResolved(const FMVResolvedHitData& HitData)
 
 	OnDamaged.Broadcast(HitData);
 	return true;
+}
+
+bool AMVCharacterBase::IsCharacterMovementActive() const
+{
+	return bIsMovementActive && (!ActionComponent || !ActionComponent->IsActiveActionLocomotionRestricted());
 }
 
 void AMVCharacterBase::SetCharacterMovementRotationActive(bool bMovementActive, bool bRotationActive)

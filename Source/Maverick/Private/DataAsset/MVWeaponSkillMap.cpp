@@ -128,12 +128,6 @@ const FDataTableRowHandle* FMVWeaponBasicAttackMap::Find(const EMVCombatActionTy
 		return &DodgeLightAttack;
 	case EMVCombatActionTypes::SprintLightAttack:
 		return &SprintLightAttack;
-	case EMVCombatActionTypes::HeavyAttack:
-		return &HeavyAttack;
-	case EMVCombatActionTypes::DodgeHeavyAttack:
-		return &DodgeHeavyAttack;
-	case EMVCombatActionTypes::SprintHeavyAttack:
-		return &SprintHeavyAttack;
 	case EMVCombatActionTypes::ChargeAttack:
 		return &ChargeAttack;
 	default:

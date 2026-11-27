@@ -314,7 +314,7 @@ void AMVProjectileBase::HandleOverlap(
 
 	bResolvingHit = false;
 
-	if (!bResolved)
+	if (!bResolved && !ResolvedHit.bBlocked)
 	{
 		HitCharacters.Remove(VictimKey);
 		if (!bPierceCharacters && !bEnding)
@@ -330,7 +330,11 @@ void AMVProjectileBase::HandleOverlap(
 		ClearHomingTarget();
 	}
 
-	OnProjectileHit.Broadcast(this, ResolvedHit);
+	if (bResolved)
+	{
+		OnProjectileHit.Broadcast(this, ResolvedHit);
+		ReceiveProjectileHit(ResolvedHit);
+	}
 
 	if (!bPierceCharacters)
 	{

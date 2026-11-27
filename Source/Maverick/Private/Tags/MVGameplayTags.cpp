@@ -27,9 +27,6 @@ namespace MVGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Stat_MaxStamina, "Stat.MaxStamina");
 	UE_DEFINE_GAMEPLAY_TAG(Stat_MaxMP, "Stat.MaxMP");	
 	UE_DEFINE_GAMEPLAY_TAG(Action_Input_LightAttack, "Action.Input.LightAttack");
-	UE_DEFINE_GAMEPLAY_TAG(Action_Input_HeavyAttack, "Action.Input.HeavyAttack");
-	UE_DEFINE_GAMEPLAY_TAG(Action_Input_HeavyChargeAttack, "Action.Input.HeavyChargeAttack");
-	UE_DEFINE_GAMEPLAY_TAG(Action_Input_ChargeAttack, "Action.Input.ChargeAttack");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Input_Skill, "Action.Input.Skill");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Input_Skill_Q, "Action.Input.Skill.Q");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Input_Skill_R, "Action.Input.Skill.R");
@@ -42,7 +39,6 @@ namespace MVGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Action_Input_WeaponSwap, "Action.Input.WeaponSwap");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Combat, "Action.Combat");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Combat_LightAttack, "Action.Combat.LightAttack");
-	UE_DEFINE_GAMEPLAY_TAG(Action_Combat_HeavyAttack, "Action.Combat.HeavyAttack");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Combat_ChargeAttack, "Action.Combat.ChargeAttack");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Combat_Skill, "Action.Combat.Skill");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Combat_Skill_Q, "Action.Combat.Skill.Q");
@@ -50,9 +46,7 @@ namespace MVGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Action_Combat_Skill_W, "Action.Combat.Skill.W");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Combat_Skill_E, "Action.Combat.Skill.E");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Combat_SprintLightAttack, "Action.Combat.SprintLightAttack");
-	UE_DEFINE_GAMEPLAY_TAG(Action_Combat_SprintHeavyAttack, "Action.Combat.SprintHeavyAttack");
 	UE_DEFINE_GAMEPLAY_TAG(Action_Combat_DodgeLightAttack, "Action.Combat.DodgeLightAttack");
-	UE_DEFINE_GAMEPLAY_TAG(Action_Combat_DodgeHeavyAttack, "Action.Combat.DodgeHeavyAttack");
 	UE_DEFINE_GAMEPLAY_TAG(StateTreeEvent_Enemy_Hit, "StateTreeEvent.Enemy.Hit");
 	UE_DEFINE_GAMEPLAY_TAG(StateTreeEvent_Enemy_DodgeThreatDetected, "StateTreeEvent.Enemy.DodgeThreatDetected");
 	UE_DEFINE_GAMEPLAY_TAG(StateTreeEvent_Enemy_Groggy, "StateTreeEvent.Enemy.Groggy");

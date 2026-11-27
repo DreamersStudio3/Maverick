@@ -2,7 +2,6 @@
 
 #include "Character/MVCharacterBase.h"
 #include "Combat/MVAbilityBase.h"
-#include "Components/MVHitReactionComponent.h"
 #include "Components/MVStatComponent.h"
 #include "Components/MVWeaponComponent.h"
 #include "Components/MVCombatComponent.h"
@@ -72,6 +71,11 @@ bool UMVHitResolverSubsystem::ResolveDirectDamage(const FMVDirectDamageRequest& 
 		return false;
 	}
 
+	if (OutHitData.Victim->TryConsumeNextHitBlock(OutHitData))
+	{
+		return false;
+	}
+
 	return DispatchResolvedHit(OutHitData);
 }
 
@@ -85,7 +89,7 @@ bool UMVHitResolverSubsystem::BuildResolvedHitData(
 	AMVCharacterBase* Victim = Request.Victim.Get();
 
 	// Todo: 자기 자신의 체력을 깎는 공격을 허용할지 여부를 결정해야 함
-	if (!Attacker || !Victim /*|| Attacker == Victim*/)
+	if (!IsValid(Attacker) || !IsValid(Victim) /*|| Attacker == Victim*/)
 	{
 		return false;
 	}
@@ -103,6 +107,18 @@ bool UMVHitResolverSubsystem::BuildResolvedHitData(
 	: ResolveNonNegativeStat(FallbackAttackPower);
 
 	if (Request.bUseSourceWeaponSnapshot && !Request.SourceWeaponSnapshot.bValid)
+	{
+		return false;
+	}
+
+	OutHitData.Attacker = Attacker;
+	OutHitData.Victim = Victim;
+	OutHitData.AttackInstanceId = Request.AttackInstanceId;
+	OutHitData.Origin = EMVResolvedHitOrigin::AttackCollision;
+	OutHitData.AttackerCharacterIndexCode = Attacker->GetCharacterIndexCode();
+	OutHitData.VictimCharacterIndexCode = Victim->GetCharacterIndexCode();
+	OutHitData.HitLocation = Request.HitLocation;
+	if (!VictimStat->IsDead() && Victim->TryConsumeNextHitBlock(OutHitData))
 	{
 		return false;
 	}
@@ -127,12 +143,6 @@ bool UMVHitResolverSubsystem::BuildResolvedHitData(
 	const float RawDamage = WeaponAttackPower * DamageMultiplier;
 	const float GroggyDamage = WeaponAttackPower * GroggyDamageMultiplier;
 
-	OutHitData.Attacker = Attacker;
-	OutHitData.Victim = Victim;
-	OutHitData.AttackInstanceId = Request.AttackInstanceId;
-	OutHitData.Origin = EMVResolvedHitOrigin::AttackCollision;
-	OutHitData.AttackerCharacterIndexCode = Attacker->GetCharacterIndexCode();
-	OutHitData.VictimCharacterIndexCode = Victim->GetCharacterIndexCode();
 	OutHitData.CharacterAttackPower = BaseAttackPower;
 	OutHitData.WeaponSnapshot = WeaponSnapshot;
 	OutHitData.WeaponAttackPower = WeaponAttackPower;
@@ -142,7 +152,6 @@ bool UMVHitResolverSubsystem::BuildResolvedHitData(
 	OutHitData.GroggyDamage = GroggyDamage;
 	OutHitData.HitReactionType = Request.HitReactionType;
 	OutHitData.HitLaunchData = Request.HitLaunchData;
-	OutHitData.HitLocation = Request.HitLocation;
 	OutHitData.ImpactNormal = Request.ImpactNormal.IsNearlyZero()
 		? FVector::ZeroVector
 		: Request.ImpactNormal.GetSafeNormal();
@@ -155,23 +164,21 @@ bool UMVHitResolverSubsystem::BuildResolvedHitData(
 	OutHitData.FinalDamage = ResolveFinalDamage(AttackerStat, VictimDefence, RawDamage, CriticalChance);
 	OutHitData.PoiseDamage = ResolveNonNegativeStat(Request.PoiseDamage);
 	OutHitData.PoiseBreak = VictimStat->PredictPoiseBreak(Request.PoiseDamage);
+
 	if (VictimStat->IsPoiseBreakGroggyWindowActive())
 	{
-		// 기존 공격의 GroggyDamage를 강인도 피해로 사용, 명시적인 PoiseDamage 우선
-		OutHitData.PoiseDamage = OutHitData.PoiseDamage > 0.0f ? OutHitData.PoiseDamage : GroggyDamage;
-		OutHitData.PoiseBreak = VictimStat->PredictPoiseBreak(OutHitData.PoiseDamage);
-		OutHitData.HitReactionType = OutHitData.PoiseBreak ? EMVActionHitReactionType::Groggy : EMVActionHitReactionType::None;
-		OutHitData.GroggyDamage = OutHitData.PoiseBreak ? FMath::Max(1.0f, VictimStat->MaxGroggy - VictimStat->CurrentGroggy) : 0.0f;
+		if (OutHitData.PoiseBreak)
+		{
+			OutHitData.HitReactionType = EMVActionHitReactionType::Groggy;
+			OutHitData.GroggyDamage = OutHitData.PoiseBreak ? FMath::Max(1.0f, VictimStat->MaxGroggy - VictimStat->CurrentGroggy) : 0.0f;
+		}
 		return true;
 	}
 
-	// Todo: Groggy 해결하면서 HitReactionComponent 부분을 삭제, 수정해야함
-	const UMVHitReactionComponent* HitReactionComponent = Victim->FindComponentByClass<UMVHitReactionComponent>();
-	const bool bCanTriggerGroggy = HitReactionComponent && HitReactionComponent->CanTriggerGroggy(OutHitData);
-	if (bCanTriggerGroggy)
-	{
-		OutHitData.HitReactionType = EMVActionHitReactionType::Groggy;
-	}
+	// Victim의 Groggy 상태를 고려하여 HitReactionType을 결정
+	OutHitData.HitReactionType = VictimStat->PredictGroggyResult(OutHitData.GroggyDamage)
+		? EMVActionHitReactionType::Groggy
+		: Request.HitReactionType;
 
 	return true;
 }

@@ -63,9 +63,6 @@ bool FMVWeaponSkillMapBasicAttackRowsTest::RunTest(const FString& Parameters)
 	WeaponSkillMap->BasicAttacks.LightAttack = MVWeaponSkillMapTestMakeRow(*DataTable, TEXT("LightAttack"));
 	WeaponSkillMap->BasicAttacks.DodgeLightAttack = MVWeaponSkillMapTestMakeRow(*DataTable, TEXT("DodgeLightAttack"));
 	WeaponSkillMap->BasicAttacks.SprintLightAttack = MVWeaponSkillMapTestMakeRow(*DataTable, TEXT("SprintLightAttack"));
-	WeaponSkillMap->BasicAttacks.HeavyAttack = MVWeaponSkillMapTestMakeRow(*DataTable, TEXT("HeavyAttack"));
-	WeaponSkillMap->BasicAttacks.DodgeHeavyAttack = MVWeaponSkillMapTestMakeRow(*DataTable, TEXT("DodgeHeavyAttack"));
-	WeaponSkillMap->BasicAttacks.SprintHeavyAttack = MVWeaponSkillMapTestMakeRow(*DataTable, TEXT("SprintHeavyAttack"));
 	WeaponSkillMap->BasicAttacks.ChargeAttack = MVWeaponSkillMapTestMakeRow(*DataTable, TEXT("ChargeAttack"));
 
 	const TPair<EMVCombatActionTypes, FDataTableRowHandle> ExpectedRows[] =
@@ -73,9 +70,6 @@ bool FMVWeaponSkillMapBasicAttackRowsTest::RunTest(const FString& Parameters)
 		{EMVCombatActionTypes::LightAttack, WeaponSkillMap->BasicAttacks.LightAttack},
 		{EMVCombatActionTypes::DodgeLightAttack, WeaponSkillMap->BasicAttacks.DodgeLightAttack},
 		{EMVCombatActionTypes::SprintLightAttack, WeaponSkillMap->BasicAttacks.SprintLightAttack},
-		{EMVCombatActionTypes::HeavyAttack, WeaponSkillMap->BasicAttacks.HeavyAttack},
-		{EMVCombatActionTypes::DodgeHeavyAttack, WeaponSkillMap->BasicAttacks.DodgeHeavyAttack},
-		{EMVCombatActionTypes::SprintHeavyAttack, WeaponSkillMap->BasicAttacks.SprintHeavyAttack},
 		{EMVCombatActionTypes::ChargeAttack, WeaponSkillMap->BasicAttacks.ChargeAttack}
 	};
 

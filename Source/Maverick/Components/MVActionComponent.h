@@ -14,6 +14,7 @@ class UAnimMontage;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FMVOnActionPreparing, FName, ActionTableName, FName, ActionRowName);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FMVOnActionStarted, FName, ActionTableName, FName, ActionRowName);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FMVOnActionEnded, FName, ActionTableName, FName, ActionRowName, bool, bInterrupted);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FMVOnActiveActionReplacementFinished, int32, FName, bool);
 
 /**
  * 공용 Action 실행 컴포넌트.
@@ -24,6 +25,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FMVOnActionEnded, FName, ActionTa
  *   - `ActionTableName + ActionRowName`으로 DataTable row를 찾아 몽타주를 재생한다.
  *   - 현재 액션, 몽타주 종료 콜백, 입력 NotifyState 정리 이벤트를 관리한다.
  *   - 이동 입력 차단, recovery window, 스탯 회복 pause 같은 도메인 정책은 전용 컴포넌트/NotifyState가 제어한다.
+ *   - 요청받은 이동·회전 제한은 현재 실행에 귀속되며 액션 종료 시 해제한다.
+ *   - 교체 요청은 새 실행에 기존 제한을 인계하고 교체 대상의 ID·섹션과 결과를 알린다.
  *   - 이후 커스텀 몽타주 priority가 도입되면 더 높은 priority의 재생 요청이 낮은 priority 액션을 끊는
  *     정책도 이 컴포넌트의 현재 액션 전환 규칙에 포함된다.
  *
@@ -100,6 +103,10 @@ public:
 		EMVActionDomain ActionDomain,
 		float PlayRateMultiplier);
 
+	// Replace the active action, carrying its locomotion restriction to the new action on success.
+	bool TryReplaceActiveActionFromRowHandle(FDataTableRowHandle ReplacementRowHandle);
+	bool IsActionReplacementInProgress(int32 ActionInstanceId) const;
+
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Action")
 	void FinishActiveAction(bool bInterrupted = false);
 
@@ -133,6 +140,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Maverick|Action|Recovery")
 	bool TryJumpActiveActionSection(FName SectionName);
 
+	void SetActiveActionLocomotionRestricted(int32 ActionInstanceId, bool bRestricted);
+	bool IsActiveActionLocomotionRestricted() const { return bActiveActionLocomotionRestricted; }
+
 
 	const FMVActionRow* FindActionRow(FName ActionTableName, FName ActionRowName) const;
 	const FMVActionRow* FindActionRow(FDataTableRowHandle ActionRowHandle, FName& OutActionTableName, FName& OutActionRowName) const;
@@ -145,6 +155,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Maverick|Action|Event")
 	FMVOnActionEnded OnActionEnded;
+
+	// Arguments are the previous action ID, its section, and whether the replacement started.
+	FMVOnActiveActionReplacementFinished OnActiveActionReplacementFinished;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Maverick|Action|Character", meta = (Categories = "Character"))
 	FGameplayTag CharacterIndexCode;
@@ -170,6 +183,8 @@ private:
 	FName ActiveActionRowName = NAME_None;
 	EMVActionDomain ActiveActionDomain = EMVActionDomain::None;
 	int32 ActiveActionInstanceId = INDEX_NONE;
+	int32 ActionBeingReplacedId = INDEX_NONE;
 	int32 NextActionInstanceId = 0;
 	bool bActiveActionCanBeInterrupted = true;
+	bool bActiveActionLocomotionRestricted = false;
 };

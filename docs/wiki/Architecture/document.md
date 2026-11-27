@@ -4,6 +4,7 @@
 최근수정일: 2026-11-19
 최근수정자: "No-Jyun"
 관련문서:
+  - "[[Features/Combat/Finisher/document|그로기 Finisher]]"
   - "[[Convention/Header-Documentation/document|C++ 헤더 책임 문서화]]"
   - "[[Features/Combat/Combat-System/document|Maverick 전투 시스템]]"
   - "[[Features/Combat/Ranged-Projectile/document|원거리 발사체와 자동 유도 대상 선택]]"
@@ -40,7 +41,7 @@ flowchart TD
     HitResolver --> CharacterBridge["AMVCharacterBase::OnHitResolved"]
     CharacterBridge --> OnDamaged["OnDamaged delegate"]
     OnDamaged --> Stat["UMVStatComponent"]
-    OnDamaged -. "Player 직접" .-> HitReaction["UMVHitReactionComponent"]
+    OnDamaged -. "Player 직접" .-> HitReaction["UMVHitReaction"]
     OnDamaged -. "Enemy 피격 방송" .-> EnemyDamaged["OnEnemyDamaged"]
     EnemyTask["MVHitReactionTask"] --> HitReaction
     Stat --> Death["UMVDeathComponent"]
@@ -79,7 +80,7 @@ flowchart TD
 | `UMVActionComponent` | 선택된 Action Row와 Montage 실행 |
 | `UMVCombatComponent` | 공격·스킬 Ability 인스턴스, Chain, 쿨다운과 실행 상태 소유 |
 | `UMVDeathComponent` | Actor 단위 사망 표현 |
-| `UMVHitReactionComponent` | 피격 Row, Interrupt, Groggy, Recovery 표현 |
+| `UMVHitReaction` | Chooser 기반 피격·Additive, 착지·기상 표현 |
 | `UMVInputManagerComponent` | 입력 Snapshot, 짧은 Buffer, 우선순위 처리기 배분 |
 | `UMVInventoryComponent` | 아이템 태그별 소유·수량·보유 한도 관리, 가방과 HUD에 변경 알림 |
 | `UMVWeaponComponent` | 교체 입력·퀵슬롯·장착 상태·무기 메시·적중 Snapshot·스타일별 공격·Skill Row 원천 |
@@ -113,10 +114,11 @@ flowchart TD
 - `AMVEnemy`: EnemyDodgeToken, Boss HUD, 필드 Reset 계약 소유
 - 필드 Reset: Controller BrainComponent, 기타 Controller Component, Pawn Component의 StateTree Component 탐색·재시작
 - 피격 경로: 직접 HitReaction 바인딩 대신 `OnEnemyDamaged` 방송
-- `MVHitReactionTask` 실행 시 `HandleDamaged` 호출
+- `MVHitReactionTask` 실행 시 `UMVHitReaction::HandleHitEvent` 호출
 
 ## 핵심 런타임 흐름
 
+- [[Features/Combat/Finisher/document|그로기 Finisher]]
 - [[Features/Combat/Weapon-Swap/document|플레이어 무기 교체]]
 - [[Features/Combat/Ranged-Projectile/document|원거리 발사체와 자동 유도 대상 선택]]
 

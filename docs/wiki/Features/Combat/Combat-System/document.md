@@ -1,7 +1,7 @@
 ---
 제목: "Maverick 전투 시스템"
 부제목: "현재 공격 실행 흐름과 공격·스킬 구성"
-최근수정일: 2026-10-21
+최근수정일: 2026-11-23
 최근수정자: "Kwon-Nahoo-Man"
 관련문서:
   - "[[Architecture/document|Maverick Architecture]]"
@@ -30,27 +30,32 @@ flowchart TD
     Hit --> Resolver["UMVHitResolverSubsystem<br/>피해·그로기·피격 결과 계산"]
     Resolver --> Damaged["AMVCharacterBase::OnHitResolved<br/>OnDamaged 브로드캐스트"]
     Damaged --> Stat["UMVStatComponent<br/>HP·Groggy·Death"]
-    Damaged --> Reaction["UMVHitReactionComponent<br/>피격 표현·행동 취소"]
+    Damaged --> Reaction["UMVHitReaction<br/>피격 표현·행동 취소"]
     Action --> End["Montage 종료<br/>체인·쿨다운 갱신"]
 ```
 
-## 공격 종류
+## 플레이어 기본 공격
 
 무기 교체·스타일별 공격 선택·듀얼 소드 손별 판정: [[Features/Combat/Weapon-Swap/document|플레이어 무기 교체]]
 
 | 분류 | 현재 동작 |
 |---|---|
-| 약공격 | 연속 Row 기반 기본 연계 |
-| 강공격 | 연속 Row 기반 강공격과 누르기 유지 조기 해제 분기 |
-| 차지공격 | 누르기 유지 후 확정 시간 도달 시 실행 |
-| 전력질주 공격 | 전력질주 문맥에서 약·강 입력을 전용 Row로 치환 |
-| 회피 공격 | 회피 문맥에서 약·강 입력을 전용 Row로 치환 |
+| Light | Charge 확정 전 좌클릭 해제 시 실행, Charge 사용 불가 시 누름 즉시 실행 |
+| Charge | 좌클릭 누름에 `LeadIn` 시작, 유지 시간이 기준에 도달하면 공격 섹션 1회 확정 |
+| Sprint Light | 전력질주 조건 충족 시 누름 즉시 실행 |
+| Dodge Light | 회피 후속 조건 충족 시 누름 즉시 실행, 전력질주보다 우선 |
+
+- 무기별 `FMVWeaponBasicAttackMap`에 네 시작 Row 저장
+- `ChargeCommitTime` 양수값 우선, 미지정 시 `DefaultChargeCommitTime` 0.5초 적용
+- 조기 해제 시 Charge 행의 `EarlyReleaseStartSection`과 `EarlyReleaseBlendOutTime` 적용, Light 몽타주에 해당 섹션이 없으면 행의 기본 시작 위치 사용
+- Light와 Charge는 다음 단계를 공유하며 공격 확정 시 한 번 전진. 해당 계열에 단계가 없으면 첫 행 사용
+- Charge 준비·확정 시 전체 스태미나 비용 확인, 실제 비용은 공격 구간의 Ability Notify에서 차감
 
 ## 스킬 시스템
 
 - 입력 인덱스: Q `Skill0`, R `Skill1`, W `Skill2`, E `Skill3`
 - 런타임 맵 키: Q `QSkill`, R `RSkill`, W `WSkill`, E `ESkill`
-- 조합 입력: Shift+좌클릭 W, Shift+우클릭 E
+- 입력: 우클릭 Q, Shift+좌클릭 W, Shift+우클릭 E
 - 현재 무기 스타일과 슬롯을 기준으로 WeaponComponent의 장착 Row 조회
 - 미등록·미지원 스킬 입력 즉시 소비로 Action 종료·무기 교체 후 지연 실행 차단
 - `NextChainName`으로 단일 스킬과 연속 스킬 구성
@@ -60,6 +65,13 @@ flowchart TD
 - Ability Notify 최초 시작 시 비용 차감, 종료 시 체인·쿨다운 갱신
 - HUD에 사용 가능 상태·연속 단계·입력 창·남은 쿨다운 투영
 - Q 적중 연계·R 게이지·W/E 조합 입력 계약: [[Features/Combat/Skill/document|플레이어 스킬 구조]]
+
+### 무기 스킬 4번 · 캐릭터 중심 원형 공격
+
+- `BP_WeaponSkillCircle`의 Class Defaults → Settings → Circle에서 `Inner Radius`(기본 700 cm)와 `Outer Radius`(기본 1000 cm) 조정
+- 대상 캡슐 중심까지의 수평 거리 기준. 내원 미만은 `Flinch`, 내원 경계부터 외원 경계까지는 `Airborne` 요청. 대상 중심의 높이 차는 시전자 캡슐 반높이 이하까지 포함
+- `ANS_ActiveAbility` 시작 시 시전자 캡슐 위치·높이 고정. 즉시 1회 검사 후 0.05초마다 360도 검사. 구간 중 진입 포함, 재진입과 영역 간 이동을 합해 대상별 1회
+- PIE 표시 기본 활성. 노란 원은 내원 경계, 청록 원통은 외원과 높이 범위. `WeaponSkillCircleTrace`에 요청 반응과 전달 결과 기록. `maverick.WeaponSkillCircle.DebugDraw 0`으로 표시·로그 해제
 
 ## Passive 스킬 생명주기
 

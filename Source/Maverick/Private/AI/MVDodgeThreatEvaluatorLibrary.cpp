@@ -10,10 +10,10 @@ bool MVDodgeThreatIsActionTypeAllowed(
 {
 	if (ThreatActionTypes.IsEmpty())
 	{
-		return ActionType == EMVCombatActionTypes::HeavyAttack
-			|| ActionType == EMVCombatActionTypes::ChargeAttack
-			|| ActionType == EMVCombatActionTypes::Skill
-			|| ActionType == EMVCombatActionTypes::SprintHeavyAttack;
+		// ActionType == EMVCombatActionTypes::HeavyAttack
+		// || ActionType == EMVCombatActionTypes::SprintHeavyAttack
+		return ActionType == EMVCombatActionTypes::ChargeAttack
+			|| ActionType == EMVCombatActionTypes::Skill;
 	}
 
 	return ThreatActionTypes.Contains(ActionType);
@@ -73,13 +73,13 @@ FGameplayTag MVDodgeThreatResolveActionTag(const FMVCombatActionEvent& CombatAct
 	switch (CombatActionEvent.ActionType)
 	{
 	case EMVCombatActionTypes::LightAttack:
-	case EMVCombatActionTypes::HeavyAttack:
+	// case EMVCombatActionTypes::HeavyAttack:
 	case EMVCombatActionTypes::ChargeAttack:
 	case EMVCombatActionTypes::Skill:
 	case EMVCombatActionTypes::SprintLightAttack:
-	case EMVCombatActionTypes::SprintHeavyAttack:
+	// case EMVCombatActionTypes::SprintHeavyAttack:
 	case EMVCombatActionTypes::DodgeLightAttack:
-	case EMVCombatActionTypes::DodgeHeavyAttack:
+	// case EMVCombatActionTypes::DodgeHeavyAttack:
 		return MVGameplayTags::Action_Combat;
 	default:
 		return FGameplayTag();
@@ -91,10 +91,10 @@ FMVDodgeThreatConfig::FMVDodgeThreatConfig()
 {
 	ThreatActionTypes =
 	{
-		EMVCombatActionTypes::HeavyAttack,
+		// EMVCombatActionTypes::HeavyAttack,
 		EMVCombatActionTypes::ChargeAttack,
-		EMVCombatActionTypes::Skill,
-		EMVCombatActionTypes::SprintHeavyAttack
+		EMVCombatActionTypes::Skill
+		// EMVCombatActionTypes::SprintHeavyAttack
 	};
 }
 

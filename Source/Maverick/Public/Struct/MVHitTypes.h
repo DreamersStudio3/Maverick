@@ -170,6 +170,10 @@ struct MAVERICK_API FMVResolvedHitData
 	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Hit")
 	EMVResolvedHitOrigin Origin = EMVResolvedHitOrigin::Unknown;
 
+	// 유효 충돌을 1회 방어가 소비했다. 피격과 적중 후속 효과는 전달하지 않았다.
+	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Hit")
+	bool bBlocked = false;
+
 	UPROPERTY(BlueprintReadOnly, Category = "Maverick|Hit", meta = (Categories = "Character"))
 	FGameplayTag AttackerCharacterIndexCode;
 

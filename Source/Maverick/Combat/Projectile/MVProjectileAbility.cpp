@@ -147,6 +147,7 @@ bool UMVProjectileAbility::TryBuildLaunchContext(
         return false;
     }
 
+    const FVector SourceLocation = Character->GetActorLocation();
     const FMVProjectileSpawnInfo SpawnInfo = ResolveSpawnInfo(AbilityIndex);
     const FVector& Direction = SpawnInfo.Direction;
     const FVector& Location = SpawnInfo.Location;
@@ -217,6 +218,7 @@ bool UMVProjectileAbility::TryBuildLaunchContext(
     OutContext.Attacker = Character;
     OutContext.Team = Team;
     OutContext.AttackInstanceId = GetAttackInstanceId();
+    OutContext.SourceLocation = SourceLocation;
     // 현재 기술은 Resolver가 기술 공격으로 다룬다. 늦게 맞아도 같은 방어력을 사용한다.
     OutContext.AttackTypes = GetSourceSkillIndex() != INDEX_NONE
         ? EMVAttackTypes::SkillAttack

@@ -1,7 +1,7 @@
 ---
 제목: 입력에서 Action 실행까지
 부제목: 입력 수집부터 Action·Ability 활성 구간까지의 실행 경계
-최근수정일: 2026-10-23
+최근수정일: 2026-11-21
 최근수정자: Kwon-Nahoo-Man
 관련문서:
   - "[[Architecture/document|Maverick Architecture]]"
@@ -39,6 +39,12 @@ flowchart TD
 | CombatComponent | 공격 입력 규칙, Chain·Ability·쿨다운 런타임과 Action 시작 조정 |
 | ActionComponent | Montage, Active Action, 실행 Domain, Interruptibility, 종료 이벤트 소유 |
 | Ability NotifyState | Montage의 실제 Ability 시작·종료 구간 소유 |
+
+## 플레이어 마우스 입력
+
+- 일반 좌클릭: `IA_LightAttack`의 `Started`·`Triggered`·`Completed`·`Canceled`를 `SubmitHoldActionInput`으로 전달
+- Shift+좌클릭 W, 우클릭 Q, Shift+우클릭 E: `Started`에서 `SubmitActionInput` 1회 호출. 입력 중 Shift 변경은 다음 누름에 적용
+- 유지 입력의 시작이 버퍼에 남아 있으면 해제 시 즉발 입력으로 소비 가능, 취소 시 버퍼 폐기
 
 ## 실행 Domain 계약
 

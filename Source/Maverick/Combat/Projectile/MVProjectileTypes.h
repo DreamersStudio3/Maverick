@@ -69,6 +69,8 @@ struct MAVERICK_API FMVProjectileLaunchContext
     UPROPERTY(BlueprintReadWrite, Category = "Maverick|Projectile")
     EMVAttackTypes AttackTypes = EMVAttackTypes::NormalAttack;
 
+    FVector SourceLocation = FVector::ZeroVector;
+
     UPROPERTY(BlueprintReadWrite, Category = "Maverick|Projectile")
     FVector LaunchDirection = FVector::ZeroVector;
 

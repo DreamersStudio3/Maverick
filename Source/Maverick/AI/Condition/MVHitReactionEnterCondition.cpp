@@ -2,7 +2,7 @@
 
 #include "AIController.h"
 #include "Character/MVCharacterBase.h"
-#include "Components/MVHitReactionComponent.h"
+#include "Components/MVHitReaction.h"
 #include "StateTreeExecutionContext.h"
 
 namespace
@@ -91,7 +91,7 @@ bool FMVHitReactionEnterCondition::TestCondition(FStateTreeExecutionContext& Con
 	}
 
 	if (InstanceData.bRequireHitReactionComponent
-		&& !Owner->FindComponentByClass<UMVHitReactionComponent>())
+		&& !Owner->FindComponentByClass<UMVHitReaction>())
 	{
 		return false;
 	}

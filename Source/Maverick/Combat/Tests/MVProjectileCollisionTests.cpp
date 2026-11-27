@@ -5,6 +5,8 @@
 #include "Character/NPC/Enemy/MVEnemy.h"
 #include "Character/PC/MVPlayerCharacter.h"
 #include "Combat/Projectile/MVProjectileBase.h"
+#include "Combat/MVHitResolverSubsystem.h"
+#include "Components/MVCombatComponent.h"
 #include "Components/MVStatComponent.h"
 #include "Engine/Engine.h"
 #include "Engine/World.h"
@@ -161,6 +163,37 @@ bool FMVProjectileCollisionTest::RunTest(const FString& Parameters)
                     OwnShot->ActivateProjectile());
                 TestEqual(TEXT("Projectile ignores its shooter"),
                     Player->StatComponent->CurrentHP, 100.0f);
+            }
+
+            FMVOnNextHitBlocked BlockCallback;
+            BlockCallback.BindUFunction(Player->CombatComponent.Get(), TEXT("HandleHitResolved"));
+            const int32 StaleRegistration = Player->RegisterNextHitBlock(BlockCallback);
+            Player->UnregisterNextHitBlock(StaleRegistration);
+            const int32 ActiveRegistration = Player->RegisterNextHitBlock(BlockCallback);
+            TestTrue(TEXT("Each block registration has its own identity"), ActiveRegistration != INDEX_NONE
+                && ActiveRegistration != StaleRegistration);
+            Player->UnregisterNextHitBlock(StaleRegistration);
+
+            AMVProjectileBase* BlockedShot = SpawnShot(Enemy, EMVProjectileTeam::Enemy,
+                Player->GetActorLocation() + FVector(0.0, 0.0, 70.0), 104);
+            if (TestNotNull(TEXT("Projectile to block"), BlockedShot))
+            {
+                TestTrue(TEXT("Blocked non-piercing projectile activates"), BlockedShot->ActivateProjectile());
+                TestTrue(TEXT("Blocked non-piercing projectile terminates"), BlockedShot->IsActorBeingDestroyed());
+                TestEqual(TEXT("Blocked projectile leaves HP intact"), Player->StatComponent->CurrentHP, 100.0f);
+            }
+
+            FMVDirectDamageRequest NextHit;
+            NextHit.Attacker = Enemy;
+            NextHit.Victim = Player;
+            NextHit.FinalDamage = 5.0f;
+            FMVResolvedHitData Resolved;
+            UMVHitResolverSubsystem* Resolver = UMVHitResolverSubsystem::Get(World);
+            if (TestNotNull(TEXT("Hit resolver"), Resolver))
+            {
+                TestTrue(TEXT("The next same-frame hit reaches the victim"), Resolver->ResolveDirectDamage(NextHit, Resolved));
+                TestFalse(TEXT("Consumed registration does not block again"), Resolved.bBlocked);
+                TestEqual(TEXT("Unblocked damage applies"), Player->StatComponent->CurrentHP, 95.0f);
             }
         }
     }
