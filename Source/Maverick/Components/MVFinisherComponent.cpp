@@ -86,6 +86,27 @@ bool UMVFinisherComponent::TryHandleActionInput(FGameplayTag ActionInputTag, FVe
 	return TryFinisherMove();
 }
 
+bool UMVFinisherComponent::TryHandleHoldActionInput(FGameplayTag ActionInputTag, EMVActionInputPhase Phase,
+	float /*HeldSeconds*/, FVector2D ControllerSpaceInput, bool bHasMovementInput)
+{
+	if (!ActionInputTag.MatchesTagExact(MVGameplayTags::Action_Input_LightAttack))
+	{
+		return false;
+	}
+
+	if (Phase == EMVActionInputPhase::Started)
+	{
+		bFinisherConsumedLightPress = TryFinisherMove();
+	}
+
+	const bool bHandled = bFinisherConsumedLightPress;
+	if (Phase == EMVActionInputPhase::Completed || Phase == EMVActionInputPhase::Canceled)
+	{
+		bFinisherConsumedLightPress = false;
+	}
+	return bHandled;
+}
+
 bool UMVFinisherComponent::TryFinisherMove()
 {
 	AActor* HitActor = nullptr;

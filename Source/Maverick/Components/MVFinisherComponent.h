@@ -63,7 +63,7 @@ class UMVAbilityBase;
 
 /**
  * 약공격 입력에서 그로기 대상을 찾고 Attacker·Victim 액션의 짝 실행을 조율한다.
- * 두 실행을 확인한 뒤 공격 데이터와 대상 그로기를 갱신한다.
+ * 홀드 시작에 양측 실행이 성공하면 대상 그로기를 갱신하고 같은 입력을 해제까지 소비한다.
  * Victim으로 넘긴 이동·회전 제한은 해당 액션의 수명을 따른다.
  */
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -86,6 +86,8 @@ public:
 
 	// Handle Input
 	virtual bool TryHandleActionInput(FGameplayTag ActionInputTag, FVector2D ControllerSpaceInput, bool bHasMovementInput) override;
+	virtual bool TryHandleHoldActionInput(FGameplayTag ActionInputTag, EMVActionInputPhase Phase, float HeldSeconds,
+		FVector2D ControllerSpaceInput, bool bHasMovementInput) override;
 
 	// Public API
 public:
@@ -141,6 +143,8 @@ private:
 	void ResetTargetGroggy();
 
 private:
+	bool bFinisherConsumedLightPress = false;
+
 	UPROPERTY()
 	FDataTableRowHandle AttackData;
 
