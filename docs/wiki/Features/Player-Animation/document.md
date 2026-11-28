@@ -1,7 +1,7 @@
 ---
 제목: "플레이어 애니메이션 교체"
 부제목: "기본 로코모션 레이어와 액션 몽타주의 편집 위치"
-최근수정일: 2026-11-14
+최근수정일: 2026-11-27
 최근수정자: "Codex"
 관련문서:
   - "[[Architecture/document|Maverick Architecture]]"
@@ -61,7 +61,7 @@ flowchart LR
 
 공통 레이어의 `AnimLayer_Fall`에서 `FallBasePose`는 `RightArmBlend` 마스크로 오른팔에 덮어쓰는 고정 자세다. Sequence Evaluator가 첫 프레임을 사용하므로 AnimSequence를 지정한다. 낙하 전체 동작은 `FallStartAnimation`과 `FallLoopAnimation`이 담당한다.
 
-현재 그래프는 `FallBasePose`가 `None`이면 `AS_BB_FallAndLand_004000_Root`를 사용한다. 따라서 기본 낙하 오른팔 자세를 유지하려면 `None`으로 두어도 된다.
+현재 그래프는 `FallBasePose`가 `None`이면 `AS_GB_FallAndLand_004000_Root`를 사용한다. 따라서 기본 낙하 오른팔 자세를 유지하려면 `None`으로 두어도 된다.
 
 - 일반 시퀀스: 전체 자세, 정상 뼈 스케일 1
 - 가산 시퀀스: 기준 자세에 대한 차이, 변화 없는 뼈 스케일 차분 0
@@ -72,7 +72,7 @@ flowchart LR
 ### 정지 후 Idle 복귀
 
 - `ABP_Base → Locomotion States → Stop → Idle`: `LocomotionStopComplete > 0.5`로 전환
-- `AS_BB_SprintAndStop_022100_Root`·`022200_Root`의 종료 0.133초 전까지 커브 0, 0.1초 전까지 1로 상승 후 유지
+- `AS_GB_SprintAndStop_022100_Root`·`022200_Root`의 종료 0.133초 전까지 커브 0, 0.1초 전까지 1로 상승 후 유지
 - Linked Anim Layer의 중첩 정지 상태에서 메인의 Relevant Anim Time Remaining 조건이 충족되지 않아 마지막 포즈가 유지되던 경로를 종료 커브로 교체
 - 정지 모션 교체 시 새 시퀀스에도 같은 종료 커브 필요, 모션 재생 배율에 따라 종료 신호 도달 시간도 함께 변경
 - Windows UE 5.8.4에서 락온 유무별 달리기·정지 및 걷기·질주·정지 후 Idle 포즈 움직임 복구 확인
@@ -80,8 +80,13 @@ flowchart LR
 ## BloodBorne 테스트 세트
 
 - 경로: `/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne`
-- Idle 000000/000001: Manny의 접지된 대기 자세를 기준으로 발목·발끝 높이 보정, 두 관절 다리 계산으로 무릎과 골반 조정, 뼈 스케일 유지
+- Idle 000000/000001: Manny 맨손 대기 `AS_Idle`의 발목·발볼 뼈 높이를 기준으로 무릎과 골반 조정, 뼈 스케일 유지
+- `BaseBossTestLevel` 평지에서 대기 2개·걷기 20개의 프레임별 Manny 메시 최저점을 측정해 골반 높이 보정. 지지발의 목표 여유 높이 0.08 cm, 기존 루트 궤적 유지
+- PIE 대기 발바닥 최저점 약 1.96 cm → 0.07–0.08 cm. 전방 걷기 정속 구간 최저점은 지면 기준 −0.11~+0.18 cm, 출발 블렌드에서 일시적인 발 침투 관측
 - Idle 보정은 시퀀스 내부 키 수정이며 공통 스켈레톤·캐릭터 메시 스케일 변경 없음
+- Graceborne 무기 1,098개와 이동·회피·회복 등 나머지 132개의 Manny 타깃 포즈는 `RTG_C0000_to_Manny`의 `GroundedFeet`. 기존 `Default Pose`에서 양쪽 발끝을 10° 올리고 골반을 1.5 cm 낮춘 설정
+- 기본 이동 시퀀스 갱신 후 대각선 혼합과 Run FL 좌우 반전 재생성. Idle 2개의 접지, 잘라낸 기상 구간, 착지·회복 가산 기준과 편집된 회복 팔 동작 유지
+- 무기 시퀀스에 이 보정을 다시 적용할 때는 골반·양쪽 발목·발볼 트랙을 갱신하고 기존 루트 모션과 손 트랙을 보존한다. [무기 모션 목록](../../../../Content/ArtAssets/Animations/PC/Moveset/Test_BloodBorne/Weapons/README.md)
 - Windows UE 5.8.4에서 정지와 회피 몽타주 전환 추적: 수정 전 손 스케일 최대 2048, 수정 후 약 1
 - 입력 판정 전체가 아닌 하부 로코모션과 몽타주 합성 경로의 회귀 검증
 
@@ -101,7 +106,7 @@ flowchart LR
 - 질주 속도 750cm/s는 기본값 확인, 이번 실행 검증은 달리기·걷기와 레이어 연결 범위
 
 - Run 시퀀스 `Rate Scale`: 1.15, 대각선 혼합본 포함 20개에 적용, 걷기·질주 시퀀스는 기존 배율 유지
-- `AS_BB_Run_FL_Blend_Root`: FR의 좌우 반전, Manny X축 반사·좌우 뼈 교환·기준 자세 회전 보정 적용
+- `AS_GB_Run_FL_Blend_Root`: FR의 좌우 반전, Manny X축 반사·좌우 뼈 교환·기준 자세 회전 보정 적용
 - FL 저장 에셋 재로드 후 25프레임의 루트·발·발끝 125표본에서 FR 반전 좌표 최대 오차 0.00016cm, 스케일 1 확인
 
 ## 회복 주사 모션 시안
@@ -112,17 +117,17 @@ flowchart LR
 
 | 종류 | AnimSequence | AnimMontage |
 |---|---|---|
-| 왼쪽 허벅지 원본 | `AS_BB_Heal_Left_Root` | `AM_BB_Heal_Left` |
-| 심장 변형 | `AS_BB_Heal_Heart_Root` | `AM_BB_Heal_Heart` |
-| 두개골 변형 | `AS_BB_Heal_Skull_Root` | `AM_BB_Heal_Skull` |
+| 왼쪽 허벅지 원본 | `AS_GB_Heal_Left_Root` | `AM_GB_Heal_Left` |
+| 심장 변형 | `AS_GB_Heal_Heart_Root` | `AM_GB_Heal_Heart` |
+| 두개골 변형 | `AS_GB_Heal_Skull_Root` | `AM_GB_Heal_Skull` |
 
 - 공통 길이 3초, 30fps·91키, Rate Scale 1
 - 변형: 왼팔 2본 IK와 손목 방향 편집, 10–80프레임 안에서 부드럽게 가중치 전환
 - 몸통·하체와 시작·종료 자세 보존, 뼈 스케일 1과 팔 길이 유지
-- `DT_Items_Consumable.HealingPotion.UseActionRow` → `DT_Props_P1.Items_HealingPotion` → `AM_BB_Heal_Left`
+- `DT_Items_Consumable.HealingPotion.UseActionRow` → `DT_Props_P1.Items_HealingPotion` → `AM_GB_Heal_Left`
 - UpperBody 슬롯으로 기존 이동 가능 동작 유지, 기존 UpperBodyAdditive 음용 포즈는 새 몽타주에서 사용하지 않음
 - `ApplyHealingPotion` 알림은 주사 구간인 1초에 1회, `RecoveryEscapeWindow`는 기존 정규화 시작 시점을 유지한 1.668–3초
 - 회복량·소지 수량·실패 액션·이동 및 중단 가능 설정 유지, 심장·두개골 몽타주는 게임플레이 미연결
 - 소품·손가락 그립 미설정, 실제 주사기 기준 접촉은 검증 범위 밖
 
-- Windows UE 5.8.4 PIE 483표본: `AM_BB_Heal_Left` 재생, 1초에 HP 30→60·수량 3→2, 이후 정상 액션 종료 확인
+- Windows UE 5.8.4 PIE 483표본: `AM_GB_Heal_Left` 재생, 1초에 HP 30→60·수량 3→2, 이후 정상 액션 종료 확인

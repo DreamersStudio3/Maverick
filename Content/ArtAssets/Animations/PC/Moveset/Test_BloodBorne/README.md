@@ -1,16 +1,19 @@
 # BloodBorne 테스트 Moveset
 
+[Graceborne 모션 Q&A — CSV 읽는 법, TAE, 무기·손가락 애니메이션, 리타겟 원본](Weapons/README.md#자주-묻는-질문)
+
 - 위치: `/Game/ArtAssets/Animations/PC/Moveset/Test_BloodBorne`
-- 구성: Manny 루트 모션 시퀀스 129개, 착지 가산 시퀀스 1개, 몽타주 135개, 이동 BlendSpace 2개
-- 명명: 시퀀스 `AS_BB_<종류>_<원본 ID>_Root`, 몽타주 `AM_BB_*`
-- 분류: Detail / Dodge / Idle / Walk / Run / Sprint / Fall / Knockdown / Getup / Heal
+- 이동·회피·회복 세트: Manny 시퀀스 132개(루트 모션 활성 129개, 일반 회복 1개, 착지·회복 가산 2개), 몽타주 135개, 이동 BlendSpace 2개
+- 무기 세트: Graceborne 0.2.5 무기별 공격·변형·사격 Manny 시퀀스 1,098개. [무기별 모션 목록](Weapons/README.md)
+- 명명: 시퀀스 `AS_GB_<종류>_<원본 ID>_Root`, 몽타주 `AM_GB_*`
+- 분류: Turn / AdapterDodge / DiagonalDodge / EscapeDodge / Idle / Walk / Run / SprintAndStop / FallAndLand / KnockdownAndRecovery / Heal
 - 기존 BareHand·OneHand·DualWield 에셋 유지, 동일 회피 시퀀스의 테스트 사본 6개 통합
 
 ## 게임플레이 연결
 
 - 메인 `ABP_Base`와 BloodBorne 기본 레이어 연결, Mage·Hammer 분기와 회피 테이블 참조 유지
 
-- 플레이어 일반 회피 18행은 새 Dodge 폴더의 기존 몽타주 12개 참조
+- 플레이어 일반 회피 18행은 새 AdapterDodge 폴더의 기존 몽타주 12개 참조
 - 기존 회피 몽타주의 길이·알림 보존, 시퀀스는 무기 스타일 간 공유
 - BH·1H 이름의 몽타주는 기존 블렌드·타이밍 구분용, 별도 시퀀스 중복 없음
 - 회피·회복 외 몽타주는 개별 모션 확인용, 로코모션은 상태 머신의 시퀀스 재생 구조 사용
@@ -26,7 +29,7 @@
 
 - 소스 메시·스켈레톤: `/Game/ArtAssets/Mannequins/Meshes/Test_BloodBorne`
 - IK Rig·리타게터: `/Game/ArtAssets/Mannequins/Rigs/Test_BloodBorne`
-- 원본 스켈레톤 시퀀스 132개: 위 Rigs 폴더의 `SourceAnimations`
+- 리타겟 전 C0000 이동·회복 시퀀스 132개는 프로젝트에서 제거. 기본 회피는 AdapterDodge, 기상 분리본은 원본과 같은 FallAndLand에 배치
 - 원본: GRACEBORNE a0.2.5 `c0000`, 출처 슬롯명은 원본 게임의 분류이며 모드 입력 선택 규칙과 별개
 - ID·구간·에셋 경로: `asset-index.json`
 
@@ -35,7 +38,7 @@
 - 전체 이동 에셋 로드, 시퀀스 길이·스켈레톤·루트 모션 설정 및 몽타주 참조 검증
 - 기존 회피 몽타주 12개의 알림 개수·길이 및 DataTable 비참조 필드 보존
 - 기상 FaceUp: `a000_004260` 30–137프레임, FaceDown: `a000_004270` 40–137프레임 분리본
-- 원본 모션 길이와 궤적 보존, 발 접촉·무기 그립·전환 체감 보정 미포함
+- 시퀀스 재생 길이와 기존 루트 모션 궤적 보존
 
 ## 로코모션 연결 검증
 
@@ -45,10 +48,13 @@
 
 ## 전환·접지 보정
 
+- 이동·회피·회복을 포함한 132개 시퀀스에 `RTG_C0000_to_Manny`의 Manny 타깃 포즈 `GroundedFeet` 적용. 기존 경로에서 갱신해 몽타주와 BlendSpace의 시퀀스 참조 유지
+- 대각선 이동은 보정된 기본 방향으로 재생성. 전방 좌측 달리기는 전방 우측 달리기의 좌우 반전, 기상 2개는 원본 프레임 구간, 회복 변형은 개별 팔 편집과 가산 기준 프레임 유지
 - NormalStop의 일반 정지 시퀀스를 가산 입력에서 Base 포즈 입력으로 이동, `ABP_Base`와 `ABP_PlayerAnimLayerBase` 모두 적용
 - 정지 및 회피 몽타주 블렌딩 재현에서 뼈 스케일 최대 2048 → 약 1, 수정 후 1441표본 확인
 - Idle 000000/000001의 발목·무릎·골반 키를 Manny 접지 자세에 맞춰 보정, 발끝 XY와 뼈 길이·스케일 유지
-- Idle 000000은 골반 약 2.75–3.23 cm 하강, 원본 리타게팅 결과와 구별되는 테스트 보정본
+- 대기 2개와 걷기 20개는 리타겟과 다리 보정 후 실제 Manny 발바닥 메시를 기준으로 골반 높이를 프레임별 보정. 목표 지면 간격 0.08 cm. 가산 착지는 대기 기준 프레임과 동일한 높이 변화량 적용
+- 에디터 재로드 후 시퀀스 132개·6,465키와 몽타주 135개의 재생 구간 136개·알림 50개 검증. 전방 걷기 첫 프레임의 왼발 발목→발볼 기울기는 38.7°에서 28.7°로 감소(소스 28.8°)
 - 모션 편집 위치와 가산 입력 주의사항: `docs/wiki/Features/Player-Animation/document.md`
 
 ## 기본 ABP 구성
@@ -63,12 +69,12 @@
 
 ## 회복 모션 시안
 
-- `Heal/AS_BB_Heal_Left_Root`: `c0000_a00_hi.anibnd.dcx`의 `a000_050210`, 왼쪽 허벅지 회복 동작
-- `Heal/AS_BB_Heal_Heart_Root`, `AS_BB_Heal_Skull_Root`: 원본에서 왼팔·손목·왼손 IK 궤적을 편집한 심장·두개골 변형
-- 각 시퀀스에 대응하는 `AM_BB_Heal_Left`, `AM_BB_Heal_Heart`, `AM_BB_Heal_Skull` 포함
+- `Heal/AS_GB_Heal_Left_Root`: `c0000_a00_hi.anibnd.dcx`의 `a000_050210`, 왼쪽 허벅지 회복 동작
+- `Heal/AS_GB_Heal_Heart_Root`, `AS_GB_Heal_Skull_Root`: 원본에서 왼팔·손목·왼손 IK 궤적을 편집한 심장·두개골 변형
+- 각 시퀀스에 대응하는 `AM_GB_Heal_Left`, `AM_GB_Heal_Heart`, `AM_GB_Heal_Skull` 포함
 - 모두 91키·30fps·3초·Rate Scale 1, 시작·종료 자세와 몸통·하체 유지
 - 허벅지 원본은 `DT_Props_P1.Items_HealingPotion`에 연결, 심장·두개골은 미연결 시안
-- `AM_BB_Heal_Left`: UpperBody 슬롯, 1초에 회복 알림, 1.668–3초에 회피 전환 창
+- `AM_GB_Heal_Left`: UpperBody 슬롯, 1초에 회복 알림, 1.668–3초에 회피 전환 창
 - 회복 중 이동·회복량·소모 수량·실패 액션 설정 유지, 소품 및 손가락 그립 추가 보정 미포함
 - 변형은 팔 궤적 검토용 첫 시안, 실제 주사기 메시 기준 바늘 끝 접촉 검증 미포함
 
